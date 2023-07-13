@@ -1,8 +1,7 @@
 <div
   *ngIf="{
     selectedHierarchy: selectedHierarchy$ | async,
-    masterHierarchyList: masterHierarchyList$ | async,
-    nodeWiseQuestionsCount: nodeWiseQuestionsCount$ | async
+    masterHierarchyList: masterHierarchyList$ | async
   }"
 >
   <div class="header">
@@ -123,6 +122,7 @@
       <app-route-plan
         [hierarchy]="hierarchy"
         [hierarchyMode]="hierarchyMode"
+        [nodeWiseQuestionsCount]="nodeWiseQuestionsCount"
         (nodeRemoved)="removeNodeHandler($event)"
         (copyNode)="handleCopyNode($event)"
       ></app-route-plan>
@@ -131,6 +131,7 @@
       <app-node
         [node]="node"
         [hierarchyMode]="hierarchyMode"
+        [nodeWiseQuestionsCount]="nodeWiseQuestionsCount"
         (nodeRemoved)="removeNodeHandler($event)"
         *ngFor="let node of filteredHierarchyList"
       ></app-node>

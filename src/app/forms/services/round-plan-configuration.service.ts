@@ -27,7 +27,7 @@ export class RoundPlanConfigurationService {
     isEmbeddedForm: boolean,
     sectionQuestionsList: SectionQuestions[] = []
   ) {
-    const page = this.getPageObject(
+    const { counter, ...page } = this.getPageObject(
       pageIndex,
       addSections,
       addQuestions,
@@ -41,7 +41,8 @@ export class RoundPlanConfigurationService {
         subFormId,
         page,
         pageIndex,
-        ...this.getFormConfigurationStatuses()
+        ...this.getFormConfigurationStatuses(),
+        counter
       })
     );
 
@@ -66,7 +67,7 @@ export class RoundPlanConfigurationService {
     isEmbeddedForm: boolean,
     sectionQuestionsList: SectionQuestions[] = []
   ) {
-    const { sections, questions } = this.getSectionsObject(
+    const { sections, questions, counter } = this.getSectionsObject(
       pageIndex,
       addSections,
       addQuestions,
@@ -82,7 +83,8 @@ export class RoundPlanConfigurationService {
         pageIndex,
         sectionIndex,
         ...this.getFormConfigurationStatuses(),
-        subFormId
+        subFormId,
+        counter
       })
     );
     this.store.dispatch(
@@ -111,16 +113,16 @@ export class RoundPlanConfigurationService {
     subFormId: string,
     questions: Question[] = []
   ) {
-    const sectionQuestions = new Array(addQuestions)
-      .fill(0)
-      .map((q, index) =>
-        this.getQuestion(
-          questionIndex + index,
-          sectionId,
-          questionCounter + index + 1,
-          questions[index]
-        )
+    let counter: number;
+    const sectionQuestions = new Array(addQuestions).fill(0).map((q, index) => {
+      counter = questionCounter + index + 1;
+      return this.getQuestion(
+        questionIndex + index,
+        sectionId,
+        questionCounter + index + 1,
+        questions[index]
       );
+    });
     this.store.dispatch(
       BuilderConfigurationActions.addQuestions({
         questions: sectionQuestions,
@@ -128,7 +130,8 @@ export class RoundPlanConfigurationService {
         sectionId,
         questionIndex,
         ...this.getFormConfigurationStatuses(),
-        subFormId
+        subFormId,
+        counter
       })
     );
     this.store.dispatch(
@@ -158,7 +161,7 @@ export class RoundPlanConfigurationService {
     sectionQuestionsList: SectionQuestions[],
     isEmbeddedForm: boolean
   ) {
-    const { sections, questions } = this.getSectionsObject(
+    const { sections, questions, counter } = this.getSectionsObject(
       pageIndex,
       addSections,
       addQuestions,
@@ -174,7 +177,8 @@ export class RoundPlanConfigurationService {
       isOpen: true,
       sections,
       questions,
-      logics: []
+      logics: [],
+      counter
     };
   }
 
@@ -193,6 +197,7 @@ export class RoundPlanConfigurationService {
         : 0;
     let sliceStart = 0;
     let questions: Question[] = [];
+    let counter: number;
 
     const sections = new Array(addSections).fill(0).map((s, sectionIndex) => {
       sectionCount = ++sectionCount;
@@ -211,14 +216,15 @@ export class RoundPlanConfigurationService {
               ? sectionQuestionsList[sectionIndex]?.questions?.length
               : 1)
         )
-        .map((q, questionIndex) =>
-          this.getQuestion(
+        .map((q, questionIndex) => {
+          counter = questionCounter + sliceStart + questionIndex + 1;
+          return this.getQuestion(
             questionIndex,
             section.id,
-            questionCounter + sliceStart + questionIndex + 1,
+            counter,
             sectionQuestionsList[sectionIndex]?.questions[questionIndex]
-          )
-        );
+          );
+        });
 
       sliceStart += sectionQuestionsList[sectionIndex]?.questions?.length;
       questions = [...questions, ...sectionQuestions];
@@ -228,7 +234,8 @@ export class RoundPlanConfigurationService {
 
     return {
       sections,
-      questions
+      questions,
+      counter
     };
   }
 
@@ -255,9 +262,6 @@ export class RoundPlanConfigurationService {
     questionCounter: number,
     question: Question
   ) {
-    this.store.dispatch(
-      BuilderConfigurationActions.updateCounter({ counter: questionCounter })
-    );
     return {
       id: `Q${questionCounter}`,
       sectionId,

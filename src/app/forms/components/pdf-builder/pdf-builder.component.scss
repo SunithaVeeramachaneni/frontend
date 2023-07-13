@@ -34,9 +34,9 @@
           .groupHead {
             font-size: 130%;
             font-weight: 500;
-            border-top: 1px solid $drag-preview-shadow2;
+            border-top: 1px solid $gray;
             padding-top: 10px;
-            border-bottom: 1px solid $drag-preview-shadow2;
+            border-bottom: 1px solid $gray;
             padding-bottom: 10px;
           }
           .option {
@@ -73,8 +73,13 @@
   }
 }
 
+.report-alignment {
+  position: relative;
+  top: -25px;
+}
+
 .bottomBorder {
-  border-bottom: 1px solid $drag-preview-shadow2;
+  border-bottom: 1px solid $gray;
   padding-bottom: 5px;
 }
 .questions {

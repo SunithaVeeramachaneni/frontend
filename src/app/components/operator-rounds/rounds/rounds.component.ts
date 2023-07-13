@@ -55,20 +55,14 @@ import {
 } from 'src/app/interfaces';
 import {
   formConfigurationStatus,
-  graphQLDefaultLimit,
   graphQLRoundsOrInspectionsLimit,
-  dateFormat2,
-  dateTimeFormat3,
+  dateTimeFormat4,
   permissions as perms,
-  dateFormat5,
-  hourFormat,
-  statusColors
+  statusColors,
+  dateTimeFormat5
 } from 'src/app/app.constants';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
 import { LoginService } from '../../login/services/login.service';
-import { FormConfigurationActions } from 'src/app/forms/state/actions';
-import { Store } from '@ngrx/store';
-import { State } from 'src/app/state/app.state';
 import { ActivatedRoute, Router } from '@angular/router';
 import { slideInOut } from 'src/app/animations';
 import { MatDialog } from '@angular/material/dialog';
@@ -80,7 +74,9 @@ import { PlantService } from '../../master-configurations/plants/services/plant.
 import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
 import { format } from 'date-fns';
 import { formatInTimeZone, zonedTimeToUtc } from 'date-fns-tz';
-
+import { ShiftService } from '../../master-configurations/shifts/services/shift.service';
+import { CommonService } from 'src/app/shared/services/common.service';
+import { ShiftDateChangeWarningModalComponent } from 'src/app/forms/components/shift-date-change-warning-modal/shift-date-change-warning-modal.component';
 @Component({
   selector: 'app-rounds',
   templateUrl: './rounds.component.html',
@@ -112,15 +108,27 @@ export class RoundsComponent implements OnInit, OnDestroy {
     'Partly-Open',
     'Overdue'
   ];
+  statusMap = {
+    open: 'Open',
+    submitted: 'Submitted',
+    assigned: 'Assigned',
+    partlyOpen: 'Partly-Open',
+    inProgress: 'In-Progress',
+    overdue: 'Overdue'
+  };
   filter = {
     status: '',
     schedule: '',
     assignedTo: '',
     dueDate: '',
-    plant: ''
+    plant: '',
+    scheduledAt: '',
+    shiftId: ''
   };
   assignedTo: string[] = [];
   schedules: string[] = [];
+  shiftObj: any = {};
+  shiftNameMap = {};
   columns: Column[] = [
     {
       id: 'name',
@@ -176,10 +184,21 @@ export class RoundsComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
-      id: 'locationAssetsCompleted',
-      displayName: 'Locations/Assets Completed',
+      id: 'shift',
+      displayName: 'Shift',
       type: 'string',
-      controlType: 'string',
+      controlType: 'dropdown',
+      controlValue: {
+        dependentFieldId: 'status',
+        dependentFieldValues: [
+          'assigned',
+          'open',
+          'in-progress',
+          'partly-open',
+          'overdue'
+        ],
+        displayType: 'text'
+      },
       order: 3,
       hasSubtitle: false,
       showMenuOptions: false,
@@ -198,56 +217,22 @@ export class RoundsComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
-      id: 'locationOrAssetSkipped',
-      displayName: 'Locations/Assets Skipped',
+      id: 'scheduledAtDisplay',
+      displayName: 'Start',
       type: 'string',
-      controlType: 'string',
+      controlType: 'dropdown',
+      controlValue: {
+        dependentFieldId: 'status',
+        dependentFieldValues: [
+          'assigned',
+          'open',
+          'in-progress',
+          'partly-open',
+          'overdue'
+        ],
+        displayType: 'text'
+      },
       order: 4,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
-      sortable: true,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
-    },
-    {
-      id: 'tasksCompleted',
-      displayName: 'Tasks Completed',
-      type: 'string',
-      controlType: 'space-between',
-      controlValue: ',',
-      order: 5,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
-      sortable: true,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
-      titleStyle: { width: '125px' },
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
-    },
-    {
-      id: 'taskSkipped',
-      displayName: 'Tasks Skipped',
-      type: 'string',
-      controlType: 'string',
-      order: 6,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -280,7 +265,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
         ],
         displayType: 'text'
       },
-      order: 7,
+      order: 5,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -298,11 +283,101 @@ export class RoundsComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
+      id: 'locationOrAssetSkipped',
+      displayName: 'Locations/Assets Skipped',
+      type: 'string',
+      controlType: 'string',
+      order: 6,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: false,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
+      id: 'taskSkipped',
+      displayName: 'Tasks Skipped',
+      type: 'string',
+      controlType: 'string',
+      order: 7,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: false,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+
+    {
+      id: 'locationAssetsCompleted',
+      displayName: 'Locations/Assets Completed',
+      type: 'string',
+      controlType: 'string',
+      order: 8,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: false,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
+      id: 'tasksCompleted',
+      displayName: 'Tasks Completed',
+      type: 'string',
+      controlType: 'space-between',
+      controlValue: ',',
+      order: 9,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: false,
+      titleStyle: { width: '125px' },
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
       id: 'schedule',
       displayName: 'Schedule',
       type: 'string',
       controlType: 'string',
-      order: 8,
+      order: 10,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -324,7 +399,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       displayName: 'Status',
       type: 'string',
       controlType: 'string',
-      order: 9,
+      order: 11,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -368,12 +443,11 @@ export class RoundsComponent implements OnInit, OnDestroy {
           'assigned',
           'open',
           'in-progress',
-          'partly-open',
-          'overdue'
+          'partly-open'
         ],
         displayType: 'text'
       },
-      order: 10,
+      order: 12,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -454,11 +528,13 @@ export class RoundsComponent implements OnInit, OnDestroy {
   userInfo$: Observable<UserInfo>;
   selectedRound: RoundDetail;
   selectedRoundInfo: RoundDetail;
-  selectedDate = null;
+  selectedDueDate = null;
+  selectedStartDate = null;
   zIndexDelay = 0;
   hideRoundDetail: boolean;
   roundPlanId: string;
   assigneePosition: any;
+  shiftPosition: any;
   initial: any;
   plants = [];
   plantsIdNameMap = {};
@@ -466,6 +542,13 @@ export class RoundsComponent implements OnInit, OnDestroy {
   roundId = '';
   sliceCount = 100;
   plantTimezoneMap = {};
+  plantShiftObj: any = {};
+  plantSelected: any;
+  plantToShift: any;
+  selectedRoundConfig: any;
+  openMenuStateDueDate = false;
+  openMenuStateStartDate = false;
+
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   private _users$: Observable<UserDetails[]>;
@@ -474,14 +557,15 @@ export class RoundsComponent implements OnInit, OnDestroy {
   constructor(
     private readonly operatorRoundsService: OperatorRoundsService,
     private loginService: LoginService,
-    private store: Store<State>,
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private dialog: MatDialog,
     private toastService: ToastService,
     private userService: UsersService,
     private cdrf: ChangeDetectorRef,
-    private plantService: PlantService
+    private plantService: PlantService,
+    private shiftSevice: ShiftService,
+    private commonService: CommonService
   ) {}
 
   ngOnInit(): void {
@@ -538,7 +622,24 @@ export class RoundsComponent implements OnInit, OnDestroy {
     this.rounds$ = combineLatest([
       roundsOnLoadSearch$,
       onScrollRounds$,
-      this.users$
+      this.users$,
+      this.shiftSevice.fetchAllShifts$().pipe(
+        tap((shifts) => {
+          shifts?.items?.map((shift) => {
+            this.shiftObj[shift.id] = shift;
+            this.shiftNameMap[shift.id] = shift.name;
+          });
+        })
+      ),
+      this.plantService.fetchAllPlants$().pipe(
+        tap((plants) => {
+          plants?.items?.map((plant) => {
+            if (this.commonService.isJson(plant.shifts) && plant.shifts) {
+              this.plantShiftObj[plant.id] = JSON.parse(plant.shifts);
+            }
+          });
+        })
+      )
     ]).pipe(
       map(([rounds, scrollData]) => {
         if (this.skip === 0) {
@@ -546,11 +647,16 @@ export class RoundsComponent implements OnInit, OnDestroy {
             ...this.configOptions,
             tableHeight: 'calc(100vh - 150px)'
           };
+
           this.initial.data = rounds.rows.map((roundDetail) => ({
             ...roundDetail,
 
             dueDateDisplay: this.formatDate(
               roundDetail.dueDate,
+              roundDetail.plantId
+            ),
+            scheduledAtDisplay: this.formatDate(
+              roundDetail.scheduledAt,
               roundDetail.plantId
             ),
             assignedTo: this.userService.getUserFullName(
@@ -568,6 +674,10 @@ export class RoundsComponent implements OnInit, OnDestroy {
                 roundDetail.dueDate,
                 roundDetail.plantId
               ),
+              scheduledAtDisplay: this.formatDate(
+                roundDetail.scheduledAt,
+                roundDetail.plantId
+              ),
               assignedTo: this.userService.getUserFullName(
                 roundDetail.assignedTo
               ),
@@ -576,6 +686,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
             }))
           );
         }
+
+        this.initial.data = this.formattingRound(this.initial.data);
         this.skip = this.initial.data.length;
         // Just a work around to improve the perforamce as we getting more records in the single n/w call. When small chunk of records are coming n/w call we can get rid of slice implementation
         const sliceStart = this.dataSource ? this.dataSource.data.length : 0;
@@ -603,6 +715,15 @@ export class RoundsComponent implements OnInit, OnDestroy {
     );
 
     this.configOptions.allColumns = this.columns;
+  }
+
+  formattingRound(rounds) {
+    return rounds.map((round) => {
+      if (this.shiftObj[round.shiftId]) {
+        round.shift = this.shiftObj[round.shiftId].name;
+      }
+      return round;
+    });
   }
 
   getRoundsList() {
@@ -640,41 +761,81 @@ export class RoundsComponent implements OnInit, OnDestroy {
       return localToTimezoneDate(
         date,
         this.plantTimezoneMap[plantId],
-        dateFormat2
+        dateTimeFormat4
       );
     }
-    return format(new Date(date), dateFormat2);
+    return format(new Date(date), dateTimeFormat4);
   }
 
   cellClickActionHandler = (event: CellClickActionEvent) => {
     const { columnId, row } = event;
+    const pos = document.getElementById(`${row.id}`).getBoundingClientRect();
     switch (columnId) {
       case 'assignedTo':
-        const pos = document
-          .getElementById(`${row.id}`)
-          .getBoundingClientRect();
         this.assigneePosition = {
-          top: `${pos?.top + 7}px`,
+          top: `${pos?.top + 20}px`,
           left: `${pos?.left - 15}px`
         };
-        if (row.status !== 'submitted') this.trigger.toArray()[0].openMenu();
+        if (row.status !== 'submitted' && row.status !== 'overdue')
+          this.trigger.toArray()[0].openMenu();
         this.selectedRoundInfo = row;
         break;
       case 'dueDateDisplay':
-        this.selectedDate = { ...this.selectedDate, date: row.dueDate };
+        this.selectedDueDate = { ...this.selectedDueDate, date: row.dueDate };
         if (this.plantTimezoneMap[row?.plantId]?.timeZoneIdentifier) {
           const dueDate = new Date(
             formatInTimeZone(
               row.dueDate,
               this.plantTimezoneMap[row.plantId].timeZoneIdentifier,
-              dateTimeFormat3
+              dateTimeFormat5
             )
           );
-          this.selectedDate = { ...this.selectedDate, date: dueDate };
+          this.selectedDueDate = { ...this.selectedDueDate, date: dueDate };
         }
+        if (row.status !== 'submitted') {
+          this.openMenuStateDueDate = true;
+        } else {
+          this.openRoundHandler(row);
+        }
+        this.selectedRoundInfo = row;
+        break;
+      case 'shift':
+        this.shiftPosition = {
+          top: `${pos?.top - 17}px`,
+          left: `${pos?.left - 15}px`
+        };
+        this.plantToShift = this.plantShiftObj;
+        this.plantSelected = row.plantId;
         if (row.status !== 'submitted') this.trigger.toArray()[1].openMenu();
         this.selectedRoundInfo = row;
         break;
+      case 'scheduledAtDisplay':
+        this.selectedStartDate = {
+          ...this.selectedStartDate,
+          date: row.scheduledAt
+        };
+        if (this.plantTimezoneMap[row?.plantId]?.timeZoneIdentifier) {
+          const scheduledAt = new Date(
+            formatInTimeZone(
+              row.scheduledAt,
+              this.plantTimezoneMap[row.plantId].timeZoneIdentifier,
+              dateTimeFormat5
+            )
+          );
+          this.selectedStartDate = {
+            ...this.selectedStartDate,
+            date: scheduledAt
+          };
+        }
+
+        if (row.status !== 'submitted') {
+          this.openMenuStateStartDate = true;
+        } else {
+          this.openRoundHandler(row);
+        }
+        this.selectedRoundInfo = row;
+        break;
+
       default:
         this.openRoundHandler(row);
     }
@@ -691,14 +852,16 @@ export class RoundsComponent implements OnInit, OnDestroy {
         action: 'showPlans'
       }
     ];
-
     if (
       !this.loginService.checkUserHasPermission(
         permissions,
         'SCHEDULE_ROUND_PLAN'
       )
     ) {
+      this.columns[12].controlType = 'string';
+      this.columns[10].controlType = 'string';
       this.columns[3].controlType = 'string';
+      this.columns[5].controlType = 'string';
       this.columns[6].controlType = 'string';
     }
 
@@ -710,7 +873,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
   onCloseViewDetail() {
     this.selectedRound = null;
     this.formDetailState = 'out';
-    this.store.dispatch(FormConfigurationActions.resetPages());
     timer(400)
       .pipe(
         tap(() => {
@@ -723,7 +885,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
 
   openRoundHandler(row: RoundDetail): void {
     this.hideRoundDetail = false;
-    this.store.dispatch(FormConfigurationActions.resetPages());
     this.selectedRound = row;
     this.formDetailState = 'in';
     this.zIndexDelay = 400;
@@ -749,7 +910,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
         this.downloadPDF(this.selectedRound);
       }
     } else {
-      this.store.dispatch(FormConfigurationActions.resetPages());
       this.router.navigate([`/operator-rounds/edit/${this.selectedRound.id}`]);
     }
   }
@@ -839,6 +999,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
             if (item.column === 'schedule') {
               item.items = this.schedules;
             }
+            if (item['column'] === 'shiftId') {
+              item.items = Object.values(this.shiftNameMap);
+            }
           }
         }
       },
@@ -875,6 +1038,11 @@ export class RoundsComponent implements OnInit, OnDestroy {
       if (item.column === 'plant') {
         const plantId = this.plantsIdNameMap[item.value];
         this.filter[item.column] = plantId ?? '';
+      } else if (item.column === 'shiftId' && item.value) {
+        const foundEntry = Object.entries(this.shiftNameMap).find(
+          ([key, val]) => val === item.value
+        );
+        this.filter[item.column] = foundEntry[0];
       } else if (item.column === 'status' && item.value) {
         this.filter[item.column] = item.value;
       } else if (item.column === 'schedule' && item.value) {
@@ -882,14 +1050,11 @@ export class RoundsComponent implements OnInit, OnDestroy {
       } else if (item.column === 'assignedTo' && item.value) {
         this.filter[item.column] = this.getFullNameToEmailArray(item.value);
       } else if (item.column === 'dueDate' && item.value) {
-        if (Array.isArray(item.value)) {
-          this.filter[item.column] = item.value.map((time) =>
-            new Date(time).toISOString()
-          );
-        }
+        this.filter[item.column] = item.value;
+      } else if (item.column === 'scheduledAt' && item.value) {
+        this.filter[item.column] = item.value;
       }
     }
-
     this.nextToken = '';
     this.fetchRounds$.next({ data: 'load' });
   }
@@ -901,7 +1066,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
       schedule: '',
       assignedTo: '',
       dueDate: '',
-      plant: ''
+      plant: '',
+      scheduledAt: '',
+      shiftId: ''
     };
     this.nextToken = '';
     this.fetchRounds$.next({ data: 'load' });
@@ -980,52 +1147,459 @@ export class RoundsComponent implements OnInit, OnDestroy {
     this.trigger.toArray()[0].closeMenu();
   }
 
-  dateChangeHandler(dueDate: Date) {
-    const { roundId, assignedToEmail, plantId, ...rest } =
-      this.selectedRoundInfo;
-    const dueDateDisplayFormat = format(dueDate, dateFormat2);
-    if (this.plantTimezoneMap[plantId]?.timeZoneIdentifier) {
-      const time = localToTimezoneDate(
-        this.selectedRoundInfo.dueDate,
-        this.plantTimezoneMap[plantId],
-        hourFormat
+  dateChangeHandler(changedDueDate: Date) {
+    const {
+      roundId,
+      assignedToEmail,
+      plantId,
+      dueDate,
+      scheduledAt,
+      status,
+      locationAndAssetTasksCompleted,
+      assignedTo,
+      ...rest
+    } = this.selectedRoundInfo;
+    if (changedDueDate.getTime() < new Date(scheduledAt).getTime()) {
+      this.toastService.show({
+        type: 'warning',
+        text: 'DueDate Cannot be less than Start Date'
+      });
+      return;
+    }
+    const dueDateDisplayFormat = this.formatDate(changedDueDate, plantId);
+
+    const dueDateTime = changedDueDate.getTime(); ///curent Date
+    let shiftStartDateAndTime: any;
+    let shiftEndDateAndTime: any;
+    let shiftValidation = true;
+    if (this.selectedRoundInfo.shiftId) {
+      const shiftStartTime =
+        this.shiftObj[this.selectedRoundInfo.shiftId].startTime;
+
+      const [startNewHours, startNewMinutes] = shiftStartTime
+        .split(':')
+        .map(Number);
+      shiftStartDateAndTime = new Date(
+        changedDueDate.getFullYear(),
+        changedDueDate.getMonth(),
+        changedDueDate.getDate(),
+        startNewHours,
+        startNewMinutes
+      ).getTime();
+
+      const shiftEndTime =
+        this.shiftObj[this.selectedRoundInfo.shiftId].endTime;
+
+      const [endNewHours, endNewMinutes] = shiftEndTime.split(':').map(Number);
+
+      shiftEndDateAndTime = new Date(
+        changedDueDate.getFullYear(),
+        changedDueDate.getMonth(),
+        changedDueDate.getDate(),
+        endNewHours,
+        endNewMinutes
+      ).getTime();
+
+      dueDateTime >= shiftStartDateAndTime && dueDateTime <= shiftEndDateAndTime
+        ? (shiftValidation = true)
+        : (shiftValidation = false);
+    } else {
+      shiftValidation = true;
+    }
+
+    if (shiftValidation) {
+      const openDialogModalRef = this.dialog.open(
+        ShiftDateChangeWarningModalComponent,
+        { data: { type: 'warning' } }
       );
-      dueDate = zonedTimeToUtc(
-        format(dueDate, dateFormat5) + ` ${time}`,
-        this.plantTimezoneMap[plantId].timeZoneIdentifier
+      openDialogModalRef.afterClosed().subscribe((resp) => {
+        if (resp) {
+          if (
+            plantId &&
+            this.plantTimezoneMap[plantId] &&
+            this.plantTimezoneMap[plantId].timeZoneIdentifier
+          ) {
+            changedDueDate = zonedTimeToUtc(
+              format(changedDueDate, dateTimeFormat5),
+              this.plantTimezoneMap[plantId].timeZoneIdentifier
+            );
+          }
+          let changedStatus = status;
+          if (status === 'overdue') {
+            if (assignedTo) {
+              locationAndAssetTasksCompleted > 0
+                ? (changedStatus = this.statusMap.inProgress)
+                : (changedStatus = this.statusMap.assigned);
+            } else {
+              locationAndAssetTasksCompleted > 0
+                ? (changedStatus = this.statusMap.partlyOpen)
+                : (changedStatus = this.statusMap.open);
+            }
+          }
+          this.operatorRoundsService
+            .updateRound$(
+              roundId,
+              {
+                ...rest,
+                assignedToEmail,
+                plantId,
+                status: changedStatus,
+                roundId,
+                dueDate: changedDueDate,
+                scheduledAt,
+                locationAndAssetTasksCompleted,
+                assignedTo
+              },
+              'due-date'
+            )
+            .pipe(
+              tap((resp: any) => {
+                if (Object.keys(resp).length) {
+                  this.dataSource.data = this.dataSource.data.map((data) => {
+                    if (data.roundId === roundId) {
+                      return {
+                        ...data,
+                        scheduledAt,
+                        dueDate: changedDueDate,
+                        dueDateDisplay: dueDateDisplayFormat,
+                        status: changedStatus,
+                        roundDBVersion: resp.roundDBVersion + 1,
+                        roundDetailDBVersion: resp.roundDetailDBVersion + 1,
+                        assignedToEmail: resp.assignedTo
+                      };
+                    }
+                    return data;
+                  });
+                  this.dataSource = new MatTableDataSource(
+                    this.dataSource.data
+                  );
+                  this.cdrf.detectChanges();
+                  this.toastService.show({
+                    type: 'success',
+                    text: 'Due date updated successfully'
+                  });
+                }
+              })
+            )
+            .subscribe();
+        }
+      });
+    } else {
+      this.dialog.open(ShiftDateChangeWarningModalComponent, {
+        data: { type: 'date' }
+      });
+    }
+  }
+
+  startDateChangeHandler(changedScheduledAt: Date) {
+    const {
+      roundId,
+      assignedToEmail,
+      plantId,
+      dueDate,
+      scheduledAt,
+      status,
+      locationAndAssetTasksCompleted,
+      assignedTo,
+      ...rest
+    } = this.selectedRoundInfo;
+    if (new Date(dueDate).getTime() < changedScheduledAt.getTime()) {
+      this.toastService.show({
+        type: 'warning',
+        text: 'Start Date Cannot be More Than Due Date'
+      });
+      return;
+    }
+    let shiftValidation: Boolean = true;
+
+    const startDateDisplayFormat = this.formatDate(changedScheduledAt, plantId);
+
+    const scheduleTime = changedScheduledAt.getTime(); ///curent Date
+
+    if (this.selectedRoundInfo.shiftId) {
+      let shfitStartDateAndTime: any;
+      let shfitEndDateAndTime: any;
+      const shiftStartTime =
+        this.shiftObj[this.selectedRoundInfo.shiftId].startTime;
+
+      const [startNewHours, startNewMinutes] = shiftStartTime
+        .split(':')
+        .map(Number);
+      shfitStartDateAndTime = new Date(
+        changedScheduledAt.getFullYear(),
+        changedScheduledAt.getMonth(),
+        changedScheduledAt.getDate(),
+        startNewHours,
+        startNewMinutes
+      ).getTime();
+
+      const shiftEndTime =
+        this.shiftObj[this.selectedRoundInfo.shiftId].endTime;
+
+      const [endNewHours, endNewMinutes] = shiftEndTime.split(':').map(Number);
+
+      shfitEndDateAndTime = new Date(
+        changedScheduledAt.getFullYear(),
+        changedScheduledAt.getMonth(),
+        changedScheduledAt.getDate(),
+        endNewHours,
+        endNewMinutes
+      ).getTime();
+
+      scheduleTime >= shfitStartDateAndTime &&
+      scheduleTime <= shfitEndDateAndTime
+        ? (shiftValidation = true)
+        : (shiftValidation = false);
+    } else {
+      shiftValidation = true;
+    }
+
+    if (shiftValidation) {
+      const data = { type: 'warning' };
+      const openDialogModalRef = this.dialog.open(
+        ShiftDateChangeWarningModalComponent,
+        { data }
+      );
+      openDialogModalRef.afterClosed().subscribe((resp) => {
+        if (resp) {
+          if (
+            plantId &&
+            this.plantTimezoneMap[plantId] &&
+            this.plantTimezoneMap[plantId].timeZoneIdentifier
+          ) {
+            changedScheduledAt = zonedTimeToUtc(
+              format(changedScheduledAt, dateTimeFormat5),
+              this.plantTimezoneMap[plantId].timeZoneIdentifier
+            );
+          }
+          let changedStatus = status;
+          if (status === 'overdue') {
+            if (assignedTo) {
+              locationAndAssetTasksCompleted > 0
+                ? (changedStatus = this.statusMap.inProgress)
+                : (changedStatus = this.statusMap.assigned);
+            } else {
+              locationAndAssetTasksCompleted > 0
+                ? (changedStatus = this.statusMap.partlyOpen)
+                : (changedStatus = this.statusMap.open);
+            }
+          }
+          this.operatorRoundsService
+            .updateRound$(
+              roundId,
+              {
+                ...rest,
+                status: changedStatus,
+                locationAndAssetTasksCompleted,
+                roundId,
+                assignedTo,
+                scheduledAt: changedScheduledAt,
+                dueDate
+              },
+              'start-date'
+            )
+            .pipe(
+              tap((resp: any) => {
+                if (Object.keys(resp).length) {
+                  this.dataSource.data = this.dataSource.data.map((data) => {
+                    if (data.roundId === roundId) {
+                      return {
+                        ...data,
+                        scheduledAt: changedScheduledAt,
+                        status: changedStatus,
+                        scheduledAtDisplay: startDateDisplayFormat,
+                        roundDBVersion: resp.roundDBVersion + 1,
+                        roundDetailDBVersion: resp.roundDetailDBVersion + 1,
+                        assignedToEmail: resp.assignedTo
+                      };
+                    }
+                    return data;
+                  });
+                  this.dataSource = new MatTableDataSource(
+                    this.dataSource.data
+                  );
+                  this.cdrf.detectChanges();
+                  this.toastService.show({
+                    type: 'success',
+                    text: 'Start Date Updated Successfully'
+                  });
+                }
+              })
+            )
+            .subscribe();
+        }
+      });
+    } else {
+      this.dialog.open(ShiftDateChangeWarningModalComponent, {
+        data: { type: 'date' }
+      });
+    }
+  }
+
+  shiftChangeHandler(shift) {
+    const {
+      roundId,
+      assignedToEmail,
+      plantId,
+      locationAndAssetTasksCompleted,
+      assignedTo,
+      scheduledAt,
+      dueDate,
+      status,
+      slotDetails,
+      ...rest
+    } = this.selectedRoundInfo;
+    const shiftId = shift.id;
+
+    ///startDate
+    const [endNewHours, endNewMinutes] = shift.endTime.split(':').map(Number);
+    const [startNewHours, startNewMinutes] = shift.startTime
+      .split(':')
+      .map(Number);
+    let shiftStartDateAndTime: Date;
+    let shiftEndDateAndTime: Date;
+    if (status !== 'overdue') {
+      const shiftStart = this.selectedRoundInfo.scheduledAt;
+      const shiftEnd = this.selectedRoundInfo.dueDate;
+      shiftStartDateAndTime = new Date(
+        new Date(shiftStart).getFullYear(),
+        new Date(shiftStart).getMonth(),
+        new Date(shiftStart).getDate(),
+        startNewHours,
+        startNewMinutes
+      );
+
+      shiftEndDateAndTime = new Date(
+        new Date(shiftEnd).getFullYear(),
+        new Date(shiftEnd).getMonth(),
+        new Date(shiftEnd).getDate(),
+        endNewHours,
+        endNewMinutes
+      );
+    } else {
+      shiftStartDateAndTime = new Date(
+        new Date().getFullYear(),
+        new Date().getMonth(),
+        new Date().getDate(),
+        startNewHours,
+        startNewMinutes
+      );
+      shiftEndDateAndTime = new Date(
+        new Date().getFullYear(),
+        new Date().getMonth(),
+        new Date().getDate(),
+        endNewHours,
+        endNewMinutes
       );
     }
-    this.operatorRoundsService
-      .updateRound$(roundId, { ...rest, roundId, dueDate }, 'due-date')
-      .pipe(
-        tap((resp: any) => {
-          if (Object.keys(resp).length) {
-            this.dataSource.data = this.dataSource.data.map((data) => {
-              if (data.roundId === roundId) {
-                return {
-                  ...data,
-                  dueDate,
-                  dueDateDisplay: dueDateDisplayFormat,
-                  roundDBVersion: resp.roundDBVersion + 1,
-                  roundDetailDBVersion: resp.roundDetailDBVersion + 1,
-                  assignedToEmail: resp.assignedTo
-                };
-              }
-              return data;
-            });
-            this.dataSource = new MatTableDataSource(this.dataSource.data);
-            this.cdrf.detectChanges();
-            this.toastService.show({
-              type: 'success',
-              text: 'Due date updated successfully'
-            });
+
+    if (shiftEndDateAndTime.getTime() < shiftStartDateAndTime.getTime()) {
+      shiftEndDateAndTime.setDate(shiftEndDateAndTime.getDate() + 1);
+    }
+
+    const openDialogModalRef = this.dialog.open(
+      ShiftDateChangeWarningModalComponent,
+      { data: { type: 'warning' } }
+    );
+    openDialogModalRef.afterClosed().subscribe((resp) => {
+      if (resp) {
+        let changedStatus = status;
+        if (status === 'overdue') {
+          if (assignedTo) {
+            locationAndAssetTasksCompleted > 0
+              ? (changedStatus = this.statusMap.inProgress)
+              : (changedStatus = this.statusMap.assigned);
+          } else {
+            locationAndAssetTasksCompleted > 0
+              ? (changedStatus = this.statusMap.partlyOpen)
+              : (changedStatus = this.statusMap.open);
           }
-        })
-      )
-      .subscribe();
+        }
+        if (
+          plantId &&
+          this.plantTimezoneMap[plantId] &&
+          this.plantTimezoneMap[plantId].timeZoneIdentifier
+        ) {
+          shiftStartDateAndTime = zonedTimeToUtc(
+            format(shiftStartDateAndTime, dateTimeFormat5),
+            this.plantTimezoneMap[plantId].timeZoneIdentifier
+          );
+          shiftEndDateAndTime = zonedTimeToUtc(
+            format(shiftEndDateAndTime, dateTimeFormat5),
+            this.plantTimezoneMap[plantId].timeZoneIdentifier
+          );
+        }
+        let slot;
+        if (JSON.parse(this.selectedRoundInfo.slotDetails)) {
+          slot = JSON.parse(this.selectedRoundInfo.slotDetails);
+          slot.startTime = shift.startTime;
+          slot.endTime = shift.endTime;
+        }
+        slot = JSON.stringify(slot);
+        this.operatorRoundsService
+          .updateRound$(
+            roundId,
+            {
+              ...rest,
+              roundId,
+              shiftId,
+              scheduledAt: shiftStartDateAndTime,
+              dueDate: shiftEndDateAndTime,
+              locationAndAssetTasksCompleted,
+              assignedTo,
+              slotDetails: slot,
+              status: changedStatus
+            },
+            'shift'
+          )
+          .pipe(
+            tap((resp: any) => {
+              if (Object.keys(resp).length) {
+                this.dataSource.data = this.dataSource.data.map((data) => {
+                  const shift = this.shiftObj[resp.shiftId].name;
+                  if (data.roundId === roundId) {
+                    return {
+                      ...data,
+                      shift,
+                      shiftId,
+                      scheduledAt: shiftStartDateAndTime,
+                      dueDateDisplay: this.formatDate(
+                        shiftEndDateAndTime,
+                        plantId
+                      ),
+                      scheduledAtDisplay: this.formatDate(
+                        shiftStartDateAndTime,
+                        plantId
+                      ),
+                      slotDetails: slot,
+                      status: changedStatus,
+                      dueDate: shiftEndDateAndTime,
+                      roundDBVersion: resp.roundDBVersion + 1,
+                      roundDetailDBVersion: resp.roundDetailDBVersion + 1,
+                      assignedToEmail: resp.assignedTo
+                    };
+                  }
+                  return data;
+                });
+                this.dataSource = new MatTableDataSource(this.dataSource.data);
+                this.cdrf.detectChanges();
+                this.toastService.show({
+                  type: 'success',
+                  text: 'Shift Updated Successfully'
+                });
+              }
+            })
+          )
+          .subscribe();
+      }
+    });
   }
 
   dueDateClosedHandler() {
-    this.trigger.toArray()[1].closeMenu();
+    this.openMenuStateDueDate = false;
+  }
+
+  startDateClosedHandler() {
+    this.openMenuStateStartDate = false;
   }
 }

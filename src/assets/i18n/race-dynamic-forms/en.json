@@ -125,7 +125,6 @@
   "issueActionDueDateAndTime": "Due Date and Time: ",
   "preview": "Preview",
   "lastPublishedBy": "Last Published By",
-  "lastModifiedBy": "Last Modified By",
   "searchArchivedForm": "Search by Name/Description",
   "archived": "Archived",
   "deleteArchivedFormModalHeading": "Alert",
@@ -315,7 +314,6 @@
   "planName": "Plan Name",
   "planDescription": "Plan Description",
   "scheduleBy": "Schedule By",
-  "timeZone": "Time Zone",
   "link": "Link",
   "raiseNotification": "Raise Notification",
   "shifts": "Shifts",
@@ -334,9 +332,12 @@
   "user": "User",
   "defaultCurrentDate": "Default to current date",
   "defaultCurrentTime": "Default to current time",
+  "alert": "Alert",
+  "warning": "Changes in Shift will update the round schedule Start Date/Time,Due Date/Time and Status. Do you want to proceed?",
+  "invalidSlotTime": "Slot we selected is out of Shift hours",
+  "shift": "Shift",
   "daysCount": "Days Count",
   "assignTo": "Assign To",
-  "shift": "Shift",
   "due": "Due",
   "issuesSummary": "Issues Summary",
   "actionsSummary": "Actions Summary",
@@ -349,5 +350,6 @@
   "total": "Total",
   "totalPages": "Total Pages",
   "reportGeneratedOn": "Report Generated On",
-  "tasksCompleted": "Responses Completed"
+  "tasksCompleted": "Responses Completed",
+  "yes": "yes"
 }

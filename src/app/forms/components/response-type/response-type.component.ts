@@ -1,10 +1,8 @@
+/* eslint-disable no-underscore-dangle */
 import { Component, Output, OnInit, Input, EventEmitter } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 
-import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
-import { ResponseSetService } from 'src/app/components/master-configurations/response-set/services/response-set.service';
 import { FormService } from '../../services/form.service';
 
 import { slideInOut } from 'src/app/animations';
@@ -22,7 +20,7 @@ import {
   QuickResponseActions
 } from '../../state/actions';
 import { MatTabChangeEvent } from '@angular/material/tabs';
-import { FormMetadata } from 'src/app/interfaces';
+import { FormMetadata, Question } from 'src/app/interfaces';
 
 @Component({
   selector: 'app-response-type',
@@ -31,8 +29,22 @@ import { FormMetadata } from 'src/app/interfaces';
   animations: [slideInOut]
 })
 export class ResponseTypeComponent implements OnInit {
-  @Input() fieldTypes;
-  @Input() question;
+  @Input() set fieldTypes(fieldTypes: any) {
+    if (fieldTypes) {
+      this._fieldTypes = fieldTypes;
+    }
+  }
+  get fieldTypes(): any {
+    return this._fieldTypes;
+  }
+  @Input() set question(question: Question) {
+    if (question) {
+      this._question = question;
+    }
+  }
+  get question(): Question {
+    return this._question;
+  }
   @Output() selectFieldTypeEvent: EventEmitter<any> = new EventEmitter<any>();
   @Output() setQuestionValue: EventEmitter<any> = new EventEmitter<any>();
   @Output() responseTypeCloseEvent: EventEmitter<boolean> =
@@ -54,6 +66,8 @@ export class ResponseTypeComponent implements OnInit {
   quickResponsesData$: Observable<any>;
   formId: string;
   formMetadata$: Observable<FormMetadata>;
+  private _question: Question = {} as Question;
+  private _fieldTypes: any = {};
 
   constructor(
     private formService: FormService,
@@ -184,7 +198,7 @@ export class ResponseTypeComponent implements OnInit {
     this.isGlobalResponseOpen = false;
   };
 
-  getSelectedIndex(question) {
+  getSelectedIndex(question = {} as Question) {
     return question.fieldType === 'DD' || question.fieldType === 'VI'
       ? (this.tabIndex = 1)
       : (this.tabIndex = 0);

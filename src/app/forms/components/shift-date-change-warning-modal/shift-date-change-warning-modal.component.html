@@ -1,0 +1,43 @@
+<div class="shift-change-modal">
+  <p class="title">
+    {{ 'alert' | translate }}
+  </p>
+  <p class="warning-body" *ngIf="data.type === 'warning'">
+    {{ 'warning' | translate }}
+  </p>
+  <p class="'warning-body" *ngIf="data.type === 'date'">
+    {{ 'invalidSlotTime' | translate }}
+  </p>
+  <button
+    mat-raised-button
+    color="warn"
+    class="yes-no-btn"
+    (click)="onClick(true)"
+    *ngIf="data.type === 'warning'"
+  >
+    {{ 'yes' | translate }}
+  </button>
+  <button
+    mat-button
+    color="primary"
+    class="yes-no-btn"
+    autofocus="false"
+    mat-dialog-close
+    (click)="onClick(false)"
+    *ngIf="data.type === 'warning'"
+  >
+    {{ 'cancel' | translate }}
+  </button>
+
+  <button
+    mat-button
+    color="primary"
+    class="yes-no-btn"
+    autofocus="false"
+    mat-dialog-close
+    (click)="onSubmit()"
+    *ngIf="data.type === 'date'"
+  >
+    {{ 'okay' | translate }}
+  </button>
+</div>

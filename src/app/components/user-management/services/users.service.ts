@@ -180,9 +180,15 @@ export class UsersService {
 
   setUsers(users: UserDetails[]) {
     this.usersInfoByEmail = users.reduce((acc, curr) => {
-      acc[curr.email] = { fullName: `${curr.firstName} ${curr.lastName}` };
+      acc[curr.email] = {
+        fullName: `${curr.firstName} ${curr.lastName}`,
+        isActive: curr.isActive
+      };
       return acc;
     }, {});
+  }
+  getUserIsActive(email: string): boolean {
+    return this.usersInfoByEmail[email]?.isActive;
   }
 
   getUsersInfo(): UsersInfoByEmail {

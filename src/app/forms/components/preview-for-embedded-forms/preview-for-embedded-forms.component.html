@@ -74,7 +74,8 @@
             question.fieldType !== 'IMG' &&
             question.fieldType !== 'RT' &&
             question.fieldType !== 'ARD' &&
-            question.fieldType !== 'DFR'
+            question.fieldType !== 'DFR' &&
+            question.value !== 'LTV'
           "
         >
           {{ question.name ? question.name : 'Type Question' }}
@@ -90,7 +91,8 @@
               question.fieldType === 'DD' ||
               question.fieldType === 'ATT' ||
               question.fieldType === 'RT' ||
-              question.fieldType === 'ARD')
+              question.fieldType === 'ARD' ||
+              question.value === 'LTV')
           "
         >
           {{ question.name ? question.name : 'Type Question' }}
@@ -115,7 +117,8 @@
             question.fieldType !== 'ARD' &&
             question.fieldType !== 'DFR' &&
             question.fieldType !== 'GAL' &&
-            question.fieldType !== 'USR'
+            question.fieldType !== 'USR' &&
+            question.value !== 'LTV'
           "
         >
           <p
@@ -137,13 +140,6 @@
           <p *ngIf="question.fieldType === 'TIF'" class="m-0">
             <input type="time" class="input-fields" />
           </p>
-
-          <textarea
-            rows="3"
-            cols="10"
-            *ngIf="question.value === 'LTV' && question.fieldType === 'TF'"
-            class="input-fields"
-          ></textarea>
 
           <p *ngIf="question.fieldType === 'NF'" class="m-0">
             <input type="number" class="input-fields" />
@@ -204,6 +200,13 @@
             {{ question.value.max }}
           </span>
         </div>
+
+        <p
+          class="m-0"
+          *ngIf="question.value === 'LTV' && question.fieldType === 'TF'"
+        >
+          <textarea rows="3" cols="10" class="text-area-field"></textarea>
+        </p>
 
         <div *ngIf="question.fieldType === 'VI'" class="m-b-10">
           <div *ngIf="question.value?.value?.length > 0">
