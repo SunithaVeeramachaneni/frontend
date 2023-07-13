@@ -40,6 +40,7 @@ export interface Section {
   isOpen: boolean;
   isImported?: boolean;
   templateID?: string;
+  templateName?: string;
   externalSectionID?: string;
   counter?: number;
 }

@@ -67,6 +67,7 @@ export class SectionComponent implements OnInit, OnDestroy {
         if (section && !section.isImported) {
           section.isImported = false;
           section.templateID = '';
+          section.templateName = '';
           section.externalSectionID = '';
         }
         this.sectionForm.patchValue(section, {
@@ -93,6 +94,7 @@ export class SectionComponent implements OnInit, OnDestroy {
     isOpen: true,
     isImported: false,
     templateID: '',
+    templateName: '',
     externalSectionID: ''
   });
   private _pageIndex: number;

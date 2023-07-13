@@ -362,5 +362,6 @@
   "formsThatWillReflectChanges": "Forms that will reflect Template changes",
   "affectedForms": "Forms will be affected",
   "formsWillAppearOnceTemplateIsLinked": "Forms will appear once Template is linked",
-  "templatesUsed": "Templates Used"
+  "templatesUsed": "Templates Used",
+  "template": "Template"
 }

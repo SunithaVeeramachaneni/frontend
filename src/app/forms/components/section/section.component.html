@@ -17,11 +17,22 @@
         >
           chevron_right
         </mat-icon>
-        <svg-icon
+        <div
           *ngIf="sectionForm.get('isImported').value === true"
-          icon="icon-Unlink"
-          class="icon-unlink"
-        ></svg-icon>
+          class="tooltip"
+        >
+          <svg-icon icon="icon-Unlink" class="icon-unlink"> </svg-icon>
+          <span
+            *ngIf="!sectionForm.get('templateName').value?.length"
+            class="tooltip-text"
+            translate="template"
+          ></span>
+          <span
+            class="tooltip-text"
+            *ngIf="sectionForm.get('templateName').value?.length"
+            >{{ sectionForm.get('templateName').value }}</span
+          >
+        </div>
 
         <a class="width-60">
           <input

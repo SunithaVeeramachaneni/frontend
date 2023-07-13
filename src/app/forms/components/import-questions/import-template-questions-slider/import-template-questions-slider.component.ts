@@ -169,6 +169,7 @@ export class ImportTemplateQuestionsSliderComponent
       section.externalSectionID = section.id;
       section.isImported = true;
       section.templateID = this.selectedTemplateControl.value.id;
+      section.templateName = this.selectedTemplateControl.value.name;
       this.importSectionQuestions = [
         ...this.importSectionQuestions,
         { section, questions, logics }

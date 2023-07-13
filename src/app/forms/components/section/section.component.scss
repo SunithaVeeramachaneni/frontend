@@ -130,3 +130,34 @@
     margin-top: 5px;
   }
 }
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip-text {
+  visibility: hidden;
+  position: absolute;
+  background-color: $light-gray;
+  padding: 3px 8px;
+  border-radius: 2px;
+  color: white;
+  top: 35px;
+  left: -8px;
+  z-index: 99999;
+}
+.tooltip-text::after {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent $light-gray transparent;
+}
+
+.tooltip:hover .tooltip-text {
+  visibility: visible;
+}
