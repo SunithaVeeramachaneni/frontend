@@ -145,6 +145,9 @@ export class SelectUserUsergroupModalComponent implements OnInit {
   users$: Observable<UserTable>;
   alluserCount$: Observable<number>;
   userCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
+  isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+
+  ghostLoading = new Array(12).fill(0).map((v, i) => i);
   userListCount$: Observable<number>;
   permissionsList$: Observable<any>;
   rolesList$: Observable<Role[]>;

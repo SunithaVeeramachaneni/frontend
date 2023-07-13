@@ -73,7 +73,15 @@
   </div>
 </div>
 
-<ng-template #loadingUsers>
+<div *ngIf="isLoading$ | async">
+  <div class="ghost-loading">
+    <div *ngFor="let number of ghostLoading">
+      <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+      </ngx-shimmer-loading>
+    </div>
+  </div>
+</div>
+<!-- <ng-template #loadingUsers>
   <div style="padding: 0 20px">
     <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
     </ngx-shimmer-loading>
@@ -112,4 +120,4 @@
     <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
     </ngx-shimmer-loading>
   </div>
-</ng-template>
+</ng-template> -->

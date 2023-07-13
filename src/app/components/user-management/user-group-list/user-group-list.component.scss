@@ -1,6 +1,6 @@
 @import '../../../../scss/colors.scss';
 .main-container {
-  background-color: #ffffff;
+  background-color: $white;
   height: 90vh;
   position: relative;
 }
@@ -123,11 +123,6 @@
   top: 15px;
 }
 
-.roles-title {
-  position: relative;
-  top: 5px;
-}
-
 .search-form-field {
   width: 94%;
   margin: 0 0 11px 0;
@@ -157,15 +152,7 @@
   line-height: normal;
 }
 
-.show-cancel-btn {
-  display: block;
-}
-
-.hide-cancel-btn {
-  display: none;
-}
-
-.role-name {
+.usergroup-name {
   color: $gray-bg;
   padding: 10px;
   margin-top: 3px;
@@ -186,51 +173,42 @@
   right: 60px;
 }
 
-.super-admin-icon {
-  position: relative;
-  top: 2px;
-  ::ng-deep svg {
-    height: 15px !important;
-    width: 20px !important;
-  }
-}
-
 .more-items {
   position: absolute;
   right: 0;
 }
 
-.roles {
+.usergroup {
   padding: 0;
   height: 100%;
   overflow-y: auto;
   background: white;
 }
 
-.roles-list {
+.usergroup-list {
   cursor: pointer;
   border-bottom: 1px solid #e7e7e7;
 }
 
-.roles-list:first-child {
+.usergroup-list:first-child {
   border-top: 1px solid #e7e7e7;
 }
 
-.selected-roles-list {
+.selected-usergroup-list {
   background: rgba(61, 90, 254, 0.08);
   .role-name {
     color: #5449b7;
   }
 }
 
-.roles-list:hover {
+.usergroup-list:hover {
   background-color: rgba(61, 90, 254, 0.08);
 }
 
 .custom-mat-form-field-white-color {
   ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
     border-radius: 8px;
-    background: #ffffff;
+    background: $white;
   }
 
   ::ng-deep .mat-form-field-label-wrapper {
@@ -257,7 +235,7 @@
   z-index: 10;
   margin-left: 20px;
   margin-top: -7px;
-  background: white;
+  background: $white;
   padding: 0 4px;
   letter-spacing: 0.4px;
 }
@@ -267,35 +245,26 @@
   z-index: 10;
   margin-left: 7px;
   margin-top: -7px;
-  background: white;
+  background: $white;
   padding: 4px;
   letter-spacing: 0.4px;
 }
 
-.role-errors {
-  margin-bottom: 0 !important;
-}
-
 .confirm-btn {
-  background-color: red;
-  color: yellow;
+  background-color: $red-main;
+  color: $yellow;
 }
 
-.text-red-color {
-  color: #f44336;
+.text-red {
+  color: $red-main;
 }
 
 .error-fields {
   white-space: nowrap;
   margin-left: -10px;
-  background: white;
+  background: $white;
 }
 
-.roles-content {
-  ::ng-deep .mat-form-field-subscript-wrapper {
-    width: auto;
-  }
-}
 .list-items {
   display: flex;
   flex-direction: row;

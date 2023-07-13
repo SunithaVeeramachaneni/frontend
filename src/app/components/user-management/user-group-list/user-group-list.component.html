@@ -41,7 +41,7 @@
           </mat-form-field>
 
           <mat-list
-            class="roles"
+            class="usergroup"
             *ngIf="allUserGroups$ | async as userGroups"
             #listContainer
           >
@@ -52,21 +52,21 @@
               *ngIf="(isLoading$ | async) === false"
               class="list-container"
             >
-              <div (scroll)="listBottom($event)" class="roles">
+              <div (scroll)="listBottom($event)" class="usergroup">
                 <mat-list-item
                   #userGroupList
                   *ngFor="let userGroup of userGroups"
-                  class="roles-list"
+                  class="usergroup-list"
                   (click)="showSelectedUserGroup(userGroup)"
                   [ngClass]="{
-                    'selected-roles-list': this.selectedUserGroup
+                    'selected-usergroup-list': this.selectedUserGroup
                       ? userGroup.id === this.selectedUserGroup.id
                       : ''
                   }"
                 >
                   <div class="list-items">
                     <span
-                      class="role-name"
+                      class="usergroup-name"
                       matTooltip="{{ userGroup.name }}"
                       [ngClass]="{ 'text-red': userGroup.name?.length > 100 }"
                     >
