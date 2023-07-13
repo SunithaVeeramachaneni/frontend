@@ -27,6 +27,8 @@ import { ToastService } from 'src/app/shared/toast';
 import { TableEvent } from 'src/app/interfaces';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 import { Router } from '@angular/router';
+import { PlantsResponse } from 'src/app/interfaces/master-data-management/plants';
+import { PlantService } from 'src/app/components/master-configurations/plants/services/plant.service';
 
 @Component({
   selector: 'app-template-affected-forms-modal',
@@ -48,6 +50,7 @@ export class TemplateAffectedFormsModalComponent implements OnInit {
   allAffectedForms: any[];
   formLoaded$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   dataSource: MatTableDataSource<any>;
+  plantsObject: { [key: string]: PlantsResponse } = {};
   columns: Column[] = [
     {
       id: 'name',
@@ -177,6 +180,7 @@ export class TemplateAffectedFormsModalComponent implements OnInit {
     private toastService: ToastService,
     private router: Router,
     private raceDynamicFormService: RaceDynamicFormService,
+    private plantService: PlantService,
     public dialogRef: MatDialogRef<TemplateAffectedFormsModalComponent>,
 
     @Inject(MAT_DIALOG_DATA) public data: any
@@ -234,7 +238,19 @@ export class TemplateAffectedFormsModalComponent implements OnInit {
       columns: this.columns,
       data: []
     };
-    this.forms$ = combineLatest([formsOnLoadSearch$, onScrollForms$]).pipe(
+    this.forms$ = combineLatest([
+      formsOnLoadSearch$,
+      onScrollForms$,
+      this.plantService.fetchAllPlants$().pipe(
+        tap(
+          ({ items: plants }) =>
+            (this.plantsObject = plants.reduce((acc, curr) => {
+              acc[curr.id] = `${curr.plantId} - ${curr.name}`;
+              return acc;
+            }, {}))
+        )
+      )
+    ]).pipe(
       map(([rows, scrollData]) => {
         if (this.skip === 0) {
           this.configOptions = {
@@ -245,6 +261,19 @@ export class TemplateAffectedFormsModalComponent implements OnInit {
         } else {
           initial.data = initial.data.concat(scrollData);
         }
+        initial.data.map((item) => {
+          item.plant = '';
+          if (item?.plantId) item.plant = this.plantsObject[item.plantId];
+          item.preTextImage = {
+            image: item?.formLogo,
+            style: {
+              width: '40px',
+              height: '40px',
+              marginRight: '10px'
+            },
+            condition: true
+          };
+        });
         this.skip = initial.data.length;
         this.dataSource = new MatTableDataSource(initial.data);
         return initial;

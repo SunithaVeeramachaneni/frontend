@@ -36,6 +36,8 @@ import {
 import { graphQLDefaultLimit } from 'src/app/app.constants';
 import { MatTableDataSource } from '@angular/material/table';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
+import { PlantService } from '../../master-configurations/plants/services/plant.service';
+import { PlantsResponse } from 'src/app/interfaces/master-data-management/plants';
 @Component({
   selector: 'app-affected-form-template-slider',
   templateUrl: './affected-form-template-slider.component.html',
@@ -48,6 +50,7 @@ export class AffectedFormTemplateSliderComponent implements OnInit, OnChanges {
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   formLoaded$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   ghostLoading = new Array(13).fill(0).map((_, i) => i);
+  plantsObject: { [key: string]: PlantsResponse } = {};
   nextToken = '';
   fetchType = 'load';
   skip = 0;
@@ -177,7 +180,10 @@ export class AffectedFormTemplateSliderComponent implements OnInit, OnChanges {
     }
   };
   private onDestroy$ = new Subject();
-  constructor(private raceDynamicFormService: RaceDynamicFormService) {}
+  constructor(
+    private raceDynamicFormService: RaceDynamicFormService,
+    private plantService: PlantService
+  ) {}
   ngOnChanges(_: SimpleChanges) {
     this.getDisplayedForms();
   }
@@ -229,7 +235,19 @@ export class AffectedFormTemplateSliderComponent implements OnInit, OnChanges {
       columns: this.columns,
       data: []
     };
-    this.forms$ = combineLatest([formsOnLoadSearch$, onScrollForms$]).pipe(
+    this.forms$ = combineLatest([
+      formsOnLoadSearch$,
+      onScrollForms$,
+      this.plantService.fetchAllPlants$().pipe(
+        tap(
+          ({ items: plants }) =>
+            (this.plantsObject = plants.reduce((acc, curr) => {
+              acc[curr.id] = `${curr.plantId} - ${curr.name}`;
+              return acc;
+            }, {}))
+        )
+      )
+    ]).pipe(
       map(([rows, scrollData]) => {
         if (this.skip === 0) {
           this.configOptions = {
@@ -240,6 +258,19 @@ export class AffectedFormTemplateSliderComponent implements OnInit, OnChanges {
         } else {
           initial.data = initial.data.concat(scrollData);
         }
+        initial.data.map((item) => {
+          item.plant = '';
+          if (item?.plantId) item.plant = this.plantsObject[item.plantId];
+          item.preTextImage = {
+            image: item?.formLogo,
+            style: {
+              width: '40px',
+              height: '40px',
+              marginRight: '10px'
+            },
+            condition: true
+          };
+        });
         this.skip = initial.data?.length;
         this.dataSource = new MatTableDataSource(initial.data);
         return initial;
