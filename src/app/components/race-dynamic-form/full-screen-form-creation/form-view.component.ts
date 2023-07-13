@@ -1,10 +1,16 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FullScreenFormCreationComponent } from '../full-screen-form-creation/full-screen-form-creation.component';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { State, getFormMetadata } from 'src/app/forms/state';
 import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-form-view',
@@ -12,8 +18,9 @@ import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
   styles: [''],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FormViewComponent implements OnInit {
+export class FormViewComponent implements OnInit, OnDestroy {
   formMetadata;
+  formMetaDataSubscription: Subscription;
 
   constructor(
     private dialog: MatDialog,
@@ -59,9 +66,11 @@ export class FormViewComponent implements OnInit {
       }
     });
 
-    this.store.select(getFormMetadata).subscribe((data) => {
-      this.formMetadata = data;
-    });
+    this.formMetaDataSubscription = this.store
+      .select(getFormMetadata)
+      .subscribe((data) => {
+        this.formMetadata = data;
+      });
 
     this.dialog.open(FullScreenFormCreationComponent, {
       maxWidth: '100vw',
@@ -74,5 +83,9 @@ export class FormViewComponent implements OnInit {
         type: 'edit'
       }
     });
+  }
+
+  ngOnDestroy() {
+    this.formMetaDataSubscription.unsubscribe();
   }
 }

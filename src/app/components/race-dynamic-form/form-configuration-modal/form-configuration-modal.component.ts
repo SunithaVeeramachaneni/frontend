@@ -9,7 +9,7 @@ import {
   EventEmitter,
   Output,
   Input,
-  Inject
+  OnDestroy
 } from '@angular/core';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -19,7 +19,7 @@ import {
   MatAutocompleteTrigger
 } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
-import { BehaviorSubject, Observable, merge, of } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription, merge, of } from 'rxjs';
 import { map, startWith, tap } from 'rxjs/operators';
 import {
   AbstractControl,
@@ -57,7 +57,7 @@ import { PDFDocument } from 'pdf-lib';
   styleUrls: ['./form-configuration-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FormConfigurationModalComponent implements OnInit {
+export class FormConfigurationModalComponent implements OnInit, OnDestroy {
   @ViewChild('tagsInput', { static: false })
   tagsInput: ElementRef<HTMLInputElement>;
   @ViewChild('auto', { static: false }) matAutocomplete: MatAutocomplete;
@@ -65,6 +65,7 @@ export class FormConfigurationModalComponent implements OnInit {
   @Output() gotoNextStep = new EventEmitter<void>();
   @Input() data;
   @Input() formData;
+  formMetaDataSubscription: Subscription;
   visible = true;
   selectable = true;
   removable = true;
@@ -176,12 +177,15 @@ export class FormConfigurationModalComponent implements OnInit {
       })
     });
 
-    this.store.select(getFormMetadata).subscribe((res) => {
-      this.headerDataForm.patchValue({
-        name: res.name,
-        description: res.description ? res.description : ''
+    this.formMetaDataSubscription = this.store
+      .select(getFormMetadata)
+      .subscribe((res) => {
+        this.headerDataForm.patchValue({
+          name: res.name,
+          description: res.description ? res.description : ''
+        });
       });
-    });
+
     this.getAllPlantsData();
     this.retrieveDetails();
   }
@@ -869,5 +873,9 @@ export class FormConfigurationModalComponent implements OnInit {
 
   onCancel() {
     this.dialogRef.close();
+  }
+
+  ngOnDestroy() {
+    this.formMetaDataSubscription.unsubscribe();
   }
 }
