@@ -14,6 +14,6 @@ export class RemoveUserModalComponent implements OnInit {
 
   ngOnInit(): void {}
   deleteUser = (data) => {
-    this.removeUserModalRef.close(data);
+    this.removeUserModalRef.close({ response: data });
   };
 }

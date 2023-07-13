@@ -76,7 +76,7 @@
   top: 14px;
 }
 
-.usergroup-count {
+.usergroup-count-header {
   font-weight: 500;
   font-size: 140%;
   color: $gray-bg;
@@ -177,14 +177,14 @@
   display: block;
 }
 
-// .usergroup-count {
-//   padding: 3px 14px;
-//   font-size: 138%;
-//   background: rgb(221 223 237 / 0%);
-//   border-radius: 20px;
-//   position: initial;
-//   right: 40px;
-// }
+.usergroup-count {
+  padding: 3px 7px;
+  font-size: 80%;
+  background: rgba(61, 90, 254, 0.08);
+  border-radius: 20px;
+  position: absolute;
+  right: 60px;
+}
 
 .super-admin-icon {
   position: relative;
@@ -301,6 +301,13 @@
   flex-direction: row;
   justify-content: space-between;
   width: 100%;
+}
+.list-display {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  width: 20%;
 }
 .userList-left-component {
   display: flex;

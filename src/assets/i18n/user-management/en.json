@@ -87,5 +87,6 @@
   "removeUserMessage": "All the rounds assigned to this user will become unassigned automatically.You may have to assign them again.",
   "removeBtn": "Remove User",
   "usergroup": "User Group",
-  "usergroups": "User Group is Required"
+  "usergroups": "User Group is Required",
+  "doneBtn": "Done"
 }

@@ -27,6 +27,7 @@ import { ToastService } from 'src/app/shared/toast';
 import {
   Count,
   LoadEvent,
+  Permission,
   RowLevelActionEvent,
   SearchEvent,
   TableEvent,
@@ -47,6 +48,11 @@ import { format } from 'date-fns';
 import { SelectUserUsergroupModalComponent } from '../select-user-usergroup-modal/select-user-usergroup-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { RemoveUserModalComponent } from '../remove-user-modal/remove-user-modal.component';
+import { LoginService } from '../../login/services/login.service';
+interface UsersListActions {
+  action: 'delete' | null;
+  id: any[];
+}
 
 @Component({
   selector: 'app-user-group-users-list',
@@ -54,12 +60,37 @@ import { RemoveUserModalComponent } from '../remove-user-modal/remove-user-modal
   styleUrls: ['./user-group-users-list.component.scss']
 })
 export class UserGroupUsersListComponent implements OnInit, OnChanges {
-  @Input() userGroupId: string;
-  @Input() userGroupPlantId: string;
-  @Input() userGroupName: string;
-  userCount$: Observable<Count>;
-  limit: number = defaultLimit;
+  @Input() set userGroupId(userGroupId: string) {
+    this._userGroupId = userGroupId;
+  }
+  get userGroupId() {
+    return this._userGroupId;
+  }
+
+  @Input() set userGroupPlantId(userGroupPlantId: string) {
+    this._userGroupPlantId = userGroupPlantId;
+  }
+  get userGroupPlantId() {
+    return this._userGroupPlantId;
+  }
+
+  @Input() set userGroupName(userGroupName: string) {
+    this._userGroupName = userGroupName;
+  }
+  get userGroupName() {
+    return this._userGroupName;
+  }
+
+  userListActions$: BehaviorSubject<UsersListActions> =
+    new BehaviorSubject<UsersListActions>({ action: null, id: [] });
+  userAddEdit = false;
+  disableBtn = true;
+  userCount: number;
+  limit = 500;
   next = '';
+  selectedUsers = [];
+  allUsersList = [];
+  selectedCount = 0;
 
   columns: Column[] = [
     {
@@ -196,26 +227,34 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
   searchUser: FormControl;
   // searchUser$: Observable<any>;
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
-  _userGroupId: string;
-  _userGroupPlantId: string;
-  _userGroupName: string;
   skip = 0;
   fetchType: string;
+  userInfo$: any;
+  private _userGroupId: string;
+  private _userGroupPlantId: string;
+  private _userGroupName: string;
 
   constructor(
     private userGroupService: UserGroupService,
     private dialog: MatDialog,
-    private toast: ToastService
+    private toast: ToastService,
+    private loginService: LoginService
   ) {}
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.userGroupId.currentValue) {
+      this.disableBtn = false;
       this._userGroupId = changes.userGroupId?.currentValue;
       this._userGroupName = changes.userGroupName?.currentValue;
       if (changes.userGroupPlantId) {
         this._userGroupPlantId = changes.userGroupPlantId?.currentValue;
       }
+      this.skip = 0;
       this.getAllUsers();
+    } else {
+      this.dataSource = new MatTableDataSource([]);
+      this.disableBtn = true;
+      this._userGroupName = '';
     }
   }
 
@@ -234,7 +273,9 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
       .subscribe(() => this.isLoading$.next(true));
     this.getAllUsers();
     this.configOptions.allColumns = this.columns;
-    this.prepareMenuActions();
+    this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
+      tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
+    );
   }
 
   getAllUsers() {
@@ -259,21 +300,39 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
       columns: this.columns,
       data: []
     };
-    this.allUsers$ = combineLatest([usersOnLoadSearch$, usersOnScroll$]).pipe(
-      map(([users, scrollData]) => {
+    this.allUsers$ = combineLatest([
+      usersOnLoadSearch$,
+      usersOnScroll$,
+      this.userListActions$
+    ]).pipe(
+      map(([users, scrollData, { action, id }]) => {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
             tableHeight: 'calc(100vh - 200px)'
           }; // To fix dynamic table height issue post search with no records & then remove search with records
           initial.data = users;
+        } else if (this.userAddEdit) {
+          switch (action) {
+            case 'delete':
+              id.forEach((data) => {
+                initial.data = initial?.data?.filter(
+                  (user) => user.id !== data
+                );
+              });
+              this.toast.show({
+                type: 'success',
+                text: 'Member deleted successfully'
+              });
+          }
         } else {
           initial.data = initial.data.concat(scrollData);
         }
 
-        // console.log(initial);
+        console.log('Initial check :', initial);
         this.skip = initial.data?.length;
         this.dataSource = new MatTableDataSource(initial.data);
+        this.allUsersList = initial.data;
         return initial;
       })
     );
@@ -283,7 +342,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
     this.userGroupService
       .listUserGroupUsers(
         {
-          limit: 25,
+          limit: this.limit,
           nextToken: this.next,
           fetchType: this.fetchType,
           searchKey: this.searchUser.value
@@ -291,8 +350,13 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
         this.userGroupId
       )
       .pipe(
+        tap((data) => console.log(data)),
         mergeMap((resp: any) => {
-          this.userCount$ = of({ count: resp.count });
+          this.userCount = resp.count;
+          this.userGroupService.usersCount$.next({
+            groupId: this._userGroupId,
+            count: this.userCount
+          });
           this.next = resp.next;
           return of(resp.items);
         }),
@@ -325,16 +389,22 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
     this.fetchUsers$.next(event);
   };
 
-  prepareMenuActions() {
+  prepareMenuActions(permissions: Permission[]) {
     const menuActions = [];
-    menuActions.push({
-      title: 'Remove User',
-      action: 'delete'
-    });
+    if (
+      this.loginService.checkUserHasPermission(permissions, 'DELETE_USER_GROUP')
+    ) {
+      menuActions.push({
+        title: 'Remove User',
+        action: 'delete'
+      });
+    }
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
     this.configOptions = { ...this.configOptions };
   }
+
+  deleteUserGroupUsers() {}
 
   selectUnselectUsers() {
     const openSelectUserRef = this.dialog.open(
@@ -348,22 +418,109 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
         }
       }
     );
-  }
 
-  openRemoveUserModal($event): void {
-    const removeUserModalRef = this.dialog.open(RemoveUserModalComponent, {
-      data: {
-        text: 'remove-users'
+    openSelectUserRef.afterClosed().subscribe((data) => {
+      const { returnType } = data;
+      if (returnType === 'done') {
+        this.fetchUsers$.next({ data: 'load' });
+        this.fetchUsers$.next({} as TableEvent);
+        this.skip = 0;
+        this.userGroupService.usersListEdit = true;
+        this.getAllUsers();
       }
     });
-    removeUserModalRef.afterClosed().subscribe();
   }
-  rowLevelActionHandler = ({ data, action }): void => {
+  rowLevelActionHandler(event) {
+    console.log('event :', event);
+    const { data, action } = event;
     switch (action) {
-      case 'delete':
-        this.openRemoveUserModal(data);
+      case 'toggleAllRows':
+        let selectedAll = false;
+        const users = this.allUsersList;
+        if (
+          this.selectedUsers.length === 0 ||
+          this.selectedUsers.length !== users.length
+        ) {
+          selectedAll = true;
+          this.selectedUsers = users;
+        } else {
+          selectedAll = false;
+          this.selectedUsers = [];
+        }
+        this.selectedCount = this.selectedUsers.length;
         break;
+      case 'toggleRowSelect':
+        const index = this.selectedUsers.findIndex(
+          (user) => user.id === data.id
+        );
+        if (index !== -1) {
+          this.selectedUsers = this.selectedUsers.filter(
+            (user) => user.id !== data.id
+          );
+        } else {
+          this.selectedUsers.push(data);
+        }
+        this.selectedCount = this.selectedUsers.length;
+        break;
+      case 'delete':
+        this.openRemoveUserModaSingleDelete(data);
+        break;
+
       default:
     }
-  };
+  }
+  openRemoveUserModaSingleDelete(data): void {
+    const removeUserModalRef = this.dialog.open(RemoveUserModalComponent, {
+      data: {
+        type: 'single'
+      }
+    });
+    removeUserModalRef.afterClosed().subscribe((resp) => {
+      const { response } = resp;
+      if (response === 'yes') {
+        const id = data?.id;
+        this.userGroupService
+          .deleteUserGroupMembers([id], this.userGroupId)
+          .subscribe(() => {
+            this.userAddEdit = true;
+            this.userListActions$.next({ action: 'delete', id: [id] });
+            this.userCount -= 1;
+            this.userGroupService.usersListEdit = true;
+            this.userGroupService.usersCount$.next({
+              groupId: this._userGroupId,
+              count: this.userCount
+            });
+          });
+      }
+    });
+  }
+  removeMultipleMembers() {
+    console.log('In remove multiple user');
+    const removeMultipleUserModelRef = this.dialog.open(
+      RemoveUserModalComponent,
+      {
+        data: {
+          text: 'multiple'
+        }
+      }
+    );
+    removeMultipleUserModelRef.afterClosed().subscribe((resp) => {
+      const { response } = resp;
+      if (response === 'yes') {
+        const idList = this.selectedUsers.map((user) => user.id);
+        this.userGroupService
+          .deleteUserGroupMembers(idList, this.userGroupId)
+          .subscribe(() => {
+            this.userAddEdit = true;
+            this.userListActions$.next({ action: 'delete', id: idList });
+            this.userCount -= idList.length;
+            this.userGroupService.usersListEdit = true;
+            this.userGroupService.usersCount$.next({
+              groupId: this._userGroupId,
+              count: this.userCount
+            });
+          });
+      }
+    });
+  }
 }

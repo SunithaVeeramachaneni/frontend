@@ -16,7 +16,9 @@
 
     <div class="right-pannel-header">
       <span class="count-of-usergroup">
-        <span class="usergroup-count">{{ userGroupCount$ | async }}</span>
+        <span class="usergroup-count-header">{{
+          userGroupCount$ | async
+        }}</span>
         <span class="usergroup-text">{{ 'userGroupCount' | translate }}</span>
       </span>
     </div>
@@ -66,14 +68,19 @@
                 >
                   {{ userGroup.name }}
                 </span>
-                <button
-                  mat-icon-button
-                  [matMenuTriggerFor]="menu"
-                  class="more-usergroup"
-                  aria-label="More Options"
-                >
-                  <mat-icon>more_horiz</mat-icon>
-                </button>
+                <div class="list-display">
+                  <span class="usergroup-count">{{
+                    userGroup?.usersCount
+                  }}</span>
+                  <button
+                    mat-icon-button
+                    [matMenuTriggerFor]="menu"
+                    class="more-usergroup"
+                    aria-label="More Options"
+                  >
+                    <mat-icon>more_horiz</mat-icon>
+                  </button>
+                </div>
               </div>
               <mat-menu #menu="matMenu">
                 <button

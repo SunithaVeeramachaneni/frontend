@@ -1,7 +1,7 @@
 <div class="container">
   <div class="header">
     <div class="left-pannel">
-      <h2 class="title">{{ _userGroupName }}</h2>
+      <h2 class="title">{{ userGroupName }}</h2>
     </div>
 
     <div class="right-pannel">
@@ -23,6 +23,7 @@
         class="create-btn"
         translate="changeUserinGroup"
         (click)="selectUnselectUsers()"
+        [disabled]="disableBtn"
       ></button>
     </div>
   </div>
@@ -36,7 +37,7 @@
       (fetchDataCallback)="handleTableEvent($event)"
       (rowLevelActionHandler)="rowLevelActionHandler($event)"
     ></cwp-dynamictable>
-    <div class="footer-btns">
+    <div class="footer-btns" *ngIf="selectedCount">
       <button
         mat-button
         class="cancel-btn"
@@ -50,6 +51,7 @@
         class="remove-btn"
         type="submit"
         translate="removeBtn"
+        (click)="removeMultipleMembers()"
       ></button>
     </div>
   </div>

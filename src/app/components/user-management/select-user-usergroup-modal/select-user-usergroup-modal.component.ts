@@ -155,7 +155,7 @@ export class SelectUserUsergroupModalComponent implements OnInit {
   skip = 0;
   plantId;
   next = '';
-  limit = defaultLimit;
+  limit = 500;
   roles;
   searchUser: FormControl;
   selectedUsers = [];
@@ -163,6 +163,8 @@ export class SelectUserUsergroupModalComponent implements OnInit {
   addNewGroup: Observable<number>;
   type: string;
   fetchType: string;
+  initialUsers = [];
+  disableBtn = true;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -221,6 +223,7 @@ export class SelectUserUsergroupModalComponent implements OnInit {
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
           this.fetchType = data;
+          console.log('Fetchtype :', this.fetchType);
           return this.getUsersList();
         } else {
           return of([]);
@@ -238,32 +241,38 @@ export class SelectUserUsergroupModalComponent implements OnInit {
       this.fetchUserGroupUsers$
     ]).pipe(
       map(([users, scrollData, groupUsers]) => {
-        console.log(groupUsers);
+        console.log('Scroll data :', scrollData);
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
             tableHeight: 'calc(100vh - 210px)'
           };
-          console.log('loa data :', scrollData);
-          users.map((user) => {
-            if (
-              groupUsers?.items.some((grp) => grp?.users?.email === user?.email)
-            ) {
-              user.isSelected = true;
-            }
-            return user;
-          });
+          if (this.type === 'update') {
+            users.map((user) => {
+              if (
+                groupUsers?.items?.some(
+                  (grp) => grp?.users?.email === user?.email
+                )
+              ) {
+                user.isSelected = true;
+              }
+              return user;
+            });
+          }
           initial.data = users;
         } else {
-          console.log('Scroll data :', scrollData);
-          scrollData.map((user) => {
-            if (
-              groupUsers?.items.some((grp) => grp?.users?.email === user?.email)
-            ) {
-              user.isSelected = true;
-            }
-            return user;
-          });
+          if (this.type === 'update') {
+            scrollData.map((user) => {
+              if (
+                groupUsers?.items?.some(
+                  (grp) => grp?.users?.email === user?.email
+                )
+              ) {
+                user.isSelected = true;
+              }
+              return user;
+            });
+          }
 
           initial.data = initial.data.concat(scrollData);
         }
@@ -272,6 +281,8 @@ export class SelectUserUsergroupModalComponent implements OnInit {
         this.skip = initial.data?.length;
         this.dataSource = new MatTableDataSource(initial.data);
         this.selectedUsers = initial?.data?.filter((user) => user.isSelected);
+        this.initialUsers = this.selectedUsers;
+        this.selectedUsersCount$ = of(this.selectedUsers.length);
         this.allUsersList = initial.data;
         return initial;
       })
@@ -289,7 +300,6 @@ export class SelectUserUsergroupModalComponent implements OnInit {
       })
       .pipe(
         mergeMap((resp: any) => {
-          console.log(resp);
           this.reloadAllUsersCount(resp.count);
           this.next = resp.next;
           return of(resp.items);
@@ -347,6 +357,11 @@ export class SelectUserUsergroupModalComponent implements OnInit {
           this.selectedUserCountUpdate$.next(1);
         }
         this.selectedUsersCount$ = of(this.selectedUsers.length);
+        this.disableBtn = this.areArraysEqual(
+          this.initialUsers,
+          this.selectedUsers
+        );
+
         break;
       default:
       // do nothing
@@ -354,8 +369,16 @@ export class SelectUserUsergroupModalComponent implements OnInit {
   };
   onCancel(): void {
     this.dialogRef.close({
-      isBack: true
+      returnType: 'cancel'
     });
+  }
+  areArraysEqual(arr1, arr2) {
+    if (arr1.length !== arr2.length) {
+      return false;
+    }
+    return arr1
+      .map((data1) => data1.id)
+      .every((element) => arr2.map((data2) => data2.id).includes(element));
   }
 
   onCreate(): void {
@@ -404,6 +427,8 @@ export class SelectUserUsergroupModalComponent implements OnInit {
     const selectedUserIds = this.selectedUsers.map((user) => user.id);
     this.userGroupService
       .selectUnselectGroupMembers$(this.data?.userGroupId, selectedUserIds)
-      .subscribe();
+      .subscribe(() => {
+        this.dialogRef.close({ returnType: 'done' });
+      });
   }
 }

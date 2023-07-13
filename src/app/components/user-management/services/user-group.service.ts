@@ -22,6 +22,11 @@ interface UserGroupListUpdate {
   group: any;
 }
 
+interface UserGroupUsersCountUpdate {
+  groupId: string | null;
+  count: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -35,6 +40,10 @@ export class UserGroupService {
 
   fetchUserGroups$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
+
+  usersCount$: BehaviorSubject<UserGroupUsersCountUpdate> =
+    new BehaviorSubject<UserGroupUsersCountUpdate>({ groupId: null, count: 0 });
+  usersListEdit = false;
   constructor(private appService: AppService) {}
 
   listDynamoUsers$ = (
@@ -48,6 +57,7 @@ export class UserGroupService {
     info: ErrorInfo = {} as ErrorInfo
   ) => {
     const params: URLSearchParams = new URLSearchParams();
+    params.set('limit', queryParams.limit.toString() ?? '');
     params.set('nextToken', queryParams.next ?? '');
     params.set('searchTerm', queryParams?.searchKey.toLocaleLowerCase() ?? '');
     params.set('plantId', queryParams.plantId);
@@ -65,7 +75,7 @@ export class UserGroupService {
     } else {
       return of({
         count: 0,
-        rows: [],
+        items: [],
         next: null
       });
     }
@@ -106,6 +116,7 @@ export class UserGroupService {
     info: ErrorInfo = {} as ErrorInfo
   ) => {
     const params: URLSearchParams = new URLSearchParams();
+    params.set('limit', queryParams.limit.toString() ?? '');
     params.set('nextToken', queryParams.nextToken ?? '');
     params.set('searchTerm', queryParams?.searchKey?.toLocaleLowerCase() ?? '');
     params.set('plantId', queryParams?.plantId ?? '');
@@ -139,6 +150,7 @@ export class UserGroupService {
     info: ErrorInfo = {} as ErrorInfo
   ) => {
     const params: URLSearchParams = new URLSearchParams();
+    params.set('limit', queryParams.limit.toString() ?? '');
     params.set('nextToken', queryParams.nextToken ?? '');
     params.set('searchTerm', queryParams?.searchKey?.toLocaleLowerCase() ?? '');
     if (
@@ -190,6 +202,19 @@ export class UserGroupService {
     return this.appService._getResp(
       environment.userRoleManagementApiUrl,
       `user-groups/${id}/users/all`,
+      info
+    );
+  }
+  deleteUserGroupMembers(
+    members: string[],
+    id: string,
+    info = {} as ErrorInfo
+  ) {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('userIds', JSON.stringify(members));
+    return this.appService._removeData(
+      environment.userRoleManagementApiUrl,
+      `user-groups/${id}/users?` + params.toString(),
       info
     );
   }

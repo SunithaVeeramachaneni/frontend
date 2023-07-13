@@ -66,12 +66,22 @@
       ></button>
 
       <button
+        *ngIf="type === 'create'"
         mat-raised-button
         class="create-btn"
         type="submit"
         translate="createBtn"
         mat-dialog-close
         (click)="onCreate()"
+      ></button>
+      <button
+        *ngIf="type === 'update'"
+        mat-raised-button
+        class="create-btn"
+        type="submit"
+        translate="doneBtn"
+        (click)="updateUsers()"
+        [disabled]="disableBtn"
       ></button>
     </div>
   </div>

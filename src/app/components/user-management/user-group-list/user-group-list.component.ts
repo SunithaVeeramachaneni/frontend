@@ -52,7 +52,7 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
   userGroupId;
   usergrp = 0;
   next = '';
-  limit = defaultLimit;
+  limit = 500;
   search: '';
   isOpenAddEditUserGroupModal = false;
   searchUserGroup: FormControl;
@@ -170,10 +170,14 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
     this.allUserGroups$ = combineLatest([
       userGroupList$,
       onScrollUserGroups$,
-      this.userGroupService.userGroupActions$
+      this.userGroupService.userGroupActions$,
+      this.userGroupService.usersCount$
     ]).pipe(
-      map(([rows, scrollData, { action, group }]) => {
+      map(([rows, scrollData, { action, group }, { groupId, count }]) => {
         if (this.skip === 0) {
+          if (rows.length === 0) {
+            this.selectedUserGroup = null;
+          }
           initial = rows;
         } else if (this.userGroupService.addUpdateDeleteCopyUserGroup) {
           switch (action) {
@@ -210,6 +214,13 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
               });
           }
           this.userGroupService.addUpdateDeleteCopyUserGroup = false;
+        } else if (this.userGroupService.usersListEdit) {
+          initial.map((data) => {
+            if (data?.id === groupId) {
+              data.usersCount = count;
+            }
+          });
+          this.userGroupService.usersListEdit = false;
         } else {
           initial = initial.concat(scrollData);
         }
