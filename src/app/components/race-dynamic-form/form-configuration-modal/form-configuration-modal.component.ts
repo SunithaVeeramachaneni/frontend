@@ -209,14 +209,11 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
         plantId: this.data.formData.plantId
       });
 
-      const additionalDetailsArray =
-        this.data.formData.additionalDetails instanceof Array
-          ? this.data.formData.additionalDetails
-          : JSON.parse(this.data.formData.additionalDetails);
+      const additionalDetailsArray = this.data.formData.additionalDetails;
 
       const tagsValue = this.data.formData.tags;
 
-      this.patchAdditionalDetailsArray(additionalDetailsArray);
+      this.updateAdditionalDetailsArray(additionalDetailsArray);
       this.patchTags(tagsValue);
 
       this.headerDataForm.markAsDirty();
@@ -227,7 +224,7 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
     this.tags = values;
   }
 
-  patchAdditionalDetailsArray(values: any[]): void {
+  updateAdditionalDetailsArray(values: any[]): void {
     const formGroups = values.map((value) =>
       this.fb.group({
         label: [value.FIELDLABEL],
@@ -411,7 +408,7 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
         );
       }
 
-      if (this.data && this.data.formData && this.data.type === 'add') {
+      if (this.data?.formData && this.data?.type === 'add') {
         this.rdfService
           .updateTemplate$(this.data.formData.id, {
             formsUsageCount: this.data.formData.formsUsageCount + 1

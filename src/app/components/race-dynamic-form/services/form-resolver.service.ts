@@ -88,7 +88,7 @@ export class FormResolverService implements Resolve<FormConfigurationState> {
           formType,
           tags,
           plantId,
-          additionalDetails,
+          additionalDetails: JSON.parse(additionalDetails),
           plant: plant.name,
           embeddedFormId: embeddedFormId ? embeddedFormId : ''
         };
