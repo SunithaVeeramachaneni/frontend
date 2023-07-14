@@ -88,6 +88,7 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
   additionalDetailsIdMap = {};
   deletedLabel = '';
   isDisabled = false;
+  isOpen = new FormControl(false);
 
   plantFilterInput = '';
   readonly formConfigurationStatus = formConfigurationStatus;
@@ -159,7 +160,6 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
       formType: [formConfigurationStatus.standalone],
       tags: [this.tags],
       plantId: ['', Validators.required],
-      isOpen: false,
       additionalDetails: this.fb.array([]),
       instructions: this.fb.group({
         notes: [
@@ -189,8 +189,8 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
   }
 
   handleEditorFocus(focus: boolean) {
-    if (this.headerDataForm.get('isOpen').value !== focus) {
-      this.headerDataForm.get('isOpen').setValue(focus);
+    if (this.isOpen.value !== focus) {
+      this.isOpen.setValue(focus);
     }
   }
 

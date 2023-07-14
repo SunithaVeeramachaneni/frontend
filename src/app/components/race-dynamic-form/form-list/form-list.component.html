@@ -36,10 +36,10 @@
         <button
           *appCheckUserHasPermission="[perms.createForm]"
           class="create-new-btn"
-          [matMenuTriggerFor]="menu"
+          (click)="openFormCreationModal(null)"
           translate="createNew"
         ></button>
-        <mat-menu #menu="matMenu" backdropClass="template-list">
+        <!-- <mat-menu #menu="matMenu" backdropClass="template-list">
           <button mat-menu-item (click)="openCreateFromTemplateModal()">
             <svg-icon
               icon="icon-Template-icon"
@@ -57,7 +57,7 @@
             ></svg-icon>
             {{ 'createManually' | translate }}
           </button>
-        </mat-menu>
+        </mat-menu> -->
       </div>
     </div>
 

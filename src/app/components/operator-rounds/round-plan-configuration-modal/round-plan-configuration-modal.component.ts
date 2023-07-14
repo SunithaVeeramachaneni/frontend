@@ -94,6 +94,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   formMetadata: FormMetadata;
   moduleName: string;
   form: FormGroup;
+  isOpen = new FormControl(false);
   options: any = [];
   filteredMediaType: any = { mediaType: [] };
   filteredMediaTypeIds: any = { mediaIds: [] };
@@ -170,7 +171,6 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       formType: [formConfigurationStatus.standalone],
       tags: [this.tags],
       plantId: ['', Validators.required],
-      isOpen: false,
       additionalDetails: this.fb.array([]),
       instructions: this.fb.group({
         notes: [
@@ -241,8 +241,8 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     );
   }
   handleEditorFocus(focus: boolean) {
-    if (this.headerDataForm.get('isOpen').value !== focus) {
-      this.headerDataForm.get('isOpen').setValue(focus);
+    if (this.isOpen.value !== focus) {
+      this.isOpen.setValue(focus);
     }
   }
 
