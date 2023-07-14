@@ -93,6 +93,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
   selectedUsers = [];
   allUsersList = [];
   selectedCount = 0;
+  plantName;
 
   columns: Column[] = [
     {
@@ -118,7 +119,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
       hasPostTextImage: false
     },
     {
-      id: 'displayRoles',
+      id: 'roles',
       displayName: 'Role',
       type: 'string',
       controlType: 'string',
@@ -259,8 +260,10 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
       this.dataSource = new MatTableDataSource([]);
       this.disableBtn = true;
       this._userGroupName = '';
-      this.isLoading$.next(true);
     }
+    this.isLoading$.next(true);
+    this.selectedUsers = [];
+    this.selectedCount = 0;
   }
 
   ngOnInit(): void {
@@ -276,6 +279,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
       .subscribe();
     this.getAllUsers();
     this.configOptions.allColumns = this.columns;
+    this.isLoading$.next(true);
   }
 
   getAllUsers() {
@@ -284,6 +288,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
       switchMap(({ data }) => {
         this.fetchType = data;
         this.skip = 0;
+        this.isLoading$.next(true);
         return this.getUsersList();
       })
     );
@@ -308,7 +313,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
       this.plantService.fetchAllPlants$()
     ]).pipe(
       map(([users, scrollData, { action, id }, plant]) => {
-        const plantName = plant?.items.find(
+        this.plantName = plant?.items.find(
           (data) => data.id === this.userGroupPlantId
         )?.name;
         if (this.skip === 0) {
@@ -331,11 +336,6 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
         }
 
         this.skip = initial.data?.length;
-        initial.data.map((user) => {
-          user.plant = plantName;
-          user.roles = user?.roles?.toString();
-          return user;
-        });
         this.dataSource = new MatTableDataSource(initial.data);
         this.allUsersList = initial.data;
         return initial;
@@ -343,53 +343,72 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
     );
   }
 
-  getUsersList = () =>
-    this.userGroupService
-      .listUserGroupUsers$(
-        {
-          limit: this.limit,
-          nextToken: this.next,
-          fetchType: this.fetchType,
-          searchKey: this.searchUser.value
-        },
-        this.userGroupId
-      )
-      .pipe(
-        mergeMap((resp: any) => {
-          this.isLoading$.next(false);
-          this.userCount = resp.count;
-          this.userGroupService.usersCount$.next({
-            groupId: this._userGroupId,
-            count: this.userCount
-          });
-          this.next = resp.next;
+  getUsersList() {
+    if (this.userGroupId) {
+      return this.userGroupService
+        .listUserGroupUsers$(
+          {
+            limit: this.limit,
+            nextToken: this.next,
+            fetchType: this.fetchType,
+            searchKey: this.searchUser.value
+          },
+          this.userGroupId
+        )
+        .pipe(
+          mergeMap((resp: any) => {
+            this.isLoading$.next(false);
+            this.userCount = resp.count;
+            this.userGroupService.usersCount$.next({
+              groupId: this._userGroupId,
+              count: this.userCount
+            });
+            this.next = resp.next;
 
-          return of(resp.items);
-        }),
+            return of(resp.items);
+          }),
 
-        map((data) => {
-          const rows = data.map((item) => {
-            if (item?.users.firstName && item?.users.lastName) {
-              item.user = item?.users.firstName + ' ' + item?.users.lastName;
-            } else {
-              item.user = '';
-            }
-            if (item?.users.email) {
-              item.email = item?.users.email ?? '';
-            }
-            if (item?.users?.validThrough) {
-              item.validThrough = format(
-                new Date(item?.users?.validThrough),
-                'dd.MM.yy'
-              );
-            } else {
-              item.validThrough = '';
-            }
-            return item;
-          });
-          return rows;
-        })
-      );
+          map((data) => {
+            const rows = data.map((item) => {
+              if (item?.users.firstName && item?.users.lastName) {
+                item.user = item?.users.firstName + ' ' + item?.users.lastName;
+              } else {
+                item.user = '';
+              }
+              if (item?.users.email) {
+                item.email = item?.users.email ?? '';
+              }
+              if (item?.users?.validThrough) {
+                item.validThrough = format(
+                  new Date(item?.users?.validThrough),
+                  'dd.MM.yy'
+                );
+              } else {
+                item.validThrough = '';
+              }
+              if (item?.users?.roles) {
+                const rolesNames = [];
+                item?.users?.roles?.forEach((role) => {
+                  rolesNames.push(role?.name);
+                });
+                item.roles = rolesNames?.toString();
+              } else {
+                item.roles = '';
+              }
+              item.plant = this.plantName;
+              return item;
+            });
+            return rows;
+          })
+        );
+    } else {
+      return of({
+        count: 0,
+        rows: [],
+        next: null
+      });
+    }
+  }
 
   handleTableEvent = (event) => {
     this.fetchUsers$.next(event);
@@ -483,6 +502,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
       const { response } = resp;
       if (response === 'yes') {
         const id = data?.id;
+        this.isLoading$.next(true);
         this.userGroupService
           .deleteUserGroupMembers([id], this.userGroupId)
           .subscribe(() => {
@@ -490,6 +510,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
             this.userListActions$.next({ action: 'delete', id: [id] });
             this.userCount -= 1;
             this.userGroupService.usersListEdit = true;
+            this.isLoading$.next(false);
             this.userGroupService.usersCount$.next({
               groupId: this._userGroupId,
               count: this.userCount
@@ -515,6 +536,8 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
           .deleteUserGroupMembers(idList, this.userGroupId)
           .subscribe(() => {
             this.selectedUsers = [];
+            this.selectedCount = this.selectedUsers.length;
+            this.fetchUsers$.next({ data: 'load' });
             this.userAddEdit = true;
             this.userListActions$.next({ action: 'delete', id: idList });
             this.userCount -= idList.length;
@@ -526,5 +549,11 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
           });
       }
     });
+  }
+  onCancelFooter() {
+    this.fetchUsers$.next({ data: 'load' });
+    this.selectedUsers = [];
+    this.skip = 0;
+    this.selectedCount = this.selectedUsers.length;
   }
 }
