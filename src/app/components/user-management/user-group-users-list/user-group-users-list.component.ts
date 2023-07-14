@@ -260,8 +260,8 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
       this.dataSource = new MatTableDataSource([]);
       this.disableBtn = true;
       this._userGroupName = '';
-      this.isLoading$.next(true);
     }
+    this.isLoading$.next(true);
     this.selectedUsers = [];
     this.selectedCount = 0;
   }
@@ -504,7 +504,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
         const id = data?.id;
         this.isLoading$.next(true);
         this.userGroupService
-          .deleteUserGroupMembers(id, this.userGroupId)
+          .deleteUserGroupMembers([id], this.userGroupId)
           .subscribe(() => {
             this.userAddEdit = true;
             this.userListActions$.next({ action: 'delete', id: [id] });
