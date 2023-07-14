@@ -47,7 +47,6 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
   selectedUserGroupIDList = [];
   selectedUserGroupUsers$: Observable<any>;
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
-
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
   skip = 0;
   fetchType = 'load';
@@ -161,6 +160,7 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
         this.skip = 0;
         this.fetchType = data;
         this.nextToken = '';
+        this.isLoading$.next(true);
         return this.getUserGroups();
       }),
       tap((data) => {

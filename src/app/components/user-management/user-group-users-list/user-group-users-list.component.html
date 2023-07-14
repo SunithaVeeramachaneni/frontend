@@ -22,21 +22,13 @@
       (fetchDataCallback)="handleTableEvent($event)"
       (rowLevelActionHandler)="rowLevelActionHandler($event)"
     ></cwp-dynamictable>
-    <div *ngIf="(isLoading$ | async) === true">
-      <div class="ghost-loading">
-        <div *ngFor="let number of ghostLoading">
-          <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
-          </ngx-shimmer-loading>
-        </div>
-      </div>
-    </div>
-
     <div class="footer-btns" *ngIf="selectedCount">
       <button
         mat-button
         class="cancel-btn"
         autofocus="false"
         translate="cancelBtn"
+        (click)="onCancelFooter()"
         tabindex="-1"
       ></button>
 
@@ -47,6 +39,14 @@
         translate="removeBtn"
         (click)="removeMultipleMembers()"
       ></button>
+    </div>
+  </div>
+  <div *ngIf="(isLoading$ | async) === true">
+    <div class="ghost-loading">
+      <div *ngFor="let number of ghostLoading">
+        <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+        </ngx-shimmer-loading>
+      </div>
     </div>
   </div>
 </div>
