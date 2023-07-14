@@ -166,7 +166,7 @@
           >
             <quill-material
               [ngClass]="{
-                'display-toolbar': headerDataForm.get('isOpen').value
+                'display-toolbar': isOpen.value
               }"
               formControlName="notes"
               [placeholder]="'addNotes' | translate"
