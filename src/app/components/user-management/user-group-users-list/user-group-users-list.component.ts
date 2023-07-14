@@ -395,6 +395,8 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
     this.fetchUsers$.next(event);
   };
 
+  onCancel() {}
+
   prepareMenuActions(permissions: Permission[]) {
     const menuActions = [];
     if (this.loginService.checkUserHasPermission(permissions, 'UPDATE_ASSET')) {
