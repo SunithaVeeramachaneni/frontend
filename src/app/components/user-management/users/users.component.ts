@@ -114,8 +114,8 @@ export class UsersComponent implements OnInit {
       hasPostTextImage: true
     },
     {
-      id: 'userGroups',
-      displayName: 'User Group',
+      id: 'userGroupsDisplay',
+      displayName: 'User Groups',
       type: 'string',
       controlType: 'string',
       order: 3,
@@ -557,7 +557,7 @@ export class UsersComponent implements OnInit {
             const obj = userGroups?.items?.find((g) => g?.id === id);
             userGroupNames.push(obj?.name);
           });
-          data.userGroups = userGroupNames.toString();
+          data.userGroupsDisplay = userGroupNames.toString();
           return data;
         });
         this.skip = initial.data.length;

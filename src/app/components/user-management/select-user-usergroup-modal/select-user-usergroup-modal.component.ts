@@ -280,7 +280,7 @@ export class SelectUserUsergroupModalComponent implements OnInit {
         }
 
         this.skip = initial.data?.length;
-        initial.data.map((user) => {
+        initial?.data?.map((user) => {
           const rolesArray = user?.roles;
           const rolesList = rolesArray?.map((role) => role.name);
           user.roleString = rolesList?.toString();
