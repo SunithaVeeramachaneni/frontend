@@ -408,7 +408,6 @@ export class UsersComponent implements OnInit {
       }
       if (resp.action === 'add') {
         const input = resp.user;
-        console.log('Data :', input);
         const idArray = input.usergroup.map((obj) => obj.id); // Extract id values
         const idString = idArray.join(','); // Join values with commas
         input.userGroups = idString;
@@ -553,12 +552,12 @@ export class UsersComponent implements OnInit {
         }
         initial?.data?.map((data) => {
           const ids = data?.userGroups?.split(',');
-          const names = [];
+          const userGroupNames = [];
           ids?.forEach((id) => {
             const obj = userGroups?.items?.find((g) => g?.id === id);
-            names.push(obj?.name);
+            userGroupNames.push(obj?.name);
           });
-          data.userGroups = names.toString();
+          data.userGroups = userGroupNames.toString();
           return data;
         });
         this.skip = initial.data.length;
