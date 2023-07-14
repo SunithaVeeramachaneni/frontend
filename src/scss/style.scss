@@ -61,22 +61,24 @@ li.breadcrumb-item.active span {
   height: 16px !important;
   width: 16px !important;
 }
+
 .mat-radio-outer-circle {
   height: 16px !important;
   width: 16px !important;
-  border-color: #3678af;
 }
+
 .mat-radio-inner-circle {
   height: 16px !important;
   width: 16px !important;
-  border-color: #3678af;
 }
+
 .mat-radio-button .mat-radio-ripple {
   height: 32px !important;
   width: 32px !important;
   left: calc(50% - 16px) !important;
   top: calc(50% - 16px) !important;
 }
+
 .mat-button-wrapper {
   position: relative;
   top: 1px !important;

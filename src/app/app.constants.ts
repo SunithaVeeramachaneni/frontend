@@ -560,3 +560,6 @@ export const statusColors = {
 };
 
 export const responseCount = 1000;
+
+export const raceDynamicForms = 'RDF';
+export const operatorRounds = 'OPERATOR_ROUNDS';

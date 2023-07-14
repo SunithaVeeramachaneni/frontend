@@ -1,25 +1,7 @@
 @import '../../../../scss/colors.scss';
 
 .form-header-modal {
-  background: $white2;
-
-  .form-toolbar {
-    height: 65px;
-    background-color: $white;
-    border-bottom: 1px solid $border-color;
-
-    .back-btn {
-      border: none;
-      background-color: transparent;
-
-      .back-arrow {
-        height: 15px;
-        width: 15px;
-        position: relative;
-        top: 1px;
-      }
-    }
-  }
+  margin-top: 30px;
 
   .form-content {
     height: calc(100vh - 75px);
@@ -30,7 +12,6 @@
       border-radius: 5px;
       margin: 15px auto;
       padding: 49px;
-      box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.5);
       overflow-y: auto;
       max-height: calc(100vh - 220px);
 
@@ -46,6 +27,34 @@
         font-size: 110%;
         color: $text-color;
         margin: 10px 5px;
+      }
+
+      .radio-btns {
+        position: relative;
+        top: 15px;
+        left: 7px;
+      }
+
+      ::ng-deep
+        .mat-radio-button.mat-accent.mat-radio-checked
+        .mat-radio-outer-circle {
+        border-color: $blue-main;
+      }
+
+      ::ng-deep .mat-radio-button.mat-accent .mat-radio-inner-circle {
+        background-color: $blue-main;
+      }
+
+      ::ng-deep .mat-ripple-element {
+        display: none !important;
+      }
+
+      ::ng-deep .mat-radio-button.mat-radio-disabled .mat-radio-outer-circle {
+        border-color: $disabled-color !important;
+      }
+
+      ::ng-deep .mat-radio-button.mat-radio-disabled .mat-radio-inner-circle {
+        background-color: $disabled-color !important;
       }
 
       .radio-btn-text {
@@ -272,4 +281,28 @@
     padding: 5px;
     margin: 5px;
   }
+}
+
+.buttons {
+  border-bottom: 1px solid $border-color;
+  min-height: 33px;
+}
+
+.next-btn {
+  float: right;
+  margin-right: 22px;
+  height: 30px;
+  font-weight: normal;
+  line-height: normal;
+  width: 8%;
+}
+
+.skip-btn {
+  float: right;
+  color: $radio-button-checked;
+  height: 30px;
+  font-weight: normal;
+  line-height: normal;
+  border: 1px solid $blue-main;
+  width: 8%;
 }

@@ -79,6 +79,8 @@ import { UnitOfMeasurementEffects } from 'src/app/forms/state/unit-of-measuremen
 import { QuickResponseEffects } from 'src/app/forms/state/quick-responses.effects';
 import { GlobalResponseEffects } from 'src/app/forms/state/global-response.effects';
 import { InspectionObservationsComponent } from './inspection-observations/inspection-observations.component';
+import { FullScreenFormCreationComponent } from './full-screen-form-creation/full-screen-form-creation.component';
+import { FormViewComponent } from './full-screen-form-creation/form-view.component';
 import { ImportTemplateListComponent } from 'src/app/components/race-dynamic-form/import-template-list/import-template-list.component';
 import { ImportFormListComponent } from 'src/app/components/race-dynamic-form/import-form-list/import-form-list.component';
 import { TemplateAffectedFormsModalComponent } from './template-configuration/template-affected-forms-modal/template-affected-forms-modal.component';
@@ -116,6 +118,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     TemplateContainerComponent,
     EditTemplateNameModalComponent,
     InspectionObservationsComponent,
+    FullScreenFormCreationComponent,
+    FormViewComponent,
     ImportTemplateListComponent,
     ImportFormListComponent,
     TemplateAffectedFormsModalComponent,
