@@ -78,7 +78,7 @@
   "selectUser": "Select Users",
   "createBtn": "Create",
   "editBtn": "Edit",
-  "changeUserinGroup": "Add user to group",
+  "changeUserinGroup": "Modify User List",
   "selectedUsers": "Users Selected",
   "deleteUserGroupHeading": "Confirm Delete",
   "deleteUserGroupSubHeading": "Do you want to delete ",
@@ -88,5 +88,6 @@
   "removeBtn": "Remove User",
   "userGroup": "User Group",
   "userGroupsRequired": "User Group is Required",
-  "doneBtn": "Done"
+  "doneBtn": "Done",
+  "selected": "Selected"
 }

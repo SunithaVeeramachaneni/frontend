@@ -31,22 +31,31 @@
       </div>
     </div>
 
-    <div class="footer-btns" *ngIf="selectedCount">
-      <button
-        mat-button
-        class="cancel-btn"
-        autofocus="false"
-        translate="cancelBtn"
-        tabindex="-1"
-      ></button>
+    <div class="footer" *ngIf="selectedCount">
+      <span class="checkedUsers">
+        <span class="checkedUsersCount">
+          {{ selectedCount }}
+        </span>
+        <span class="checkedUsersText">{{ 'selected' | translate }}</span>
+      </span>
 
-      <button
-        mat-raised-button
-        class="remove-btn"
-        type="submit"
-        translate="removeBtn"
-        (click)="removeMultipleMembers()"
-      ></button>
+      <div class="footer-button">
+        <button
+          mat-button
+          class="cancel-btn"
+          autofocus="false"
+          translate="cancelBtn"
+          tabindex="-1"
+        ></button>
+
+        <button
+          mat-raised-button
+          class="remove-btn"
+          type="submit"
+          translate="removeBtn"
+          (click)="removeMultipleMembers()"
+        ></button>
+      </div>
     </div>
   </div>
 </div>

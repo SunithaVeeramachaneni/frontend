@@ -49,17 +49,19 @@
 .user-content {
   height: max-content;
 }
-.footer-btns {
+.footer {
   background-color: $footer-bg-color;
   display: flex;
   flex-direction: row;
-  float: right;
-  justify-content: end;
+  justify-content: space-between;
   width: 75%;
   position: absolute;
   bottom: 15px;
   border-top: 1px solid $border-color;
   right: 0;
+}
+.footer-button {
+  justify-content: end;
 }
 .header {
   display: flex;
@@ -69,4 +71,23 @@
   margin: 0px 10px 0px 10px;
   position: relative;
   padding: 2px;
+}
+
+.checkedUsers {
+  margin: 15px;
+  position: relative;
+  top: 7px;
+}
+
+.checkedUsersCount {
+  font-weight: 500;
+  font-size: 110%;
+  color: $gray-bg;
+}
+
+.checkedUsersText {
+  font-weight: 500;
+  font-size: 110%;
+  color: $gray1;
+  margin-left: 5px;
 }
