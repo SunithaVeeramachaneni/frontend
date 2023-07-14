@@ -585,7 +585,9 @@ export class IssuesListComponent implements OnInit, OnDestroy {
                 ? notificationInfo
                 : this.placeHolder,
               priority,
-              dueDate: dueDate ? format(new Date(dueDate), 'dd MMM, yyyy') : '',
+              dueDate: dueDate
+                ? format(new Date(dueDate), 'dd MMM, yyyy hh:mm a')
+                : '',
               assignedToDisplay: assignedToDisplay || '',
               assignedTo: assignedTo || ''
             };
