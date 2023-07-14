@@ -374,7 +374,7 @@ export class BuilderComponent implements OnInit {
         sectionIndex,
         1,
         questionIndex,
-        1,
+        this.counter,
         subFormId,
         this.isTemplate
       );
