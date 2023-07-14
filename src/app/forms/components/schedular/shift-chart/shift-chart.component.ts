@@ -206,7 +206,7 @@ export class ShiftChartComponent implements OnInit, OnChanges {
           this.setShiftDetails();
           return;
         }
-        const lastTIme = this.dataArrays[indexOfMatchObject].endTime;
+        const lastTime = this.dataArrays[indexOfMatchObject].endTime;
         const oldIndex = this.dataArrays[indexOfMatchObject].index;
         this.dataArrays[indexOfMatchObject].index = Math.abs(timeDiff);
         this.dataArrays[indexOfMatchObject].endTime = this.service.subtractTime(
@@ -217,7 +217,7 @@ export class ShiftChartComponent implements OnInit, OnChanges {
         obj = {
           index: Math.abs(oldIndex - timeDiff),
           startTime: this.service.subtractTime(val, 0, 0),
-          endTime: timeDiff === 1 ? this.service.addTime(val, 0, 59) : lastTIme,
+          endTime: lastTime,
           isBook: true
         };
         this.dataArrays.push(obj);
@@ -286,12 +286,6 @@ export class ShiftChartComponent implements OnInit, OnChanges {
       }
 
       // If we add slot from left to right and endTime and startTime are equal
-      console.log(
-        this.dataArrays.filter(
-          (item) => item.endTime === this.service.addTime(obj?.startTime, 0, 59)
-        ).length > 0,
-        'this.dataArrays.filter'
-      );
       if (
         this.dataArrays.filter(
           (item) => item.endTime === this.service.addTime(obj?.startTime, 0, 59)
@@ -315,6 +309,25 @@ export class ShiftChartComponent implements OnInit, OnChanges {
         obj.startTime = this.service.subtractTime(obj?.startTime, timeDiff1, 0);
         obj.endTime = this.service.subtractTime(obj?.endTime, timeDiff1, 0);
       }
+      let highestEndTime = '';
+      this.dataArrays.forEach((item) => {
+        highestEndTime = this.service.addTime(item.endTime, 0, 1);
+      });
+      if (highestEndTime !== '') {
+        const endTimeDiff = this.service.getTimeDifference(
+          highestEndTime,
+          obj?.startTime
+        );
+        if (endTimeDiff > 0) {
+          obj.startTime = this.service.subtractTime(
+            obj?.startTime,
+            endTimeDiff,
+            0
+          );
+          obj.endTime = this.service.subtractTime(obj.endTime, endTimeDiff, 0);
+        }
+      }
+
       this.dataArrays.push(obj);
       this.slotsArray.push(this.createItemFormGroup());
       this.dataArrays = this.service.sortArray(this.dataArrays, this.slots);

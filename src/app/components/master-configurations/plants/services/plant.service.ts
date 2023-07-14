@@ -41,10 +41,12 @@ export class PlantService {
     if (!Object.keys(this.plantTimeZoneMapping$.value).length) {
       this.fetchAllPlants$().subscribe((res) => {
         const timeZoneMapping = {};
-        for (const plant of res.items) {
-          if (plant.id && plant.timeZone) {
-            if (Object.keys(plant.timeZone).length !== 0) {
-              timeZoneMapping[plant.id] = plant.timeZone;
+        if (res?.items?.length > 0) {
+          for (const plant of res.items) {
+            if (plant.id && plant.timeZone) {
+              if (Object.keys(plant.timeZone).length !== 0) {
+                timeZoneMapping[plant.id] = plant.timeZone;
+              }
             }
           }
         }

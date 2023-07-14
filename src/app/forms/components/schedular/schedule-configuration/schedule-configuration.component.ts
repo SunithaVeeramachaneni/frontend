@@ -952,8 +952,6 @@ export class ScheduleConfigurationComponent
               );
               this.shiftDetails = {};
               delete config?.shiftDetails;
-            }
-            if (this.selectedDetails?.shifts?.length > 0) {
               this.initCreatedSlots();
             }
             this.schedulerConfigForm.patchValue(config);
@@ -1132,8 +1130,6 @@ export class ScheduleConfigurationComponent
               );
               this.shiftDetails = {};
               delete config?.shiftDetails;
-            }
-            if (this.selectedDetails?.shifts?.length > 0) {
               this.initCreatedSlots();
             }
             this.schedulerConfigForm.patchValue(config);
