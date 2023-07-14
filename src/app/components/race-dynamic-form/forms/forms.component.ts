@@ -503,11 +503,12 @@ export class FormsComponent implements OnInit, OnDestroy {
       fetchType: this.fetchType,
       formId: this.formId
     };
-
+    this.isLoading$.next(true);
     return this.raceDynamicFormService
       .getFormQuestionsFormsList$(obj, this.filter)
       .pipe(
         tap(({ scheduledCount, unscheduledCount, next }) => {
+          this.isLoading$.next(false);
           this.nextToken = next !== undefined ? next : null;
           const { scheduled, unscheduled } = this.formsCount;
           this.formsCount = {
@@ -756,9 +757,6 @@ export class FormsComponent implements OnInit, OnDestroy {
       if (formScheduleConfigurations[form?.id]) {
         return {
           ...form,
-          schedule: this.getFormattedSchedule(
-            formScheduleConfigurations[form?.id]
-          ),
           scheduleDates: this.getFormattedScheduleDates(
             formScheduleConfigurations[form?.id]
           ),
