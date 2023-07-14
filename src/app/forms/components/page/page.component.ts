@@ -34,6 +34,7 @@ export class PageComponent implements OnInit, OnDestroy {
   @ViewChild('pageName') pageName: ElementRef;
   @Input() selectedNodeId: any;
   @Input() isEmbeddedForm: boolean;
+  @Input() isTemplate: boolean;
 
   @Input() set pageIndex(pageIndex: number) {
     this._pageIndex = pageIndex;

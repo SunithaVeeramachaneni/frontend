@@ -60,15 +60,19 @@ export class FormConfigurationService {
         counter
       })
     );
-
-    this.store.dispatch(
-      BuilderConfigurationActions.updateQuestionState({
-        questionId: page.questions[addQuestions - 1].id,
-        isOpen: true,
-        isResponseTypeModalOpen: false,
-        subFormId: null
-      })
-    );
+    if (
+      sectionQuestionsList.length === 0 ||
+      !sectionQuestionsList[0].section?.isImported
+    ) {
+      this.store.dispatch(
+        BuilderConfigurationActions.updateQuestionState({
+          questionId: page.questions[addQuestions - 1].id,
+          isOpen: true,
+          isResponseTypeModalOpen: false,
+          subFormId: null
+        })
+      );
+    }
   }
 
   addSections(
@@ -80,7 +84,7 @@ export class FormConfigurationService {
     questionCounter: number,
     sectionQuestionsList: SectionQuestions[] = []
   ) {
-    const { sections, questions, counter } = this.getSectionsObject(
+    const { sections, questions, counter, logics } = this.getSectionsObject(
       pageIndex,
       addSections,
       addQuestions,
@@ -99,6 +103,15 @@ export class FormConfigurationService {
         counter
       })
     );
+    if (logics?.length)
+      this.store.dispatch(
+        BuilderConfigurationActions.addLogics({
+          logics,
+          pageIndex,
+          ...this.getFormConfigurationStatuses(),
+          subFormId: null
+        })
+      );
     this.store.dispatch(
       BuilderConfigurationActions.updatePageState({
         pageIndex,
@@ -106,14 +119,19 @@ export class FormConfigurationService {
         subFormId: null
       })
     );
-    this.store.dispatch(
-      BuilderConfigurationActions.updateQuestionState({
-        questionId: questions[addQuestions - 1].id,
-        isOpen: true,
-        isResponseTypeModalOpen: false,
-        subFormId: null
-      })
-    );
+    if (
+      sectionQuestionsList.length === 0 ||
+      !sectionQuestionsList[0].section?.isImported
+    ) {
+      this.store.dispatch(
+        BuilderConfigurationActions.updateQuestionState({
+          questionId: questions[addQuestions - 1].id,
+          isOpen: true,
+          isResponseTypeModalOpen: false,
+          subFormId: null
+        })
+      );
+    }
   }
 
   addQuestions(
@@ -175,7 +193,7 @@ export class FormConfigurationService {
     questionCounter: number,
     sectionQuestionsList: SectionQuestions[]
   ) {
-    const { sections, questions, counter } = this.getSectionsObject(
+    const { sections, questions, counter, logics } = this.getSectionsObject(
       pageIndex,
       addSections,
       addQuestions,
@@ -190,7 +208,7 @@ export class FormConfigurationService {
       isOpen: true,
       sections,
       questions,
-      logics: [],
+      logics,
       counter
     };
   }
@@ -210,6 +228,7 @@ export class FormConfigurationService {
     let sliceStart = 0;
     let questions: Question[] = [];
     let counter: number;
+    let logics: any[] = [];
 
     const sections = new Array(addSections).fill(0).map((s, sectionIndex) => {
       sectionCount = ++sectionCount;
@@ -217,7 +236,6 @@ export class FormConfigurationService {
         sectionCount,
         sectionQuestionsList[sectionIndex]?.section
       );
-
       const sectionQuestions = new Array(addQuestions)
         .fill(0)
         .slice(
@@ -231,7 +249,12 @@ export class FormConfigurationService {
           counter = questionCounter + sliceStart + questionIndex + 1;
           return this.getQuestion(
             questionIndex,
-            section.id,
+            sectionQuestionsList[sectionIndex]?.questions[
+              questionIndex
+            ]?.sectionId?.startsWith('AQ')
+              ? sectionQuestionsList[sectionIndex]?.questions[questionIndex]
+                  ?.sectionId
+              : section.id,
             counter,
             sectionQuestionsList[sectionIndex]?.questions[questionIndex]
           );
@@ -239,6 +262,10 @@ export class FormConfigurationService {
 
       sliceStart += sectionQuestionsList[sectionIndex]?.questions?.length;
       questions = [...questions, ...sectionQuestions];
+      logics = [
+        ...logics,
+        ...(sectionQuestionsList[sectionIndex]?.logics || [])
+      ];
 
       return section;
     });
@@ -246,16 +273,26 @@ export class FormConfigurationService {
     return {
       sections,
       questions,
-      counter
+      counter,
+      logics
     };
   }
 
   private getSection(sectionIndex: number, section: Section) {
+    const templateData: any = {};
+    if (section?.isImported === true) {
+      templateData.isImported = section.isImported;
+      templateData.externalSectionId = section.externalSectionId;
+      templateData.templateId = section.templateId;
+      templateData.templateName = section.templateName;
+      templateData.counter = section.counter;
+    }
     return {
       id: `S${uuidv4()}`,
       name: section ? section.name : 'Section',
       position: sectionIndex,
-      isOpen: true
+      isOpen: true,
+      ...templateData
     };
   }
 
@@ -266,7 +303,10 @@ export class FormConfigurationService {
     question: Question
   ) {
     return {
-      id: `Q${questionCounter}`,
+      id:
+        question?.id?.startsWith('TQ') || question?.id?.startsWith('AQ')
+          ? question.id
+          : `Q${questionCounter}`,
       sectionId,
       name: question ? question.name : '',
       fieldType: question ? question.fieldType : 'TF',

@@ -247,11 +247,6 @@
   font-weight: 400;
 }
 
-::ng-deep .cdk-overlay-pane .active {
-  background-color: $blue-primary;
-  color: $white;
-}
-
 ::ng-deep .slider-values {
   color: $black !important;
 }
@@ -272,4 +267,8 @@
 }
 .m-t-20 {
   margin-top: 20px;
+}
+
+.affected-forms {
+  color: $blue-main;
 }

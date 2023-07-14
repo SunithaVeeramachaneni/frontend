@@ -18,6 +18,7 @@
         [pageQuestionsCount]="
           props.pageWiseSectionQuestions[pageIndex].pageQuestionsCount
         "
+        [isTemplate]="isTemplate"
         [isEmbeddedForm]="isEmbeddedForm"
         (pageEvent)="pageEventHandler($event)"
         cdkDropListGroup
@@ -43,6 +44,7 @@
                   class="sectionContainer"
                   [pageIndex]="pageIndex"
                   [sectionIndex]="sectionIndex"
+                  [isTemplate]="isTemplate"
                   [sectionId]="props.sectionIds[pageIndex][sectionIndex]"
                   (sectionEvent)="sectionEventHandler($event)"
                   [selectedNodeId]="selectedNode.id"
@@ -122,6 +124,9 @@
                     >
                       <div
                         cdkDrag
+                        [cdkDragDisabled]="
+                          pageWiseSections[pageIndex][sectionIndex]?.isImported
+                        "
                         class="questionContainer"
                         [ngClass]="{
                           'highlight-bg':
@@ -132,9 +137,21 @@
                       >
                         <div class="question-drag-handler">
                           <svg-icon
+                            *ngIf="
+                              !pageWiseSections[pageIndex][sectionIndex]
+                                ?.isImported
+                            "
                             icon="icon-six-dots"
                             class="question-six-dots section-dots"
                             cdkDragHandle
+                          ></svg-icon>
+                          <svg-icon
+                            *ngIf="
+                              pageWiseSections[pageIndex][sectionIndex]
+                                ?.isImported
+                            "
+                            icon="icon-Unlink"
+                            class="icon-unlink"
                           ></svg-icon>
                         </div>
 
@@ -144,6 +161,7 @@
                           [sectionId]="
                             props.sectionIds[pageIndex][sectionIndex]
                           "
+                          [isTemplate]="isTemplate"
                           [questionId]="questionId"
                           [questionIndex]="questionIndex"
                           [question]="

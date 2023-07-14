@@ -17,6 +17,22 @@
         >
           chevron_right
         </mat-icon>
+        <div
+          *ngIf="sectionForm.get('isImported').value === true"
+          class="tooltip"
+        >
+          <svg-icon icon="icon-Unlink" class="icon-unlink"> </svg-icon>
+          <span
+            *ngIf="!sectionForm.get('templateName').value?.length"
+            class="tooltip-text"
+            translate="template"
+          ></span>
+          <span
+            class="tooltip-text"
+            *ngIf="sectionForm.get('templateName').value?.length"
+            >{{ sectionForm.get('templateName').value }}</span
+          >
+        </div>
 
         <a class="width-60">
           <input
@@ -35,7 +51,10 @@
             mat-icon-button
             (click)="editSection()"
             class="edit-icon"
-            *ngIf="sectionForm.get('name').disabled === true"
+            *ngIf="
+              sectionForm.get('name').disabled === true &&
+              sectionForm.get('isImported').value !== true
+            "
           >
             <svg-icon
               icon="icon-edit-icon-white"
@@ -56,7 +75,12 @@
             <mat-icon>more_horiz</mat-icon>
           </button>
           <mat-menu #sectionMenu="matMenu">
-            <button mat-menu-item (click)="deleteSection()" class="text-red">
+            <button
+              mat-menu-item
+              (click)="deleteSection()"
+              [disabled]="isTemplate"
+              class="text-red"
+            >
               <span translate="deleteSection"></span>
             </button>
           </mat-menu>
@@ -64,7 +88,11 @@
       </div>
       <div
         *ngIf="sectionForm.get('isOpen').value === true"
-        class="questions-content"
+        [ngClass]="
+          sectionForm.get('isImported').value === true
+            ? 'disable-questions questions-content'
+            : 'questions-content'
+        "
       >
         <ng-content></ng-content>
       </div>

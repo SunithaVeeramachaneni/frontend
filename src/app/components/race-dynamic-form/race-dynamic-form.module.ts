@@ -79,6 +79,13 @@ import { UnitOfMeasurementEffects } from 'src/app/forms/state/unit-of-measuremen
 import { QuickResponseEffects } from 'src/app/forms/state/quick-responses.effects';
 import { GlobalResponseEffects } from 'src/app/forms/state/global-response.effects';
 import { InspectionObservationsComponent } from './inspection-observations/inspection-observations.component';
+import { FullScreenFormCreationComponent } from './full-screen-form-creation/full-screen-form-creation.component';
+import { FormViewComponent } from './full-screen-form-creation/form-view.component';
+import { ImportTemplateListComponent } from 'src/app/components/race-dynamic-form/import-template-list/import-template-list.component';
+import { ImportFormListComponent } from 'src/app/components/race-dynamic-form/import-form-list/import-form-list.component';
+import { TemplateAffectedFormsModalComponent } from './template-configuration/template-affected-forms-modal/template-affected-forms-modal.component';
+import { AffectedFormTemplateSliderComponent } from 'src/app/components/race-dynamic-form/affected-form-template-slider/affected-form-template-slider.component';
+import { QuillMaterialComponent } from 'src/app/shared/components/quill-material/quill-material.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/race-dynamic-forms/', '.json');
@@ -110,7 +117,14 @@ export const customTranslateLoader = (http: HttpClient) =>
     CreateFromTemplateModalComponent,
     TemplateContainerComponent,
     EditTemplateNameModalComponent,
-    InspectionObservationsComponent
+    InspectionObservationsComponent,
+    FullScreenFormCreationComponent,
+    FormViewComponent,
+    ImportTemplateListComponent,
+    ImportFormListComponent,
+    TemplateAffectedFormsModalComponent,
+    AffectedFormTemplateSliderComponent,
+    QuillMaterialComponent
   ],
   imports: [
     FormsModule,
@@ -180,7 +194,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     FormConfigurationComponent,
     SelectQuestionsDialogComponent,
     AvatarComponent,
-    TemplateConfigurationComponent
+    TemplateConfigurationComponent,
+    QuillMaterialComponent
   ]
 })
 export class RaceDynamicFormModule {

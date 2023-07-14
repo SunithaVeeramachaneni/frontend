@@ -1,0 +1,43 @@
+<div id="opendetail" *ngIf="selectedForm">
+  <mat-card>
+    <ng-container>
+      <div>
+        <svg-icon
+          icon="icon-close"
+          class="cancel-icon"
+          (click)="cancelForm()"
+        ></svg-icon>
+        <h2 class="detail-heading">{{ selectedForm?.name }}</h2>
+      </div>
+      <div class="custom-form-field-gray-color search">
+        <mat-form-field class="width-100" appearance="outline">
+          <mat-icon matPrefix class="searchIcon">search</mat-icon>
+          <input
+            matInput
+            type="text"
+            [placeholder]="'searchForms' | translate"
+            autocomplete="off"
+            [formControl]="searchForm"
+          />
+        </mat-form-field>
+      </div>
+    </ng-container>
+    <div *ngIf="(forms$ | async) && (isLoading$ | async) === false">
+      <cwp-dynamictable
+        [dataSource]="dataSource"
+        [configOptions]="configOptions"
+        (cellClickActionHandler)="cellClickActionHandler($event)"
+        (fetchDataCallback)="handleTableEvent($event)"
+        class="width-100"
+      ></cwp-dynamictable>
+    </div>
+    <div *ngIf="isLoading$ | async">
+      <div class="ghost-loading mt-5 pt-5">
+        <div *ngFor="let number of ghostLoading">
+          <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+          </ngx-shimmer-loading>
+        </div>
+      </div>
+    </div>
+  </mat-card>
+</div>

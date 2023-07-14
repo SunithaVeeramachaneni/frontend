@@ -19,6 +19,7 @@ export interface FormMetadata {
   plantId?: string;
   plant: string;
   pdfTemplateConfiguration: any;
+  instructions: any;
   lastModifiedBy: string;
   embeddedFormId?: string;
   additionalDetails: string;
@@ -38,6 +39,11 @@ export interface Section {
   name: string;
   position: number;
   isOpen: boolean;
+  isImported?: boolean;
+  templateId?: string;
+  templateName?: string;
+  externalSectionId?: string;
+  counter?: number;
 }
 
 export interface Question {
@@ -61,6 +67,7 @@ export interface Question {
 export interface SectionQuestions {
   section: Section;
   questions: Question[];
+  logics?: any[];
 }
 
 export interface NumberRangeMetadata {
@@ -101,4 +108,9 @@ export interface InstructionsFile {
   size: number;
   objectKey: string;
   objectURL: string;
+}
+export interface FormUploadFile {
+  name: string;
+  size: number;
+  objectKey: string;
 }

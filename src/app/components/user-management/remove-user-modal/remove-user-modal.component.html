@@ -1,0 +1,16 @@
+<div class="userRemoveModal">
+  <p class="heading" translate="removeUserHeading"></p>
+  <p class="message" translate="removeUserMessage"></p>
+  <button
+    mat-raised-button
+    class="yes-btn"
+    (click)="deleteUser('yes')"
+    translate="yesBtn"
+  ></button>
+  <button
+    mat-button
+    class="no-btn"
+    (click)="deleteUser('no')"
+    translate="noBtn"
+  ></button>
+</div>
