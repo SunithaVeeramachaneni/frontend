@@ -385,6 +385,7 @@ export class SelectUserUsergroupModalComponent implements OnInit {
   };
   onCancel(): void {
     this.dialogRef.close({
+      isBack: true,
       returnType: 'cancel'
     });
   }
