@@ -22,10 +22,11 @@
         </mat-form-field>
       </div>
     </ng-container>
-    <div *ngIf="(forms$ | async )&& (isLoading$ | async) === false">
+    <div *ngIf="(forms$ | async) && (isLoading$ | async) === false">
       <cwp-dynamictable
         [dataSource]="dataSource"
         [configOptions]="configOptions"
+        (cellClickActionHandler)="cellClickActionHandler($event)"
         (fetchDataCallback)="handleTableEvent($event)"
         class="width-100"
       ></cwp-dynamictable>

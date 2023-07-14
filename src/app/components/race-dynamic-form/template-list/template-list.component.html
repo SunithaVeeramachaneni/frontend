@@ -62,7 +62,7 @@
       [selectedForm]="selectedForm"
       (showAffectedForms)="showAffectedSlider($event)"
       [isTemplate]="true"
-      (formDetailAction)="templateDetailActionHandler($event)"
+      (formDetailAction)="templateDetailActionHandler()"
     ></app-form-detail>
   </ng-container>
 
@@ -70,8 +70,18 @@
     <app-affected-form-template-slider
       [@slideInOut]="affectedSliderState"
       (slideInOut)="onCloseAffectedSlider()"
+      (affectedFormDetail)="onClickAffectedFormDetail($event)"
       [selectedForm]="selectedTemplate"
     ></app-affected-form-template-slider>
+  </ng-container>
+
+  <ng-container *ngIf="affectedFormDetailState">
+    <app-form-detail
+      [@slideInOut]="affectedFormDetailState"
+      (slideInOut)="onCloseViewDetail()"
+      [selectedForm]="affectedFormDetail"
+      (formDetailAction)="affectedFormDetailActionHandler()"
+    ></app-form-detail>
   </ng-container>
 
   <div *ngIf="isLoading$ | async">
