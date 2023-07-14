@@ -1,0 +1,72 @@
+@import '../../../../scss/colors.scss';
+
+.title {
+  font-size: 145%;
+  font-weight: 500;
+  padding-bottom: 1px;
+}
+.search {
+  position: relative;
+  top: -3px;
+  right: 10px;
+}
+
+.create-btn {
+  text-transform: capitalize;
+  float: right;
+  background: $blue-main;
+  color: $white;
+  height: 31px;
+  width: 150px;
+  top: 2px;
+  font-weight: normal;
+  line-height: normal;
+}
+.remove-btn {
+  text-transform: capitalize;
+  float: right;
+  background: $blue-main;
+  color: $white;
+  height: 35px;
+  width: 150px;
+  font-weight: normal;
+  line-height: normal;
+  margin: 10px;
+}
+
+.cancel-btn {
+  text-transform: capitalize;
+  float: right;
+  border: 1px solid $blue-primary;
+  background-color: $white;
+  color: $blue-main;
+  height: 35px;
+  width: 150px;
+  font-weight: normal;
+  line-height: normal;
+  margin: 10px;
+}
+.user-content {
+  height: max-content;
+}
+.footer-btns {
+  background-color: $footer-bg-color;
+  display: flex;
+  flex-direction: row;
+  float: right;
+  justify-content: end;
+  width: 75%;
+  position: absolute;
+  bottom: 15px;
+  border-top: 1px solid $border-color;
+  right: 0;
+}
+.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0px 10px 0px 10px;
+  position: relative;
+  padding: 2px;
+}

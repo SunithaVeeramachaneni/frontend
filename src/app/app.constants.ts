@@ -23,6 +23,10 @@ export const permissions = Object.freeze({
   createUser: 'CREATE_USER',
   updateUser: 'UPDATE_USER',
   deactivateUser: 'DEACTIVATE_USER',
+  viewUserGroup: 'VIEW_USER_GROUPS',
+  createUserGroup: 'CREATE_USER_GROUP',
+  editUserGroup: 'EDIT_USER_GROUP',
+  deleteUserGroup: 'DELETE_USER_GROUP',
   viewRoles: 'VIEW_ROLES',
   createRole: 'CREATE_ROLE',
   updateRole: 'UPDATE_ROLE',
@@ -184,6 +188,11 @@ export const routingUrls = {
     url: '/user-management/roles-permissions',
     title: 'Roles & Permissions',
     permission: permissions.viewRoles
+  },
+  userGroups: {
+    url: '/user-management/user-groups',
+    title: 'User Groups',
+    permission: permissions.viewUserGroup
   },
   inActiveUsers: {
     url: '/user-management/inactive-users',
