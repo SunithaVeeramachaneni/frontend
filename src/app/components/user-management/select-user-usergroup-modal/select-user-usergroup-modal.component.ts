@@ -137,7 +137,7 @@ export class SelectUserUsergroupModalComponent implements OnInit {
     groupByColumns: [],
     pageSizeOptions: [10, 25, 50, 75, 100],
     allColumns: [],
-    tableHeight: 'calc(100vh - 210px)',
+    tableHeight: 'calc(100vh - 300px)',
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957']
   };
 
@@ -405,11 +405,11 @@ export class SelectUserUsergroupModalComponent implements OnInit {
     });
 
     const newUserGroup = {
-      name: this.data.name,
-      description: this.data.description,
-      plantId: this.data.plantId,
+      name: this.data?.name,
+      description: this.data?.description,
+      plantId: this.data?.plantId,
       users: selectedUserId,
-      searchTerm: `${this.data.name.toLowerCase()} ${this.data.description.toLowerCase()}`
+      searchTerm: `${this.data?.name?.toLowerCase()} ${this.data?.description?.toLowerCase()}`
     };
 
     this.userGroupService

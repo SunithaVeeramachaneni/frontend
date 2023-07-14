@@ -134,7 +134,7 @@ export class AddEditUserGroupModalComponent implements OnInit {
       ...this.groupData,
       name: updatedName,
       description: updatedDesc,
-      searchTerm: `${updatedName.toLowerCase()} ${updatedDesc.toLowerCase()}`
+      searchTerm: `${updatedName?.toLowerCase()} ${updatedDesc?.toLowerCase()}`
     };
     this.userGroupService
       .updateUserGroup$(this.groupData?.id, updatedData, {

@@ -91,7 +91,7 @@ export class UserGroupService {
       {
         ...userGroupDetails,
         searchTerm:
-          `${userGroupDetails.name.toLowerCase()} ${userGroupDetails?.description.toLowerCase()}` ||
+          `${userGroupDetails?.name?.toLowerCase()} ${userGroupDetails?.description?.toLowerCase()}` ||
           ''
       },
       info
@@ -205,11 +205,7 @@ export class UserGroupService {
       info
     );
 
-  deleteUserGroupMembers(
-    members: string[],
-    id: string,
-    info = {} as ErrorInfo
-  ) {
+  deleteUserGroupMembers(members: any, id: string, info = {} as ErrorInfo) {
     const params: URLSearchParams = new URLSearchParams();
     params.set('userIds', JSON.stringify(members));
     return this.appService._removeData(
