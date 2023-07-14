@@ -241,7 +241,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     );
   }
   handleEditorFocus(focus: boolean) {
-    if (this.isOpen.value === focus) {
+    if (this.isOpen.value !== focus) {
       this.isOpen.setValue(focus);
     }
   }
