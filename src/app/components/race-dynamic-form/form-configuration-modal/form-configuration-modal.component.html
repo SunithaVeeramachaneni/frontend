@@ -287,8 +287,6 @@
                     [matAutocomplete]="autolabel"
                     (click)="labelOptionClick(i)"
                   />
-                  <mat-icon matSuffix class="arrow">arrow_drop_down</mat-icon>
-
                   <mat-autocomplete #autolabel="matAutocomplete">
                     <mat-option
                       *ngFor="let label of filteredLabels$ | async"
@@ -368,8 +366,6 @@
                     class="example-input"
                     (click)="valueOptionClick(i)"
                   />
-                  <mat-icon matSuffix class="arrow">arrow_drop_down</mat-icon>
-
                   <mat-autocomplete #autoValue="matAutocomplete">
                     <mat-option
                       *ngFor="let value of filteredValues$ | async"
