@@ -448,7 +448,6 @@ export class PlansComponent implements OnInit, OnDestroy {
       this.users$
     ]).pipe(
       map(([roundPlans, scrollData, roundPlanScheduleConfigurations]) => {
-        this.isLoading$.next(false);
         if (this.skip === 0) {
           this.initial.data = this.formatRoundPlans(
             roundPlans.rows,
@@ -556,11 +555,12 @@ export class PlansComponent implements OnInit, OnDestroy {
       fetchType: this.fetchType,
       roundPlanId: this.roundPlanId
     };
-
+    this.isLoading$.next(true);
     return this.operatorRoundsService
       .getPlansList$({ ...obj, ...this.filter })
       .pipe(
         tap(({ scheduledCount, unscheduledCount, next }) => {
+          this.isLoading$.next(false);
           this.nextToken = next !== undefined ? next : null;
           const { scheduled, unscheduled } = this.roundPlanCounts;
           this.roundPlanCounts = {
@@ -824,9 +824,6 @@ export class PlansComponent implements OnInit, OnDestroy {
       if (roundPlanScheduleConfigurations[roundPlan.id]) {
         return {
           ...roundPlan,
-          schedule: this.getFormatedSchedule(
-            roundPlanScheduleConfigurations[roundPlan.id]
-          ),
           scheduleDates: this.getFormatedScheduleDates(
             roundPlanScheduleConfigurations[roundPlan.id]
           ),

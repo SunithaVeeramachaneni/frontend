@@ -169,8 +169,8 @@ export class RaceDynamicFormService {
       filterData && filterData.status ? filterData.status : ''
     );
     params.set(
-      'modifiedBy',
-      filterData && filterData.modifiedBy ? filterData.modifiedBy : ''
+      'publishedBy',
+      filterData && filterData.publishedBy ? filterData.publishedBy : ''
     );
     params.set(
       'createdBy',
@@ -206,10 +206,6 @@ export class RaceDynamicFormService {
     params.set(
       'formStatus',
       filterData && filterData.status ? filterData.status : ''
-    );
-    params.set(
-      'modifiedBy',
-      filterData && filterData.modifiedBy ? filterData.modifiedBy : ''
     );
     params.set(
       'lastModifiedOn',
@@ -833,7 +829,6 @@ export class RaceDynamicFormService {
     params.set('next', '');
     params.set('fetchType', 'load');
     params.set('isArchived', 'false');
-    params.set('modifiedBy', '');
     params.set('formStatus', '');
     params.set('authoredBy', '');
     params.set('lastModifiedOn', '');
@@ -851,7 +846,6 @@ export class RaceDynamicFormService {
     params.set('next', '');
     params.set('fetchType', 'load');
     params.set('isArchived', 'true');
-    params.set('modifiedBy', '');
     params.set('formStatus', '');
     params.set('authoredBy', '');
     params.set('lastModifiedOn', '');
@@ -869,7 +863,6 @@ export class RaceDynamicFormService {
     params.set('next', '');
     params.set('fetchType', 'load');
     params.set('isArchived', 'false');
-    params.set('modifiedBy', '');
     params.set('formStatus', '');
     params.set('authoredBy', '');
     params.set('lastModifiedOn', '');

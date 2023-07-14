@@ -30,6 +30,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { OverlayModule } from '@angular/cdk/overlay';
 
 import { ResponseTypeSideDrawerComponent } from './components/response-type-side-drawer/response-type-side-drawer.component';
 
@@ -216,7 +217,8 @@ import { UserNameByEmailPipe } from './pipes';
     NgxEchartsModule.forRoot({
       echarts
     }),
-    MatToolbarModule
+    MatToolbarModule,
+    OverlayModule
   ],
   exports: [
     FormWidgetComponent,

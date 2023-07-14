@@ -7,9 +7,9 @@
     "value": ""
   },
   {
-    "label": "Modified By",
+    "label": "Last Published by",
     "items": [],
-    "column": "modifiedBy",
+    "column": "publishedBy",
     "type": "multiple",
     "value": ""
   },
