@@ -7,7 +7,8 @@ import {
   ElementRef,
   EventEmitter,
   Output,
-  Input
+  Input,
+  OnDestroy
 } from '@angular/core';
 import { LoginService } from 'src/app/components/login/services/login.service';
 import {
@@ -55,7 +56,7 @@ import { RaceDynamicFormService } from '../services/rdf.service';
   styleUrls: ['./form-configuration.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FormConfigurationComponent implements OnInit {
+export class FormConfigurationComponent implements OnInit, OnDestroy {
   @ViewChild('name') formName: ElementRef;
   @Output() gotoNextStep = new EventEmitter<void>();
   @Input() data;
@@ -570,5 +571,13 @@ export class FormConfigurationComponent implements OnInit {
     this.dialog.open(SaveTemplateContainerComponent, {
       data: this.formDetails
     });
+  }
+
+  ngOnDestroy(): void {
+    if (this.authoredFormDetailSubscription) {
+      this.authoredFormDetailSubscription.unsubscribe();
+    }
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 }
