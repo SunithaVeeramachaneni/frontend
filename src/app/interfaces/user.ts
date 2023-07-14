@@ -31,10 +31,12 @@ export interface UserDetails {
   createdAt?: string;
   updatedAt?: string;
   roles: any[];
+  usergroup: any[];
   validFrom: string;
   validThrough: string;
   plantId: string;
   displayRoles?: string;
+  displayUsergroup?: string;
 }
 
 export interface UserInfo extends UserDetails {
