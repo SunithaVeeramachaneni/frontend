@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import { map, tap } from 'rxjs/operators';
-import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription, of } from 'rxjs';
 import {
   Component,
   EventEmitter,
@@ -52,12 +52,14 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   @Output() formDetailAction: EventEmitter<any> = new EventEmitter();
   @Output() scheduleRoundPlan: EventEmitter<RoundPlanDetail> =
     new EventEmitter();
+  @Output() showAffectedForms: EventEmitter<any> = new EventEmitter();
   @Input() selectedForm: any | RoundPlan | RoundPlanDetail | RoundDetail = null;
   @Input() moduleName = 'RDF';
   @Input() showPDFDownload = false;
   @Input() formStatus = formConfigurationStatus.draft;
   @Input() formDetailType = 'Authored';
   @Input() shiftObj: any;
+  @Input() isTemplate: boolean;
   @Input() set scheduleConfiguration(
     scheduleConfiguration: any | RoundPlanScheduleConfiguration
   ) {
@@ -72,6 +74,7 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   plantMapSubscription: Subscription;
   currentPage = 1;
   selectedFormDetail$: Observable<any> = null;
+  operatorRoundsModule = 'OPERATOR_ROUNDS';
   defaultFormName = null;
   pagesCount = 0;
   questionsCount = 0;
@@ -82,6 +85,7 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   pdfButtonDisabled = false;
   plantTimezoneMap: any;
   slotArr = [];
+  templatesUsed = [];
   readonly dateTimeFormat = dateTimeFormat2;
   readonly dateFormat = dateFormat2;
   readonly formConfigurationStatus = formConfigurationStatus;
@@ -113,6 +117,9 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
           this.formStatus
         );
       }
+      if (this.isTemplate) {
+        formDetail$ = of(this.selectedForm.authoredFormTemplateDetails[0]);
+      }
       this.selectedFormDetail$ = formDetail$.pipe(
         map((formDetail: any) => {
           this.pagesCount = 0;
@@ -137,6 +144,10 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
               this.questionsCount += page?.questions?.length || 0;
               this.pagesCount += 1;
             });
+            this.templatesUsed = [];
+            if (formDetail?.templatesUsed?.length) {
+              this.templatesUsed = formDetail.templatesUsed;
+            }
           }
           return data;
         })
@@ -315,6 +326,11 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
 
   isDayOfWeekSelected(daysOfWeek, dayIndex) {
     return daysOfWeek.includes(dayIndex);
+  }
+
+  showAffectedTemplateForms() {
+    if (this.selectedForm?.formsUsageCount)
+      this.showAffectedForms.emit(this.selectedForm);
   }
 
   private toggleLoader(action: boolean): void {

@@ -46,6 +46,7 @@ import { ImageComponent } from './components/field-types/image/image.component';
 import { GlobalResponseTypeSideDrawerComponent } from './components/global-response-type-side-drawer/global-response-type-side-drawer.component';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { ImportQuestionsSliderComponent } from './components/import-questions/import-questions-slider/import-questions-slider.component';
+import { ImportTemplateQuestionsSliderComponent } from './components/import-questions/import-template-questions-slider/import-template-questions-slider.component';
 import { AddPageOrSelectExistingPageModalComponent } from './components/import-questions/add-page-or-select-existing-page-modal/add-page-or-select-existing-page-modal.component';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatDividerModule } from '@angular/material/divider';
@@ -159,6 +160,7 @@ import { UploadImagePreviewComponent } from './components/upload-image-preview/u
     ImageComponent,
     GlobalResponseTypeSideDrawerComponent,
     ImportQuestionsSliderComponent,
+    ImportTemplateQuestionsSliderComponent,
     AddPageOrSelectExistingPageModalComponent,
     HyperlinkSideDrawerComponent,
     BuilderComponent,
@@ -258,6 +260,7 @@ import { UploadImagePreviewComponent } from './components/upload-image-preview/u
     ShowHierarchyPopupComponent,
     AddFilterComponent,
     ImportQuestionsSliderComponent,
+    ImportTemplateQuestionsSliderComponent,
     GlobalResponseTypeSideDrawerComponent,
     BuilderComponent,
     PDFBuilderComponent,

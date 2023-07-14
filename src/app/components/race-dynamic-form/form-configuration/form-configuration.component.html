@@ -132,13 +132,13 @@
         (click)="importQuestions()"
       ></button>
 
-      <button
+      <!-- <button
         mat-stroked-button
         class="import-btn"
         [disabled]="isEmbeddedForm"
         translate="saveAsTemplate"
         (click)="openSaveTemplateDialog()"
-      ></button>
+      ></button> -->
 
       <button mat-stroked-button class="next-btn" (click)="publishOrShowPdf()">
         {{ isEmbeddedForm ? ('publishBtn' | translate) : ('next' | translate) }}
@@ -151,6 +151,7 @@
         [selectedNode]="selectedNode"
         [isPreviewActive]="true"
         [isEmbeddedForm]="isEmbeddedForm"
+        [isTemplate]="false"
         [counter]="formConfiguration.get('counter').value"
         [moduleName]="'forms'"
       ></app-builder>
@@ -179,5 +180,19 @@
       [currentFormData]="currentFormData"
       (cancelSliderEvent)="cancelSlider($event)"
     ></app-import-questions-slider>
+  </div>
+</div>
+
+<div *ngIf="openImportTemplateSider$ | async as openImportTemplateSider">
+  <div *ngIf="openImportTemplateSider">
+    <app-import-template-questions-slider
+      [isFooter]="true"
+      [selectedTemplateName]="selectedFormName"
+      [selectedTemplateData]="selectedFormData"
+      [allTemplates]="allTemplates"
+      [isEmbeddedForm]="isEmbeddedForm"
+      [currentFormData]="currentFormData"
+      (cancelSliderEvent)="cancelTemplateSlider($event)"
+    ></app-import-template-questions-slider>
   </div>
 </div>

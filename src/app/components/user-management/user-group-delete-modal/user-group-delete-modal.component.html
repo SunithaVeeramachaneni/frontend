@@ -1,0 +1,21 @@
+<div class="userGroupDeleteModal">
+  <p class="heading" translate="deleteUserGroupHeading"></p>
+  <p class="subHeading">
+    <span translate="deleteUserGroupSubHeading"></span>
+    <b class="userGroupText">"{{ userGroupName }}"</b>?
+  </p>
+
+  <p class="message" translate="deleteUserGroupModal"></p>
+  <button
+    mat-raised-button
+    class="yes-btn"
+    (click)="deleteUserGroup('yes')"
+    translate="yesBtn"
+  ></button>
+  <button
+    mat-button
+    class="no-btn"
+    (click)="deleteUserGroup('no')"
+    translate="noBtn"
+  ></button>
+</div>

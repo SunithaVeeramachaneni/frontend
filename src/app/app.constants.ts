@@ -23,6 +23,10 @@ export const permissions = Object.freeze({
   createUser: 'CREATE_USER',
   updateUser: 'UPDATE_USER',
   deactivateUser: 'DEACTIVATE_USER',
+  viewUserGroup: 'VIEW_USER_GROUPS',
+  createUserGroup: 'CREATE_USER_GROUP',
+  editUserGroup: 'EDIT_USER_GROUP',
+  deleteUserGroup: 'DELETE_USER_GROUP',
   viewRoles: 'VIEW_ROLES',
   createRole: 'CREATE_ROLE',
   updateRole: 'UPDATE_ROLE',
@@ -184,6 +188,11 @@ export const routingUrls = {
     url: '/user-management/roles-permissions',
     title: 'Roles & Permissions',
     permission: permissions.viewRoles
+  },
+  userGroups: {
+    url: '/user-management/user-groups',
+    title: 'User Groups',
+    permission: permissions.viewUserGroup
   },
   inActiveUsers: {
     url: '/user-management/inactive-users',
@@ -362,7 +371,7 @@ export const DEFAULT_PDF_BUILDER_CONFIG = {
 export const EXCEL_TYPE =
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 export const EXCEL_EXTENSION = '.xlsx';
-export const DEFAULT_TEMPLATE_PAGES = [
+export const DEFAULT_TEMPLATE_PAGES_STANDALONE = [
   {
     name: 'Page',
     position: 1,
@@ -377,7 +386,7 @@ export const DEFAULT_TEMPLATE_PAGES = [
     ],
     questions: [
       {
-        id: 'Q1',
+        id: 'TQ1',
         sectionId: 'S1',
         name: 'Site Conducted',
         fieldType: 'TF',
@@ -394,7 +403,7 @@ export const DEFAULT_TEMPLATE_PAGES = [
         rangeMetadata: {}
       },
       {
-        id: 'Q2',
+        id: 'TQ2',
         sectionId: 'S1',
         name: 'Conducted On',
         fieldType: 'DT',
@@ -413,7 +422,7 @@ export const DEFAULT_TEMPLATE_PAGES = [
         time: true
       },
       {
-        id: 'Q3',
+        id: 'TQ3',
         sectionId: 'S1',
         name: 'Performed By',
         fieldType: 'TF',
@@ -430,7 +439,95 @@ export const DEFAULT_TEMPLATE_PAGES = [
         rangeMetadata: {}
       },
       {
-        id: 'Q4',
+        id: 'TQ4',
+        sectionId: 'S1',
+        name: 'Location',
+        fieldType: 'GAL',
+        position: 4,
+        required: false,
+        enableHistory: false,
+        multi: false,
+        value: 'TF',
+        isPublished: false,
+        isPublishedTillSave: false,
+        isOpen: true,
+        isResponseTypeModalOpen: false,
+        unitOfMeasurement: 'None',
+        rangeMetadata: {}
+      }
+    ],
+    logics: []
+  }
+];
+export const DEFAULT_TEMPLATE_PAGES_EMBEDDED = [
+  {
+    name: 'Page',
+    position: 1,
+    isOpen: true,
+    sections: [
+      {
+        id: 'S1',
+        name: 'Section',
+        position: 1,
+        isOpen: true
+      }
+    ],
+    questions: [
+      {
+        id: 'TQ1',
+        sectionId: 'S1',
+        name: 'Site Conducted',
+        fieldType: 'TF',
+        position: 1,
+        required: false,
+        enableHistory: false,
+        multi: false,
+        value: 'TF',
+        isPublished: false,
+        isPublishedTillSave: false,
+        isOpen: true,
+        isResponseTypeModalOpen: false,
+        unitOfMeasurement: 'None',
+        rangeMetadata: {}
+      },
+      {
+        id: 'TQ2',
+        sectionId: 'S1',
+        name: 'Conducted On',
+        fieldType: 'DF',
+        position: 2,
+        required: false,
+        enableHistory: false,
+        multi: false,
+        value: 'TF',
+        isPublished: false,
+        isPublishedTillSave: false,
+        isOpen: true,
+        isResponseTypeModalOpen: false,
+        unitOfMeasurement: 'None',
+        rangeMetadata: {},
+        date: true,
+        time: true
+      },
+      {
+        id: 'TQ3',
+        sectionId: 'S1',
+        name: 'Performed By',
+        fieldType: 'TF',
+        position: 3,
+        required: false,
+        enableHistory: false,
+        multi: false,
+        value: 'TF',
+        isPublished: false,
+        isPublishedTillSave: false,
+        isOpen: true,
+        isResponseTypeModalOpen: false,
+        unitOfMeasurement: 'None',
+        rangeMetadata: {}
+      },
+      {
+        id: 'TQ4',
         sectionId: 'S1',
         name: 'Location',
         fieldType: 'GAL',

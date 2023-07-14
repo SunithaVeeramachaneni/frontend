@@ -1,0 +1,34 @@
+<div *ngIf="{ formMetadata: formMetadata$ | async }">
+  <div class="custom-form-field-gray-color search">
+    <mat-form-field class="width-100" appearance="outline">
+      <mat-icon matPrefix class="searchIcon">search</mat-icon>
+      <input
+        matInput
+        type="text"
+        [placeholder]="'searchForms' | translate"
+        autocomplete="off"
+        [formControl]="searchForm"
+      />
+      <svg-icon matSuffix icon="icon-filterIcon" class="filter-icon"></svg-icon>
+    </mat-form-field>
+  </div>
+
+  <div *ngIf="(forms$ | async) && (isLoading$ | async) === false">
+    <cwp-dynamictable
+      [dataSource]="dataSource"
+      [configOptions]="configOptions"
+      (fetchDataCallback)="handleTableEvent($event)"
+      (cellClickActionHandler)="cellClickActionHandler($event)"
+      class="width-100"
+    ></cwp-dynamictable>
+  </div>
+</div>
+
+<div *ngIf="isLoading$ | async">
+  <div>
+    <div *ngFor="let number of ghostLoading">
+      <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+      </ngx-shimmer-loading>
+    </div>
+  </div>
+</div>

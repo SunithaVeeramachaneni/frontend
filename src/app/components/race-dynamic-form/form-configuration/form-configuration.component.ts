@@ -78,9 +78,11 @@ export class FormConfigurationComponent implements OnInit {
   isFormDetailPublished: string;
   formMetadata: FormMetadata;
   formListVersion: number;
-  openAppSider$: Observable<any>;
+  public openAppSider$: Observable<any>;
+  public openImportTemplateSider$: Observable<any>;
   selectedFormName: string;
   selectedFormData: any;
+  allTemplates: any;
   currentFormData: any;
   isEmbeddedForm: boolean;
   errors: ValidationError = {};
@@ -520,12 +522,15 @@ export class FormConfigurationComponent implements OnInit {
         selectedFormData: '',
         selectedFormName: '',
         openImportQuestionsSlider: false,
-        isEmbeddedForm: this.isEmbeddedForm
+        openImportTemplateQuestionsSlider: false,
+        isEmbeddedForm: this.isEmbeddedForm,
+        allTemplates: []
       }
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       this.selectedFormData = result.selectedFormData;
+      this.allTemplates = result.allTemplates;
       this.selectedFormName = result.selectedFormName;
       this.authoredFormDetailSubscription = this.authoredFormDetail$.subscribe(
         (pagesData) => {
@@ -533,12 +538,19 @@ export class FormConfigurationComponent implements OnInit {
         }
       );
       this.openAppSider$ = of(result.openImportQuestionsSlider);
+      this.openImportTemplateSider$ = of(
+        result.openImportTemplateQuestionsSlider
+      );
       this.cdrf.markForCheck();
     });
   }
 
   cancelSlider(event) {
     this.openAppSider$ = of(event);
+  }
+
+  cancelTemplateSlider(event) {
+    this.openImportTemplateSider$ = of(event);
   }
 
   publishOrShowPdf() {
