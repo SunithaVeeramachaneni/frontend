@@ -83,10 +83,10 @@
   "deleteUserGroupHeading": "Confirm Delete",
   "deleteUserGroupSubHeading": "Do you want to delete ",
   "deleteUserGroupModal": "All the rounds assigned to this User Group will become unassigned automatically. You may to assigned them back.",
-  "removeUserheading": "Confirm Remove User",
+  "removeUserHeading": "Confirm Remove User",
   "removeUserMessage": "All the rounds assigned to this user will become unassigned automatically.You may have to assign them again.",
   "removeBtn": "Remove User",
-  "usergroup": "User Group",
-  "usergroups": "User Group is Required",
+  "userGroup": "User Group",
+  "userGroupsRequired": "User Group is Required",
   "doneBtn": "Done"
 }
