@@ -49,6 +49,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { LoginService } from '../../login/services/login.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { UsersService } from '../../user-management/services/users.service';
+import { FullScreenFormCreationComponent } from '../full-screen-form-creation/full-screen-form-creation.component';
 
 @Component({
   selector: 'app-form-list',
@@ -692,20 +693,41 @@ export class FormListComponent implements OnInit, OnDestroy {
   openCreateFromTemplateModal() {
     const dialogRef = this.dialog.open(CreateFromTemplateModalComponent, {});
     dialogRef.afterClosed().subscribe((data) => {
-      if (data.selectedTemplate) {
+      if (data?.selectedTemplate) {
         this.openFormCreationModal(data.selectedTemplate);
       }
     });
   }
 
   openFormCreationModal(data: any) {
-    this.dialog.open(FormConfigurationModalComponent, {
+    const dialogRef = this.dialog.open(FullScreenFormCreationComponent, {
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',
       width: '100%',
       panelClass: 'full-screen-modal',
-      data
+      data: {
+        formData: data,
+        type: 'add'
+      }
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      const formData = result.data === undefined ? {} : result;
+      if (Object.keys(formData.data).length !== 0) {
+        this.raceDynamicFormService.fetchForms$.next({ data: 'search' });
+        this.formsListCountUpdate$.next(1);
+        if (result.type === 'add') {
+          this.toast.show({
+            text: 'Form created successfully',
+            type: 'success'
+          });
+        } else if (result.type === 'publish') {
+          this.toast.show({
+            text: 'Form published successfully',
+            type: 'success'
+          });
+        }
+      }
     });
   }
 

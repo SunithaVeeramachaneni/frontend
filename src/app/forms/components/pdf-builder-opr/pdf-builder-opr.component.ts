@@ -3,24 +3,19 @@
 import {
   Component,
   OnInit,
+  Inject,
   ChangeDetectionStrategy,
   ViewChild,
   ElementRef,
-  OnDestroy,
-  Input,
-  EventEmitter,
-  Output
+  OnDestroy
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { Observable, Subject, Subscription } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
 import { ToastService } from 'src/app/shared/toast';
-import {
-  formConfigurationStatus,
-  operatorRounds,
-  raceDynamicForms
-} from 'src/app/app.constants';
+import { formConfigurationStatus } from 'src/app/app.constants';
 import { FormMetadata } from 'src/app/interfaces';
 import { getSelectedHierarchyList } from '../../state';
 import {
@@ -48,17 +43,15 @@ import { LoginService } from 'src/app/components/login/services/login.service';
 import { format } from 'date-fns';
 
 @Component({
-  selector: 'app-pdf-builder',
-  templateUrl: './pdf-builder.component.html',
-  styleUrls: ['./pdf-builder.component.scss'],
+  selector: 'app-pdf-builder-opr',
+  templateUrl: './pdf-builder-opr.component.html',
+  styleUrls: ['./pdf-builder-opr.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PDFBuilderComponent implements OnInit, OnDestroy {
+export class PdfBuilderOprComponent implements OnInit, OnDestroy {
   @ViewChild('myPDF', { static: false }) myPDF!: ElementRef;
   @ViewChild('content', { static: false }) content: ElementRef;
-  @Input() moduleName;
-  @Output() publishedEvent = new EventEmitter<void>();
-  authoredFormDetailSubscription: Subscription;
+
   loadPDFBuilderConfig$: Observable<any>;
 
   authoredFormDetail$: Observable<any>;
@@ -110,8 +103,6 @@ export class PDFBuilderComponent implements OnInit, OnDestroy {
   currentUserName = '';
 
   readonly formConfigurationStatus = formConfigurationStatus;
-  readonly operatorRounds = operatorRounds;
-  readonly raceDynamicForms = raceDynamicForms;
   private onDestroy$ = new Subject();
 
   constructor(
@@ -119,8 +110,10 @@ export class PDFBuilderComponent implements OnInit, OnDestroy {
     private store: Store<State>,
     private router: Router,
     public assetHierarchyUtil: AssetHierarchyUtil,
+    public dialogRef: MatDialogRef<PdfBuilderOprComponent>,
     private loginService: LoginService,
-    private toast: ToastService
+    private toast: ToastService,
+    @Inject(MAT_DIALOG_DATA) public data
   ) {}
 
   ngOnInit(): void {
@@ -147,19 +140,20 @@ export class PDFBuilderComponent implements OnInit, OnDestroy {
           if (formDetailPublishStatus === 'Draft') this.inDraftState = true;
           this.formDetailPublishStatus = formDetailPublishStatus;
           if (formDetailPublishStatus === 'Published' && this.inDraftState) {
-            if (this.moduleName === this.operatorRounds) {
+            if (this.data.moduleName === 'OPERATOR_ROUNDS') {
               this.toast.show({
                 text: 'Round published successfully',
                 type: 'success'
               });
               this.router.navigate(['/operator-rounds']);
-            } else if (this.moduleName === this.raceDynamicForms) {
+              this.dialogRef.close();
+            } else if (this.data.moduleName === 'RDF') {
               this.toast.show({
                 text: 'Form published successfully',
                 type: 'success'
               });
               this.router.navigate(['/forms']);
-              this.publishedEvent.emit();
+              this.dialogRef.close();
             }
           }
           if (
@@ -170,7 +164,7 @@ export class PDFBuilderComponent implements OnInit, OnDestroy {
         })
       );
 
-    if (this.moduleName && this.moduleName === this.operatorRounds) {
+    if (this.data.moduleName && this.data.moduleName === 'OPERATOR_ROUNDS') {
       this.store.select(getSelectedHierarchyList).subscribe((data) => {
         this.selectedFlatHierarchy =
           this.assetHierarchyUtil.convertHierarchyToFlatList(data, 0);
@@ -209,7 +203,7 @@ export class PDFBuilderComponent implements OnInit, OnDestroy {
           })
         );
 
-        if (this.moduleName && this.moduleName === this.raceDynamicForms) {
+        if (this.data.moduleName && this.data.moduleName === 'RDF') {
           this.store.dispatch(
             BuilderConfigurationActions.updateForm({
               formMetadata: this.formMetadata,
@@ -246,7 +240,7 @@ export class PDFBuilderComponent implements OnInit, OnDestroy {
           })
         );
 
-        if (this.moduleName && this.moduleName === this.raceDynamicForms) {
+        if (this.data.moduleName && this.data.moduleName === 'RDF') {
           this.store.dispatch(
             BuilderConfigurationActions.updateForm({
               formMetadata: this.formMetadata,
@@ -501,6 +495,10 @@ export class PDFBuilderComponent implements OnInit, OnDestroy {
     return format(new Date(), 'M/d/yy');
   }
 
+  onCancel(): void {
+    this.dialogRef.close();
+  }
+
   get getAssetsLocationsTasksAdded(): boolean {
     return (
       (this.totalLocationsCount === 0 || this.totalAssetsCount === 0) &&
@@ -509,9 +507,6 @@ export class PDFBuilderComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.authoredFormDetailSubscription) {
-      this.authoredFormDetailSubscription.unsubscribe();
-    }
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }

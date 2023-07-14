@@ -116,6 +116,10 @@ import { PreviewForEmbeddedFormsComponent } from './components/preview-for-embed
 import { UserNameByEmailPipe } from './pipes';
 import { ShiftMenuItemComponent } from './components/shift-menu-item/shift-menu-item.component';
 import { ShiftDateChangeWarningModalComponent } from './components/shift-date-change-warning-modal/shift-date-change-warning-modal.component';
+import { DynamicStepperComponent } from './components/stepper/dynamic-stepper/dynamic-stepper.component';
+import { StepsHeaderComponent } from './components/stepper/steps-header/steps-header.component';
+import { MatStepperModule } from '@angular/material/stepper';
+import { PdfBuilderOprComponent } from './components/pdf-builder-opr/pdf-builder-opr.component';
 import { UploadImagePreviewComponent } from './components/upload-image-preview/upload-image-preview.component';
 @NgModule({
   declarations: [
@@ -190,7 +194,10 @@ import { UploadImagePreviewComponent } from './components/upload-image-preview/u
     PreviewForEmbeddedFormsComponent,
     UserNameByEmailPipe,
     ShiftMenuItemComponent,
-    ShiftDateChangeWarningModalComponent
+    ShiftDateChangeWarningModalComponent,
+    DynamicStepperComponent,
+    StepsHeaderComponent,
+    PdfBuilderOprComponent
   ],
   imports: [
     SharedModule,
@@ -234,7 +241,8 @@ import { UploadImagePreviewComponent } from './components/upload-image-preview/u
     NgxEchartsModule.forRoot({
       echarts
     }),
-    MatToolbarModule
+    MatToolbarModule,
+    MatStepperModule
   ],
   exports: [
     FormWidgetComponent,
@@ -274,6 +282,10 @@ import { UploadImagePreviewComponent } from './components/upload-image-preview/u
     IphoneForEmbeddedFormsComponent,
     PreviewForEmbeddedFormsComponent,
     UserNameByEmailPipe,
+    ShiftMenuItemComponent,
+    DynamicStepperComponent,
+    StepsHeaderComponent,
+    PdfBuilderOprComponent,
     InstructionPdfComponent,
     ShiftMenuItemComponent
   ]

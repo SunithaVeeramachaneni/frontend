@@ -7,6 +7,12 @@
     formDetailPublishStatus: formDetailPublishStatus$ | async
   } as props"
 >
+  <div class="dialogHead">
+    <button (click)="onCancel()" class="back-btn">
+      <svg-icon icon="icon-back-arrow" class="back-arrow"></svg-icon>
+      <span class="back-btn-text" translate="backBtn"></span>
+    </button>
+  </div>
   <div class="dialogContainer">
     <div class="left">
       <h2
@@ -92,18 +98,12 @@
 
           <span
             class="option"
+            formControlName="questions"
             class="checkbox bottomBorder questions"
             [ngClass]="{ indeterminate: areQuestionsIndeterminate() }"
             (click)="toggleAllQuestions($event)"
           >
-            <span
-              *ngIf="moduleName === raceDynamicForms"
-              translate="question"
-            ></span>
-            <span
-              *ngIf="moduleName !== raceDynamicForms"
-              translate="tasks"
-            ></span>
+            <span translate="tasks"></span>
           </span>
 
           <span class="option m-l-50">
@@ -187,7 +187,7 @@
             [disabled]="
               formStatus === 'Published' ||
               props.authoredFormDetail.isFormDetailPublished ||
-              (getAssetsLocationsTasksAdded && moduleName !== raceDynamicForms)
+              (getAssetsLocationsTasksAdded && data.moduleName !== 'RDF')
             "
           >
             <span>
@@ -250,7 +250,7 @@
               <span
                 class="formName-gray"
                 *ngIf="pdfBuilderConfigurationsForm.get('formTitle').value"
-                >{{ formMetadata?.name }}</span
+                >{{ formMetadata.name }}</span
               >
             </div>
             <div
@@ -272,10 +272,10 @@
                   <span
                     class="name"
                     *ngIf="pdfBuilderConfigurationsForm.get('formTitle').value"
-                    >{{ formMetadata?.name }}</span
+                    >{{ formMetadata.name }}</span
                   >
                   <span class="discribe">{{
-                    formMetadata?.description ? formMetadata?.description : '--'
+                    formMetadata.description ? formMetadata.description : ''
                   }}</span>
                 </div>
               </div>
@@ -315,7 +315,7 @@
             >
               <div class="tasksHead">
                 <span translate="questions"></span>
-                <span *ngIf="moduleName !== raceDynamicForms">
+                <span *ngIf="data.moduleName !== 'RDF'">
                   <span
                     >Total Locations: {{ totalLocationsCount }}, Assets:
                     {{ totalAssetsCount }}, Tasks:
@@ -323,7 +323,7 @@
                   </span>
                 </span>
               </div>
-              <div *ngIf="moduleName !== raceDynamicForms">
+              <div *ngIf="data.moduleName !== 'RDF'">
                 <div class="actionCell" *ngIf="selectedFlatHierarchy">
                   <div
                     *ngFor="let node of selectedFlatHierarchy"
@@ -362,7 +362,7 @@
                   </div>
                 </div>
               </div>
-              <div *ngIf="moduleName === raceDynamicForms">
+              <div *ngIf="data.moduleName === 'RDF'">
                 <div class="actionCell">
                   <div
                     class="hierarchyNodeContainer"
@@ -407,13 +407,13 @@
           class="formName"
           *ngIf="pdfBuilderConfigurationsForm.get('formTitle').value"
         >
-          {{ formMetadata?.name }}
+          {{ formMetadata.name }}
         </div>
         <div
           class="roundId"
           *ngIf="pdfBuilderConfigurationsForm.get('formId').value"
         >
-          <b> Id:</b> {{ formMetadata?.id }}
+          <b> Id:</b> {{ formMetadata.id }}
         </div>
       </div>
 
@@ -431,7 +431,7 @@
           </tr>
           <tr>
             <td>
-              {{ formMetadata?.description ? formMetadata?.description : '--' }}
+              {{ formMetadata.description ? formMetadata.description : '--' }}
             </td>
           </tr>
         </table>
@@ -445,7 +445,7 @@
           </tr>
           <tr>
             <td>
-              {{ ' ' + formMetadata?.plant }}
+              {{ ' ' + formMetadata.plant }}
             </td>
             <td>Weekly</td>
             <td>Shift A</td>
@@ -594,7 +594,7 @@
       <span
         class="formName-gray"
         *ngIf="pdfBuilderConfigurationsForm.get('formTitle').value"
-        >{{ formMetadata?.name }}</span
+        >{{ formMetadata.name }}</span
       >
     </div>
     <div
@@ -763,7 +763,7 @@
       <span
         class="formName-gray"
         *ngIf="pdfBuilderConfigurationsForm.get('formTitle').value"
-        >{{ formMetadata?.name }}</span
+        >{{ formMetadata.name }}</span
       >
     </div>
     <div *ngIf="!pdfBuilderConfigurationsForm.get('issues').value">
@@ -778,10 +778,10 @@
           <span
             class="name"
             *ngIf="pdfBuilderConfigurationsForm.get('formTitle').value"
-            >{{ formMetadata?.name }}</span
+            >{{ formMetadata.name }}</span
           >
           <span class="discribe">{{
-            formMetadata?.description ? formMetadata?.description : '--'
+            formMetadata.description ? formMetadata.description : ''
           }}</span>
         </div>
       </div>
