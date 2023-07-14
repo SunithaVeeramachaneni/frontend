@@ -397,9 +397,7 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
               ...this.headerDataForm.value,
               id: this.formData.formMetadata.id,
               additionalDetails: updatedAdditionalDetails,
-              pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG,
-              author: userName,
-              formLogo: 'assets/rdf-forms-icons/formlogo.svg'
+              pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG
             },
             formListDynamoDBVersion: this.formData.formListDynamoDBVersion
           })
