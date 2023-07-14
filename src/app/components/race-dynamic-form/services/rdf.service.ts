@@ -291,6 +291,7 @@ export class RaceDynamicFormService {
     if (!formMetadata.id) {
       return;
     }
+    delete formMetadata.isOpen;
     return this.appService.patchData(
       environment.rdfApiUrl,
       `forms/${formMetaDataDetails.formMetadata.id}`,
