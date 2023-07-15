@@ -12,6 +12,7 @@ import { TemplateConfigurationComponent } from './template-configuration/templat
 import { TemplateResolverService } from './services/template-resolver.service';
 import { TemplateContainerComponent } from './template-container/template-container.component';
 import { InspectionObservationsComponent } from './inspection-observations/inspection-observations.component';
+import { FormViewComponent } from './full-screen-form-creation/form-view.component';
 
 const routes: Routes = [
   {
@@ -25,21 +26,19 @@ const routes: Routes = [
     children: [
       {
         path: 'create',
-        component: FormConfigurationComponent,
+        component: FormViewComponent,
         canActivate: [AuthGuard],
         resolve: { form: FormResolverService },
         data: {
-          breadcrumb: { label: 'Untitled Form', alias: 'formName' },
           permissions: [permissions.createForm]
         }
       },
       {
         path: 'edit/:id',
-        component: FormConfigurationComponent,
+        component: FormViewComponent,
         canActivate: [AuthGuard],
         resolve: { form: FormResolverService },
         data: {
-          breadcrumb: { label: 'Edit Form', alias: 'formName' },
           permissions: [permissions.updateForm]
         }
       },
@@ -64,6 +63,7 @@ const routes: Routes = [
       {
         path: 'templates',
         component: TemplateContainerComponent,
+        resolve: { form: TemplateResolverService },
         canActivate: [AuthGuard],
         data: {
           breadcrumb: { label: 'Templates' },

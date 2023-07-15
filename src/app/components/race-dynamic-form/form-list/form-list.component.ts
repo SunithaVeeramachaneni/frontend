@@ -41,9 +41,6 @@ import { RaceDynamicFormService } from '../services/rdf.service';
 import { Router } from '@angular/router';
 import { omit } from 'lodash-es';
 import { generateCopyNumber, generateCopyRegex } from '../utils/utils';
-import { Store } from '@ngrx/store';
-import { State } from 'src/app/forms/state';
-import { FormConfigurationActions } from 'src/app/forms/state/actions';
 import { slideInOut } from 'src/app/animations';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 import { CreateFromTemplateModalComponent } from '../create-from-template-modal/create-from-template-modal.component';
@@ -52,6 +49,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { LoginService } from '../../login/services/login.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { UsersService } from '../../user-management/services/users.service';
+import { FullScreenFormCreationComponent } from '../full-screen-form-creation/full-screen-form-creation.component';
 
 @Component({
   selector: 'app-form-list',
@@ -269,12 +267,12 @@ export class FormListComponent implements OnInit, OnDestroy {
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
     conditionalStyles: {
       draft: {
-        'background-color': '#FEF3C7',
-        color: '#92400E'
+        'background-color': '#FFCC00',
+        color: '#000000'
       },
       published: {
-        'background-color': '#D1FAE5',
-        color: '#065f46'
+        'background-color': '#2C9E53',
+        color: '#FFFFFF'
       }
     }
   };
@@ -324,7 +322,6 @@ export class FormListComponent implements OnInit, OnDestroy {
     private readonly toast: ToastService,
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private router: Router,
-    private readonly store: Store<State>,
     private dialog: MatDialog,
     private loginService: LoginService,
     private usersService: UsersService,
@@ -635,10 +632,8 @@ export class FormListComponent implements OnInit, OnDestroy {
   onCloseViewDetail() {
     this.selectedForm = null;
     this.menuState = 'out';
-    this.store.dispatch(FormConfigurationActions.resetPages());
   }
-  formDetailActionHandler(event) {
-    this.store.dispatch(FormConfigurationActions.resetPages());
+  formDetailActionHandler() {
     this.router.navigate([`/forms/edit/${this.selectedForm.id}`]);
   }
 
@@ -698,20 +693,41 @@ export class FormListComponent implements OnInit, OnDestroy {
   openCreateFromTemplateModal() {
     const dialogRef = this.dialog.open(CreateFromTemplateModalComponent, {});
     dialogRef.afterClosed().subscribe((data) => {
-      if (data.selectedTemplate) {
+      if (data?.selectedTemplate) {
         this.openFormCreationModal(data.selectedTemplate);
       }
     });
   }
 
   openFormCreationModal(data: any) {
-    this.dialog.open(FormConfigurationModalComponent, {
+    const dialogRef = this.dialog.open(FullScreenFormCreationComponent, {
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',
       width: '100%',
       panelClass: 'full-screen-modal',
-      data
+      data: {
+        formData: data,
+        type: 'add'
+      }
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      const formData = result.data === undefined ? {} : result;
+      if (Object.keys(formData.data).length !== 0) {
+        this.raceDynamicFormService.fetchForms$.next({ data: 'search' });
+        this.formsListCountUpdate$.next(1);
+        if (result.type === 'add') {
+          this.toast.show({
+            text: 'Form created successfully',
+            type: 'success'
+          });
+        } else if (result.type === 'publish') {
+          this.toast.show({
+            text: 'Form published successfully',
+            type: 'success'
+          });
+        }
+      }
     });
   }
 
@@ -733,7 +749,6 @@ export class FormListComponent implements OnInit, OnDestroy {
   }
 
   private showFormDetail(row: GetFormList): void {
-    this.store.dispatch(FormConfigurationActions.resetPages());
     this.selectedForm = row;
     this.menuState = 'in';
   }

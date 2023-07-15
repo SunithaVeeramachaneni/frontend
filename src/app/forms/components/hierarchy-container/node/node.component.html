@@ -1,15 +1,16 @@
 <div
   class="node-item"
   *ngIf="{
-    selectedNode: selectedNode$ | async,
-    nodeWiseQuestionsCount: nodeWiseQuestionsCount$ | async
+    selectedNode: selectedNode$ | async
   }"
 >
   <div
     class="parentNode node"
-    [ngClass]="{ active: selectedNode && node && selectedNode.id === node.id }"
-    [attr.data-id]="node ? node.id : null"
-    [attr.id]="node ? 'node-' + node.id : null"
+    [ngClass]="{
+      active: selectedNode && node && selectedNode?.id === node?.id
+    }"
+    [attr.data-id]="node ? node?.id : null"
+    [attr.id]="node ? 'node-' + node?.id : null"
   >
     <div class="left">
       <svg-icon
@@ -39,7 +40,7 @@
       <div
         *ngIf="node.hasChildren && node.children && node.children.length"
         class="childrenHead"
-        [ngClass]="{ inactive: selectedNode.id !== node.id }"
+        [ngClass]="{ inactive: selectedNode?.id !== node?.id }"
       >
         <span
           class="expandCollapseBtn"
@@ -68,7 +69,7 @@
       <span
         class="nodeCount"
         [ngClass]="{
-          nodeCountInvert: selectedNode && node && selectedNode.id === node.id
+          nodeCountInvert: selectedNode && node && selectedNode?.id === node?.id
         }"
       >
         {{ getTasksCountByNode(node) }}
@@ -124,13 +125,14 @@
       cdkDropList
       class="node-children"
       [cdkDropListData]="node.children"
-      [id]="node.id"
+      [id]="node?.id"
       [cdkDropListConnectedTo]="dropTargetIds"
       [cdkDropListSortingDisabled]="true"
     >
       <app-node
         class="node-item"
         [node]="node"
+        [nodeWiseQuestionsCount]="nodeWiseQuestionsCount"
         [hierarchyMode]="hierarchyMode"
         [dropTargetIds]="dropTargetIds"
         *ngFor="let node of node.children"

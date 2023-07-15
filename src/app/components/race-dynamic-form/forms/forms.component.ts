@@ -56,9 +56,6 @@ import {
   permissions as perms
 } from 'src/app/app.constants';
 import { LoginService } from '../../login/services/login.service';
-import { FormConfigurationActions } from 'src/app/forms/state/actions';
-import { Store } from '@ngrx/store';
-import { State } from 'src/app/state/app.state';
 import { ActivatedRoute, Router } from '@angular/router';
 import { slideInOut } from 'src/app/animations';
 import { DatePipe } from '@angular/common';
@@ -377,7 +374,6 @@ export class FormsComponent implements OnInit, OnDestroy {
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private loginService: LoginService,
-    private store: Store<State>,
     private router: Router,
     private formScheduleConfigurationService: FormScheduleConfigurationService,
     private datePipe: DatePipe,
@@ -470,7 +466,7 @@ export class FormsComponent implements OnInit, OnDestroy {
           this.shiftIdNameMap[shift.id] = shift.name;
         });
         this.allPlants = plants;
-        this.allShifts = shifts.items.filter((s) => s.isActive);
+        this.allShifts = shifts?.items?.filter((s) => s?.isActive) || [];
         for (const item of this.filterJson) {
           if (item.column === 'shiftId') {
             item.items = Object.values(this.shiftIdNameMap);
@@ -647,12 +643,12 @@ export class FormsComponent implements OnInit, OnDestroy {
   };
 
   prepareActiveShifts(form: any) {
-    const selectedPlant = this.allPlants?.items.find(
+    const selectedPlant = this.allPlants?.items?.find(
       (plant) => plant.id === form.plantId
     );
     const selectedShifts = JSON.parse(selectedPlant?.shifts);
-    const activeShifts = this.allShifts.filter((data) =>
-      selectedShifts.some((shift) => shift.id === data.id)
+    const activeShifts = this.allShifts?.filter((data) =>
+      selectedShifts.some((shift) => shift?.id === data?.id)
     );
     return activeShifts;
   }
@@ -712,7 +708,6 @@ export class FormsComponent implements OnInit, OnDestroy {
   closeFormHandler() {
     this.formDetail = null;
     this.menuState = 'out';
-    this.store.dispatch(FormConfigurationActions.resetPages());
     timer(400)
       .pipe(
         tap(() => {
@@ -726,14 +721,12 @@ export class FormsComponent implements OnInit, OnDestroy {
   openFormHandler(row: ScheduleFormDetail): void {
     this.hideFormDetail = false;
     this.scheduleConfigEventHandler({ slideInOut: 'out' });
-    this.store.dispatch(FormConfigurationActions.resetPages());
     this.formDetail = { ...row };
     this.menuState = 'in';
     this.zIndexDelay = 400;
   }
 
   formDetailActionHandler() {
-    this.store.dispatch(FormConfigurationActions.resetPages());
     this.router.navigate([`/forms/edit/${this.formDetail.id}`]);
   }
 

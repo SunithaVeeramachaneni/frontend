@@ -61,22 +61,24 @@ li.breadcrumb-item.active span {
   height: 16px !important;
   width: 16px !important;
 }
+
 .mat-radio-outer-circle {
   height: 16px !important;
   width: 16px !important;
-  border-color: #3678af;
 }
+
 .mat-radio-inner-circle {
   height: 16px !important;
   width: 16px !important;
-  border-color: #3678af;
 }
+
 .mat-radio-button .mat-radio-ripple {
   height: 32px !important;
   width: 32px !important;
   left: calc(50% - 16px) !important;
   top: calc(50% - 16px) !important;
 }
+
 .mat-button-wrapper {
   position: relative;
   top: 1px !important;
@@ -143,6 +145,17 @@ li.breadcrumb-item.active span {
 
 .display-toolbar .ql-editor {
   padding: 12px 15px !important;
+}
+.notes-field {
+  .ql-editor {
+    padding: 0px 5px !important;
+  }
+  .ql-editor p,
+  .ql-editor ol,
+  .ql-editor ul {
+    margin-bottom: 0rem !important;
+    padding-left: 0;
+  }
 }
 
 .display-toolbar .ql-toolbar.ql-snow {

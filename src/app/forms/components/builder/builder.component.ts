@@ -16,7 +16,8 @@ import {
   SectionEvent,
   Question,
   Section,
-  FormMetadata
+  FormMetadata,
+  Page
 } from 'src/app/interfaces';
 
 import {
@@ -29,7 +30,8 @@ import {
   getSubFormPages,
   getQuestionCounter,
   getPageWiseSectionQuestions,
-  getPageWiseSections
+  getPageWiseSections,
+  getPageWiseQuestionLogics
 } from 'src/app/forms/state/builder/builder-state.selectors';
 
 import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
@@ -61,6 +63,7 @@ export class BuilderComponent implements OnInit {
   @Input() isPreviewActive;
   @Input() moduleName;
   @Input() isEmbeddedForm;
+  @Input() isTemplate;
 
   subFormPages$: Observable<any>;
   pageIndexes$: Observable<number[]>;
@@ -75,8 +78,20 @@ export class BuilderComponent implements OnInit {
   pageWiseSections: any;
   questionCounter$: Observable<number>;
   formMetadata$: Observable<FormMetadata>;
-  pageWiseSectionQuestions$: Observable<any>;
+  pageWiseSectionQuestions$: Observable<{
+    [key: number]: {
+      page: Page;
+      pageQuestionsCount: number;
+    } & {
+      [key: string]: {
+        section: Section;
+        questions: Question[];
+        questionsById: { [key: string]: Question };
+      };
+    };
+  }>;
   pageWiseSections$: Observable<any>;
+  pageWiseQuestionLogics$: Observable<any>;
 
   readonly formConfigurationStatus = formConfigurationStatus;
 
@@ -127,6 +142,9 @@ export class BuilderComponent implements OnInit {
       .pipe(
         tap((pageWiseSections) => (this.pageWiseSections = pageWiseSections))
       );
+    this.pageWiseQuestionLogics$ = this.store.select(
+      getPageWiseQuestionLogics(this.selectedNode.id)
+    );
   }
 
   ngOnInit(): void {}
@@ -140,7 +158,8 @@ export class BuilderComponent implements OnInit {
       this.sectionIndexes,
       this.counter,
       this.selectedNode.id,
-      this.isEmbeddedForm
+      this.isEmbeddedForm,
+      this.isTemplate
     );
   }
 
@@ -156,7 +175,8 @@ export class BuilderComponent implements OnInit {
             this.sectionIndexes,
             this.counter,
             this.selectedNode.id,
-            this.isEmbeddedForm
+            this.isEmbeddedForm,
+            this.isTemplate
           );
         }
         break;
@@ -196,7 +216,8 @@ export class BuilderComponent implements OnInit {
             this.sectionIndexes,
             this.counter,
             this.selectedNode.id,
-            this.isEmbeddedForm
+            this.isEmbeddedForm,
+            this.isTemplate
           );
         }
         break;
@@ -241,7 +262,8 @@ export class BuilderComponent implements OnInit {
             1,
             questionIndex,
             this.counter,
-            this.selectedNode.id
+            this.selectedNode.id,
+            this.isTemplate
           );
         }
         break;
@@ -352,8 +374,9 @@ export class BuilderComponent implements OnInit {
         sectionIndex,
         1,
         questionIndex,
-        1,
-        subFormId
+        this.counter,
+        subFormId,
+        this.isTemplate
       );
     }
   }

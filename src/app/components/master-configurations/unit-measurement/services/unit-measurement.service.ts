@@ -5,7 +5,7 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { groupBy } from 'lodash-es';
 
-import { ErrorInfo, UnitOfMeasurementList } from 'src/app/interfaces';
+import { ErrorInfo } from 'src/app/interfaces';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
 import { ToastService } from 'src/app/shared/toast';
@@ -37,7 +37,8 @@ export class UnitMeasurementService {
       searchKey: string;
       fetchType: string;
     },
-    filter?: { [x: string]: string }
+    filter?: { [x: string]: string },
+    info: ErrorInfo = {} as ErrorInfo
   ) {
     if (
       ['load', 'search'].includes(queryParams?.fetchType) ||
@@ -52,10 +53,18 @@ export class UnitMeasurementService {
       params.set('status', filter?.status ?? '');
       params.set('symbol', filter?.symbol ?? '');
       params.set('unitType', filter?.unitType ?? '');
+      const {
+        displayToast,
+        failureResponse = { items: [], next: null, filters: {} }
+      } = info;
       return this._appService
         ._getResp(
           environment.masterConfigApiUrl,
-          'unit-of-measurement?' + params.toString()
+          'unit-of-measurement?' + params.toString(),
+          {
+            displayToast,
+            failureResponse
+          }
         )
         .pipe(map((data) => this.formatUnitOfMeasurementResponse(data)));
     } else {

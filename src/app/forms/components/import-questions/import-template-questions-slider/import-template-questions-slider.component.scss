@@ -1,0 +1,125 @@
+@import '../../../../../scss/colors.scss';
+
+.import-questions {
+  position: fixed;
+  bottom: 0px;
+  top: 0;
+  right: 0;
+  width: 540px;
+  z-index: 999;
+  background-color: $white;
+  border-left: 1px solid $border-color;
+  box-shadow: -15px 0px 17px -7px rgb(0 0 0 / 46%);
+
+  .slider-heading {
+    padding: 15px 15px 15px 15px;
+    font-size: 80%;
+    border-bottom: 1px solid $gray9;
+    margin: 0;
+    display: flex;
+    align-items: center;
+
+    .back-btn {
+      border: none;
+      background-color: transparent;
+      margin-right: 8px;
+
+      .back-arrow {
+        height: 15px;
+        width: 15px;
+        position: relative;
+        top: 1px;
+      }
+    }
+
+    .import-questions-heading {
+      font-size: 130%;
+    }
+  }
+
+  .form-name {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: space-between;
+    font-weight: 500;
+    font-size: 130%;
+  }
+
+  .mat-card {
+    margin: 0;
+    border-radius: 0;
+    height: 100%;
+    padding: 0;
+  }
+
+  .mat-card-content {
+    padding: 0 15px;
+    height: calc(100vh - 118px);
+    overflow-y: auto;
+  }
+
+  .section-div {
+    background: rgba(61, 90, 254, 0.15);
+    border-radius: 8px 8px 0 0;
+    height: 30px;
+    padding: 10px 0 10px 10px;
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .questions {
+    padding: 8px 16px;
+    border-bottom: 1px solid $gray;
+  }
+
+  .import-form-footer {
+    padding: 0 15px 10px 15px;
+    position: absolute;
+    bottom: 0;
+    display: flex;
+    padding: 10px;
+    align-items: center;
+    width: 94%;
+    justify-content: center;
+
+    .use-button {
+      width: 48%;
+      background-color: $blue-main;
+      color: $white;
+    }
+
+    .use-button:disabled {
+      background-color: $gray2-bg;
+      color: $gray7;
+    }
+
+    .cancel-button {
+      width: 48%;
+      margin-right: 10px;
+      color: $blue-main;
+    }
+  }
+
+  .page-arrow {
+    position: relative;
+    top: 8px;
+  }
+
+  ::ng-deep .mat-checkbox-layout {
+    white-space: pre-wrap;
+  }
+}
+
+.search {
+  margin: 4px 0px 4px 8px;
+}
+
+.searchIcon {
+  padding: 8px 0;
+}
+
+::ng-deep .mat-form-field-infix {
+  border-top-width: 6px;
+}

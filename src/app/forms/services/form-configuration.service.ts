@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
-import { QuestionComponent } from '../components/question/question.component';
 import {
   NumberRangeMetadata,
   Question,
@@ -43,7 +42,7 @@ export class FormConfigurationService {
     questionCounter: number,
     sectionQuestionsList: SectionQuestions[] = []
   ) {
-    const page = this.getPageObject(
+    const { counter, ...page } = this.getPageObject(
       pageIndex,
       addSections,
       addQuestions,
@@ -57,18 +56,23 @@ export class FormConfigurationService {
         page,
         pageIndex,
         ...this.getFormConfigurationStatuses(),
-        subFormId: null
+        subFormId: null,
+        counter
       })
     );
-
-    this.store.dispatch(
-      BuilderConfigurationActions.updateQuestionState({
-        questionId: page.questions[addQuestions - 1].id,
-        isOpen: true,
-        isResponseTypeModalOpen: false,
-        subFormId: null
-      })
-    );
+    if (
+      sectionQuestionsList.length === 0 ||
+      !sectionQuestionsList[0].section?.isImported
+    ) {
+      this.store.dispatch(
+        BuilderConfigurationActions.updateQuestionState({
+          questionId: page.questions[addQuestions - 1].id,
+          isOpen: true,
+          isResponseTypeModalOpen: false,
+          subFormId: null
+        })
+      );
+    }
   }
 
   addSections(
@@ -80,7 +84,7 @@ export class FormConfigurationService {
     questionCounter: number,
     sectionQuestionsList: SectionQuestions[] = []
   ) {
-    const { sections, questions } = this.getSectionsObject(
+    const { sections, questions, counter, logics } = this.getSectionsObject(
       pageIndex,
       addSections,
       addQuestions,
@@ -95,9 +99,19 @@ export class FormConfigurationService {
         pageIndex,
         sectionIndex,
         ...this.getFormConfigurationStatuses(),
-        subFormId: null
+        subFormId: null,
+        counter
       })
     );
+    if (logics?.length)
+      this.store.dispatch(
+        BuilderConfigurationActions.addLogics({
+          logics,
+          pageIndex,
+          ...this.getFormConfigurationStatuses(),
+          subFormId: null
+        })
+      );
     this.store.dispatch(
       BuilderConfigurationActions.updatePageState({
         pageIndex,
@@ -105,14 +119,19 @@ export class FormConfigurationService {
         subFormId: null
       })
     );
-    this.store.dispatch(
-      BuilderConfigurationActions.updateQuestionState({
-        questionId: questions[addQuestions - 1].id,
-        isOpen: true,
-        isResponseTypeModalOpen: false,
-        subFormId: null
-      })
-    );
+    if (
+      sectionQuestionsList.length === 0 ||
+      !sectionQuestionsList[0].section?.isImported
+    ) {
+      this.store.dispatch(
+        BuilderConfigurationActions.updateQuestionState({
+          questionId: questions[addQuestions - 1].id,
+          isOpen: true,
+          isResponseTypeModalOpen: false,
+          subFormId: null
+        })
+      );
+    }
   }
 
   addQuestions(
@@ -123,16 +142,16 @@ export class FormConfigurationService {
     questionCounter: number,
     questions: Question[] = []
   ) {
-    const sectionQuestions = new Array(addQuestions)
-      .fill(0)
-      .map((q, index) =>
-        this.getQuestion(
-          questionIndex + index,
-          sectionId,
-          questionCounter + index + 1,
-          questions[index]
-        )
+    let counter: number;
+    const sectionQuestions = new Array(addQuestions).fill(0).map((q, index) => {
+      counter = questionCounter + index + 1;
+      return this.getQuestion(
+        questionIndex + index,
+        sectionId,
+        questionCounter + index + 1,
+        questions[index]
       );
+    });
     this.store.dispatch(
       BuilderConfigurationActions.addQuestions({
         questions: sectionQuestions,
@@ -140,7 +159,8 @@ export class FormConfigurationService {
         sectionId,
         questionIndex,
         ...this.getFormConfigurationStatuses(),
-        subFormId: null
+        subFormId: null,
+        counter
       })
     );
     this.store.dispatch(
@@ -151,6 +171,10 @@ export class FormConfigurationService {
         subFormId: null
       })
     );
+  }
+
+  getDefQues() {
+    return this.defField;
   }
 
   private getFormConfigurationStatuses() {
@@ -169,7 +193,7 @@ export class FormConfigurationService {
     questionCounter: number,
     sectionQuestionsList: SectionQuestions[]
   ) {
-    const { sections, questions } = this.getSectionsObject(
+    const { sections, questions, counter, logics } = this.getSectionsObject(
       pageIndex,
       addSections,
       addQuestions,
@@ -184,7 +208,8 @@ export class FormConfigurationService {
       isOpen: true,
       sections,
       questions,
-      logics: []
+      logics,
+      counter
     };
   }
 
@@ -202,6 +227,8 @@ export class FormConfigurationService {
         : 0;
     let sliceStart = 0;
     let questions: Question[] = [];
+    let counter: number;
+    let logics: any[] = [];
 
     const sections = new Array(addSections).fill(0).map((s, sectionIndex) => {
       sectionCount = ++sectionCount;
@@ -209,7 +236,6 @@ export class FormConfigurationService {
         sectionCount,
         sectionQuestionsList[sectionIndex]?.section
       );
-
       const sectionQuestions = new Array(addQuestions)
         .fill(0)
         .slice(
@@ -219,33 +245,54 @@ export class FormConfigurationService {
               ? sectionQuestionsList[sectionIndex]?.questions?.length
               : addQuestions)
         )
-        .map((q, questionIndex) =>
-          this.getQuestion(
+        .map((q, questionIndex) => {
+          counter = questionCounter + sliceStart + questionIndex + 1;
+          return this.getQuestion(
             questionIndex,
-            section.id,
-            questionCounter + sliceStart + questionIndex + 1,
+            sectionQuestionsList[sectionIndex]?.questions[
+              questionIndex
+            ]?.sectionId?.startsWith('AQ')
+              ? sectionQuestionsList[sectionIndex]?.questions[questionIndex]
+                  ?.sectionId
+              : section.id,
+            counter,
             sectionQuestionsList[sectionIndex]?.questions[questionIndex]
-          )
-        );
+          );
+        });
 
       sliceStart += sectionQuestionsList[sectionIndex]?.questions?.length;
       questions = [...questions, ...sectionQuestions];
+      logics = [
+        ...logics,
+        ...(sectionQuestionsList[sectionIndex]?.logics || [])
+      ];
 
       return section;
     });
 
     return {
       sections,
-      questions
+      questions,
+      counter,
+      logics
     };
   }
 
   private getSection(sectionIndex: number, section: Section) {
+    const templateData: any = {};
+    if (section?.isImported === true) {
+      templateData.isImported = section.isImported;
+      templateData.externalSectionId = section.externalSectionId;
+      templateData.templateId = section.templateId;
+      templateData.templateName = section.templateName;
+      templateData.counter = section.counter;
+    }
     return {
       id: `S${uuidv4()}`,
       name: section ? section.name : 'Section',
       position: sectionIndex,
-      isOpen: true
+      isOpen: true,
+      ...templateData
     };
   }
 
@@ -255,11 +302,11 @@ export class FormConfigurationService {
     questionCounter: number,
     question: Question
   ) {
-    this.store.dispatch(
-      BuilderConfigurationActions.updateCounter({ counter: questionCounter })
-    );
     return {
-      id: `Q${questionCounter}`,
+      id:
+        question?.id?.startsWith('TQ') || question?.id?.startsWith('AQ')
+          ? question.id
+          : `Q${questionCounter}`,
       sectionId,
       name: question ? question.name : '',
       fieldType: question ? question.fieldType : 'TF',
@@ -277,9 +324,5 @@ export class FormConfigurationService {
         ? question.rangeMetadata
         : ({} as NumberRangeMetadata)
     };
-  }
-  // eslint-disable-next-line @typescript-eslint/member-ordering
-  getDefQues() {
-    return this.defField;
   }
 }

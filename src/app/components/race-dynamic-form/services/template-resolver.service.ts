@@ -4,11 +4,11 @@ import { Store } from '@ngrx/store';
 import { State } from 'src/app/forms/state';
 import { ActivatedRouteSnapshot } from '@angular/router';
 import { Observable, of } from 'rxjs';
-import { FormConfigurationState } from 'src/app/forms/state/form-configuration.reducer';
 import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
 import { map } from 'rxjs/operators';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { RoundPlanResolverService } from '../../operator-rounds/services/round-plan-resolver.service';
+import { FormConfigurationState } from 'src/app/forms/state/builder/builder.reducer';
 
 @Injectable({
   providedIn: 'root'
@@ -26,6 +26,7 @@ export class TemplateResolverService {
       this.roundPlanResolverServive.getResponseTypeDetails();
       return of({} as FormConfigurationState);
     }
+    this.store.dispatch(BuilderConfigurationActions.resetFormConfiguration());
     return this.raceDynamicFormService.fetchTemplateById$(id).pipe(
       map((form) => {
         this.store.dispatch(
@@ -42,6 +43,7 @@ export class TemplateResolverService {
           formStatus,
           formType,
           tags,
+          instructions,
           authoredFormTemplateDetails
         } = form.rows[0];
         const { counter, pages } = authoredFormTemplateDetails[0];
@@ -54,7 +56,8 @@ export class TemplateResolverService {
           isPublic,
           formStatus,
           formType,
-          tags
+          tags,
+          instructions
         };
         this.roundPlanResolverServive.getResponseTypeDetails(id);
 

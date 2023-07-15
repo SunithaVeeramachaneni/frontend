@@ -59,9 +59,6 @@ import {
   dateTimeFormat5
 } from 'src/app/app.constants';
 import { LoginService } from '../../login/services/login.service';
-import { FormConfigurationActions } from 'src/app/forms/state/actions';
-import { Store } from '@ngrx/store';
-import { State } from 'src/app/state/app.state';
 import { ActivatedRoute, Router } from '@angular/router';
 import { slideInOut } from 'src/app/animations';
 import { RaceDynamicFormService } from '../services/rdf.service';
@@ -496,7 +493,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private loginService: LoginService,
-    private store: Store<State>,
     private router: Router,
     private dialog: MatDialog,
     private toastService: ToastService,
@@ -870,7 +866,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
   onCloseViewDetail() {
     this.selectedForm = null;
     this.menuState = 'out';
-    this.store.dispatch(FormConfigurationActions.resetPages());
     timer(400)
       .pipe(
         tap(() => {
@@ -883,7 +878,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
 
   openInspectionHandler(row: InspectionDetail): void {
     this.hideInspectionDetail = false;
-    this.store.dispatch(FormConfigurationActions.resetPages());
     this.selectedForm = row;
     this.menuState = 'in';
     this.zIndexDelay = 400;
@@ -909,7 +903,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
         this.downloadPDF(this.selectedForm);
       }
     } else {
-      this.store.dispatch(FormConfigurationActions.resetPages());
       this.router.navigate([`/forms/edit/${this.selectedForm.id}`]);
     }
   }

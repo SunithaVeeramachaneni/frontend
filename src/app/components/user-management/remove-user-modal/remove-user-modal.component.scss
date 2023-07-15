@@ -1,0 +1,39 @@
+@import '../../../../scss/colors.scss';
+
+.userRemoveModal {
+  width: 350px;
+  height: auto;
+  overflow: hidden;
+  padding: 17px;
+  background: $white;
+  border-radius: 4px;
+}
+
+.heading {
+  color: $gray-bg;
+  font-size: 110%;
+  font-weight: 600;
+  margin: 0;
+}
+
+.message {
+  font-weight: 400;
+  color: $light-gray;
+}
+
+.yes-btn {
+  background: $red-main;
+  height: 34px;
+  border-radius: 4px;
+  color: $white;
+  float: right;
+  border: none;
+}
+
+.no-btn {
+  color: $blue-main;
+  background: $white;
+  border-radius: 4px;
+  float: right;
+  border: none;
+}

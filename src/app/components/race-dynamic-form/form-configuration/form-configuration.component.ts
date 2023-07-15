@@ -2,10 +2,13 @@ import {
   Component,
   OnInit,
   ChangeDetectionStrategy,
-  OnDestroy,
   ChangeDetectorRef,
   ViewChild,
-  ElementRef
+  ElementRef,
+  EventEmitter,
+  Output,
+  Input,
+  OnDestroy
 } from '@angular/core';
 import { LoginService } from 'src/app/components/login/services/login.service';
 import {
@@ -38,20 +41,12 @@ import {
   getQuestionCounter,
   State
 } from 'src/app/forms/state';
-import { HeaderService } from 'src/app/shared/services/header.service';
-import { BreadcrumbService } from 'xng-breadcrumb';
 import { MatDialog } from '@angular/material/dialog';
 import { ImportQuestionsModalComponent } from '../import-questions/import-questions-modal/import-questions-modal.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { FormConfigurationService } from 'src/app/forms/services/form-configuration.service';
-import { PDFBuilderComponent } from 'src/app/forms/components/pdf-builder/pdf-builder.component';
-import {
-  BuilderConfigurationActions,
-  GlobalResponseActions,
-  QuickResponseActions,
-  UnitOfMeasurementActions
-} from 'src/app/forms/state/actions';
+import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
 import { SaveTemplateContainerComponent } from '../save-template-container/save-template-container.component';
 import { RaceDynamicFormService } from '../services/rdf.service';
 
@@ -63,6 +58,8 @@ import { RaceDynamicFormService } from '../services/rdf.service';
 })
 export class FormConfigurationComponent implements OnInit, OnDestroy {
   @ViewChild('name') formName: ElementRef;
+  @Output() gotoNextStep = new EventEmitter<void>();
+  @Input() data;
   selectedNode = { id: null };
   formConfiguration: FormGroup;
   formMetadata$: Observable<FormMetadata>;
@@ -83,8 +80,10 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   formMetadata: FormMetadata;
   formListVersion: number;
   public openAppSider$: Observable<any>;
+  public openImportTemplateSider$: Observable<any>;
   selectedFormName: string;
   selectedFormData: any;
+  allTemplates: any;
   currentFormData: any;
   isEmbeddedForm: boolean;
   errors: ValidationError = {};
@@ -97,8 +96,6 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private store: Store<State>,
-    private headerService: HeaderService,
-    private breadcrumbService: BreadcrumbService,
     private router: Router,
     private dialog: MatDialog,
     private route: ActivatedRoute,
@@ -149,7 +146,11 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
               ...curr
             } = current;
 
-            if (!isEqual(prev, curr)) {
+            if (
+              !isEqual(prev, curr) &&
+              prev.name !== undefined &&
+              curr.name !== undefined
+            ) {
               this.store.dispatch(
                 BuilderConfigurationActions.updateFormMetadata({
                   formMetadata: curr,
@@ -185,11 +186,6 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
           },
           { emitEvent: false }
         );
-        const formName = name ? name : 'Untitled Form';
-        this.headerService.setHeaderTitle(formName);
-        this.breadcrumbService.set('@formName', {
-          label: formName
-        });
       })
     );
     this.questionCounter$ = this.store.select(getQuestionCounter).pipe(
@@ -229,8 +225,13 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
           formSaveStatus,
           formListDynamoDBVersion,
           formDetailDynamoDBVersion,
-          authoredFormDetailDynamoDBVersion
+          authoredFormDetailDynamoDBVersion,
+          skipAuthoredDetail
         } = formDetails;
+
+        if (skipAuthoredDetail) {
+          return;
+        }
         this.formListVersion = formListDynamoDBVersion;
         this.formStatus = formStatus;
         this.formDetailPublishStatus = formDetailPublishStatus;
@@ -241,8 +242,8 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         if (formListId) {
           if (authoredFormDetailId && authoredFormDetailId.length) {
             if (
-              formSaveStatus !== 'Saved' &&
-              formStatus !== 'Published' &&
+              formSaveStatus !== formConfigurationStatus.saved &&
+              formStatus !== formConfigurationStatus.published &&
               !isEqual(this.formDetails, formDetails)
             ) {
               this.store.dispatch(
@@ -257,27 +258,32 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
                   authoredFormDetailDynamoDBVersion
                 })
               );
-              this.store.dispatch(
-                BuilderConfigurationActions.updateFormMetadata({
-                  formMetadata: {
-                    ...formMetadata,
-                    lastModifiedBy: this.loginService.getLoggedInUserName()
-                  },
-                  ...this.getFormConfigurationStatuses()
-                })
-              );
+              if (
+                formMetadata.lastModifiedBy !==
+                this.loginService.getLoggedInUserName()
+              ) {
+                this.store.dispatch(
+                  BuilderConfigurationActions.updateFormMetadata({
+                    formMetadata: {
+                      ...formMetadata,
+                      lastModifiedBy: this.loginService.getLoggedInUserName()
+                    },
+                    ...this.getFormConfigurationStatuses()
+                  })
+                );
 
-              this.store.dispatch(
-                BuilderConfigurationActions.updateForm({
-                  formMetadata: {
-                    ...formMetadata,
-                    lastModifiedBy: this.loginService.getLoggedInUserName()
-                  },
-                  formListDynamoDBVersion: this.formListVersion
-                })
-              );
+                this.store.dispatch(
+                  BuilderConfigurationActions.updateForm({
+                    formMetadata: {
+                      ...formMetadata,
+                      lastModifiedBy: this.loginService.getLoggedInUserName()
+                    },
+                    formListDynamoDBVersion: this.formListVersion
+                  })
+                );
+              }
+              this.formDetails = formDetails;
             }
-            this.formDetails = formDetails;
           } else {
             this.store.dispatch(
               BuilderConfigurationActions.createAuthoredFormDetail({
@@ -356,37 +362,6 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
     this.route.data.subscribe((data) => {
       if (data.form && Object.keys(data.form).length) {
         this.formConf.counter.setValue(data.form.counter);
-        this.store.dispatch(
-          BuilderConfigurationActions.updateFormConfiguration({
-            formConfiguration: data.form
-          })
-        );
-        data.form.pages.forEach((page, index) => {
-          if (index === 0) {
-            this.store.dispatch(
-              BuilderConfigurationActions.updatePageState({
-                pageIndex: index,
-                isOpen: false,
-                subFormId: null
-              })
-            );
-            this.store.dispatch(
-              BuilderConfigurationActions.updatePageState({
-                pageIndex: index,
-                isOpen: true,
-                subFormId: null
-              })
-            );
-          } else {
-            this.store.dispatch(
-              BuilderConfigurationActions.updatePageState({
-                pageIndex: index,
-                isOpen: false,
-                subFormId: null
-              })
-            );
-          }
-        });
       }
     });
 
@@ -406,41 +381,44 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
           this.store.select(getFormMetadata).subscribe((data) => {
             this.isEmbeddedForm = data.formType === 'Embedded';
           });
-          const section = {
-            id: 'S1',
-            name: 'Section',
-            position: 1,
-            isOpen: true
-          };
-          const df = this.formConfigurationService.getDefQues();
-          const questions = new Array(4).fill(0).map((q, index) => {
-            if (index === 0) {
-              return { ...df, name: 'Site Conducted' };
-            }
-            if (index === 1) {
-              return {
-                ...df,
-                name: 'Conducted On',
-                fieldType: this.isEmbeddedForm ? 'DF' : 'DT',
-                date: true,
-                time: true
-              };
-            }
-            if (index === 2) {
-              return { ...df, name: 'Performed By' };
-            }
-            if (index === 3) {
-              return { ...df, name: 'Location', fieldType: 'GAL' };
-            }
-          });
-          this.formConfigurationService.addPage(
-            0,
-            1,
-            4,
-            this.sectionIndexes,
-            this.formConf.counter.value,
-            [{ section, questions }]
-          );
+
+          if (this.data.formData === null) {
+            const section = {
+              id: 'S1',
+              name: 'Section',
+              position: 1,
+              isOpen: true
+            };
+            const df = this.formConfigurationService.getDefQues();
+            const questions = new Array(4).fill(0).map((q, index) => {
+              if (index === 0) {
+                return { ...df, name: 'Site Conducted' };
+              }
+              if (index === 1) {
+                return {
+                  ...df,
+                  name: 'Conducted On',
+                  fieldType: this.isEmbeddedForm ? 'DF' : 'DT',
+                  date: true,
+                  time: true
+                };
+              }
+              if (index === 2) {
+                return { ...df, name: 'Performed By' };
+              }
+              if (index === 3) {
+                return { ...df, name: 'Location', fieldType: 'GAL' };
+              }
+            });
+            this.formConfigurationService.addPage(
+              0,
+              1,
+              4,
+              this.sectionIndexes,
+              this.formConf.counter.value,
+              [{ section, questions }]
+            );
+          }
         }
       }
     });
@@ -500,7 +478,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         } = this.formDetails;
         this.store.dispatch(
           BuilderConfigurationActions.updateAuthoredFormDetail({
-            formStatus: formStatus,
+            formStatus,
             formDetailPublishStatus,
             formListId: formMetadata.id,
             counter,
@@ -539,30 +517,21 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
     return !touched || this.errors[controlName] === null ? false : true;
   }
 
-  ngOnDestroy(): void {
-    if (this.authoredFormDetailSubscription) {
-      this.authoredFormDetailSubscription.unsubscribe();
-    }
-    this.onDestroy$.next();
-    this.onDestroy$.complete();
-    this.store.dispatch(BuilderConfigurationActions.resetFormConfiguration());
-    this.store.dispatch(UnitOfMeasurementActions.resetUnitOfMeasurementList());
-    this.store.dispatch(QuickResponseActions.resetQuickResponses());
-    this.store.dispatch(GlobalResponseActions.resetGlobalResponses());
-  }
-
   importQuestions(): void {
     const dialogRef = this.dialog.open(ImportQuestionsModalComponent, {
       data: {
         selectedFormData: '',
         selectedFormName: '',
         openImportQuestionsSlider: false,
-        isEmbeddedForm: this.isEmbeddedForm
+        openImportTemplateQuestionsSlider: false,
+        isEmbeddedForm: this.isEmbeddedForm,
+        allTemplates: []
       }
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       this.selectedFormData = result.selectedFormData;
+      this.allTemplates = result.allTemplates;
       this.selectedFormName = result.selectedFormName;
       this.authoredFormDetailSubscription = this.authoredFormDetail$.subscribe(
         (pagesData) => {
@@ -570,12 +539,19 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         }
       );
       this.openAppSider$ = of(result.openImportQuestionsSlider);
+      this.openImportTemplateSider$ = of(
+        result.openImportTemplateQuestionsSlider
+      );
       this.cdrf.markForCheck();
     });
   }
 
   cancelSlider(event) {
     this.openAppSider$ = of(event);
+  }
+
+  cancelTemplateSlider(event) {
+    this.openImportTemplateSider$ = of(event);
   }
 
   publishOrShowPdf() {
@@ -588,21 +564,20 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   }
 
   goToPDFBuilderConfiguration = () => {
-    this.dialog.open(PDFBuilderComponent, {
-      data: {
-        moduleName: 'RDF'
-      },
-      hasBackdrop: false,
-      disableClose: true,
-      width: '100vw',
-      minWidth: '100vw',
-      height: '100vh'
-    });
+    this.gotoNextStep.emit();
   };
 
   openSaveTemplateDialog() {
     this.dialog.open(SaveTemplateContainerComponent, {
       data: this.formDetails
     });
+  }
+
+  ngOnDestroy(): void {
+    if (this.authoredFormDetailSubscription) {
+      this.authoredFormDetailSubscription.unsubscribe();
+    }
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 }

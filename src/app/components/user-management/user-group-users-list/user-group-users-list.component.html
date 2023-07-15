@@ -1,0 +1,52 @@
+<div class="container">
+  <div class="header">
+    <div class="left-pannel">
+      <h2 class="title">{{ userGroupName }}</h2>
+    </div>
+
+    <div class="right-pannel">
+      <button
+        mat-raised-button
+        class="create-btn"
+        translate="changeUserinGroup"
+        (click)="selectUnselectUsers()"
+        [disabled]="disableBtn"
+      ></button>
+    </div>
+  </div>
+  <div *ngIf="allUsers$ | async as users" class="users-content">
+    <cwp-dynamictable
+      *ngIf="(isLoading$ | async) === false"
+      [dataSource]="dataSource"
+      [configOptions]="configOptions"
+      (fetchDataCallback)="handleTableEvent($event)"
+      (rowLevelActionHandler)="rowLevelActionHandler($event)"
+    ></cwp-dynamictable>
+    <div class="footer-btns" *ngIf="selectedCount">
+      <button
+        mat-button
+        class="cancel-btn"
+        autofocus="false"
+        translate="cancelBtn"
+        (click)="onCancelFooter()"
+        tabindex="-1"
+      ></button>
+
+      <button
+        mat-raised-button
+        class="remove-btn"
+        type="submit"
+        translate="removeBtn"
+        (click)="removeMultipleMembers()"
+      ></button>
+    </div>
+  </div>
+  <div *ngIf="(isLoading$ | async) === true">
+    <div class="ghost-loading">
+      <div *ngFor="let number of ghostLoading">
+        <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+        </ngx-shimmer-loading>
+      </div>
+    </div>
+  </div>
+</div>

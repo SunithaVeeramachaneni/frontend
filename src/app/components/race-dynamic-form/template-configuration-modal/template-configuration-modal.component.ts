@@ -28,7 +28,8 @@ import { ValidationError } from 'src/app/interfaces';
 import { Router } from '@angular/router';
 import { LoginService } from '../../login/services/login.service';
 import {
-  DEFAULT_TEMPLATE_PAGES,
+  DEFAULT_TEMPLATE_PAGES_STANDALONE,
+  DEFAULT_TEMPLATE_PAGES_EMBEDDED,
   formConfigurationStatus
 } from 'src/app/app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
@@ -37,6 +38,10 @@ import { DuplicateNameValidator } from 'src/app/shared/validators/duplicate-name
 import { AppService } from 'src/app/shared/services/app.services';
 import { ToastService } from 'src/app/shared/toast';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
+import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
+import { Store } from '@ngrx/store';
+import { State } from 'src/app/forms/state';
+
 @Component({
   selector: 'app-template-configuration-modal',
   templateUrl: './template-configuration-modal.component.html',
@@ -75,6 +80,7 @@ export class TemplateConfigurationModalComponent implements OnInit {
     public dialogRef: MatDialogRef<TemplateConfigurationModalComponent>,
     private readonly loginService: LoginService,
     private rdfService: RaceDynamicFormService,
+    private store: Store<State>,
     private cdrf: ChangeDetectorRef,
     private appService: AppService,
     private toastService: ToastService,
@@ -194,6 +200,7 @@ export class TemplateConfigurationModalComponent implements OnInit {
     }
 
     if (this.headerDataForm.valid) {
+      this.store.dispatch(BuilderConfigurationActions.resetFormConfiguration());
       const userEmail = this.loginService.getLoggedInEmail();
       this.rdfService
         .createTemplate$({
@@ -206,7 +213,9 @@ export class TemplateConfigurationModalComponent implements OnInit {
           this.rdfService
             .createAuthoredTemplateDetail$(template.id, {
               formStatus: formConfigurationStatus.draft,
-              pages: DEFAULT_TEMPLATE_PAGES,
+              pages: this.getDefaultTemplateQuestions(
+                this.headerDataForm?.value?.formType
+              ),
               counter: 4
             })
             .subscribe(() => {
@@ -501,5 +510,23 @@ export class TemplateConfigurationModalComponent implements OnInit {
   }
   getAdditionalDetailList() {
     return (this.headerDataForm.get('additionalDetails') as FormArray).controls;
+  }
+  getDefaultTemplateQuestions(formType) {
+    const timestamp = new Date().getTime();
+    if (formType === formConfigurationStatus.embedded) {
+      DEFAULT_TEMPLATE_PAGES_EMBEDDED.map((page) => {
+        page.questions.map(
+          (question) => (question.id = `${question.id}_${timestamp}`)
+        );
+      });
+      return DEFAULT_TEMPLATE_PAGES_EMBEDDED;
+    } else {
+      DEFAULT_TEMPLATE_PAGES_STANDALONE.map((page) => {
+        page.questions.map(
+          (question) => (question.id = `${question.id}_${timestamp}`)
+        );
+      });
+      return DEFAULT_TEMPLATE_PAGES_STANDALONE;
+    }
   }
 }

@@ -1,79 +1,16 @@
-<div
-  class="import-questions-modal"
-  *ngIf="{ formMetadata: formMetadata$ | async }"
->
+<div class="import-questions-modal">
   <div class="dis-flex heading-conatiner">
-    <h2 class="heading" translate>selectForm</h2>
+    <h2 class="heading" translate>Import From</h2>
     <mat-icon class="clear-icon" mat-dialog-close="true">clear</mat-icon>
   </div>
-  <div class="search">
-    <mat-form-field class="width-100" appearance="outline">
-      <input
-        matInput
-        [placeholder]="'searchForms' | translate"
-        class="width-100"
-        autocomplete="off"
-        [formControl]="searchForm"
-      />
-      <mat-icon matSuffix class="icon">search</mat-icon>
-    </mat-form-field>
-  </div>
-  <div
-    *ngIf="forms$ | async as forms; else loadingForms"
-    class="list-container"
-  >
-    <div
-      *ngFor="let form of forms.data; let i = index"
-      class="dis-flex list-item-conatiner"
-    >
-      <li
-        class="selected-list-element"
-        (click)="selectListItem(form, i)"
-        [ngClass]="{ active: selectedItem === i }"
-      >
-        <div class="width-100">
-          <p class="form-name">{{ form.name }}</p>
-          <p class="form-des">
-            {{
-              (form.description ? form.description : 'formDescription')
-                | translate
-            }}
-          </p>
-        </div>
-        <!-- <div class="width-30">
-          <p class="no-of-ques">{{ form.countOfQues }} Questions</p>
-        </div> -->
-      </li>
-    </div>
-    <div
-      class="dis-flex no-records"
-      *ngIf="forms.data.length === 0"
-      translate="noSearchResultsFound"
-    ></div>
-  </div>
-
-  <div mat-dialog-actions class="actions">
-    <button
-      mat-stroked-button
-      mat-dialog-close="true"
-      translate="close"
-      class="close-btn"
-    ></button>
-    <button
-      mat-raised-button
-      [disabled]="disableSelectBtn"
-      (click)="selectFormElement()"
-      translate="select"
-      class="select-btn"
-    ></button>
-  </div>
+  <mat-tab-group class="body-container" animationDuration="0ms">
+    <mat-tab>
+      <ng-template mat-tab-label>{{ 'templates' | translate }}</ng-template>
+      <app-import-template-list></app-import-template-list>
+    </mat-tab>
+    <mat-tab>
+      <ng-template mat-tab-label>{{ 'forms' | translate }}</ng-template>
+      <app-import-form-list></app-import-form-list>
+    </mat-tab>
+  </mat-tab-group>
 </div>
-
-<ng-template #loadingForms>
-  <div class="ghost-loading">
-    <div *ngFor="let number of ghostLoading">
-      <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
-      </ngx-shimmer-loading>
-    </div>
-  </div>
-</ng-template>

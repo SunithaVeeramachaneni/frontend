@@ -9,13 +9,14 @@ import {
   AddLogicActions,
   BuilderConfigurationActions,
   BuilderConfigurationsApiActions,
+  FormConfigurationApiActions,
   RoundPlanConfigurationApiActions
 } from '../actions';
 
 export interface FormConfigurationState {
   formMetadata: FormMetadata;
   pages: Page[];
-  subForms?: any[];
+  subForms?: Page[];
   counter: number;
   formStatus: string;
   authoredFormDetailId: string;
@@ -30,6 +31,7 @@ export interface FormConfigurationState {
   authoredFormDetailDynamoDBVersion: number;
   isFormCreated: boolean;
   moduleName: string;
+  skipAuthoredDetail: boolean;
 }
 
 const initialState = {
@@ -48,7 +50,8 @@ const initialState = {
   formDetailDynamoDBVersion: 0,
   authoredFormDetailDynamoDBVersion: 0,
   isFormCreated: false,
-  moduleName: 'operator-rounds'
+  moduleName: 'operator-rounds',
+  skipAuthoredDetail: false
 };
 
 export const formConfigurationReducer = createReducer<FormConfigurationState>(
@@ -62,50 +65,55 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
         pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG
       },
       formDetailPublishStatus: action.formDetailPublishStatus,
-      formSaveStatus: action.formSaveStatus
+      formSaveStatus: action.formSaveStatus,
+      skipAuthoredDetail: false
     })
   ),
   on(
-    BuilderConfigurationsApiActions.createFormSuccess,
+    FormConfigurationApiActions.createFormSuccess,
     RoundPlanConfigurationApiActions.createRoundPlanSuccess,
     (state, action): FormConfigurationState => ({
       ...state,
       formMetadata: { ...state.formMetadata, ...action.formMetadata },
       formSaveStatus: action.formSaveStatus,
-      formListDynamoDBVersion: state.formListDynamoDBVersion + 1
+      formListDynamoDBVersion: state.formListDynamoDBVersion + 1,
+      skipAuthoredDetail: false
     })
   ),
   on(
-    BuilderConfigurationsApiActions.updateFormSuccess,
+    FormConfigurationApiActions.updateFormSuccess,
     RoundPlanConfigurationApiActions.updateRoundPlanSuccess,
     (state, action): FormConfigurationState => ({
       ...state,
       formSaveStatus: action.formSaveStatus,
-      formListDynamoDBVersion: state.formListDynamoDBVersion + 1
+      formListDynamoDBVersion: state.formListDynamoDBVersion + 1,
+      skipAuthoredDetail: true
     })
   ),
   on(
-    BuilderConfigurationsApiActions.createAuthoredFromDetailSuccess,
+    FormConfigurationApiActions.createAuthoredFromDetailSuccess,
     RoundPlanConfigurationApiActions.createAuthoredRoundPlanDetailSuccess,
     (state, action): FormConfigurationState => ({
       ...state,
       authoredFormDetailId: action.authoredFormDetail.id,
       formSaveStatus: action.formSaveStatus,
       authoredFormDetailDynamoDBVersion: action.authoredFormDetail._version,
-      isFormCreated: action.isFormCreated
+      isFormCreated: action.isFormCreated,
+      skipAuthoredDetail: true
     })
   ),
   on(
-    BuilderConfigurationsApiActions.updateAuthoredFromDetailSuccess,
+    FormConfigurationApiActions.updateAuthoredFromDetailSuccess,
     RoundPlanConfigurationApiActions.updateAuthoredRoundPlanDetailSuccess,
     (state, action): FormConfigurationState => ({
       ...state,
       formSaveStatus: action.formSaveStatus,
-      authoredFormDetailDynamoDBVersion: action.authoredFormDetail._version
+      authoredFormDetailDynamoDBVersion: action.authoredFormDetail._version,
+      skipAuthoredDetail: true
     })
   ),
   on(
-    BuilderConfigurationsApiActions.createFormDetailSuccess,
+    FormConfigurationApiActions.createFormDetailSuccess,
     (state, action): FormConfigurationState => ({
       ...state,
       formStatus: action.formStatus,
@@ -120,7 +128,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       formDetailDynamoDBVersion: action.formDetail._version,
       formListDynamoDBVersion: state.formListDynamoDBVersion + 1,
       authoredFormDetailDynamoDBVersion: 1,
-      authoredFormDetailId: action.authoredFormDetail.id
+      authoredFormDetailId: action.authoredFormDetail.id,
+      skipAuthoredDetail: true
     })
   ),
   on(
@@ -135,7 +144,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       formDetailDynamoDBVersion: action.formDetail._version,
       formListDynamoDBVersion: state.formListDynamoDBVersion + 1,
       authoredFormDetailDynamoDBVersion: 1,
-      authoredFormDetailId: action.authoredFormDetail.id
+      authoredFormDetailId: action.authoredFormDetail.id,
+      skipAuthoredDetail: true
     })
   ),
   on(
@@ -150,7 +160,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
         },
         formStatus: action.formStatus,
         formDetailPublishStatus: action.formDetailPublishStatus,
-        formSaveStatus: action.formSaveStatus
+        formSaveStatus: action.formSaveStatus,
+        skipAuthoredDetail: true
       };
     }
   ),
@@ -161,35 +172,32 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       formMetadata: {
         ...state.formMetadata,
         pdfTemplateConfiguration: action.pdfBuilderConfiguration
-      }
+      },
+      skipAuthoredDetail: false
     })
   ),
   on(
     BuilderConfigurationActions.updateIsFormDetailPublished,
     (state, action): FormConfigurationState => ({
       ...state,
-      isFormDetailPublished: action.isFormDetailPublished
+      isFormDetailPublished: action.isFormDetailPublished,
+      skipAuthoredDetail: false
     })
   ),
   on(
     BuilderConfigurationActions.updateFormPublishStatus,
     (state, action): FormConfigurationState => ({
       ...state,
-      formDetailPublishStatus: action.formDetailPublishStatus
+      formDetailPublishStatus: action.formDetailPublishStatus,
+      skipAuthoredDetail: false
     })
   ),
   on(
     BuilderConfigurationActions.updateCreateOrEditForm,
     (state, action): FormConfigurationState => ({
       ...state,
-      createOrEditForm: action.createOrEditForm
-    })
-  ),
-  on(
-    BuilderConfigurationActions.updateCounter,
-    (state, action): FormConfigurationState => ({
-      ...state,
-      counter: action.counter
+      createOrEditForm: action.createOrEditForm,
+      skipAuthoredDetail: false
     })
   ),
   on(
@@ -206,7 +214,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       }
       return {
         ...state,
-        [key]: initPage
+        [key]: initPage,
+        skipAuthoredDetail: false
       };
     }
   ),
@@ -219,7 +228,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
         key = `${key}_${subFormId}`;
       }
       delete state[key];
-      return state;
+      return { ...state, skipAuthoredDetail: false };
     }
   ),
   on(
@@ -233,7 +242,31 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
         }
         delete state[key];
       });
-      return state;
+      return { ...state, skipAuthoredDetail: false };
+    }
+  ),
+  on(
+    BuilderConfigurationActions.addLogics,
+    (state, action): FormConfigurationState => {
+      let key = 'pages';
+      if (action.subFormId) {
+        key = `${key}_${action.subFormId}`;
+      }
+      const pageToBeUpdated = state[key] || [];
+      const idx = pageToBeUpdated.findIndex(
+        (page) => page.position === action.pageIndex + 1
+      );
+      pageToBeUpdated[idx] = {
+        ...pageToBeUpdated[idx],
+        logics: [...pageToBeUpdated[idx].logics, ...(action.logics || [])]
+      };
+      return {
+        ...state,
+        [key]: [...pageToBeUpdated],
+        formStatus: action.formStatus,
+        formDetailPublishStatus: action.formDetailPublishStatus,
+        formSaveStatus: action.formSaveStatus
+      };
     }
   ),
   on(
@@ -256,16 +289,11 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
             .slice(action.pageIndex)
             .map((page) => ({ ...page, position: page.position + 1 }))
         ],
-        // pages: [
-        //   ...state.pages.slice(0, action.pageIndex),
-        //   action.page,
-        //   ...state.pages
-        //     .slice(action.pageIndex)
-        //     .map((page) => ({ ...page, position: page.position + 1 }))
-        // ],
         formStatus: action.formStatus,
         formDetailPublishStatus: action.formDetailPublishStatus,
-        formSaveStatus: action.formSaveStatus
+        formSaveStatus: action.formSaveStatus,
+        counter: action.counter,
+        skipAuthoredDetail: false
       };
     }
   ),
@@ -289,7 +317,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
         [key]: [...pageToBeUpdated],
         formStatus: action.formStatus,
         formDetailPublishStatus: action.formDetailPublishStatus,
-        formSaveStatus: action.formSaveStatus
+        formSaveStatus: action.formSaveStatus,
+        skipAuthoredDetail: false
       };
     }
   ),
@@ -325,7 +354,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
             return { ...page, sections, questions, isOpen: action.isOpen };
           }
           return page;
-        })
+        }),
+        skipAuthoredDetail: true
       };
     }
   ),
@@ -348,7 +378,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
         ],
         formStatus: action.formStatus,
         formDetailPublishStatus: action.formDetailPublishStatus,
-        formSaveStatus: action.formSaveStatus
+        formSaveStatus: action.formSaveStatus,
+        skipAuthoredDetail: false
       };
     }
   ),
@@ -384,7 +415,9 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
         [key]: pages,
         formStatus: action.formStatus,
         formDetailPublishStatus: action.formDetailPublishStatus,
-        formSaveStatus: action.formSaveStatus
+        formSaveStatus: action.formSaveStatus,
+        counter: action.counter,
+        skipAuthoredDetail: false
       };
     }
   ),
@@ -415,7 +448,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
         [key]: [...pages],
         formStatus: action.formStatus,
         formDetailPublishStatus: action.formDetailPublishStatus,
-        formSaveStatus: action.formSaveStatus
+        formSaveStatus: action.formSaveStatus,
+        skipAuthoredDetail: false
       };
     }
   ),
@@ -453,7 +487,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       });
       return {
         ...state,
-        [key]: pages
+        [key]: pages,
+        skipAuthoredDetail: false
       };
     }
   ),
@@ -471,7 +506,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       formDetailPublishStatus: action.formDetailPublishStatus,
       formListDynamoDBVersion: state.formListDynamoDBVersion + 1,
       authoredFormDetailDynamoDBVersion: 1,
-      authoredFormDetailId: action.authoredFormDetail.id
+      authoredFormDetailId: action.authoredFormDetail.id,
+      skipAuthoredDetail: true
     })
   ),
   on(
@@ -528,7 +564,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
         [key]: pages,
         formStatus: action.formStatus,
         formDetailPublishStatus: action.formDetailPublishStatus,
-        formSaveStatus: action.formSaveStatus
+        formSaveStatus: action.formSaveStatus,
+        skipAuthoredDetail: false
       };
     }
   ),
@@ -559,7 +596,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
         [key]: pages,
         formStatus: action.formStatus,
         formDetailPublishStatus: action.formDetailPublishStatus,
-        formSaveStatus: action.formSaveStatus
+        formSaveStatus: action.formSaveStatus,
+        skipAuthoredDetail: false
       };
     }
   ),
@@ -599,7 +637,9 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
         [key]: pages,
         formStatus: action.formStatus,
         formDetailPublishStatus: action.formDetailPublishStatus,
-        formSaveStatus: action.formSaveStatus
+        formSaveStatus: action.formSaveStatus,
+        counter: action.counter,
+        skipAuthoredDetail: false
       };
     }
   ),
@@ -637,7 +677,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
         [key]: pages,
         formStatus: action.formStatus,
         formDetailPublishStatus: action.formDetailPublishStatus,
-        formSaveStatus: action.formSaveStatus
+        formSaveStatus: action.formSaveStatus,
+        skipAuthoredDetail: false
       };
     }
   ),
@@ -671,7 +712,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       });
       return {
         ...state,
-        [key]: pages
+        [key]: pages,
+        skipAuthoredDetail: true
       };
     }
   ),
@@ -703,7 +745,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
         [key]: pages,
         formStatus: action.formStatus,
         formDetailPublishStatus: action.formDetailPublishStatus,
-        formSaveStatus: action.formSaveStatus
+        formSaveStatus: action.formSaveStatus,
+        skipAuthoredDetail: false
       };
     }
   ),
@@ -764,7 +807,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
         [key]: pages,
         formStatus: action.formStatus,
         formDetailPublishStatus: action.formDetailPublishStatus,
-        formSaveStatus: action.formSaveStatus
+        formSaveStatus: action.formSaveStatus,
+        skipAuthoredDetail: false
       };
     }
   ),
@@ -840,7 +884,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
         [key]: pages,
         formStatus: action.formStatus,
         formDetailPublishStatus: action.formDetailPublishStatus,
-        formSaveStatus: action.formSaveStatus
+        formSaveStatus: action.formSaveStatus,
+        skipAuthoredDetail: false
       };
     }
   ),
@@ -848,7 +893,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
     BuilderConfigurationActions.updateFormConfiguration,
     (state, action): FormConfigurationState => ({
       ...state,
-      ...action.formConfiguration
+      ...action.formConfiguration,
+      skipAuthoredDetail: true
     })
   ),
   on(
@@ -879,7 +925,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
         [key]: pages,
         formStatus: 'Draft',
         formDetailPublishStatus: 'Draft',
-        formSaveStatus: 'Saving'
+        formSaveStatus: 'Saving',
+        skipAuthoredDetail: false
       };
     }
   ),
@@ -913,7 +960,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       });
       return {
         ...state,
-        [key]: pages
+        [key]: pages,
+        skipAuthoredDetail: false
       };
     }
   ),
@@ -948,7 +996,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
         [key]: pages,
         formStatus: 'Draft',
         formDetailPublishStatus: 'Draft',
-        formSaveStatus: 'Saving'
+        formSaveStatus: 'Saving',
+        skipAuthoredDetail: false
       };
     }
   ),
@@ -983,7 +1032,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
         [key]: pages,
         formStatus: 'Draft',
         formDetailPublishStatus: 'Draft',
-        formSaveStatus: 'Saving'
+        formSaveStatus: 'Saving',
+        skipAuthoredDetail: false
       };
     }
   ),
@@ -1007,7 +1057,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
         [key]: pages,
         formStatus: 'Draft',
         formDetailPublishStatus: 'Draft',
-        formSaveStatus: 'Saving'
+        formSaveStatus: 'Saving',
+        skipAuthoredDetail: false
       };
     }
   ),
@@ -1043,7 +1094,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
         [key]: pages,
         formStatus: 'Draft',
         formDetailPublishStatus: 'Draft',
-        formSaveStatus: 'Saving'
+        formSaveStatus: 'Saving',
+        skipAuthoredDetail: false
       };
     }
   ),
@@ -1075,7 +1127,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
         [key]: pages,
         formStatus: 'Draft',
         formDetailPublishStatus: 'Draft',
-        formSaveStatus: 'Saving'
+        formSaveStatus: 'Saving',
+        skipAuthoredDetail: false
       };
     }
   ),
@@ -1096,19 +1149,9 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       }
       return {
         ...state,
-        [key]: action.pages
+        [key]: action.pages,
+        skipAuthoredDetail: false
       };
-    }
-  ),
-  on(
-    BuilderConfigurationActions.resetPages,
-    (state, action): FormConfigurationState => {
-      let key = 'pages';
-      const subFormId = action.subFormId;
-      if (subFormId) {
-        key = `${key}_${subFormId}`;
-      }
-      return { ...state, [key]: [] };
     }
   ),
   on(
@@ -1125,7 +1168,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
     (state, action): FormConfigurationState => ({
       ...state,
       pages: action.pages,
-      counter: action.counter
+      counter: action.counter,
+      skipAuthoredDetail: false
     })
   )
 );

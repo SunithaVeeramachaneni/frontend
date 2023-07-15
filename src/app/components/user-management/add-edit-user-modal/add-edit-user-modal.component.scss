@@ -22,7 +22,7 @@
 }
 
 .title {
-  font-size: 120%;
+  font-size: 150%;
   font-weight: 500;
 }
 
@@ -114,6 +114,10 @@
 .last-name {
   width: 49%;
   float: right;
+}
+
+.usergroup-select {
+  padding-right: 0;
 }
 
 .permissions-modal {

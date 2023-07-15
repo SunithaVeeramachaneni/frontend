@@ -1,0 +1,143 @@
+<ng-container *ngIf="currentRouteUrl$ | async as currentRouteUrl">
+  <div *ngIf="currentRouteUrl === routingUrls.userGroups.url">
+    <div class="main-container">
+      <ngx-spinner
+        size="medium"
+        bdColor="rgba(0, 0, 0, 0.6)"
+        type="ball-clip-rotate-pulse"
+        [fullScreen]="false"
+      >
+      </ngx-spinner>
+      <div class="usergroup-header">
+        <div class="width-30 left-pannel-header">
+          <h2 class="heading" translate="userGroups"></h2>
+          <button class="add-btn" (click)="createUserGroup()">
+            <mat-icon class="add-btn-icon">add</mat-icon>
+          </button>
+        </div>
+
+        <div class="right-pannel-header">
+          <span class="count-of-usergroup">
+            <span class="usergroup-count-header">{{
+              userGroupCount$ | async
+            }}</span>
+            <span class="usergroup-text">{{
+              'userGroupCount' | translate
+            }}</span>
+          </span>
+        </div>
+      </div>
+      <div class="dis-flex usergroup-content">
+        <div class="width-25 custom-form-field-gray-color usergroup-left-panel">
+          <mat-form-field appearance="outline" class="search-form-field">
+            <mat-icon matPrefix class="searchIcon">search</mat-icon>
+            <input
+              matInput
+              type="text"
+              [placeholder]="'searchUserGroup' | translate"
+              [formControl]="searchUserGroup"
+              autocomplete="off"
+            />
+          </mat-form-field>
+
+          <mat-list
+            class="usergroup"
+            *ngIf="allUserGroups$ | async as userGroups"
+            #listContainer
+          >
+            <div *ngIf="userGroups.length === 0" class="unselected-role-text">
+              <span translate="noResultsFound"></span>
+            </div>
+            <ng-container
+              *ngIf="(isLoading$ | async) === false"
+              class="list-container"
+            >
+              <div (scroll)="listBottom($event)" class="usergroup">
+                <mat-list-item
+                  #userGroupList
+                  *ngFor="let userGroup of userGroups"
+                  class="usergroup-list"
+                  (click)="showSelectedUserGroup(userGroup)"
+                  [ngClass]="{
+                    'selected-usergroup-list': this.selectedUserGroup
+                      ? userGroup.id === this.selectedUserGroup.id
+                      : ''
+                  }"
+                >
+                  <div class="list-items">
+                    <span
+                      class="usergroup-name"
+                      matTooltip="{{ userGroup.name }}"
+                      [ngClass]="{ 'text-red': userGroup.name?.length > 100 }"
+                    >
+                      {{ userGroup.name }}
+                    </span>
+                    <div class="list-display">
+                      <span class="usergroup-count">{{
+                        userGroup?.usersCount
+                      }}</span>
+                      <button
+                        mat-icon-button
+                        [matMenuTriggerFor]="menu"
+                        class="more-usergroup"
+                        aria-label="More Options"
+                      >
+                        <mat-icon>more_horiz</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                  <mat-menu #menu="matMenu">
+                    <button
+                      *ngIf="checkPermissions('EDIT_USER_GROUP')"
+                      mat-menu-item
+                      translate="copyBtn"
+                      (click)="copyUserGroup(userGroup.id)"
+                    ></button>
+                    <button
+                      *ngIf="checkPermissions('EDIT_USER_GROUP')"
+                      mat-menu-item
+                      translate="editBtn"
+                      (click)="editUserGroup(userGroup)"
+                    ></button>
+                    <button
+                      *ngIf="checkPermissions('DELETE_USER_GROUP')"
+                      mat-menu-item
+                      class="text-red"
+                      translate="deleteBtn"
+                      (click)="deleteUserGroup(userGroup)"
+                    ></button>
+                  </mat-menu>
+                </mat-list-item>
+              </div>
+            </ng-container>
+          </mat-list>
+          <div *ngIf="(isLoading$ | async) === true">
+            <div class="ghost-loading">
+              <div *ngFor="let number of ghostLoading">
+                <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+                </ngx-shimmer-loading>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="userList-left-component">
+          <app-user-group-users-list
+            [userGroupPlantId]="selectedUserGroup?.plantId"
+            [userGroupId]="selectedUserGroup?.id"
+            [userGroupName]="selectedUserGroup?.name"
+          >
+          </app-user-group-users-list>
+        </div>
+      </div>
+    </div>
+    <router-outlet></router-outlet>
+
+    <div *ngIf="isLoading$ | async">
+      <div class="ghost-loading">
+        <div *ngFor="let number of ghostLoading">
+          <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+          </ngx-shimmer-loading>
+        </div>
+      </div>
+    </div></div
+></ng-container>
