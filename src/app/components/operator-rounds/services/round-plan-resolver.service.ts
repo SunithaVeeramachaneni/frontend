@@ -115,7 +115,7 @@ export class RoundPlanResolverService
           formConfigurationState: {
             formMetadata,
             counter,
-            pages: JSON.parse(pages),
+            pages: pages ? JSON.parse(pages) : [],
             ...subFormsMap,
             authoredFormDetailId,
             formDetailId,

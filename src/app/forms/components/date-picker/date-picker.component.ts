@@ -40,15 +40,15 @@ export class DatePickerComponent implements OnInit {
   currentDate = new Date();
   _selectedDate: SelectedDate;
   mindate: any;
+  dateGroup: FormGroup = this.fb.group({
+    date: ''
+  });
 
   constructor(private fb: FormBuilder) {
     this.minDate = new Date();
   }
 
   ngOnInit(): void {}
-  dateGroup: FormGroup = this.fb.group({
-    date: ''
-  });
 
   onDateChange(event: MatDatetimePickerInputEvent<Date>) {
     this.dateChange.emit(event.value);

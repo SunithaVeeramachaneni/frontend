@@ -278,11 +278,10 @@ export class FormListComponent implements OnInit, OnDestroy {
   };
   filter: any = {
     status: '',
-    modifiedBy: '',
     authoredBy: '',
     lastModifiedOn: '',
-    plant: '',
-    formType: ''
+    publishedBy: '',
+    plant: ''
   };
   dataSource: MatTableDataSource<any>;
   forms$: Observable<any>;
@@ -656,8 +655,8 @@ export class FormListComponent implements OnInit, OnDestroy {
       for (const item of this.filterJson) {
         if (item.column === 'status') {
           item.items = this.status;
-        } else if (item.column === 'modifiedBy') {
-          item.items = this.lastModifiedBy;
+        } else if (item.column === 'publishedBy') {
+          item.items = this.lastPublishedBy;
         } else if (item.column === 'plant') {
           item.items = this.plants;
         } else if (item.column === 'createdBy') {
@@ -734,10 +733,10 @@ export class FormListComponent implements OnInit, OnDestroy {
   resetFilter() {
     this.filter = {
       status: '',
-      modifiedBy: '',
       authoredBy: '',
       lastModifiedOn: '',
-      plant: ''
+      plant: '',
+      publishedBy: ''
     };
     this.nextToken = '';
     this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
