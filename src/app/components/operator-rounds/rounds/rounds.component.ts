@@ -553,6 +553,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   selectedRoundConfig: any;
   openMenuStateDueDate = false;
   openMenuStateStartDate = false;
+  assigneeDetailsWithPlant: any = { users: [] };
 
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
@@ -654,23 +655,28 @@ export class RoundsComponent implements OnInit, OnDestroy {
             tableHeight: 'calc(100vh - 150px)'
           };
 
-          this.initial.data = rounds.rows.map((roundDetail) => ({
-            ...roundDetail,
+          this.initial.data = rounds.rows.map((roundDetail) => {
+            return {
+              ...roundDetail,
 
-            dueDateDisplay: this.formatDate(
-              roundDetail.dueDate,
-              roundDetail.plantId
-            ),
-            scheduledAtDisplay: this.formatDate(
-              roundDetail.scheduledAt,
-              roundDetail.plantId
-            ),
-            assignedTo: this.userService.getUserFullName(
-              roundDetail.assignedTo
-            ),
-            status: roundDetail.status.replace('-', ' '),
-            assignedToEmail: roundDetail.assignedTo
-          }));
+              dueDateDisplay: this.formatDate(
+                roundDetail.dueDate,
+                roundDetail.plantId
+              ),
+              scheduledAtDisplay: this.formatDate(
+                roundDetail.scheduledAt,
+                roundDetail.plantId
+              ),
+              assignedTo: this.userService.getUserFullName(
+                roundDetail.assignedTo
+              ),
+              shift: this.shiftObj[roundDetail.shiftId]
+                ? this.shiftObj[roundDetail.shiftId].name
+                : undefined,
+              status: roundDetail.status.replace('-', ' '),
+              assignedToEmail: roundDetail.assignedTo
+            };
+          });
         } else {
           this.initial.data = this.initial.data.concat(
             scrollData.rows?.map((roundDetail) => ({
@@ -687,13 +693,15 @@ export class RoundsComponent implements OnInit, OnDestroy {
               assignedTo: this.userService.getUserFullName(
                 roundDetail.assignedTo
               ),
+              shift: this.shiftObj[roundDetail.shiftId]
+                ? this.shiftObj[roundDetail.shiftId].name
+                : undefined,
               status: roundDetail.status.replace('-', ' '),
               assignedToEmail: roundDetail.assignedTo
             }))
           );
         }
 
-        this.initial.data = this.formattingRound(this.initial.data);
         this.skip = this.initial.data.length;
         // Just a work around to improve the perforamce as we getting more records in the single n/w call. When small chunk of records are coming n/w call we can get rid of slice implementation
 
@@ -722,15 +730,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
     );
 
     this.configOptions.allColumns = this.columns;
-  }
-
-  formattingRound(rounds) {
-    return rounds.map((round) => {
-      if (this.shiftObj[round.shiftId]) {
-        round.shift = this.shiftObj[round.shiftId].name;
-      }
-      return round;
-    });
   }
 
   getRoundsList() {
@@ -783,6 +782,10 @@ export class RoundsComponent implements OnInit, OnDestroy {
           top: `${pos?.top + 17}px`,
           left: `${pos?.left - 15}px`
         };
+        this.assigneeDetailsWithPlant.users = this.assigneeDetails.users.filter(
+          (user) =>
+            user.plantId && row.plantId ? user.plantId === row.plantId : false
+        );
         if (row.status !== 'submitted' && row.status !== 'overdue')
           this.trigger.toArray()[0].openMenu();
         this.selectedRoundInfo = row;

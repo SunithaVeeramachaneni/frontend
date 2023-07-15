@@ -168,6 +168,7 @@ export class UsersService {
           firstName: user.firstName,
           lastName: user.lastName,
           email: user.email,
+          plantId: user.plantId,
           profileImage: this.getImageSrc(
             Buffer.from(user.profileImage).toString()
           ),

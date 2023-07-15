@@ -4,6 +4,7 @@ import {
   Component,
   EventEmitter,
   Input,
+  OnChanges,
   OnInit,
   Output
 } from '@angular/core';
@@ -28,7 +29,7 @@ import {
   styleUrls: ['./assigned-to.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AssignedToComponent implements OnInit {
+export class AssignedToComponent implements OnInit, OnChanges {
   @Input() set assigneeDetails(assigneeDetails: AssigneeDetails) {
     this._assigneeDetails = assigneeDetails;
   }
@@ -49,8 +50,9 @@ export class AssignedToComponent implements OnInit {
 
   ngOnInit(): void {
     this.searchUsers = new FormControl('');
-
-    this.filteredUsers$ = this.searchUsers.valueChanges.pipe(
+  }
+  ngOnChanges() {
+    this.filteredUsers$ = this.searchUsers?.valueChanges.pipe(
       startWith(''),
       debounceTime(500),
       distinctUntilChanged(),

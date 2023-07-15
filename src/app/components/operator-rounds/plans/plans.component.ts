@@ -166,7 +166,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
-      id: 'shift',
+      id: 'shifts',
       displayName: 'Shift',
       type: 'string',
       controlType: 'string',
@@ -545,7 +545,6 @@ export class PlansComponent implements OnInit, OnDestroy {
               )
             );
           }
-          this.initial.data = this.formattingPlans(this.initial.data);
           this.skip = this.initial.data.length;
           return this.initial;
         }
@@ -634,25 +633,6 @@ export class PlansComponent implements OnInit, OnDestroy {
     this.configOptions.allColumns = this.columns;
 
     this.getAllRoundPlans();
-  }
-
-  formattingPlans(plans) {
-    return plans.map((plan) => {
-      let shift = '';
-      if (this.roundPlanScheduleConfigurations[plan.id]?.shiftDetails) {
-        Object.keys(
-          this.roundPlanScheduleConfigurations[plan.id]?.shiftDetails
-        ).map((shiftId) => {
-          if (shiftId !== 'null') {
-            shift += this.activeShiftIdMap[shiftId] + ',';
-          }
-        });
-        if (shift) {
-          plan.shift = shift.substring(0, shift.length - 1);
-        }
-      }
-      return plan;
-    });
   }
 
   getRoundPlanList() {
@@ -990,6 +970,20 @@ export class PlansComponent implements OnInit, OnDestroy {
           )
         };
       }
+      let shift = '';
+      if (this.roundPlanScheduleConfigurations[roundPlan.id]?.shiftDetails) {
+        Object.keys(
+          this.roundPlanScheduleConfigurations[roundPlan.id]?.shiftDetails
+        ).map((shiftId) => {
+          if (shiftId !== 'null') {
+            shift += this.activeShiftIdMap[shiftId] + ',';
+          }
+        });
+        if (shift) {
+          roundPlan.shifts = shift.substring(0, shift.length - 1);
+        }
+      }
+
       return {
         ...roundPlan,
         scheduleDates: this.placeHolder,

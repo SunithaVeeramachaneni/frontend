@@ -484,6 +484,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
   plantSelected: any;
   plantToShift: any;
   shiftPosition: any;
+  assigneeDetailsWithPlant: any = { users: [] };
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   private _users$: Observable<UserDetails[]>;
@@ -606,6 +607,9 @@ export class InspectionComponent implements OnInit, OnDestroy {
               inspectionDetail.scheduledAt,
               inspectionDetail.plantId
             ),
+            shift: this.shiftObj[inspectionDetail.shiftId]
+              ? this.shiftObj[inspectionDetail.shiftId].name
+              : undefined,
             assignedTo: inspectionDetail?.assignedTo
               ? this.userService.getUserFullName(inspectionDetail.assignedTo)
               : '',
@@ -627,13 +631,16 @@ export class InspectionComponent implements OnInit, OnDestroy {
               assignedTo: this.userService.getUserFullName(
                 inspectionDetail.assignedTo
               ),
+              shift: this.shiftObj[inspectionDetail.shiftId]
+                ? this.shiftObj[inspectionDetail.shiftId].name
+                : undefined,
+
               status: inspectionDetail.status.replace('-', ' '),
               assignedToEmail: inspectionDetail.assignedTo || ''
             }))
           );
         }
         this.skip = this.initial.data.length;
-        this.initial.data = this.formattingInspection(this.initial.data);
         // Just a work around to improve the perforamce as we getting more records in the single n/w call. When small chunk of records are coming n/w call we can get rid of slice implementation
         const sliceStart = this.dataSource ? this.dataSource.data.length : 0;
         const dataSource = this.dataSource
@@ -660,15 +667,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
     );
 
     this.configOptions.allColumns = this.columns;
-  }
-
-  formattingInspection(rounds) {
-    return rounds.map((round) => {
-      if (this.shiftObj[round.shiftId]) {
-        round.shift = this.shiftObj[round.shiftId].name;
-      }
-      return round;
-    });
   }
 
   getInspectionsList() {
@@ -769,6 +767,11 @@ export class InspectionComponent implements OnInit, OnDestroy {
           top: `${pos?.top + 17}px`,
           left: `${pos?.left - 15}px`
         };
+
+        this.assigneeDetailsWithPlant.users = this.assigneeDetails.users.filter(
+          (user) =>
+            user.plantId && row.plantId ? user.plantId === row.plantId : false
+        );
         if (row.status !== 'submitted' && row.status !== 'overdue')
           this.trigger.toArray()[0].openMenu();
         this.selectedFormInfo = row;

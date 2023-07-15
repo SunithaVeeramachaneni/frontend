@@ -105,7 +105,7 @@
     ></button>
     <mat-menu #assigneeMenu="matMenu" backdropClass="assign-menu-list">
       <app-assigned-to
-        [assigneeDetails]="assigneeDetails"
+        [assigneeDetails]="assigneeDetailsWithPlant"
         [dropdownPosition]="assigneePosition"
         (selectedAssignee)="selectedAssigneeHandler($event)"
       ></app-assigned-to>

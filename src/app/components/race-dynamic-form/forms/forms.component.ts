@@ -153,7 +153,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
-      id: 'shift',
+      id: 'shifts',
       displayName: 'Shift',
       type: 'string',
       controlType: 'string',
@@ -483,7 +483,6 @@ export class FormsComponent implements OnInit, OnDestroy {
             this.formatForms(scrollData.rows, formScheduleConfigurations)
           );
         }
-        this.initial.data = this.formattingForms(this.initial.data);
         this.skip = this.initial.data.length;
         return this.initial;
       })
@@ -566,25 +565,6 @@ export class FormsComponent implements OnInit, OnDestroy {
     this.configOptions.allColumns = this.columns;
     this.populatePlantsforFilter();
     this.getFilter();
-  }
-
-  formattingForms(forms) {
-    return forms.map((form) => {
-      let shift = '';
-      if (this.formScheduleConfigurations[form.id]?.shiftDetails) {
-        Object.keys(this.formScheduleConfigurations[form.id]?.shiftDetails).map(
-          (shiftId) => {
-            if (shiftId !== 'null') {
-              shift += this.shiftIdNameMap[shiftId] + ',';
-            }
-          }
-        );
-        if (shift) {
-          form.shift = shift.substring(0, shift.length - 1);
-        }
-      }
-      return form;
-    });
   }
 
   getFormsList() {
@@ -896,6 +876,21 @@ export class FormsComponent implements OnInit, OnDestroy {
           )
         };
       }
+
+      let shift = '';
+      if (this.formScheduleConfigurations[form.id]?.shiftDetails) {
+        Object.keys(this.formScheduleConfigurations[form.id]?.shiftDetails).map(
+          (shiftId) => {
+            if (shiftId !== 'null') {
+              shift += this.shiftIdNameMap[shiftId] + ',';
+            }
+          }
+        );
+        if (shift) {
+          form.shifts = shift.substring(0, shift.length - 1);
+        }
+      }
+
       return {
         ...form,
         scheduleDates: this.placeHolder,

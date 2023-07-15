@@ -83,7 +83,7 @@ export interface RoundPlanDetail extends RoundPlan {
   rounds: number;
   plantId?: string;
   plant?: string;
-  shifts: [];
+  shifts: [] | string;
 }
 
 export interface RoundDetail extends RoundPlan {
