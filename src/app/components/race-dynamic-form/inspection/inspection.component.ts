@@ -546,7 +546,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
           this.fetchType = 'infiniteScroll';
-          return this.getInspectionsList();
+          return this.getInspectionsList(false);
         } else {
           return of(
             {} as {
@@ -671,7 +671,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
     });
   }
 
-  getInspectionsList() {
+  getInspectionsList(displayGhostLoading = true) {
     const obj = {
       next: this.nextToken,
       limit: this.limit,
@@ -680,7 +680,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
       formId: this.formId,
       inspectionId: this.inspectionId
     };
-    this.isLoading$.next(true);
+    this.isLoading$.next(displayGhostLoading);
     return this.raceDynamicFormService
       .getInspectionsList$({ ...obj, ...this.filter })
       .pipe(
@@ -969,6 +969,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
       } else if (item.column === 'dueDate' && item.value) {
         this.filter[item.column] = item.value;
       } else if (item.type !== 'date' && item.value) {
+        this.filter[item.column] = item.value;
+      } else if (item.type === 'date' && item.value) {
         this.filter[item.column] = item.value;
       }
     }

@@ -370,6 +370,17 @@ export class IssuesListComponent implements OnInit, OnDestroy {
   placeHolder = '_ _';
   plantTimezoneMap = {};
   readonly perms = perms;
+  isPopoverOpen = false;
+  filterJson = [];
+  filter = {
+    title: '',
+    location: '',
+    plant: '',
+    priority: '',
+    status: '',
+    dueDate: '',
+    assignedTo: ''
+  };
   private _users$: Observable<UserDetails[]>;
   private onDestroy$ = new Subject();
 
@@ -405,6 +416,7 @@ export class IssuesListComponent implements OnInit, OnDestroy {
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
     );
+    this.getFilter();
     this.displayIssues();
     this.configOptions.allColumns = this.columns;
   }
@@ -509,14 +521,18 @@ export class IssuesListComponent implements OnInit, OnDestroy {
       type: 'issue',
       moduleName: this.moduleName
     };
-    return this.observationsService.getObservations$(obj).pipe(
-      mergeMap(({ rows, next, count }) => {
+    return this.observationsService.getObservations$(obj, this.filter).pipe(
+      mergeMap(({ rows, next, count, filters }) => {
         this.observationsService.issuesNextToken = next;
         this.isLoading$.next(false);
         if (count) {
           this.issuesCount$ = of(count);
         }
-        this.observationsService.issues$.next({ rows, next, count });
+        this.observationsService.issues$.next({ rows, next, count, filters });
+        this.filterJson = this.observationsService.prepareFilterData(
+          filters,
+          this.filterJson
+        );
         return of(rows as any[]);
       }),
       catchError(() => {
@@ -601,7 +617,9 @@ export class IssuesListComponent implements OnInit, OnDestroy {
                 ? notificationInfo
                 : this.placeHolder,
               priority,
-              dueDate: dueDate ? format(new Date(dueDate), 'dd MMM, yyyy') : '',
+              dueDate: dueDate
+                ? format(new Date(dueDate), 'dd MMM, yyyy hh:mm a')
+                : '',
               assignedToDisplay: assignedToDisplay || '',
               assignedTo: assignedTo || ''
             };
@@ -624,9 +642,47 @@ export class IssuesListComponent implements OnInit, OnDestroy {
     }
   };
 
+  applyFilters(data: any): void {
+    this.isLoading$.next(true);
+    this.isPopoverOpen = false;
+    for (const item of data) {
+      if (item.type !== 'date' && item.value) {
+        this.filter[item.column] = item.value ?? '';
+      } else if (item.type === 'date' && item.value) {
+        this.filter[item.column] = item.value.toISOString();
+      } else {
+        this.filter[item.column] = item.value ?? '';
+      }
+    }
+    this.observationsService.issuesNextToken = '';
+    this.observationsService.fetchIssues$.next({ data: 'load' });
+  }
+
+  clearFilters(): void {
+    this.isLoading$.next(true);
+    this.isPopoverOpen = false;
+    this.filter = {
+      title: '',
+      location: '',
+      plant: '',
+      priority: '',
+      status: '',
+      dueDate: '',
+      assignedTo: ''
+    };
+    this.observationsService.issuesNextToken = '';
+    this.observationsService.fetchIssues$.next({ data: 'load' });
+  }
+
   ngOnDestroy(): void {
     this.plantMapSubscription.unsubscribe();
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  private getFilter(): void {
+    this.observationsService
+      .getFormsFilter()
+      .subscribe((res) => (this.filterJson = res));
   }
 }

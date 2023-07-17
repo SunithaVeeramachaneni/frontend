@@ -46,6 +46,21 @@
   line-height: normal;
   margin: 10px;
 }
+.footer-left {
+  display: flex;
+  justify-content: center;
+}
+.user-content {
+  height: max-content;
+}
+
+.check-circle-icon {
+  height: 18px;
+  width: 18px;
+  padding: 8px;
+  margin-top: 13px;
+  margin-left: 13px;
+}
 .user-content {
   height: max-content;
 }
@@ -59,8 +74,10 @@
   bottom: 15px;
   border-top: 1px solid $border-color;
   right: 0;
+  z-index: 3;
 }
 .footer-button {
+  display: flex;
   justify-content: end;
 }
 .header {
@@ -74,7 +91,7 @@
 }
 
 .checkedUsers {
-  margin: 15px;
+  margin: 15px 14px 15px 5px;
   position: relative;
   top: 7px;
 }
@@ -88,6 +105,6 @@
 .checkedUsersText {
   font-weight: 500;
   font-size: 110%;
-  color: $gray1;
+  color: $gray-bg;
   margin-left: 5px;
 }

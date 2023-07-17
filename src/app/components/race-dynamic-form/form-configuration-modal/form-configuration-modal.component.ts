@@ -204,7 +204,8 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
         name: this.data.formData.name,
         description: this.data.formData.description,
         formType: this.data.formData.formType,
-        plantId: this.data.formData.plantId
+        plantId: this.data.formData.plantId,
+        formStatus: this.data.formData.formStatus
       });
 
       const additionalDetailsArray = this.data.formData.additionalDetails;

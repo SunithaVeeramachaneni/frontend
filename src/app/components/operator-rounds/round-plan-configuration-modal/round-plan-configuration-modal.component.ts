@@ -387,7 +387,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
                         mediaType: [...this.pdfFiles.mediaType, file]
                       };
                       const responsenew =
-                        response?.data?.createFormAttachments?.id;
+                        response?.data?.createRoundPlanAttachments?.id;
                       this.filteredMediaPdfTypeIds.push(responsenew);
                       this.filteredMediaPdfType.push(this.base64result);
                     }
@@ -413,7 +413,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
                   tap((response) => {
                     if (response) {
                       const responsenew =
-                        response?.data?.createFormAttachments?.id;
+                        response?.data?.createRoundPlanAttachments?.id;
                       this.filteredMediaTypeIds = {
                         mediaIds: [
                           ...this.filteredMediaTypeIds.mediaIds,
