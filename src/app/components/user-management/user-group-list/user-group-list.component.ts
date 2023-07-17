@@ -196,6 +196,10 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
           switch (action) {
             case 'copy':
               initial.unshift(group);
+              this.toast.show({
+                type: 'success',
+                text: 'User Group copied successfully'
+              });
               break;
             case 'edit':
               const indexCpy = initial.findIndex(
@@ -277,6 +281,7 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
       const preparedData = Object.fromEntries(
         Object.entries(data).filter(([key, value]) => key !== 'users')
       );
+      preparedData.usersCount = data?.users?.length;
       this.userGroupService.userGroupActions$.next({
         action: 'copy',
         group: preparedData

@@ -1,0 +1,53 @@
+[
+  {
+    "label": "Title",
+    "items": [],
+    "column": "title",
+    "type": "select",
+    "value": ""
+  },
+  {
+    "label": "Location",
+    "items": [],
+    "column": "location",
+    "type": "select",
+    "value": ""
+  },
+  {
+    "label": "Plant",
+    "items": [],
+    "column": "plant",
+    "type": "select",
+    "value": ""
+  },
+  {
+    "label": "Priority",
+    "items": [],
+    "column": "priority",
+    "type": "multiple",
+    "value": ""
+  },
+  {
+    "label": "Status",
+    "items": [],
+    "column": "status",
+    "type": "multiple",
+    "value": ""
+  },
+  {
+    "label": "Due Date",
+    "items": [],
+    "column": "dueDate",
+    "type": "daterange",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "value": ""
+  },
+  {
+    "label": "Assigned To",
+    "items": [],
+    "column": "assignedTo",
+    "type": "multiple",
+    "value": ""
+  }
+]

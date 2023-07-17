@@ -591,7 +591,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       formId: this.formId,
       formType: formConfigurationStatus.standalone
     };
-
+    this.isLoading$.next(true);
     return this.raceDynamicFormService
       .getFormsForScheduler$(obj, this.filter)
       .pipe(
@@ -875,9 +875,6 @@ export class FormsComponent implements OnInit, OnDestroy {
       if (formScheduleConfigurations[form?.id]) {
         return {
           ...form,
-          schedule: this.getFormattedSchedule(
-            formScheduleConfigurations[form?.id]
-          ),
           scheduleDates: this.getFormattedScheduleDates(
             formScheduleConfigurations[form?.id],
             form.plantId
