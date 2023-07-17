@@ -339,6 +339,58 @@ export class ScheduleConfigurationComponent
       shiftsSelected: []
     });
     this.schedulerConfigForm
+      .get('startDatePicker')
+      .valueChanges.pipe(takeUntil(this.onDestroy$))
+      .subscribe((startDate) => {
+        const repeatDuration =
+          this.schedulerConfigForm.get('repeatDuration').value;
+        const repeatEvery = this.schedulerConfigForm.get('repeatEvery').value;
+        const scheduleEndType =
+          this.schedulerConfigForm.get('scheduleEndType').value;
+        const scheduleEndOn = this.schedulerConfigForm.get(
+          'scheduleEndOnPicker'
+        ).value;
+        const scheduleEndOccurrences = this.schedulerConfigForm.get(
+          'scheduleEndOccurrences'
+        ).value;
+
+        let endDate: Date;
+        switch (scheduleEndType) {
+          case 'on':
+            endDate = scheduleEndOn;
+            break;
+          case 'after':
+            if (scheduleEndOccurrences > 0) {
+              let days = 0;
+              switch (repeatEvery) {
+                case 'day':
+                  days = repeatDuration * scheduleEndOccurrences - 1;
+                  break;
+                case 'week':
+                  days = weeksToDays(scheduleEndOccurrences);
+                  break;
+                case 'month':
+                  days = differenceInDays(
+                    addMonths(startDate, scheduleEndOccurrences),
+                    startDate
+                  );
+                  break;
+              }
+              endDate = addDays(startDate, days);
+            }
+            break;
+          default:
+            endDate = null;
+            break;
+        }
+
+        this.schedulerConfigForm.get('endDatePicker').setValue(endDate);
+        this.schedulerConfigForm
+          .get('endDate')
+          .setValue(format(endDate, dateFormat3));
+      });
+
+    this.schedulerConfigForm
       .get('scheduleEndType')
       .valueChanges.pipe(takeUntil(this.onDestroy$))
       .subscribe((scheduleEndType) => {
@@ -399,13 +451,14 @@ export class ScheduleConfigurationComponent
       .get('repeatEvery')
       .valueChanges.pipe(takeUntil(this.onDestroy$))
       .subscribe((repeatEvery) => {
+        const startDate = this.schedulerConfigForm.get('startDatePicker').value;
         switch (repeatEvery) {
           case 'day':
             this.schedulerConfigForm
               .get('scheduleEndOn')
               .patchValue(
                 localToTimezoneDate(
-                  addDays(new Date(), 29),
+                  addDays(startDate, 29),
                   this.plantTimezoneMap[this.selectedDetails?.plantId],
                   dateFormat4
                 )
@@ -415,7 +468,7 @@ export class ScheduleConfigurationComponent
               .patchValue(
                 new Date(
                   localToTimezoneDate(
-                    addDays(new Date(), 29),
+                    addDays(startDate, 29),
                     this.plantTimezoneMap[this.selectedDetails?.plantId],
                     dateFormat4
                   )
@@ -428,7 +481,7 @@ export class ScheduleConfigurationComponent
               .get('endDate')
               .patchValue(
                 localToTimezoneDate(
-                  addDays(new Date(), 29),
+                  addDays(startDate, 29),
                   this.plantTimezoneMap[this.selectedDetails?.plantId],
                   dateFormat3
                 )
@@ -438,7 +491,7 @@ export class ScheduleConfigurationComponent
               .patchValue(
                 new Date(
                   localToTimezoneDate(
-                    addDays(new Date(), 29),
+                    addDays(startDate, 29),
                     this.plantTimezoneMap[this.selectedDetails?.plantId],
                     dateFormat3
                   )
@@ -451,7 +504,7 @@ export class ScheduleConfigurationComponent
               .get('scheduleEndOn')
               .patchValue(
                 localToTimezoneDate(
-                  addDays(new Date(), 90),
+                  addDays(startDate, 90),
                   this.plantTimezoneMap[this.selectedDetails?.plantId],
                   dateFormat4
                 )
@@ -461,7 +514,7 @@ export class ScheduleConfigurationComponent
               .patchValue(
                 new Date(
                   localToTimezoneDate(
-                    addDays(new Date(), 90),
+                    addDays(startDate, 90),
                     this.plantTimezoneMap[this.selectedDetails?.plantId],
                     dateFormat4
                   )
@@ -482,7 +535,7 @@ export class ScheduleConfigurationComponent
               .get('endDate')
               .patchValue(
                 localToTimezoneDate(
-                  addDays(new Date(), 90),
+                  addDays(startDate, 90),
                   this.plantTimezoneMap[this.selectedDetails?.plantId],
                   dateFormat3
                 )
@@ -492,7 +545,7 @@ export class ScheduleConfigurationComponent
               .patchValue(
                 new Date(
                   localToTimezoneDate(
-                    addDays(new Date(), 90),
+                    addDays(startDate, 90),
                     this.plantTimezoneMap[this.selectedDetails?.plantId],
                     dateFormat3
                   )
@@ -505,7 +558,7 @@ export class ScheduleConfigurationComponent
               .get('scheduleEndOn')
               .patchValue(
                 localToTimezoneDate(
-                  addDays(new Date(), 364),
+                  addDays(startDate, 364),
                   this.plantTimezoneMap[this.selectedDetails?.plantId],
                   dateFormat4
                 )
@@ -515,7 +568,7 @@ export class ScheduleConfigurationComponent
               .patchValue(
                 new Date(
                   localToTimezoneDate(
-                    addDays(new Date(), 364),
+                    addDays(startDate, 364),
                     this.plantTimezoneMap[this.selectedDetails?.plantId],
                     dateFormat4
                   )
@@ -529,7 +582,7 @@ export class ScheduleConfigurationComponent
               .get('endDate')
               .patchValue(
                 localToTimezoneDate(
-                  addDays(new Date(), 364),
+                  addDays(startDate, 364),
                   this.plantTimezoneMap[this.selectedDetails?.plantId],
                   dateFormat3
                 )
@@ -539,7 +592,7 @@ export class ScheduleConfigurationComponent
               .patchValue(
                 new Date(
                   localToTimezoneDate(
-                    addDays(new Date(), 364),
+                    addDays(startDate, 364),
                     this.plantTimezoneMap[this.selectedDetails?.plantId],
                     dateFormat3
                   )
@@ -588,49 +641,32 @@ export class ScheduleConfigurationComponent
       .subscribe((occurrences) => {
         if (occurrences > 0) {
           let days = 0;
-          switch (this.schedulerConfigForm.get('repeatEvery').value) {
+          const repeatEvery = this.schedulerConfigForm.get('repeatEvery').value;
+          const repeatDuration =
+            this.schedulerConfigForm.get('repeatDuration').value;
+          const startDate =
+            this.schedulerConfigForm.get('startDatePicker').value;
+
+          switch (repeatEvery) {
             case 'day':
-              days = occurrences;
+              days = repeatDuration * occurrences - 1;
               break;
             case 'week':
               days = weeksToDays(occurrences);
               break;
             case 'month':
               days = differenceInDays(
-                addMonths(new Date(), occurrences),
-                new Date()
+                addMonths(startDate, occurrences),
+                startDate
               );
               break;
           }
+          const endDate = addDays(startDate, days);
+
+          this.schedulerConfigForm.get('endDatePicker').setValue(endDate);
           this.schedulerConfigForm
             .get('endDate')
-            .patchValue(
-              localToTimezoneDate(
-                addDays(
-                  new Date(),
-                  days * this.schedulerConfigForm.get('repeatDuration').value -
-                    1
-                ),
-                this.plantTimezoneMap[this.selectedDetails?.plantId],
-                dateFormat3
-              )
-            );
-          this.schedulerConfigForm
-            .get('endDatePicker')
-            .patchValue(
-              new Date(
-                localToTimezoneDate(
-                  addDays(
-                    new Date(),
-                    days *
-                      this.schedulerConfigForm.get('repeatDuration').value -
-                      1
-                  ),
-                  this.plantTimezoneMap[this.selectedDetails?.plantId],
-                  dateFormat3
-                )
-              )
-            );
+            .setValue(format(endDate, dateFormat3));
         }
       });
 
@@ -638,11 +674,12 @@ export class ScheduleConfigurationComponent
       .get('repeatDuration')
       .valueChanges.pipe(takeUntil(this.onDestroy$))
       .subscribe(() => {
+        const occurrences = this.schedulerConfigForm.get(
+          'scheduleEndOccurrences'
+        ).value;
         this.schedulerConfigForm
           .get('scheduleEndOccurrences')
-          .patchValue(
-            this.schedulerConfigForm.get('scheduleEndOccurrences').value
-          );
+          .setValue(occurrences);
       });
 
     this.currentDate = new Date();
