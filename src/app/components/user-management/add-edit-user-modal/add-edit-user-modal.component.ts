@@ -181,12 +181,12 @@ export class AddEditUserModalComponent implements OnInit {
   }
 
   ngOnInit() {
-    const userDetails = this.data.user;
-    this.permissionsList$ = this.data.permissionsList$;
-    this.rolesInput = this.data.roles.rows;
-    this.rolesList$ = this.data.rolesList$;
-    this.usergroupInput = this.data.usergroup?.items;
-    this.usergroupList$ = this.data.usergroupList$;
+    const userDetails = this.data?.user;
+    this.permissionsList$ = this.data?.permissionsList$;
+    this.rolesInput = this.data?.roles?.rows;
+    this.rolesList$ = this.data?.rolesList$;
+    this.usergroupInput = this.data?.usergroup?.items;
+    this.usergroupList$ = this.data?.usergroupList$;
 
     if (Object.keys(userDetails).length === 0) {
       this.dialogText = 'addUser';
@@ -209,6 +209,10 @@ export class AddEditUserModalComponent implements OnInit {
         profileImage: base64
       });
       this.previousEmail = userDetails.email;
+      const idArray = userDetails?.userGroups?.split(',');
+      userDetails.usergroup = this.usergroupInput?.filter((g) =>
+        idArray?.includes(g?.id)
+      );
       this.userForm.patchValue(userDetails);
     }
 
@@ -322,6 +326,7 @@ export class AddEditUserModalComponent implements OnInit {
   }
 
   save() {
+    const newGroupsIds = this.usergroup?.value?.map((obj) => obj?.id);
     const profileImageFileName = this.userForm.get(
       'profileImageFileName'
     ).value;
@@ -334,7 +339,8 @@ export class AddEditUserModalComponent implements OnInit {
     const payload = {
       user: {
         ...this.data.user,
-        ...this.userForm.value
+        ...this.userForm.value,
+        userGroups: newGroupsIds?.toString()
       },
       action: this.dialogText === 'addUser' ? 'add' : 'edit'
     };
