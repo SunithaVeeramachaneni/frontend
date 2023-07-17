@@ -294,7 +294,7 @@ export class ScheduleConfigurationService {
   addLeadingZero(val: string): string {
     const parsedNumber = parseInt(val, 10);
     if (!isNaN(parsedNumber) && parsedNumber >= 1 && parsedNumber <= 9) {
-      return '0' + val;
+      return val.split('')[0] === '0' ? val : '0' + val;
     }
     return val;
   }
