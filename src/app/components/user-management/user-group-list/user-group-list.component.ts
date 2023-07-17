@@ -226,10 +226,12 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
               );
               initial.splice(indexDel, 1);
               this.selectedUserGroup = initial[indexDel];
+              this.userGroupCountUpdate$.next(-1);
               this.toast.show({
                 type: 'success',
                 text: 'User Group deleted successfully'
               });
+              break;
           }
         } else if (this.userGroupService.usersListEdit) {
           initial.map((data) => {
