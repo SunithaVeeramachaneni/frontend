@@ -313,7 +313,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
       this.plantService.fetchAllPlants$()
     ]).pipe(
       map(([users, scrollData, { action, id }, plant]) => {
-        const plantName = plant?.items.find(
+        this.plantName = plant?.items.find(
           (data) => data.id === this.userGroupPlantId
         )?.name;
         if (this.skip === 0) {

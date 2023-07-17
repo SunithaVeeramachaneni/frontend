@@ -608,7 +608,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
           this.fetchType = 'infiniteScroll';
-          return this.getRoundsList();
+          return this.getRoundsList(false);
         } else {
           return of({} as RoundDetailResponse);
         }
@@ -647,10 +647,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
             ...this.configOptions,
             tableHeight: 'calc(100vh - 150px)'
           };
-
           this.initial.data = rounds.rows.map((roundDetail) => ({
             ...roundDetail,
-
             dueDateDisplay: this.formatDate(
               roundDetail.dueDate,
               roundDetail.plantId
@@ -669,7 +667,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
           this.initial.data = this.initial.data.concat(
             scrollData.rows?.map((roundDetail) => ({
               ...roundDetail,
-
               dueDateDisplay: this.formatDate(
                 roundDetail.dueDate,
                 roundDetail.plantId
@@ -726,7 +723,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
     });
   }
 
-  getRoundsList() {
+  getRoundsList(displayGhostLoading = true) {
     const obj = {
       next: this.nextToken,
       limit: this.limit,
@@ -735,7 +732,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       roundPlanId: this.roundPlanId,
       roundId: this.roundId
     };
-    this.isLoading$.next(true);
+    this.isLoading$.next(displayGhostLoading);
     return this.operatorRoundsService
       .getRoundsList$({ ...obj, ...this.filter })
       .pipe(
