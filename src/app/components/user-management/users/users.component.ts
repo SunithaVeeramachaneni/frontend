@@ -604,7 +604,7 @@ export class UsersComponent implements OnInit {
           return of(resp.rows);
         }),
         mergeMap((resp: UserDetails[]) => {
-          resp = resp.map((user) =>
+          resp = resp?.map((user) =>
             this.usersService.prepareUser(user, user.roles)
           );
           return of(resp);
