@@ -218,6 +218,7 @@ export class SelectUserUsergroupModalComponent implements OnInit {
         this.skip = 0;
         this.fetchType = data;
         this.isLoading$.next(true);
+        this.next = '';
         return this.getUsersList();
       })
     );
