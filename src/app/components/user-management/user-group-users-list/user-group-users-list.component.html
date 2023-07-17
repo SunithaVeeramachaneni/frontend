@@ -22,23 +22,35 @@
       (fetchDataCallback)="handleTableEvent($event)"
       (rowLevelActionHandler)="rowLevelActionHandler($event)"
     ></cwp-dynamictable>
-    <div class="footer-btns" *ngIf="selectedCount">
-      <button
-        mat-button
-        class="cancel-btn"
-        autofocus="false"
-        translate="cancelBtn"
-        (click)="onCancelFooter()"
-        tabindex="-1"
-      ></button>
+    <div class="footer" *ngIf="selectedCount">
+      <div class="footer-left">
+        <svg-icon icon="check-circle" class="check-circle-icon"></svg-icon>
+        <span class="checkedUsers">
+          <span class="checkedUsersCount">
+            {{ selectedCount }}
+          </span>
+          <span class="checkedUsersText">{{ 'selected' | translate }}</span>
+        </span>
+      </div>
 
-      <button
-        mat-raised-button
-        class="remove-btn"
-        type="submit"
-        translate="removeBtn"
-        (click)="removeMultipleMembers()"
-      ></button>
+      <div class="footer-button">
+        <button
+          mat-button
+          class="cancel-btn"
+          autofocus="false"
+          translate="cancelBtn"
+          (click)="onCancelFooter()"
+          tabindex="-1"
+        ></button>
+
+        <button
+          mat-raised-button
+          class="remove-btn"
+          type="submit"
+          translate="removeBtn"
+          (click)="removeMultipleMembers()"
+        ></button>
+      </div>
     </div>
   </div>
   <div *ngIf="(isLoading$ | async) === true">
