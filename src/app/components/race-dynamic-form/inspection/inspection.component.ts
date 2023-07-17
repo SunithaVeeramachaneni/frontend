@@ -970,6 +970,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
         this.filter[item.column] = item.value;
       } else if (item.type !== 'date' && item.value) {
         this.filter[item.column] = item.value;
+      } else if (item.type === 'date' && item.value) {
+        this.filter[item.column] = item.value;
       }
     }
     this.nextToken = '';
