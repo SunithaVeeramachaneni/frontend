@@ -23,6 +23,7 @@ import {
   debounceTime,
   distinctUntilChanged,
   pairwise,
+  startWith,
   takeUntil,
   tap
 } from 'rxjs/operators';
@@ -127,6 +128,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
     this.formConfiguration.valueChanges
       .pipe(
+        startWith({}),
         debounceTime(500),
         distinctUntilChanged(),
         takeUntil(this.onDestroy$),
@@ -148,8 +150,8 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
             if (
               !isEqual(prev, curr) &&
-              prev.name !== undefined &&
-              curr.name !== undefined
+              ((prev.name !== undefined && curr.name !== undefined) ||
+                prev.description !== curr.description)
             ) {
               this.store.dispatch(
                 BuilderConfigurationActions.updateFormMetadata({

@@ -79,25 +79,20 @@
 
 .stepper-div {
   display: flex;
-  justify-content: space-evenly;
+  justify-content: center;
   position: relative;
   top: 5px;
 }
 
 .stepper-line {
   position: relative;
-  bottom: 12px;
-  left: 115px;
-  width: 85px;
+  top: 12px;
+  width: auto;
   margin: 0;
-}
-
-.stepper-line-length {
-  position: relative;
-  bottom: 12px;
-  left: 107px;
-  width: 155px;
-  margin: 0;
+  border-bottom: none;
+  border-top: 2px solid $disable-stpper-bg;
+  border-left: none;
+  border-right: none;
 }
 
 .disable-step {
