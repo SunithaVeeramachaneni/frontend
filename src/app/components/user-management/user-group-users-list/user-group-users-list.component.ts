@@ -382,7 +382,6 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
 
           map((data) => {
             const rows = data.map((item) => {
-              console.log('items :', item);
               if (item?.users.firstName && item?.users.lastName) {
                 item.user = item?.users.firstName + ' ' + item?.users.lastName;
               } else {
