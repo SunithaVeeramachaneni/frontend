@@ -411,6 +411,9 @@ export class FormsComponent implements OnInit, OnDestroy {
             this.formatForms(scrollData.rows, formScheduleConfigurations)
           );
         }
+        if (this.filter.assignedTo) {
+          this.initial.data = this.assingedToFilter(this.initial.data);
+        }
         this.skip = this.initial.data.length;
         return this.initial;
       })
@@ -493,6 +496,12 @@ export class FormsComponent implements OnInit, OnDestroy {
     this.configOptions.allColumns = this.columns;
     this.getAllForms();
     this.getFilter();
+  }
+
+  assingedToFilter(roundPlan) {
+    return roundPlan.filter((plan) =>
+      this.filter.assignedTo.includes(plan.assigneeToEmail)
+    );
   }
 
   getFormsList() {
