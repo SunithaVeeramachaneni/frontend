@@ -333,7 +333,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
               });
               this.toast.show({
                 type: 'success',
-                text: 'Member deleted successfully'
+                text: 'Member removed successfully'
               });
           }
           this.userAddEdit = false;
@@ -382,7 +382,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
 
           map((data) => {
             if (data && data.length) {
-              const rows = data.map((item) => {
+              const rows = data?.map((item) => {
                 if (item?.users.firstName && item?.users.lastName) {
                   item.user =
                     item?.users.firstName + ' ' + item?.users.lastName;

@@ -370,6 +370,10 @@ export class SelectUserUsergroupModalComponent implements OnInit {
           this.selectedUsers = [];
         }
         this.selectedUsersCount$ = of(this.selectedUsers.length);
+        this.disableBtn = this.areArraysEqual(
+          this.initialUsers,
+          this.selectedUsers
+        );
 
         break;
 
