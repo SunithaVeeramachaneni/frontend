@@ -231,6 +231,9 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
                 type: 'success',
                 text: 'User Group deleted successfully'
               });
+              if (initial?.length === 0) {
+                this.selectedUserGroup = null;
+              }
               break;
           }
         } else if (this.userGroupService.usersListEdit) {
