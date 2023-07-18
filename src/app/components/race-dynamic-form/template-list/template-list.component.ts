@@ -493,9 +493,11 @@ export class TemplateListComponent implements OnInit, OnDestroy {
   }
 
   showAffectedSlider(row: any): void {
-    this.selectedTemplate = row;
-    this.affectedSliderState = 'in';
-    this.onCloseViewDetail();
+    if (row.formsUsageCount) {
+      this.selectedTemplate = row;
+      this.affectedSliderState = 'in';
+      this.onCloseViewDetail();
+    }
   }
 
   private showFormDetail(row: any): void {
