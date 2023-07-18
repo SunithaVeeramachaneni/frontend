@@ -25,7 +25,7 @@ import {
   Column,
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
-import { defaultLimit, routingUrls } from 'src/app/app.constants';
+import { graphQLDefaultLimit, routingUrls } from 'src/app/app.constants';
 import {
   BehaviorSubject,
   Observable,
@@ -159,7 +159,7 @@ export class SelectUserUsergroupModalComponent implements OnInit {
   skip = 0;
   plantId;
   next = '';
-  limit = 500;
+  limit = graphQLDefaultLimit;
   roles;
   searchUser: FormControl;
   selectedUsers = [];
@@ -370,6 +370,10 @@ export class SelectUserUsergroupModalComponent implements OnInit {
           this.selectedUsers = [];
         }
         this.selectedUsersCount$ = of(this.selectedUsers.length);
+        this.disableBtn = this.areArraysEqual(
+          this.initialUsers,
+          this.selectedUsers
+        );
 
         break;
 
