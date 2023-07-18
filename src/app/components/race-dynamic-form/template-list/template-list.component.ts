@@ -4,7 +4,7 @@ import {
   OnDestroy,
   OnInit
 } from '@angular/core';
-import { BehaviorSubject, Observable, Subject, of } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription, of } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -276,6 +276,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
   lastPublishedBy = [];
   createdBy = [];
   readonly permissions = permissions;
+  fetchAllTemplatesSubscription: Subscription;
   private onDestroy$ = new Subject();
 
   constructor(
@@ -295,21 +296,23 @@ export class TemplateListComponent implements OnInit, OnDestroy {
     );
 
     this.usersService.getUsersInfo$().subscribe(() => {
-      this.raceDynamicFormService.fetchAllTemplates$().subscribe((res: any) => {
-        this.templatesCount$ = of(res.rows.length);
-        this.allTemplates = res.rows.map((item) => ({
-          ...item,
-          author: this.usersService.getUserFullName(item.author),
-          lastPublishedBy: this.usersService.getUserFullName(
-            item.lastPublishedBy
-          )
-        }));
-        this.displayedTemplates = this.allTemplates;
-        this.dataSource = new MatTableDataSource(this.displayedTemplates);
-        this.isLoading$.next(false);
+      this.fetchAllTemplatesSubscription = this.raceDynamicFormService
+        .fetchAllTemplates$()
+        .subscribe((res: any) => {
+          this.templatesCount$ = of(res.rows.length);
+          this.allTemplates = res.rows.map((item) => ({
+            ...item,
+            author: this.usersService.getUserFullName(item.author),
+            lastPublishedBy: this.usersService.getUserFullName(
+              item.lastPublishedBy
+            )
+          }));
+          this.displayedTemplates = this.allTemplates;
+          this.dataSource = new MatTableDataSource(this.displayedTemplates);
+          this.isLoading$.next(false);
 
-        this.initializeFilter();
-      });
+          this.initializeFilter();
+        });
     });
 
     this.searchTemplates.valueChanges
@@ -488,6 +491,9 @@ export class TemplateListComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    if (this.fetchAllTemplatesSubscription) {
+      this.fetchAllTemplatesSubscription.unsubscribe();
+    }
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }

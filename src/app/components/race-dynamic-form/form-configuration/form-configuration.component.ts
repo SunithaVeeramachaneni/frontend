@@ -92,6 +92,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   pages: any;
   readonly formConfigurationStatus = formConfigurationStatus;
   authoredFormDetailSubscription: Subscription;
+  getFormMetadataSubscription: Subscription;
   private onDestroy$ = new Subject();
 
   constructor(
@@ -380,9 +381,11 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
             })
           );
         } else {
-          this.store.select(getFormMetadata).subscribe((data) => {
-            this.isEmbeddedForm = data.formType === 'Embedded';
-          });
+          this.getFormMetadataSubscription = this.store
+            .select(getFormMetadata)
+            .subscribe((data) => {
+              this.isEmbeddedForm = data.formType === 'Embedded';
+            });
 
           if (this.data.formData === null) {
             const section = {
@@ -578,6 +581,9 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.authoredFormDetailSubscription) {
       this.authoredFormDetailSubscription.unsubscribe();
+    }
+    if (this.getFormMetadataSubscription) {
+      this.getFormMetadataSubscription.unsubscribe();
     }
     this.onDestroy$.next();
     this.onDestroy$.complete();
