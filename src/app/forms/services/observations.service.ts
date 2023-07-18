@@ -437,18 +437,19 @@ export class ObservationsService {
     return formattedStatus;
   }
 
-  prepareColorsAndData(result, action: 'priority' | 'status') {
+  prepareColorsAndData(result: any, action: 'priority' | 'status') {
     const color = [];
     const data = [];
     Object.entries(result).map(([key, value]) => {
       const leanKey = this.removeSpecialCharacter(key.toLowerCase());
+      const formattedKey = leanKey === 'low' ? 'Low' : key;
       color.push(
         action === 'priority'
           ? this.priorityColors[leanKey]
           : this.statusColors[leanKey]
       );
       data.push({
-        name: leanKey === 'inprogress' ? 'In Progress' : key,
+        name: formattedKey === 'inprogress' ? 'In Progress' : formattedKey,
         value
       });
     });
