@@ -87,6 +87,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   allTemplates: any;
   currentFormData: any;
   isEmbeddedForm: boolean;
+  embeddedText = 'Embedded';
   errors: ValidationError = {};
   formDetails: any;
   pages: any;
@@ -384,7 +385,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
           this.getFormMetadataSubscription = this.store
             .select(getFormMetadata)
             .subscribe((data) => {
-              this.isEmbeddedForm = data.formType === 'Embedded';
+              this.isEmbeddedForm = data.formType === this.embeddedText;
             });
 
           if (this.data.formData === null) {
