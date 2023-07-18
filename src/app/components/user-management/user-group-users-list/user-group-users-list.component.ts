@@ -254,7 +254,8 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
       if (changes.userGroupPlantId) {
         this._userGroupPlantId = changes.userGroupPlantId?.currentValue;
       }
-      this.skip = 0;
+      this.fetchUsers$.next({ data: 'load' });
+      this.fetchUsers$.next({} as TableEvent);
       this.getAllUsers();
     } else {
       this.dataSource = new MatTableDataSource([]);
@@ -288,6 +289,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
       switchMap(({ data }) => {
         this.fetchType = data;
         this.skip = 0;
+        this.next = '';
         this.isLoading$.next(true);
         return this.getUsersList();
       })
@@ -296,9 +298,10 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
       filter(({ data }) => data !== 'load' && data !== 'search'),
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
+          this.fetchType = data;
           return this.getUsersList();
         } else {
-          return of([] as UserDetails[]);
+          return of([]);
         }
       })
     );
@@ -331,6 +334,10 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
                 text: 'Member deleted successfully'
               });
           }
+          this.userAddEdit = false;
+          this.fetchUsers$.next({ data: 'load' });
+          this.fetchUsers$.next({} as TableEvent);
+          this.getAllUsers();
         } else {
           initial.data = initial.data.concat(scrollData);
         }
@@ -359,6 +366,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
           mergeMap((resp: any) => {
             this.isLoading$.next(false);
             this.userCount = resp.count;
+            this.userGroupService.usersListEdit = true;
             this.userGroupService.usersCount$.next({
               groupId: this._userGroupId,
               count: this.userCount
@@ -537,7 +545,6 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
           .subscribe(() => {
             this.selectedUsers = [];
             this.selectedCount = this.selectedUsers.length;
-            this.fetchUsers$.next({ data: 'load' });
             this.userAddEdit = true;
             this.userListActions$.next({ action: 'delete', id: idList });
             this.userCount -= idList.length;
@@ -552,6 +559,8 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
   }
   onCancelFooter() {
     this.fetchUsers$.next({ data: 'load' });
+    this.fetchUsers$.next({} as TableEvent);
+    this.getAllUsers();
     this.selectedUsers = [];
     this.skip = 0;
     this.selectedCount = this.selectedUsers.length;
