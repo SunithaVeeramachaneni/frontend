@@ -54,7 +54,7 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
   userGroupId;
   usergrp = 0;
   next = '';
-  limit = 500;
+  limit = defaultLimit;
   search: '';
   isOpenAddEditUserGroupModal = false;
   searchUserGroup: FormControl;
@@ -196,28 +196,29 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
           switch (action) {
             case 'copy':
               initial.unshift(group);
-              this.toast.show({
-                type: 'success',
-                text: 'User Group copied successfully'
-              });
+              this.userGroupCountUpdate$.next(+1);
               break;
             case 'edit':
               const indexCpy = initial.findIndex(
                 (data) => data?.id === group?.id
               );
               initial[indexCpy] = group;
+              this.userGroupCountUpdate$.next(0);
               this.toast.show({
                 type: 'success',
                 text: 'User Group edited successfully'
               });
+
               break;
             case 'add':
               initial.unshift(group);
               this.selectedUserGroup = group;
+              this.userGroupCountUpdate$.next(+1);
               this.toast.show({
                 type: 'success',
                 text: 'User Group added successfully'
               });
+
               break;
             case 'delete':
               const indexDel = initial.findIndex(
@@ -225,12 +226,16 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
               );
               initial.splice(indexDel, 1);
               this.selectedUserGroup = initial[indexDel];
+              this.userGroupCountUpdate$.next(-1);
               this.toast.show({
                 type: 'success',
                 text: 'User Group deleted successfully'
               });
+              if (initial?.length === 0) {
+                this.selectedUserGroup = null;
+              }
+              break;
           }
-          this.userGroupService.addUpdateDeleteCopyUserGroup = false;
         } else if (this.userGroupService.usersListEdit) {
           initial.map((data) => {
             if (data?.id === groupId) {
@@ -286,7 +291,7 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
         action: 'copy',
         group: preparedData
       });
-      this.userGroupCountUpdate$.next(1);
+
       this.toast.show({
         type: 'success',
         text: 'User Group copied successfully'
@@ -311,7 +316,6 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
           action: 'delete',
           group: data
         });
-        this.userGroupCountUpdate$.next(-1);
       });
     });
   }

@@ -1,15 +1,24 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  ChangeDetectionStrategy
+} from '@angular/core';
 import { FormService } from '../../services/form.service';
 
 @Component({
   selector: 'app-response-type-button',
   templateUrl: './response-type-button.component.html',
-  styleUrls: ['./response-type-button.component.scss']
+  styleUrls: ['./response-type-button.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ResponseTypeButtonComponent implements OnInit {
   @Input() questionForm;
   @Input() fieldTypes;
   @Input() title;
+  @Input() isImported: boolean;
   @Output() responseTypeOpenEvent: EventEmitter<boolean> =
     new EventEmitter<boolean>();
   constructor(private formService: FormService) {}

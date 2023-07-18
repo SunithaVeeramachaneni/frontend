@@ -552,11 +552,14 @@ export class UsersComponent implements OnInit {
         }
         initial?.data?.map((data) => {
           const ids = data?.userGroups?.split(',');
-          const userGroupNames = [];
+          let userGroupNames = [];
           ids?.forEach((id) => {
             const obj = userGroups?.items?.find((g) => g?.id === id);
             userGroupNames.push(obj?.name);
           });
+          userGroupNames = userGroupNames?.filter(
+            (name) => name !== '' && name !== undefined
+          );
           data.userGroupsDisplay = userGroupNames.toString();
           return data;
         });

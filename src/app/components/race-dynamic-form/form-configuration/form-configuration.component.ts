@@ -23,6 +23,7 @@ import {
   debounceTime,
   distinctUntilChanged,
   pairwise,
+  startWith,
   takeUntil,
   tap
 } from 'rxjs/operators';
@@ -91,6 +92,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   pages: any;
   readonly formConfigurationStatus = formConfigurationStatus;
   authoredFormDetailSubscription: Subscription;
+  getFormMetadataSubscription: Subscription;
   private onDestroy$ = new Subject();
 
   constructor(
@@ -127,6 +129,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
     this.formConfiguration.valueChanges
       .pipe(
+        startWith({}),
         debounceTime(500),
         distinctUntilChanged(),
         takeUntil(this.onDestroy$),
@@ -148,8 +151,8 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
             if (
               !isEqual(prev, curr) &&
-              prev.name !== undefined &&
-              curr.name !== undefined
+              ((prev.name !== undefined && curr.name !== undefined) ||
+                prev.description !== curr.description)
             ) {
               this.store.dispatch(
                 BuilderConfigurationActions.updateFormMetadata({
@@ -378,9 +381,12 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
             })
           );
         } else {
-          this.store.select(getFormMetadata).subscribe((data) => {
-            this.isEmbeddedForm = data.formType === 'Embedded';
-          });
+          this.getFormMetadataSubscription = this.store
+            .select(getFormMetadata)
+            .subscribe((data) => {
+              this.isEmbeddedForm =
+                data.formType === this.formConfigurationStatus.embedded;
+            });
 
           if (this.data.formData === null) {
             const section = {
@@ -576,6 +582,9 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.authoredFormDetailSubscription) {
       this.authoredFormDetailSubscription.unsubscribe();
+    }
+    if (this.getFormMetadataSubscription) {
+      this.getFormMetadataSubscription.unsubscribe();
     }
     this.onDestroy$.next();
     this.onDestroy$.complete();

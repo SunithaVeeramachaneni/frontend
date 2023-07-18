@@ -78,6 +78,7 @@
         <div class="width-30">
           <app-response-type-button
             [questionForm]="questionForm"
+            [isImported]="this.isImported"
             [fieldTypes]="fieldTypes"
             (responseTypeOpenEvent)="responseTypeOpenEventHandler($event)"
           >
