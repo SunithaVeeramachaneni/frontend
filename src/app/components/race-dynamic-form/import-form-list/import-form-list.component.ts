@@ -20,7 +20,7 @@ import {
   TableEvent
 } from '../../../interfaces';
 
-import { graphQLDefaultMaxLimit } from '../../../app.constants';
+import { defaultLimit } from '../../../app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { getFormMetadata, State } from 'src/app/forms/state';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
@@ -38,7 +38,7 @@ import { MatTableDataSource } from '@angular/material/table';
 export class ImportFormListComponent implements OnInit, OnDestroy {
   searchForm: FormControl;
   skip = 0;
-  limit = graphQLDefaultMaxLimit;
+  limit = defaultLimit;
   selectedForm;
   forms$: Observable<any>;
   authoredFormDetail$: Observable<any>;
@@ -80,7 +80,7 @@ export class ImportFormListComponent implements OnInit, OnDestroy {
         color: 'darkgray',
         display: 'block',
         'white-space': 'wrap',
-        'max-width': '350px',
+        'max-width': '240px',
         'overflow-wrap': 'anywhere'
       },
       hasPreTextImage: true,
