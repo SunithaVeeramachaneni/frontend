@@ -81,6 +81,7 @@ export const permissions = Object.freeze({
   viewArchivedForms: 'VIEW_ARCHIVED_FORMS',
   viewFormScheduler: 'VIEW_FORM_SCHEDULER',
   scheduleInspection: 'SCHEDULE_FORM',
+  importForm: 'IMPORT_FORM',
 
   viewORPlans: 'VIEW_OR_PLANS',
   createORPlan: 'CREATE_OR_PLAN',

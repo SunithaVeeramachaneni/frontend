@@ -34,20 +34,15 @@
           ></svg-icon>
         </mat-form-field>
         <button
-          *appCheckUserHasPermission="[perms.createForm]"
+          *appCheckUserHasPermission="[perms.createForm, perms.importForm]"
+          [matMenuTriggerFor]="menu"
           class="create-new-btn"
-          (click)="openFormCreationModal(null)"
           translate="createNew"
         ></button>
-        <!-- <mat-menu #menu="matMenu" backdropClass="template-list">
-          <button mat-menu-item (click)="openCreateFromTemplateModal()">
-            <svg-icon
-              icon="icon-Template-icon"
-              class="add-template-icon"
-            ></svg-icon>
-            <span class="create-template">
-              {{ 'createFromTemplate' | translate }}</span
-            >
+        <mat-menu #menu="matMenu" backdropClass="template-list">
+          <button mat-menu-item>
+            <svg-icon icon="icon-excel1" class="add-template-icon"></svg-icon>
+            <span class="create-template" translate="uploadExcel"> </span>
           </button>
 
           <button mat-menu-item (click)="openFormCreationModal(null)">
@@ -57,7 +52,7 @@
             ></svg-icon>
             {{ 'createManually' | translate }}
           </button>
-        </mat-menu> -->
+        </mat-menu>
       </div>
     </div>
 

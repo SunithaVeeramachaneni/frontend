@@ -366,5 +366,8 @@
   "formsWillAppearOnceTemplateIsLinked": "Forms will appear once Template is linked",
   "templatesUsed": "Templates Used",
   "template": "Template",
-  "addNotes": "Add Notes"
+  "addNotes": "Add Notes",
+  "uploadExcel": "Upload Excel",
+  "uploadEmbedded": "Embedded (For mWorkorder)",
+  "uploadStandalone": "Standalone (For mInspections)"
 }
