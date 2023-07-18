@@ -89,7 +89,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
   userAddEdit = false;
   disableBtn = true;
   userCount: number;
-  limit = 500;
+  limit = 100;
   next = '';
   selectedUsers = [];
   allUsersList = [];
@@ -381,47 +381,52 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
           }),
 
           map((data) => {
-            const rows = data.map((item) => {
-              if (item?.users.firstName && item?.users.lastName) {
-                item.user = item?.users.firstName + ' ' + item?.users.lastName;
-              } else {
-                item.user = '';
-              }
-              if (item?.users.email) {
-                item.email = item?.users.email ?? '';
-              }
-              if (item?.users?.validThrough) {
-                item.validThrough = format(
-                  new Date(item?.users?.validThrough),
-                  'dd.MM.yy'
-                );
-              } else {
-                item.validThrough = '';
-              }
-              if (item?.users?.roles) {
-                const rolesNames = [];
-                item?.users?.roles?.forEach((role) => {
-                  rolesNames.push(role?.name);
-                });
-                item.roles = rolesNames?.toString();
-              } else {
-                item.roles = '';
-              }
-              item.plant = this.plantName;
-              item.preTextImage = {
-                style: {
-                  width: '30px',
-                  height: '30px',
-                  'border-radius': '50%',
-                  display: 'block',
-                  padding: '0px 10px'
-                },
-                image: this.getImageSrc(item?.users?.profileImage),
-                condition: true
-              };
-              return item;
-            });
-            return rows;
+            if (data && data.length) {
+              const rows = data.map((item) => {
+                if (item?.users.firstName && item?.users.lastName) {
+                  item.user =
+                    item?.users.firstName + ' ' + item?.users.lastName;
+                } else {
+                  item.user = '';
+                }
+                if (item?.users.email) {
+                  item.email = item?.users.email ?? '';
+                }
+                if (item?.users?.validThrough) {
+                  item.validThrough = format(
+                    new Date(item?.users?.validThrough),
+                    'dd.MM.yy'
+                  );
+                } else {
+                  item.validThrough = '';
+                }
+                if (item?.users?.roles) {
+                  const rolesNames = [];
+                  item?.users?.roles?.forEach((role) => {
+                    rolesNames.push(role?.name);
+                  });
+                  item.roles = rolesNames?.toString();
+                } else {
+                  item.roles = '';
+                }
+                item.plant = this.plantName;
+                item.preTextImage = {
+                  style: {
+                    width: '30px',
+                    height: '30px',
+                    'border-radius': '50%',
+                    display: 'block',
+                    padding: '0px 10px'
+                  },
+                  image: this.getImageSrc(item?.users?.profileImage),
+                  condition: true
+                };
+                return item;
+              });
+              return rows;
+            } else {
+              return [];
+            }
           })
         );
     } else {

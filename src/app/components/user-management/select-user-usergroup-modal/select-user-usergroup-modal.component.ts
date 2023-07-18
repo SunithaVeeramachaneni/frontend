@@ -159,7 +159,7 @@ export class SelectUserUsergroupModalComponent implements OnInit {
   skip = 0;
   plantId;
   next = '';
-  limit = 500;
+  limit = 100;
   roles;
   searchUser: FormControl;
   selectedUsers = [];
