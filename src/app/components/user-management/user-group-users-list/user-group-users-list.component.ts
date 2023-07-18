@@ -51,6 +51,7 @@ import { RemoveUserModalComponent } from '../remove-user-modal/remove-user-modal
 import { LoginService } from '../../login/services/login.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { DomSanitizer } from '@angular/platform-browser';
+import { graphQLDefaultLimit } from 'src/app/app.constants';
 interface UsersListActions {
   action: 'delete' | null;
   id: any[];
@@ -89,7 +90,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
   userAddEdit = false;
   disableBtn = true;
   userCount: number;
-  limit = 100;
+  limit = graphQLDefaultLimit;
   next = '';
   selectedUsers = [];
   allUsersList = [];
