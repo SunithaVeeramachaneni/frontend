@@ -498,9 +498,9 @@ export class FormsComponent implements OnInit, OnDestroy {
     this.getFilter();
   }
 
-  assingedToFilter(roundPlan) {
-    return roundPlan.filter((plan) =>
-      this.filter.assignedTo.includes(plan.assigneeToEmail)
+  assingedToFilter(forms) {
+    return forms.filter((form) =>
+      this.filter.assignedTo.includes(form.assigneeToEmail)
     );
   }
 
