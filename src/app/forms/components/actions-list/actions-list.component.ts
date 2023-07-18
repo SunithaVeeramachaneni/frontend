@@ -442,7 +442,7 @@ export class ActionsListComponent implements OnInit, OnDestroy {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
-            tableHeight: 'calc(100vh - 430px)'
+            tableHeight: 'calc(100vh - 435px)'
           };
           this.initial.data = this.formatActions(rows);
         } else {
