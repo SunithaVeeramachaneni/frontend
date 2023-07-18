@@ -437,7 +437,7 @@ export class ObservationsService {
     return formattedStatus;
   }
 
-  prepareColorsAndData(result: any, action: 'priority' | 'status') {
+  prepareColorsAndData(result, action: 'priority' | 'status') {
     const color = [];
     const data = [];
     Object.entries(result).map(([key, value]) => {
