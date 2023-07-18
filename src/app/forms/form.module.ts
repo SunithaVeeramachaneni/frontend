@@ -122,6 +122,7 @@ import { StepsHeaderComponent } from './components/stepper/steps-header/steps-he
 import { MatStepperModule } from '@angular/material/stepper';
 import { PdfBuilderOprComponent } from './components/pdf-builder-opr/pdf-builder-opr.component';
 import { UploadImagePreviewComponent } from './components/upload-image-preview/upload-image-preview.component';
+import { FormUpdateDeleteProgressComponent } from './components/form-update-delete-progress/form-update-delete-progress.component';
 @NgModule({
   declarations: [
     FormWidgetComponent,
@@ -198,7 +199,8 @@ import { UploadImagePreviewComponent } from './components/upload-image-preview/u
     ShiftDateChangeWarningModalComponent,
     DynamicStepperComponent,
     StepsHeaderComponent,
-    PdfBuilderOprComponent
+    PdfBuilderOprComponent,
+    FormUpdateDeleteProgressComponent
   ],
   imports: [
     SharedModule,
@@ -289,7 +291,8 @@ import { UploadImagePreviewComponent } from './components/upload-image-preview/u
     StepsHeaderComponent,
     PdfBuilderOprComponent,
     InstructionPdfComponent,
-    ShiftMenuItemComponent
+    ShiftMenuItemComponent,
+    FormUpdateDeleteProgressComponent
   ]
 })
 export class FormModule {}

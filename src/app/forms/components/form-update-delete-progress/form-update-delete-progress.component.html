@@ -1,0 +1,32 @@
+<div [ngClass]="['form-update-delete-progress', isOpen ? '' : 'shrink']">
+  <div class="total-progress-container">
+    <div class="total-progress-count">
+      3 of {{ formMetadata.length }} Forms Updated
+    </div>
+    <div class="progress-container-cta">
+      <div
+        [ngClass]="['cta-icon-holder', isFormListExpanded ? '' : 'rotate-icon']"
+        (click)="toggleFormListExpanded()"
+      >
+        <svg-icon icon="icon-arrow-down" class="cta-icon"></svg-icon>
+      </div>
+      <div class="cta-icon-holder" (click)="closeFormProgressComponent()">
+        <svg-icon icon="icon-close" class="cta-icon"></svg-icon>
+      </div>
+    </div>
+  </div>
+  <div
+    [ngClass]="[
+      'form-progress-list-container',
+      isFormListExpanded ? 'expand' : 'shrink'
+    ]"
+  >
+    <div class="single-form-progress" *ngFor="let form of formMetadata">
+      <div class="form-metadata">
+        <img class="form-icon" src="{{ form.preTextImage.image }}" alt="" />
+        <span class="form-name">{{ form.name }}</span>
+      </div>
+      <mat-spinner class="form-progress-spinner" [diameter]="25"></mat-spinner>
+    </div>
+  </div>
+</div>
