@@ -215,6 +215,8 @@ export class ScheduleConfigurationService {
     subtractHours: number,
     subtractMinutes: number
   ): string {
+    timeString = this.convertTo24Hour(timeString);
+
     const [timePart, timeType] = (timeString?.split(' ') ?? []) as [
       string?,
       string?
@@ -223,7 +225,6 @@ export class ScheduleConfigurationService {
       string?,
       string?
     ];
-    timeString = this.convertTo24Hour(timeString);
 
     let hours: number = parseInt(hoursStr, 10);
     let minutes: number = parseInt(minutesStr, 10);
@@ -255,20 +256,6 @@ export class ScheduleConfigurationService {
     } else if (hours === 0) {
       hours = 12;
     }
-    const startTimePM = '12:00';
-    if (timeString?.toLowerCase() === startTimePM?.toLowerCase()) {
-      type = TimeType.am;
-    }
-    const startTimeAM = '12:00 am';
-    if (timeString?.toLowerCase() === startTimeAM) {
-      type = TimeType.am;
-    }
-    if (
-      timeString?.toLowerCase() === startTimePM?.toLowerCase() &&
-      timeType === 'PM'
-    ) {
-      type = TimeType.pm;
-    }
     const updatedTimeString = `${this.padZero(hours)}:${this.padZero(
       minutes
     )} ${type}`;
@@ -294,9 +281,34 @@ export class ScheduleConfigurationService {
   addLeadingZero(val: string): string {
     const parsedNumber = parseInt(val, 10);
     if (!isNaN(parsedNumber) && parsedNumber >= 1 && parsedNumber <= 9) {
-      return '0' + val;
+      return val.split('')[0] === '0' ? val : '0' + val;
     }
     return val;
+  }
+
+  adjustStartEndTime(dataArrays, obj, slotStartTime, objStartLastTime) {
+    const totalDiff = this.getTimeDifference(slotStartTime, objStartLastTime);
+    let highestEndTime = '';
+    dataArrays.forEach((item) => {
+      highestEndTime = this.addTime(item.endTime, 0, 1);
+    });
+
+    if (highestEndTime !== '') {
+      let endTimeDiff = this.getTimeDifference(highestEndTime, obj?.startTime);
+      if (totalDiff < endTimeDiff) {
+        this.sortArray(dataArrays, obj);
+        return obj;
+      }
+      if (endTimeDiff > 0) {
+        obj.startTime = this.subtractTime(obj?.startTime, endTimeDiff, 0);
+        if (obj.index === 2) {
+          endTimeDiff = obj.index;
+        } else {
+          obj.endTime = this.subtractTime(obj.endTime, endTimeDiff, 0);
+        }
+      }
+    }
+    return obj;
   }
 
   private getDateString(data?: Date): string {
