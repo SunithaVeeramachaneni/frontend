@@ -50,6 +50,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { RemoveUserModalComponent } from '../remove-user-modal/remove-user-modal.component';
 import { LoginService } from '../../login/services/login.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
+import { DomSanitizer } from '@angular/platform-browser';
 interface UsersListActions {
   action: 'delete' | null;
   id: any[];
@@ -243,7 +244,8 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
     private dialog: MatDialog,
     private toast: ToastService,
     private loginService: LoginService,
-    private plantService: PlantService
+    private plantService: PlantService,
+    private sant: DomSanitizer
   ) {}
 
   ngOnChanges(changes: SimpleChanges) {
@@ -259,10 +261,10 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
       this.getAllUsers();
     } else {
       this.dataSource = new MatTableDataSource([]);
+      this.isLoading$.next(false);
       this.disableBtn = true;
       this._userGroupName = '';
     }
-    this.isLoading$.next(true);
     this.selectedUsers = [];
     this.selectedCount = 0;
   }
@@ -365,7 +367,9 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
         .pipe(
           mergeMap((resp: any) => {
             this.isLoading$.next(false);
-            this.userCount = resp.count;
+            if (resp.count) {
+              this.userCount = resp.count;
+            }
             this.userGroupService.usersListEdit = true;
             this.userGroupService.usersCount$.next({
               groupId: this._userGroupId,
@@ -378,6 +382,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
 
           map((data) => {
             const rows = data.map((item) => {
+              console.log('items :', item);
               if (item?.users.firstName && item?.users.lastName) {
                 item.user = item?.users.firstName + ' ' + item?.users.lastName;
               } else {
@@ -404,6 +409,17 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
                 item.roles = '';
               }
               item.plant = this.plantName;
+              item.preTextImage = {
+                style: {
+                  width: '30px',
+                  height: '30px',
+                  'border-radius': '50%',
+                  display: 'block',
+                  padding: '0px 10px'
+                },
+                image: this.getImageSrc(item?.users?.profileImage),
+                condition: true
+              };
               return item;
             });
             return rows;
@@ -420,6 +436,13 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
 
   handleTableEvent = (event) => {
     this.fetchUsers$.next(event);
+  };
+
+  getImageSrc = (source: string) => {
+    if (source) {
+      const base64Image = 'data:image/jpeg;base64,' + source;
+      return this.sant.bypassSecurityTrustResourceUrl(base64Image);
+    }
   };
 
   prepareMenuActions(permissions: Permission[]) {

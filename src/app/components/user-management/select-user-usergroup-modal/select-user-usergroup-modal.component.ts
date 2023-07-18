@@ -47,6 +47,7 @@ import { UserGroupService } from '../services/user-group.service';
 import { AddEditUserGroupModalComponent } from '../add-edit-user-group-modal/add-edit-user-group-modal.component';
 import { ToastService } from 'src/app/shared/toast';
 import { data_test } from '../../spare-parts/spare-parts-data';
+import { DomSanitizer } from '@angular/platform-browser';
 @Component({
   selector: 'app-select-user-usergroup-modal',
   templateUrl: './select-user-usergroup-modal.component.html',
@@ -177,7 +178,8 @@ export class SelectUserUsergroupModalComponent implements OnInit {
     private userGroupService: UserGroupService,
     private roleService: RolesPermissionsService,
     private commonService: CommonService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private sant: DomSanitizer
   ) {}
 
   ngOnInit() {
@@ -328,6 +330,17 @@ export class SelectUserUsergroupModalComponent implements OnInit {
             } else {
               item.user = '';
             }
+            item.preTextImage = {
+              style: {
+                width: '30px',
+                height: '30px',
+                'border-radius': '50%',
+                display: 'block',
+                padding: '0px 10px'
+              },
+              image: this.getImageSrc(item?.profileImage ?? ''),
+              condition: true
+            };
             return item;
           });
           return rows;
@@ -384,6 +397,12 @@ export class SelectUserUsergroupModalComponent implements OnInit {
       // do nothing
     }
   };
+  getImageSrc = (source: string) => {
+    if (source) {
+      const base64Image = 'data:image/jpeg;base64,' + source;
+      return this.sant.bypassSecurityTrustResourceUrl(base64Image);
+    }
+  };
   onCancel(): void {
     this.dialogRef.close({
       isBack: true,
@@ -406,11 +425,13 @@ export class SelectUserUsergroupModalComponent implements OnInit {
     });
 
     const newUserGroup = {
-      name: this.data?.name,
-      description: this.data?.description,
+      name: this.data?.name ?? '',
+      description: this.data?.description ?? '',
       plantId: this.data?.plantId,
       users: selectedUserId,
-      searchTerm: `${this.data?.name?.toLowerCase()} ${this.data?.description?.toLowerCase()}`
+      searchTerm: `${this.data?.name?.toLowerCase() ?? ''} ${
+        this.data?.description?.toLowerCase() ?? ''
+      }`
     };
 
     this.userGroupService
