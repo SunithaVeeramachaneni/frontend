@@ -54,7 +54,7 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
   userGroupId;
   usergrp = 0;
   next = '';
-  limit = 100;
+  limit = 25;
   search: '';
   isOpenAddEditUserGroupModal = false;
   searchUserGroup: FormControl;
