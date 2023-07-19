@@ -371,7 +371,7 @@ export class SelectUserUsergroupModalComponent implements OnInit {
         }
         this.selectedUsersCount$ = of(this.selectedUsers?.length);
         this.disableBtn =
-          this.areArraysEqual(this.initialUsers, this.selectedUsers) &&
+          this.areArraysEqual(this.initialUsers, this.selectedUsers) ||
           this.selectedUsers?.length === 0;
 
         break;
@@ -391,7 +391,7 @@ export class SelectUserUsergroupModalComponent implements OnInit {
         }
         this.selectedUsersCount$ = of(this.selectedUsers?.length);
         this.disableBtn =
-          this.areArraysEqual(this.initialUsers, this.selectedUsers) &&
+          this.areArraysEqual(this.initialUsers, this.selectedUsers) ||
           this.selectedUsers?.length === 0;
 
         break;
