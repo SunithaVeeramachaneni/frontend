@@ -47,6 +47,7 @@ import { ToastService } from 'src/app/shared/toast';
 import { ErrorInfo, CreateUpdateResponse } from 'src/app/interfaces';
 import { AddDependencyModalComponent } from '../add-dependency-modal/add-dependency-modal.component';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { ErrorHandlerService } from 'src/app/shared/error-handler/error-handler.service';
 
 @Component({
   selector: 'app-create-form',
@@ -148,7 +149,8 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     private router: Router,
     public dialog: MatDialog,
     private toaster: ToastService,
-    private spinner: NgxSpinnerService
+    private spinner: NgxSpinnerService,
+    private errorHandlerService: ErrorHandlerService
   ) {}
 
   ngOnInit() {
@@ -1140,53 +1142,89 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   }
 
   publishForm() {
-    let publishedCount = 0;
+    const publishedCount = 0;
     const form = this.createForm.getRawValue();
     this.publishInProgress = true;
     this.status$.next(this.publishingChanges);
+    let requestType: 'create' | 'update' = null;
 
-    this.rdfService
-      .publishForm$(form)
-      .pipe(
-        tap((response) => {
-          form.sections.forEach((section) => {
-            section.questions.forEach((question) => {
+    const info: ErrorInfo = {
+      displayToast: false,
+      failureResponse: 'throwError'
+    };
+    this.publishFormRequest(form, info, publishedCount, requestType).subscribe(
+      () => {
+        this.cdrf.markForCheck();
+        requestType = null;
+      },
+      (err) => {
+        const recordNotExist = 'Record not exist.';
+        const recordAlreadyExist = 'Record Already Exist.';
+        if (err?.error?.message === recordNotExist) {
+          requestType = 'create';
+        } else if (err?.error?.message === recordAlreadyExist) {
+          requestType = 'update';
+        } else {
+          this.toaster.show({
+            text: this.errorHandlerService.getErrorMessage(err),
+            type: 'warning'
+          });
+        }
+        if (requestType) {
+          this.publishFormRequest(
+            form,
+            info,
+            publishedCount,
+            requestType
+          ).subscribe();
+        } else {
+          this.createForm.patchValue({ isPublishedTillSave: false });
+          this.disableFormFields = false;
+          this.publishInProgress = false;
+          this.status$.next(this.changesSaved);
+        }
+      }
+    );
+  }
+
+  publishFormRequest(form, info, publishedCount, requestType) {
+    return this.rdfService.publishForm$(form, info, requestType).pipe(
+      tap((response) => {
+        form.sections.forEach((section) => {
+          section.questions.forEach((question) => {
+            if (response.includes(question.id)) {
+              publishedCount++;
+              question.isPublished = true;
+              question.isPublishedTillSave = true;
+            }
+            question.table.forEach((row) => {
               if (response.includes(question.id)) {
                 publishedCount++;
-                question.isPublished = true;
-                question.isPublishedTillSave = true;
+                row.isPublished = true;
+                row.isPublishedTillSave = true;
               }
-              question.table.forEach((row) => {
-                if (response.includes(question.id)) {
+            });
+            question.logics.forEach((logic) => {
+              logic.questions.forEach((que) => {
+                if (response.includes(que.id)) {
                   publishedCount++;
-                  row.isPublished = true;
-                  row.isPublishedTillSave = true;
+                  que.isPublished = true;
+                  que.isPublishedTillSave = true;
                 }
-              });
-              question.logics.forEach((logic) => {
-                logic.questions.forEach((que) => {
-                  if (response.includes(que.id)) {
-                    publishedCount++;
-                    que.isPublished = true;
-                    que.isPublishedTillSave = true;
-                  }
-                });
               });
             });
           });
-          if (publishedCount === response.length) {
-            form.isPublished = true;
-            form.isPublishedTillSave = true;
-            this.status$.next(this.changesPublished);
-          }
-          this.createForm.patchValue(form, { emitEvent: false });
-          this.publishInProgress = false;
-        }),
-        switchMap(() => this.saveForm(true))
-      )
-      .subscribe(() => {
-        this.cdrf.markForCheck();
-      });
+        });
+        if (publishedCount === response.length) {
+          form.isPublished = true;
+          form.isPublishedTillSave = true;
+          this.status$.next(this.changesPublished);
+        }
+        this.createForm.patchValue(form, { emitEvent: false });
+        this.publishInProgress = false;
+      }),
+      switchMap(() => this.saveForm(true))
+    );
   }
 
   getFieldTypeImage(type) {

@@ -294,9 +294,14 @@ export class AddLogicComponent implements OnInit, OnChanges {
     if (action === 'ask_questions') {
       logic.hasAskQuestions = true;
       const control = logic.get('questions') as FormArray;
+      let questionId = `${question.value.id}_AQ_${new Date().getTime()}`;
+      const maxLength = 20;
+      if (questionId?.length > maxLength) {
+        questionId = questionId.slice(0, maxLength);
+      }
       control.push(
         this.fb.group({
-          id: [`${question.value.id}_AQ_${new Date().getTime()}`],
+          id: [questionId],
           name: [''],
           fieldType: ['TF'],
           position: [''],

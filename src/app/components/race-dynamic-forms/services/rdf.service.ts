@@ -76,11 +76,26 @@ export class RdfService {
 
   publishForm$ = (
     form: any,
-    info: ErrorInfo = {} as ErrorInfo
+    info: ErrorInfo = {} as ErrorInfo,
+    requestType?: 'create' | 'update'
   ): Observable<any> =>
     from(this.postPutFormFieldPayload(form)).pipe(
       mergeMap((payload) => {
         const { PUBLISHED, ...rest } = payload;
+        if (requestType) {
+          if (requestType === 'update') {
+            return this.updateAbapFormField$(rest, info).pipe(
+              map((resp) => (resp === null ? rest.UNIQUEKEY : resp))
+            );
+          } else if (requestType === 'create') {
+            return this.createAbapFormField$(rest, info).pipe(
+              map((resp) =>
+                Object.keys(resp).length === 0 ? resp : rest.UNIQUEKEY
+              )
+            );
+          }
+        }
+
         if (!PUBLISHED) {
           return this.createAbapFormField$(rest, info).pipe(
             map((resp) =>
