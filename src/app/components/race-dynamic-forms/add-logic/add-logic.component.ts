@@ -296,7 +296,7 @@ export class AddLogicComponent implements OnInit, OnChanges {
       const control = logic.get('questions') as FormArray;
       let questionId = `${question.value.id}_AQ_${new Date().getTime()}`;
       const maxLength = 20;
-      if (questionId && questionId?.length > maxLength) {
+      if (questionId?.length > maxLength) {
         questionId = questionId.slice(0, maxLength);
       }
       control.push(

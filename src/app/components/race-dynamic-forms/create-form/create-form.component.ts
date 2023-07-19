@@ -1181,7 +1181,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
           this.createForm.patchValue({ isPublishedTillSave: false });
           this.disableFormFields = false;
           this.publishInProgress = false;
-          this.status$.next(this.publishingChanges);
+          this.status$.next(this.changesSaved);
         }
       }
     );
