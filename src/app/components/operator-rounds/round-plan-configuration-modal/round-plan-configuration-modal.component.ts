@@ -4,8 +4,10 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  Inject,
+  EventEmitter,
+  Input,
   OnInit,
+  Output,
   ViewChild
 } from '@angular/core';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
@@ -48,6 +50,7 @@ import { ToastService } from 'src/app/shared/toast';
 import { SlideshowComponent } from 'src/app/shared/components/slideshow/slideshow.component';
 import { NgxImageCompressService } from 'ngx-image-compress';
 import { PDFDocument } from 'pdf-lib';
+import { RoundPlanFullScreenModalComponent } from '../round-plan-full-screen-modal/round-plan-full-screen-modal.component';
 
 @Component({
   selector: 'app-round-plan-configuration-modal',
@@ -62,6 +65,8 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   @ViewChild('labelInput', { static: false }) labelInput: ElementRef;
   @ViewChild('auto', { static: false }) matAutocomplete: MatAutocomplete;
   @ViewChild(MatAutocompleteTrigger) auto: MatAutocompleteTrigger;
+  @Output() gotoNextStep = new EventEmitter<void>();
+  @Input() roundData;
   visible = true;
   selectable = true;
   removable = true;
@@ -107,7 +112,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    public dialogRef: MatDialogRef<RoundPlanConfigurationModalComponent>,
+    public dialogRef: MatDialogRef<RoundPlanFullScreenModalComponent>,
     private readonly loginService: LoginService,
     private store: Store<State>,
     private operatorRoundsService: OperatorRoundsService,
@@ -115,7 +120,6 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     private cdrf: ChangeDetectorRef,
     private toastService: ToastService,
     public dialog: MatDialog,
-    @Inject(MAT_DIALOG_DATA) public data,
     private imageCompress: NgxImageCompressService
   ) {
     this.operatorRoundsService.getDataSetsByType$('tags').subscribe((tags) => {
@@ -285,39 +289,74 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     );
 
     if (this.headerDataForm.valid) {
-      this.store.dispatch(BuilderConfigurationActions.resetFormConfiguration());
       const userName = this.loginService.getLoggedInUserName();
-      this.store.dispatch(
-        BuilderConfigurationActions.addFormMetadata({
-          formMetadata: {
-            ...this.headerDataForm.value,
-            additionalDetails: updatedAdditionalDetails,
-            plant: plant.name,
-            moduleName: 'rdf'
-          },
-          formDetailPublishStatus: formConfigurationStatus.draft,
-          formSaveStatus: formConfigurationStatus.saving
-        })
-      );
-      this.store.dispatch(
-        BuilderConfigurationActions.updateCreateOrEditForm({
-          createOrEditForm: true
-        })
-      );
+      if (this.roundData?.roundExists === false) {
+        this.store.dispatch(
+          BuilderConfigurationActions.addFormMetadata({
+            formMetadata: {
+              ...this.headerDataForm.value,
+              additionalDetails: updatedAdditionalDetails,
+              plant: plant.name,
+              moduleName: 'rdf'
+            },
+            formDetailPublishStatus: formConfigurationStatus.draft,
+            formSaveStatus: formConfigurationStatus.saving
+          })
+        );
+        this.store.dispatch(
+          BuilderConfigurationActions.updateCreateOrEditForm({
+            createOrEditForm: true
+          })
+        );
 
-      this.store.dispatch(
-        RoundPlanConfigurationActions.createRoundPlan({
-          formMetadata: {
-            ...this.headerDataForm.value,
-            additionalDetails: updatedAdditionalDetails,
-            pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG,
-            author: userName,
-            formLogo: 'assets/img/svg/round-plans-icon.svg'
-          }
-        })
-      );
-      this.router.navigate(['/operator-rounds/create']);
-      this.dialogRef.close();
+        this.store.dispatch(
+          RoundPlanConfigurationActions.createRoundPlan({
+            formMetadata: {
+              ...this.headerDataForm.value,
+              additionalDetails: updatedAdditionalDetails,
+              pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG,
+              author: userName,
+              formLogo: 'assets/img/svg/round-plans-icon.svg'
+            }
+          })
+        );
+      } else if (this.roundData?.roundExists === true) {
+        this.store.dispatch(
+          BuilderConfigurationActions.updateFormMetadata({
+            formMetadata: {
+              ...this.headerDataForm.value,
+              additionalDetails: updatedAdditionalDetails,
+              plant: plant.name,
+              moduleName: 'rdf',
+              lastModifiedBy: this.loginService.getLoggedInUserName()
+            },
+            formStatus: formConfigurationStatus.draft,
+            formDetailPublishStatus: formConfigurationStatus.draft,
+            formSaveStatus: formConfigurationStatus.saving
+          })
+        );
+        this.store.dispatch(
+          BuilderConfigurationActions.updateCreateOrEditForm({
+            createOrEditForm: true
+          })
+        );
+        this.store.dispatch(
+          RoundPlanConfigurationActions.updateRoundPlan({
+            formMetadata: {
+              ...this.headerDataForm.value,
+              additionalDetails: updatedAdditionalDetails,
+              plant: plant.name,
+              moduleName: 'rdf',
+              lastModifiedBy: this.loginService.getLoggedInUserName()
+            },
+            formListDynamoDBVersion: this.roundData.formListDynamoDBVersion,
+            formStatus: formConfigurationStatus.draft,
+            formDetailPublishStatus: formConfigurationStatus.draft,
+            formSaveStatus: formConfigurationStatus.saving
+          })
+        );
+      }
+      this.gotoNextStep.emit();
     }
   }
 

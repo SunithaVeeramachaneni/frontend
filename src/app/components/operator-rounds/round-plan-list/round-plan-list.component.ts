@@ -44,6 +44,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { PlantsResponse } from 'src/app/interfaces/master-data-management/plants';
 import { LoginService } from '../../login/services/login.service';
+import { RoundPlanFullScreenModalComponent } from '../round-plan-full-screen-modal/round-plan-full-screen-modal.component';
 
 @Component({
   selector: 'app-round-plan-list',
@@ -682,7 +683,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
   }
 
   openRoundPlanCreationModal() {
-    this.dialog.open(RoundPlanConfigurationModalComponent, {
+    this.dialog.open(RoundPlanFullScreenModalComponent, {
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',

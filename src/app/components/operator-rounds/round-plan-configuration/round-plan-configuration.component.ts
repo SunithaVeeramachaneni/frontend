@@ -5,7 +5,9 @@ import {
   OnDestroy,
   ViewChild,
   ElementRef,
-  ChangeDetectorRef
+  ChangeDetectorRef,
+  EventEmitter,
+  Output
 } from '@angular/core';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { LoginService } from 'src/app/components/login/services/login.service';
@@ -64,8 +66,6 @@ import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { FormService } from 'src/app/forms/services/form.service';
 import { getSelectedHierarchyList } from 'src/app/forms/state';
 import { HierarchyModalComponent } from 'src/app/forms/components/hierarchy-modal/hierarchy-modal.component';
-import { PdfBuilderOprComponent } from 'src/app/forms/components/pdf-builder-opr/pdf-builder-opr.component';
-
 @Component({
   selector: 'app-round-plan-configuration',
   templateUrl: './round-plan-configuration.component.html',
@@ -83,6 +83,7 @@ import { PdfBuilderOprComponent } from 'src/app/forms/components/pdf-builder-opr
 })
 export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
   @ViewChild('name') formName: ElementRef;
+  @Output() gotoNextStep = new EventEmitter<void>();
   public openAppSider$: Observable<any>;
   formConfiguration: FormGroup;
   formMetadata$: Observable<FormMetadata>;
@@ -645,15 +646,6 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
   }
 
   goToPDFBuilderConfiguration = () => {
-    this.dialog.open(PdfBuilderOprComponent, {
-      data: {
-        moduleName: 'OPERATOR_ROUNDS'
-      },
-      hasBackdrop: false,
-      disableClose: true,
-      width: '100vw',
-      minWidth: '100vw',
-      height: '100vh'
-    });
+    this.gotoNextStep.emit();
   };
 }

@@ -153,6 +153,7 @@ export class PDFBuilderComponent implements OnInit, OnDestroy {
                 type: 'success'
               });
               this.router.navigate(['/operator-rounds']);
+              this.publishedEvent.emit();
             } else if (this.moduleName === this.raceDynamicForms) {
               this.toast.show({
                 text: 'Form published successfully',
