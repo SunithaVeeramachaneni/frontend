@@ -336,14 +336,10 @@
             id="skippedBgColor"
             *ngIf="selectedForm?.status === 'skipped'"
           >
-            <div id="skippedDiv">
-              <p
-                id="skippedReasonHeading"
-                class="color-gray"
-                translate="skippedReason"
-              ></p>
+            <div>
+              <p class="color-gray" translate="skippedReason"></p>
             </div>
-            <div id="skippedReason" class="flex-custom">
+            <div class="flex-custom">
               <h4 id="skippedReasonText" class="create-name">
                 {{ selectedForm?.skipReason }}
               </h4>
