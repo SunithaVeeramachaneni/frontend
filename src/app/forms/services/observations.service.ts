@@ -469,7 +469,7 @@ export class ObservationsService {
   > {
     return this.appService._getLocal(
       '',
-      'assets/json/observations-filter.json',
+      '/assets/json/observations-filter.json',
       info
     );
   }
@@ -503,6 +503,9 @@ export class ObservationsService {
   }
 
   private formateGetObservationResponse(resp, type) {
+    resp.filters.assignedTo = resp.filters.assignedTo.map((email) => {
+      return this.userService.getUserFullName(email);
+    });
     const items = resp?.items?.sort(
       (a, b) =>
         new Date(b?.createdAt).getTime() - new Date(a?.createdAt).getTime()

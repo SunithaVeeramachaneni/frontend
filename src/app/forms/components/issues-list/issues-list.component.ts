@@ -56,6 +56,7 @@ import { IssuesActionsViewComponent } from '../issues-actions-view/issues-action
 import { ObservationsService } from '../../services/observations.service';
 import { PlantService } from 'src/app/components/master-configurations/plants/services/plant.service';
 import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
+import { UsersService } from 'src/app/components/user-management/services/users.service';
 
 @Component({
   selector: 'app-issues-list',
@@ -370,7 +371,9 @@ export class IssuesListComponent implements OnInit, OnDestroy {
   placeHolder = '_ _';
   plantTimezoneMap = {};
   readonly perms = perms;
+  userFullNameByEmail: any;
   isPopoverOpen = false;
+
   filterJson = [];
   filter = {
     title: '',
@@ -389,10 +392,13 @@ export class IssuesListComponent implements OnInit, OnDestroy {
     private readonly loginService: LoginService,
     private plantService: PlantService,
     private readonly dialog: MatDialog,
-    private readonly cdrf: ChangeDetectorRef
+    private readonly cdrf: ChangeDetectorRef,
+    private userService: UsersService
   ) {}
 
   ngOnInit(): void {
+    this.userFullNameByEmail = this.userService.getUsersInfo();
+    console.log('usr;', this.userService.getUsersInfo());
     this.plantMapSubscription =
       this.plantService.plantTimeZoneMapping$.subscribe(
         (data) => (this.plantTimezoneMap = data)
@@ -642,14 +648,30 @@ export class IssuesListComponent implements OnInit, OnDestroy {
     }
   };
 
+  getFullNameToEmailArray(data: any) {
+    const emailArray = [];
+    console.log('userFullName', this.userFullNameByEmail);
+    data?.forEach((name: any) => {
+      emailArray.push(
+        Object.keys(this.userFullNameByEmail).find(
+          (email) => this.userFullNameByEmail[email].fullName === name
+        )
+      );
+    });
+    console.log('emailArray', emailArray);
+    return emailArray;
+  }
+
   applyFilters(data: any): void {
     this.isLoading$.next(true);
     this.isPopoverOpen = false;
+    console.log(data);
     for (const item of data) {
-      if (item.type !== 'date' && item.value) {
-        this.filter[item.column] = item.value ?? '';
-      } else if (item.type === 'date' && item.value) {
+      if (item.type === 'date' && item.value) {
         this.filter[item.column] = item.value.toISOString();
+      } else if (item.column === 'assignedTo' && item.value) {
+        console.log('here');
+        this.filter[item.column] = this.getFullNameToEmailArray(item.value);
       } else {
         this.filter[item.column] = item.value ?? '';
       }
