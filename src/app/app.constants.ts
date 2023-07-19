@@ -556,7 +556,8 @@ export const statusColors = {
   open: '#e0e0e0',
   assigned: '#5AC8FA',
   partlyOpen: '#FE9C30',
-  submitted: '#2C9E53'
+  submitted: '#2C9E53',
+  skipped: '#9E9E9E'
 };
 
 export const responseCount = 1000;

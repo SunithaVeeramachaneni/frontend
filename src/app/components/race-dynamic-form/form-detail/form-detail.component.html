@@ -331,6 +331,24 @@
               </h4>
             </div>
           </div>
+          <div
+            class="name-heading"
+            id="skippedBgColor"
+            *ngIf="selectedForm?.status === 'skipped'"
+          >
+            <div id="skippedDiv">
+              <p
+                id="skippedReasonHeading"
+                class="color-gray"
+                translate="skippedReason"
+              ></p>
+            </div>
+            <div id="skippedReason" class="flex-custom">
+              <h4 id="skippedReasonText" class="create-name">
+                {{ selectedForm?.skipReason }}
+              </h4>
+            </div>
+          </div>
 
           <div *ngIf="moduleName === operatorRoundsModule" class="name-heading">
             <div>
