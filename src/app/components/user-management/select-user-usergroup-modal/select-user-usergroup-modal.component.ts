@@ -338,7 +338,7 @@ export class SelectUserUsergroupModalComponent implements OnInit {
                 display: 'block',
                 padding: '0px 10px'
               },
-              image: this.getImageSrc(item?.profileImage),
+              image: this.getImageSrc(item?.profileImage ?? ''),
               condition: true
             };
             return item;

@@ -419,7 +419,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
                     display: 'block',
                     padding: '0px 10px'
                   },
-                  image: this.getImageSrc(item?.users?.profileImage),
+                  image: this.getImageSrc(item?.users?.profileImage ?? ''),
                   condition: true
                 };
                 return item;
