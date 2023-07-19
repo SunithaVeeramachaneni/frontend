@@ -1158,9 +1158,11 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
         requestType = null;
       },
       (err) => {
-        if (err?.error?.error?.error?.code === '/IWBEP/CM_MGW_RT/022') {
-          requestType = 'update';
-        } else if (err?.error?.status === 500) {
+        const recordNotExist = 'Record not exist.';
+        const recordAlreadyExist = 'Record Already Exist.';
+        if (err?.error?.message === recordNotExist) {
+          requestType = 'create';
+        } else if (err?.error?.message === recordAlreadyExist) {
           requestType = 'update';
         } else {
           this.toaster.show({
@@ -1175,6 +1177,11 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
             publishedCount,
             requestType
           ).subscribe();
+        } else {
+          this.createForm.patchValue({ isPublishedTillSave: false });
+          this.disableFormFields = false;
+          this.publishInProgress = false;
+          this.status$.next(this.publishingChanges);
         }
       }
     );
