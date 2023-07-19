@@ -747,7 +747,12 @@ export class FormListComponent implements OnInit, OnDestroy {
         failureResponse: {}
       })
       .pipe(tap((data) => downloadFile(data, fileName)))
-      .subscribe();
+      .subscribe(() => {
+        this.toast.show({
+          text: 'Template downloaded successfully!',
+          type: 'success'
+        });
+      });
   }
 
   ngOnDestroy(): void {

@@ -1295,11 +1295,15 @@ export class RaceDynamicFormService {
   downloadSampleFormTemplate = (
     formType: String,
     info: ErrorInfo = {} as ErrorInfo
-  ): Observable<any> =>
-    this.appService._postData(
+  ): Observable<any> => {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('formType', formType.toString());
+
+    return this.appService.downloadFile(
       environment.rdfApiUrl,
-      'forms/download/sample-template',
-      { formType },
-      info
+      'forms/download/sample-template?' + params.toString(),
+      info,
+      true
     );
+  };
 }
