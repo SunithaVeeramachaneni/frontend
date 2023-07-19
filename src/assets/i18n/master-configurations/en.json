@@ -8,7 +8,7 @@
   "locationIdMandatory": "Location Id *",
   "locationId": "Location Id",
   "required": "{name} is required",
-  "searchUom": "Search by Name/Description",
+  "searchUom": "Search",
   "uom": "UOM",
   "cancel": "Cancel",
   "apply": "Apply",

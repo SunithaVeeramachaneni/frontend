@@ -67,6 +67,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
 
   @Input() selectedNodeId: any;
   @Input() isTemplate: boolean;
+  @Input() isImported: boolean;
 
   @Input() set questionId(id: string) {
     this._id = id;

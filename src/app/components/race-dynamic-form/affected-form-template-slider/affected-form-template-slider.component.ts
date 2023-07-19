@@ -60,13 +60,13 @@ export class AffectedFormTemplateSliderComponent
   fetchType = 'load';
   skip = 0;
   limit = graphQLDefaultLimit;
-  searchForm: FormControl;
+  searchForm = new FormControl('');
   dataSource: MatTableDataSource<any>;
   forms$: Observable<any>;
   columns: Column[] = [
     {
       id: 'name',
-      displayName: 'Form Name',
+      displayName: 'Used in Forms',
       type: 'string',
       controlType: 'string',
       order: 1,
@@ -195,11 +195,11 @@ export class AffectedFormTemplateSliderComponent
   ngOnInit(): void {
     this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
     this.raceDynamicFormService.fetchForms$.next({} as TableEvent);
-    this.searchForm = new FormControl('');
     this.searchForm.valueChanges
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.destroy$),
         tap((value: string) => {
           this.raceDynamicFormService.fetchForms$.next({ data: 'search' });
         })
@@ -309,27 +309,29 @@ export class AffectedFormTemplateSliderComponent
   }
 
   getForms() {
-    return this.raceDynamicFormService
-      .getAffectedFormList$({
-        templateId: this.selectedForm.id,
-        nextToken: this.nextToken,
-        limit: this.limit,
-        searchTerm: this.searchForm.value,
-        fetchType: this.fetchType
-      })
-      .pipe(
-        mergeMap(({ count, rows, next }) => {
-          this.nextToken = next;
-          this.formLoaded$.next(true);
-          this.isLoading$.next(false);
-          return of(rows);
-        }),
-        catchError(() => {
-          this.formLoaded$.next(true);
-          this.isLoading$.next(false);
-          return of([]);
+    if (this.selectedForm?.id) {
+      return this.raceDynamicFormService
+        .getAffectedFormList$({
+          templateId: this.selectedForm.id,
+          nextToken: this.nextToken,
+          limit: this.limit,
+          searchTerm: this.searchForm.value,
+          fetchType: this.fetchType
         })
-      );
+        .pipe(
+          mergeMap(({ count, rows, next }) => {
+            this.nextToken = next;
+            this.formLoaded$.next(true);
+            this.isLoading$.next(false);
+            return of(rows);
+          }),
+          catchError(() => {
+            this.formLoaded$.next(true);
+            this.isLoading$.next(false);
+            return of([]);
+          })
+        );
+    } else return of([]);
   }
 
   cancelForm() {
