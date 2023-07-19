@@ -25,11 +25,7 @@ import {
   Column,
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
-import {
-  defaultProfilePic,
-  graphQLDefaultLimit,
-  routingUrls
-} from 'src/app/app.constants';
+import { graphQLDefaultLimit, routingUrls } from 'src/app/app.constants';
 import {
   BehaviorSubject,
   Observable,
@@ -342,7 +338,7 @@ export class SelectUserUsergroupModalComponent implements OnInit {
                 display: 'block',
                 padding: '0px 10px'
               },
-              image: this.getImageSrc(item?.profileImage ?? defaultProfilePic),
+              image: this.getImageSrc(item?.profileImage),
               condition: true
             };
             return item;

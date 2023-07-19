@@ -237,7 +237,11 @@ export class UserGroupListComponent
               if (initial?.length === 0) {
                 this.selectedUserGroup = null;
               }
-              this.selectedUserGroup = initial[indexDel - 1];
+              if (indexDel === 0) {
+                this.selectedUserGroup = initial[indexDel];
+              } else {
+                this.selectedUserGroup = initial[indexDel - 1];
+              }
               this.toast.show({
                 type: 'success',
                 text: 'User Group deleted successfully'
