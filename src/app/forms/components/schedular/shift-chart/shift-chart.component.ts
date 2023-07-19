@@ -186,10 +186,11 @@ export class ShiftChartComponent implements OnInit, OnChanges {
         }
         this.dataArrays[indexOfMatchObject].index = timeDiff;
         this.dataArrays[indexOfMatchObject].isBook = true;
+        const indexDiff = Math.abs(oldIndex - timeDiff) - 1;
         obj = {
           index: Math.abs(oldIndex - timeDiff),
           startTime: this.service.subtractTime(val, 0, 0),
-          endTime: this.service.addTime(val, 1, 59),
+          endTime: this.service.addTime(val, indexDiff, 59),
           isBook: false
         };
         this.dataArrays.push(obj);
