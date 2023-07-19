@@ -247,12 +247,15 @@
           </div>
         </div>
 
-        <div
-          class="additional-details"
-          *ngIf="headerDataForm.get('additionalDetails')['controls'].length < 5"
-        >
+        <div class="additional-details">
           <p translate="additionalDetails" class="additional-details-text"></p>
-          <button class="add-button" (click)="addAdditionalDetails()">
+          <button
+            *ngIf="
+              headerDataForm.get('additionalDetails')['controls'].length < 5
+            "
+            class="add-button"
+            (click)="addAdditionalDetails()"
+          >
             {{ 'add' | translate }}
           </button>
         </div>
