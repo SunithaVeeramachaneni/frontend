@@ -161,6 +161,10 @@
                           [sectionId]="
                             props.sectionIds[pageIndex][sectionIndex]
                           "
+                          [isImported]="
+                            pageWiseSections[pageIndex][sectionIndex]
+                              ?.isImported
+                          "
                           [isTemplate]="isTemplate"
                           [questionId]="questionId"
                           [questionIndex]="questionIndex"

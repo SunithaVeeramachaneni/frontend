@@ -54,7 +54,7 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
   userGroupId;
   usergrp = 0;
   next = '';
-  limit = 500;
+  limit = defaultLimit;
   search: '';
   isOpenAddEditUserGroupModal = false;
   searchUserGroup: FormControl;
@@ -231,6 +231,9 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
                 type: 'success',
                 text: 'User Group deleted successfully'
               });
+              if (initial?.length === 0) {
+                this.selectedUserGroup = null;
+              }
               break;
           }
         } else if (this.userGroupService.usersListEdit) {

@@ -132,9 +132,11 @@ export class AddEditUserGroupModalComponent implements OnInit {
     const updatedDesc = this.userGroupForm.get('description').value;
     const updatedData = {
       ...this.groupData,
-      name: updatedName,
-      description: updatedDesc,
-      searchTerm: `${updatedName?.toLowerCase()} ${updatedDesc?.toLowerCase()}`
+      name: updatedName ?? '',
+      description: updatedDesc ?? '',
+      searchTerm: `${updatedName?.toLowerCase() ?? ''} ${
+        updatedDesc?.toLowerCase() ?? ''
+      }`
     };
     const payload = {
       name: updatedName,

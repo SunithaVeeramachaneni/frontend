@@ -76,14 +76,16 @@
 
   <ng-template #nonMCQFields>
     <svg-icon
-                  [icon]="getFieldTypeImage(questionForm.get('fieldType').value)"
-                  class="response-type-icons"
-                ></svg-icon>
-    
+      [icon]="getFieldTypeImage(questionForm.get('fieldType').value)"
+      class="response-type-icons"
+    ></svg-icon>
+
     &nbsp;
     <span class="response-type-text">
       {{ getFieldTypeDescription(questionForm.get('fieldType').value) }}
     </span>
   </ng-template>
-  <mat-icon class="response-type-btn-arrow"> keyboard_arrow_down </mat-icon>
+  <mat-icon *ngIf="!this.isImported" class="response-type-btn-arrow">
+    keyboard_arrow_down
+  </mat-icon>
 </button>

@@ -56,8 +56,6 @@ export class ImportTemplateListComponent implements OnInit, OnDestroy {
       sticky: false,
       groupable: false,
       titleStyle: {
-        display: 'inline-block',
-        width: '345px',
         'font-weight': '500',
         'font-size': '100%',
         color: '#000000',
@@ -67,8 +65,6 @@ export class ImportTemplateListComponent implements OnInit, OnDestroy {
       showMenuOptions: false,
       subtitleColumn: 'description',
       subtitleStyle: {
-        display: 'inline-block',
-        width: '345px',
         'font-size': '80%',
         color: 'darkgray',
         'overflow-wrap': 'anywhere'
