@@ -357,5 +357,6 @@
   "total": "Total",
   "totalPages": "Total Pages",
   "reportGeneratedOn": "Report Generated On",
-  "addNotes": "Add Notes"
+  "addNotes": "Add Notes",
+  "skippedReason": "Skipped Reason"
 }
