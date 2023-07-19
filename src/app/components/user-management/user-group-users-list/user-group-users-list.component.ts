@@ -51,7 +51,7 @@ import { RemoveUserModalComponent } from '../remove-user-modal/remove-user-modal
 import { LoginService } from '../../login/services/login.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { DomSanitizer } from '@angular/platform-browser';
-import { graphQLDefaultLimit } from 'src/app/app.constants';
+import { defaultProfilePic, graphQLDefaultLimit } from 'src/app/app.constants';
 interface UsersListActions {
   action: 'delete' | null;
   id: any[];
@@ -419,7 +419,9 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
                     display: 'block',
                     padding: '0px 10px'
                   },
-                  image: this.getImageSrc(item?.users?.profileImage),
+                  image: this.getImageSrc(
+                    item?.users?.profileImage ?? defaultProfilePic
+                  ),
                   condition: true
                 };
                 return item;

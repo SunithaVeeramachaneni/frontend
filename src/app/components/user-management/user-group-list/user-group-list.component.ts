@@ -5,7 +5,8 @@ import {
   OnInit,
   ViewChild,
   ElementRef,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  OnDestroy
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { AddEditUserGroupModalComponent } from '../add-edit-user-group-modal/add-edit-user-group-modal.component';
@@ -38,7 +39,9 @@ import { LoginService } from '../../login/services/login.service';
   styleUrls: ['./user-group-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class UserGroupListComponent implements OnInit, AfterViewChecked {
+export class UserGroupListComponent
+  implements OnInit, AfterViewChecked, OnDestroy
+{
   currentRouteUrl$: Observable<string>;
   readonly routingUrls = routingUrls;
   userGroupList$: Observable<any> = of([]);
@@ -72,7 +75,7 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
   userGroupCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(
     0
   );
-  userGroupCount$: Observable<number>;
+
   userGroupListCount$: Observable<number>;
   selectedUserGroupPlantId$: BehaviorSubject<string> =
     new BehaviorSubject<string>('');
@@ -80,6 +83,8 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
   listHeight = '68vh';
   bottomHit = false;
   permissionsArray = [];
+  counterSubject: BehaviorSubject<number> = new BehaviorSubject<number>(0);
+  userGroupCount$: Observable<number> = this.counterSubject.asObservable();
   private onDestroy$ = new Subject();
 
   constructor(
@@ -94,6 +99,8 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
   ) {}
 
   ngOnInit(): void {
+    this.counterSubject.next(0);
+    this.userGroupCount$.pipe(takeUntil(this.onDestroy$)).subscribe();
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
       tap(() => this.headerService.setHeaderTitle(routingUrls.userGroups.title))
     );
@@ -197,6 +204,7 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
             case 'copy':
               initial.unshift(group);
               this.userGroupCountUpdate$.next(+1);
+              this.increment();
               break;
             case 'edit':
               const indexCpy = initial.findIndex(
@@ -208,16 +216,17 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
                 type: 'success',
                 text: 'User Group edited successfully'
               });
+              this.userGroupService.addUpdateDeleteCopyUserGroup = false;
 
               break;
             case 'add':
               initial.unshift(group);
               this.selectedUserGroup = group;
-              this.userGroupCountUpdate$.next(+1);
               this.toast.show({
                 type: 'success',
                 text: 'User Group added successfully'
               });
+              this.increment();
 
               break;
             case 'delete':
@@ -225,15 +234,16 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
                 (data) => data.id === group.id
               );
               initial.splice(indexDel, 1);
-              this.selectedUserGroup = initial[indexDel];
-              this.userGroupCountUpdate$.next(-1);
+              if (initial?.length === 0) {
+                this.selectedUserGroup = null;
+              }
+              this.selectedUserGroup = initial[indexDel - 1];
               this.toast.show({
                 type: 'success',
                 text: 'User Group deleted successfully'
               });
-              if (initial?.length === 0) {
-                this.selectedUserGroup = null;
-              }
+              this.decrement();
+
               break;
           }
         } else if (this.userGroupService.usersListEdit) {
@@ -265,8 +275,8 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
       .pipe(
         map((data) => {
           this.isLoading$.next(false);
-          if (data.count) {
-            this.reloadUserGroupCount(data.count);
+          if (data?.count) {
+            this.counterSubject.next(data?.count);
           }
           this.nextToken = data.next;
           if (this.bottomHit === true) {
@@ -333,20 +343,23 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
       }
     }
   }
-  reloadUserGroupCount(rawCount: number) {
-    this.userGroupListCount$ = of(rawCount);
-    this.userGroupCount$ = combineLatest([
-      this.userGroupListCount$,
-      this.userGroupCountUpdate$
-    ]).pipe(
-      map(([count, update]) => {
-        if (this.userGroupService.addUpdateDeleteCopyUserGroup) {
-          count += update;
-          this.userGroupService.addUpdateDeleteCopyUserGroup = false;
-        }
-        return count;
-      })
-    );
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
+  increment() {
+    if (this.userGroupService.addUpdateDeleteCopyUserGroup) {
+      this.counterSubject.next(this.counterSubject.value + 1);
+      this.userGroupService.addUpdateDeleteCopyUserGroup = false;
+    }
+  }
+
+  decrement() {
+    if (this.userGroupService.addUpdateDeleteCopyUserGroup) {
+      this.counterSubject.next(this.counterSubject.value - 1);
+      this.userGroupService.addUpdateDeleteCopyUserGroup = false;
+    }
   }
   checkPermissions = (permission) =>
     this.loginService.checkUserHasPermission(this.permissionsArray, permission);

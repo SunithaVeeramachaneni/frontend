@@ -25,7 +25,11 @@ import {
   Column,
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
-import { graphQLDefaultLimit, routingUrls } from 'src/app/app.constants';
+import {
+  defaultProfilePic,
+  graphQLDefaultLimit,
+  routingUrls
+} from 'src/app/app.constants';
 import {
   BehaviorSubject,
   Observable,
@@ -298,7 +302,7 @@ export class SelectUserUsergroupModalComponent implements OnInit {
         this.initialUsers = this.preselectedUsers;
         this.selectedUsers = [...this.selectedUsers, ...this.preselectedUsers];
         this.selectedUsers = this.makeArrayUnique(this.selectedUsers);
-        this.selectedUsersCount$ = of(this.selectedUsers.length);
+        this.selectedUsersCount$ = of(this.selectedUsers?.length);
         this.allUsersList = initial.data;
         return initial;
       })
@@ -338,7 +342,7 @@ export class SelectUserUsergroupModalComponent implements OnInit {
                 display: 'block',
                 padding: '0px 10px'
               },
-              image: this.getImageSrc(item?.profileImage ?? ''),
+              image: this.getImageSrc(item?.profileImage ?? defaultProfilePic),
               condition: true
             };
             return item;
@@ -360,8 +364,8 @@ export class SelectUserUsergroupModalComponent implements OnInit {
         users = this.allUsersList;
 
         if (
-          this.selectedUsers.length === 0 ||
-          this.selectedUsers.length !== users.length
+          this.selectedUsers?.length === 0 ||
+          this.selectedUsers?.length !== users.length
         ) {
           allSelected = true;
           this.selectedUsers = users;
@@ -369,11 +373,10 @@ export class SelectUserUsergroupModalComponent implements OnInit {
           allSelected = false;
           this.selectedUsers = [];
         }
-        this.selectedUsersCount$ = of(this.selectedUsers.length);
-        this.disableBtn = this.areArraysEqual(
-          this.initialUsers,
-          this.selectedUsers
-        );
+        this.selectedUsersCount$ = of(this.selectedUsers?.length);
+        this.disableBtn =
+          this.areArraysEqual(this.initialUsers, this.selectedUsers) &&
+          this.selectedUsers?.length === 0;
 
         break;
 
@@ -390,11 +393,10 @@ export class SelectUserUsergroupModalComponent implements OnInit {
           this.selectedUsers.push(data);
           this.selectedUserCountUpdate$.next(1);
         }
-        this.selectedUsersCount$ = of(this.selectedUsers.length);
-        this.disableBtn = this.areArraysEqual(
-          this.initialUsers,
-          this.selectedUsers
-        );
+        this.selectedUsersCount$ = of(this.selectedUsers?.length);
+        this.disableBtn =
+          this.areArraysEqual(this.initialUsers, this.selectedUsers) &&
+          this.selectedUsers?.length === 0;
 
         break;
       default:
@@ -414,7 +416,7 @@ export class SelectUserUsergroupModalComponent implements OnInit {
     });
   }
   areArraysEqual(arr1, arr2) {
-    if (arr1.length !== arr2.length) {
+    if (arr1?.length !== arr2?.length) {
       return false;
     }
     return arr1
@@ -448,7 +450,7 @@ export class SelectUserUsergroupModalComponent implements OnInit {
 
         this.userGroupService.userGroupActions$.next({
           action: 'add',
-          group: { ...data, usersCount: data?.users.length }
+          group: { ...data, usersCount: data?.users?.length }
         });
       });
     this.dialogRef.close({
