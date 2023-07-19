@@ -68,7 +68,10 @@ import { UsersService } from 'src/app/components/user-management/services/users.
 export class IssuesListComponent implements OnInit, OnDestroy {
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
-      tap((users) => (this.assigneeDetails = { users }))
+      tap((users) => {
+        this.userFullNameByEmail = this.userService.getUsersInfo();
+        this.assigneeDetails = { users };
+      })
     );
   }
   get users$(): Observable<UserDetails[]> {
@@ -397,7 +400,6 @@ export class IssuesListComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.userFullNameByEmail = this.userService.getUsersInfo();
     console.log('usr;', this.userService.getUsersInfo());
     this.plantMapSubscription =
       this.plantService.plantTimeZoneMapping$.subscribe(
@@ -650,7 +652,6 @@ export class IssuesListComponent implements OnInit, OnDestroy {
 
   getFullNameToEmailArray(data: any) {
     const emailArray = [];
-    console.log('userFullName', this.userFullNameByEmail);
     data?.forEach((name: any) => {
       emailArray.push(
         Object.keys(this.userFullNameByEmail).find(
@@ -658,19 +659,16 @@ export class IssuesListComponent implements OnInit, OnDestroy {
         )
       );
     });
-    console.log('emailArray', emailArray);
     return emailArray;
   }
 
   applyFilters(data: any): void {
     this.isLoading$.next(true);
     this.isPopoverOpen = false;
-    console.log(data);
     for (const item of data) {
       if (item.type === 'date' && item.value) {
         this.filter[item.column] = item.value.toISOString();
       } else if (item.column === 'assignedTo' && item.value) {
-        console.log('here');
         this.filter[item.column] = this.getFullNameToEmailArray(item.value);
       } else {
         this.filter[item.column] = item.value ?? '';
