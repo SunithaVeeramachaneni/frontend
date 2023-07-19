@@ -369,5 +369,6 @@
   "addNotes": "Add Notes",
   "uploadExcel": "Upload Excel",
   "uploadEmbedded": "Embedded (For mWorkorder)",
-  "uploadStandalone": "Standalone (For mInspections)"
+  "uploadStandalone": "Standalone (For mInspections)",
+  "downloadTemplate": "Download Excel Template"
 }

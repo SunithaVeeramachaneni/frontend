@@ -40,8 +40,8 @@
           translate="createNew"
         ></button>
         <mat-menu #menu="matMenu" backdropClass="template-list">
-          <button mat-menu-item>
-            <svg-icon icon="icon-excel1" class="add-template-icon"></svg-icon>
+          <button mat-menu-item [matMenuTriggerFor]="uploadMenu">
+            <svg-icon icon="icon-excel1" class="add-manually-icon"></svg-icon>
             <span class="create-template" translate="uploadExcel"> </span>
           </button>
 
@@ -51,6 +51,42 @@
               class="add-manually-icon"
             ></svg-icon>
             {{ 'createManually' | translate }}
+          </button>
+        </mat-menu>
+
+        <mat-menu #uploadMenu="matMenu">
+          <button mat-menu-item>
+            <span translate="uploadEmbedded"></span>
+          </button>
+          <button mat-menu-item>
+            <span translate="uploadStandalone"></span>
+          </button>
+        </mat-menu>
+
+        <button
+          mat-raised-button
+          [matMenuTriggerFor]="moreMenu"
+          class="more-btn"
+          *appCheckUserHasPermission="[perms.importLocations]"
+        >
+          <mat-icon class="menu-icon">more_horiz</mat-icon>
+        </button>
+        <mat-menu #moreMenu="matMenu">
+          <button
+            mat-menu-item
+            class="menu-buttons"
+            [matMenuTriggerFor]="templateMenu"
+          >
+            <svg-icon icon="icon-excel1" class="menu-icons"></svg-icon>
+            <span translate="downloadTemplate"></span>
+          </button>
+        </mat-menu>
+        <mat-menu #templateMenu="matMenu">
+          <button mat-menu-item (click)="downloadTemplate('Embedded')">
+            <span translate="uploadEmbedded"></span>
+          </button>
+          <button mat-menu-item (click)="downloadTemplate('Standalone')">
+            <span translate="uploadStandalone"></span>
           </button>
         </mat-menu>
       </div>

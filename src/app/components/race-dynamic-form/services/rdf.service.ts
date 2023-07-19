@@ -1291,4 +1291,15 @@ export class RaceDynamicFormService {
       'template-reference',
       data
     );
+
+  downloadSampleFormTemplate = (
+    formType: String,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._postData(
+      environment.rdfApiUrl,
+      'forms/download/sample-template',
+      { formType },
+      info
+    );
 }

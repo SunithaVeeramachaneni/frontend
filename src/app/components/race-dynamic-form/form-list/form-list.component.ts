@@ -50,6 +50,7 @@ import { LoginService } from '../../login/services/login.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { UsersService } from '../../user-management/services/users.service';
 import { FullScreenFormCreationComponent } from '../full-screen-form-creation/full-screen-form-creation.component';
+import { downloadFile } from 'src/app/shared/utils/fileUtils';
 
 @Component({
   selector: 'app-form-list',
@@ -730,6 +731,23 @@ export class FormListComponent implements OnInit, OnDestroy {
     };
     this.nextToken = '';
     this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
+  }
+
+  downloadTemplate(formType): void {
+    let fileName;
+    if (formType === formConfigurationStatus.standalone) {
+      fileName = 'Standalone_Form_Sample_Template';
+    } else {
+      fileName = 'Embedded_Form_Sample_Template';
+    }
+
+    this.raceDynamicFormService
+      .downloadSampleFormTemplate(formType, {
+        displayToast: true,
+        failureResponse: {}
+      })
+      .pipe(tap((data) => downloadFile(data, fileName)))
+      .subscribe();
   }
 
   ngOnDestroy(): void {
