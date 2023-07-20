@@ -98,8 +98,11 @@
     </div>
   </div>
   <div class="dis-flex scroll-content">
-    <div class="width-30"></div>
-    <div class="custom-form-field-white-color width-40">
+    <div class="width-30" [hidden]="selectedID.value === 7"></div>
+    <div
+      class="custom-form-field-white-color width-40"
+      [hidden]="selectedID.value === 7"
+    >
       <div [hidden]="selectedID.value !== 0">
         <p class="m-0">
           <mat-form-field appearance="outline" class="width-100">
@@ -2138,15 +2141,19 @@
           <div class="info4" translate>borderNote</div>
         </div>
       </div>
-      <div [hidden]="selectedID.value !== 7">
-        <app-api-key-generation
-          [apiKeysInfo]="apiKeysInfoObject"
-          [disabeleApiKeyGeneration]="!editTenant"
-          (apiKeyEvent)="apiKeyEventHandler($event)"
-        ></app-api-key-generation>
-      </div>
     </div>
 
-    <div class="width-30"></div>
+    <div class="width-30" [hidden]="selectedID.value === 7"></div>
+
+    <div
+      [hidden]="selectedID.value !== 7"
+      class="custom-form-field-white-color width-100"
+    >
+      <app-api-key-generation
+        [apiKeysInfo]="apiKeysInfoObject"
+        [disabeleApiKeyGeneration]="!editTenant"
+        (apiKeyEvent)="apiKeyEventHandler($event)"
+      ></app-api-key-generation>
+    </div>
   </div>
 </form>

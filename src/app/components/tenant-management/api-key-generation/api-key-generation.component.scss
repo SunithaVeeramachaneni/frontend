@@ -2,14 +2,24 @@
 
 .api-key-info {
   .generate-btn {
-    float: right;
+    position: relative;
+    left: 40%;
     background-color: $blue-main;
     box-shadow: none;
     color: $white;
+    margin-top: 7px;
   }
 
   .generate-btn:disabled {
     background-color: $gray2-bg;
     color: $gray7;
+  }
+}
+
+.api-table {
+  margin-top: 12px;
+
+  ::ng-deep .table-column {
+    width: 35%;
   }
 }

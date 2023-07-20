@@ -13,8 +13,9 @@
   "protectedResources": "3. PROTECTED RESOURCES",
   "dbConfigurations": "4. DB CONFIGURATIONS",
   "collaboration": "5. COLLABORATION",
-  "assets": "7. ASSETS",
   "configurations": "6. CONFIGURATIONS",
+  "assets": "7. ASSETS",
+  "apiKeys": "8. API Keys",
   "collaborationType": "Collaboration Type",
   "slack": "Slack",
   "slackConfiguration": "Slack Configuration",
@@ -114,5 +115,8 @@
   "bucket": "Bucket",
   "region": "Region",
   "amplifyConfig": "Amplify Config",
-  "configs": "Configurations"
+  "configs": "Configurations",
+  "description": "Description",
+  "expires": "Expires",
+  "generate": "Generate"
 }
