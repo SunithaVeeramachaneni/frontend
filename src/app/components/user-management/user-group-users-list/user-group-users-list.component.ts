@@ -334,7 +334,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
               });
               this.toast.show({
                 type: 'success',
-                text: 'Member removed successfully'
+                text: 'User removed successfully'
               });
           }
           this.userAddEdit = false;
