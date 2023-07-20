@@ -192,7 +192,12 @@ export class UsersService {
   }
 
   getUsersInfo(): UsersInfoByEmail {
-    return this.usersInfoByEmail;
+    const lowerCaseUsersInfoByEmail: UsersInfoByEmail = {};
+    Object.keys(this.usersInfoByEmail).forEach((email) => {
+      lowerCaseUsersInfoByEmail[email.toLowerCase()] =
+        this.usersInfoByEmail[email];
+    });
+    return lowerCaseUsersInfoByEmail;
   }
 
   getUserFullName(email: string): string {
