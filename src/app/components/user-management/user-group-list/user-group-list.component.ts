@@ -68,7 +68,7 @@ export class UserGroupListComponent
   addingUserGroup$ = new BehaviorSubject<boolean>(false);
 
   userGroupList: any = [];
-  selectedUserGroup = null;
+  selectedUserGroup = '';
   selectedUserGroupId$: BehaviorSubject<string> = new BehaviorSubject<string>(
     ''
   );
@@ -198,12 +198,23 @@ export class UserGroupListComponent
           if (rows.length === 0) {
             this.selectedUserGroup = null;
           }
+          if (
+            this.userGroupService.addUpdateDeleteCopyUserGroup &&
+            action === 'add'
+          ) {
+            initial.unshift(group);
+            this.selectedUserGroup = group;
+            this.toast.show({
+              type: 'success',
+              text: 'User Group added successfully'
+            });
+            this.increment();
+          }
           initial = rows;
         } else if (this.userGroupService.addUpdateDeleteCopyUserGroup) {
           switch (action) {
             case 'copy':
               initial.unshift(group);
-              this.userGroupCountUpdate$.next(+1);
               this.increment();
               break;
             case 'edit':
@@ -211,7 +222,6 @@ export class UserGroupListComponent
                 (data) => data?.id === group?.id
               );
               initial[indexCpy] = group;
-              this.userGroupCountUpdate$.next(0);
               this.toast.show({
                 type: 'success',
                 text: 'User Group edited successfully'
@@ -279,7 +289,7 @@ export class UserGroupListComponent
       .pipe(
         map((data) => {
           this.isLoading$.next(false);
-          if (data?.count) {
+          if (data?.count !== null && data?.count !== undefined) {
             this.counterSubject.next(data?.count);
           }
           this.nextToken = data.next;

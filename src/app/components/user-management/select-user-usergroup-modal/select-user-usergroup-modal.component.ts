@@ -25,7 +25,11 @@ import {
   Column,
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
-import { graphQLDefaultLimit, routingUrls } from 'src/app/app.constants';
+import {
+  defaultProfilePic,
+  graphQLDefaultLimit,
+  routingUrls
+} from 'src/app/app.constants';
 import {
   BehaviorSubject,
   Observable,
@@ -338,7 +342,7 @@ export class SelectUserUsergroupModalComponent implements OnInit {
                 display: 'block',
                 padding: '0px 10px'
               },
-              image: this.getImageSrc(item?.profileImage ?? ''),
+              image: this.getImageSrc(item?.profileImage),
               condition: true
             };
             return item;
@@ -346,7 +350,6 @@ export class SelectUserUsergroupModalComponent implements OnInit {
           return rows;
         })
       );
-
   handleTableEvent = (event) => {
     this.fetchUsers$.next(event);
   };
@@ -403,6 +406,8 @@ export class SelectUserUsergroupModalComponent implements OnInit {
     if (source) {
       const base64Image = 'data:image/jpeg;base64,' + source;
       return this.sant.bypassSecurityTrustResourceUrl(base64Image);
+    } else {
+      return this.sant.bypassSecurityTrustResourceUrl(defaultProfilePic);
     }
   };
   onCancel(): void {
@@ -443,7 +448,6 @@ export class SelectUserUsergroupModalComponent implements OnInit {
       })
       .subscribe((data) => {
         this.userGroupService.addUpdateDeleteCopyUserGroup = true;
-
         this.userGroupService.userGroupActions$.next({
           action: 'add',
           group: { ...data, usersCount: data?.users?.length }
