@@ -126,11 +126,14 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
         );
       }, 1000);
     } else {
-      this.raceDynamicFormService.fetchAllTemplates$().subscribe((res) => {
-        this.allTemplates = res.rows.filter(
-          (item) => item.id !== this.formDetails.formMetadata.id
-        );
-      });
+      this.raceDynamicFormService
+        .fetchAllTemplates$()
+        .pipe(takeUntil(this.onDestroy$))
+        .subscribe((res) => {
+          this.allTemplates = res.rows.filter(
+            (item) => item.id !== this.formDetails.formMetadata.id
+          );
+        });
     }
     this.formSaveStatus$ = this.store.select(getFormSaveStatus);
 

@@ -247,12 +247,15 @@
           </div>
         </div>
 
-        <div
-          class="additional-details"
-          *ngIf="headerDataForm.get('additionalDetails')['controls'].length < 5"
-        >
+        <div class="additional-details">
           <p translate="additionalDetails" class="additional-details-text"></p>
-          <button class="add-button" (click)="addAdditionalDetails()">
+          <button
+            *ngIf="
+              headerDataForm.get('additionalDetails')['controls'].length < 5
+            "
+            class="add-button"
+            (click)="addAdditionalDetails()"
+          >
             {{ 'add' | translate }}
           </button>
         </div>
@@ -287,8 +290,6 @@
                     [matAutocomplete]="autolabel"
                     (click)="labelOptionClick(i)"
                   />
-                  <mat-icon matSuffix class="arrow">arrow_drop_down</mat-icon>
-
                   <mat-autocomplete #autolabel="matAutocomplete">
                     <mat-option
                       *ngFor="let label of filteredLabels$ | async"
@@ -368,8 +369,6 @@
                     class="example-input"
                     (click)="valueOptionClick(i)"
                   />
-                  <mat-icon matSuffix class="arrow">arrow_drop_down</mat-icon>
-
                   <mat-autocomplete #autoValue="matAutocomplete">
                     <mat-option
                       *ngFor="let value of filteredValues$ | async"
