@@ -1,0 +1,15 @@
+@import '../../../../scss/colors.scss';
+
+.api-key-info {
+  .generate-btn {
+    float: right;
+    background-color: $blue-main;
+    box-shadow: none;
+    color: $white;
+  }
+
+  .generate-btn:disabled {
+    background-color: $gray2-bg;
+    color: $gray7;
+  }
+}

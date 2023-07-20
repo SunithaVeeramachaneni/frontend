@@ -1,0 +1,43 @@
+<ng-container *ngIf="userInfo$ | async">
+  <form
+    class="api-key-info"
+    [formGroup]="apiKeyInfoForm"
+    (ngSubmit)="generateApiKey()"
+  >
+    <p class="m-0">
+      <mat-form-field appearance="outline" class="width-100">
+        <mat-label translate>description</mat-label>
+        <input
+          matInput
+          [placeholder]="'description' | translate"
+          formControlName="description"
+        />
+      </mat-form-field>
+    </p>
+    <p class="m-0">
+      <mat-form-field appearance="outline" class="width-100">
+        <mat-label translate>expires</mat-label>
+        <mat-select formControlName="expires">
+          <mat-option *ngFor="let expire of expires" [value]="expire">
+            {{ expire }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </p>
+    <p class="m-0">
+      <button
+        mat-raised-button
+        translate="generate"
+        class="generate-btn"
+        [disabled]="disabeleApiKeyGeneration"
+        type="submit"
+      ></button>
+    </p>
+  </form>
+  <cwp-dynamictable
+    [dataSource]="dataSource"
+    [configOptions]="configOptions"
+    (rowLevelActionHandler)="rowLevelActionHandler($event)"
+    class="width-100"
+  ></cwp-dynamictable>
+</ng-container>

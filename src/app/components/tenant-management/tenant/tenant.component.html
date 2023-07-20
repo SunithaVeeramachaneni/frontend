@@ -75,6 +75,7 @@
         <mat-tab label="{{ 'collaboration' | translate }}"></mat-tab>
         <mat-tab label="{{ 'configurations' | translate }}"></mat-tab>
         <mat-tab label="{{ 'assets' | translate }}"></mat-tab>
+        <mat-tab label="{{ 'apiKeys' | translate }}"></mat-tab>
       </mat-tab-group>
     </div>
     <div class="nextbtn p-0">
@@ -2136,6 +2137,13 @@
           </div>
           <div class="info4" translate>borderNote</div>
         </div>
+      </div>
+      <div [hidden]="selectedID.value !== 7">
+        <app-api-key-generation
+          [apiKeysInfo]="apiKeysInfoObject"
+          [disabeleApiKeyGeneration]="!editTenant"
+          (apiKeyEvent)="apiKeyEventHandler($event)"
+        ></app-api-key-generation>
       </div>
     </div>
 
