@@ -11,8 +11,9 @@
   >
   </ngx-spinner>
   <div class="p-20">
-    <span class="profile-heading" translate>profile</span>
+    <span id="profileHeading" class="profile-heading" translate>profile</span>
     <button
+      id="profileEditBtn"
       mat-raised-button
       type="button"
       class="edit-btn"
@@ -21,6 +22,7 @@
       translate="editBtn"
     ></button>
     <button
+      id="profileSubmitBtn"
       type="submit"
       mat-raised-button
       class="save-btn"
@@ -29,6 +31,7 @@
       translate="saveBtn"
     ></button>
     <button
+      id="profileCancelBtn"
       mat-raised-button
       type="button"
       class="cancel-btn"
@@ -39,8 +42,9 @@
   </div>
 
   <div class="image-upload">
-    <img [src]="profileImage" class="user-profile-img" />
+    <img id="profileImg" [src]="profileImage" class="user-profile-img" />
     <button
+      id="profileRemovePhotoBtn"
       type="button"
       class="change-remove-btn"
       *ngIf="profileEditMode"
@@ -50,6 +54,7 @@
     ></button>
     <label for="file-input" #file *ngIf="profileEditMode">
       <button
+        id="profileChangeBtn"
         type="button"
         class="change-remove-btn"
         (click)="file.click()"
@@ -67,13 +72,15 @@
   <div class="custom-profile-form-fields">
     <div class="input-container">
       <mat-form-field appearance="outline" class="first-name p-t-15">
-        <mat-label>{{ 'firstName' | translate }}</mat-label>
-        <input matInput formControlName="firstName" />
+        <mat-label id="profileFirstName">{{
+          'firstName' | translate
+        }}</mat-label>
+        <inputmatInput formControlName="firstName" />
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="last-name p-t-15">
-        <mat-label>{{ 'lastName' | translate }}</mat-label>
-        <input matInput formControlName="lastName" />
+        <mat-label id="profileLastName">{{ 'lastName' | translate }}</mat-label>
+        <inputmatInput formControlName="lastName" />
       </mat-form-field>
     </div>
 
@@ -81,17 +88,17 @@
       appearance="outline"
       class="input-container width-100 p-t-15"
     >
-      <mat-label>{{ 'title' | translate }}</mat-label>
+      <mat-label id="profileTitle">{{ 'title' | translate }}</mat-label>
       <input matInput formControlName="title" />
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="width-100 p-t-15">
-      <mat-label>{{ 'email' | translate }}</mat-label>
+      <mat-label id="profileEmail">{{ 'email' | translate }}</mat-label>
       <input matInput formControlName="email" />
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="width-100 p-t-15">
-      <mat-label>{{ 'roles' | translate }}</mat-label>
+      <mat-label id="profileRole">{{ 'roles' | translate }}</mat-label>
       <input matInput formControlName="roles" />
     </mat-form-field>
 
@@ -103,7 +110,7 @@
           profileEditMode === true || this.userInfo?.contact !== null
       }"
     >
-      <mat-label>{{ 'contact' | translate }}</mat-label>
+      <mat-label id="profileContact">{{ 'contact' | translate }}</mat-label>
       <input matInput value="Not added" [disabled]="true" />
     </mat-form-field>
 
@@ -115,7 +122,7 @@
           profileEditMode === false && this.userInfo?.contact === null
       }"
     >
-      <mat-label>{{ 'contact' | translate }}</mat-label>
+      <mat-label id="profileContacts">{{ 'contact' | translate }}</mat-label>
       <ngx-mat-intl-tel-input
         formControlName="contact"
         [preferredCountries]="['us', 'in']"
@@ -126,6 +133,7 @@
       >
       </ngx-mat-intl-tel-input>
       <mat-error
+        id="profileError"
         *ngIf="
           profileForm.get('contact').errors?.validatePhoneNumber &&
           profileForm.get('contact').touched

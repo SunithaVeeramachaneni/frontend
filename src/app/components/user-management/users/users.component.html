@@ -1,13 +1,20 @@
 <div class="main-container" *ngIf="loggedInUserInfo$ | async">
   <div class="users-header">
-    <h2 class="heading" translate="activeUsers"></h2>
+    <h2
+      id="activeUsers"
+      id="activeUsers"
+      class="heading"
+      translate="activeUsers"
+    ></h2>
     <div>
       <span class="no-of-users" *ngIf="userCount$ | async as userCount">
-        <span class="users-count" *ngIf="userCount.count">
+        <span id="userCountText" class="users-count" *ngIf="userCount.count">
           {{ userCount.count }} &nbsp;
         </span>
-        <span class="users-count" *ngIf="!userCount.count">0</span>
-        <span class="users-text">{{
+        <span id="userCountNum" class="users-count" *ngIf="!userCount.count"
+          >0</span
+        >
+        <span class="users-text" id="userCount">{{
           'usersPlural'
             | translate
               : {
@@ -16,6 +23,7 @@
         }}</span>
       </span>
       <button
+        id="userMenuBtn"
         mat-icon-button
         [matMenuTriggerFor]="menu"
         class="more-users"
@@ -24,20 +32,24 @@
       >
         <mat-menu #menu="matMenu">
           <button
+            id="userDeactivated"
             mat-menu-item
             [disabled]="selectedUsers.length > 1 || disableDeactivate"
             (click)="deactivateUsers()"
             class="text-red"
           >
-            <span translate="deactivate"></span>
+            <span id="deactivateUserText" translate="deactivate"></span>
           </button>
         </mat-menu>
-        <mat-icon>more_horiz</mat-icon>
+        <mat-icon id="userMoreIcon">more_horiz</mat-icon>
       </button>
       <span class="custom-form-field-gray-color search">
         <mat-form-field appearance="outline">
-          <mat-icon matPrefix class="searchIcon">search</mat-icon>
+          <mat-icon matPrefix class="searchIcon" id="UserSearchIcon"
+            >search</mat-icon
+          >
           <input
+            id="userSearchText"
             matInput
             type="text"
             [placeholder]="'searchUsers' | translate"
@@ -48,6 +60,7 @@
       </span>
 
       <button
+        id="addUserBtn"
         mat-raised-button
         class="add-user-btn"
         (click)="openEditAddUserModal()"
