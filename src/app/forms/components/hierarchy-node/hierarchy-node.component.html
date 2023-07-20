@@ -52,10 +52,9 @@
           'nodeId'
             | translate
               : {
-                  type: masterData.type,
+                  type: masterData.type | titlecase,
                   id: masterData.nodeId
                 }
-            | titlecase
         }}
       </div>
     </div>
