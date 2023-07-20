@@ -416,13 +416,13 @@ export class SelectUserUsergroupModalComponent implements OnInit {
       returnType: 'cancel'
     });
   }
-  areArraysEqual(arr1, arr2) {
-    if (arr1?.length !== arr2?.length) {
+  areArraysEqual(initial, selected) {
+    if (initial?.length !== selected?.length) {
       return false;
     }
-    return arr1
+    return initial
       .map((data1) => data1.id)
-      .every((element) => arr2.map((data2) => data2.id).includes(element));
+      .every((element) => selected.map((data2) => data2.id).includes(element));
   }
 
   onCreate(): void {
