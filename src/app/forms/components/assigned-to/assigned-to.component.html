@@ -8,16 +8,18 @@
     </mat-card-title>
     <mat-card-content (click)="$event.stopPropagation()">
       <span class="custom-form-field-gray-color">
-        <mat-form-field appearance="outline" class="search width-100">
-          <mat-icon matPrefix class="searchIcon">search</mat-icon>
-          <input
-            matInput
-            type="text"
-            [placeholder]="'search' | translate"
-            autocomplete="off"
-            [formControl]="searchUsers"
-          />
-        </mat-form-field>
+        <ng-container [formGroup]="search">
+          <mat-form-field appearance="outline" class="search width-100">
+            <mat-icon matPrefix class="searchIcon">search</mat-icon>
+            <input
+              matInput
+              type="text"
+              [placeholder]="'search' | translate"
+              autocomplete="off"
+              formControlName="searchUsers"
+            />
+          </mat-form-field>
+        </ng-container>
       </span>
       <ng-container *ngFor="let user of filteredUsers$ | async">
         <div

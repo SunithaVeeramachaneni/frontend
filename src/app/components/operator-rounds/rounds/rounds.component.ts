@@ -782,10 +782,11 @@ export class RoundsComponent implements OnInit, OnDestroy {
           top: `${pos?.top + 17}px`,
           left: `${pos?.left - 15}px`
         };
-        this.assigneeDetailsWithPlant.users = this.assigneeDetails.users.filter(
-          (user) =>
+        this.assigneeDetailsWithPlant = {
+          users: this.assigneeDetails.users.filter((user) =>
             user.plantId && row.plantId ? user.plantId === row.plantId : false
-        );
+          )
+        };
         if (row.status !== 'submitted' && row.status !== 'overdue')
           this.trigger.toArray()[0].openMenu();
         this.selectedRoundInfo = row;

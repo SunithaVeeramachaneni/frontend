@@ -18,6 +18,7 @@ import {
   startWith,
   tap
 } from 'rxjs/operators';
+import { FormGroup, FormBuilder } from '@angular/forms';
 import {
   AssigneeDetails,
   SelectedAssignee,
@@ -29,9 +30,10 @@ import {
   styleUrls: ['./assigned-to.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AssignedToComponent implements OnInit, OnChanges {
+export class AssignedToComponent implements OnInit {
   @Input() set assigneeDetails(assigneeDetails: AssigneeDetails) {
     this._assigneeDetails = assigneeDetails;
+    this.search.get('searchUsers').patchValue('', { emitEvent: true });
   }
   get assigneeDetails(): AssigneeDetails {
     return this._assigneeDetails;
@@ -42,20 +44,20 @@ export class AssignedToComponent implements OnInit, OnChanges {
   @Input() dropdownPosition;
   @Input() isMultiple = false;
   @Input() assignedTo: string;
-  searchUsers: FormControl;
   filteredUsers$: Observable<UserDetails[]>;
   filteredUsersCount: number;
   private _assigneeDetails: AssigneeDetails;
-  constructor() {}
+  constructor(private fb: FormBuilder) {}
+
+  search: FormGroup = this.fb.group({
+    searchUsers: ''
+  });
 
   ngOnInit(): void {
-    this.searchUsers = new FormControl('');
-  }
-  ngOnChanges() {
-    this.filteredUsers$ = this.searchUsers?.valueChanges.pipe(
+    this.search.get('searchUsers').setValue('');
+    this.filteredUsers$ = this.search.get('searchUsers').valueChanges.pipe(
       startWith(''),
       debounceTime(500),
-      distinctUntilChanged(),
       map((search) => {
         search = search.toLowerCase();
         return this.assigneeDetails.users.filter(
