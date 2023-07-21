@@ -30,6 +30,21 @@
     }
   }
 }
+
+.affected-form-template-slider {
+  ::ng-deep .table-column {
+    width: 20%;
+  }
+
+  ::ng-deep .mat-column-name {
+    min-width: 240px !important;
+  }
+
+  ::ng-deep .mat-column-formStatus {
+    min-width: 70px !important;
+  }
+}
+
 .search {
   margin-top: -10px;
   margin-bottom: 5px;

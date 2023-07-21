@@ -50,6 +50,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { RemoveUserModalComponent } from '../remove-user-modal/remove-user-modal.component';
 import { LoginService } from '../../login/services/login.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
+import { DomSanitizer } from '@angular/platform-browser';
+import { defaultProfilePic, graphQLDefaultLimit } from 'src/app/app.constants';
 interface UsersListActions {
   action: 'delete' | null;
   id: any[];
@@ -87,8 +89,8 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
     new BehaviorSubject<UsersListActions>({ action: null, id: [] });
   userAddEdit = false;
   disableBtn = true;
-  userCount: number;
-  limit = 500;
+  userCount = 0;
+  limit = graphQLDefaultLimit;
   next = '';
   selectedUsers = [];
   allUsersList = [];
@@ -243,7 +245,8 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
     private dialog: MatDialog,
     private toast: ToastService,
     private loginService: LoginService,
-    private plantService: PlantService
+    private plantService: PlantService,
+    private sant: DomSanitizer
   ) {}
 
   ngOnChanges(changes: SimpleChanges) {
@@ -254,16 +257,18 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
       if (changes.userGroupPlantId) {
         this._userGroupPlantId = changes.userGroupPlantId?.currentValue;
       }
-      this.skip = 0;
+      this.fetchUsers$.next({ data: 'load' });
+      this.fetchUsers$.next({} as TableEvent);
       this.getAllUsers();
     } else {
       this.dataSource = new MatTableDataSource([]);
+      this.isLoading$.next(false);
       this.disableBtn = true;
       this._userGroupName = '';
     }
-    this.isLoading$.next(true);
     this.selectedUsers = [];
     this.selectedCount = 0;
+    this.userCount = 0;
   }
 
   ngOnInit(): void {
@@ -288,6 +293,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
       switchMap(({ data }) => {
         this.fetchType = data;
         this.skip = 0;
+        this.next = '';
         this.isLoading$.next(true);
         return this.getUsersList();
       })
@@ -296,9 +302,10 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
       filter(({ data }) => data !== 'load' && data !== 'search'),
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
+          this.fetchType = data;
           return this.getUsersList();
         } else {
-          return of([] as UserDetails[]);
+          return of([]);
         }
       })
     );
@@ -328,9 +335,13 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
               });
               this.toast.show({
                 type: 'success',
-                text: 'Member deleted successfully'
+                text: 'User removed successfully'
               });
           }
+          this.userAddEdit = false;
+          this.fetchUsers$.next({ data: 'load' });
+          this.fetchUsers$.next({} as TableEvent);
+          this.getAllUsers();
         } else {
           initial.data = initial.data.concat(scrollData);
         }
@@ -358,7 +369,10 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
         .pipe(
           mergeMap((resp: any) => {
             this.isLoading$.next(false);
-            this.userCount = resp.count;
+            if (resp?.count !== null && resp?.count !== undefined) {
+              this.userCount = resp.count;
+            }
+            this.userGroupService.usersListEdit = true;
             this.userGroupService.usersCount$.next({
               groupId: this._userGroupId,
               count: this.userCount
@@ -369,36 +383,52 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
           }),
 
           map((data) => {
-            const rows = data.map((item) => {
-              if (item?.users.firstName && item?.users.lastName) {
-                item.user = item?.users.firstName + ' ' + item?.users.lastName;
-              } else {
-                item.user = '';
-              }
-              if (item?.users.email) {
-                item.email = item?.users.email ?? '';
-              }
-              if (item?.users?.validThrough) {
-                item.validThrough = format(
-                  new Date(item?.users?.validThrough),
-                  'dd.MM.yy'
-                );
-              } else {
-                item.validThrough = '';
-              }
-              if (item?.users?.roles) {
-                const rolesNames = [];
-                item?.users?.roles?.forEach((role) => {
-                  rolesNames.push(role?.name);
-                });
-                item.roles = rolesNames?.toString();
-              } else {
-                item.roles = '';
-              }
-              item.plant = this.plantName;
-              return item;
-            });
-            return rows;
+            if (data && data.length) {
+              const rows = data?.map((item) => {
+                if (item?.users.firstName && item?.users.lastName) {
+                  item.user =
+                    item?.users.firstName + ' ' + item?.users.lastName;
+                } else {
+                  item.user = '';
+                }
+                if (item?.users.email) {
+                  item.email = item?.users.email ?? '';
+                }
+                if (item?.users?.validThrough) {
+                  item.validThrough = format(
+                    new Date(item?.users?.validThrough),
+                    'dd.MM.yy'
+                  );
+                } else {
+                  item.validThrough = '';
+                }
+                if (item?.users?.roles) {
+                  const rolesNames = [];
+                  item?.users?.roles?.forEach((role) => {
+                    rolesNames.push(role?.name);
+                  });
+                  item.roles = rolesNames?.toString();
+                } else {
+                  item.roles = '';
+                }
+                item.plant = this.plantName;
+                item.preTextImage = {
+                  style: {
+                    width: '30px',
+                    height: '30px',
+                    'border-radius': '50%',
+                    display: 'block',
+                    padding: '0px 10px'
+                  },
+                  image: this.getImageSrc(item?.users?.profileImage),
+                  condition: true
+                };
+                return item;
+              });
+              return rows;
+            } else {
+              return [];
+            }
           })
         );
     } else {
@@ -412,6 +442,15 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
 
   handleTableEvent = (event) => {
     this.fetchUsers$.next(event);
+  };
+
+  getImageSrc = (source: string) => {
+    if (source) {
+      const base64Image = 'data:image/jpeg;base64,' + source;
+      return this.sant.bypassSecurityTrustResourceUrl(base64Image);
+    } else {
+      return this.sant.bypassSecurityTrustResourceUrl(defaultProfilePic);
+    }
   };
 
   prepareMenuActions(permissions: Permission[]) {
@@ -537,7 +576,6 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
           .subscribe(() => {
             this.selectedUsers = [];
             this.selectedCount = this.selectedUsers.length;
-            this.fetchUsers$.next({ data: 'load' });
             this.userAddEdit = true;
             this.userListActions$.next({ action: 'delete', id: idList });
             this.userCount -= idList.length;
@@ -552,6 +590,8 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
   }
   onCancelFooter() {
     this.fetchUsers$.next({ data: 'load' });
+    this.fetchUsers$.next({} as TableEvent);
+    this.getAllUsers();
     this.selectedUsers = [];
     this.skip = 0;
     this.selectedCount = this.selectedUsers.length;

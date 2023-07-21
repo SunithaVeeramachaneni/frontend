@@ -1,12 +1,26 @@
-.filter-icon {
-  width: 15px;
-  height: 15px;
-}
+.import-template-list {
+  ::ng-deep .table-column {
+    width: 20%;
+  }
 
-.search {
-  margin: 4px 0;
-}
+  ::ng-deep .mat-column-name {
+    min-width: 330px !important;
+  }
 
-.searchIcon {
-  padding: 4px 0;
+  ::ng-deep .mat-column-formStatus {
+    min-width: 70px !important;
+  }
+
+  .filter-icon {
+    width: 15px;
+    height: 15px;
+  }
+
+  .search {
+    margin: 4px 0;
+  }
+
+  .searchIcon {
+    padding: 4px 0;
+  }
 }

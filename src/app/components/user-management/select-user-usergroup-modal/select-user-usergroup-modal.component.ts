@@ -25,7 +25,11 @@ import {
   Column,
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
-import { defaultLimit, routingUrls } from 'src/app/app.constants';
+import {
+  defaultProfilePic,
+  graphQLDefaultLimit,
+  routingUrls
+} from 'src/app/app.constants';
 import {
   BehaviorSubject,
   Observable,
@@ -47,6 +51,7 @@ import { UserGroupService } from '../services/user-group.service';
 import { AddEditUserGroupModalComponent } from '../add-edit-user-group-modal/add-edit-user-group-modal.component';
 import { ToastService } from 'src/app/shared/toast';
 import { data_test } from '../../spare-parts/spare-parts-data';
+import { DomSanitizer } from '@angular/platform-browser';
 @Component({
   selector: 'app-select-user-usergroup-modal',
   templateUrl: './select-user-usergroup-modal.component.html',
@@ -158,7 +163,7 @@ export class SelectUserUsergroupModalComponent implements OnInit {
   skip = 0;
   plantId;
   next = '';
-  limit = 500;
+  limit = graphQLDefaultLimit;
   roles;
   searchUser: FormControl;
   selectedUsers = [];
@@ -177,7 +182,8 @@ export class SelectUserUsergroupModalComponent implements OnInit {
     private userGroupService: UserGroupService,
     private roleService: RolesPermissionsService,
     private commonService: CommonService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private sant: DomSanitizer
   ) {}
 
   ngOnInit() {
@@ -218,6 +224,7 @@ export class SelectUserUsergroupModalComponent implements OnInit {
         this.skip = 0;
         this.fetchType = data;
         this.isLoading$.next(true);
+        this.next = '';
         return this.getUsersList();
       })
     );
@@ -295,7 +302,7 @@ export class SelectUserUsergroupModalComponent implements OnInit {
         this.initialUsers = this.preselectedUsers;
         this.selectedUsers = [...this.selectedUsers, ...this.preselectedUsers];
         this.selectedUsers = this.makeArrayUnique(this.selectedUsers);
-        this.selectedUsersCount$ = of(this.selectedUsers.length);
+        this.selectedUsersCount$ = of(this.selectedUsers?.length);
         this.allUsersList = initial.data;
         return initial;
       })
@@ -327,12 +334,22 @@ export class SelectUserUsergroupModalComponent implements OnInit {
             } else {
               item.user = '';
             }
+            item.preTextImage = {
+              style: {
+                width: '30px',
+                height: '30px',
+                'border-radius': '50%',
+                display: 'block',
+                padding: '0px 10px'
+              },
+              image: this.getImageSrc(item?.profileImage),
+              condition: true
+            };
             return item;
           });
           return rows;
         })
       );
-
   handleTableEvent = (event) => {
     this.fetchUsers$.next(event);
   };
@@ -346,8 +363,8 @@ export class SelectUserUsergroupModalComponent implements OnInit {
         users = this.allUsersList;
 
         if (
-          this.selectedUsers.length === 0 ||
-          this.selectedUsers.length !== users.length
+          this.selectedUsers?.length === 0 ||
+          this.selectedUsers?.length !== users.length
         ) {
           allSelected = true;
           this.selectedUsers = users;
@@ -355,7 +372,10 @@ export class SelectUserUsergroupModalComponent implements OnInit {
           allSelected = false;
           this.selectedUsers = [];
         }
-        this.selectedUsersCount$ = of(this.selectedUsers.length);
+        this.selectedUsersCount$ = of(this.selectedUsers?.length);
+        this.disableBtn =
+          this.areArraysEqual(this.initialUsers, this.selectedUsers) ||
+          this.selectedUsers?.length === 0;
 
         break;
 
@@ -372,15 +392,22 @@ export class SelectUserUsergroupModalComponent implements OnInit {
           this.selectedUsers.push(data);
           this.selectedUserCountUpdate$.next(1);
         }
-        this.selectedUsersCount$ = of(this.selectedUsers.length);
-        this.disableBtn = this.areArraysEqual(
-          this.initialUsers,
-          this.selectedUsers
-        );
+        this.selectedUsersCount$ = of(this.selectedUsers?.length);
+        this.disableBtn =
+          this.areArraysEqual(this.initialUsers, this.selectedUsers) ||
+          this.selectedUsers?.length === 0;
 
         break;
       default:
       // do nothing
+    }
+  };
+  getImageSrc = (source: string) => {
+    if (source) {
+      const base64Image = 'data:image/jpeg;base64,' + source;
+      return this.sant.bypassSecurityTrustResourceUrl(base64Image);
+    } else {
+      return this.sant.bypassSecurityTrustResourceUrl(defaultProfilePic);
     }
   };
   onCancel(): void {
@@ -389,13 +416,13 @@ export class SelectUserUsergroupModalComponent implements OnInit {
       returnType: 'cancel'
     });
   }
-  areArraysEqual(arr1, arr2) {
-    if (arr1.length !== arr2.length) {
+  areArraysEqual(initial, selected) {
+    if (initial?.length !== selected?.length) {
       return false;
     }
-    return arr1
+    return initial
       .map((data1) => data1.id)
-      .every((element) => arr2.map((data2) => data2.id).includes(element));
+      .every((element) => selected.map((data2) => data2.id).includes(element));
   }
 
   onCreate(): void {
@@ -405,11 +432,13 @@ export class SelectUserUsergroupModalComponent implements OnInit {
     });
 
     const newUserGroup = {
-      name: this.data?.name,
-      description: this.data?.description,
+      name: this.data?.name ?? '',
+      description: this.data?.description ?? '',
       plantId: this.data?.plantId,
       users: selectedUserId,
-      searchTerm: `${this.data?.name?.toLowerCase()} ${this.data?.description?.toLowerCase()}`
+      searchTerm: `${this.data?.name?.toLowerCase() ?? ''} ${
+        this.data?.description?.toLowerCase() ?? ''
+      }`
     };
 
     this.userGroupService
@@ -419,10 +448,9 @@ export class SelectUserUsergroupModalComponent implements OnInit {
       })
       .subscribe((data) => {
         this.userGroupService.addUpdateDeleteCopyUserGroup = true;
-
         this.userGroupService.userGroupActions$.next({
           action: 'add',
-          group: { ...data, usersCount: data?.users.length }
+          group: { ...data, usersCount: data?.users?.length }
         });
       });
     this.dialogRef.close({

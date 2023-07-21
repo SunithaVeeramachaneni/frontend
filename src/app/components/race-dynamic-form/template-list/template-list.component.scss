@@ -5,27 +5,27 @@
   height: calc(100vh - 80px);
 
   ::ng-deep .table-column {
-    width: 60%;
+    width: 20%;
   }
 
   ::ng-deep .mat-column-name {
-    min-width: 240px !important;
+    min-width: 320px !important;
   }
 
   ::ng-deep .mat-column-formStatus {
-    min-width: 70px !important;
+    min-width: 80px !important;
   }
 
   ::ng-deep .mat-column-counter {
-    min-width: 70px !important;
+    min-width: 80px !important;
   }
 
   ::ng-deep .mat-column-questionsCount {
-    min-width: 70px !important;
+    min-width: 80px !important;
   }
 
   ::ng-deep .mat-column-formsUsageCount {
-    min-width: 70px !important;
+    min-width: 80px !important;
   }
 
   ::ng-deep .mat-column-lastPublishedBy {
@@ -34,6 +34,10 @@
 
   ::ng-deep .mat-column-author {
     min-width: 140px !important;
+  }
+
+  ::ng-deep .mat-column-formType {
+    min-width: 80px !important;
   }
 
   .heading {
