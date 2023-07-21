@@ -951,7 +951,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     const dropDownTypes = ['DD', 'VI', 'DDM'];
     let operand2Val = '';
     if (dropDownTypes.indexOf(question.value.fieldType) > -1) {
-      operand2Val = question.value.value.values[0].title;
+      operand2Val = question.value.value.values[0]?.title ?? '';
     }
     control.push(
       this.fb.group({
