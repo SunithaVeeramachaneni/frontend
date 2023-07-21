@@ -85,7 +85,11 @@
           class="time-ago"
           [ngClass]="{ 'time-ago-mt': form.description.trim() }"
         >
-          <span class="form-created">{{ form.createdAt | timeAgo }}</span>
+          <span class="form-created">
+            {{ form?.createdAt | timeAgo }}
+            <span>by {{ form?.createdBy }}</span>
+          </span>
+          <div></div>
         </span>
       </div>
     </div>
