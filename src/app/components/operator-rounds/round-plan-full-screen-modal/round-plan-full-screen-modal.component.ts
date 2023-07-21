@@ -1,5 +1,6 @@
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { getFormDetails } from 'src/app/forms/state';
@@ -27,7 +28,8 @@ export class RoundPlanFullScreenModalComponent implements OnInit, OnDestroy {
   constructor(
     public dialogRef: MatDialogRef<RoundPlanFullScreenModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data,
-    private store: Store<State>
+    private store: Store<State>,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -39,6 +41,7 @@ export class RoundPlanFullScreenModalComponent implements OnInit, OnDestroy {
         const { formMetadata, formListDynamoDBVersion } = formDetails;
         this.roundData = {
           formListDynamoDBVersion,
+          formMetadata,
           roundExists: Object.keys(formMetadata).length === 0 ? false : true
         };
       });
@@ -46,14 +49,15 @@ export class RoundPlanFullScreenModalComponent implements OnInit, OnDestroy {
 
   goBack(): void {
     if (this.currentStep === 0) {
-      this.dialogRef.close();
+      this.dialogRef.close(this.roundData.formMetadata);
+      this.router.navigate(['/operator-rounds']);
     } else if (this.currentStep > 0) {
       this.gotoPreviousStep();
     }
   }
 
   publishedEventHandler(): void {
-    this.dialogRef.close();
+    this.dialogRef.close(this.roundData.formMetadata);
   }
 
   onGotoStep(step): void {

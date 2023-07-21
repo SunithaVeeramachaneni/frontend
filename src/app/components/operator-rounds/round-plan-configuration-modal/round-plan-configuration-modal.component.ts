@@ -6,6 +6,7 @@ import {
   ElementRef,
   EventEmitter,
   Input,
+  OnDestroy,
   OnInit,
   Output,
   ViewChild
@@ -18,7 +19,7 @@ import {
   MatAutocompleteTrigger
 } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
-import { Observable, merge, of } from 'rxjs';
+import { Observable, Subscription, merge, of } from 'rxjs';
 import { map, startWith, tap } from 'rxjs/operators';
 import {
   AbstractControl,
@@ -30,10 +31,9 @@ import {
   ValidatorFn
 } from '@angular/forms';
 import { ValidationError, FormMetadata } from 'src/app/interfaces';
-import { Router } from '@angular/router';
 import { LoginService } from '../../login/services/login.service';
 import { Store } from '@ngrx/store';
-import { State } from 'src/app/forms/state';
+import { State, getFormMetadata } from 'src/app/forms/state';
 import {
   BuilderConfigurationActions,
   RoundPlanConfigurationActions
@@ -58,7 +58,7 @@ import { RoundPlanFullScreenModalComponent } from '../round-plan-full-screen-mod
   styleUrls: ['./round-plan-configuration-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class RoundPlanConfigurationModalComponent implements OnInit {
+export class RoundPlanConfigurationModalComponent implements OnInit, OnDestroy {
   @ViewChild('tagsInput', { static: false })
   tagsInput: ElementRef<HTMLInputElement>;
   @ViewChild('valueInput', { static: false }) valueInput: ElementRef;
@@ -109,9 +109,11 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   pdfFiles: any = { mediaType: [] };
   additionalDetails: FormArray;
   labelSelected: any;
+
+  formMetadataSubscrption: Subscription;
+
   constructor(
     private fb: FormBuilder,
-    private router: Router,
     public dialogRef: MatDialogRef<RoundPlanFullScreenModalComponent>,
     private readonly loginService: LoginService,
     private store: Store<State>,
@@ -191,6 +193,27 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     });
     this.getAllPlantsData();
     this.retrieveDetails();
+    this.patchPlanDetails();
+
+    this.formMetadataSubscrption = this.store
+      .select(getFormMetadata)
+      .subscribe((res) => {
+        this.headerDataForm.patchValue({
+          name: res.name,
+          description: res.description ? res.description : ''
+        });
+      });
+  }
+
+  patchPlanDetails() {
+    if (this.roundData?.formMetadata) {
+      this.headerDataForm.patchValue({
+        name: this.roundData.formMetadata.name,
+        description: this.roundData.formMetadata.description,
+        plantId: this.roundData.formMetadata.plantId,
+        formStatus: this.roundData.formMetadata.formStatus
+      });
+    }
   }
 
   add(event: MatChipInputEvent): void {
@@ -325,6 +348,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
           BuilderConfigurationActions.updateFormMetadata({
             formMetadata: {
               ...this.headerDataForm.value,
+              id: this.roundData.formMetadata.id,
               additionalDetails: updatedAdditionalDetails,
               plant: plant.name,
               moduleName: 'rdf',
@@ -344,6 +368,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
           RoundPlanConfigurationActions.updateRoundPlan({
             formMetadata: {
               ...this.headerDataForm.value,
+              id: this.roundData.formMetadata.id,
               additionalDetails: updatedAdditionalDetails,
               plant: plant.name,
               moduleName: 'rdf',
@@ -827,5 +852,9 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
 
   getAdditionalDetailList() {
     return (this.headerDataForm.get('additionalDetails') as FormArray).controls;
+  }
+
+  ngOnDestroy() {
+    this.formMetadataSubscrption.unsubscribe();
   }
 }

@@ -13,7 +13,7 @@
     color="primary"
     class="next-btn"
     (click)="next()"
-    [disabled]="headerDataForm.invalid || headerDataForm.pristine"
+    [disabled]="headerDataForm.invalid"
     translate="nextBtn"
   ></button>
 </div>
@@ -95,6 +95,7 @@
               formControlName="plantId"
               [placeholder]="'plant' | translate"
               (openedChange)="resetPlantSearchFilter()"
+              [disabled]="roundData.roundExists"
             >
               <input
                 class="searchable-input"

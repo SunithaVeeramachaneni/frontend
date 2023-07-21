@@ -683,12 +683,20 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
   }
 
   openRoundPlanCreationModal() {
-    this.dialog.open(RoundPlanFullScreenModalComponent, {
+    const dialogRef = this.dialog.open(RoundPlanFullScreenModalComponent, {
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',
       width: '100%',
       panelClass: 'full-screen-modal'
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      const data = result === undefined ? {} : result;
+      if (Object.keys(data).length !== 0) {
+        this.isLoading$.next(true);
+        this.operatorRoundsService.fetchForms$.next({ data: 'search' });
+        this.formsListCountUpdate$.next(1);
+      }
     });
   }
 

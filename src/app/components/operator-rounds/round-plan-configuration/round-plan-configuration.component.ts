@@ -184,11 +184,6 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
             },
             { emitEvent: false }
           );
-          const formName = name ? name : 'Untitled Form';
-          this.headerService.setHeaderTitle(formName);
-          this.breadcrumbService.set('@formName', {
-            label: formName
-          });
         }
       })
     );
