@@ -6,6 +6,7 @@ import {
   EventEmitter,
   ChangeDetectionStrategy
 } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-upload-image-preview',
@@ -19,8 +20,19 @@ export class UploadImagePreviewComponent implements OnInit {
   @Output() triggerPreviewDialog: EventEmitter<null> = new EventEmitter();
   @Output() imageIndexEmitter: EventEmitter<number> =
     new EventEmitter<number>();
+  constructor(private sanitizer: DomSanitizer) {}
+  ngOnInit(): void {
+    console.log('image', this.image);
+  }
 
-  ngOnInit(): void {}
+  getImageSrc = (source: string) => {
+    if (source) {
+      console.log('abcde');
+      const base64Image = 'data:image/jpeg;base64,' + source;
+      console.log('base64image', base64Image);
+      return this.sanitizer.bypassSecurityTrustResourceUrl(base64Image);
+    }
+  };
 
   triggerDelete() {
     this.imageIndexEmitter.emit(this.index);

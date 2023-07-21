@@ -301,6 +301,7 @@ export class FormListComponent implements OnInit, OnDestroy {
   );
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
   nextToken = '';
+  includeAttachments = false;
   selectedForm: GetFormList = null;
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
@@ -711,9 +712,9 @@ export class FormListComponent implements OnInit, OnDestroy {
       }
     });
     dialogRef.afterClosed().subscribe((result) => {
-      const formData = result.data === undefined ? {} : result;
+      const formData = result?.data === undefined ? {} : result;
       this.isLoading$.next(true);
-      if (Object.keys(formData.data).length !== 0) {
+      if (Object?.keys(formData.data).length !== 0) {
         this.raceDynamicFormService.fetchForms$.next({ data: 'search' });
         this.formsListCountUpdate$.next(1);
       }

@@ -4,7 +4,7 @@
 /* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
 import { format, formatDistance } from 'date-fns';
-import { from, Observable, of, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
 import { map, mergeMap, toArray } from 'rxjs/operators';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
@@ -46,6 +46,8 @@ const APPNAME = 'MWORKORDER';
 export class RaceDynamicFormService {
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
+  attachmentsMapping$ = new BehaviorSubject<any>({});
+  pdfMapping$ = new BehaviorSubject<any>({});
   embeddedFormId;
 
   constructor(
@@ -79,6 +81,7 @@ export class RaceDynamicFormService {
       info
     );
   uploadAttachments$(file, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
+    console.log('file', file);
     return this.appService._postData(
       environment.rdfApiUrl,
       `upload-attachments`,
@@ -86,6 +89,17 @@ export class RaceDynamicFormService {
       info
     );
   }
+  getAttachmentsById$(id, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
+    console.log('id', id);
+    return this.appService._getResp(
+      environment.rdfApiUrl,
+      `upload-attachments/${id}`,
+      info
+    );
+  }
+
+  getAttachmentsMapping = () => {};
+
   getDataSetsByType$ = (
     datasetType: string,
     info: ErrorInfo = {} as ErrorInfo
@@ -277,7 +291,8 @@ export class RaceDynamicFormService {
       additionalDetails: formListQuery.additionalDetails,
       instructions: formListQuery.instructions,
       isArchived: false,
-      isDeleted: false
+      isDeleted: false,
+      includeAttachments: true
     });
   }
 
@@ -311,11 +326,17 @@ export class RaceDynamicFormService {
       'arraybuffer'
     );
 
-  getFormById$(id: string) {
+  getFormById$(
+    id: string,
+    queryParams: { includeAttachments: boolean },
+    info: ErrorInfo = {} as ErrorInfo
+  ) {
     return this.appService._getRespById(
       environment.rdfApiUrl,
       `forms/list/`,
-      id
+      id,
+      info,
+      queryParams.toString()
     );
   }
 
