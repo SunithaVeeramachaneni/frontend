@@ -1,35 +1,52 @@
 <div id="view-location-slider">
   <mat-card>
     <div>
-      <svg-icon (click)="cancel()" icon="icon-close" class="cancel"></svg-icon>
+      <svg-icon
+        id="assetDetailCancelIcon"
+        (click)="cancel()"
+        icon="icon-close"
+        class="cancel"
+      ></svg-icon>
     </div>
     <div *ngIf="selectedAsset">
       <p>
-        <img [src]="selectedAsset.image" alt="Image" class="image" />
+        <img
+          id="assetDetailImg"
+          [src]="selectedAsset.image"
+          alt="Image"
+          class="image"
+        />
       </p>
-      <h1 class="heading">{{ selectedAsset.name }}</h1>
+      <h1 id="assetDetailName" class="heading">{{ selectedAsset.name }}</h1>
       <hr class="horizon-line" />
-      <p class="m-0 sub-headings" translate="id"></p>
-      <p class="m-0 sub-headings-value">{{ selectedAsset.assetsId }}</p>
+      <p id="assetDetailId" class="m-0 sub-headings" translate="id"></p>
+      <p id="assetDetailSelectId" class="m-0 sub-headings-value">
+        {{ selectedAsset.assetsId }}
+      </p>
       <ng-container *ngIf="selectedAsset.plant">
         <hr class="horizon-line" />
-        <p class="m-0 sub-headings" translate="plant"></p>
-        <p class="m-0 sub-headings-value">
+        <p id="assetDetailPlant" class="m-0 sub-headings" translate="plant"></p>
+        <p id="assetDetailSelectPlant" class="m-0 sub-headings-value">
           {{ selectedAsset.plant }}
         </p>
       </ng-container>
       <hr class="horizon-line" />
-      <p class="m-0 sub-headings" translate="parent"></p>
-      <p class="m-0 sub-headings-value">
+      <p id="assetDetailParent" class="m-0 sub-headings" translate="parent"></p>
+      <p id="assetDetailSelectParent" class="m-0 sub-headings-value">
         {{ selectedAsset.parent ? selectedAsset.parent : '--' }}
       </p>
       <hr class="horizon-line" />
-      <p class="m-0 sub-headings" translate="description"></p>
-      <p class="m-0 sub-headings-value">
+      <p
+        id="assetDetailDescription"
+        class="m-0 sub-headings"
+        translate="description"
+      ></p>
+      <p id="assetDetailSelectDescription" class="m-0 sub-headings-value">
         {{ selectedAsset.description }}
       </p>
       <hr class="horizon-line" />
       <button
+        id="assetDetailEditBtn"
         mat-raised-button
         class="edit-btn"
         (click)="edit()"

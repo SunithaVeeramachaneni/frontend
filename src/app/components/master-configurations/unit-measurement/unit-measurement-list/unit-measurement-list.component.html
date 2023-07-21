@@ -7,13 +7,16 @@
       <div class="main-container">
         <div class="uom-header">
           <div>
-            <h2 class="heading" translate="uom"></h2>
+            <h2 id="unitListHeading" class="heading" translate="uom"></h2>
           </div>
           <div>
             <span class="custom-form-field-gray-color search">
               <mat-form-field appearance="outline">
-                <mat-icon matPrefix class="searchIcon">search</mat-icon>
+                <mat-icon id="unitListSearchIcon" matPrefix class="searchIcon"
+                  >search</mat-icon
+                >
                 <input
+                  id="unitListSearchText"
                   matInput
                   type="text"
                   [placeholder]="'searchUom' | translate"
@@ -21,6 +24,7 @@
                   [formControl]="searchUom"
                 />
                 <svg-icon
+                  id="unitListFilterIcon"
                   matSuffix
                   icon="icon-filterIcon"
                   cdkOverlayOrigin
@@ -32,6 +36,7 @@
             </span>
 
             <button
+              id="unitListCreateBtn"
               mat-raised-button
               [matMenuTriggerFor]="createMenu"
               translate="createNew"
@@ -39,45 +44,66 @@
             ></button>
             <mat-menu #createMenu="matMenu">
               <button
+                id="unitListMenuBtn"
                 mat-menu-item
                 class="menu-buttons"
                 (click)="uploader?.click()"
                 *appCheckUserHasPermission="[perms.importUnitOfMeasurement]"
               >
-                <svg-icon icon="icon-excel1" class="menu-icons"></svg-icon>
-                <span translate="uploadExcel"></span>
+                <svg-icon
+                  id="unitListExcelIcon"
+                  icon="icon-excel1"
+                  class="menu-icons"
+                ></svg-icon>
+                <span id="UploadExcel" translate="uploadExcel"></span>
               </button>
               <button
+                id="unitListAddBtn"
                 mat-menu-item
                 (click)="addManually()"
                 *appCheckUserHasPermission="[perms.createUnitOfMeasurement]"
                 class="menu-buttons"
               >
                 <svg-icon
+                  id="unitListAddIcon"
                   icon="icon-add-manually"
                   class="add-manually-icon"
                 ></svg-icon>
 
-                <span translate="createManually"></span>
+                <span
+                  id="unitListCreateManually"
+                  translate="createManually"
+                ></span>
               </button>
             </mat-menu>
 
             <button
+              id="unitListMoreBtn"
               mat-raised-button
               [matMenuTriggerFor]="moreMenu"
               class="more-btn"
             >
-              <mat-icon class="menu-icon">more_horiz</mat-icon>
+              <mat-icon id="unitListMOreIcon" class="menu-icon"
+                >more_horiz</mat-icon
+              >
             </button>
             <mat-menu #moreMenu="matMenu">
               <button
+                id="unitListExportBtn"
                 mat-menu-item
                 class="menu-buttons"
                 *appCheckUserHasPermission="[perms.importUnitOfMeasurement]"
                 (click)="exportAsXLSX()"
               >
-                <svg-icon icon="icon-excel1" class="menu-icons"></svg-icon>
-                <span translate="downloadTemplate"></span>
+                <svg-icon
+                  id="unitListExcelIcon"
+                  icon="icon-excel1"
+                  class="menu-icons"
+                ></svg-icon>
+                <span
+                  id="unitListDownloadTemplate"
+                  translate="downloadTemplate"
+                ></span>
               </button>
             </mat-menu>
             <input
