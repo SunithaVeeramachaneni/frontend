@@ -186,46 +186,45 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
 
     this.getAllPlantsData();
     this.retrieveDetails();
-    // this.rdfService.attachmentsMapping$.subscribe((data) => {
-    //   console.log(data);
-    // });
+
     this.rdfService.attachmentsMapping$
       .pipe(
         map((data) => {
           if (Array.isArray(data)) {
-            return data.map((item) => item.attachment);
+            return data.map((item) => item);
           } else if (data && typeof data === 'object' && data.attachment) {
-            return [data.attachment];
+            return [data];
           } else {
             return [];
           }
         })
       )
       .subscribe((attachments) => {
-        console.log('Attachments:', attachments);
-        this.cdrf.detectChanges();
-        this.filteredMediaType.mediaType = attachments;
-        console.log('mediafiles', this.filteredMediaType.mediaType);
+        attachments?.forEach((att) => {
+          this.cdrf.detectChanges();
+          this.filteredMediaType.mediaType.push(att.attachment);
+          this.filteredMediaTypeIds.mediaIds.push(att.id);
+        });
       });
 
     this.rdfService.pdfMapping$
       .pipe(
         map((data) => {
-          console.log('data', data);
           if (Array.isArray(data)) {
-            return data.map((item) => item.attachment);
+            return data.map((item) => item);
           } else if (data && typeof data === 'object' && data.attachment) {
-            return [data.attachment];
+            return [data];
           } else {
             return [];
           }
         })
       )
-      .subscribe((attachments) => {
-        this.cdrf.detectChanges();
-        console.log('Attachments:', attachments);
-        this.pdfFiles.mediaType = attachments;
-        console.log('pdffiles', this.pdfFiles.mediaType);
+      .subscribe((pdfs) => {
+        pdfs?.forEach((pdf) => {
+          this.cdrf.detectChanges();
+          this.pdfFiles.mediaType.push(pdf.attachment);
+          this.filteredMediaPdfTypeIds.push(pdf.id);
+        });
       });
   }
 
@@ -468,7 +467,7 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
     }
   }
   trackBySelectedattachments(index: number, el: any): string {
-    return el.id;
+    return el?.id;
   }
 
   processValidationErrors(controlName: string): boolean {
@@ -496,17 +495,19 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
       reader.readAsDataURL(file);
       reader.onloadend = () => {
         this.base64result = reader?.result as string;
-        console.log('base64', this.base64result);
         if (this.base64result.includes('data:application/pdf;base64,')) {
           this.resizePdf(this.base64result).then((compressedPdf) => {
             const onlybase64 = compressedPdf.split(',')[1];
             const resizedPdfSize = atob(onlybase64).length;
-            const pdf = { file, attachment: onlybase64 };
-            console.log('pdf', pdf);
-            console.log('file', file);
+            // const pdf = {
+            //   name: file.name,
+            //   size: file.size,
+            //   attachment: onlybase64
+            // };
+            // console.log('pdf', pdf);
             if (resizedPdfSize <= maxSize) {
               this.rdfService
-                .uploadAttachments$(pdf)
+                .uploadAttachments$({ file: onlybase64 })
                 .pipe(
                   tap((response) => {
                     if (response) {
@@ -531,10 +532,8 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
           });
         } else {
           this.resizeImage(this.base64result).then((compressedImage) => {
-            console.log('compressedimage', compressedImage);
             const onlybase64 = compressedImage.split(',')[1];
             const resizedImageSize = atob(onlybase64).length;
-            console.log('onlybase64', onlybase64);
             if (resizedImageSize <= maxSize) {
               this.rdfService
                 .uploadAttachments$({ file: onlybase64 })

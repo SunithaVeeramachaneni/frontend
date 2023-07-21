@@ -12,9 +12,7 @@ export class InstructionPdfComponent implements OnInit {
 
   constructor() {}
 
-  ngOnInit(): void {
-    console.log('pdf', this.pdf);
-  }
+  ngOnInit(): void {}
 
   triggerDelete() {
     this.indexEmitter.emit(this.index);

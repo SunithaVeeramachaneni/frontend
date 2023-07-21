@@ -81,7 +81,6 @@ export class RaceDynamicFormService {
       info
     );
   uploadAttachments$(file, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
-    console.log('file', file);
     return this.appService._postData(
       environment.rdfApiUrl,
       `upload-attachments`,
@@ -90,7 +89,6 @@ export class RaceDynamicFormService {
     );
   }
   getAttachmentsById$(id, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
-    console.log('id', id);
     return this.appService._getResp(
       environment.rdfApiUrl,
       `upload-attachments/${id}`,

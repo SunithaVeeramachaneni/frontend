@@ -21,15 +21,11 @@ export class UploadImagePreviewComponent implements OnInit {
   @Output() imageIndexEmitter: EventEmitter<number> =
     new EventEmitter<number>();
   constructor(private sanitizer: DomSanitizer) {}
-  ngOnInit(): void {
-    console.log('image', this.image);
-  }
+  ngOnInit(): void {}
 
   getImageSrc = (source: string) => {
     if (source) {
-      console.log('abcde');
       const base64Image = 'data:image/jpeg;base64,' + source;
-      console.log('base64image', base64Image);
       return this.sanitizer.bypassSecurityTrustResourceUrl(base64Image);
     }
   };
