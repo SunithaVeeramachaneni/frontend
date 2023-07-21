@@ -271,13 +271,13 @@
                       <mat-button-toggle-group class="vi-input">
                         <mat-button-toggle
                           class="vi-values"
-                          [value]="ques.title"
+                          [value]="ques?.title"
                           [ngStyle]="{
                             color: ques.color
                           }"
                           *ngFor="let ques of question.value.values"
                         >
-                          {{ ques.title }}
+                          {{ ques?.title ?? '' }}
                         </mat-button-toggle>
                       </mat-button-toggle-group>
                     </div>
@@ -290,12 +290,12 @@
                       <mat-select class="dropdown" [multiple]="question.multi">
                         <mat-option
                           *ngFor="let ques of question.value.values"
-                          [value]="ques.title"
+                          [value]="ques?.title"
                           [ngStyle]="{
                             color: ques.color
                           }"
                         >
-                          {{ ques.title }}
+                          {{ ques?.title ?? '' }}
                         </mat-option>
                       </mat-select>
                     </div>

@@ -137,7 +137,6 @@
                   autofocus="true"
                   autocomplete="off"
                   (keyup.enter)="section.get('name').disable()"
-                  (keydown.control.c)="addSection(i, section)"
                 />
                 <button
                   mat-icon-button
@@ -349,7 +348,8 @@
                               }"
                             >
                               {{
-                                question.controls.value.value?.values[0].title
+                                question.controls.value.value?.values[0]
+                                  ?.title ?? ''
                               }}
                             </mat-chip>
                             <mat-chip
@@ -368,7 +368,8 @@
                               }"
                             >
                               {{
-                                question.controls.value.value?.values[1].title
+                                question.controls.value.value?.values[1]
+                                  ?.title ?? ''
                               }}
                             </mat-chip>
                             <span
@@ -546,7 +547,7 @@
                                               togglePopOverOpenState(i, j)
                                             "
                                           >
-                                            {{ val.title }}
+                                            {{ val?.title ?? '' }}
                                           </mat-chip>
                                         </mat-chip-list>
                                         <span
@@ -1310,7 +1311,8 @@
                                                     >
                                                       {{
                                                         row.controls.value.value
-                                                          ?.values[0].title
+                                                          ?.values[0]?.title ??
+                                                          ''
                                                       }}
                                                     </mat-chip>
                                                     <mat-chip
@@ -1333,7 +1335,8 @@
                                                     >
                                                       {{
                                                         row.controls.value.value
-                                                          ?.values[1].title
+                                                          ?.values[1]?.title ??
+                                                          ''
                                                       }}
                                                     </mat-chip>
                                                     <span
@@ -1618,7 +1621,8 @@
                                                                     "
                                                                   >
                                                                     {{
-                                                                      val.title
+                                                                      val?.title ??
+                                                                        ''
                                                                     }}
                                                                   </mat-chip>
                                                                 </mat-chip-list>
@@ -2130,7 +2134,7 @@
                                           >
                                             {{
                                               row.controls.value.value
-                                                ?.values[0].title
+                                                ?.values[0]?.title ?? ''
                                             }}
                                           </mat-chip>
                                           <mat-chip
@@ -2150,7 +2154,7 @@
                                           >
                                             {{
                                               row.controls.value.value
-                                                ?.values[1].title
+                                                ?.values[1]?.title ?? ''
                                             }}
                                           </mat-chip>
                                           <span
@@ -2393,7 +2397,7 @@
                                                             )
                                                           "
                                                         >
-                                                          {{ val.title }}
+                                                          {{ val?.title ?? '' }}
                                                         </mat-chip>
                                                       </mat-chip-list>
                                                       <span
