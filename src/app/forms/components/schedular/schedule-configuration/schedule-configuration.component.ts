@@ -637,12 +637,8 @@ export class ScheduleConfigurationComponent
       .subscribe((occurrences) => {
         if (occurrences > 0) {
           let days = 0;
-          const repeatEvery = this.schedulerConfigForm.get('repeatEvery').value;
-          const repeatDuration =
-            this.schedulerConfigForm.get('repeatDuration').value;
-          const startDate =
-            this.schedulerConfigForm.get('startDatePicker').value;
-
+          const { repeatDuration, repeatEvery, startDate } =
+            this.schedulerConfigForm.value;
           switch (repeatEvery) {
             case 'day':
               days = repeatDuration * occurrences - 1;
