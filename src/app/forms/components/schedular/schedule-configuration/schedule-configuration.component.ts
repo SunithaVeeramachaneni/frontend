@@ -342,17 +342,13 @@ export class ScheduleConfigurationComponent
       .get('startDatePicker')
       .valueChanges.pipe(takeUntil(this.onDestroy$))
       .subscribe((startDate) => {
-        const repeatDuration =
-          this.schedulerConfigForm.get('repeatDuration').value;
-        const repeatEvery = this.schedulerConfigForm.get('repeatEvery').value;
-        const scheduleEndType =
-          this.schedulerConfigForm.get('scheduleEndType').value;
-        const scheduleEndOn = this.schedulerConfigForm.get(
-          'scheduleEndOnPicker'
-        ).value;
-        const scheduleEndOccurrences = this.schedulerConfigForm.get(
-          'scheduleEndOccurrences'
-        ).value;
+        const {
+          repeatDuration,
+          repeatEvery,
+          scheduleEndType,
+          scheduleEndOn,
+          scheduleEndOccurrences
+        } = this.schedulerConfigForm.value;
 
         let endDate: Date;
         switch (scheduleEndType) {
@@ -384,10 +380,10 @@ export class ScheduleConfigurationComponent
             break;
         }
 
-        this.schedulerConfigForm.get('endDatePicker').setValue(endDate);
-        this.schedulerConfigForm
-          .get('endDate')
-          .setValue(format(endDate, dateFormat3));
+        this.schedulerConfigForm.patchValue({
+          endDatePicker: endDate,
+          endDate: format(endDate, dateFormat3)
+        });
       });
 
     this.schedulerConfigForm
