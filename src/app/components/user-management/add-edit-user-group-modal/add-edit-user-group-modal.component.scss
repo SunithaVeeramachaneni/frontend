@@ -95,11 +95,12 @@
   margin-top: 13px;
 }
 .max-char {
-  font-size: 11px;
-  margin-left: 3px;
+  display: flex;
+  float: right;
+  font-size: 86%;
   position: relative;
-  margin-top: 14px;
-  top: 3px;
+  top: -6px;
+  right: 4px;
   color: $gray-text;
 }
 ::ng-deep .mat-form-field-subscript-wrapper {
@@ -112,4 +113,8 @@
 
 .m-t-8 {
   margin-top: 8px;
+}
+
+::ng-deep .mat-dialog-container {
+  overflow: hidden;
 }

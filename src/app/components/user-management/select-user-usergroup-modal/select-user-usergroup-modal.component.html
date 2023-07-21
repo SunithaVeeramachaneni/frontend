@@ -67,6 +67,7 @@
         translate="createBtn"
         mat-dialog-close
         (click)="onCreate()"
+        [disabled]="disableBtn"
       ></button>
       <button
         *ngIf="type === 'update'"
