@@ -68,7 +68,7 @@ export class UserGroupListComponent
   addingUserGroup$ = new BehaviorSubject<boolean>(false);
 
   userGroupList: any = [];
-  selectedUserGroup = '';
+  selectedUserGroup: any;
   selectedUserGroupId$: BehaviorSubject<string> = new BehaviorSubject<string>(
     ''
   );
