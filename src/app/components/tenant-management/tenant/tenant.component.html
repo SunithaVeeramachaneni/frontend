@@ -20,6 +20,7 @@
     >
       <button
         mat-raised-button
+        type="submit"
         translate="saveBtn"
         class="save-btn"
         *ngIf="editTenant"
@@ -27,6 +28,7 @@
       ></button>
     </ng-container>
     <button
+      type="button"
       mat-raised-button
       translate="cancelBtn"
       class="cancel-btn"
@@ -35,6 +37,7 @@
     ></button>
     <ng-container *appCheckUserHasPermission="[permissions.updateTenant]">
       <button
+        type="button"
         mat-raised-button
         translate="editBtn"
         class="edit-btn"

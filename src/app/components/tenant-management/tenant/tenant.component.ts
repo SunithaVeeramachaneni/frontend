@@ -579,10 +579,15 @@ export class TenantComponent implements OnInit, AfterViewInit {
         )
         .subscribe();
     } else {
-      const index = this.apiKeysInfo.value.find(
+      const index = this.apiKeysInfo.value.findIndex(
         (info: ApiKeyInfo) => info.apiKey === apiKeyInfo.apiKey
       );
       this.apiKeysInfo.removeAt(index);
+      this.apiKeysInfoObject = {
+        apiKeysInfo: this.apiKeysInfo.value
+      };
+      this.tenantForm.markAsDirty();
+      this.cdrf.detectChanges();
     }
   }
 

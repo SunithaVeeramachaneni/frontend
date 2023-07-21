@@ -13,6 +13,7 @@ import { ConfigOptions } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { addMonths, format } from 'date-fns';
 import {
   ApiKeyEvent,
+  ApiKeyInfo,
   ApiKeysInfoObject,
   Permission,
   RowLevelActionEvent,
@@ -34,11 +35,9 @@ const expiredOnFormat = 'yyyy-MM-dd';
 })
 export class ApiKeyGenerationComponent implements OnInit {
   @Input() set apiKeysInfo(apiKeysInfoObject: ApiKeysInfoObject) {
-    this._apiKeysInfoObject = apiKeysInfoObject;
-    this.dataSource = new MatTableDataSource(apiKeysInfoObject.apiKeysInfo);
-  }
-  get apiKeysInfoObject(): ApiKeysInfoObject {
-    return this._apiKeysInfoObject;
+    this.adjustTableHeight();
+    this.filteredApiKeysInfo = apiKeysInfoObject.apiKeysInfo;
+    this.dataSource = new MatTableDataSource(this.filteredApiKeysInfo);
   }
   @Input() set disabeleApiKeyGeneration(disabeleApiKeyGeneration: boolean) {
     this._disabeleApiKeyGeneration = disabeleApiKeyGeneration;
@@ -101,7 +100,7 @@ export class ApiKeyGenerationComponent implements OnInit {
   dataSource: MatTableDataSource<any>;
   userInfo$: Observable<UserInfo>;
   permissions: Permission[] = [];
-  private _apiKeysInfoObject: ApiKeysInfoObject;
+  filteredApiKeysInfo: ApiKeyInfo[] = [];
   private _disabeleApiKeyGeneration: boolean;
 
   constructor(
@@ -129,6 +128,11 @@ export class ApiKeyGenerationComponent implements OnInit {
     const { action, data: apiKeyInfo } = event;
     switch (action) {
       case 'delete':
+        this.filteredApiKeysInfo = this.filteredApiKeysInfo.filter(
+          (info) => info.apiKey !== apiKeyInfo.apiKey
+        );
+        this.adjustTableHeight();
+        this.dataSource = new MatTableDataSource(this.filteredApiKeysInfo);
         this.apiKeyEvent.emit({
           type: 'delete',
           apiKeyInfo
@@ -138,6 +142,15 @@ export class ApiKeyGenerationComponent implements OnInit {
       // do nothing
     }
   };
+
+  adjustTableHeight() {
+    if (!this.filteredApiKeysInfo.length) {
+      this.configOptions = {
+        ...this.configOptions,
+        tableHeight: 'calc(100vh - 350px)'
+      };
+    }
+  }
 
   generateApiKey() {
     this.apiKeyEvent.emit({
