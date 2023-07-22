@@ -653,12 +653,35 @@ export class ScheduleConfigurationComponent
               );
               break;
           }
-          const endDate = addDays(startDate, days);
-
-          this.schedulerConfigForm.get('endDatePicker').setValue(endDate);
           this.schedulerConfigForm
             .get('endDate')
-            .setValue(format(endDate, dateFormat3));
+            .patchValue(
+              localToTimezoneDate(
+                addDays(
+                  new Date(),
+                  days * this.schedulerConfigForm.get('repeatDuration').value -
+                    1
+                ),
+                this.plantTimezoneMap[this.selectedDetails?.plantId],
+                dateFormat3
+              )
+            );
+          this.schedulerConfigForm
+            .get('endDatePicker')
+            .patchValue(
+              new Date(
+                localToTimezoneDate(
+                  addDays(
+                    new Date(),
+                    days *
+                      this.schedulerConfigForm.get('repeatDuration').value -
+                      1
+                  ),
+                  this.plantTimezoneMap[this.selectedDetails?.plantId],
+                  dateFormat3
+                )
+              )
+            );
         }
       });
 
