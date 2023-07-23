@@ -442,13 +442,14 @@ export class ObservationsService {
     const data = [];
     Object.entries(result).map(([key, value]) => {
       const leanKey = this.removeSpecialCharacter(key.toLowerCase());
+      const formattedKey = leanKey === 'low' ? 'Low' : key;
       color.push(
         action === 'priority'
           ? this.priorityColors[leanKey]
           : this.statusColors[leanKey]
       );
       data.push({
-        name: leanKey === 'inprogress' ? 'In Progress' : key,
+        name: formattedKey === 'inprogress' ? 'In Progress' : formattedKey,
         value
       });
     });
@@ -469,7 +470,7 @@ export class ObservationsService {
   > {
     return this.appService._getLocal(
       '',
-      'assets/json/observations-filter.json',
+      '/assets/json/observations-filter.json',
       info
     );
   }
@@ -503,6 +504,9 @@ export class ObservationsService {
   }
 
   private formateGetObservationResponse(resp, type) {
+    resp.filters.assignedTo = resp.filters.assignedTo.map((email) => {
+      return this.userService.getUserFullName(email);
+    });
     const items = resp?.items?.sort(
       (a, b) =>
         new Date(b?.createdAt).getTime() - new Date(a?.createdAt).getTime()

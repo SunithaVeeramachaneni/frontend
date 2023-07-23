@@ -51,7 +51,7 @@ import { RemoveUserModalComponent } from '../remove-user-modal/remove-user-modal
 import { LoginService } from '../../login/services/login.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { DomSanitizer } from '@angular/platform-browser';
-import { graphQLDefaultLimit } from 'src/app/app.constants';
+import { defaultProfilePic, graphQLDefaultLimit } from 'src/app/app.constants';
 interface UsersListActions {
   action: 'delete' | null;
   id: any[];
@@ -89,7 +89,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
     new BehaviorSubject<UsersListActions>({ action: null, id: [] });
   userAddEdit = false;
   disableBtn = true;
-  userCount: number;
+  userCount = 0;
   limit = graphQLDefaultLimit;
   next = '';
   selectedUsers = [];
@@ -268,6 +268,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
     }
     this.selectedUsers = [];
     this.selectedCount = 0;
+    this.userCount = 0;
   }
 
   ngOnInit(): void {
@@ -334,7 +335,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
               });
               this.toast.show({
                 type: 'success',
-                text: 'Member removed successfully'
+                text: 'User removed successfully'
               });
           }
           this.userAddEdit = false;
@@ -368,7 +369,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
         .pipe(
           mergeMap((resp: any) => {
             this.isLoading$.next(false);
-            if (resp.count) {
+            if (resp?.count !== null && resp?.count !== undefined) {
               this.userCount = resp.count;
             }
             this.userGroupService.usersListEdit = true;
@@ -447,6 +448,8 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
     if (source) {
       const base64Image = 'data:image/jpeg;base64,' + source;
       return this.sant.bypassSecurityTrustResourceUrl(base64Image);
+    } else {
+      return this.sant.bypassSecurityTrustResourceUrl(defaultProfilePic);
     }
   };
 
