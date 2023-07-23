@@ -1,7 +1,10 @@
 import { Component, OnDestroy, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Subject } from 'rxjs';
 import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
-import { progressStatus } from '../../../app.constants';
+import {
+  progressStatus,
+  formConfigurationStatus
+} from '../../../app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { FormUpdateProgressService } from '../../services/form-update-progress.service';
 
@@ -52,7 +55,7 @@ export class FormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
           this.showToast();
           this.cdr.detectChanges();
         });
-      } else {
+      } else if (payload?.templateId) {
         this.showToast();
       }
     });
@@ -76,7 +79,9 @@ export class FormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
     ) {
       this.toastService.show({
         type: 'success',
-        text: `${this.totalCompletedCount} Forms are updated successfully.`
+        text: `${this.totalCompletedCount} ${
+          this.totalCompletedCount === 1 ? 'Form is' : 'Forms are'
+        } updated successfully.`
       });
     } else if (this.formMetadata.length === 0) {
       this.toastService.show({
@@ -100,10 +105,17 @@ export class FormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
     return this.formProgressService.formUpdateDeletePayload$;
   }
   updateProgress$(data: any) {
-    return this.rdfService.updateAdhocFormOnTemplateChange$(
-      data.templateId,
-      data.formIds
-    );
+    if (data.templateType === formConfigurationStatus.standalone) {
+      return this.rdfService.updateAdhocFormOnTemplateChange$(
+        data.templateId,
+        data.formIds
+      );
+    } else if (data.templateType === formConfigurationStatus.embedded) {
+      // return this.rdfService.updateEmbeddedFormOnTemplateChange$(
+      //   data.templateId,
+      //   data.formIds
+      // );
+    }
   }
   isOpen() {
     this.formProgressService.formProgressIsOpen$.subscribe((isOpen) => {

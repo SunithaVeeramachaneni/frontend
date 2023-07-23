@@ -5,9 +5,9 @@
   bottom: 0;
   right: 50px;
   background-color: $white;
-  box-shadow: 0 0 10px 10px $box-shadow;
+  box-shadow: 0 0 5px 5px $box-shadow;
   border-radius: 10px 10px 0px 0px;
-  width: 460px;
+  width: 400px;
   max-height: 300px;
   z-index: 200;
   transition: all 0.5s ease-in-out;
@@ -17,7 +17,7 @@
     flex-direction: row;
     justify-content: space-between;
     border-bottom: 1px solid $border-bottom;
-    padding: 20px;
+    padding: 15px;
     .total-progress-count {
       font-size: 130%;
       font-weight: 500;
@@ -28,7 +28,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        margin: 0px 15px;
+        margin: 0px 11px;
         cursor: pointer;
       }
       .cta-icon {
@@ -60,7 +60,7 @@
           margin-left: 10px;
           font-size: 105%;
           font-weight: 500;
-          max-width: 300px;
+          max-width: 290px;
         }
       }
       .state {
