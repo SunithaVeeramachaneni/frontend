@@ -1,12 +1,12 @@
-<div [ngClass]="['form-update-delete-progress', isOpen ? '' : 'shrink']">
+<div [ngClass]="['form-update-delete-progress', _isOpen ? '' : 'shrink']">
   <div class="total-progress-container">
     <div class="total-progress-count">
-      3 of {{ formMetadata.length }} Forms Updated
+      {{ totalCompletedCount }} of {{ formMetadata.length }} Forms Updated
     </div>
     <div class="progress-container-cta">
       <div
-        [ngClass]="['cta-icon-holder', isFormListExpanded ? '' : 'rotate-icon']"
-        (click)="toggleFormListExpanded()"
+        [ngClass]="['cta-icon-holder', _isExpanded ? '' : 'rotate-icon']"
+        (click)="isExpandedToggle()"
       >
         <svg-icon icon="icon-arrow-down" class="cta-icon"></svg-icon>
       </div>
@@ -18,7 +18,7 @@
   <div
     [ngClass]="[
       'form-progress-list-container',
-      isFormListExpanded ? 'expand' : 'shrink'
+      _isExpanded ? 'expand' : 'shrink'
     ]"
   >
     <div class="single-form-progress" *ngFor="let form of formMetadata">
@@ -26,7 +26,22 @@
         <img class="form-icon" src="{{ form.preTextImage.image }}" alt="" />
         <span class="form-name">{{ form.name }}</span>
       </div>
-      <mat-spinner class="form-progress-spinner" [diameter]="25"></mat-spinner>
+      <div>
+        <div
+          class="state in-progress"
+          *ngIf="form.progressStatus === 'success'"
+        >
+          <svg-icon icon="icon-tick" class="icon"></svg-icon>
+        </div>
+        <mat-spinner
+          *ngIf="form.progressStatus === 'in-progress'"
+          class="form-progress-spinner"
+          [diameter]="25"
+        ></mat-spinner>
+        <div class="state failed" *ngIf="form.progressStatus === 'failed'">
+          <svg-icon icon="icon-upload-error" class="icon"></svg-icon>
+        </div>
+      </div>
     </div>
   </div>
 </div>

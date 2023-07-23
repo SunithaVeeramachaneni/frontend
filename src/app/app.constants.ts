@@ -558,7 +558,11 @@ export const statusColors = {
   partlyOpen: '#FE9C30',
   submitted: '#2C9E53'
 };
-
+export const progressStatus = {
+  inprogress: 'in-progress',
+  success: 'success',
+  error: 'error'
+};
 export const responseCount = 1000;
 
 export const raceDynamicForms = 'RDF';

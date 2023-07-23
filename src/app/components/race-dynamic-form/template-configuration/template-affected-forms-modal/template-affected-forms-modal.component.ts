@@ -18,17 +18,20 @@ import {
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { MatTableDataSource } from '@angular/material/table';
-import { graphQLDefaultLimit } from 'src/app/app.constants';
+import {
+  graphQLDefaultLimit,
+  graphQLDefaultMaxLimit
+} from 'src/app/app.constants';
 import { FormControl } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/state/app.state';
 import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
-import { ToastService } from 'src/app/shared/toast';
 import { TableEvent } from 'src/app/interfaces';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 import { Router } from '@angular/router';
 import { PlantsResponse } from 'src/app/interfaces/master-data-management/plants';
 import { PlantService } from 'src/app/components/master-configurations/plants/services/plant.service';
+import { FormUpdateProgressService } from 'src/app/forms/services/form-update-progress.service';
 
 @Component({
   selector: 'app-template-affected-forms-modal',
@@ -179,9 +182,9 @@ export class TemplateAffectedFormsModalComponent implements OnInit {
 
   constructor(
     private store: Store<State>,
-    private toastService: ToastService,
     private router: Router,
     private raceDynamicFormService: RaceDynamicFormService,
+    private formProgressService: FormUpdateProgressService,
     private plantService: PlantService,
     public dialogRef: MatDialogRef<TemplateAffectedFormsModalComponent>,
 
@@ -324,16 +327,51 @@ export class TemplateAffectedFormsModalComponent implements OnInit {
       );
   }
   markTemplateAsReady() {
-    this.dialogRef.close();
-    this.store.dispatch(
-      BuilderConfigurationActions.updateIsFormDetailPublished({
-        isFormDetailPublished: true
+    this.raceDynamicFormService
+      .getAffectedFormList$({
+        templateId: this.data.templateId,
+        nextToken: '',
+        limit: graphQLDefaultMaxLimit,
+        searchTerm: '',
+        fetchType: 'load'
       })
-    );
-    this.router.navigate(['/forms/templates']);
-    this.toastService.show({
-      type: 'success',
-      text: `${this.affectedFormsCount} Forms are updated.`
-    });
+      .pipe(
+        mergeMap(({ rows }) => {
+          const affectedFormData = {
+            templateId: this.data.templateId,
+            templateType: this.data.templateType,
+            formIds: [],
+            affectedForms: []
+          };
+          rows.map((item) => {
+            item.preTextImage = {
+              image: item?.formLogo,
+              style: {
+                width: '40px',
+                height: '40px',
+                marginRight: '10px'
+              },
+              condition: true
+            };
+            affectedFormData.formIds.push(item.id);
+            affectedFormData.affectedForms.push({
+              id: item.id,
+              name: item.name,
+              preTextImage: item.preTextImage
+            });
+          });
+          return of(affectedFormData);
+        })
+      )
+      .subscribe((data) => {
+        this.store.dispatch(
+          BuilderConfigurationActions.updateIsFormDetailPublished({
+            isFormDetailPublished: true
+          })
+        );
+        this.formProgressService.formUpdateDeletePayload$.next(data);
+        this.dialogRef.close();
+        this.router.navigate(['/forms/templates']);
+      });
   }
 }
