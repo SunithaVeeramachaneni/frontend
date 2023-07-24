@@ -86,8 +86,13 @@
           [ngClass]="{ 'time-ago-mt': form.description.trim() }"
         >
           <span class="form-created">
-            {{ form?.createdAt | timeAgo }}
-            <span>by {{ form?.createdBy }}</span>
+            <ng-container *ngIf="form?.updatedAt; else createdAt">
+              {{ form?.updatedAt | timeAgo }}
+            </ng-container>
+            <ng-template #createdAt>
+              {{ form?.createdAt | timeAgo }}
+            </ng-template>
+            <span *ngIf="form?.updatedBy">by {{ form?.updatedBy }}</span>
           </span>
           <div></div>
         </span>
