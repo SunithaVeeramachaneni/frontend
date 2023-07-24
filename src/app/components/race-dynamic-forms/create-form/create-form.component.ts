@@ -1341,14 +1341,21 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
 
   selectFieldType(fieldType, question, i, j) {
     question.get('logics').setControl(this.fb.array([]));
-    if (fieldType.type === question.get('fieldType').value) {
+    if (
+      fieldType.type === question.get('fieldType').value &&
+      fieldType.type !== 'IMG'
+    ) {
       return;
     }
 
     this.currentQuestion = question;
+
+    if (fieldType.type !== 'IMG') {
+      question.get('value').setValue('');
+    }
     question.get('fieldType').setValue(fieldType.type);
     question.get('required').setValue(false);
-    question.get('value').setValue('');
+
     if (fieldType.type !== 'ARD' && fieldType.type !== 'TAF') {
       (question.get('table') as FormArray).clear();
     }
