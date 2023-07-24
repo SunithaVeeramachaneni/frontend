@@ -1,7 +1,12 @@
 <div class="uom-delete-modal">
-  <p class="cancel-title" translate="delete"></p>
-  <p class="cancel-subtitle" translate="deleteSubTitle"></p>
+  <p id="uomDeleteTitle" class="cancel-title" translate="delete"></p>
+  <p
+    id="uomDeleteSubTitle"
+    class="cancel-subtitle"
+    translate="deleteSubTitle"
+  ></p>
   <button
+    id="uomDeleteBtn"
     mat-raised-button
     color="warn"
     class="delete-btn pr-2"
@@ -9,6 +14,7 @@
     translate="delete"
   ></button>
   <button
+    id="uomDeleteCancelBtn"
     mat-button
     class="cancel-btn"
     (click)="deleteForm('cancel')"
