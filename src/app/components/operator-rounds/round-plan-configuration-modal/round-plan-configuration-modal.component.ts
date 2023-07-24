@@ -370,6 +370,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit, OnDestroy {
           })
         );
         this.router.navigate(['/operator-rounds/create']);
+        this.gotoNextStep.emit();
       } else if (this.roundData?.roundExists === true) {
         this.store.dispatch(
           BuilderConfigurationActions.updateFormMetadata({
@@ -407,8 +408,8 @@ export class RoundPlanConfigurationModalComponent implements OnInit, OnDestroy {
             formSaveStatus: formConfigurationStatus.saving
           })
         );
+        this.gotoNextStep.emit();
       }
-      this.gotoNextStep.emit();
     }
   }
 

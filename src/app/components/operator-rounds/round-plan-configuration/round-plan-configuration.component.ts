@@ -24,6 +24,7 @@ import {
   debounceTime,
   distinctUntilChanged,
   pairwise,
+  startWith,
   takeUntil,
   tap
 } from 'rxjs/operators';
@@ -56,8 +57,6 @@ import {
   RoundPlanConfigurationActions,
   UnitOfMeasurementActions
 } from 'src/app/forms/state/actions';
-import { HeaderService } from 'src/app/shared/services/header.service';
-import { BreadcrumbService } from 'xng-breadcrumb';
 import { ActivatedRoute, Router } from '@angular/router';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { MatDialog } from '@angular/material/dialog';
@@ -126,8 +125,6 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private store: Store<State>,
-    private headerService: HeaderService,
-    private breadcrumbService: BreadcrumbService,
     private router: Router,
     private route: ActivatedRoute,
     private formService: FormService,
@@ -209,6 +206,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
 
     this.formConfiguration.valueChanges
       .pipe(
+        startWith({}),
         debounceTime(500),
         distinctUntilChanged(),
         takeUntil(this.destroy$),
@@ -230,8 +228,8 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
 
             if (
               !isEqual(prev, curr) &&
-              prev.name !== undefined &&
-              curr.name !== undefined
+              ((prev.name !== undefined && curr.name !== undefined) ||
+                prev.description !== curr.description)
             ) {
               const { moduleName, ...currentVal } = curr;
               this.store.dispatch(
@@ -420,10 +418,8 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
         if (!createOrEditForm) {
           this.router.navigate(['/operator-rounds']);
         }
-        const { componentMode } = data;
         const { formConfigurationState, hierarchyState } = data.form || {};
-
-        if (createOrEditForm && componentMode === 'create')
+        if (createOrEditForm && this.router.url === '/operator-rounds')
           this.openHierarchyModal();
 
         if (hierarchyState && Object.keys(hierarchyState).length) {
