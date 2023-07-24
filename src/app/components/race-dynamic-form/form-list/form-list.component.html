@@ -55,10 +55,10 @@
         </mat-menu>
 
         <mat-menu #uploadMenu="matMenu">
-          <button mat-menu-item>
+          <button mat-menu-item (click)="embeddedUploader.click()">
             <span translate="uploadEmbedded"></span>
           </button>
-          <button mat-menu-item>
+          <button mat-menu-item (click)="standaloneUploader.click()">
             <span translate="uploadStandalone"></span>
           </button>
         </mat-menu>
@@ -89,6 +89,24 @@
             <span translate="uploadStandalone"></span>
           </button>
         </mat-menu>
+        <input
+          id="upload"
+          hidden
+          type="file"
+          #standaloneUploader
+          accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+          (change)="uploadFile($event, 'Standalone')"
+          (click)="resetFile($event)"
+        />
+        <input
+          id="upload"
+          hidden
+          type="file"
+          #embeddedUploader
+          accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+          (change)="uploadFile($event, 'Embedded')"
+          (click)="resetFile($event)"
+        />
       </div>
     </div>
 

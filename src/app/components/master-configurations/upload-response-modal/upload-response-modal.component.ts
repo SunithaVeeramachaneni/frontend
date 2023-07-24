@@ -13,7 +13,8 @@ import { AssetsService } from '../assets/services/assets.service';
 import { LocationService } from '../locations/services/location.service';
 import { ResponseSetService } from '../response-set/services/response-set.service';
 import { Observable } from 'rxjs';
-import { ErrorInfo } from 'src/app/interfaces';
+import { SseService } from 'src/app/shared/services/sse.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-upload-response-modal',
@@ -30,12 +31,14 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
   successCount = 0;
   failedCount = 0;
   type = '';
+  formType = '';
   failure: any = [];
   observable: Observable<any>;
   constructor(
     private readonly locationService: LocationService,
     private readonly assetsService: AssetsService,
     private readonly resposneSetService: ResponseSetService,
+    private readonly sseService: SseService,
     private changeDetectorRef: ChangeDetectorRef,
     private dialogRef: MatDialogRef<UploadResponseModalComponent>,
     @Inject(MAT_DIALOG_DATA) public dialogData
@@ -49,8 +52,10 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
       this.isSuccess = false;
       formData.append('file', this.dialogData?.file);
       const type = this.dialogData?.type;
+      const formType = this.dialogData?.formType;
       this.title = 'In-Progress';
       this.type = type;
+      this.formType = formType;
       this.message = `Adding ${type}`;
       this.successCount = 0;
       switch (type) {
@@ -62,6 +67,39 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
           break;
         case 'response-set':
           this.observable = this.resposneSetService.uploadExcel(formData);
+          break;
+        case 'forms':
+          this.observable = new Observable((observer) => {
+            const params: URLSearchParams = new URLSearchParams();
+            params.set('formType', formType.toString());
+            const eventSourceForms = this.sseService.getEventSourceWithPost(
+              environment.rdfApiUrl,
+              'forms/upload?' + params.toString(),
+              formData
+            );
+
+            eventSourceForms.stream();
+            eventSourceForms.onmessage = (event) => {
+              const eventData = JSON.parse(event.data);
+              const { successCount, failedCount, totalCount, failure } =
+                eventData;
+
+              observer.next({
+                totalCount,
+                failedCount,
+                successCount,
+                failure
+              });
+
+              if (successCount + failedCount === totalCount) {
+                eventSourceForms.close();
+              }
+            };
+
+            eventSourceForms.onerror = (event) => {
+              observer.error(JSON.parse(event.data));
+            };
+          });
           break;
       }
       this.observable?.subscribe((result) => {

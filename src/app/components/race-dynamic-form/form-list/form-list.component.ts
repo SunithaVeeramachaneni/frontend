@@ -51,6 +51,7 @@ import { PlantService } from '../../master-configurations/plants/services/plant.
 import { UsersService } from '../../user-management/services/users.service';
 import { FullScreenFormCreationComponent } from '../full-screen-form-creation/full-screen-form-creation.component';
 import { downloadFile } from 'src/app/shared/utils/fileUtils';
+import { UploadResponseModalComponent } from '../../master-configurations/upload-response-modal/upload-response-modal.component';
 
 @Component({
   selector: 'app-form-list',
@@ -753,6 +754,34 @@ export class FormListComponent implements OnInit, OnDestroy {
           type: 'success'
         });
       });
+  }
+
+  resetFile(event: Event) {
+    const file = event.target as HTMLInputElement;
+    file.value = '';
+  }
+
+  uploadFile(event, formType) {
+    const file = event.target.files[0];
+    const dialogRef = this.dialog.open(UploadResponseModalComponent, {
+      data: {
+        file,
+        type: 'forms',
+        formType
+      },
+      disableClose: true
+    });
+
+    dialogRef.afterClosed().subscribe((res) => {
+      if (res.data) {
+        this.nextToken = '';
+        this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
+        this.toast.show({
+          text: 'Forms uploaded successfully!',
+          type: 'success'
+        });
+      }
+    });
   }
 
   ngOnDestroy(): void {
