@@ -1,14 +1,20 @@
 <div class="widget-delete-modal">
-  <p class="cancel-title" translate="cancelModalHeading"></p>
-  <p class="cancel-subtitle" translate="cancelModalSubHeading"></p>
+  <p id="cancelTitle" class="cancel-title" translate="cancelModalHeading"></p>
+  <p
+    id="CancelSubTitle"
+    class="cancel-subtitle"
+    translate="cancelModalSubHeading"
+  ></p>
 
   <button
+    id="cancelYesBtn"
     mat-raised-button
     class="yes-btn"
     (click)="cancelRole('yes')"
     translate="yesBtn"
   ></button>
   <button
+    id="cancelNoBtn"
     mat-button
     class="no-btn"
     (click)="cancelRole('no')"

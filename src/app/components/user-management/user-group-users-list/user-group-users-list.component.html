@@ -1,11 +1,12 @@
 <div class="container">
   <div class="header">
     <div class="left-pannel">
-      <h2 class="title">{{ userGroupName }}</h2>
+      <h2 id="userGroupListName" class="title">{{ userGroupName }}</h2>
     </div>
 
     <div class="right-pannel">
       <button
+        id="userGroupListCreateBtn"
         mat-raised-button
         class="create-btn"
         translate="changeUserinGroup"
@@ -24,17 +25,24 @@
     ></cwp-dynamictable>
     <div class="footer" *ngIf="selectedCount">
       <div class="footer-left">
-        <svg-icon icon="check-circle" class="check-circle-icon"></svg-icon>
+        <svg-icon
+          id="userGroupListCheckIcon"
+          icon="check-circle"
+          class="check-circle-icon"
+        ></svg-icon>
         <span class="checkedUsers">
-          <span class="checkedUsersCount">
+          <span id="userGroupListCount" class="checkedUsersCount">
             {{ selectedCount }}
           </span>
-          <span class="checkedUsersText">{{ 'selected' | translate }}</span>
+          <span id="userGroupListSelected" class="checkedUsersText">{{
+            'selected' | translate
+          }}</span>
         </span>
       </div>
 
       <div class="footer-button">
         <button
+          id="userGroupListCancelBtn"
           mat-button
           class="cancel-btn"
           autofocus="false"
@@ -44,6 +52,7 @@
         ></button>
 
         <button
+          id="userGroupListRemoveBtn"
           mat-raised-button
           class="remove-btn"
           type="submit"

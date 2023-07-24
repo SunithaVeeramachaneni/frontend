@@ -1,8 +1,9 @@
 <div class="edit-unit-modal">
   <div class="edit-modal-header">
-    <h1 class="heading">{{ 'editUOM' | translate }}</h1>
+    <h1 id="editUnitHeading" class="heading">{{ 'editUOM' | translate }}</h1>
 
     <svg-icon
+      id="editUnitCancelIcon"
       icon="icon-close"
       class="cancel"
       (click)="cancel('cancel')"
@@ -12,14 +13,24 @@
   <div [formGroup]="unitForm" class="p-10">
     <p class="m-0 custom-form-field-white-color">
       <mat-form-field appearance="outline" class="unitType">
-        <mat-label>{{ 'unitType' | translate }}</mat-label>
-        <input *ngIf="false" matInput formControlName="unitType" />
-        <mat-select formControlName="unitType">
-          <mat-option *ngFor="let unit of unitList" [value]="unit?.name">
+        <mat-label id="editUnitType">{{ 'unitType' | translate }}</mat-label>
+        <input
+          id="editUnitTypeText"
+          *ngIf="false"
+          matInput
+          formControlName="unitType"
+        />
+        <mat-select id="editUnitSelect" formControlName="unitType">
+          <mat-option
+            id="editUnitOptions"
+            *ngFor="let unit of unitList"
+            [value]="unit?.name"
+          >
             {{ unit?.name }}
           </mat-option>
         </mat-select>
         <mat-error
+          id="editUnitError"
           *ngIf="processValidationErrors('unitType')"
           class="m-t-5 error-fields"
         >
@@ -38,9 +49,16 @@
     <div class="custom-form-field-white-color m-t-5">
       <div class="input-container">
         <mat-form-field appearance="outline" class="description">
-          <mat-label>{{ 'description' | translate }}</mat-label>
-          <input matInput formControlName="description" />
+          <mat-label id="editUnitDescription">{{
+            'description' | translate
+          }}</mat-label>
+          <input
+            id="editUnitDescriptionText"
+            matInput
+            formControlName="description"
+          />
           <mat-error
+            id="editUnitDescriptionError"
             *ngIf="processValidationErrors('description')"
             class="m-t-5 error-fields"
           >
@@ -55,9 +73,10 @@
           </mat-error>
         </mat-form-field>
         <mat-form-field appearance="outline" class="symbol">
-          <mat-label>{{ 'symbol' | translate }}</mat-label>
-          <input matInput formControlName="symbol" />
+          <mat-label id="editUnitSymbol">{{ 'symbol' | translate }}</mat-label>
+          <input id="editUnitSymbolText" matInput formControlName="symbol" />
           <mat-error
+            id="editUnitSymbolError"
             *ngIf="processValidationErrors('symbol')"
             class="m-t-5 error-fields"
           >
@@ -72,8 +91,11 @@
           </mat-error>
         </mat-form-field>
 
-        <mat-label class="status m-l-5">{{ 'status' | translate }}</mat-label>
+        <mat-label id="editUnitStatus" class="status m-l-5">{{
+          'status' | translate
+        }}</mat-label>
         <mat-slide-toggle
+          id="editUnitStatusActive"
           formControlName="isActive"
           [checked]="unitForm.value.isActive"
           class="slide-toggle"
@@ -81,6 +103,7 @@
           {{ unitForm.value.isActive ? 'Active' : 'InActive' }}
         </mat-slide-toggle>
         <mat-error
+          id="editUnitStatusError"
           *ngIf="processValidationErrors('isActive')"
           class="m-t-5 error-fields"
         >
@@ -98,6 +121,7 @@
   </div>
   <div class="footer">
     <button
+      id="editUnitSaveBtn"
       mat-raised-button
       color="primary"
       (click)="onSave('save')"
@@ -106,7 +130,12 @@
     >
       {{ 'done' | translate }}
     </button>
-    <button mat-button class="cancel-btn" (click)="cancel('cancel')">
+    <button
+      id="editUnitCancelBtn"
+      mat-button
+      class="cancel-btn"
+      (click)="cancel('cancel')"
+    >
       {{ 'cancel' | translate }}
     </button>
   </div>

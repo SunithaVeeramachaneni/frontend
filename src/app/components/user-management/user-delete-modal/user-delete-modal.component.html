@@ -1,23 +1,28 @@
 <div class="report-delete-modal">
-  <p class="title" *ngIf="this.multiple !== true">
+  <p id="userDeleteDeactivate" class="title" *ngIf="this.multiple !== true">
     {{ 'deactivateUser' | translate }}
   </p>
-  <p class="title" *ngIf="this.multiple === true">
+  <p id="userDeleteTitle" class="title" *ngIf="this.multiple === true">
     {{ 'deactivate' | translate }}
     {{ this.selctedUsersList.length === 1 ? 'User?' : 'Users?' }}
   </p>
-  <p class="warning-body" *ngIf="this.multiple !== true">
+  <p id="userDeleteWarning" class="warning-body" *ngIf="this.multiple !== true">
     {{ 'deactivateUserWarning' | translate }}
     <b>{{ firstName + ' ' + lastName }}</b
     >?
   </p>
 
-  <p class="warning-body" *ngIf="this.multiple === true">
+  <p
+    id="userDeleteMultiWarning"
+    class="warning-body"
+    *ngIf="this.multiple === true"
+  >
     {{ 'deactivateUsersWarning' | translate }}
     {{ this.selctedUsersList.length === 1 ? 'User?' : 'Users?' }}
   </p>
 
   <button
+    id="userDeleteYesBtn"
     mat-raised-button
     color="warn"
     class="yes-no-btn"
@@ -26,6 +31,7 @@
     Yes
   </button>
   <button
+    id="userDeleteNoBtn"
     mat-button
     color="primary"
     class="yes-no-btn"

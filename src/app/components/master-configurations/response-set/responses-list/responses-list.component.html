@@ -7,13 +7,23 @@
       <div class="main-container">
         <div class="responses-header">
           <div>
-            <h2 class="heading" translate="globalMcqHeading"></h2>
+            <h2
+              id="responseListHeading"
+              class="heading"
+              translate="globalMcqHeading"
+            ></h2>
           </div>
           <div>
             <span class="custom-form-field-gray-color search">
               <mat-form-field appearance="outline">
-                <mat-icon matPrefix class="searchIcon">search</mat-icon>
+                <mat-icon
+                  id="responseListSearchIcon"
+                  matPrefix
+                  class="searchIcon"
+                  >search</mat-icon
+                >
                 <input
+                  id="responseListSearchText"
                   matInput
                   type="text"
                   [placeholder]="'search' | translate"
@@ -21,6 +31,7 @@
                   [formControl]="searchResponseSet"
                 />
                 <svg-icon
+                  id="responseListFilterIcon"
                   icon="icon-filterIcon"
                   class="filter-icon"
                   matSuffix
@@ -29,6 +40,7 @@
             </span>
 
             <button
+              id="responseListCreateBtn"
               mat-raised-button
               [matMenuTriggerFor]="createMenu"
               translate="createNew"
@@ -36,43 +48,67 @@
             ></button>
             <mat-menu #createMenu="matMenu">
               <button
+                id="responseListUploadMenu"
                 mat-menu-item
                 (click)="uploader.click()"
                 class="menu-buttons"
                 *appCheckUserHasPermission="[perms.importLocations]"
               >
-                <svg-icon icon="icon-excel1" class="menu-icons"></svg-icon>
-                <span translate="uploadExcel"></span>
+                <svg-icon
+                  id="responseListExcelIcon"
+                  icon="icon-excel1"
+                  class="menu-icons"
+                ></svg-icon>
+                <span
+                  id="responseListUploadExcelText"
+                  translate="uploadExcel"
+                ></span>
               </button>
               <button
+                id="responseListMenuBtn"
                 mat-menu-item
                 class="menu-buttons"
                 (click)="addManually()"
               >
                 <svg-icon
+                  id="responseListAddIcon"
                   icon="icon-add-manually"
                   class="add-manually-icon"
                 ></svg-icon>
-                <span translate="createManually"></span>
+                <span
+                  id="responseListCreateManually"
+                  translate="createManually"
+                ></span>
               </button>
             </mat-menu>
 
             <button
+              id="responseListMoreMenu"
               mat-raised-button
               [matMenuTriggerFor]="moreMenu"
               class="more-btn"
               *appCheckUserHasPermission="[perms.importLocations]"
             >
-              <mat-icon class="menu-icon">more_horiz</mat-icon>
+              <mat-icon id="responseListMenuIcon" class="menu-icon"
+                >more_horiz</mat-icon
+              >
             </button>
             <mat-menu #moreMenu="matMenu">
               <button
+                id="responseListExportExcel"
                 (click)="exportAsXLSX()"
                 mat-menu-item
                 class="menu-buttons"
               >
-                <svg-icon icon="icon-excel1" class="menu-icons"></svg-icon>
-                <span translate="downloadTemplate"></span>
+                <svg-icon
+                  id="responseListIconExcel"
+                  icon="icon-excel1"
+                  class="menu-icons"
+                ></svg-icon>
+                <span
+                  id="responseListDownloadTemplate"
+                  translate="downloadTemplate"
+                ></span>
               </button>
             </mat-menu>
 
