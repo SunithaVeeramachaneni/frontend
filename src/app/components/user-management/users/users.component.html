@@ -1,11 +1,6 @@
 <div class="main-container" *ngIf="loggedInUserInfo$ | async">
   <div class="users-header">
-    <h2
-      id="activeUsers"
-      id="activeUsers"
-      class="heading"
-      translate="activeUsers"
-    ></h2>
+    <h2 id="activeUsers" class="heading" translate="activeUsers"></h2>
     <div>
       <span class="no-of-users" *ngIf="userCount$ | async as userCount">
         <span id="userCountText" class="users-count" *ngIf="userCount.count">
