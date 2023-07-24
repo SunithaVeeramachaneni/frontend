@@ -16,13 +16,13 @@ const routes: Routes = [
     component: OperatorRoundsContainerComponent,
     canActivate: [AuthGuard],
     data: {
-      breadcrumb: { label: 'Operator Rounds' },
+      breadcrumb: { label: '' },
       permissions: [permissions.viewORPlans]
     },
     children: [
       {
         path: 'create',
-        component: RoundPlanViewComponent,
+        component: OperatorRoundsContainerComponent,
         canActivate: [AuthGuard],
         resolve: { form: RoundPlanResolverService },
         data: {

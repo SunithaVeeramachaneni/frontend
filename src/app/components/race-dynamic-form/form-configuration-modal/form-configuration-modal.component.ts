@@ -49,6 +49,7 @@ import { OperatorRoundsService } from '../../operator-rounds/services/operator-r
 import { FullScreenFormCreationComponent } from '../full-screen-form-creation/full-screen-form-creation.component';
 import { NgxImageCompressService } from 'ngx-image-compress';
 import { PDFDocument } from 'pdf-lib';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-form-configuration-modal',
@@ -112,7 +113,8 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
     private toastService: ToastService,
     private operatorRoundService: OperatorRoundsService,
     public dialog: MatDialog,
-    private imageCompress: NgxImageCompressService
+    private imageCompress: NgxImageCompressService,
+    private router: Router
   ) {
     this.rdfService.getDataSetsByType$('tags').subscribe((tags) => {
       if (tags && tags.length) {
@@ -867,6 +869,7 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
 
   onCancel() {
     this.dialogRef.close();
+    this.router.navigate(['/forms']);
   }
 
   ngOnDestroy() {

@@ -39,7 +39,6 @@ import { ToastService } from 'src/app/shared/toast';
 import { Router } from '@angular/router';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { slideInOut } from 'src/app/animations';
-import { RoundPlanConfigurationModalComponent } from '../round-plan-configuration-modal/round-plan-configuration-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { PlantsResponse } from 'src/app/interfaces/master-data-management/plants';

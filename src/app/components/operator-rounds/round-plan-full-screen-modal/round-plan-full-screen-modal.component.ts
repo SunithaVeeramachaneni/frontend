@@ -49,8 +49,8 @@ export class RoundPlanFullScreenModalComponent implements OnInit, OnDestroy {
 
   goBack(): void {
     if (this.currentStep === 0) {
-      this.dialogRef.close(this.roundData.formMetadata);
       this.router.navigate(['/operator-rounds']);
+      this.dialogRef.close(this.roundData.formMetadata);
     } else if (this.currentStep > 0) {
       this.gotoPreviousStep();
     }

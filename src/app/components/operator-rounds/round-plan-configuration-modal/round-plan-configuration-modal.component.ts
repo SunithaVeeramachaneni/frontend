@@ -51,6 +51,7 @@ import { SlideshowComponent } from 'src/app/shared/components/slideshow/slidesho
 import { NgxImageCompressService } from 'ngx-image-compress';
 import { PDFDocument } from 'pdf-lib';
 import { RoundPlanFullScreenModalComponent } from '../round-plan-full-screen-modal/round-plan-full-screen-modal.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-round-plan-configuration-modal',
@@ -122,7 +123,8 @@ export class RoundPlanConfigurationModalComponent implements OnInit, OnDestroy {
     private cdrf: ChangeDetectorRef,
     private toastService: ToastService,
     public dialog: MatDialog,
-    private imageCompress: NgxImageCompressService
+    private imageCompress: NgxImageCompressService,
+    private router: Router
   ) {
     this.operatorRoundsService.getDataSetsByType$('tags').subscribe((tags) => {
       if (tags && tags.length) {
@@ -138,24 +140,6 @@ export class RoundPlanConfigurationModalComponent implements OnInit, OnDestroy {
         tag ? this.filter(tag) : this.allTags.slice()
       )
     );
-  }
-
-  getAllPlantsData() {
-    this.plantService.fetchAllPlants$().subscribe((plants) => {
-      this.allPlantsData = plants.items || [];
-      this.plantInformation = this.allPlantsData;
-    });
-  }
-
-  maxLengthWithoutBulletPoints(maxLength: number): ValidatorFn {
-    const htmlTagsRegex = /<[^>]+>/g;
-    return (control: AbstractControl): { [key: string]: any } | null => {
-      const textWithoutTags = control?.value?.replace(htmlTagsRegex, '');
-      if (textWithoutTags?.length > maxLength) {
-        return { maxLength: { value: control.value } };
-      }
-      return null;
-    };
   }
 
   ngOnInit(): void {
@@ -191,9 +175,6 @@ export class RoundPlanConfigurationModalComponent implements OnInit, OnDestroy {
         pdfDocs: ''
       })
     });
-    this.getAllPlantsData();
-    this.retrieveDetails();
-    this.patchPlanDetails();
 
     this.formMetadataSubscrption = this.store
       .select(getFormMetadata)
@@ -203,17 +184,62 @@ export class RoundPlanConfigurationModalComponent implements OnInit, OnDestroy {
           description: res.description ? res.description : ''
         });
       });
+    this.getAllPlantsData();
+    this.retrieveDetails();
   }
 
-  patchPlanDetails() {
-    if (this.roundData?.formMetadata) {
+  getAllPlantsData() {
+    this.plantService.fetchAllPlants$().subscribe((plants) => {
+      this.allPlantsData = plants.items || [];
+      this.plantInformation = this.allPlantsData;
+    });
+
+    if (Object.keys(this.roundData?.formMetadata).length !== 0) {
       this.headerDataForm.patchValue({
         name: this.roundData.formMetadata.name,
         description: this.roundData.formMetadata.description,
         plantId: this.roundData.formMetadata.plantId,
         formStatus: this.roundData.formMetadata.formStatus
       });
+
+      const additionalDetailsArray =
+        this.roundData.formMetadata.additionalDetails;
+
+      const tagsValue = this.roundData.formMetadata.tags;
+
+      this.updateAdditionalDetailsArray(additionalDetailsArray);
+      this.patchTags(tagsValue);
+
+      this.headerDataForm.markAsDirty();
     }
+  }
+
+  patchTags(values: any[]): void {
+    this.tags = values;
+  }
+
+  updateAdditionalDetailsArray(values: any[]): void {
+    if (values) {
+      const formGroups = values.map((value) =>
+        this.fb.group({
+          label: [value.FIELDLABEL],
+          value: [value.DEFAULTVALUE]
+        })
+      );
+      const formArray = this.fb.array(formGroups);
+      this.headerDataForm.setControl('additionalDetails', formArray);
+    }
+  }
+
+  maxLengthWithoutBulletPoints(maxLength: number): ValidatorFn {
+    const htmlTagsRegex = /<[^>]+>/g;
+    return (control: AbstractControl): { [key: string]: any } | null => {
+      const textWithoutTags = control?.value?.replace(htmlTagsRegex, '');
+      if (textWithoutTags?.length > maxLength) {
+        return { maxLength: { value: control.value } };
+      }
+      return null;
+    };
   }
 
   add(event: MatChipInputEvent): void {
@@ -343,6 +369,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit, OnDestroy {
             }
           })
         );
+        this.router.navigate(['/operator-rounds/create']);
       } else if (this.roundData?.roundExists === true) {
         this.store.dispatch(
           BuilderConfigurationActions.updateFormMetadata({
@@ -388,8 +415,10 @@ export class RoundPlanConfigurationModalComponent implements OnInit, OnDestroy {
   trackBySelectedattachments(index: number, el: any): string {
     return el.id;
   }
+
   onCancel(): void {
     this.dialogRef.close();
+    this.router.navigate(['/operator-rounds']);
   }
 
   resetPlantSearchFilter = () => {
