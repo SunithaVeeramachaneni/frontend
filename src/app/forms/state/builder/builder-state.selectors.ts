@@ -111,6 +111,27 @@ export const getSection = (
       ?.sections.find((section, index) => index === sectionIndex);
   });
 
+export const getImportedSectionsByTemplateId = (subFormId: string) =>
+  createSelector(selectFormConfigurationState, (state) => {
+    let key = 'pages';
+    if (subFormId) {
+      key = `${key}_${subFormId}`;
+    }
+    const importedSectionsByTemplateId = {};
+    for (const page of state[key] || []) {
+      for (const section of page.sections) {
+        if (section.isImported) {
+          if (!importedSectionsByTemplateId[section.templateId])
+            importedSectionsByTemplateId[section.templateId] = {};
+          importedSectionsByTemplateId[section.templateId][
+            section.externalSectionId
+          ] = 1;
+        }
+      }
+    }
+    return importedSectionsByTemplateId;
+  });
+
 export const getTaskCountByPage = (pageIndex: number, subFormId: string) =>
   createSelector(selectFormConfigurationState, (state) => {
     let key = 'pages';

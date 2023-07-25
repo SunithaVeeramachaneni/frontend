@@ -422,7 +422,15 @@ export class FormListComponent implements OnInit, OnDestroy {
                     counter: authoredFormDetail?.counter,
                     authoredFormDetailVersion: 1
                   })
-                  .subscribe(() => (newRecord.publishedDate = ''));
+                  .subscribe(() => {
+                    newRecord.publishedDate = '';
+                    this.raceDynamicFormService
+                      .copyTemplateReferenceByFormId$({
+                        oldFormId: form.id,
+                        newFormId: newRecord.id
+                      })
+                      .subscribe();
+                  });
               }
               newRecord.publishedDate = '';
               this.addEditCopyForm$.next({

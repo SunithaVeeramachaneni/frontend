@@ -90,7 +90,7 @@ export interface SectionEvent {
   pageIndex: number;
   sectionIndex: number;
   section?: Section;
-  type: 'add' | 'update' | 'delete';
+  type: 'add' | 'update' | 'delete' | 'copy' | 'unlink';
 }
 
 export interface QuestionEvent {

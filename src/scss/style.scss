@@ -654,3 +654,9 @@ button.mat-menu-item {
   padding-bottom: 10px !important;
   padding-top: 10px !important;
 }
+
+.select-questions-dialog {
+  mat-dialog-container {
+    padding: 25px !important;
+  }
+}

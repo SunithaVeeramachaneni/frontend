@@ -10,7 +10,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { cloneDeep, isEqual } from 'lodash-es';
-import { BehaviorSubject, Observable, Subject, of } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription, of } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -28,6 +28,7 @@ import { SectionQuestions } from 'src/app/interfaces';
 import { AddPageOrSelectExistingPageModalComponent } from '../add-page-or-select-existing-page-modal/add-page-or-select-existing-page-modal.component';
 import { FormControl } from '@angular/forms';
 import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
+import { updateForm } from 'src/app/forms/state/builder/builder.actions';
 
 @Component({
   selector: 'app-import-template-questions-slider',
@@ -57,8 +58,11 @@ export class ImportTemplateQuestionsSliderComponent
   selectedTemplateControl = new FormControl('');
   allTemplateSections = [];
   selectedTemplateSections$ = new BehaviorSubject<any[]>([]);
-  searchSections;
+  searchSections = new FormControl('');
   formTemplateUsage: any = {};
+  getFormTemplateUsageSubscription: Subscription;
+  updateFormTemplateUsageByFormIdSubscription: Subscription;
+  updateformTemplateListSuscription: Subscription;
   private onDestroy$ = new Subject();
 
   constructor(
@@ -69,8 +73,6 @@ export class ImportTemplateQuestionsSliderComponent
   ) {}
 
   ngOnInit(): void {
-    this.searchSections = new FormControl('');
-
     this.searchSections.valueChanges
       .pipe(
         debounceTime(500),
@@ -82,19 +84,21 @@ export class ImportTemplateQuestionsSliderComponent
       )
       .subscribe();
 
-    this.selectedTemplateControl.valueChanges.subscribe((template) => {
-      this.sectionCheckedCount = 0;
-      this.raceDynamicFormService
-        .getFormTemplateUsage$({
-          formId: this.currentFormData.formMetadata.id,
-          templateId: template.id
-        })
-        .subscribe((res) => {
-          this.updateFormTemplateUsage(res[0], template.id);
-        });
-      this.allTemplateSections = this.getTemplateSections(template);
-      this.selectedTemplateSections$.next(this.allTemplateSections);
-    });
+    this.selectedTemplateControl.valueChanges
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe((template) => {
+        this.sectionCheckedCount = 0;
+        this.getFormTemplateUsageSubscription = this.raceDynamicFormService
+          .getFormTemplateUsage$({
+            formId: this.currentFormData.formMetadata.id,
+            templateId: template.id
+          })
+          .subscribe((res) => {
+            this.updateFormTemplateUsageByFormId(res[0], template.id);
+          });
+        this.allTemplateSections = this.getTemplateSections(template);
+        this.selectedTemplateSections$.next(this.allTemplateSections);
+      });
 
     this.selectedTemplateControl.setValue(this.selectedTemplateData);
     this.sectionIndexes$ = this.store
@@ -110,7 +114,7 @@ export class ImportTemplateQuestionsSliderComponent
       .pipe(tap((questionCounter) => (this.questionCounter = questionCounter)));
   }
 
-  updateFormTemplateUsage(res, templateId) {
+  updateFormTemplateUsageByFormId(res, templateId) {
     this.formTemplateUsage = {
       formId: this.currentFormData.formMetadata.id,
       templateId,
@@ -186,38 +190,68 @@ export class ImportTemplateQuestionsSliderComponent
     );
 
     dialogRef.afterClosed().subscribe((data) => {
+      const sectionCounters = JSON.parse(
+        this.selectedTemplateControl.value?.sectionCounters || '{}'
+      );
       for (const section of importTemplateData) {
-        if (this.formTemplateUsage.sections[section.externalSectionId]) {
-          this.formTemplateUsage.sections[section.externalSectionId] = ++this
-            .formTemplateUsage.sections[section.externalSectionId];
+        this.formTemplateUsage.sections[section.externalSectionId] = 1;
+        if (!sectionCounters[this.formTemplateUsage.formId])
+          sectionCounters[this.formTemplateUsage.formId] = {};
+        if (
+          sectionCounters[this.formTemplateUsage.formId][
+            section.externalSectionId
+          ]
+        ) {
+          sectionCounters[this.formTemplateUsage.formId][
+            section.externalSectionId
+          ] = ++sectionCounters[this.formTemplateUsage.formId][
+            section.externalSectionId
+          ];
         } else {
-          this.formTemplateUsage.sections[section.externalSectionId] = 1;
+          sectionCounters[this.formTemplateUsage.formId][
+            section.externalSectionId
+          ] = 1;
         }
       }
+
       this.importSectionQuestions.forEach((d) => {
         d.section.counter =
-          this.formTemplateUsage.sections[d.section.externalSectionId];
+          sectionCounters[this.formTemplateUsage.formId][
+            d.section.externalSectionId
+          ];
         d.questions.forEach(
           (question) =>
             (question.id =
               question.id +
               `_${
-                this.formTemplateUsage.sections[d.section.externalSectionId]
+                sectionCounters[this.formTemplateUsage.formId][
+                  d.section.externalSectionId
+                ]
               }`)
         );
         d.logics.forEach((logic) => {
           logic.id =
             logic.id +
-            `_${this.formTemplateUsage.sections[d.section.externalSectionId]}`;
+            `_${
+              sectionCounters[this.formTemplateUsage.formId][
+                d.section.externalSectionId
+              ]
+            }`;
           logic.questionId =
             logic.questionId +
-            `_${this.formTemplateUsage.sections[d.section.externalSectionId]}`;
+            `_${
+              sectionCounters[this.formTemplateUsage.formId][
+                d.section.externalSectionId
+              ]
+            }`;
           logic.evidenceQuestions = logic.evidenceQuestions.map(
             (item) =>
               (item =
                 item +
                 `_${
-                  this.formTemplateUsage.sections[d.section.externalSectionId]
+                  sectionCounters[this.formTemplateUsage.formId][
+                    d.section.externalSectionId
+                  ]
                 }`)
           );
           logic.mandateQuestions = logic.mandateQuestions.map(
@@ -225,7 +259,9 @@ export class ImportTemplateQuestionsSliderComponent
               (item =
                 item +
                 `_${
-                  this.formTemplateUsage.sections[d.section.externalSectionId]
+                  sectionCounters[this.formTemplateUsage.formId][
+                    d.section.externalSectionId
+                  ]
                 }`)
           );
           logic.hideQuestions = logic.hideQuestions.map(
@@ -233,19 +269,25 @@ export class ImportTemplateQuestionsSliderComponent
               (item =
                 item +
                 `_${
-                  this.formTemplateUsage.sections[d.section.externalSectionId]
+                  sectionCounters[this.formTemplateUsage.formId][
+                    d.section.externalSectionId
+                  ]
                 }`)
           );
           logic.questions.forEach((question) => {
             question.id =
               question.id +
               `_${
-                this.formTemplateUsage.sections[d.section.externalSectionId]
+                sectionCounters[this.formTemplateUsage.formId][
+                  d.section.externalSectionId
+                ]
               }`;
             question.sectionId =
               question.sectionId +
               `_${
-                this.formTemplateUsage.sections[d.section.externalSectionId]
+                sectionCounters[this.formTemplateUsage.formId][
+                  d.section.externalSectionId
+                ]
               }`;
             d.questions.push({
               ...question,
@@ -279,13 +321,32 @@ export class ImportTemplateQuestionsSliderComponent
           this.importSectionQuestions
         );
       }
-      this.raceDynamicFormService
-        .updateFormTemplateUsage$(this.formTemplateUsage)
+      const updateFormTemplateUsageByFormIdPayload = {
+        formId: this.formTemplateUsage.formId,
+        importedSections: {}
+      };
+      updateFormTemplateUsageByFormIdPayload.importedSections[
+        this.formTemplateUsage.templateId
+      ] = this.formTemplateUsage.sections;
+      this.updateFormTemplateUsageByFormIdSubscription =
+        this.raceDynamicFormService
+          .updateFormTemplateUsageByFormId$(
+            updateFormTemplateUsageByFormIdPayload
+          )
+          .subscribe((res) => {
+            this.updateFormTemplateUsageByFormId(
+              res,
+              this.selectedTemplateControl.value.id
+            );
+          });
+      this.updateformTemplateListSuscription = this.raceDynamicFormService
+        .updateTemplate$(this.formTemplateUsage.templateId, {
+          sectionCounters
+        })
         .subscribe((res) => {
-          this.updateFormTemplateUsage(
-            res,
-            this.selectedTemplateControl.value.id
-          );
+          this.selectedTemplateControl.patchValue({
+            sectionCounters: res.sectionCounters
+          });
         });
       this.cancelSliderEvent.emit(false);
     });
@@ -300,6 +361,15 @@ export class ImportTemplateQuestionsSliderComponent
   }
 
   ngOnDestroy(): void {
+    if (this.getFormTemplateUsageSubscription) {
+      this.getFormTemplateUsageSubscription.unsubscribe();
+    }
+    if (this.updateFormTemplateUsageByFormIdSubscription) {
+      this.updateFormTemplateUsageByFormIdSubscription.unsubscribe();
+    }
+    if (this.updateformTemplateListSuscription) {
+      this.updateformTemplateListSuscription.unsubscribe();
+    }
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }

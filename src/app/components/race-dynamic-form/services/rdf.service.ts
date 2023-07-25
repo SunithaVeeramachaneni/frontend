@@ -568,7 +568,8 @@ export class RaceDynamicFormService {
           lastPublishedBy: p.lastPublishedBy,
           author: p.author,
           publishedDate: p.publishedDate ? p.publishedDate : '',
-          isArchivedAt: p?.isArchivedAt ? p?.isArchivedAt : ''
+          isArchivedAt: p?.isArchivedAt ? p?.isArchivedAt : '',
+          archivedBy: p.archivedBy ? p.archivedBy : ''
         })) || [];
     return {
       count: resp?.count,
@@ -804,18 +805,22 @@ export class RaceDynamicFormService {
         map((response) => (response === null ? inspectionDetail : response))
       );
 
-  fetchAllTemplates$ = () =>
+  fetchTemplates$ = (filter) =>
     this.appService
       ._getResp(
         environment.rdfApiUrl,
         'templates',
         { displayToast: true, failureResponse: {} },
         {
+          ...filter,
           limit: 0,
           skip: 0
         }
       )
       .pipe(map((data) => this.formatGetRdfFormsResponse({ items: data })));
+
+  fetchAllTemplateListNames$ = () =>
+    this.appService._getResp(environment.rdfApiUrl, 'templates/name');
 
   fetchTemplateByName$ = (name: string) =>
     this.appService
@@ -844,7 +849,7 @@ export class RaceDynamicFormService {
       )
       .pipe(map((data) => this.formatGetRdfFormsResponse({ items: data })));
 
-  createTemplate$ = (templateMetadata: FormMetadata) =>
+  createTemplate$ = (templateMetadata) =>
     this.appService._postData(environment.rdfApiUrl, 'templates', {
       data: templateMetadata
     });
@@ -1285,10 +1290,21 @@ export class RaceDynamicFormService {
       'template-reference/' + `${payload.templateId}/` + `${payload.formId}`
     );
 
-  updateFormTemplateUsage$ = (data: any): Observable<any> =>
+  updateFormTemplateUsageByFormId$ = (data: any): Observable<any> =>
     this.appService.patchData(
       environment.rdfApiUrl,
-      'template-reference',
+      'template-reference/formId',
       data
+    );
+  copyTemplateReferenceByFormId$ = (data: any): Observable<any> =>
+    this.appService._postData(
+      environment.rdfApiUrl,
+      'template-reference/copy',
+      data
+    );
+  deleteTemplateReferenceByFormId$ = (formId: any): Observable<any> =>
+    this.appService._removeData(
+      environment.rdfApiUrl,
+      'template-reference/formId/' + formId
     );
 }

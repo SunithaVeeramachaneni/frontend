@@ -130,19 +130,21 @@ export class ImportTemplateListComponent implements OnInit, OnDestroy {
       formType: this.data.isEmbeddedForm ? 'Embedded' : 'Standalone'
     };
 
-    this.templates$ = this.raceDynamicFormService.fetchAllTemplates$().pipe(
-      map((res: any) => {
-        this.allTemplates =
-          res?.rows?.filter(
-            (item) =>
-              item.formType === filterData.formType &&
-              item.formStatus === 'Ready'
-          ) || [];
-        this.dataSource = new MatTableDataSource(this.allTemplates);
-        this.isLoading$.next(false);
-        return this.allTemplates;
-      })
-    );
+    this.templates$ = this.raceDynamicFormService
+      .fetchTemplates$({ isArchived: false, isDeleted: false })
+      .pipe(
+        map((res: any) => {
+          this.allTemplates =
+            res?.rows?.filter(
+              (item) =>
+                item.formType === filterData.formType &&
+                item.formStatus === 'Ready'
+            ) || [];
+          this.dataSource = new MatTableDataSource(this.allTemplates);
+          this.isLoading$.next(false);
+          return this.allTemplates;
+        })
+      );
 
     this.searchTemplates.valueChanges
       .pipe(

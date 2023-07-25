@@ -1,0 +1,18 @@
+<div>
+  <div class="widget-delete-modal">
+    <p class="cancel-title" translate="deleteArchivedFormModalHeading"></p>
+    <p class="cancel-subtitle" translate="deleteTemplateModalSubHeading"></p>
+    <button
+      mat-raised-button
+      class="delete-btn"
+      (click)="deleteTemplate('delete')"
+      translate="yes"
+    ></button>
+    <button
+      mat-button
+      class="cancel-btn"
+      (click)="deleteTemplate('cancel')"
+      translate="no"
+    ></button>
+  </div>
+</div>

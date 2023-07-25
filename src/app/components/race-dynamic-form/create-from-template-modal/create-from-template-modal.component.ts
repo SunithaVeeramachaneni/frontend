@@ -50,21 +50,23 @@ export class CreateFromTemplateModalComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.usersService.getUsersInfo$().subscribe(() => {
-      this.raceDynamicFormService.fetchAllTemplates$().subscribe((res) => {
-        this.allTemplates = res.rows
-          .filter((item) => item.formStatus === formConfigurationStatus.ready)
-          .map((item) => ({
-            ...item,
-            author: this.usersService.getUserFullName(item.author),
-            lastPublishedBy: this.usersService.getUserFullName(
-              item.lastPublishedBy
-            )
-          }));
-        this.displayedTemplates = this.allTemplates;
-        this.initializeFilter();
-        this.templateLoadingFinished = true;
-        this.cdrf.markForCheck();
-      });
+      this.raceDynamicFormService
+        .fetchTemplates$({ isArchived: false, isDeleted: false })
+        .subscribe((res) => {
+          this.allTemplates = res.rows
+            .filter((item) => item.formStatus === formConfigurationStatus.ready)
+            .map((item) => ({
+              ...item,
+              author: this.usersService.getUserFullName(item.author),
+              lastPublishedBy: this.usersService.getUserFullName(
+                item.lastPublishedBy
+              )
+            }));
+          this.displayedTemplates = this.allTemplates;
+          this.initializeFilter();
+          this.templateLoadingFinished = true;
+          this.cdrf.markForCheck();
+        });
     });
 
     this.searchTemplates = new FormControl('');

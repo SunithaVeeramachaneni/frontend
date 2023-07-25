@@ -50,7 +50,10 @@ import { SelectQuestionsDialogComponent } from 'src/app/forms/components/add-log
 import { AvatarComponent } from './form-configuration/avatar.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ArchivedListComponent } from './archived-list/archived-list.component';
+import { ArchivedFormListComponent } from './archived-form-list/archived-form-list.component';
+import { ArchivedTemplateListComponent } from './archived-template-list/archived-template-list.component';
 import { ArchivedDeleteModalComponent } from './archived-delete-modal/archived-delete-modal.component';
+import { DeleteTemplateModalComponent } from './delete-template-modal/delete-template-modal.component';
 import { ImportQuestionsModalComponent } from './import-questions/import-questions-modal/import-questions-modal.component';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -86,6 +89,7 @@ import { ImportFormListComponent } from 'src/app/components/race-dynamic-form/im
 import { TemplateAffectedFormsModalComponent } from './template-configuration/template-affected-forms-modal/template-affected-forms-modal.component';
 import { AffectedFormTemplateSliderComponent } from 'src/app/components/race-dynamic-form/affected-form-template-slider/affected-form-template-slider.component';
 import { QuillMaterialComponent } from 'src/app/shared/components/quill-material/quill-material.component';
+import { ArchiveTemplateModalComponent } from './archive-template-modal/archive-template-modal.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/race-dynamic-forms/', '.json');
@@ -102,8 +106,12 @@ export const customTranslateLoader = (http: HttpClient) =>
     SelectQuestionsDialogComponent,
     AvatarComponent,
     ArchivedListComponent,
+    ArchivedFormListComponent,
+    ArchivedTemplateListComponent,
+    DeleteTemplateModalComponent,
     AssignInspectionComponent,
     ArchivedDeleteModalComponent,
+    ArchiveTemplateModalComponent,
     ImportQuestionsModalComponent,
     SchedulerComponent,
     FormsComponent,

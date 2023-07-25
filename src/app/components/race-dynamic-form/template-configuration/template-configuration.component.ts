@@ -127,7 +127,7 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
       }, 1000);
     } else {
       this.raceDynamicFormService
-        .fetchAllTemplates$()
+        .fetchTemplates$({ isArchived: false, isDeleted: false })
         .pipe(takeUntil(this.onDestroy$))
         .subscribe((res) => {
           this.allTemplates = res.rows.filter(
