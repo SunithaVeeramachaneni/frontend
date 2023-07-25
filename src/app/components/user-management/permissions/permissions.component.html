@@ -28,18 +28,22 @@
           }"
         >
         </mat-checkbox>
-        <span class="module-name">{{ module.name }}</span>
-        <span class="permission-count m-r-10">
+        <span id="permissionHeading" class="module-name">{{
+          module.name
+        }}</span>
+        <span id="activePermissionCount" class="permission-count m-r-10">
           {{ module.totalActivePermissions }} of
           {{ module.totalPermissionsCount }}
         </span>
         <svg-icon
+          id="permissionRightArrowIcon"
           icon="icon-right-arrow"
           *ngIf="!opened[i].main && module.subPermissions.length === 0"
           (click)="opened[i].main = true"
           class="arrow-icon"
         ></svg-icon>
         <svg-icon
+          id="permissionDownArrowIcon"
           icon="icon-down-arrow"
           *ngIf="opened[i].main"
           (click)="opened[i].main = false"
@@ -67,7 +71,9 @@
               "
             >
             </mat-checkbox>
-            <span class="m-r-15 m-l-5">{{ permission.displayName }}</span>
+            <span id="permissionName" class="m-r-15 m-l-5">{{
+              permission.displayName
+            }}</span>
           </li>
         </ul>
       </div>
@@ -99,17 +105,21 @@
             }"
           >
           </mat-checkbox>
-          <span class="module-name">{{ subper.name }}</span>
-          <span class="permission-count m-r-10">
+          <span id="subPermissionName" class="module-name">{{
+            subper.name
+          }}</span>
+          <span id="permissionCount" class="permission-count m-r-10">
             {{ subper.countOfSubChecked }} of {{ subper.permissions.length }}
           </span>
           <svg-icon
+            id="permissionRightIcon"
             icon="icon-right-arrow"
             *ngIf="!opened[i]['sub'][subindex]"
             (click)="opened[i]['sub'][subindex] = true"
             class="arrow-icon"
           ></svg-icon>
           <svg-icon
+            id="permissionDownIcon"
             icon="icon-down-arrow"
             *ngIf="opened[i]['sub'][subindex]"
             (click)="opened[i]['sub'][subindex] = false"
@@ -135,7 +145,9 @@
                 "
               >
               </mat-checkbox>
-              <span class="m-r-15 m-l-5"> {{ sub.displayName }}</span>
+              <span id="subPermissionDisplayName" class="m-r-15 m-l-5">
+                {{ sub.displayName }}</span
+              >
             </li>
           </ul>
         </div>

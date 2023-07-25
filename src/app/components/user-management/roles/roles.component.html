@@ -16,7 +16,7 @@
           *appCheckUserHasPermission="[perms.deleteRole]"
           aria-label="More Options"
         >
-          <mat-icon>more_horiz</mat-icon>
+          <mat-icon id="rolesMoreIcon">more_horiz</mat-icon>
         </button>
         <mat-menu #menu="matMenu">
           <button
@@ -31,8 +31,10 @@
           class="count-of-roles"
           *ngIf="filteredRolesList$ | async as roles"
         >
-          <span class="roles-count">{{ roles ? roles.length : 0 }}</span>
-          <span class="roles-text">{{
+          <span class="roles-count" id="rolesCount">{{
+            roles ? roles.length : 0
+          }}</span>
+          <span class="roles-text" id="rolesText">{{
             'rolesTitleCasePlural'
               | translate
                 : {
@@ -41,6 +43,7 @@
           }}</span>
         </span>
         <button
+          id="rolesAddBtn"
           mat-raised-button
           class="add-role-btn"
           (click)="clearSearchAndAddRole()"
@@ -51,8 +54,11 @@
       <div class="dis-flex roles-content">
         <div class="width-30 custom-form-field-gray-color roles-left-panel">
           <mat-form-field appearance="outline" class="search-form-field">
-            <mat-icon matPrefix class="searchIcon">search</mat-icon>
+            <mat-icon matPrefix class="searchIcon" id="rolesSearchIcon"
+              >search</mat-icon
+            >
             <input
+              id="rolesInputText"
               matInput
               type="text"
               [placeholder]="'search' | translate"
@@ -79,38 +85,43 @@
               }"
             >
               <mat-checkbox
+                id="rolesList"
                 (change)="roleChecked(role, $event)"
                 [disabled]="role.name === superAdminText"
                 [checked]="selectedRoleIDList.includes(role.id)"
               ></mat-checkbox>
               <span
+                id="rolesName"
                 class="role-name"
                 matTooltip="{{ role.name }}"
                 [ngClass]="{ 'text-red': role.name.length > 100 }"
               >
                 {{ role.name }}
                 <svg-icon
+                  id="rolesIcon"
                   icon="icon-super-admin-icon"
                   *ngIf="role.name === superAdminText"
                   class="super-admin-icon"
                 ></svg-icon>
               </span>
 
-              <span class="role-count">
+              <span id="rolesPermissionCount" class="role-count">
                 {{ role.permissionIds?.length }} of
                 {{ permissionsTotalLength$ | async }}
               </span>
               <button
+                id="rolesMoreOption"
                 mat-icon-button
                 [matMenuTriggerFor]="submenu"
                 class="more-items"
                 *appCheckUserHasPermission="[perms.copyRole, perms.deleteRole]"
                 aria-label="More Options"
               >
-                <mat-icon>more_horiz</mat-icon>
+                <mat-icon id="rolesMoreMatIcon">more_horiz</mat-icon>
               </button>
               <mat-menu #submenu="matMenu">
                 <button
+                  id="rolesCopyBtn"
                   mat-menu-item
                   [disabled]="role.name === superAdminText"
                   (click)="copyRole(role)"
@@ -119,11 +130,16 @@
                 ></button>
                 <ng-container *appCheckUserHasPermission="[perms.deleteRole]">
                   <button
+                    id="rolesDeleteBtn"
                     mat-menu-item
                     *ngIf="role.name !== superAdminText"
                     (click)="deleteRole(role)"
                   >
-                    <span class="text-red-color" translate="deleteBtn"></span>
+                    <span
+                      id="rolesDeleteText"
+                      class="text-red-color"
+                      translate="deleteBtn"
+                    ></span>
                   </button>
                 </ng-container>
               </mat-menu>
@@ -134,13 +150,17 @@
                 class="selected-roles-list"
               >
                 <mat-checkbox disabled=""></mat-checkbox>
-                <span class="role-name" translate="addingRoleText"></span>
-                <span class="role-count">
+                <span
+                  id="addRolesText"
+                  class="role-name"
+                  translate="addingRoleText"
+                ></span>
+                <span id="addRolesCount" class="role-count">
                   0 of
                   {{ permissionsTotalLength$ | async }}
                 </span>
                 <button disabled mat-icon-button class="more-items">
-                  <mat-icon>more_horiz</mat-icon>
+                  <mat-icon id="addRolesMoreIcon">more_horiz</mat-icon>
                 </button>
               </mat-list-item>
             </div>
@@ -151,9 +171,18 @@
             <form [formGroup]="roleForm" class="dis-flex m-b-5">
               <div class="width-30">
                 <mat-form-field appearance="outline" class="roles-title m-l-20">
-                  <mat-label translate="roleName"></mat-label>
-                  <input matInput formControlName="name" autofocus />
+                  <mat-label
+                    id="rolesNameLabel"
+                    translate="roleName"
+                  ></mat-label>
+                  <input
+                    id="rolesNameText"
+                    matInput
+                    formControlName="name"
+                    autofocus
+                  />
                   <mat-error
+                    id="rolesNameError"
                     *ngIf="processValidationErrors('name')"
                     class="m-t-8 error-fields"
                   >
@@ -171,9 +200,13 @@
 
               <div class="width-30">
                 <mat-form-field appearance="outline" class="roles-title">
-                  <mat-label translate="roleDescription"></mat-label>
+                  <mat-label
+                    id="rolesDescription"
+                    translate="roleDescription"
+                  ></mat-label>
                   <input matInput formControlName="description" />
                   <mat-error
+                    id="rolesDescriptionError"
                     *ngIf="processValidationErrors('description')"
                     class="m-t-8 error-fields"
                   >
@@ -193,6 +226,7 @@
                   *ngIf="selectedRole?.id === undefined; else updateButton"
                 >
                   <button
+                    id="saveRolesBtn"
                     mat-raised-button
                     type="button"
                     class="save-role-btn"
@@ -204,6 +238,7 @@
                 </ng-container>
                 <ng-template #updateButton>
                   <button
+                    id="updateRolesBtn"
                     mat-raised-button
                     type="button"
                     class="save-role-btn"
@@ -215,6 +250,7 @@
                 </ng-template>
 
                 <button
+                  id="cancelRolesBtn"
                   mat-stroked-button
                   type="button"
                   class="copy-role-btn"
@@ -227,6 +263,7 @@
                 ></button>
 
                 <button
+                  id="copyRolesBtn"
                   mat-stroked-button
                   type="button"
                   class="copy-role-btn"
@@ -243,7 +280,7 @@
             *ngIf="this.selectedRole === null && filteredRolesList.length"
             class="unselected-role-text"
           >
-            <span translate="noRoles"></span>
+            <span id="noRoles" translate="noRoles"></span>
           </div>
           <div *ngIf="this.selectedRole !== null">
             <app-permissions

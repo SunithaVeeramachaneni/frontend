@@ -34,7 +34,7 @@ import {
 import {
   graphQLDefaultLimit,
   formConfigurationStatus,
-  permissions as perms
+  permissions as perms, defaultLimit
 } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { RaceDynamicFormService } from '../services/rdf.service';
@@ -291,7 +291,7 @@ export class FormListComponent implements OnInit, OnDestroy {
       form: {} as GetFormList
     });
   skip = 0;
-  limit = graphQLDefaultLimit;
+  limit = defaultLimit;
   searchForm: FormControl;
   addCopyFormCount = false;
   formsListCount$: Observable<number>;
