@@ -222,6 +222,9 @@ export class RoundPlanScheduleConfigurationComponent
       .get('repeatEvery')
       .valueChanges.pipe(takeUntil(this.destroy$))
       .subscribe((repeatEvery) => {
+        const startDate = new Date(
+          this.roundPlanSchedulerConfigForm.get('startDate').value
+        );
         switch (repeatEvery) {
           case 'day':
             this.roundPlanSchedulerConfigForm
@@ -235,7 +238,7 @@ export class RoundPlanScheduleConfigurationComponent
               .patchValue(30);
             this.roundPlanSchedulerConfigForm
               .get('endDate')
-              .patchValue(format(addDays(new Date(), 29), 'd MMMM yyyy'));
+              .patchValue(format(addDays(startDate, 29), 'd MMMM yyyy'));
             this.updateAdvanceRoundsCountValidation(30);
             break;
           case 'week':
@@ -253,7 +256,7 @@ export class RoundPlanScheduleConfigurationComponent
               .patchValue([getDay(new Date())]);
             this.roundPlanSchedulerConfigForm
               .get('endDate')
-              .patchValue(format(addDays(new Date(), 90), 'd MMMM yyyy'));
+              .patchValue(format(addDays(startDate, 90), 'd MMMM yyyy'));
             this.updateAdvanceRoundsCountValidation(daysToWeeks(91));
             break;
           case 'month':
@@ -269,7 +272,7 @@ export class RoundPlanScheduleConfigurationComponent
             this.setMonthlyDaysOfWeek();
             this.roundPlanSchedulerConfigForm
               .get('endDate')
-              .patchValue(format(addDays(new Date(), 364), 'd MMMM yyyy'));
+              .patchValue(format(addDays(startDate, 364), 'd MMMM yyyy'));
             this.updateAdvanceRoundsCountValidation(12);
             break;
         }
@@ -322,12 +325,15 @@ export class RoundPlanScheduleConfigurationComponent
               );
               break;
           }
+          const startDate = new Date(
+            this.roundPlanSchedulerConfigForm.get('startDate').value
+          );
           this.roundPlanSchedulerConfigForm
             .get('endDate')
             .patchValue(
               format(
                 addDays(
-                  new Date(),
+                  startDate,
                   days *
                     this.roundPlanSchedulerConfigForm.get('repeatDuration')
                       .value -
@@ -341,6 +347,18 @@ export class RoundPlanScheduleConfigurationComponent
 
     this.roundPlanSchedulerConfigForm
       .get('repeatDuration')
+      .valueChanges.pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.roundPlanSchedulerConfigForm
+          .get('scheduleEndOccurrences')
+          .patchValue(
+            this.roundPlanSchedulerConfigForm.get('scheduleEndOccurrences')
+              .value
+          );
+      });
+
+    this.roundPlanSchedulerConfigForm
+      .get('startDate')
       .valueChanges.pipe(takeUntil(this.destroy$))
       .subscribe(() => {
         this.roundPlanSchedulerConfigForm
