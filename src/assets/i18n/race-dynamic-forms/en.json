@@ -370,5 +370,10 @@
   "uploadExcel": "Upload Excel",
   "uploadEmbedded": "Embedded (For mWorkorder)",
   "uploadStandalone": "Standalone (For mInspections)",
-  "downloadTemplate": "Download Excel Template"
+  "downloadTemplate": "Download Excel Template",
+  "review": "Review",
+  "successfullyUpload": "Successfully uploaded",
+  "failedUpload": "Failed to uploaded",
+  "closeBtn": "Close",
+  "downloadExcel": "Download Excel"
 }

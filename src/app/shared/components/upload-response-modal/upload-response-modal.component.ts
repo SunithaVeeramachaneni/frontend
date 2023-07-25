@@ -4,17 +4,21 @@ import {
   ChangeDetectorRef,
   Component,
   Inject,
-  OnInit
+  OnInit,
+  NgZone
 } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { tap } from 'rxjs/operators';
 import { downloadFile } from 'src/app/shared/utils/fileUtils';
-import { AssetsService } from '../assets/services/assets.service';
-import { LocationService } from '../locations/services/location.service';
-import { ResponseSetService } from '../response-set/services/response-set.service';
+import { AssetsService } from '../../../components/master-configurations/assets/services/assets.service';
+import { LocationService } from '../../../components/master-configurations/locations/services/location.service';
+import { ResponseSetService } from '../../../components/master-configurations/response-set/services/response-set.service';
 import { Observable } from 'rxjs';
 import { SseService } from 'src/app/shared/services/sse.service';
 import { environment } from 'src/environments/environment';
+import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
+import { formConfigurationStatus } from 'src/app/app.constants';
+import { ToastService } from '../../toast';
 
 @Component({
   selector: 'app-upload-response-modal',
@@ -30,6 +34,7 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
   isReviewed = false;
   successCount = 0;
   failedCount = 0;
+  totalCount = 0;
   type = '';
   formType = '';
   failure: any = [];
@@ -39,6 +44,9 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
     private readonly assetsService: AssetsService,
     private readonly resposneSetService: ResponseSetService,
     private readonly sseService: SseService,
+    private readonly rdfService: RaceDynamicFormService,
+    private readonly toastService: ToastService,
+    private readonly zone: NgZone,
     private changeDetectorRef: ChangeDetectorRef,
     private dialogRef: MatDialogRef<UploadResponseModalComponent>,
     @Inject(MAT_DIALOG_DATA) public dialogData
@@ -69,44 +77,23 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
           this.observable = this.resposneSetService.uploadExcel(formData);
           break;
         case 'forms':
-          this.observable = new Observable((observer) => {
-            const params: URLSearchParams = new URLSearchParams();
-            params.set('formType', formType.toString());
-            const eventSourceForms = this.sseService.getEventSourceWithPost(
-              environment.rdfApiUrl,
-              'forms/upload?' + params.toString(),
-              formData
-            );
-
-            eventSourceForms.stream();
-            eventSourceForms.onmessage = (event) => {
-              const eventData = JSON.parse(event.data);
-              const { successCount, failedCount, totalCount, failure } =
-                eventData;
-
-              observer.next({
-                totalCount,
-                failedCount,
-                successCount,
-                failure
-              });
-
-              if (successCount + failedCount === totalCount) {
-                eventSourceForms.close();
-              }
-            };
-
-            eventSourceForms.onerror = (event) => {
-              observer.error(JSON.parse(event.data));
-            };
-          });
+          this.observable = this.getFormUploadData$(formData, formType);
           break;
       }
       this.observable?.subscribe((result) => {
         if (Object.keys(result).length > 0) {
-          this.isSuccess = true;
           this.title = 'All done!';
           this.message = `Adding all ${result?.totalCount} ${type}`;
+          this.isSuccess = true;
+          if (type === 'forms' && !result?.isCompleted) {
+            this.title = 'In-Progress';
+            this.message = `Adding ${
+              result?.successCount + result?.failedCount
+            } of ${result?.totalCount} Forms`;
+            this.isFailure = false;
+            this.isSuccess = false;
+          }
+          this.totalCount = result?.totalCount;
           this.successCount = result?.successCount;
           this.failedCount = result?.failedCount;
           this.failure = result?.failure;
@@ -152,6 +139,20 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
           )
           .subscribe();
         break;
+      case 'forms':
+        this.rdfService
+          .downloadFailure({ rows: this.failure }, this.formType)
+          .pipe(
+            tap((data) => {
+              const fileName =
+                this.formType === formConfigurationStatus.embedded
+                  ? 'Embedded_Form_Failure'
+                  : 'Standalone_Form_Failure';
+              downloadFile(data, fileName);
+            })
+          )
+          .subscribe();
+        break;
     }
   }
   ngAfterViewChecked(): void {
@@ -159,12 +160,61 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
   }
 
   onClose(): void {
-    this.dialogRef.close({ event: 'close', data: this.successCount > 0 });
+    this.dialogRef.close({
+      event: 'close',
+      data: this.successCount > 0,
+      successCount: this.successCount
+    });
   }
 
   onReview(): void {
     this.isReviewed = true;
   }
+
+  getFormUploadData$ = (formData, formType): Observable<any> => {
+    return new Observable((observer) => {
+      const params: URLSearchParams = new URLSearchParams();
+      params.set('formType', formType.toString());
+      const eventSourceForms = this.sseService.getEventSourceWithPost(
+        environment.rdfApiUrl,
+        'forms/upload?' + params.toString(),
+        formData
+      );
+
+      eventSourceForms.stream();
+      eventSourceForms.onmessage = (event) => {
+        const eventData = JSON.parse(event.data);
+        const { successCount, failedCount, totalCount, failure, isError } =
+          eventData;
+        const isCompleted = successCount + failedCount === totalCount;
+        if (!isError) {
+          this.zone.run(() => {
+            observer.next({
+              totalCount,
+              failedCount,
+              successCount,
+              failure,
+              isCompleted
+            });
+          });
+
+          if (isCompleted) {
+            eventSourceForms.close();
+          }
+        } else {
+          eventSourceForms.close();
+          this.toastService.show({ type: 'info', text: eventData?.message });
+          this.zone.run(() => observer.next({}));
+        }
+      };
+
+      eventSourceForms.onerror = (event) => {
+        this.zone.run(() => {
+          observer.error(JSON.parse(event.error));
+        });
+      };
+    });
+  };
 
   private init(): void {
     this.title = '';

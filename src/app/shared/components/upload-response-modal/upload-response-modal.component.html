@@ -3,12 +3,11 @@
     <div *ngIf="!isReviewed">
       <h1 class="heading">{{ title }}</h1>
 
-        <img
+      <img
         *ngIf="!isSuccess && !isFailure"
         class="center"
         src="assets/Images/illustration_bulkupload.svg"
-   
-  />
+      />
       <svg-icon
         icon="icon-illustration_bulkupload_success"
         *ngIf="isSuccess"
@@ -20,8 +19,13 @@
         class="center mb-5"
       ></svg-icon>
       <mat-progress-bar
-        *ngIf="!isSuccess && !isFailure"
+        *ngIf="!isSuccess && !isFailure && type !== 'forms'"
         mode="indeterminate"
+      ></mat-progress-bar>
+      <mat-progress-bar
+        *ngIf="!isSuccess && !isFailure && type === 'forms'"
+        mode="determinate"
+        [value]="((successCount + failedCount) / totalCount) * 100"
       ></mat-progress-bar>
       <mat-progress-bar
         *ngIf="isSuccess"
@@ -52,12 +56,26 @@
       ></button>
     </div>
     <div *ngIf="isReviewed">
-      <div class="success-message">
-        <div>
+      <div class="success-message" *ngIf="failedCount === 0">
+        <div class="only-success-message">
+          <svg-icon icon="icon-upload-success" class="upload-icon"></svg-icon>
+          <p>
+            {{ successCount }} {{ type }} {{ 'successfullyUpload' | translate }}
+          </p>
+        </div>
+      </div>
+      <div class="success-message" *ngIf="successCount === 0">
+        <div class="only-failure-message">
+          <svg-icon icon="icon-upload-error" class="upload-icon"></svg-icon>
+          <p>{{ failedCount }} {{ type }} {{ 'failedUpload' | translate }}</p>
+        </div>
+      </div>
+      <div class="success-message" *ngIf="successCount > 0 && failedCount > 0">
+        <div class="success-box">
           <svg-icon icon="icon-upload-success" class="upload-icon"></svg-icon>
           {{ successCount }} {{ type }} {{ 'successfullyUpload' | translate }}
         </div>
-        <div> 
+        <div class="failure-box">
           <svg-icon icon="icon-upload-error" class="upload-icon"></svg-icon>
           {{ failedCount }} {{ type }} {{ 'failedUpload' | translate }}
         </div>

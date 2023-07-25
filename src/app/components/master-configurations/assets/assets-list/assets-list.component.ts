@@ -42,7 +42,7 @@ import { LoginService } from 'src/app/components/login/services/login.service';
 import { LocationService } from '../../locations/services/location.service';
 import { slideInOut } from 'src/app/animations';
 import { MatDialog } from '@angular/material/dialog';
-import { UploadResponseModalComponent } from '../../upload-response-modal/upload-response-modal.component';
+import { UploadResponseModalComponent } from '../../../../shared/components/upload-response-modal/upload-response-modal.component';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { PlantService } from '../../plants/services/plant.service';
