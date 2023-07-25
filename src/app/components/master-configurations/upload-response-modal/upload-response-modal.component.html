@@ -1,20 +1,22 @@
 <div class="upload-list-view">
   <div class="upload-modal">
     <div *ngIf="!isReviewed">
-      <h1 class="heading">{{ title }}</h1>
+      <h1 id="uploadResponseTitle" class="heading">{{ title }}</h1>
 
-        <img
+      <img
+        id="uploadResponseImg"
         *ngIf="!isSuccess && !isFailure"
         class="center"
         src="assets/Images/illustration_bulkupload.svg"
-   
-  />
+      />
       <svg-icon
+        id="uploadResonseSuccessIcon"
         icon="icon-illustration_bulkupload_success"
         *ngIf="isSuccess"
         class="center mb-5"
       ></svg-icon>
       <svg-icon
+        id="uploadResponseFailIcon"
         icon="icon-illustration_bulkupload_failure"
         *ngIf="isFailure"
         class="center mb-5"
@@ -33,8 +35,9 @@
         mode="determinate"
         value="100"
       ></mat-progress-bar>
-      <div class="sub-heading">{{ message }}</div>
+      <div id="uploadResponseMessage" class="sub-heading">{{ message }}</div>
       <button
+        id="uploadResponseCancelBtn"
         mat-stroked-button
         class="cancel-btn"
         type="button"
@@ -43,6 +46,7 @@
         translate="cancelBtn"
       ></button>
       <button
+        id="uploadResponseReviewBtn"
         *ngIf="isSuccess"
         (click)="onReview()"
         mat-raised-button
@@ -53,16 +57,25 @@
     </div>
     <div *ngIf="isReviewed">
       <div class="success-message">
-        <div>
-          <svg-icon icon="icon-upload-success" class="upload-icon"></svg-icon>
+        <div id="uploadResponseSuccessCount">
+          <svg-icon
+            id="uploadResponseIcon"
+            icon="icon-upload-success"
+            class="upload-icon"
+          ></svg-icon>
           {{ successCount }} {{ type }} {{ 'successfullyUpload' | translate }}
         </div>
-        <div> 
-          <svg-icon icon="icon-upload-error" class="upload-icon"></svg-icon>
+        <div id="uploadResponsefailCount">
+          <svg-icon
+            id="uploadResponseErrorIcon"
+            icon="icon-upload-error"
+            class="upload-icon"
+          ></svg-icon>
           {{ failedCount }} {{ type }} {{ 'failedUpload' | translate }}
         </div>
       </div>
       <div
+        id="uploadResponseDownloadExcel"
         class="review-text"
         *ngIf="failedCount > 0"
         (click)="downloadExcel()"
@@ -71,6 +84,7 @@
       </div>
 
       <button
+        id="uploadResponseCloseBtn"
         mat-stroked-button
         class="review-btn"
         type="button"

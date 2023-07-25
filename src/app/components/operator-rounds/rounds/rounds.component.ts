@@ -504,6 +504,10 @@ export class RoundsComponent implements OnInit, OnDestroy {
       overdue: {
         'background-color': statusColors.overdue,
         color: statusColors.white
+      },
+      skipped: {
+        'background-color': statusColors.skipped,
+        color: statusColors.white
       }
     }
   };

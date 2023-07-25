@@ -34,7 +34,7 @@ import {
 import {
   graphQLDefaultLimit,
   formConfigurationStatus,
-  permissions as perms
+  permissions as perms, defaultLimit
 } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { RaceDynamicFormService } from '../services/rdf.service';
@@ -291,7 +291,7 @@ export class FormListComponent implements OnInit, OnDestroy {
       form: {} as GetFormList
     });
   skip = 0;
-  limit = graphQLDefaultLimit;
+  limit = defaultLimit;
   searchForm: FormControl;
   addCopyFormCount = false;
   formsListCount$: Observable<number>;
@@ -301,6 +301,7 @@ export class FormListComponent implements OnInit, OnDestroy {
   );
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
   nextToken = '';
+  includeAttachments = false;
   selectedForm: GetFormList = null;
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
@@ -720,8 +721,8 @@ export class FormListComponent implements OnInit, OnDestroy {
     });
     dialogRef.afterClosed().subscribe((result) => {
       const formData = result.data === undefined ? {} : result;
-      this.isLoading$.next(true);
       if (Object.keys(formData.data).length !== 0) {
+        this.isLoading$.next(true);
         this.raceDynamicFormService.fetchForms$.next({ data: 'search' });
         this.formsListCountUpdate$.next(1);
       }

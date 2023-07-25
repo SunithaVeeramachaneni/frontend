@@ -7,15 +7,17 @@
       <div class="main-container">
         <div class="assets-header">
           <div>
-            <h2 class="heading" translate="assets"></h2>
+            <h2 id="assetsListHeading" class="heading" translate="assets"></h2>
           </div>
           <div>
             <span
               class="no-of-asset"
               *ngIf="assetsCount$ | async as totalCount; else loadingAssets"
             >
-              <span class="asset-count"> {{ totalCount }} &nbsp; </span>
-              <span class="asset-text">{{
+              <span id="assetsListCount" class="asset-count">
+                {{ totalCount }} &nbsp;
+              </span>
+              <span id="assetsListCountText" class="asset-text">{{
                 'assets'
                   | translate
                     : {
@@ -33,8 +35,11 @@
             </ng-template>
             <span class="custom-form-field-gray-color search">
               <mat-form-field appearance="outline">
-                <mat-icon matPrefix class="searchIcon">search</mat-icon>
+                <mat-icon id="assetsListSearchIcon" matPrefix class="searchIcon"
+                  >search</mat-icon
+                >
                 <input
+                  id="assetsListSearchText"
                   matInput
                   type="text"
                   [placeholder]="'search' | translate"
@@ -42,6 +47,7 @@
                   [formControl]="searchAssets"
                 />
                 <svg-icon
+                  id="assetsListFilterIcon"
                   matSuffix
                   cdkOverlayOrigin
                   class="common-filter-icon"
@@ -72,6 +78,7 @@
             </ng-template>
 
             <button
+              id="assetsListCreateBtn"
               mat-raised-button
               [matMenuTriggerFor]="createMenu"
               translate="createNew"
@@ -83,21 +90,28 @@
             ></button>
             <mat-menu #createMenu="matMenu">
               <button
+                id="assetsListMenuBtn"
                 mat-menu-item
                 class="menu-buttons"
                 (click)="uploader.click()"
                 *appCheckUserHasPermission="[perms.importAssets]"
               >
-                <svg-icon icon="icon-excel1" class="menu-icons"></svg-icon>
-                <span translate="uploadExcel"></span>
+                <svg-icon
+                  id="assetsListExcelIcon"
+                  icon="icon-excel1"
+                  class="menu-icons"
+                ></svg-icon>
+                <span id="assetsListUploadExcel" translate="uploadExcel"></span>
               </button>
               <button
+                id="assetsListAddManually"
                 mat-menu-item
                 (click)="addManually()"
                 class="menu-buttons"
                 *appCheckUserHasPermission="[perms.createAsset]"
               >
                 <svg-icon
+                  id="assetsListAddManuallyBtn"
                   icon="icon-add-manually"
                   class="add-manually-icon"
                 ></svg-icon>
@@ -106,6 +120,7 @@
             </mat-menu>
 
             <button
+              id="assetsListMoreBtn"
               mat-raised-button
               [matMenuTriggerFor]="moreMenu"
               class="more-btn"
@@ -115,19 +130,25 @@
             </button>
             <mat-menu #moreMenu="matMenu">
               <button
+                id="assetsListExportExcelBtn"
                 mat-menu-item
                 (click)="exportAsXLSX()"
                 class="menu-buttons"
               >
                 <svg-icon
+                  id="assetsListIconExcel"
                   matSuffix
                   icon="icon-excel1"
                   class="menu-icons"
                 ></svg-icon>
-                <span translate="downloadTemplate"></span>
+                <span
+                  id="assetsListDownLoadTemplate"
+                  translate="downloadTemplate"
+                ></span>
               </button>
             </mat-menu>
             <input
+              id="assetsListUploadFile"
               id="upload"
               hidden
               type="file"

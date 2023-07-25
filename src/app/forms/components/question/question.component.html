@@ -35,7 +35,7 @@
           <mat-form-field
             *ngIf="questionForm.get('fieldType').value === 'INST'"
             appearance="outline"
-            class="width-100"
+            class="width-100 instruction-question"
             placeholder="Type Question"
           >
             <quill-material
@@ -167,7 +167,6 @@
                     </app-instruction-pdf>
                   </span>
                 </div>
-                <br />
                 <input
                   type="file"
                   class="file-upload"

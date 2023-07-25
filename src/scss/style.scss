@@ -660,3 +660,9 @@ button.mat-menu-item {
     padding: 25px !important;
   }
 }
+
+.mat-input-element:disabled {
+  color: $black;
+  opacity: 0.6;
+  font-size: 105%;
+}

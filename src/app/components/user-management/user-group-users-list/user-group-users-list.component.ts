@@ -51,6 +51,7 @@ import { RemoveUserModalComponent } from '../remove-user-modal/remove-user-modal
 import { LoginService } from '../../login/services/login.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { DomSanitizer } from '@angular/platform-browser';
+import { defaultProfilePic, graphQLDefaultLimit } from 'src/app/app.constants';
 interface UsersListActions {
   action: 'delete' | null;
   id: any[];
@@ -88,8 +89,8 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
     new BehaviorSubject<UsersListActions>({ action: null, id: [] });
   userAddEdit = false;
   disableBtn = true;
-  userCount: number;
-  limit = 500;
+  userCount = 0;
+  limit = graphQLDefaultLimit;
   next = '';
   selectedUsers = [];
   allUsersList = [];
@@ -267,6 +268,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
     }
     this.selectedUsers = [];
     this.selectedCount = 0;
+    this.userCount = 0;
   }
 
   ngOnInit(): void {
@@ -333,7 +335,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
               });
               this.toast.show({
                 type: 'success',
-                text: 'Member deleted successfully'
+                text: 'User removed successfully'
               });
           }
           this.userAddEdit = false;
@@ -367,7 +369,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
         .pipe(
           mergeMap((resp: any) => {
             this.isLoading$.next(false);
-            if (resp.count) {
+            if (resp?.count !== null && resp?.count !== undefined) {
               this.userCount = resp.count;
             }
             this.userGroupService.usersListEdit = true;
@@ -381,47 +383,52 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
           }),
 
           map((data) => {
-            const rows = data.map((item) => {
-              if (item?.users.firstName && item?.users.lastName) {
-                item.user = item?.users.firstName + ' ' + item?.users.lastName;
-              } else {
-                item.user = '';
-              }
-              if (item?.users.email) {
-                item.email = item?.users.email ?? '';
-              }
-              if (item?.users?.validThrough) {
-                item.validThrough = format(
-                  new Date(item?.users?.validThrough),
-                  'dd.MM.yy'
-                );
-              } else {
-                item.validThrough = '';
-              }
-              if (item?.users?.roles) {
-                const rolesNames = [];
-                item?.users?.roles?.forEach((role) => {
-                  rolesNames.push(role?.name);
-                });
-                item.roles = rolesNames?.toString();
-              } else {
-                item.roles = '';
-              }
-              item.plant = this.plantName;
-              item.preTextImage = {
-                style: {
-                  width: '30px',
-                  height: '30px',
-                  'border-radius': '50%',
-                  display: 'block',
-                  padding: '0px 10px'
-                },
-                image: this.getImageSrc(item?.users?.profileImage),
-                condition: true
-              };
-              return item;
-            });
-            return rows;
+            if (data && data.length) {
+              const rows = data?.map((item) => {
+                if (item?.users.firstName && item?.users.lastName) {
+                  item.user =
+                    item?.users.firstName + ' ' + item?.users.lastName;
+                } else {
+                  item.user = '';
+                }
+                if (item?.users.email) {
+                  item.email = item?.users.email ?? '';
+                }
+                if (item?.users?.validThrough) {
+                  item.validThrough = format(
+                    new Date(item?.users?.validThrough),
+                    'dd.MM.yy'
+                  );
+                } else {
+                  item.validThrough = '';
+                }
+                if (item?.users?.roles) {
+                  const rolesNames = [];
+                  item?.users?.roles?.forEach((role) => {
+                    rolesNames.push(role?.name);
+                  });
+                  item.roles = rolesNames?.toString();
+                } else {
+                  item.roles = '';
+                }
+                item.plant = this.plantName;
+                item.preTextImage = {
+                  style: {
+                    width: '30px',
+                    height: '30px',
+                    'border-radius': '50%',
+                    display: 'block',
+                    padding: '0px 10px'
+                  },
+                  image: this.getImageSrc(item?.users?.profileImage),
+                  condition: true
+                };
+                return item;
+              });
+              return rows;
+            } else {
+              return [];
+            }
           })
         );
     } else {
@@ -441,6 +448,8 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
     if (source) {
       const base64Image = 'data:image/jpeg;base64,' + source;
       return this.sant.bypassSecurityTrustResourceUrl(base64Image);
+    } else {
+      return this.sant.bypassSecurityTrustResourceUrl(defaultProfilePic);
     }
   };
 
