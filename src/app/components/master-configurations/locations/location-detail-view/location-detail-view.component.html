@@ -1,35 +1,62 @@
 <div id="view-location-slider">
   <mat-card>
     <div>
-      <svg-icon (click)="cancel()" icon="icon-close" class="cancel"></svg-icon>
+      <svg-icon
+        id="locationDetailCancelIcon"
+        (click)="cancel()"
+        icon="icon-close"
+        class="cancel"
+      ></svg-icon>
     </div>
     <div *ngIf="selectedLocation">
       <p>
-        <img [src]="selectedLocation.image" alt="Image" class="image" />
+        <img
+          id="locationDetailImg"
+          [src]="selectedLocation.image"
+          alt="Image"
+          class="image"
+        />
       </p>
-      <h1 class="heading">{{ selectedLocation.name }}</h1>
+      <h1 id="locationDetailName" class="heading">
+        {{ selectedLocation.name }}
+      </h1>
       <hr class="horizon-line" />
-      <p class="m-0 sub-headings" translate="id"></p>
-      <p class="m-0 sub-headings-value">{{ selectedLocation.locationId }}</p>
+      <p id="locationDetailId" class="m-0 sub-headings" translate="id"></p>
+      <p id="locationDetailSelectId" class="m-0 sub-headings-value">
+        {{ selectedLocation.locationId }}
+      </p>
       <ng-container *ngIf="selectedLocation.plant">
         <hr class="horizon-line" />
-        <p class="m-0 sub-headings" translate="plant"></p>
-        <p class="m-0 sub-headings-value">
+        <p
+          id="locationDetailPlant"
+          class="m-0 sub-headings"
+          translate="plant"
+        ></p>
+        <p id="locationDetailSelectPlant" class="m-0 sub-headings-value">
           {{ selectedLocation.plant }}
         </p>
       </ng-container>
       <hr class="horizon-line" />
-      <p class="m-0 sub-headings" translate="parent"></p>
-      <p class="m-0 sub-headings-value">
+      <p
+        id="locationDetailParent"
+        class="m-0 sub-headings"
+        translate="parent"
+      ></p>
+      <p id="locationDetailSelectParent" class="m-0 sub-headings-value">
         {{ selectedLocation.parent ? selectedLocation.parent : '--' }}
       </p>
       <hr class="horizon-line" />
-      <p class="m-0 sub-headings" translate="description"></p>
-      <p class="m-0 sub-headings-value">
+      <p
+        id="locationDetailDescription"
+        class="m-0 sub-headings"
+        translate="description"
+      ></p>
+      <p id="locationDetailSelectDescription" class="m-0 sub-headings-value">
         {{ selectedLocation.description }}
       </p>
       <hr class="horizon-line" />
       <button
+        id="locationDetailEditBtn"
         mat-raised-button
         class="edit-btn"
         (click)="edit()"

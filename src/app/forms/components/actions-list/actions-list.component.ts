@@ -69,7 +69,10 @@ export class ActionsListComponent implements OnInit, OnDestroy {
   @Input() moduleName;
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
-      tap((users) => (this.assigneeDetails = { users }))
+      tap((users) => {
+        this.userFullNameByEmail = this.userService.getUsersInfo();
+        this.assigneeDetails = { users };
+      })
     );
   }
   get users$(): Observable<UserDetails[]> {
@@ -371,6 +374,7 @@ export class ActionsListComponent implements OnInit, OnDestroy {
   initial: any;
   isModalOpened = false;
   isPopoverOpen = false;
+  userFullNameByEmail: any;
   filterJson = [];
   filter = {
     title: '',
@@ -620,14 +624,26 @@ export class ActionsListComponent implements OnInit, OnDestroy {
     }
   };
 
+  getFullNameToEmailArray(data: any) {
+    const emailArray = [];
+    data?.forEach((name: any) => {
+      emailArray.push(
+        Object.keys(this.userFullNameByEmail).find(
+          (email) => this.userFullNameByEmail[email].fullName === name
+        )
+      );
+    });
+    return emailArray;
+  }
+
   applyFilters(data: any): void {
     this.isLoading$.next(true);
     this.isPopoverOpen = false;
     for (const item of data) {
-      if (item.type !== 'date' && item.value) {
-        this.filter[item.column] = item.value ?? '';
-      } else if (item.type === 'date' && item.value) {
+      if (item.type === 'date' && item.value) {
         this.filter[item.column] = item.value.toISOString();
+      } else if (item.column === 'assignedTo' && item.value) {
+        this.filter[item.column] = this.getFullNameToEmailArray(item.value);
       } else {
         this.filter[item.column] = item.value ?? '';
       }
