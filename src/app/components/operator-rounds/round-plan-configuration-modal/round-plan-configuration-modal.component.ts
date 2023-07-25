@@ -547,7 +547,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         height: '100%',
         panelClass: 'slideshow-container',
         backdropClass: 'slideshow-backdrop',
-        data: slideshowImages
+        data: { images: slideshowImages, type: 'forms' }
       });
     }
   }

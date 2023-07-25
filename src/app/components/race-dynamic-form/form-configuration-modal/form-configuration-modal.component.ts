@@ -490,7 +490,7 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
     if (files.length > 0 && files[0] instanceof File) {
       const file: File = files[0];
       const maxSize = 390000;
-      reader.readAsDataURL(file as Blob);
+      reader.readAsDataURL(file);
       reader.onloadend = () => {
         this.base64result = reader?.result as string;
         if (this.base64result.includes('data:application/pdf;base64,')) {
@@ -613,8 +613,6 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
   openPreviewDialog() {
     const filteredMediaTypes = [...this.filteredMediaType.mediaType];
     const slideshowImages = [];
-    // const slideshowImages = [{ images: [], base64image: true }];
-
     filteredMediaTypes.forEach((media) => {
       slideshowImages.push(media);
     });
