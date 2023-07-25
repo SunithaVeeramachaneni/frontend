@@ -10,18 +10,22 @@
       </ngx-spinner>
       <div class="usergroup-header">
         <div class="width-30 left-pannel-header">
-          <h2 class="heading" translate="userGroups"></h2>
-          <button class="add-btn" (click)="createUserGroup()">
-            <mat-icon class="add-btn-icon">add</mat-icon>
+          <h2 id="userGroupHeading" class="heading" translate="userGroups"></h2>
+          <button
+            id="userGroupCreateBtn"
+            class="add-btn"
+            (click)="createUserGroup()"
+          >
+            <mat-icon id="userGroupAddIcon" class="add-btn-icon">add</mat-icon>
           </button>
         </div>
 
         <div class="right-pannel-header">
           <span class="count-of-usergroup">
-            <span class="usergroup-count-header">{{
+            <span id="userGroupCount" class="usergroup-count-header">{{
               userGroupCount$ | async
             }}</span>
-            <span class="usergroup-text">{{
+            <span id="userGroupCountText" class="usergroup-text">{{
               'userGroupCount' | translate
             }}</span>
           </span>
@@ -30,8 +34,11 @@
       <div class="dis-flex usergroup-content">
         <div class="width-25 custom-form-field-gray-color usergroup-left-panel">
           <mat-form-field appearance="outline" class="search-form-field">
-            <mat-icon matPrefix class="searchIcon">search</mat-icon>
+            <mat-icon id="userGroupSearchIcon" matPrefix class="searchIcon"
+              >search</mat-icon
+            >
             <input
+              id="userGroupSearchText"
               matInput
               type="text"
               [placeholder]="'searchUserGroup' | translate"
@@ -46,7 +53,7 @@
             #listContainer
           >
             <div *ngIf="userGroups.length === 0" class="unselected-role-text">
-              <span translate="noResultsFound"></span>
+              <span id="userGroupNoResult" translate="noResultsFound"></span>
             </div>
             <ng-container
               *ngIf="(isLoading$ | async) === false"
@@ -54,6 +61,7 @@
             >
               <div (scroll)="listBottom($event)" class="usergroup">
                 <mat-list-item
+                  id="userGroupList"
                   #userGroupList
                   *ngFor="let userGroup of userGroups"
                   class="usergroup-list"
@@ -66,6 +74,7 @@
                 >
                   <div class="list-items">
                     <span
+                      id="userGroupListName"
                       class="usergroup-name"
                       matTooltip="{{ userGroup.name }}"
                       [ngClass]="{ 'text-red': userGroup.name?.length > 100 }"
@@ -73,33 +82,37 @@
                       {{ userGroup.name }}
                     </span>
                     <div class="list-display">
-                      <span class="usergroup-count">{{
+                      <span class="usergroup-count" id="userGroupUserCount">{{
                         userGroup?.usersCount
                       }}</span>
                       <button
+                        id="userGroupMoreBtn"
                         mat-icon-button
                         [matMenuTriggerFor]="menu"
                         class="more-usergroup"
                         aria-label="More Options"
                       >
-                        <mat-icon>more_horiz</mat-icon>
+                        <mat-icon id="userGroupMoreIcon">more_horiz</mat-icon>
                       </button>
                     </div>
                   </div>
                   <mat-menu #menu="matMenu">
                     <button
+                      id="userGroupCopyBtn"
                       *ngIf="checkPermissions('EDIT_USER_GROUP')"
                       mat-menu-item
                       translate="copyBtn"
                       (click)="copyUserGroup(userGroup.id)"
                     ></button>
                     <button
+                      id="userGroupEditBtn"
                       *ngIf="checkPermissions('EDIT_USER_GROUP')"
                       mat-menu-item
                       translate="editBtn"
                       (click)="editUserGroup(userGroup)"
                     ></button>
                     <button
+                      id="userGroupDeleteBtn"
                       *ngIf="checkPermissions('DELETE_USER_GROUP')"
                       mat-menu-item
                       class="text-red"
