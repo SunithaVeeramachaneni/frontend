@@ -311,14 +311,27 @@
   border-bottom: 1px solid $border-color;
   min-height: 34px;
 
-  .skip-btn {
-    height: 35px;
-    position: relative;
-    top: 1px;
+  .next-btn {
+    background-color: $radio-button-checked;
+    border-color: $radio-button-checked;
+    float: right;
+    margin-right: 22px;
+    font-weight: normal;
+    line-height: normal;
+    height: 34px;
   }
 
-  .next-btn {
+  .skip-btn {
+    float: right;
+    color: $radio-button-checked;
     height: 34px;
-    margin-right: 14px;
+    font-weight: normal;
+    line-height: normal;
+    border: 1px solid $blue-main;
+  }
+
+  ::ng-deep .mat-raised-button[disabled] {
+    color: $disabled-text-color;
+    background-color: $gray2-bg;
   }
 }

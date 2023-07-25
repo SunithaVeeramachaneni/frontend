@@ -375,6 +375,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
             }
           })
         );
+        this.router.navigate(['/forms/create']);
       } else if (this.formData.formExists === true) {
         this.store.dispatch(
           BuilderConfigurationActions.updateFormMetadata({
