@@ -5,7 +5,7 @@ import {
   OnDestroy,
   OnInit
 } from '@angular/core';
-import { RoundPlanFullScreenModalComponent } from './round-plan-full-screen-modal.component';
+import { RoundPlanModalComponent } from './round-plan-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/state/app.state';
@@ -26,7 +26,7 @@ import { FormService } from 'src/app/forms/services/form.service';
   styles: [''],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class RoundPlanViewComponent implements OnInit, OnDestroy {
+export class RoundPlanEditViewComponent implements OnInit, OnDestroy {
   formMetadata: any;
   selectedNode: any;
   selectedNodeInstances: any[];
@@ -134,7 +134,7 @@ export class RoundPlanViewComponent implements OnInit, OnDestroy {
         this.formMetadata = data;
       });
 
-    this.dialog.open(RoundPlanFullScreenModalComponent, {
+    this.dialog.open(RoundPlanModalComponent, {
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',

@@ -43,7 +43,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { PlantsResponse } from 'src/app/interfaces/master-data-management/plants';
 import { LoginService } from '../../login/services/login.service';
-import { RoundPlanFullScreenModalComponent } from '../round-plan-full-screen-modal/round-plan-full-screen-modal.component';
+import { RoundPlanModalComponent } from '../round-plan-modal/round-plan-modal.component';
 
 @Component({
   selector: 'app-round-plan-list',
@@ -682,7 +682,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
   }
 
   openRoundPlanCreationModal() {
-    const dialogRef = this.dialog.open(RoundPlanFullScreenModalComponent, {
+    const dialogRef = this.dialog.open(RoundPlanModalComponent, {
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',

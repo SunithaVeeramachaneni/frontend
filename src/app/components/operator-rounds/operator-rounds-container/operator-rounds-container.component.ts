@@ -11,7 +11,7 @@ import { routingUrls } from 'src/app/app.constants';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { BreadcrumbService } from 'xng-breadcrumb';
-import { RoundPlanConfigurationModalComponent } from '../round-plan-configuration-modal/round-plan-configuration-modal.component';
+import { RoundPlanConfigurationModalComponent } from '../round-plan-header-configuration/round-plan-header-configuration.component';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 
 @Component({

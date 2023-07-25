@@ -50,16 +50,18 @@ import { ToastService } from 'src/app/shared/toast';
 import { SlideshowComponent } from 'src/app/shared/components/slideshow/slideshow.component';
 import { NgxImageCompressService } from 'ngx-image-compress';
 import { PDFDocument } from 'pdf-lib';
-import { RoundPlanFullScreenModalComponent } from '../round-plan-full-screen-modal/round-plan-full-screen-modal.component';
+import { RoundPlanModalComponent } from '../round-plan-modal/round-plan-modal.component';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-round-plan-configuration-modal',
-  templateUrl: './round-plan-configuration-modal.component.html',
-  styleUrls: ['./round-plan-configuration-modal.component.scss'],
+  selector: 'app-round-plan-header-configuration',
+  templateUrl: './round-plan-header-configuration.component.html',
+  styleUrls: ['./round-plan-header-configuration.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class RoundPlanConfigurationModalComponent implements OnInit, OnDestroy {
+export class RoundPlanHeaderConfigurationComponent
+  implements OnInit, OnDestroy
+{
   @ViewChild('tagsInput', { static: false })
   tagsInput: ElementRef<HTMLInputElement>;
   @ViewChild('valueInput', { static: false }) valueInput: ElementRef;
@@ -115,7 +117,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit, OnDestroy {
 
   constructor(
     private fb: FormBuilder,
-    public dialogRef: MatDialogRef<RoundPlanFullScreenModalComponent>,
+    public dialogRef: MatDialogRef<RoundPlanModalComponent>,
     private readonly loginService: LoginService,
     private store: Store<State>,
     private operatorRoundsService: OperatorRoundsService,

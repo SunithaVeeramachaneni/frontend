@@ -9,11 +9,11 @@ import { Step } from 'src/app/interfaces/stepper';
 import { State } from 'src/app/state/app.state';
 
 @Component({
-  selector: 'app-round-plan-full-screen-modal',
-  templateUrl: './round-plan-full-screen-modal.component.html',
-  styleUrls: ['./round-plan-full-screen-modal.component.scss']
+  selector: 'app-round-plan-modal',
+  templateUrl: './round-plan-modal.component.html',
+  styleUrls: ['./round-plan-modal.component.scss']
 })
-export class RoundPlanFullScreenModalComponent implements OnInit, OnDestroy {
+export class RoundPlanModalComponent implements OnInit, OnDestroy {
   steps: Step[] = [
     { title: 'Plan Details', content: '' },
     { title: 'Route and Tasks', content: '' },
@@ -26,7 +26,7 @@ export class RoundPlanFullScreenModalComponent implements OnInit, OnDestroy {
   authoredRoundPlanDetailSubscription: Subscription;
 
   constructor(
-    public dialogRef: MatDialogRef<RoundPlanFullScreenModalComponent>,
+    public dialogRef: MatDialogRef<RoundPlanModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data,
     private store: Store<State>,
     private router: Router

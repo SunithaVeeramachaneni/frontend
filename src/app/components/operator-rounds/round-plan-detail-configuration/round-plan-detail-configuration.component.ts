@@ -66,9 +66,9 @@ import { FormService } from 'src/app/forms/services/form.service';
 import { getSelectedHierarchyList } from 'src/app/forms/state';
 import { HierarchyModalComponent } from 'src/app/forms/components/hierarchy-modal/hierarchy-modal.component';
 @Component({
-  selector: 'app-round-plan-configuration',
-  templateUrl: './round-plan-configuration.component.html',
-  styleUrls: ['./round-plan-configuration.component.scss'],
+  selector: 'app-round-plan-detail-configuration',
+  templateUrl: './round-plan-detail-configuration.component.html',
+  styleUrls: ['./round-plan-detail-configuration.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
     trigger('previewSlide', [
@@ -80,7 +80,9 @@ import { HierarchyModalComponent } from 'src/app/forms/components/hierarchy-moda
     ])
   ]
 })
-export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
+export class RoundPlanDetailConfigurationComponent
+  implements OnInit, OnDestroy
+{
   @ViewChild('name') formName: ElementRef;
   @Output() gotoNextStep = new EventEmitter<void>();
   public openAppSider$: Observable<any>;

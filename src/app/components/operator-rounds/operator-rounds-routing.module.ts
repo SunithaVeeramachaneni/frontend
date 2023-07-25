@@ -8,7 +8,7 @@ import { OperatorRoundsContainerComponent } from './operator-rounds-container/op
 import { RoundPlanResolverService } from './services/round-plan-resolver.service';
 import { SchedulerComponent } from './scheduler/scheduler.component';
 import { RoundObservationsComponent } from './round-observations/round-observations.component';
-import { RoundPlanViewComponent } from './round-plan-full-screen-modal/round-plan-view.component';
+import { RoundPlanEditViewComponent } from './round-plan-modal/round-plan-edit-view.component';
 
 const routes: Routes = [
   {
@@ -32,7 +32,7 @@ const routes: Routes = [
       },
       {
         path: 'edit/:id',
-        component: RoundPlanViewComponent,
+        component: RoundPlanEditViewComponent,
         canActivate: [AuthGuard],
         resolve: { form: RoundPlanResolverService },
         data: {
