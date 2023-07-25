@@ -23,3 +23,11 @@
     width: 35%;
   }
 }
+
+.api-table-disable {
+  margin-top: 12px;
+
+  ::ng-deep .table-column {
+    width: 45%;
+  }
+}

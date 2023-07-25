@@ -42,7 +42,12 @@
     </div>
     <div class="width-30"></div>
   </div>
-  <div class="api-table">
+  <div
+    [ngClass]="{
+      'api-table-disable': disabeleApiKeyGeneration,
+      'api-table': !disabeleApiKeyGeneration
+    }"
+  >
     <cwp-dynamictable
       [dataSource]="dataSource"
       [configOptions]="configOptions"
