@@ -438,7 +438,7 @@ export class FormsComponent implements OnInit, OnDestroy {
           filteredForms = forms.data
             .filter(
               (form: ScheduleFormDetail) =>
-                !form.schedule || form.schedule === 'Ad=Hoc'
+                !form.schedule || form.schedule === 'Ad-Hoc'
             )
             .map((item) => {
               item.schedule = '';
