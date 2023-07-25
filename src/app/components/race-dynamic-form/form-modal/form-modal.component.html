@@ -10,19 +10,19 @@
   <div stepsContent>
     <!-- STEP 1 -->
     <div [hidden]="currentStep !== 0">
-      <app-form-configuration-modal
+      <app-form-header-configuration
         [data]="data"
         [formData]="formData"
         (gotoNextStep)="gotoNextStep()"
-      ></app-form-configuration-modal>
+      ></app-form-header-configuration>
     </div>
 
     <!-- STEP 2 -->
     <div [hidden]="currentStep !== 1">
-      <app-form-configuration
+      <app-form-detail-configuration
         [data]="data"
         (gotoNextStep)="gotoNextStep()"
-      ></app-form-configuration>
+      ></app-form-detail-configuration>
     </div>
 
     <!-- STEP 3 -->

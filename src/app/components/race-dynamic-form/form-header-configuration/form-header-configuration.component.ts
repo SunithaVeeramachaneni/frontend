@@ -46,18 +46,18 @@ import { ToastService } from 'src/app/shared/toast';
 import { MatDialog } from '@angular/material/dialog';
 import { SlideshowComponent } from 'src/app/shared/components/slideshow/slideshow.component';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
-import { FullScreenFormCreationComponent } from '../full-screen-form-creation/full-screen-form-creation.component';
+import { FormModalComponent } from '../form-modal/form-modal.component';
 import { NgxImageCompressService } from 'ngx-image-compress';
 import { PDFDocument } from 'pdf-lib';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-form-configuration-modal',
-  templateUrl: './form-configuration-modal.component.html',
-  styleUrls: ['./form-configuration-modal.component.scss'],
+  selector: 'app-form-header-configuration',
+  templateUrl: './form-header-configuration.component.html',
+  styleUrls: ['./form-header-configuration.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FormConfigurationModalComponent implements OnInit, OnDestroy {
+export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   @ViewChild('tagsInput', { static: false })
   tagsInput: ElementRef<HTMLInputElement>;
   @ViewChild('auto', { static: false }) matAutocomplete: MatAutocomplete;
@@ -103,7 +103,7 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
   pdfFiles: any = { mediaType: [] };
 
   constructor(
-    public dialogRef: MatDialogRef<FullScreenFormCreationComponent>,
+    public dialogRef: MatDialogRef<FormModalComponent>,
     private fb: FormBuilder,
     private readonly loginService: LoginService,
     private store: Store<State>,
