@@ -95,9 +95,6 @@ export class RaceDynamicFormService {
       info
     );
   }
-
-  getAttachmentsMapping = () => {};
-
   getDataSetsByType$ = (
     datasetType: string,
     info: ErrorInfo = {} as ErrorInfo
@@ -289,8 +286,7 @@ export class RaceDynamicFormService {
       additionalDetails: formListQuery.additionalDetails,
       instructions: formListQuery.instructions,
       isArchived: false,
-      isDeleted: false,
-      includeAttachments: true
+      isDeleted: false
     });
   }
 

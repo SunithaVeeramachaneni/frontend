@@ -192,8 +192,6 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
         map((data) => {
           if (Array.isArray(data)) {
             return data.map((item) => item);
-          } else if (data && typeof data === 'object' && data.attachment) {
-            return [data];
           } else {
             return [];
           }
@@ -212,8 +210,6 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
         map((data) => {
           if (Array.isArray(data)) {
             return data.map((item) => item);
-          } else if (data && typeof data === 'object' && data.attachment) {
-            return [data];
           } else {
             return [];
           }
@@ -222,7 +218,9 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
       .subscribe((pdfs) => {
         pdfs?.forEach((pdf) => {
           this.cdrf.detectChanges();
-          this.pdfFiles.mediaType.push(pdf.attachment);
+          this.pdfFiles = {
+            mediaType: [...this.pdfFiles.mediaType, JSON.parse(pdf.fileInfo)]
+          };
           this.filteredMediaPdfTypeIds.push(pdf.id);
         });
       });
@@ -492,22 +490,20 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
     if (files.length > 0 && files[0] instanceof File) {
       const file: File = files[0];
       const maxSize = 390000;
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(file as Blob);
       reader.onloadend = () => {
         this.base64result = reader?.result as string;
         if (this.base64result.includes('data:application/pdf;base64,')) {
           this.resizePdf(this.base64result).then((compressedPdf) => {
             const onlybase64 = compressedPdf.split(',')[1];
             const resizedPdfSize = atob(onlybase64).length;
-            // const pdf = {
-            //   name: file.name,
-            //   size: file.size,
-            //   attachment: onlybase64
-            // };
-            // console.log('pdf', pdf);
+            const pdf = {
+              fileInfo: { name: file.name, size: resizedPdfSize },
+              attachment: onlybase64
+            };
             if (resizedPdfSize <= maxSize) {
               this.rdfService
-                .uploadAttachments$({ file: onlybase64 })
+                .uploadAttachments$({ file: pdf })
                 .pipe(
                   tap((response) => {
                     if (response) {
@@ -534,9 +530,13 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
           this.resizeImage(this.base64result).then((compressedImage) => {
             const onlybase64 = compressedImage.split(',')[1];
             const resizedImageSize = atob(onlybase64).length;
+            const image = {
+              fileInfo: { name: file.name, size: resizedImageSize },
+              attachment: onlybase64
+            };
             if (resizedImageSize <= maxSize) {
               this.rdfService
-                .uploadAttachments$({ file: onlybase64 })
+                .uploadAttachments$({ file: image })
                 .pipe(
                   tap((response) => {
                     if (response) {
@@ -613,6 +613,8 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
   openPreviewDialog() {
     const filteredMediaTypes = [...this.filteredMediaType.mediaType];
     const slideshowImages = [];
+    // const slideshowImages = [{ images: [], base64image: true }];
+
     filteredMediaTypes.forEach((media) => {
       slideshowImages.push(media);
     });
@@ -623,7 +625,7 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
         height: '100%',
         panelClass: 'slideshow-container',
         backdropClass: 'slideshow-backdrop',
-        data: slideshowImages
+        data: { images: slideshowImages, type: 'forms' }
       });
     }
   }
