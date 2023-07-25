@@ -189,15 +189,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     this.retrieveDetails();
 
     this.operatorRoundsService.attachmentsMapping$
-      .pipe(
-        map((data) => {
-          if (Array.isArray(data)) {
-            return data.map((item) => item);
-          } else {
-            return [];
-          }
-        })
-      )
+      .pipe(map((data) => (Array.isArray(data) ? data : [])))
       .subscribe((attachments) => {
         attachments?.forEach((att) => {
           this.cdrf.detectChanges();
@@ -207,15 +199,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       });
 
     this.operatorRoundsService.pdfMapping$
-      .pipe(
-        map((data) => {
-          if (Array.isArray(data)) {
-            return data.map((item) => item);
-          } else {
-            return [];
-          }
-        })
-      )
+      .pipe(map((data) => (Array.isArray(data) ? data : [])))
       .subscribe((pdfs) => {
         pdfs?.forEach((pdf) => {
           this.cdrf.detectChanges();

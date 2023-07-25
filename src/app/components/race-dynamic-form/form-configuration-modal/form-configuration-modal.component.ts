@@ -188,15 +188,7 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
     this.retrieveDetails();
 
     this.rdfService.attachmentsMapping$
-      .pipe(
-        map((data) => {
-          if (Array.isArray(data)) {
-            return data.map((item) => item);
-          } else {
-            return [];
-          }
-        })
-      )
+      .pipe(map((data) => (Array.isArray(data) ? data : [])))
       .subscribe((attachments) => {
         attachments?.forEach((att) => {
           this.cdrf.detectChanges();
@@ -206,15 +198,7 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
       });
 
     this.rdfService.pdfMapping$
-      .pipe(
-        map((data) => {
-          if (Array.isArray(data)) {
-            return data.map((item) => item);
-          } else {
-            return [];
-          }
-        })
-      )
+      .pipe(map((data) => (Array.isArray(data) ? data : [])))
       .subscribe((pdfs) => {
         pdfs?.forEach((pdf) => {
           this.cdrf.detectChanges();
