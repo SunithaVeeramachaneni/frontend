@@ -167,7 +167,7 @@ export class UsersService {
         users.map((user: UserDetails) => ({
           firstName: user.firstName,
           lastName: user.lastName,
-          email: user.email,
+          email: user.email.toLowerCase(),
           profileImage: this.getImageSrc(
             Buffer.from(user.profileImage).toString()
           ),
@@ -180,7 +180,7 @@ export class UsersService {
 
   setUsers(users: UserDetails[]) {
     this.usersInfoByEmail = users.reduce((acc, curr) => {
-      acc[curr.email] = {
+      acc[curr.email.toLowerCase()] = {
         fullName: `${curr.firstName} ${curr.lastName}`,
         isActive: curr.isActive
       };
@@ -188,20 +188,15 @@ export class UsersService {
     }, {});
   }
   getUserIsActive(email: string): boolean {
-    return this.usersInfoByEmail[email]?.isActive;
+    return this.usersInfoByEmail[email.toLowerCase()]?.isActive;
   }
 
   getUsersInfo(): UsersInfoByEmail {
-    const lowerCaseUsersInfoByEmail: UsersInfoByEmail = {};
-    Object.keys(this.usersInfoByEmail).forEach((email) => {
-      lowerCaseUsersInfoByEmail[email.toLowerCase()] =
-        this.usersInfoByEmail[email];
-    });
-    return lowerCaseUsersInfoByEmail;
+    return this.usersInfoByEmail;
   }
 
   getUserFullName(email: string): string {
-    return this.usersInfoByEmail[email]?.fullName;
+    return this.usersInfoByEmail[email.toLowerCase()]?.fullName;
   }
 
   deactivateUser$ = (userID, info: ErrorInfo = {} as ErrorInfo) => {
