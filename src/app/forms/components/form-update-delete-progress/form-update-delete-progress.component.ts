@@ -111,10 +111,10 @@ export class FormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
         data.formIds
       );
     } else if (data.templateType === formConfigurationStatus.embedded) {
-      // return this.rdfService.updateEmbeddedFormOnTemplateChange$(
-      //   data.templateId,
-      //   data.formIds
-      // );
+      return this.rdfService.updateEmbeddedFormOnTemplateChange$(
+        data.templateId,
+        data.formIds
+      );
     }
   }
   isOpen() {

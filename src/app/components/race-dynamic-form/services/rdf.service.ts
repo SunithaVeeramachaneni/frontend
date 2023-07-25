@@ -1338,4 +1338,17 @@ export class RaceDynamicFormService {
       formData
     );
   };
+  updateEmbeddedFormOnTemplateChange$ = (
+    templateId: string,
+    formIds: [string]
+  ): Observable<any> => {
+    const formData = new FormData();
+    formData.append('templateId', templateId);
+    formData.append('formIds', JSON.stringify(formIds));
+    return this.getServerSentEvent(
+      environment.rdfApiUrl,
+      'templates/updateEmbeddedForms',
+      formData
+    );
+  };
 }

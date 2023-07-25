@@ -27,19 +27,16 @@
         <span class="form-name">{{ form.name }}</span>
       </div>
       <div>
-        <div
-          class="state in-progress"
-          *ngIf="form.progressStatus === 'success'"
-        >
-          <svg-icon icon="icon-tick" class="icon"></svg-icon>
+        <div *ngIf="form.progressStatus === 'success'">
+          <svg-icon icon="loader-success" class="icon"></svg-icon>
         </div>
         <mat-spinner
           *ngIf="form.progressStatus === 'in-progress'"
           class="form-progress-spinner"
           [diameter]="25"
         ></mat-spinner>
-        <div class="state failed" *ngIf="form.progressStatus === 'failed'">
-          <svg-icon icon="icon-upload-error" class="icon"></svg-icon>
+        <div *ngIf="form.progressStatus === 'failed'">
+          <svg-icon icon="loader-failed" class="icon"></svg-icon>
         </div>
       </div>
     </div>
