@@ -17,7 +17,7 @@
 >
   <div class="dis-flex form-header">
     <div class="dis-flex width-55">
-      <svg-icon icon="icon-formlogo" class="form-logo"></svg-icon>
+      <svg-icon id="formLogo" icon="icon-formlogo" class="form-logo"></svg-icon>
       <input
         hidden
         type="file"
@@ -32,6 +32,7 @@
         >
           <a class="width-90">
             <input
+              id="formNameText"
               #name
               type="text"
               [size]="name.value !== '' ? getSize(name.value) : 20"
@@ -44,6 +45,7 @@
             />
 
             <mat-error
+              id="formNameError"
               *ngIf="processValidationErrors('name')"
               class="error-fields"
             >
@@ -58,11 +60,16 @@
             </mat-error>
           </a>
           <button
+            is="formNameEditBtn"
             (click)="editFormName()"
             class="edit-icon"
             *ngIf="formConfiguration.get('name').disabled === true"
           >
-            <svg-icon icon="icon-edit-icon" class="edit-icon-img"></svg-icon>
+            <svg-icon
+              id="formNameEditIcon"
+              icon="icon-edit-icon"
+              class="edit-icon-img"
+            ></svg-icon>
           </button>
         </a>
         <br />
@@ -72,6 +79,7 @@
             class="width-60"
           >
             <input
+              id="formDescriptionText"
               type="text"
               class="form_description_input"
               placeholder="{{ 'addFormDesc' | translate }}"
@@ -81,7 +89,9 @@
             />
           </a>
           <span
-            ><span class="plant">{{ 'plant' | translate }}:</span>
+            ><span id="formPlant" class="plant"
+              >{{ 'plant' | translate }}:</span
+            >
             {{ ' ' + formMetadata.plant }}</span
           >
         </div>
@@ -89,6 +99,7 @@
     </div>
     <div class="dis-flex width-70 justify-content-end">
       <div
+        id="formSavedChanges"
         class="save-status"
         [hidden]="
           props.formSaveStatus !== formConfigurationStatus.saved ||
@@ -99,6 +110,7 @@
         {{ 'changesSaved' | translate }}
       </div>
       <div
+        id="formSavingChanges"
         class="save-status"
         [hidden]="
           props.formSaveStatus !== formConfigurationStatus.saving ||
@@ -108,6 +120,7 @@
         {{ 'savingChanges' | translate }}
       </div>
       <div
+        id="formChangesPublished"
         class="save-status"
         [hidden]="
           formDetailPublishStatus !== formConfigurationStatus.published ||
@@ -117,6 +130,7 @@
         {{ 'changesPublished' | translate }}
       </div>
       <div
+        id="formPublishingChanges"
         class="save-status"
         [hidden]="
           formDetailPublishStatus !== formConfigurationStatus.publishing ||
@@ -126,6 +140,7 @@
         {{ 'publishingChanges' | translate }}
       </div>
       <button
+        id="FormImportBtn"
         mat-stroked-button
         class="import-btn"
         translate="importBtn"
@@ -140,7 +155,12 @@
         (click)="openSaveTemplateDialog()"
       ></button> -->
 
-      <button mat-stroked-button class="next-btn" (click)="publishOrShowPdf()">
+      <button
+        id="formNextBtn"
+        mat-stroked-button
+        class="next-btn"
+        (click)="publishOrShowPdf()"
+      >
         {{ isEmbeddedForm ? ('publishBtn' | translate) : ('next' | translate) }}
       </button>
     </div>

@@ -1,6 +1,7 @@
 <div class="field-types">
   <div class="each-fieldtype">
     <p
+      id="previewQuestionName"
       class="question-name"
       *ngIf="question.fieldType !== 'ARD' && question.fieldType !== 'INST'"
     >
@@ -15,30 +16,48 @@
   </div>
   <div class="task-footer">
     <button
+      id="previewQuestionBtn"
       *ngIf="question.fieldType !== 'ATT'"
       mat-button
       mat-icon-button
       class="task-icon-button"
     >
-      <svg-icon icon="icon-Photo" class="options"></svg-icon>
-      <p>Photo</p>
+      <svg-icon
+        id="previewQuestionIconPhoto"
+        icon="icon-Photo"
+        class="options"
+      ></svg-icon>
+      <p id="previewQuestionPhoto">Photo</p>
     </button>
     <button mat-button mat-icon-button class="task-icon-button">
-      <svg-icon icon="icon-Note" class="options"></svg-icon>
-      <p>Note</p>
+      <svg-icon
+        id="previewQuestionOption"
+        icon="icon-Note"
+        class="options"
+      ></svg-icon>
+      <p id="previewQuestionNote">Note</p>
     </button>
     <button mat-button mat-icon-button class="task-icon-button">
-      <svg-icon icon="icon-Action" class="options"></svg-icon>
-      <p>Action</p>
+      <svg-icon
+        id="previewQuestionIconAction"
+        icon="icon-Action"
+        class="options"
+      ></svg-icon>
+      <p id="previewQuestionAction">Action</p>
     </button>
     <button
+      id="previewQuestionOpenMoreBtn"
       mat-button
       mat-icon-button
       class="task-icon-button"
       (click)="openMoreMenu()"
     >
-      <svg-icon icon="icon-More" class="options"></svg-icon>
-      <p>More</p>
+      <svg-icon
+        id="previewQuestionMoreIcon"
+        icon="icon-More"
+        class="options"
+      ></svg-icon>
+      <p id="previewQuestionMore">More</p>
     </button>
   </div>
 </div>

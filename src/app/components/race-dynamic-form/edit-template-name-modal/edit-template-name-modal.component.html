@@ -1,14 +1,17 @@
 <div class="edit-template-name-modal">
-  <span class="title">{{
+  <span id="editTemplateName" class="title">{{
     'overwriteTemplateTitle' | translate : { name: data.templateName }
   }}</span>
-  <span class="dialog-close-btn" (click)="close()">
-    <mat-icon class="dialog-close">close</mat-icon>
+  <span id="editTemplateNameClose" class="dialog-close-btn" (click)="close()">
+    <mat-icon id="editTemplateNameCloseIcon" class="dialog-close"
+      >close</mat-icon
+    >
   </span>
-  <p>
+  <p id="editTemplateNameMessage">
     {{ 'overwriteTemplateMessage' | translate : { name: data.templateName } }}
   </p>
   <button
+    id="editTemplateNameSave"
     mat-raised-button
     class="save-template-btn"
     type="submit"
@@ -17,6 +20,7 @@
     {{ 'overwriteSaveTemplateBtn' | translate }}
   </button>
   <button
+    id="editTemplateNameCancel"
     mat-stroked-button
     class="cancel-btn"
     translate="cancel"

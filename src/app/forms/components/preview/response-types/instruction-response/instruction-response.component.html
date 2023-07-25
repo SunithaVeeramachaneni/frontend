@@ -4,6 +4,7 @@
     <div *ngIf="question.value.tag.title === 'Information'"></div>
     <div *ngIf="question.value.tag.title === 'Danger'"></div>
     <p
+      id="instructionResponseValue"
       class="tag-text"
       [ngClass]="
         question.value.tag.title === 'Information'
@@ -31,6 +32,7 @@
 <div>
   <ng-container *ngFor="let image of question.value.images; index as i">
     <img
+      id="instructionResponseImg"
       src="{{ image.objectURL }}"
       alt="image"
       class="instruction-image-field"

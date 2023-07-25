@@ -1,11 +1,11 @@
 <div mat-dialog-title>
   <div class="logicRow">
-    <mat-icon>info</mat-icon>
+    <mat-icon id="raiseNotificationInfo">info</mat-icon>
     <div class="questionLogic">
-      <span class="currentQuestion">
+      <span id="raiseNotificationQuestionName" class="currentQuestion">
         {{ data.questionName }}
       </span>
-      <p class="m-0">
+      <p id="raiseNotificationAnswer" class="m-0">
         If answer {{ operatorSymbolMap[data.logic.operator] }}
         {{ data.logic.operand2 }}
       </p>
@@ -14,17 +14,21 @@
 </div>
 <div mat-dialog-content>
   <div class="dialogBody">
-    <span class="heading"> Enter the fields for the Notification </span>
+    <span id="raiseNotificationField" class="heading">
+      Enter the fields for the Notification
+    </span>
     <div class="validationMessageRow" [formGroup]="notificationForm">
       <mat-form-field appearance="outline" class="w-100">
-        <mat-label>Trigger Info</mat-label>
+        <mat-label id="raiseNotificationTriggerInfo">Trigger Info</mat-label>
         <input
+          id="raiseNotificationTriggerText"
           matInput
           placeholder="Please create a Notification to the Maintenance Team to report an Issue "
           formControlName="triggerInfo"
         />
         <div class="dis-flex h-30">
           <div
+            id="raiseNotificationTiggerName"
             *ngIf="processValidationErrors('triggerInfo')"
             class="invalid-feedback m-t-2"
           >
@@ -33,10 +37,16 @@
         </div>
       </mat-form-field>
       <mat-form-field appearance="outline" class="w-100">
-        <mat-label>Trigger While</mat-label>
+        <mat-label id="raiseNotificationTriggerWhile">Trigger While</mat-label>
         <mat-select formControlName="triggerWhen">
-          <mat-option value="While Filling form">Filling the Form</mat-option>
-          <mat-option value="While Submitting form"
+          <mat-option
+            id="raiseNotificationFillFormOption"
+            value="While Filling form"
+            >Filling the Form</mat-option
+          >
+          <mat-option
+            id="raiseNotificationSubmitForm"
+            value="While Submitting form"
             >Submitting the Form</mat-option
           >
         </mat-select>
@@ -44,6 +54,7 @@
           <div
             *ngIf="processValidationErrors('triggerWhen')"
             class="invalid-feedback m-t-2"
+            id="raiseNotificationTriggerWhen"
           >
             {{ errors.triggerWhen.name | translate }}
           </div>
@@ -53,8 +64,16 @@
   </div>
 </div>
 <mat-dialog-actions align="end">
-  <button mat-raised-button mat-dialog-close (click)="close()">Cancel</button>
   <button
+    id="raiseNotificationCancelBtn"
+    mat-raised-button
+    mat-dialog-close
+    (click)="close()"
+  >
+    Cancel
+  </button>
+  <button
+    id="raiseNotificationSubmitBtn"
     mat-raised-button
     color="primary"
     [mat-dialog-close]="true"

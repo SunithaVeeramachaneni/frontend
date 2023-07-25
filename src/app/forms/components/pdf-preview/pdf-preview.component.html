@@ -1,14 +1,27 @@
 <div class="pdfPreview-dialog">
   <div class="dialogHead">
-    <button (click)="onCancel()" class="back-btn">
-      <svg-icon icon="icon-back-arrow" class="back-arrow"></svg-icon>
-      <span class="back-btn-text">
+    <button id="pdfPreviewBackBtn" (click)="onCancel()" class="back-btn">
+      <svg-icon
+        id="pdfPreviewBackIcon"
+        icon="icon-back-arrow"
+        class="back-arrow"
+      ></svg-icon>
+      <span id="pdfPreviewName" class="back-btn-text">
         {{ data.selectedForm.name }}
       </span>
     </button>
-    <button mat-stroked-button class="downloadPDFBtn" (click)="downloadPdf()">
-      <svg-icon icon="icon-picture-as-pdf" class="pdf-picture"></svg-icon>
-      <span translate="download"></span>
+    <button
+      id="pdfPreviewDownloadPDF"
+      mat-stroked-button
+      class="downloadPDFBtn"
+      (click)="downloadPdf()"
+    >
+      <svg-icon
+        id="pdfPreviewIcon"
+        icon="icon-picture-as-pdf"
+        class="pdf-picture"
+      ></svg-icon>
+      <span id="pdfPreviewDownload" translate="download"></span>
     </button>
   </div>
   <div class="dialogContainer">

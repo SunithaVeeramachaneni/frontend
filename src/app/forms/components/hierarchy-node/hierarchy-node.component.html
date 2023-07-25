@@ -16,6 +16,7 @@
   >
     <div class="dis-flex">
       <mat-checkbox
+        id="hierarchyNodeCheckbox"
         *ngIf="viewMode === false"
         [(ngModel)]="masterData.isSelected"
         (change)="nodeCheckboxToggled($event)"
@@ -25,6 +26,7 @@
       ></mat-checkbox>
 
       <svg-icon
+        id="hierarchyNodeIcon"
         [icon]="
           masterData?.type === 'location'
             ? 'icon-locationIcon'
@@ -40,6 +42,7 @@
     </div>
     <div [ngClass]="{ 'node-info': !viewMode }">
       <div
+        id="hierarchyNodeName"
         [ngClass]="{
           'master-data-title': !viewMode,
           'view-mode': viewMode === true
@@ -47,7 +50,7 @@
       >
         {{ masterData.name }}
       </div>
-      <div *ngIf="!viewMode" class="node-id">
+      <div *ngIf="!viewMode" class="node-id" id="hierarchyNodeId">
         {{
           'nodeId'
             | translate
@@ -72,21 +75,34 @@
         *ngIf="viewMode === false"
         (click)="masterData.isToggledView = !masterData.isToggledView"
       >
-        <mat-icon *ngIf="masterData.isToggledView === false" class="arrows">
+        <mat-icon
+          id="hierarchyNodeRightArrow"
+          *ngIf="masterData.isToggledView === false"
+          class="arrows"
+        >
           keyboard_arrow_right
         </mat-icon>
-        <mat-icon *ngIf="masterData.isToggledView === true" class="arrows">
+        <mat-icon
+          id="hierarchyNodeDownArrow"
+          *ngIf="masterData.isToggledView === true"
+          class="arrows"
+        >
           keyboard_arrow_down
         </mat-icon>
       </a>
       <mat-checkbox
+        id="hierarchyNodeSelectAll"
         [(ngModel)]="allSelected"
         [indeterminate]="multipleSelected()"
         color="primary"
         (change)="isAllSelectedToggled($event)"
         class="select-all-checkbox"
       ></mat-checkbox>
-      <a *ngIf="viewMode === false && selectedCount === 0" class="count-assets">
+      <a
+        id="hierarchyNodeCount"
+        *ngIf="viewMode === false && selectedCount === 0"
+        class="count-assets"
+      >
         {{
           'selectAllAssets'
             | translate
@@ -95,7 +111,11 @@
                 }
         }}
       </a>
-      <a *ngIf="viewMode === false && selectedCount > 0" class="count-assets">
+      <a
+        id="hierarchyNodeSelectcount"
+        *ngIf="viewMode === false && selectedCount > 0"
+        class="count-assets"
+      >
         {{
           'selectedAssets'
             | translate

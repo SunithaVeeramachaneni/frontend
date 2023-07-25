@@ -1,5 +1,6 @@
 <!-- text answer  -->
 <input
+  id="textAnswerText"
   type="text"
   class="text-answer"
   [placeholder]="'enter' | translate"
@@ -8,6 +9,7 @@
 
 <!-- long text answer  -->
 <textarea
+  id="textAnswerLong"
   class="long-text-answer"
   [placeholder]="'enter' | translate"
   *ngIf="question.value === 'LTV'"
