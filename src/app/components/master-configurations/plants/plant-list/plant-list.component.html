@@ -3,13 +3,16 @@
     <div class="main-container">
       <div class="locations-header">
         <div>
-          <h2 class="heading" translate="plants"></h2>
+          <h2 id="plantListHeading" class="heading" translate="plants"></h2>
         </div>
         <div>
           <span class="custom-form-field-gray-color search">
             <mat-form-field appearance="outline">
-              <mat-icon matPrefix class="searchIcon">search</mat-icon>
+              <mat-icon id="plantListSearchIcon" matPrefix class="searchIcon"
+                >search</mat-icon
+              >
               <input
+                id="plantListSearchText"
                 matInput
                 type="text"
                 [placeholder]="'search' | translate"
@@ -17,6 +20,7 @@
                 [formControl]="searchPlant"
               />
               <svg-icon
+                id="plantListFilterIcon"
                 matSuffix
                 icon="icon-filterIcon"
                 class="filter-icon"
@@ -25,6 +29,7 @@
           </span>
 
           <button
+            id="plantListCreateBtn"
             mat-raised-button
             translate="createNew"
             class="create-new-btn"

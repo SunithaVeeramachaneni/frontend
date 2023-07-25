@@ -56,6 +56,7 @@ import { IssuesActionsViewComponent } from '../issues-actions-view/issues-action
 import { ObservationsService } from '../../services/observations.service';
 import { PlantService } from 'src/app/components/master-configurations/plants/services/plant.service';
 import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
+import { UsersService } from 'src/app/components/user-management/services/users.service';
 
 @Component({
   selector: 'app-issues-list',
@@ -67,7 +68,10 @@ import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
 export class IssuesListComponent implements OnInit, OnDestroy {
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
-      tap((users) => (this.assigneeDetails = { users }))
+      tap((users) => {
+        this.userFullNameByEmail = this.userService.getUsersInfo();
+        this.assigneeDetails = { users };
+      })
     );
   }
   get users$(): Observable<UserDetails[]> {
@@ -370,7 +374,9 @@ export class IssuesListComponent implements OnInit, OnDestroy {
   placeHolder = '_ _';
   plantTimezoneMap = {};
   readonly perms = perms;
+  userFullNameByEmail: any;
   isPopoverOpen = false;
+
   filterJson = [];
   filter = {
     title: '',
@@ -389,7 +395,8 @@ export class IssuesListComponent implements OnInit, OnDestroy {
     private readonly loginService: LoginService,
     private plantService: PlantService,
     private readonly dialog: MatDialog,
-    private readonly cdrf: ChangeDetectorRef
+    private readonly cdrf: ChangeDetectorRef,
+    private userService: UsersService
   ) {}
 
   ngOnInit(): void {
@@ -642,14 +649,26 @@ export class IssuesListComponent implements OnInit, OnDestroy {
     }
   };
 
+  getFullNameToEmailArray(data: any) {
+    const emailArray = [];
+    data?.forEach((name: any) => {
+      emailArray.push(
+        Object.keys(this.userFullNameByEmail).find(
+          (email) => this.userFullNameByEmail[email].fullName === name
+        )
+      );
+    });
+    return emailArray;
+  }
+
   applyFilters(data: any): void {
     this.isLoading$.next(true);
     this.isPopoverOpen = false;
     for (const item of data) {
-      if (item.type !== 'date' && item.value) {
-        this.filter[item.column] = item.value ?? '';
-      } else if (item.type === 'date' && item.value) {
+      if (item.type === 'date' && item.value) {
         this.filter[item.column] = item.value.toISOString();
+      } else if (item.column === 'assignedTo' && item.value) {
+        this.filter[item.column] = this.getFullNameToEmailArray(item.value);
       } else {
         this.filter[item.column] = item.value ?? '';
       }
