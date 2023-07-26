@@ -75,24 +75,34 @@
       border-radius: 15px;
       width: 50%;
 
-      &:first-child {
-        background-color: $submitted-bg-light;
-      }
-
-      &:last-child {
-        background-color: $light-orange;
-      }
-
       img {
         display: block;
         margin: auto;
         padding-bottom: 15px;
       }
     }
+
+    .success-box {
+      background-color: $submitted-bg-light;
+    }
+
+    .failure-box {
+      background-color: $light-orange;
+    }
+
+    .only-success-message {
+      width: 100%;
+      background-color: $submitted-bg-light;
+    }
+
+    .only-failure-message {
+      width: 100%;
+      background-color: $light-orange;
+    }
   }
 }
 
-.upload-icon{
+.upload-icon {
   height: 50px;
   width: 90px;
 }
