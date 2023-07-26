@@ -75,12 +75,7 @@
             <mat-icon>more_horiz</mat-icon>
           </button>
           <mat-menu #sectionMenu="matMenu">
-            <button
-              mat-menu-item
-              (click)="deleteSection()"
-              [disabled]="isTemplate"
-              class="text-red"
-            >
+            <button mat-menu-item (click)="deleteSection()" class="text-red">
               <span translate="deleteSection"></span>
             </button>
           </mat-menu>

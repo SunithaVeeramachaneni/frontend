@@ -13,7 +13,7 @@
   "setTemplateTypeHeading": "Select Template Type",
   "standalone": "Standalone",
   "embedded": "Embedded",
-  "embeddedSubText": "On Publishing form will show in your mWorkorder app",
+  "embeddedSubText": "On Publishing form will show in your mWorkorder app (SAP)",
   "addFormName": "Form Name",
   "addFormNameMandatory": "Form Name *",
   "addFormDescription": "Short Description",
@@ -334,7 +334,7 @@
   "value": "Value",
   "add": "Add",
   "standaloneSubText": "On Publishing form will show in mInspections app",
-  "embeddedTemplateSubText": "For mWorkorder app",
+  "embeddedTemplateSubText": "For mWorkorder app (SAP)",
   "standaloneTemplateSubText": "For mInspections app",
   "timeZone": "Plant Timezone",
   "removeBtn": "Remove",
@@ -360,11 +360,13 @@
   "totalPages": "Total Pages",
   "reportGeneratedOn": "Report Generated On",
   "tasksCompleted": "Responses Completed",
-  "yes": "yes",
+  "yes": "Yes",
   "formsThatWillReflectChanges": "Forms that will reflect Template changes",
   "affectedForms": "Forms will be affected",
   "formsWillAppearOnceTemplateIsLinked": "Forms will appear once Template is linked",
   "templatesUsed": "Templates Used",
   "template": "Template",
-  "addNotes": "Add Notes"
+  "addNotes": "Add Notes",
+  "confirmDelete?": "Confirm Delete?",
+  "deletingTheSectionWillUnlinkTheElementsCreatedFromThisTemplate": "Deleting the section will unlink the elements created from this Template."
 }
