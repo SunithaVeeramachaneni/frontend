@@ -1043,6 +1043,29 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       table: this.fb.array([])
     });
 
+  prepareSectionUid(sc: number): string {
+    let uid = `uid${sc}`;
+    const alreadyExistSections = this.createForm?.value?.sections?.map(
+      (s) => s?.uid
+    );
+    if (alreadyExistSections?.length > 0) {
+      const isExist = alreadyExistSections?.find((a) => a === uid);
+      if (isExist) {
+        let count = 1;
+        uid = `uid${sc + count}`;
+        let i = 0;
+        while (i < alreadyExistSections?.length) {
+          if (alreadyExistSections[i] === uid) {
+            count += 1;
+            uid = `uid${sc + count}`;
+          }
+          i++;
+        }
+      }
+    }
+    return uid;
+  }
+
   initSection = (
     sc: number,
     qc: number,
@@ -1061,7 +1084,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       this.richTextEditorToolbarState[sc] = {};
 
     return this.fb.group({
-      uid: [`uid${sc}`],
+      uid: [this.prepareSectionUid(sc)],
       name: [
         {
           value:
