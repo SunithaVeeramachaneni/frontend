@@ -10,25 +10,23 @@
   <div stepsContent>
     <!-- STEP 1 -->
     <div [hidden]="currentStep !== 0">
-      <app-form-configuration-modal
-        [data]="data"
-        [formData]="formData"
+      <app-round-plan-header-configuration
+        [roundData]="roundData"
         (gotoNextStep)="gotoNextStep()"
-      ></app-form-configuration-modal>
+      ></app-round-plan-header-configuration>
     </div>
 
     <!-- STEP 2 -->
     <div [hidden]="currentStep !== 1">
-      <app-form-configuration
-        [data]="data"
+      <app-round-plan-detail-configuration
         (gotoNextStep)="gotoNextStep()"
-      ></app-form-configuration>
+      ></app-round-plan-detail-configuration>
     </div>
 
     <!-- STEP 3 -->
     <div [hidden]="currentStep !== 2">
       <app-pdf-builder
-        [moduleName]="'RDF'"
+        [moduleName]="'OPERATOR_ROUNDS'"
         (publishedEvent)="publishedEventHandler()"
       ></app-pdf-builder>
     </div>

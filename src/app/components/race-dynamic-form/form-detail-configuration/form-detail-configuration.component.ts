@@ -52,12 +52,12 @@ import { SaveTemplateContainerComponent } from '../save-template-container/save-
 import { RaceDynamicFormService } from '../services/rdf.service';
 
 @Component({
-  selector: 'app-form-configuration',
-  templateUrl: './form-configuration.component.html',
-  styleUrls: ['./form-configuration.component.scss'],
+  selector: 'app-form-detail-configuration',
+  templateUrl: './form-detail-configuration.component.html',
+  styleUrls: ['./form-detail-configuration.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FormConfigurationComponent implements OnInit, OnDestroy {
+export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
   @ViewChild('name') formName: ElementRef;
   @Output() gotoNextStep = new EventEmitter<void>();
   @Input() data;

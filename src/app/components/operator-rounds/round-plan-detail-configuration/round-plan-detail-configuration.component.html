@@ -85,7 +85,7 @@
           </a>
           <span
             ><span class="plant">{{ 'plant' | translate }}:</span>
-            {{ ' ' + formMetadata.plant }}</span
+            {{ ' ' + formMetadata?.plant }}</span
           >
         </div>
       </div>
@@ -157,7 +157,7 @@
   <div class="dis-flex form">
     <div class="assetHierarchyContainer" [hidden]="isPreviewActive">
       <app-hierarchy-container
-        [plantId]="formMetadata.plantId"
+        [plantId]="formMetadata?.plantId"
         [nodeWiseQuestionsCount]="props.nodeWiseQuestionsCount"
         (hierarchyEvent)="hierarchyEventHandler($event)"
       ></app-hierarchy-container>

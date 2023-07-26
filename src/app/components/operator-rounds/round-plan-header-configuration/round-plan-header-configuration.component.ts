@@ -4,22 +4,22 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  OnInit,
-  ViewChild,
   EventEmitter,
-  Output,
   Input,
-  OnDestroy
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild
 } from '@angular/core';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
   MatAutocomplete,
   MatAutocompleteSelectedEvent,
   MatAutocompleteTrigger
 } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
-import { BehaviorSubject, Observable, Subscription, merge, of } from 'rxjs';
+import { Observable, Subscription, merge, of } from 'rxjs';
 import { map, startWith, tap } from 'rxjs/operators';
 import {
   AbstractControl,
@@ -27,44 +27,49 @@ import {
   FormBuilder,
   FormControl,
   FormGroup,
-  ValidatorFn,
-  Validators
+  Validators,
+  ValidatorFn
 } from '@angular/forms';
-import { ValidationError } from 'src/app/interfaces';
+import { ValidationError, FormMetadata } from 'src/app/interfaces';
 import { LoginService } from '../../login/services/login.service';
 import { Store } from '@ngrx/store';
 import { State, getFormMetadata } from 'src/app/forms/state';
-import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
+import {
+  BuilderConfigurationActions,
+  RoundPlanConfigurationActions
+} from 'src/app/forms/state/actions';
 import {
   DEFAULT_PDF_BUILDER_CONFIG,
   formConfigurationStatus
 } from 'src/app/app.constants';
-import { RaceDynamicFormService } from '../services/rdf.service';
+import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
-import { ToastService } from 'src/app/shared/toast';
 import { MatDialog } from '@angular/material/dialog';
+import { ToastService } from 'src/app/shared/toast';
 import { SlideshowComponent } from 'src/app/shared/components/slideshow/slideshow.component';
-import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
-import { FullScreenFormCreationComponent } from '../full-screen-form-creation/full-screen-form-creation.component';
 import { NgxImageCompressService } from 'ngx-image-compress';
 import { PDFDocument } from 'pdf-lib';
+import { RoundPlanModalComponent } from '../round-plan-modal/round-plan-modal.component';
+import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-form-configuration-modal',
-  templateUrl: './form-configuration-modal.component.html',
-  styleUrls: ['./form-configuration-modal.component.scss'],
+  selector: 'app-round-plan-header-configuration',
+  templateUrl: './round-plan-header-configuration.component.html',
+  styleUrls: ['./round-plan-header-configuration.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FormConfigurationModalComponent implements OnInit, OnDestroy {
+export class RoundPlanHeaderConfigurationComponent
+  implements OnInit, OnDestroy
+{
   @ViewChild('tagsInput', { static: false })
   tagsInput: ElementRef<HTMLInputElement>;
+  @ViewChild('valueInput', { static: false }) valueInput: ElementRef;
+  @ViewChild('labelInput', { static: false }) labelInput: ElementRef;
   @ViewChild('auto', { static: false }) matAutocomplete: MatAutocomplete;
   @ViewChild(MatAutocompleteTrigger) auto: MatAutocompleteTrigger;
   @Output() gotoNextStep = new EventEmitter<void>();
-  @Input() data;
-  @Input() formData;
-  formMetaDataSubscription: Subscription;
+  @Input() roundData;
   visible = true;
   selectable = true;
   removable = true;
@@ -78,43 +83,52 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
   filteredValues$: Observable<any>;
   allTags: string[] = [];
   originalTags: string[] = [];
+  selectedOption: string;
   allPlantsData = [];
   plantInformation = [];
   changedValues: any;
-  addNewShow = new BehaviorSubject<boolean>(false);
   headerDataForm: FormGroup;
   errors: ValidationError = {};
   convertedDetail = {};
   additionalDetailsIdMap = {};
   deletedLabel = '';
-  isDisabled = false;
-  isOpen = new FormControl(false);
 
   plantFilterInput = '';
   readonly formConfigurationStatus = formConfigurationStatus;
-  additionalDetails: FormArray;
-  labelSelected: any;
+
+  dropDownIsOpen = false;
+  modalIsOpen = false;
+  attachment: any;
+  formMetadata: FormMetadata;
+  moduleName: string;
+  form: FormGroup;
+  isOpen = new FormControl(false);
+  options: any = [];
   filteredMediaType: any = { mediaType: [] };
   filteredMediaTypeIds: any = { mediaIds: [] };
   filteredMediaPdfTypeIds: any = [];
   filteredMediaPdfType: any = [];
   base64result: string;
   pdfFiles: any = { mediaType: [] };
+  additionalDetails: FormArray;
+  labelSelected: any;
+
+  formMetadataSubscrption: Subscription;
 
   constructor(
-    public dialogRef: MatDialogRef<FullScreenFormCreationComponent>,
     private fb: FormBuilder,
+    public dialogRef: MatDialogRef<RoundPlanModalComponent>,
     private readonly loginService: LoginService,
     private store: Store<State>,
-    private rdfService: RaceDynamicFormService,
-    private cdrf: ChangeDetectorRef,
+    private operatorRoundsService: OperatorRoundsService,
     private plantService: PlantService,
+    private cdrf: ChangeDetectorRef,
     private toastService: ToastService,
-    private operatorRoundService: OperatorRoundsService,
     public dialog: MatDialog,
-    private imageCompress: NgxImageCompressService
+    private imageCompress: NgxImageCompressService,
+    private router: Router
   ) {
-    this.rdfService.getDataSetsByType$('tags').subscribe((tags) => {
+    this.operatorRoundsService.getDataSetsByType$('tags').subscribe((tags) => {
       if (tags && tags.length) {
         this.allTags = tags[0].values;
         this.originalTags = JSON.parse(JSON.stringify(tags[0].values));
@@ -128,17 +142,6 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
         tag ? this.filter(tag) : this.allTags.slice()
       )
     );
-  }
-
-  maxLengthWithoutBulletPoints(maxLength: number): ValidatorFn {
-    const htmlTagsRegex = /<[^>]+>/g;
-    return (control: AbstractControl): { [key: string]: any } | null => {
-      const textWithoutTags = control?.value?.replace(htmlTagsRegex, '');
-      if (textWithoutTags?.length > maxLength) {
-        return { maxLength: { value: control.value } };
-      }
-      return null;
-    };
   }
 
   ngOnInit(): void {
@@ -175,7 +178,7 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
       })
     });
 
-    this.formMetaDataSubscription = this.store
+    this.formMetadataSubscrption = this.store
       .select(getFormMetadata)
       .subscribe((res) => {
         this.headerDataForm.patchValue({
@@ -183,11 +186,10 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
           description: res.description ? res.description : ''
         });
       });
-
     this.getAllPlantsData();
     this.retrieveDetails();
 
-    this.rdfService.attachmentsMapping$
+    this.operatorRoundsService.attachmentsMapping$
       .pipe(map((data) => (Array.isArray(data) ? data : [])))
       .subscribe((attachments) => {
         attachments?.forEach((att) => {
@@ -197,7 +199,7 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
         });
       });
 
-    this.rdfService.pdfMapping$
+    this.operatorRoundsService.pdfMapping$
       .pipe(map((data) => (Array.isArray(data) ? data : [])))
       .subscribe((pdfs) => {
         pdfs?.forEach((pdf) => {
@@ -210,29 +212,24 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
       });
   }
 
-  handleEditorFocus(focus: boolean) {
-    if (this.isOpen.value !== focus) {
-      this.isOpen.setValue(focus);
-    }
-  }
   getAllPlantsData() {
     this.plantService.fetchAllPlants$().subscribe((plants) => {
       this.allPlantsData = plants.items || [];
       this.plantInformation = this.allPlantsData;
     });
-    if (this.data?.formData) {
+
+    if (Object.keys(this.roundData?.formMetadata).length !== 0) {
       this.headerDataForm.patchValue({
-        name: this.data.formData.name,
-        description: this.data.formData.description,
-        formType: this.data.formData.formType,
-        plantId: this.data.formData.plantId,
-        formStatus: this.data.formData.formStatus,
-        instructions: this.data.formData.instructions
+        name: this.roundData.formMetadata.name,
+        description: this.roundData.formMetadata.description,
+        plantId: this.roundData.formMetadata.plantId,
+        formStatus: this.roundData.formMetadata.formStatus
       });
 
-      const additionalDetailsArray = this.data.formData.additionalDetails;
+      const additionalDetailsArray =
+        this.roundData.formMetadata.additionalDetails;
 
-      const tagsValue = this.data.formData.tags;
+      const tagsValue = this.roundData.formMetadata.tags;
 
       this.updateAdditionalDetailsArray(additionalDetailsArray);
       this.patchTags(tagsValue);
@@ -246,33 +243,27 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
   }
 
   updateAdditionalDetailsArray(values: any[]): void {
-    const formGroups = values.map((value) =>
-      this.fb.group({
-        label: [value.FIELDLABEL],
-        value: [value.DEFAULTVALUE]
-      })
-    );
-    const formArray = this.fb.array(formGroups);
-    this.headerDataForm.setControl('additionalDetails', formArray);
+    if (values) {
+      const formGroups = values.map((value) =>
+        this.fb.group({
+          label: [value.FIELDLABEL],
+          value: [value.DEFAULTVALUE]
+        })
+      );
+      const formArray = this.fb.array(formGroups);
+      this.headerDataForm.setControl('additionalDetails', formArray);
+    }
   }
 
-  resetPlantSearchFilter = () => {
-    this.plantFilterInput = '';
-    this.plantInformation = this.allPlantsData;
-  };
-
-  onKeyPlant(event) {
-    this.plantFilterInput = event.target.value.trim() || '';
-
-    if (this.plantFilterInput) {
-      this.plantInformation = this.allPlantsData.filter(
-        (plant) =>
-          plant.name.toLowerCase().indexOf(this.plantFilterInput) !== -1 ||
-          plant.plantId.toLowerCase().indexOf(this.plantFilterInput) !== -1
-      );
-    } else {
-      this.plantInformation = this.allPlantsData;
-    }
+  maxLengthWithoutBulletPoints(maxLength: number): ValidatorFn {
+    const htmlTagsRegex = /<[^>]+>/g;
+    return (control: AbstractControl): { [key: string]: any } | null => {
+      const textWithoutTags = control?.value?.replace(htmlTagsRegex, '');
+      if (textWithoutTags?.length > maxLength) {
+        return { maxLength: { value: control.value } };
+      }
+      return null;
+    };
   }
 
   add(event: MatChipInputEvent): void {
@@ -289,6 +280,7 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
 
     this.tagsCtrl.setValue(null);
   }
+
   openAutoComplete() {
     this.auto.openPanel();
   }
@@ -325,6 +317,11 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
       tag.toLowerCase().includes(filterValue)
     );
   }
+  handleEditorFocus(focus: boolean) {
+    if (this.isOpen.value !== focus) {
+      this.isOpen.setValue(focus);
+    }
+  }
 
   next() {
     const additionalinfoArray = this.headerDataForm.get(
@@ -339,7 +336,6 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
     );
 
     const newTags = [];
-
     this.headerDataForm
       .get('instructions.attachments')
       .setValue(this.filteredMediaTypeIds.mediaIds);
@@ -356,9 +352,9 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
         type: 'tags',
         values: newTags
       };
-      this.rdfService.createTags$(dataSet).subscribe((response) => {
-        // do nothing
-      });
+      // this.operatorRoundsService.createTags$(dataSet).subscribe((response) => {
+      //   // do nothing
+      // });
     }
 
     const plant = this.allPlantsData.find(
@@ -367,13 +363,14 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
 
     if (this.headerDataForm.valid) {
       const userName = this.loginService.getLoggedInUserName();
-      if (this.formData.formExists === false) {
+      if (this.roundData?.roundExists === false) {
         this.store.dispatch(
           BuilderConfigurationActions.addFormMetadata({
             formMetadata: {
               ...this.headerDataForm.value,
               additionalDetails: updatedAdditionalDetails,
-              plant: plant.name
+              plant: plant.name,
+              moduleName: 'rdf'
             },
             formDetailPublishStatus: formConfigurationStatus.draft,
             formSaveStatus: formConfigurationStatus.saving
@@ -384,25 +381,30 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
             createOrEditForm: true
           })
         );
+
         this.store.dispatch(
-          BuilderConfigurationActions.createForm({
+          RoundPlanConfigurationActions.createRoundPlan({
             formMetadata: {
               ...this.headerDataForm.value,
               additionalDetails: updatedAdditionalDetails,
               pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG,
               author: userName,
-              formLogo: 'assets/rdf-forms-icons/formlogo.svg'
+              formLogo: 'assets/img/svg/round-plans-icon.svg'
             }
           })
         );
-      } else if (this.formData.formExists === true) {
+        this.router.navigate(['/operator-rounds/create']);
+        this.gotoNextStep.emit();
+      } else if (this.roundData?.roundExists === true) {
         this.store.dispatch(
           BuilderConfigurationActions.updateFormMetadata({
             formMetadata: {
               ...this.headerDataForm.value,
-              id: this.formData.formMetadata.id,
+              id: this.roundData.formMetadata.id,
               additionalDetails: updatedAdditionalDetails,
-              plant: plant?.name
+              plant: plant.name,
+              moduleName: 'rdf',
+              lastModifiedBy: this.loginService.getLoggedInUserName()
             },
             formStatus: formConfigurationStatus.draft,
             formDetailPublishStatus: formConfigurationStatus.draft,
@@ -415,41 +417,52 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
           })
         );
         this.store.dispatch(
-          BuilderConfigurationActions.updateForm({
+          RoundPlanConfigurationActions.updateRoundPlan({
             formMetadata: {
               ...this.headerDataForm.value,
-              id: this.formData.formMetadata.id,
+              id: this.roundData.formMetadata.id,
               additionalDetails: updatedAdditionalDetails,
-              pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG
+              plant: plant.name,
+              moduleName: 'rdf',
+              lastModifiedBy: this.loginService.getLoggedInUserName()
             },
-            formListDynamoDBVersion: this.formData.formListDynamoDBVersion
+            formListDynamoDBVersion: this.roundData.formListDynamoDBVersion,
+            formStatus: formConfigurationStatus.draft,
+            formDetailPublishStatus: formConfigurationStatus.draft,
+            formSaveStatus: formConfigurationStatus.saving
           })
         );
-      }
-
-      if (this.data?.formData && this.data?.type === 'add') {
-        this.rdfService
-          .updateTemplate$(this.data.formData.id, {
-            formsUsageCount: this.data.formData.formsUsageCount + 1
-          })
-          .subscribe(() => {
-            this.store.dispatch(
-              BuilderConfigurationActions.replacePagesAndCounter({
-                pages: JSON.parse(
-                  this.data.formData.authoredFormTemplateDetails[0].pages
-                ),
-                counter: this.data.formData.counter
-              })
-            );
-            this.gotoNextStep.emit();
-          });
-      } else {
         this.gotoNextStep.emit();
       }
     }
   }
+
   trackBySelectedattachments(index: number, el: any): string {
-    return el?.id;
+    return el.id;
+  }
+
+  onCancel(): void {
+    this.dialogRef.close();
+    this.router.navigate(['/operator-rounds']);
+  }
+
+  resetPlantSearchFilter = () => {
+    this.plantFilterInput = '';
+    this.plantInformation = this.allPlantsData;
+  };
+
+  onKeyPlant(event) {
+    this.plantFilterInput = event.target.value.trim() || '';
+
+    if (this.plantFilterInput) {
+      this.plantInformation = this.allPlantsData.filter(
+        (plant) =>
+          plant.name.toLowerCase().indexOf(this.plantFilterInput) !== -1 ||
+          plant.plantId.toLowerCase().indexOf(this.plantFilterInput) !== -1
+      );
+    } else {
+      this.plantInformation = this.allPlantsData;
+    }
   }
 
   processValidationErrors(controlName: string): boolean {
@@ -467,10 +480,11 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
     return !touched || this.errors[controlName] === null ? false : true;
   }
 
-  formFileUploadHandler = (event: Event) => {
+  roundplanFileUploadHandler = (event: Event) => {
     const target = event.target as HTMLInputElement;
     const files = Array.from(target.files);
     const reader = new FileReader();
+
     if (files.length > 0 && files[0] instanceof File) {
       const file: File = files[0];
       const maxSize = 390000;
@@ -486,7 +500,7 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
               attachment: onlybase64
             };
             if (resizedPdfSize <= maxSize) {
-              this.rdfService
+              this.operatorRoundsService
                 .uploadAttachments$({ file: pdf })
                 .pipe(
                   tap((response) => {
@@ -495,7 +509,7 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
                         mediaType: [...this.pdfFiles.mediaType, file]
                       };
                       const responsenew =
-                        response?.data?.createFormAttachments?.id;
+                        response?.data?.createRoundPlanAttachments?.id;
                       this.filteredMediaPdfTypeIds.push(responsenew);
                       this.filteredMediaPdfType.push(this.base64result);
                     }
@@ -519,13 +533,13 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
               attachment: onlybase64
             };
             if (resizedImageSize <= maxSize) {
-              this.rdfService
+              this.operatorRoundsService
                 .uploadAttachments$({ file: image })
                 .pipe(
                   tap((response) => {
                     if (response) {
                       const responsenew =
-                        response?.data?.createFormAttachments?.id;
+                        response?.data?.createRoundPlanAttachments?.id;
                       this.filteredMediaTypeIds = {
                         mediaIds: [
                           ...this.filteredMediaTypeIds.mediaIds,
@@ -535,7 +549,7 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
                       this.filteredMediaType = {
                         mediaType: [
                           ...this.filteredMediaType.mediaType,
-                          onlybase64
+                          this.base64result
                         ]
                       };
                       this.cdrf.detectChanges();
@@ -570,14 +584,18 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
     try {
       const base64Data = base64Pdf.split(',')[1];
       const binaryString = atob(base64Data);
+
       const encoder = new TextEncoder();
       const pdfBytes = encoder.encode(binaryString);
+
       const pdfDoc = await PDFDocument.load(pdfBytes);
+
       const currentSize = pdfBytes.length / 1024;
       const desiredSize = 400 * 1024;
       if (currentSize <= desiredSize) {
         return base64Pdf;
       }
+
       const scalingFactor = Math.sqrt(desiredSize / currentSize);
       const pages = pdfDoc.getPages();
       pages.forEach((page) => {
@@ -586,8 +604,10 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
       });
 
       const modifiedPdfBytes = await pdfDoc.save();
+
       const decoder = new TextDecoder();
       const base64ModifiedPdf = btoa(decoder.decode(modifiedPdfBytes));
+
       return base64ModifiedPdf;
     } catch (error) {
       throw error;
@@ -612,7 +632,7 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
     }
   }
 
-  formFileDeleteHandler(index: number): void {
+  roundPlanFileDeleteHandler(index: number): void {
     this.filteredMediaType.mediaType = this.filteredMediaType.mediaType.filter(
       (_, i) => i !== index
     );
@@ -620,7 +640,7 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
       this.filteredMediaTypeIds.mediaIds.filter((_, i) => i !== index);
   }
 
-  formPdfDeleteHandler(index: number): void {
+  roundPlanPdfDeleteHandler(index: number): void {
     this.pdfFiles.mediaType = this.pdfFiles.mediaType.filter(
       (_, i) => i !== index
     );
@@ -692,7 +712,7 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
         this.changedValues = changes.value;
         if (this.changedValues.label) {
           this.filteredLabels$ = of(
-            Object.keys(this.labels).filter(
+            Object.keys(this.labels)?.filter(
               (label) =>
                 label
                   .toLowerCase()
@@ -725,7 +745,7 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
   }
 
   storeDetails(i) {
-    this.operatorRoundService
+    this.operatorRoundsService
       .createAdditionalDetails$({ ...this.changedValues })
       .subscribe((response) => {
         if (response?.label) {
@@ -754,7 +774,7 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
         )
       ) {
         const newValues = [...this.labels[currentLabel], currentValue];
-        this.operatorRoundService
+        this.operatorRoundsService
           .updateValues$({
             value: newValues,
             labelId: this.additionalDetailsIdMap[currentLabel]
@@ -786,7 +806,7 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
   }
 
   retrieveDetails() {
-    this.operatorRoundService
+    this.operatorRoundsService
       .getAdditionalDetails$()
       .subscribe((details: any[]) => {
         this.labels = this.convertArrayToObject(details);
@@ -841,7 +861,7 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
 
   removeLabel(label, i) {
     const documentId = this.additionalDetailsIdMap[label];
-    this.operatorRoundService.removeLabel$(documentId).subscribe(() => {
+    this.operatorRoundsService.removeLabel$(documentId).subscribe(() => {
       delete this.labels[label];
       delete this.additionalDetailsIdMap[label];
       this.toastService.show({
@@ -866,7 +886,7 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
     const newValue = this.labels[this.changedValues.label].filter(
       (value) => value !== deleteValue
     );
-    this.operatorRoundService
+    this.operatorRoundsService
       .deleteAdditionalDetailsValue$({
         value: newValue,
         labelId: this.additionalDetailsIdMap[this.changedValues.label]
@@ -891,19 +911,12 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
         });
       });
   }
+
   getAdditionalDetailList() {
     return (this.headerDataForm.get('additionalDetails') as FormArray).controls;
   }
 
-  onCancel() {
-    this.dialogRef.close();
-  }
-
   ngOnDestroy() {
-    this.formMetaDataSubscription.unsubscribe();
-    this.rdfService.attachmentsMapping$.next([]);
-    // this.rdfService.attachmentsMapping$.unsubscribe();
-    this.rdfService.pdfMapping$.next([]);
-    // this.rdfService.pdfMapping$.unsubscribe();
+    this.formMetadataSubscrption.unsubscribe();
   }
 }

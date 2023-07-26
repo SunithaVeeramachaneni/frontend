@@ -4,19 +4,22 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  Inject,
   OnInit,
-  ViewChild
+  ViewChild,
+  EventEmitter,
+  Output,
+  Input,
+  OnDestroy
 } from '@angular/core';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import {
   MatAutocomplete,
   MatAutocompleteSelectedEvent,
   MatAutocompleteTrigger
 } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
-import { Observable, merge, of } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription, merge, of } from 'rxjs';
 import { map, startWith, tap } from 'rxjs/operators';
 import {
   AbstractControl,
@@ -24,44 +27,45 @@ import {
   FormBuilder,
   FormControl,
   FormGroup,
-  Validators,
-  ValidatorFn
+  ValidatorFn,
+  Validators
 } from '@angular/forms';
-import { ValidationError, FormMetadata } from 'src/app/interfaces';
-import { Router } from '@angular/router';
+import { ValidationError } from 'src/app/interfaces';
 import { LoginService } from '../../login/services/login.service';
 import { Store } from '@ngrx/store';
-import { State } from 'src/app/forms/state';
-import {
-  BuilderConfigurationActions,
-  RoundPlanConfigurationActions
-} from 'src/app/forms/state/actions';
+import { State, getFormMetadata } from 'src/app/forms/state';
+import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
 import {
   DEFAULT_PDF_BUILDER_CONFIG,
   formConfigurationStatus
 } from 'src/app/app.constants';
-import { OperatorRoundsService } from '../services/operator-rounds.service';
+import { RaceDynamicFormService } from '../services/rdf.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
-import { MatDialog } from '@angular/material/dialog';
 import { ToastService } from 'src/app/shared/toast';
+import { MatDialog } from '@angular/material/dialog';
 import { SlideshowComponent } from 'src/app/shared/components/slideshow/slideshow.component';
+import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
+import { FormModalComponent } from '../form-modal/form-modal.component';
 import { NgxImageCompressService } from 'ngx-image-compress';
 import { PDFDocument } from 'pdf-lib';
+import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-round-plan-configuration-modal',
-  templateUrl: './round-plan-configuration-modal.component.html',
-  styleUrls: ['./round-plan-configuration-modal.component.scss'],
+  selector: 'app-form-header-configuration',
+  templateUrl: './form-header-configuration.component.html',
+  styleUrls: ['./form-header-configuration.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class RoundPlanConfigurationModalComponent implements OnInit {
+export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   @ViewChild('tagsInput', { static: false })
   tagsInput: ElementRef<HTMLInputElement>;
-  @ViewChild('valueInput', { static: false }) valueInput: ElementRef;
-  @ViewChild('labelInput', { static: false }) labelInput: ElementRef;
   @ViewChild('auto', { static: false }) matAutocomplete: MatAutocomplete;
   @ViewChild(MatAutocompleteTrigger) auto: MatAutocompleteTrigger;
+  @Output() gotoNextStep = new EventEmitter<void>();
+  @Input() data;
+  @Input() formData;
+  formMetaDataSubscription: Subscription;
   visible = true;
   selectable = true;
   removable = true;
@@ -75,50 +79,44 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   filteredValues$: Observable<any>;
   allTags: string[] = [];
   originalTags: string[] = [];
-  selectedOption: string;
   allPlantsData = [];
   plantInformation = [];
   changedValues: any;
+  addNewShow = new BehaviorSubject<boolean>(false);
   headerDataForm: FormGroup;
   errors: ValidationError = {};
   convertedDetail = {};
   additionalDetailsIdMap = {};
   deletedLabel = '';
+  isDisabled = false;
+  isOpen = new FormControl(false);
 
   plantFilterInput = '';
   readonly formConfigurationStatus = formConfigurationStatus;
-
-  dropDownIsOpen = false;
-  modalIsOpen = false;
-  attachment: any;
-  formMetadata: FormMetadata;
-  moduleName: string;
-  form: FormGroup;
-  isOpen = new FormControl(false);
-  options: any = [];
+  additionalDetails: FormArray;
+  labelSelected: any;
   filteredMediaType: any = { mediaType: [] };
   filteredMediaTypeIds: any = { mediaIds: [] };
   filteredMediaPdfTypeIds: any = [];
   filteredMediaPdfType: any = [];
   base64result: string;
   pdfFiles: any = { mediaType: [] };
-  additionalDetails: FormArray;
-  labelSelected: any;
+
   constructor(
+    public dialogRef: MatDialogRef<FormModalComponent>,
     private fb: FormBuilder,
-    private router: Router,
-    public dialogRef: MatDialogRef<RoundPlanConfigurationModalComponent>,
     private readonly loginService: LoginService,
     private store: Store<State>,
-    private operatorRoundsService: OperatorRoundsService,
-    private plantService: PlantService,
+    private rdfService: RaceDynamicFormService,
     private cdrf: ChangeDetectorRef,
+    private plantService: PlantService,
     private toastService: ToastService,
+    private operatorRoundService: OperatorRoundsService,
     public dialog: MatDialog,
-    @Inject(MAT_DIALOG_DATA) public data,
-    private imageCompress: NgxImageCompressService
+    private imageCompress: NgxImageCompressService,
+    private router: Router
   ) {
-    this.operatorRoundsService.getDataSetsByType$('tags').subscribe((tags) => {
+    this.rdfService.getDataSetsByType$('tags').subscribe((tags) => {
       if (tags && tags.length) {
         this.allTags = tags[0].values;
         this.originalTags = JSON.parse(JSON.stringify(tags[0].values));
@@ -132,13 +130,6 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         tag ? this.filter(tag) : this.allTags.slice()
       )
     );
-  }
-
-  getAllPlantsData() {
-    this.plantService.fetchAllPlants$().subscribe((plants) => {
-      this.allPlantsData = plants.items || [];
-      this.plantInformation = this.allPlantsData;
-    });
   }
 
   maxLengthWithoutBulletPoints(maxLength: number): ValidatorFn {
@@ -185,10 +176,20 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         pdfDocs: ''
       })
     });
+
+    this.formMetaDataSubscription = this.store
+      .select(getFormMetadata)
+      .subscribe((res) => {
+        this.headerDataForm.patchValue({
+          name: res.name,
+          description: res.description ? res.description : ''
+        });
+      });
+
     this.getAllPlantsData();
     this.retrieveDetails();
 
-    this.operatorRoundsService.attachmentsMapping$
+    this.rdfService.attachmentsMapping$
       .pipe(map((data) => (Array.isArray(data) ? data : [])))
       .subscribe((attachments) => {
         attachments?.forEach((att) => {
@@ -198,7 +199,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         });
       });
 
-    this.operatorRoundsService.pdfMapping$
+    this.rdfService.pdfMapping$
       .pipe(map((data) => (Array.isArray(data) ? data : [])))
       .subscribe((pdfs) => {
         pdfs?.forEach((pdf) => {
@@ -209,6 +210,71 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
           this.filteredMediaPdfTypeIds.push(pdf.id);
         });
       });
+  }
+
+  handleEditorFocus(focus: boolean) {
+    if (this.isOpen.value !== focus) {
+      this.isOpen.setValue(focus);
+    }
+  }
+  getAllPlantsData() {
+    this.plantService.fetchAllPlants$().subscribe((plants) => {
+      this.allPlantsData = plants.items || [];
+      this.plantInformation = this.allPlantsData;
+    });
+    if (this.data?.formData) {
+      this.headerDataForm.patchValue({
+        name: this.data.formData.name,
+        description: this.data.formData.description,
+        formType: this.data.formData.formType,
+        plantId: this.data.formData.plantId,
+        formStatus: this.data.formData.formStatus,
+        instructions: this.data.formData.instructions
+      });
+
+      const additionalDetailsArray = this.data.formData.additionalDetails;
+
+      const tagsValue = this.data.formData.tags;
+
+      this.updateAdditionalDetailsArray(additionalDetailsArray);
+      this.patchTags(tagsValue);
+
+      this.headerDataForm.markAsDirty();
+    }
+  }
+
+  patchTags(values: any[]): void {
+    this.tags = values;
+  }
+
+  updateAdditionalDetailsArray(values: any[]): void {
+    const formGroups = values.map((value) =>
+      this.fb.group({
+        label: [value.FIELDLABEL],
+        value: [value.DEFAULTVALUE]
+      })
+    );
+    const formArray = this.fb.array(formGroups);
+    this.headerDataForm.setControl('additionalDetails', formArray);
+  }
+
+  resetPlantSearchFilter = () => {
+    this.plantFilterInput = '';
+    this.plantInformation = this.allPlantsData;
+  };
+
+  onKeyPlant(event) {
+    this.plantFilterInput = event.target.value.trim() || '';
+
+    if (this.plantFilterInput) {
+      this.plantInformation = this.allPlantsData.filter(
+        (plant) =>
+          plant.name.toLowerCase().indexOf(this.plantFilterInput) !== -1 ||
+          plant.plantId.toLowerCase().indexOf(this.plantFilterInput) !== -1
+      );
+    } else {
+      this.plantInformation = this.allPlantsData;
+    }
   }
 
   add(event: MatChipInputEvent): void {
@@ -225,7 +291,6 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
 
     this.tagsCtrl.setValue(null);
   }
-
   openAutoComplete() {
     this.auto.openPanel();
   }
@@ -262,11 +327,6 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       tag.toLowerCase().includes(filterValue)
     );
   }
-  handleEditorFocus(focus: boolean) {
-    if (this.isOpen.value !== focus) {
-      this.isOpen.setValue(focus);
-    }
-  }
 
   next() {
     const additionalinfoArray = this.headerDataForm.get(
@@ -281,6 +341,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     );
 
     const newTags = [];
+
     this.headerDataForm
       .get('instructions.attachments')
       .setValue(this.filteredMediaTypeIds.mediaIds);
@@ -297,9 +358,9 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         type: 'tags',
         values: newTags
       };
-      // this.operatorRoundsService.createTags$(dataSet).subscribe((response) => {
-      //   // do nothing
-      // });
+      this.rdfService.createTags$(dataSet).subscribe((response) => {
+        // do nothing
+      });
     }
 
     const plant = this.allPlantsData.find(
@@ -307,66 +368,91 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     );
 
     if (this.headerDataForm.valid) {
-      this.store.dispatch(BuilderConfigurationActions.resetFormConfiguration());
       const userName = this.loginService.getLoggedInUserName();
-      this.store.dispatch(
-        BuilderConfigurationActions.addFormMetadata({
-          formMetadata: {
-            ...this.headerDataForm.value,
-            additionalDetails: updatedAdditionalDetails,
-            plant: plant.name,
-            moduleName: 'rdf'
-          },
-          formDetailPublishStatus: formConfigurationStatus.draft,
-          formSaveStatus: formConfigurationStatus.saving
-        })
-      );
-      this.store.dispatch(
-        BuilderConfigurationActions.updateCreateOrEditForm({
-          createOrEditForm: true
-        })
-      );
+      if (this.formData.formExists === false) {
+        this.store.dispatch(
+          BuilderConfigurationActions.addFormMetadata({
+            formMetadata: {
+              ...this.headerDataForm.value,
+              additionalDetails: updatedAdditionalDetails,
+              plant: plant.name
+            },
+            formDetailPublishStatus: formConfigurationStatus.draft,
+            formSaveStatus: formConfigurationStatus.saving
+          })
+        );
+        this.store.dispatch(
+          BuilderConfigurationActions.updateCreateOrEditForm({
+            createOrEditForm: true
+          })
+        );
+        this.store.dispatch(
+          BuilderConfigurationActions.createForm({
+            formMetadata: {
+              ...this.headerDataForm.value,
+              additionalDetails: updatedAdditionalDetails,
+              pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG,
+              author: userName,
+              formLogo: 'assets/rdf-forms-icons/formlogo.svg'
+            }
+          })
+        );
+        this.router.navigate(['/forms/create']);
+      } else if (this.formData.formExists === true) {
+        this.store.dispatch(
+          BuilderConfigurationActions.updateFormMetadata({
+            formMetadata: {
+              ...this.headerDataForm.value,
+              id: this.formData.formMetadata.id,
+              additionalDetails: updatedAdditionalDetails,
+              plant: plant?.name
+            },
+            formStatus: formConfigurationStatus.draft,
+            formDetailPublishStatus: formConfigurationStatus.draft,
+            formSaveStatus: formConfigurationStatus.saving
+          })
+        );
+        this.store.dispatch(
+          BuilderConfigurationActions.updateCreateOrEditForm({
+            createOrEditForm: true
+          })
+        );
+        this.store.dispatch(
+          BuilderConfigurationActions.updateForm({
+            formMetadata: {
+              ...this.headerDataForm.value,
+              id: this.formData.formMetadata.id,
+              additionalDetails: updatedAdditionalDetails,
+              pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG
+            },
+            formListDynamoDBVersion: this.formData.formListDynamoDBVersion
+          })
+        );
+      }
 
-      this.store.dispatch(
-        RoundPlanConfigurationActions.createRoundPlan({
-          formMetadata: {
-            ...this.headerDataForm.value,
-            additionalDetails: updatedAdditionalDetails,
-            pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG,
-            author: userName,
-            formLogo: 'assets/img/svg/round-plans-icon.svg'
-          }
-        })
-      );
-      this.router.navigate(['/operator-rounds/create']);
-      this.dialogRef.close();
+      if (this.data?.formData && this.data?.type === 'add') {
+        this.rdfService
+          .updateTemplate$(this.data.formData.id, {
+            formsUsageCount: this.data.formData.formsUsageCount + 1
+          })
+          .subscribe(() => {
+            this.store.dispatch(
+              BuilderConfigurationActions.replacePagesAndCounter({
+                pages: JSON.parse(
+                  this.data.formData.authoredFormTemplateDetails[0].pages
+                ),
+                counter: this.data.formData.counter
+              })
+            );
+            this.gotoNextStep.emit();
+          });
+      } else {
+        this.gotoNextStep.emit();
+      }
     }
   }
-
   trackBySelectedattachments(index: number, el: any): string {
-    return el.id;
-  }
-  onCancel(): void {
-    this.dialogRef.close();
-  }
-
-  resetPlantSearchFilter = () => {
-    this.plantFilterInput = '';
-    this.plantInformation = this.allPlantsData;
-  };
-
-  onKeyPlant(event) {
-    this.plantFilterInput = event.target.value.trim() || '';
-
-    if (this.plantFilterInput) {
-      this.plantInformation = this.allPlantsData.filter(
-        (plant) =>
-          plant.name.toLowerCase().indexOf(this.plantFilterInput) !== -1 ||
-          plant.plantId.toLowerCase().indexOf(this.plantFilterInput) !== -1
-      );
-    } else {
-      this.plantInformation = this.allPlantsData;
-    }
+    return el?.id;
   }
 
   processValidationErrors(controlName: string): boolean {
@@ -384,11 +470,10 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     return !touched || this.errors[controlName] === null ? false : true;
   }
 
-  roundplanFileUploadHandler = (event: Event) => {
+  formFileUploadHandler = (event: Event) => {
     const target = event.target as HTMLInputElement;
     const files = Array.from(target.files);
     const reader = new FileReader();
-
     if (files.length > 0 && files[0] instanceof File) {
       const file: File = files[0];
       const maxSize = 390000;
@@ -404,7 +489,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
               attachment: onlybase64
             };
             if (resizedPdfSize <= maxSize) {
-              this.operatorRoundsService
+              this.rdfService
                 .uploadAttachments$({ file: pdf })
                 .pipe(
                   tap((response) => {
@@ -413,7 +498,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
                         mediaType: [...this.pdfFiles.mediaType, file]
                       };
                       const responsenew =
-                        response?.data?.createRoundPlanAttachments?.id;
+                        response?.data?.createFormAttachments?.id;
                       this.filteredMediaPdfTypeIds.push(responsenew);
                       this.filteredMediaPdfType.push(this.base64result);
                     }
@@ -437,13 +522,13 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
               attachment: onlybase64
             };
             if (resizedImageSize <= maxSize) {
-              this.operatorRoundsService
+              this.rdfService
                 .uploadAttachments$({ file: image })
                 .pipe(
                   tap((response) => {
                     if (response) {
                       const responsenew =
-                        response?.data?.createRoundPlanAttachments?.id;
+                        response?.data?.createFormAttachments?.id;
                       this.filteredMediaTypeIds = {
                         mediaIds: [
                           ...this.filteredMediaTypeIds.mediaIds,
@@ -453,7 +538,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
                       this.filteredMediaType = {
                         mediaType: [
                           ...this.filteredMediaType.mediaType,
-                          this.base64result
+                          onlybase64
                         ]
                       };
                       this.cdrf.detectChanges();
@@ -488,18 +573,14 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     try {
       const base64Data = base64Pdf.split(',')[1];
       const binaryString = atob(base64Data);
-
       const encoder = new TextEncoder();
       const pdfBytes = encoder.encode(binaryString);
-
       const pdfDoc = await PDFDocument.load(pdfBytes);
-
       const currentSize = pdfBytes.length / 1024;
       const desiredSize = 400 * 1024;
       if (currentSize <= desiredSize) {
         return base64Pdf;
       }
-
       const scalingFactor = Math.sqrt(desiredSize / currentSize);
       const pages = pdfDoc.getPages();
       pages.forEach((page) => {
@@ -508,10 +589,8 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       });
 
       const modifiedPdfBytes = await pdfDoc.save();
-
       const decoder = new TextDecoder();
       const base64ModifiedPdf = btoa(decoder.decode(modifiedPdfBytes));
-
       return base64ModifiedPdf;
     } catch (error) {
       throw error;
@@ -536,7 +615,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     }
   }
 
-  roundPlanFileDeleteHandler(index: number): void {
+  formFileDeleteHandler(index: number): void {
     this.filteredMediaType.mediaType = this.filteredMediaType.mediaType.filter(
       (_, i) => i !== index
     );
@@ -544,7 +623,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       this.filteredMediaTypeIds.mediaIds.filter((_, i) => i !== index);
   }
 
-  roundPlanPdfDeleteHandler(index: number): void {
+  formPdfDeleteHandler(index: number): void {
     this.pdfFiles.mediaType = this.pdfFiles.mediaType.filter(
       (_, i) => i !== index
     );
@@ -616,7 +695,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         this.changedValues = changes.value;
         if (this.changedValues.label) {
           this.filteredLabels$ = of(
-            Object.keys(this.labels)?.filter(
+            Object.keys(this.labels).filter(
               (label) =>
                 label
                   .toLowerCase()
@@ -649,7 +728,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   }
 
   storeDetails(i) {
-    this.operatorRoundsService
+    this.operatorRoundService
       .createAdditionalDetails$({ ...this.changedValues })
       .subscribe((response) => {
         if (response?.label) {
@@ -678,7 +757,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         )
       ) {
         const newValues = [...this.labels[currentLabel], currentValue];
-        this.operatorRoundsService
+        this.operatorRoundService
           .updateValues$({
             value: newValues,
             labelId: this.additionalDetailsIdMap[currentLabel]
@@ -710,7 +789,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   }
 
   retrieveDetails() {
-    this.operatorRoundsService
+    this.operatorRoundService
       .getAdditionalDetails$()
       .subscribe((details: any[]) => {
         this.labels = this.convertArrayToObject(details);
@@ -765,7 +844,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
 
   removeLabel(label, i) {
     const documentId = this.additionalDetailsIdMap[label];
-    this.operatorRoundsService.removeLabel$(documentId).subscribe(() => {
+    this.operatorRoundService.removeLabel$(documentId).subscribe(() => {
       delete this.labels[label];
       delete this.additionalDetailsIdMap[label];
       this.toastService.show({
@@ -790,7 +869,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     const newValue = this.labels[this.changedValues.label].filter(
       (value) => value !== deleteValue
     );
-    this.operatorRoundsService
+    this.operatorRoundService
       .deleteAdditionalDetailsValue$({
         value: newValue,
         labelId: this.additionalDetailsIdMap[this.changedValues.label]
@@ -815,8 +894,20 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         });
       });
   }
-
   getAdditionalDetailList() {
     return (this.headerDataForm.get('additionalDetails') as FormArray).controls;
+  }
+
+  onCancel() {
+    this.dialogRef.close();
+    this.router.navigate(['/forms']);
+  }
+
+  ngOnDestroy() {
+    this.formMetaDataSubscription.unsubscribe();
+    this.rdfService.attachmentsMapping$.next([]);
+    // this.rdfService.attachmentsMapping$.unsubscribe();
+    this.rdfService.pdfMapping$.next([]);
+    // this.rdfService.pdfMapping$.unsubscribe();
   }
 }
