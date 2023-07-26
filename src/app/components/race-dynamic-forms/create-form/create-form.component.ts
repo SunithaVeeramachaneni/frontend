@@ -30,7 +30,7 @@ import {
   toArray,
   map
 } from 'rxjs/operators';
-import { isEqual } from 'lodash-es';
+import { isEqual, uniqBy } from 'lodash-es';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { RdfService } from '../services/rdf.service';
@@ -1187,7 +1187,18 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     );
   }
 
+  removeDuplicateSectionsFromForm(form) {
+    const uniqueSections = uniqBy(form.sections, 'uid');
+    const updatedForm = { ...form, sections: uniqueSections };
+    this.createForm.patchValue(
+      { sections: uniqueSections },
+      { emitEvent: false }
+    );
+    return updatedForm;
+  }
+
   publishFormRequest(form, info, publishedCount, requestType) {
+    form = this.removeDuplicateSectionsFromForm(form);
     return this.rdfService.publishForm$(form, info, requestType).pipe(
       tap((response) => {
         form.sections.forEach((section) => {
@@ -1239,11 +1250,12 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
 
   saveForm(ignoreStatus = false) {
     const { id, ...form } = this.createForm.getRawValue();
+    const updatedForm = this.removeDuplicateSectionsFromForm(form);
     if (id) {
       if (!ignoreStatus) {
         this.status$.next(this.saveProgress);
       }
-      return this.rdfService.updateForm$({ ...form, id }).pipe(
+      return this.rdfService.updateForm$({ ...updatedForm, id }).pipe(
         tap((updateForm) => {
           if (!ignoreStatus && Object.keys(updateForm).length) {
             this.status$.next(this.changesSaved);
@@ -1256,7 +1268,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       if (!ignoreStatus) {
         this.status$.next(this.saveProgress);
       }
-      return this.rdfService.createForm$(form).pipe(
+      return this.rdfService.createForm$(updatedForm).pipe(
         tap((createdForm) => {
           if (Object.keys(createdForm).length) {
             this.formId = createdForm.id;
