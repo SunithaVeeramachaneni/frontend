@@ -193,22 +193,22 @@ export class RoundPlanHeaderConfigurationComponent
       .pipe(map((data) => (Array.isArray(data) ? data : [])))
       .subscribe((attachments) => {
         attachments?.forEach((att) => {
-          this.cdrf.detectChanges();
           this.filteredMediaType.mediaType.push(att.attachment);
           this.filteredMediaTypeIds.mediaIds.push(att.id);
         });
+        this.cdrf.detectChanges();
       });
 
     this.operatorRoundsService.pdfMapping$
       .pipe(map((data) => (Array.isArray(data) ? data : [])))
       .subscribe((pdfs) => {
         pdfs?.forEach((pdf) => {
-          this.cdrf.detectChanges();
           this.pdfFiles = {
             mediaType: [...this.pdfFiles.mediaType, JSON.parse(pdf.fileInfo)]
           };
           this.filteredMediaPdfTypeIds.push(pdf.id);
         });
+        this.cdrf.detectChanges();
       });
   }
 
