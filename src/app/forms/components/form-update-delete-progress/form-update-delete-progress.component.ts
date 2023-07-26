@@ -31,6 +31,7 @@ export class FormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
     this.isExpanded();
     this.formUpdateDeletePayload$().subscribe((payload) => {
       if (payload?.formIds.length > 0) {
+        this.resetCounters();
         payload.affectedForms.map((form) => {
           form.progressStatus = progressStatus.inprogress;
           if (this.checkIfFormIdExists(form.id) === -1) {
@@ -46,7 +47,6 @@ export class FormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
         this.formProgressService.formUpdateDeletePayload$.next(null);
         delete payload.affectedForms;
         this.updateProgress$(payload).subscribe((event) => {
-          console.log(event);
           const idx = this.formMetadata.findIndex(
             (form) => form.id === event.id
           );
@@ -56,7 +56,10 @@ export class FormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
           this.cdr.detectChanges();
         });
       } else if (payload?.templateId) {
-        this.showToast();
+        this.toastService.show({
+          type: 'success',
+          text: `Template is updated successfully.`
+        });
       }
     });
   }
@@ -82,11 +85,6 @@ export class FormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
         text: `${this.totalCompletedCount} ${
           this.totalCompletedCount === 1 ? 'Form is' : 'Forms are'
         } updated successfully.`
-      });
-    } else if (this.formMetadata.length === 0) {
-      this.toastService.show({
-        type: 'success',
-        text: `Template is updated successfully.`
       });
     }
   }
@@ -134,6 +132,15 @@ export class FormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
     this.formProgressService.formProgressisExpanded$.next(
       isExpanded ?? !this._isExpanded
     );
+  }
+  resetCounters() {
+    if (
+      this.formMetadata.length === this.totalCompletedCount &&
+      this.totalCompletedCount !== 0
+    ) {
+      this.formMetadata = [];
+      this.totalCompletedCount = 0;
+    }
   }
 
   ngOnDestroy(): void {

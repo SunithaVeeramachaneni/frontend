@@ -197,9 +197,7 @@ import { FormUpdateDeleteProgressComponent } from './components/form-update-dele
     ShiftMenuItemComponent,
     ShiftDateChangeWarningModalComponent,
     DynamicStepperComponent,
-    StepsHeaderComponent,
-    PdfBuilderOprComponent,
-    FormUpdateDeleteProgressComponent
+    FormUpdateDeleteProgressComponent,
     StepsHeaderComponent
   ],
   imports: [
