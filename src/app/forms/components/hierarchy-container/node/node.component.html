@@ -14,6 +14,7 @@
   >
     <div class="left">
       <svg-icon
+        id="nodeSixDots"
         icon="icon-six-dots"
         cdkDragHandle
         class="question-six-dots"
@@ -21,14 +22,15 @@
       ></svg-icon>
       <div class="nodeContent" (click)="setSelectedNode(node)">
         <svg-icon
+          id="nodeIcons"
           [icon]="
             node?.type === 'location' ? 'icon-locationIcon' : 'icon-asset-icon'
           "
           class="node-icon"
         ></svg-icon>
         <div class="description">
-          <span class="title">{{ node.name }}</span>
-          <span class="subTitle">
+          <span id="nodeName" class="title">{{ node.name }}</span>
+          <span id="nodeSubTitle" class="subTitle">
             {{
               'nodeSubTitle'
                 | translate
@@ -43,16 +45,18 @@
         [ngClass]="{ inactive: selectedNode?.id !== node?.id }"
       >
         <span
+          id="nodeCollapseBtn"
           class="expandCollapseBtn"
           (click)="node.isExpanded = !node.isExpanded"
         >
           <mat-icon
+            id="nodeExpandDown"
             [ngClass]="{ 'rotate-270': !node.isExpanded }"
             class="material-icons-outlined"
             >expand_circle_down</mat-icon
           >
         </span>
-        <span>
+        <span id="nodeAssetCount">
           {{
             'nodeChildrenHead'
               | translate
@@ -67,6 +71,7 @@
     </div>
     <div class="right">
       <span
+        id="nodeGetCount"
         class="nodeCount"
         [ngClass]="{
           nodeCountInvert: selectedNode && node && selectedNode?.id === node?.id
@@ -80,10 +85,11 @@
         class="more-icon"
         aria-label="More Options"
       >
-        <mat-icon>more_horiz</mat-icon>
+        <mat-icon id="nodeMoreMenu">more_horiz</mat-icon>
       </span>
       <mat-menu #hierarchyMenu="matMenu" xPosition="before">
         <button
+          id="nodeMoreMenuBtn"
           mat-menu-item
           cdkOverlayOrigin
           #trigger="cdkOverlayOrigin"
@@ -110,11 +116,12 @@
           </div>
         </ng-template>
         <button
+          id="nodeRemovebtn"
           mat-menu-item
           class="text-red"
           (click)="onRemoveNode($event, node)"
         >
-          <span translate="removeBtn"></span>
+          <span id="nodeRemove" translate="removeBtn"></span>
         </button>
       </mat-menu>
     </div>

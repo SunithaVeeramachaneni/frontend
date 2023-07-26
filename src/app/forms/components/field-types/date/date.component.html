@@ -2,16 +2,18 @@
   [(ngModel)]="defaultDateChecked"
   (change)="toggleChecked()"
   class="date-checkbox"
+  id="DefaultDateCheck"
 >
 </mat-checkbox>
 
-<label translate="dateLabel" class="date-label"></label>
+<label id="dateLabel" translate="dateLabel" class="date-label"></label>
 
 <mat-checkbox
   [(ngModel)]="defaultTimeChecked"
   (change)="toggleChecked()"
   class="date-checkbox"
+  id="defaultTimeCheck"
 >
 </mat-checkbox>
 
-<label translate="timeLabel" class="date-label"></label>
+<label id="timeLabel" translate="timeLabel" class="date-label"></label>

@@ -1,29 +1,56 @@
 <div class="form-header-modal" [formGroup]="headerDataForm">
   <mat-toolbar class="form-toolbar">
-    <button (click)="onCancel()" class="back-btn">
-      <svg-icon icon="icon-back-arrow" class="back-arrow"></svg-icon>
+    <button
+      id="templateConfigurationModelBackBtn"
+      (click)="onCancel()"
+      class="back-btn"
+    >
+      <svg-icon
+        id="templateConfigurationModelBackIcon"
+        icon="icon-back-arrow"
+        class="back-arrow"
+      ></svg-icon>
     </button>
   </mat-toolbar>
   <div class="dis-flex form-content">
     <div class="width-5"></div>
     <div class="width-95">
       <div class="form-details">
-        <h2 class="heading" translate="templateDetailsHeading"></h2>
-        <p class="sub-heading" translate="setTemplateTypeHeading"></p>
+        <h2
+          id="templateConfigurationModelHeading"
+          class="heading"
+          translate="templateDetailsHeading"
+        ></h2>
+        <p
+          id="templateConfigurationModelSubHeading"
+          class="sub-heading"
+          translate="setTemplateTypeHeading"
+        ></p>
         <div class="formtype-flex">
           <div class="formtype-style">
             <input
+              id="templateConfigurationModelStandaloneType"
               type="radio"
               name="formType"
               [value]="formConfigurationStatus.standalone"
               id="1"
               formControlName="formType"
             />
-            <span class="radio-btn-text" translate="standalone"> </span>
-            <p class="radio-sub-text" translate="standaloneTemplateSubText"></p>
+            <span
+              id="templateConfigurationModelStandalone"
+              class="radio-btn-text"
+              translate="standalone"
+            >
+            </span>
+            <p
+              id="templateConfigurationModelStandaloneText"
+              class="radio-sub-text"
+              translate="standaloneTemplateSubText"
+            ></p>
           </div>
           <div class="formtype-style">
             <input
+              id="templateConfigurationModelStandaloneRadio"
               id="2"
               type="radio"
               name="formType"
@@ -31,15 +58,30 @@
               [disabled]="true"
               formControlName="formType"
             />
-            <span class="radio-btn-text" translate="embedded"> </span><br />
+            <span
+              id="templateConfigurationModelEmbedded"
+              class="radio-btn-text"
+              translate="embedded"
+            >
+            </span
+            ><br />
 
-            <p class="radio-sub-text" translate="embeddedTemplateSubText"></p>
+            <p
+              id="templateConfigurationModelEmbeddedText"
+              class="radio-sub-text"
+              translate="embeddedTemplateSubText"
+            ></p>
           </div>
         </div>
         <div class="form-name">
-          <p class="form-name-description" translate="templateName"></p>
+          <p
+            id="templateConfigurationModelName"
+            class="form-name-description"
+            translate="templateName"
+          ></p>
           <mat-form-field appearance="outline" class="width-100">
             <input
+              id="templateConfigurationModelNameText"
               type="text"
               name="formName"
               matInput
@@ -47,6 +89,7 @@
               formControlName="name"
             />
             <mat-error
+              id="templateConfigurationModelNameError"
               *ngIf="processValidationErrors('name')"
               class="error-fields"
             >
@@ -60,9 +103,14 @@
               }}
             </mat-error>
           </mat-form-field>
-          <p class="form-name-description" translate="templateDescription"></p>
+          <p
+            id="templateConfigurationModelDescription"
+            class="form-name-description"
+            translate="templateDescription"
+          ></p>
           <mat-form-field appearance="outline" class="width-100">
             <input
+              id="templateConfigurationModelDescriptionText"
               type="text"
               matInput
               name="formDescription"
@@ -72,10 +120,15 @@
           </mat-form-field>
         </div>
         <div class="tags">
-          <p class="form-name-description m-b-0" translate="tags"></p>
+          <p
+            id="templateConfigurationModelTags"
+            class="form-name-description m-b-0"
+            translate="tags"
+          ></p>
           <mat-form-field class="chips-list width-100" appearance="outline">
             <mat-chip-list #chipList>
               <mat-chip
+                id="templateConfigurationModelTagsInput"
                 *ngFor="let tag of tags"
                 [selectable]="selectable"
                 [removable]="removable"
@@ -83,9 +136,15 @@
                 class="tags-mat-chips"
               >
                 {{ tag }}
-                <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                <mat-icon
+                  id="templateConfigurationModelCancelTags"
+                  matChipRemove
+                  *ngIf="removable"
+                  >cancel</mat-icon
+                >
               </mat-chip>
               <input
+                id="templateConfigurationModelTagsText"
                 [placeholder]="'startTypingTags' | translate"
                 [matChipInputFor]="chipList"
                 [matAutocomplete]="auto"
@@ -101,6 +160,7 @@
               (optionSelected)="selected($event)"
             >
               <mat-option
+                id="templateConfigurationModelTagsOptions"
                 *ngFor="let tag of filteredTags | async"
                 [value]="tag"
               >
@@ -115,7 +175,11 @@
           *ngIf="headerDataForm.get('additionalDetails')['controls'].length < 5"
         >
           <p translate="additionalDetails" class="additional-details-text"></p>
-          <button class="add-button" (click)="addAdditionalDetails()">
+          <button
+            id="templateConfigurationModelAdditionalDetailBtn"
+            class="add-button"
+            (click)="addAdditionalDetails()"
+          >
             {{ 'add' | translate }}
           </button>
         </div>
@@ -125,8 +189,15 @@
             headerDataForm.get('additionalDetails')['controls']?.length > 0
           "
         >
-          <div class="width-45 label">{{ 'label' | translate }}</div>
-          <div class="width-45 m-l-20 value">{{ 'value' | translate }}</div>
+          <div id="templateConfigurationModelLabel" class="width-45 label">
+            {{ 'label' | translate }}
+          </div>
+          <div
+            id="templateConfigurationModelValue"
+            class="width-45 m-l-20 value"
+          >
+            {{ 'value' | translate }}
+          </div>
         </div>
         <div formArrayName="additionalDetails">
           <div
@@ -142,6 +213,7 @@
                   class="m-l-5 symbol m-b-10 width-100"
                 >
                   <input
+                    id="templateConfigurationModelText"
                     #labelInput
                     matInput
                     type="text"
@@ -150,9 +222,9 @@
                     [matAutocomplete]="autolabel"
                     (click)="labelOptionClick(i)"
                   />
-
                   <mat-autocomplete #autolabel="matAutocomplete">
                     <mat-option
+                      id="templateConfigurationModelLabelOptions"
                       *ngFor="let label of filteredLabels$ | async"
                       [value]="label"
                     >
@@ -162,7 +234,9 @@
                         class="remove-btn"
                         (click)="removeLabel(label, i)"
                       >
-                        <span>{{ 'removeBtn' | translate }}</span>
+                        <span id="templateConfigurationModelRemoveBtn">{{
+                          'removeBtn' | translate
+                        }}</span>
                       </button>
                     </mat-option>
                     <mat-option
@@ -173,6 +247,7 @@
                     >
                       <ng-container>
                         <button
+                          id="templateConfigurationModelStoreDetails"
                           mat-button
                           color="primary"
                           class="p-0"
@@ -186,9 +261,13 @@
                             ].pristine
                           "
                         >
-                          <mat-icon class="m-r-5">add</mat-icon>
+                          <mat-icon
+                            id="templateConfigurationModelAddDetailsIcon"
+                            class="m-r-5"
+                            >add</mat-icon
+                          >
 
-                          <span
+                          <span id="templateConfigurationModelAddNew"
                             >{{ 'addNew' | translate }} ({{
                               headerDataForm.get('additionalDetails')[
                                 'controls'
@@ -201,6 +280,7 @@
                   </mat-autocomplete>
 
                   <mat-error
+                    id="templateConfigurationModelLabelError"
                     *ngIf="processValidationErrorsAdditionalDetails(i, 'label')"
                     class="m-t-5 error-fields"
                   >
@@ -222,6 +302,7 @@
                   class="m-l-20 symbol m-b-10 width-100"
                 >
                   <input
+                    id="templateConfigurationModelValueText"
                     #valueInput
                     matInput
                     type="text"
@@ -232,20 +313,25 @@
                   />
                   <mat-autocomplete #autoValue="matAutocomplete">
                     <mat-option
+                      id="templateConfigurationModelValueOption"
                       *ngFor="let value of filteredValues$ | async"
                       [value]="value"
                     >
                       {{ value }}
                       <button
+                        id="templateConfigurationModelValueRemoveBtn"
                         mat-button
                         class="remove-btn"
                         (click)="removeValue(value, i)"
                       >
-                        <span>{{ 'removeBtn' | translate }}</span>
+                        <span id="templateConfigurationModelValueRemoveBtn">{{
+                          'removeBtn' | translate
+                        }}</span>
                       </button>
                     </mat-option>
 
                     <mat-option
+                      id="templateConfigurationModelValueOptions"
                       *ngIf="
                         headerDataForm.get('additionalDetails')['controls'][i][
                           'value'
@@ -253,6 +339,7 @@
                       "
                     >
                       <button
+                        id="templateConfigurationModelStoreValue"
                         mat-button
                         color="primary"
                         class="p-0"
@@ -264,9 +351,13 @@
                             .pristine
                         "
                       >
-                        <mat-icon class="m-r-5">add</mat-icon>
+                        <mat-icon
+                          id="templateConfigurationModelAddValue"
+                          class="m-r-5"
+                          >add</mat-icon
+                        >
 
-                        <span
+                        <span id="templateConfigurationModelAddNewValue"
                           >{{ 'addNew' | translate }} ({{
                             headerDataForm.get('additionalDetails')['controls'][
                               i
@@ -278,6 +369,7 @@
                   </mat-autocomplete>
 
                   <mat-error
+                    id="templateConfigurationModelValueError"
                     *ngIf="processValidationErrorsAdditionalDetails(i, 'value')"
                     class="m-t-5 error-fields"
                   >
@@ -294,6 +386,7 @@
               </div>
               <div class="width-10 cancel-icon">
                 <svg-icon
+                  id="templateConfigurationModelCloseIcon"
                   icon="icon-closeIcon"
                   class="close-icon"
                   (click)="deleteAdditionalDetails(i)"
@@ -304,6 +397,7 @@
 
           <div mat-dialog-actions align="end" class="buttons">
             <button
+              id="templateConfigurationModelCancelBtn"
               mat-stroked-button
               type="button"
               color="primary"
@@ -312,6 +406,7 @@
               translate="cancelBtn"
             ></button>
             <button
+              id="templateConfigurationModelNextBtn"
               mat-raised-button
               type="submit"
               color="primary"

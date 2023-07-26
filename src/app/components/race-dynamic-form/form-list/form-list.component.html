@@ -1,11 +1,13 @@
 <div class="list-view" *ngIf="userInfo$ | async">
   <div class="main-container">
     <div class="forms-header">
-      <h2 class="heading" translate="myForms"></h2>
+      <h2 id="formsListHeading" class="heading" translate="myForms"></h2>
       <div class="custom-form-field-gray-color search">
         <span class="no-of-forms" *ngIf="formsListCount$ | async as totalCount">
-          <span class="forms-count"> {{ totalCount }} &nbsp; </span>
-          <span class="forms-text">{{
+          <span id="formsListCount" class="forms-count">
+            {{ totalCount }} &nbsp;
+          </span>
+          <span id="formsListCountNum" class="forms-text">{{
             'forms'
               | translate
                 : {
@@ -14,8 +16,11 @@
           }}</span>
         </span>
         <mat-form-field appearance="outline">
-          <mat-icon matPrefix class="searchIcon">search</mat-icon>
+          <mat-icon matPrefix id="formsListsearchIcon" class="searchIcon"
+            >search</mat-icon
+          >
           <input
+            id="searchFormsList"
             matInput
             type="text"
             [placeholder]="'searchForms' | translate"
@@ -29,11 +34,13 @@
             class="pointer"
             #trigger="cdkOverlayOrigin"
             (click)="isPopoverOpen = !isPopoverOpen"
+            id="formListfilterBtn"
             matSuffix
             class="filter-icon"
           ></svg-icon>
         </mat-form-field>
         <button
+          id="formsListCreateNewBtn"
           *appCheckUserHasPermission="[perms.createForm, perms.importForm]"
           [matMenuTriggerFor]="menu"
           class="create-new-btn"

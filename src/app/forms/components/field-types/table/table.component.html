@@ -1,16 +1,34 @@
 <span class="table-field">
-  <button class="add-column-btn" (click)="addTab()">
-    <svg-icon icon="icon-add-column" class="add-column-icon"></svg-icon>
-    <span class="add-column-text" translate="addColumn"></span>
+  <button id="tableColBtn" class="add-column-btn" (click)="addTab()">
+    <svg-icon
+      id="tableCloIcon"
+      icon="icon-add-column"
+      class="add-column-icon"
+    ></svg-icon>
+    <span
+      id="tableColText"
+      class="add-column-text"
+      translate="addColumn"
+    ></span>
   </button>
 
   <span class="rows m-l-20">
-    <span class="rows-text" translate="rows"></span>
-    <input type="number" class="rows-input m-l-10" value="2" />
+    <span id="tableRowText" class="rows-text" translate="rows"></span>
+    <input
+      id="tableRowNumber"
+      type="number"
+      class="rows-input m-l-10"
+      value="2"
+    />
   </span>
 
   <span class="m-l-20">
-    <input type="checkbox" class="fix-no-of-rows-checkbox" checked />
+    <input
+      id="tableCheckbox"
+      type="checkbox"
+      class="fix-no-of-rows-checkbox"
+      checked
+    />
     <span class="m-l-10" translate="fixNoofRows"></span>
   </span>
 
@@ -22,19 +40,33 @@
   >
     <mat-tab *ngFor="let tab of tabs; let index = index">
       <ng-template mat-tab-label>
-        <a matTooltip="{{ tab }}" class="labels"> {{ tab }} </a>
+        <a id="tableTab" matTooltip="{{ tab }}" class="labels"> {{ tab }} </a>
       </ng-template>
       <span class="table-content">
         <button
+          id="tableDeleteBtn"
           class="delete-button"
           [disabled]="tabs.length === 1"
           (click)="removeTab(index)"
         >
-          <svg-icon icon="icon-delete-icon" class="delete-icon"></svg-icon>
+          <svg-icon
+            id="tableDeleteIcon"
+            icon="icon-delete-icon"
+            class="delete-icon"
+          ></svg-icon>
         </button>
-        <span class="labels" translate="columnName"></span>
-        <input type="text" name="column" class="input-field" />
-        <span class="labels" translate="responseType"></span>
+        <span id="tableColName" class="labels" translate="columnName"></span>
+        <input
+          id="tableColField"
+          type="text"
+          name="column"
+          class="input-field"
+        />
+        <span
+          id="tableResponseType"
+          class="labels"
+          translate="responseType"
+        ></span>
         <app-response-type-button
           [questionForm]="questionForm"
           [fieldTypes]="fieldTypes"

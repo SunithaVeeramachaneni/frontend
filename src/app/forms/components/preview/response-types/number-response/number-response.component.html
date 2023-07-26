@@ -1,7 +1,16 @@
 <div class="number-container">
   <div class="number-input">
-    <input type="number" class="number" [placeholder]="'enter' | translate" />
-    <div *ngIf="question.unitOfMeasurement !== 'None'" class="uom-text">
+    <input
+      id="numberResponseEnter"
+      type="number"
+      class="number"
+      [placeholder]="'enter' | translate"
+    />
+    <div
+      id="numberResponseQuestion"
+      *ngIf="question.unitOfMeasurement !== 'None'"
+      class="uom-text"
+    >
       {{ question.unitOfMeasurement }}
     </div>
   </div>
@@ -10,10 +19,20 @@
     *ngIf="question.rangeMetadata.min && question.rangeMetadata.max"
   >
     <div class="range-text">
-      <span class="range-text-label" translate="minTxt"></span>: {{ question.rangeMetadata.min }}
+      <span
+        id="numberResponseMin"
+        class="range-text-label"
+        translate="minTxt"
+      ></span
+      >: {{ question.rangeMetadata.min }}
     </div>
     <div class="range-text">
-      <span class="range-text-label" translate="maxTxt"></span>: {{ question.rangeMetadata.max }}
+      <span
+        id="numberResponseMax"
+        class="range-text-label"
+        translate="maxTxt"
+      ></span
+      >: {{ question.rangeMetadata.max }}
     </div>
   </div>
 </div>
