@@ -34,7 +34,8 @@ import {
   getPageWiseSectionQuestions,
   getPageWiseSections,
   getPageWiseQuestionLogics,
-  getImportedSectionsByTemplateId
+  getImportedSectionsByTemplateId,
+  getFormConfigurationCounter
 } from 'src/app/forms/state/builder/builder-state.selectors';
 
 import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
@@ -46,6 +47,7 @@ import {
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { RoundPlanConfigurationService } from 'src/app/forms/services/round-plan-configuration.service';
 import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
+import { v4 as uuidv4 } from 'uuid';
 
 @Component({
   selector: 'app-builder',
@@ -82,8 +84,10 @@ export class BuilderComponent implements OnInit, OnDestroy {
   isEmptyPlan = true;
   pageWiseSections: any;
   pageWiseSectionQuestions: any;
+  subFormPages: any;
   questionCounter: any;
   importedSectionsByTemplateId: any = {};
+  formConfigurationCounter: any;
   questionCounter$: Observable<number>;
   formMetadata$: Observable<FormMetadata>;
   pageWiseSectionQuestions$: Observable<{
@@ -101,6 +105,7 @@ export class BuilderComponent implements OnInit, OnDestroy {
   pageWiseSections$: Observable<any>;
   pageWiseQuestionLogics$: Observable<any>;
   importedSectionsByTemplateId$: Observable<any>;
+  getFormConfigurationCounter$: Observable<any>;
   updateFormTemplateUsageByFormIdSubscription: Subscription;
 
   readonly formConfigurationStatus = formConfigurationStatus;
@@ -118,6 +123,7 @@ export class BuilderComponent implements OnInit, OnDestroy {
       .select(getSubFormPages(this.selectedNode.id))
       .pipe(
         tap((pages) => {
+          this.subFormPages = pages;
           if (pages && pages.length === 0) {
             this.isEmptyPlan = true;
           } else {
@@ -168,6 +174,13 @@ export class BuilderComponent implements OnInit, OnDestroy {
       .pipe(
         tap((importedSectionsByTemplateId) => {
           this.importedSectionsByTemplateId = importedSectionsByTemplateId;
+        })
+      );
+    this.getFormConfigurationCounter$ = this.store
+      .select(getFormConfigurationCounter())
+      .pipe(
+        tap((formConfigurationCounter) => {
+          this.formConfigurationCounter = formConfigurationCounter;
         })
       );
   }
@@ -351,10 +364,57 @@ export class BuilderComponent implements OnInit, OnDestroy {
   }
 
   copySection(pageIndex, sectionIndex, section: Section) {
+    const page = JSON.parse(JSON.stringify(this.subFormPages[pageIndex]));
+    let questionCounter = this.formConfigurationCounter;
     const sectionQuestionsList: SectionQuestions[] = [];
-    const questionsArray =
-      this.pageWiseSectionQuestions[pageIndex][section.id]?.questions || [];
+    const questionsArray = [];
+    const sectionQuestions = {};
+    const newQuestionIds = {};
+    for (const question of page.questions || []) {
+      if (question.sectionId === section.id) {
+        newQuestionIds[question.id] = `Q${++questionCounter}`;
+        sectionQuestions[question.id] = 1;
+        question.id = newQuestionIds[question.id];
+        question.skipIdGeneration = true;
+        questionsArray.push(question);
+      }
+    }
     const logicsArray = [];
+    const sectionLogics = {};
+    const newLogicIds = {};
+    for (const logic of page.logics || []) {
+      if (sectionQuestions[logic.questionId]) {
+        newLogicIds[logic.id] = uuidv4();
+        sectionLogics[`AQ_${logic.id}`] = 1;
+        logic.id = newLogicIds[logic.id];
+        logic.questionId = newQuestionIds[logic.questionId];
+        logic.evidenceQuestions = logic.evidenceQuestions.map(
+          (item) => newQuestionIds[item]
+        );
+        logic.hideQuestions = logic.hideQuestions.map(
+          (item) => newQuestionIds[item]
+        );
+        logic.mandateQuestions = logic.mandateQuestions.map(
+          (item) => newQuestionIds[item]
+        );
+        delete logic.questions;
+        logicsArray.push(logic);
+      }
+    }
+    const askQuestions = [];
+    for (const question of page.questions || []) {
+      if (
+        question.sectionId.startsWith('AQ_') &&
+        sectionLogics[question.sectionId]
+      ) {
+        question.id = `AQ_${uuidv4()}`;
+        question.sectionId = `AQ_${
+          newLogicIds[question.sectionId.substring(3)]
+        }`;
+        question.skipIdGeneration = true;
+        askQuestions.push(question);
+      }
+    }
     delete section.isImported;
     delete section.templateId;
     delete section.externalSectionId;
@@ -362,7 +422,8 @@ export class BuilderComponent implements OnInit, OnDestroy {
     delete section.id;
     sectionQuestionsList.push({
       section,
-      questions: questionsArray
+      questions: [...questionsArray, ...askQuestions],
+      logics: logicsArray
     });
 
     this.roundPlanConfigurationService.addSections(

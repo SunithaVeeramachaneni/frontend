@@ -9,7 +9,8 @@
       sectionIds: sectionIds$ | async,
       questionIds: questionIds$ | async,
       pageWiseQuestionLogics: pageWiseQuestionLogics$ | async,
-      importedSectionsByTemplateId: importedSectionsByTemplateId$ | async
+      importedSectionsByTemplateId: importedSectionsByTemplateId$ | async,
+      formConfigurationCounter: getFormConfigurationCounter$ | async
     } as props"
   >
     <ng-container *ngFor="let pageIndex of props.pageIndexes">

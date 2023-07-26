@@ -62,6 +62,7 @@ export interface Question {
   isResponseTypeModalOpen: boolean;
   unitOfMeasurement?: string;
   rangeMetadata?: NumberRangeMetadata;
+  skipIdGeneration?: boolean;
 }
 
 export interface SectionQuestions {

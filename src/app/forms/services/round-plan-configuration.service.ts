@@ -312,7 +312,9 @@ export class RoundPlanConfigurationService {
     isTemplate: boolean
   ) {
     return {
-      id: isTemplate
+      id: question?.skipIdGeneration
+        ? question.id
+        : isTemplate
         ? `TQ${questionCounter}_${new Date().getTime()}`
         : `Q${questionCounter}`,
       sectionId,

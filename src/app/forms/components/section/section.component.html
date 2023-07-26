@@ -82,7 +82,11 @@
             >
               <span translate="unlinkSection"></span>
             </button>
-            <button mat-menu-item (click)="copySection()">
+            <button
+              *ngIf="sectionForm.get('isImported').value"
+              mat-menu-item
+              (click)="copySection()"
+            >
               <span translate="copySection"></span>
             </button>
             <button

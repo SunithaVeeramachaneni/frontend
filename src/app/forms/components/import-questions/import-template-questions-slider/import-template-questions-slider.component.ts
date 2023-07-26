@@ -142,9 +142,22 @@ export class ImportTemplateQuestionsSliderComponent
           questionsArray.push(question);
         }
       });
-      const logicsArray = filteredTemplate.logics.filter(
-        (logic) => questionsInSection[logic.questionId] === 1
-      );
+      const logicsInSection = {};
+      let index = 1;
+      const logicsArray = filteredTemplate.logics.filter((logic) => {
+        if (!questionsInSection[logic.questionId]) return false;
+        logicsInSection[`AQ_${logic.id}`] = index++;
+        logic.questions = [];
+        return true;
+      });
+      filteredTemplate.questions.forEach((question) => {
+        if (logicsInSection[question.sectionId]) {
+          logicsArray[logicsInSection[question.sectionId] - 1].questions.push(
+            question
+          );
+        }
+      });
+
       return {
         ...section,
         questions: questionsArray,
@@ -161,8 +174,9 @@ export class ImportTemplateQuestionsSliderComponent
   }
 
   useTemplate() {
-    let importTemplateData = cloneDeep(this.selectedTemplateSections$.value);
-
+    let importTemplateData = JSON.parse(
+      JSON.stringify(this.selectedTemplateSections$.value)
+    );
     importTemplateData = importTemplateData.filter(
       (section) => section.checked === true
     );
@@ -170,6 +184,7 @@ export class ImportTemplateQuestionsSliderComponent
       const questions = section.questions.filter(
         (question) => question.sectionId === section.id
       );
+      delete section.questions;
       const logics = section.logics;
       delete section.logics;
       section.externalSectionId = section.id;
@@ -295,6 +310,7 @@ export class ImportTemplateQuestionsSliderComponent
               sectonId: question.sectionId
             });
           });
+          delete logic.questions;
         });
       });
       const questionsCount = this.importSectionQuestions.reduce((acc, curr) => {

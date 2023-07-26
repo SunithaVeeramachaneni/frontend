@@ -37,6 +37,9 @@ export const getModuleName = createSelector(
   (state) => state.moduleName
 );
 
+export const getFormConfigurationCounter = () =>
+  createSelector(selectFormConfigurationState, (state) => state.counter);
+
 export const getPagesCount = (subFormId) =>
   createSelector(selectFormConfigurationState, (state) => {
     let key = 'pages';
