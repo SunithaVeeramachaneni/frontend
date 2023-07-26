@@ -1,6 +1,6 @@
 <div class="locations-modal">
   <div class="dis-flex heading-container">
-    <h2 class="heading">
+    <h2 class="heading" id="hierarchyLocationListHeading">
       {{
         'selectHierarchyType'
           | translate
@@ -13,8 +13,11 @@
   <div class="search">
     <span>
       <mat-form-field class="width-100" appearance="outline">
-        <mat-icon matPrefix class="icon">search</mat-icon>
+        <mat-icon id="hierarchyLocationListSearchIcon" matPrefix class="icon"
+          >search</mat-icon
+        >
         <input
+          id="hierarchyLocationListSearchText"
           matInput
           [placeholder]="'searchLocation' | translate"
           class="width-100"
@@ -27,6 +30,7 @@
   <div class="list-container">
     <div *ngIf="allItems.length; else loadingLocations" class="node-container">
       <mat-checkbox
+        id="hierarchyLocationListSelectAll"
         class="master-checkbox"
         [(ngModel)]="isMasterChecked"
         (change)="handleMasterToggle($event)"
@@ -47,7 +51,7 @@
         </div>
       </div>
       <ng-template #noResults
-        ><p class="no-results-text">
+        ><p id="hierarchyLocationListNoResult" class="no-results-text">
           {{ 'noResults' | translate }}
         </p></ng-template
       >
@@ -55,7 +59,7 @@
   </div>
 
   <div class="locations-footer">
-    <div class="selected-items">
+    <div id="hierarchyLocationListCount" class="selected-items">
       {{
         'selectedLocations'
           | translate
@@ -67,6 +71,7 @@
 
     <div mat-dialog-actions class="actions">
       <button
+        id="hierarchyLocationListCancelBtn"
         mat-stroked-button
         class="cancel-btn"
         mat-dialog-close="true"
@@ -74,6 +79,7 @@
         (click)="cancel()"
       ></button>
       <button
+        id="hierarchyLocationListNextBtn"
         mat-raised-button
         class="next-btn"
         translate="Next"

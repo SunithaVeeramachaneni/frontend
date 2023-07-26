@@ -3,6 +3,7 @@
   <mat-form-field appearance="outline" class="dropdown">
     <mat-select [multiple]="question.multi" [placeholder]="'enter' | translate">
       <mat-option
+        id="downDownResponseTitle"
         *ngFor="let value of question.value.value"
         [value]="value.title"
         [ngStyle]="{ color: value.color }"
@@ -17,6 +18,7 @@
 <div *ngIf="question.value.value.length <= 4">
   <mat-button-toggle-group>
     <mat-button-toggle
+      id="downDownResponseQuestion"
       *ngFor="let question of question.value.value"
       [value]="question.title"
       [ngStyle]="{

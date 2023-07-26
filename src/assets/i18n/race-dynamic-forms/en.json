@@ -368,5 +368,14 @@
   "template": "Template",
   "addNotes": "Add Notes",
   "confirmDelete?": "Confirm Delete?",
-  "deletingTheSectionWillUnlinkTheElementsCreatedFromThisTemplate": "Deleting the section will unlink the elements created from this Template."
+  "deletingTheSectionWillUnlinkTheElementsCreatedFromThisTemplate": "Deleting the section will unlink the elements created from this Template.",
+  "uploadExcel": "Upload Excel",
+  "uploadEmbedded": "Embedded (For mWorkorder)",
+  "uploadStandalone": "Standalone (For mInspections)",
+  "downloadTemplate": "Download Excel Template",
+  "review": "Review",
+  "successfullyUpload": "Successfully uploaded",
+  "failedUpload": "Failed to uploaded",
+  "closeBtn": "Close",
+  "downloadExcel": "Download Excel"
 }

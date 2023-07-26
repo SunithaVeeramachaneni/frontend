@@ -120,7 +120,6 @@ import { ShiftDateChangeWarningModalComponent } from './components/shift-date-ch
 import { DynamicStepperComponent } from './components/stepper/dynamic-stepper/dynamic-stepper.component';
 import { StepsHeaderComponent } from './components/stepper/steps-header/steps-header.component';
 import { MatStepperModule } from '@angular/material/stepper';
-import { PdfBuilderOprComponent } from './components/pdf-builder-opr/pdf-builder-opr.component';
 import { UploadImagePreviewComponent } from './components/upload-image-preview/upload-image-preview.component';
 import { FormUpdateDeleteProgressComponent } from './components/form-update-delete-progress/form-update-delete-progress.component';
 @NgModule({
@@ -201,6 +200,7 @@ import { FormUpdateDeleteProgressComponent } from './components/form-update-dele
     StepsHeaderComponent,
     PdfBuilderOprComponent,
     FormUpdateDeleteProgressComponent
+    StepsHeaderComponent
   ],
   imports: [
     SharedModule,
@@ -289,7 +289,6 @@ import { FormUpdateDeleteProgressComponent } from './components/form-update-dele
     ShiftMenuItemComponent,
     DynamicStepperComponent,
     StepsHeaderComponent,
-    PdfBuilderOprComponent,
     InstructionPdfComponent,
     ShiftMenuItemComponent,
     FormUpdateDeleteProgressComponent

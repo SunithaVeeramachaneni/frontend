@@ -1,6 +1,6 @@
 <div class="assets-modal">
   <div class="dis-flex heading-container">
-    <h2 class="heading">
+    <h2 id="hierarchyAssetListHeading" class="heading">
       {{
         'selectHierarchyType'
           | translate
@@ -12,8 +12,11 @@
   </div>
   <span class="custom-form-field-gray-color search">
     <mat-form-field appearance="outline" class="searchField" disabled>
-      <mat-icon matPrefix class="searchIcon">search</mat-icon>
+      <mat-icon id="hierarchyAssetListSearchIcon" matPrefix class="searchIcon"
+        >search</mat-icon
+      >
       <input
+        id="hierarchyAssetListSearchInput"
         matInput
         type="text"
         [placeholder]="'search' | translate"
@@ -38,8 +41,10 @@
             <div class="nodeContent">
               <img [src]="option.image" />
               <div class="description">
-                <span class="title">{{ option.name }}</span>
-                <span class="subTitle">
+                <span id="hierarchyAssetListName" class="title">{{
+                  option.name
+                }}</span>
+                <span class="subTitle" id="hierarchyAssetListSubTitle">
                   {{
                     'nodeSubTitle'
                       | translate
@@ -55,6 +60,7 @@
         </mat-optgroup>
       </mat-autocomplete>
       <svg-icon
+        id="hierarchyAssetListCloseIcon"
         icon="icon-closeIcon"
         matSuffix
         *ngIf="searchMasterData.value.length"
@@ -79,7 +85,7 @@
   </div>
 
   <div class="assets-footer">
-    <div class="selected-items">
+    <div id="hierarchyAssetListCount" class="selected-items">
       {{
         'selectedLocationsAndAssets'
           | translate
@@ -92,6 +98,7 @@
 
     <div mat-dialog-actions class="actions">
       <button
+        id="hierarchyAssetListCancelBtn"
         mat-stroked-button
         class="cancel-btn"
         mat-dialog-close="true"
@@ -99,6 +106,7 @@
         (click)="cancel()"
       ></button>
       <button
+        id="hierarchyAssetListAddBtn"
         mat-raised-button
         class="next-btn"
         translate="Add"

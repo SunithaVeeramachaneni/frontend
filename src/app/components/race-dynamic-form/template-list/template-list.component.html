@@ -1,13 +1,13 @@
 <div class="list-view">
   <div class="main-container">
     <div class="forms-header">
-      <h2 class="heading" translate="templates"></h2>
+      <h2 id="templateListHeading" class="heading" translate="templates"></h2>
       <span class="custom-form-field-gray-color search">
         <span class="no-of-forms" *ngIf="templatesCount$ | async as totalCount">
-          <span class="forms-count">
+          <span id="templateListCount" class="forms-count">
             {{ totalCount | count }}
           </span>
-          <span class="forms-text">{{
+          <span id="templateListCountText" class="forms-text">{{
             'templates'
               | translate
                 : {
@@ -16,8 +16,11 @@
           }}</span>
         </span>
         <mat-form-field appearance="outline">
-          <mat-icon matPrefix class="searchIcon">search</mat-icon>
+          <mat-icon id="templateListSearchIcon" matPrefix class="searchIcon"
+            >search</mat-icon
+          >
           <input
+            id="templateListSearchText"
             matInput
             type="text"
             [placeholder]="'searchTemplates' | translate"
@@ -25,6 +28,7 @@
             [formControl]="searchTemplates"
           />
           <svg-icon
+            id="templateListFilterIcon"
             icon="icon-filterIcon"
             class="filter-icon"
             cdkOverlayOrigin
@@ -34,6 +38,7 @@
           ></svg-icon>
         </mat-form-field>
         <button
+          id="templateListCreateBtn"
           mat-raised-button
           translate="createNew"
           class="create-new-btn"

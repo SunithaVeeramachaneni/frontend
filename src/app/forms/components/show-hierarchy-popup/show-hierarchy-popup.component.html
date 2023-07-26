@@ -4,9 +4,13 @@
 ></div>
 <div class="show-hierarchy-container" *ngIf="hierarchyList$ | async">
   <div class="heading">
-    <a translate>hierarchy</a>
-    <button class="cancel-icon" (click)="closeShowHierarchy()">
-      <mat-icon>close</mat-icon>
+    <a id="showHierarchyPopUp" translate>hierarchy</a>
+    <button
+      id="showHierarchyCancelBtn"
+      class="cancel-icon"
+      (click)="closeShowHierarchy()"
+    >
+      <mat-icon id="showHierarchyCloseIcon">close</mat-icon>
     </button>
   </div>
   <div class="node-container">

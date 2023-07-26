@@ -19,7 +19,7 @@
       aria-label="Forms"
       [formControl]="formCategory"
     >
-      <mat-button-toggle value="all"
+      <mat-button-toggle value="all" id="formsCount"
         >{{
           'all'
             | translate
@@ -28,7 +28,7 @@
                 }
         }}
       </mat-button-toggle>
-      <mat-button-toggle value="scheduled"
+      <mat-button-toggle value="scheduled" id="formsCountScheduled"
         >{{
           'scheduled'
             | translate
@@ -37,7 +37,7 @@
                 }
         }}
       </mat-button-toggle>
-      <mat-button-toggle value="unscheduled">{{
+      <mat-button-toggle value="unscheduled" id="formCountUnscheduled">{{
         'unscheduled'
           | translate
             : {
@@ -46,8 +46,11 @@
       }}</mat-button-toggle>
     </mat-button-toggle-group>
     <mat-form-field appearance="outline" class="search">
-      <mat-icon matPrefix class="searchIcon">search</mat-icon>
+      <mat-icon id="formsSearchIcon" matPrefix class="searchIcon"
+        >search</mat-icon
+      >
       <input
+        id="formsSearchText"
         matInput
         type="text"
         [placeholder]="'search' | translate"
@@ -56,6 +59,7 @@
       />
 
       <svg-icon
+        id="formsFilterIcon"
         icon="icon-filterIcon"
         cdkOverlayOrigin
         #trigger="cdkOverlayOrigin"

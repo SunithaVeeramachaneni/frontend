@@ -18,6 +18,7 @@
         <div class="left">
           <div class="dis-flex">
             <svg-icon
+              id="routePlanSixDots"
               icon="icon-six-dots"
               *ngIf="hierarchyMode !== 'asset_hierarchy'"
               cdkDragHandle
@@ -25,6 +26,7 @@
             ></svg-icon>
             <div class="nodeContent" class="nodeContent">
               <svg-icon
+                id="roundPlanIcons"
                 [icon]="
                   node?.type === 'location'
                     ? 'icon-locationIcon'
@@ -33,8 +35,8 @@
                 class="node-icon"
               ></svg-icon>
               <div class="description">
-                <span class="title">{{ node.name }}</span>
-                <span class="subTitle">
+                <span id="roundPlanName" class="title">{{ node.name }}</span>
+                <span id="roundPlanSubTitle" class="subTitle">
                   {{
                     'nodeSubTitle'
                       | translate
@@ -53,13 +55,16 @@
             [ngClass]="{ white: selectedNode.id === node.id }"
           >
             <span
+              id="roundPlanExpand"
               class="expandCollapseBtn"
               (click)="node.isExpanded = !node.isExpanded"
-              ><mat-icon [ngClass]="{ 'rotate-270': !node.isExpanded }"
+              ><mat-icon
+                id="roundPlanExpandDown"
+                [ngClass]="{ 'rotate-270': !node.isExpanded }"
                 >expand_circle_down</mat-icon
               ></span
             >
-            <span>
+            <span id="roundPlanCount">
               {{
                 'nodeChildrenHead'
                   | translate
@@ -76,6 +81,7 @@
         </div>
         <div class="right">
           <span
+            id="roundPlanNodeId"
             class="nodeCount"
             [ngClass]="{ nodeCountInvert: selectedNode.id === node.id }"
           >
@@ -87,16 +93,20 @@
             class="more-icon"
             aria-label="More Options"
           >
-            <mat-icon>more_horiz</mat-icon>
+            <mat-icon id="roundPlanMoreMenu">more_horiz</mat-icon>
           </span>
           <mat-menu #hierarchyMenu="matMenu" xPosition="before">
             <button
+              id="roundPlanMenuBtn"
               mat-menu-item
               cdkOverlayOrigin
               #trigger="cdkOverlayOrigin"
               (click)="toggleShowHierarchyPopover(node)"
             >
-              <span translate="showHierarchy"></span>
+              <span
+                id="roundPlanShowHierarchy"
+                translate="showHierarchy"
+              ></span>
             </button>
             <ng-template
               cdkConnectedOverlay
@@ -118,15 +128,20 @@
                 ></app-show-hierarchy-popup>
               </div>
             </ng-template>
-            <button mat-menu-item (click)="triggerCopyNode(node)">
-              <span translate="copy"></span>
+            <button
+              id="roundPlanCopyBtn"
+              mat-menu-item
+              (click)="triggerCopyNode(node)"
+            >
+              <span id="roundPlanCopy" translate="copy"></span>
             </button>
             <button
+              id="roundPlanRemoveBtn"
               mat-menu-item
               class="text-red"
               (click)="onRemoveNode($event, node)"
             >
-              <span translate="delete"></span>
+              <span id="roundPlanDelete" translate="delete"></span>
             </button>
           </mat-menu>
         </div>

@@ -1,21 +1,29 @@
 <div class="from-templates-modal">
   <div class="dis-flex heading-container">
-    <h2 class="heading">
+    <h2 id="createFormTemplateHeading" class="heading">
       {{ 'selectTemplate' | translate }}
     </h2>
     <button
+      id="createFormTemplateCancelBtn"
       class="choose-template-cancel"
       (click)="cancel()"
       aria-label="Close Template"
     >
-      <svg-icon icon="icon-cancel-icon" class="cancel-icon"></svg-icon>
+      <svg-icon
+        id="createFormTemplateCancelIcon"
+        icon="icon-cancel-icon"
+        class="cancel-icon"
+      ></svg-icon>
     </button>
   </div>
   <div class="search">
     <span>
       <mat-form-field class="width-100" appearance="outline">
-        <mat-icon matPrefix class="icon">search</mat-icon>
+        <mat-icon id="createFormTemplateSearchIcon" matPrefix class="icon"
+          >search</mat-icon
+        >
         <input
+          id="createFormTemplateSearchText"
           matInput
           [placeholder]="'searchTemplates' | translate"
           class="width-100"
@@ -23,6 +31,7 @@
           [formControl]="searchTemplates"
         />
         <svg-icon
+          id="createFormTemplateFilterIcon"
           icon="icon-filterIcon"
           cdkOverlayOrigin
           class="pointer"
@@ -40,10 +49,16 @@
       class="node-container"
     >
       <div *ngFor="let template of displayedTemplates; let i = index">
-        <div (click)="submitTemplate(i)" class="template">
-          <h5 class="template-name">{{ template.name }}</h5>
+        <div
+          id="createFormTemplateSubmit"
+          (click)="submitTemplate(i)"
+          class="template"
+        >
+          <h5 id="createFormTemplateName" class="template-name">
+            {{ template.name }}
+          </h5>
           <div *ngIf="template.description; else blankText">
-            <p class="template-description">
+            <p id="createFormTemplateDescription" class="template-description">
               {{ template.description }}
             </p>
           </div>
