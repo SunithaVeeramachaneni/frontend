@@ -39,11 +39,11 @@ import { ToastService } from 'src/app/shared/toast';
 import { Router } from '@angular/router';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { slideInOut } from 'src/app/animations';
-import { RoundPlanConfigurationModalComponent } from '../round-plan-configuration-modal/round-plan-configuration-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { PlantsResponse } from 'src/app/interfaces/master-data-management/plants';
 import { LoginService } from '../../login/services/login.service';
+import { RoundPlanModalComponent } from '../round-plan-modal/round-plan-modal.component';
 
 @Component({
   selector: 'app-round-plan-list',
@@ -682,12 +682,20 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
   }
 
   openRoundPlanCreationModal() {
-    this.dialog.open(RoundPlanConfigurationModalComponent, {
+    const dialogRef = this.dialog.open(RoundPlanModalComponent, {
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',
       width: '100%',
       panelClass: 'full-screen-modal'
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      const data = result === undefined ? {} : result;
+      if (Object.keys(data).length !== 0) {
+        this.isLoading$.next(true);
+        this.operatorRoundsService.fetchForms$.next({ data: 'search' });
+        this.formsListCountUpdate$.next(1);
+      }
     });
   }
 

@@ -74,6 +74,7 @@ export class RoundPlanResolverService
           plant,
           instructions,
           lastModifiedBy,
+          additionalDetails,
           _version: formListDynamoDBVersion
         } = form;
         let pdfTemplateConfiguration = JSON.parse(
@@ -94,6 +95,27 @@ export class RoundPlanResolverService
         } = authoredFormDetail;
         const { id: formDetailId, _version: formDetailDynamoDBVersion } =
           formDetail[0] ?? {};
+        if (instructions) {
+          const { notes, attachments, pdfDocs } = JSON.parse(instructions);
+          const attachmentPromises = attachments?.map((attachmentId) =>
+            this.operatorRoundsService
+              .getAttachmentsById$(attachmentId)
+              .toPromise()
+              .then()
+          );
+          const pdfPromises = pdfDocs?.map((pdfId) =>
+            this.operatorRoundsService
+              .getAttachmentsById$(pdfId)
+              .toPromise()
+              .then()
+          );
+          Promise.all(attachmentPromises).then((result) => {
+            this.operatorRoundsService.attachmentsMapping$.next(result);
+          });
+          Promise.all(pdfPromises).then((result) => {
+            this.operatorRoundsService.pdfMapping$.next(result);
+          });
+        }
         const formMetadata = {
           id,
           name,
@@ -105,7 +127,9 @@ export class RoundPlanResolverService
           tags,
           plantId,
           plant: plant.name,
-          pdfTemplateConfiguration
+          pdfTemplateConfiguration,
+          additionalDetails: JSON.parse(additionalDetails),
+          instructions: JSON.parse(instructions)
         };
 
         const subFormsMap = subForms ? JSON.parse(subForms) : {};

@@ -34,7 +34,8 @@ import {
 import {
   graphQLDefaultLimit,
   formConfigurationStatus,
-  permissions as perms, defaultLimit
+  permissions as perms,
+  defaultLimit
 } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { RaceDynamicFormService } from '../services/rdf.service';
@@ -44,12 +45,11 @@ import { generateCopyNumber, generateCopyRegex } from '../utils/utils';
 import { slideInOut } from 'src/app/animations';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 import { CreateFromTemplateModalComponent } from '../create-from-template-modal/create-from-template-modal.component';
-import { FormConfigurationModalComponent } from '../form-configuration-modal/form-configuration-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { LoginService } from '../../login/services/login.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { UsersService } from '../../user-management/services/users.service';
-import { FullScreenFormCreationComponent } from '../full-screen-form-creation/full-screen-form-creation.component';
+import { FormModalComponent } from '../form-modal/form-modal.component';
 
 @Component({
   selector: 'app-form-list',
@@ -301,6 +301,7 @@ export class FormListComponent implements OnInit, OnDestroy {
   );
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
   nextToken = '';
+  includeAttachments = false;
   selectedForm: GetFormList = null;
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
@@ -699,7 +700,7 @@ export class FormListComponent implements OnInit, OnDestroy {
   }
 
   openFormCreationModal(data: any) {
-    const dialogRef = this.dialog.open(FullScreenFormCreationComponent, {
+    const dialogRef = this.dialog.open(FormModalComponent, {
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',

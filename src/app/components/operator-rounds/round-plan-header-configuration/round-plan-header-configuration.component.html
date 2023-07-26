@@ -1,9 +1,24 @@
+<div mat-dialog-actions align="end" class="buttons">
+  <button
+    mat-stroked-button
+    type="button"
+    color="primary"
+    class="skip-btn"
+    (click)="onCancel()"
+    translate="cancelBtn"
+  ></button>
+  <button
+    mat-raised-button
+    type="submit"
+    color="primary"
+    class="next-btn"
+    (click)="next()"
+    [disabled]="headerDataForm.invalid"
+    translate="nextBtn"
+  ></button>
+</div>
+
 <div class="form-header-modal" [formGroup]="headerDataForm">
-  <mat-toolbar class="form-toolbar">
-    <button (click)="onCancel()" class="back-btn">
-      <svg-icon icon="icon-back-arrow" class="back-arrow"></svg-icon>
-    </button>
-  </mat-toolbar>
   <div class="dis-flex form-content">
     <div class="width-100">
       <div class="form-detials">
@@ -80,6 +95,7 @@
               formControlName="plantId"
               [placeholder]="'plant' | translate"
               (openedChange)="resetPlantSearchFilter()"
+              [disabled]="roundData.roundExists"
             >
               <input
                 class="searchable-input"
@@ -431,26 +447,6 @@
               </div>
             </div>
           </div>
-        </div>
-
-        <div mat-dialog-actions align="end" class="buttons">
-          <button
-            mat-stroked-button
-            type="button"
-            color="primary"
-            class="skip-btn"
-            (click)="onCancel()"
-            translate="cancelBtn"
-          ></button>
-          <button
-            mat-raised-button
-            type="submit"
-            color="primary"
-            class="next-btn"
-            (click)="next()"
-            [disabled]="headerDataForm.invalid || headerDataForm.pristine"
-            translate="nextBtn"
-          ></button>
         </div>
       </div>
     </div>

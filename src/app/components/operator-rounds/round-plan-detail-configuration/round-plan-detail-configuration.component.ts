@@ -5,7 +5,9 @@ import {
   OnDestroy,
   ViewChild,
   ElementRef,
-  ChangeDetectorRef
+  ChangeDetectorRef,
+  EventEmitter,
+  Output
 } from '@angular/core';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { LoginService } from 'src/app/components/login/services/login.service';
@@ -22,6 +24,7 @@ import {
   debounceTime,
   distinctUntilChanged,
   pairwise,
+  startWith,
   takeUntil,
   tap
 } from 'rxjs/operators';
@@ -54,8 +57,6 @@ import {
   RoundPlanConfigurationActions,
   UnitOfMeasurementActions
 } from 'src/app/forms/state/actions';
-import { HeaderService } from 'src/app/shared/services/header.service';
-import { BreadcrumbService } from 'xng-breadcrumb';
 import { ActivatedRoute, Router } from '@angular/router';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { MatDialog } from '@angular/material/dialog';
@@ -64,12 +65,10 @@ import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { FormService } from 'src/app/forms/services/form.service';
 import { getSelectedHierarchyList } from 'src/app/forms/state';
 import { HierarchyModalComponent } from 'src/app/forms/components/hierarchy-modal/hierarchy-modal.component';
-import { PdfBuilderOprComponent } from 'src/app/forms/components/pdf-builder-opr/pdf-builder-opr.component';
-
 @Component({
-  selector: 'app-round-plan-configuration',
-  templateUrl: './round-plan-configuration.component.html',
-  styleUrls: ['./round-plan-configuration.component.scss'],
+  selector: 'app-round-plan-detail-configuration',
+  templateUrl: './round-plan-detail-configuration.component.html',
+  styleUrls: ['./round-plan-detail-configuration.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
     trigger('previewSlide', [
@@ -81,8 +80,11 @@ import { PdfBuilderOprComponent } from 'src/app/forms/components/pdf-builder-opr
     ])
   ]
 })
-export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
+export class RoundPlanDetailConfigurationComponent
+  implements OnInit, OnDestroy
+{
   @ViewChild('name') formName: ElementRef;
+  @Output() gotoNextStep = new EventEmitter<void>();
   public openAppSider$: Observable<any>;
   formConfiguration: FormGroup;
   formMetadata$: Observable<FormMetadata>;
@@ -125,8 +127,6 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private store: Store<State>,
-    private headerService: HeaderService,
-    private breadcrumbService: BreadcrumbService,
     private router: Router,
     private route: ActivatedRoute,
     private formService: FormService,
@@ -183,11 +183,6 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
             },
             { emitEvent: false }
           );
-          const formName = name ? name : 'Untitled Form';
-          this.headerService.setHeaderTitle(formName);
-          this.breadcrumbService.set('@formName', {
-            label: formName
-          });
         }
       })
     );
@@ -213,6 +208,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
 
     this.formConfiguration.valueChanges
       .pipe(
+        startWith({}),
         debounceTime(500),
         distinctUntilChanged(),
         takeUntil(this.destroy$),
@@ -234,8 +230,8 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
 
             if (
               !isEqual(prev, curr) &&
-              prev.name !== undefined &&
-              curr.name !== undefined
+              ((prev.name !== undefined && curr.name !== undefined) ||
+                prev.description !== curr.description)
             ) {
               const { moduleName, ...currentVal } = curr;
               this.store.dispatch(
@@ -424,10 +420,8 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
         if (!createOrEditForm) {
           this.router.navigate(['/operator-rounds']);
         }
-        const { componentMode } = data;
         const { formConfigurationState, hierarchyState } = data.form || {};
-
-        if (createOrEditForm && componentMode === 'create')
+        if (createOrEditForm && this.router.url === '/operator-rounds')
           this.openHierarchyModal();
 
         if (hierarchyState && Object.keys(hierarchyState).length) {
@@ -645,15 +639,6 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
   }
 
   goToPDFBuilderConfiguration = () => {
-    this.dialog.open(PdfBuilderOprComponent, {
-      data: {
-        moduleName: 'OPERATOR_ROUNDS'
-      },
-      hasBackdrop: false,
-      disableClose: true,
-      width: '100vw',
-      minWidth: '100vw',
-      height: '100vh'
-    });
+    this.gotoNextStep.emit();
   };
 }
