@@ -188,6 +188,28 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
 
     this.getAllPlantsData();
     this.retrieveDetails();
+
+    this.rdfService.attachmentsMapping$
+      .pipe(map((data) => (Array.isArray(data) ? data : [])))
+      .subscribe((attachments) => {
+        attachments?.forEach((att) => {
+          this.cdrf.detectChanges();
+          this.filteredMediaType.mediaType.push(att.attachment);
+          this.filteredMediaTypeIds.mediaIds.push(att.id);
+        });
+      });
+
+    this.rdfService.pdfMapping$
+      .pipe(map((data) => (Array.isArray(data) ? data : [])))
+      .subscribe((pdfs) => {
+        pdfs?.forEach((pdf) => {
+          this.cdrf.detectChanges();
+          this.pdfFiles = {
+            mediaType: [...this.pdfFiles.mediaType, JSON.parse(pdf.fileInfo)]
+          };
+          this.filteredMediaPdfTypeIds.push(pdf.id);
+        });
+      });
   }
 
   handleEditorFocus(focus: boolean) {
@@ -195,7 +217,6 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
       this.isOpen.setValue(focus);
     }
   }
-
   getAllPlantsData() {
     this.plantService.fetchAllPlants$().subscribe((plants) => {
       this.allPlantsData = plants.items || [];
@@ -207,7 +228,8 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
         description: this.data.formData.description,
         formType: this.data.formData.formType,
         plantId: this.data.formData.plantId,
-        formStatus: this.data.formData.formStatus
+        formStatus: this.data.formData.formStatus,
+        instructions: this.data.formData.instructions
       });
 
       const additionalDetailsArray = this.data.formData.additionalDetails;
@@ -430,7 +452,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     }
   }
   trackBySelectedattachments(index: number, el: any): string {
-    return el.id;
+    return el?.id;
   }
 
   processValidationErrors(controlName: string): boolean {
@@ -462,9 +484,13 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
           this.resizePdf(this.base64result).then((compressedPdf) => {
             const onlybase64 = compressedPdf.split(',')[1];
             const resizedPdfSize = atob(onlybase64).length;
+            const pdf = {
+              fileInfo: { name: file.name, size: resizedPdfSize },
+              attachment: onlybase64
+            };
             if (resizedPdfSize <= maxSize) {
               this.rdfService
-                .uploadAttachments$({ file: onlybase64 })
+                .uploadAttachments$({ file: pdf })
                 .pipe(
                   tap((response) => {
                     if (response) {
@@ -491,9 +517,13 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
           this.resizeImage(this.base64result).then((compressedImage) => {
             const onlybase64 = compressedImage.split(',')[1];
             const resizedImageSize = atob(onlybase64).length;
+            const image = {
+              fileInfo: { name: file.name, size: resizedImageSize },
+              attachment: onlybase64
+            };
             if (resizedImageSize <= maxSize) {
               this.rdfService
-                .uploadAttachments$({ file: onlybase64 })
+                .uploadAttachments$({ file: image })
                 .pipe(
                   tap((response) => {
                     if (response) {
@@ -508,7 +538,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
                       this.filteredMediaType = {
                         mediaType: [
                           ...this.filteredMediaType.mediaType,
-                          this.base64result
+                          onlybase64
                         ]
                       };
                       this.cdrf.detectChanges();
@@ -580,7 +610,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
         height: '100%',
         panelClass: 'slideshow-container',
         backdropClass: 'slideshow-backdrop',
-        data: slideshowImages
+        data: { images: slideshowImages, type: 'forms' }
       });
     }
   }
@@ -875,5 +905,9 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.formMetaDataSubscription.unsubscribe();
+    this.rdfService.attachmentsMapping$.next([]);
+    // this.rdfService.attachmentsMapping$.unsubscribe();
+    this.rdfService.pdfMapping$.next([]);
+    // this.rdfService.pdfMapping$.unsubscribe();
   }
 }

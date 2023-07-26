@@ -38,7 +38,8 @@ export class OperatorRoundsService {
 
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
-
+  attachmentsMapping$ = new BehaviorSubject<any>({});
+  pdfMapping$ = new BehaviorSubject<any>({});
   selectedNode$ = this.selectedNodeSubject.asObservable();
   hierarchyMode$ = this.hierarchyModeSubject.asObservable();
   usersInfoByEmail: UsersInfoByEmail;
@@ -116,6 +117,13 @@ export class OperatorRoundsService {
       environment.operatorRoundsApiUrl,
       `upload-attachments`,
       file,
+      info
+    );
+  }
+  getAttachmentsById$(id, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
+    return this.appService._getResp(
+      environment.operatorRoundsApiUrl,
+      `upload-attachments/${id}`,
       info
     );
   }

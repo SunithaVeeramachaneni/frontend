@@ -188,6 +188,28 @@ export class RoundPlanHeaderConfigurationComponent
       });
     this.getAllPlantsData();
     this.retrieveDetails();
+
+    this.operatorRoundsService.attachmentsMapping$
+      .pipe(map((data) => (Array.isArray(data) ? data : [])))
+      .subscribe((attachments) => {
+        attachments?.forEach((att) => {
+          this.cdrf.detectChanges();
+          this.filteredMediaType.mediaType.push(att.attachment);
+          this.filteredMediaTypeIds.mediaIds.push(att.id);
+        });
+      });
+
+    this.operatorRoundsService.pdfMapping$
+      .pipe(map((data) => (Array.isArray(data) ? data : [])))
+      .subscribe((pdfs) => {
+        pdfs?.forEach((pdf) => {
+          this.cdrf.detectChanges();
+          this.pdfFiles = {
+            mediaType: [...this.pdfFiles.mediaType, JSON.parse(pdf.fileInfo)]
+          };
+          this.filteredMediaPdfTypeIds.push(pdf.id);
+        });
+      });
   }
 
   getAllPlantsData() {
@@ -473,9 +495,13 @@ export class RoundPlanHeaderConfigurationComponent
           this.resizePdf(this.base64result).then((compressedPdf) => {
             const onlybase64 = compressedPdf.split(',')[1];
             const resizedPdfSize = atob(onlybase64).length;
+            const pdf = {
+              fileInfo: { name: file.name, size: resizedPdfSize },
+              attachment: onlybase64
+            };
             if (resizedPdfSize <= maxSize) {
               this.operatorRoundsService
-                .uploadAttachments$({ file: onlybase64 })
+                .uploadAttachments$({ file: pdf })
                 .pipe(
                   tap((response) => {
                     if (response) {
@@ -502,9 +528,13 @@ export class RoundPlanHeaderConfigurationComponent
           this.resizeImage(this.base64result).then((compressedImage) => {
             const onlybase64 = compressedImage.split(',')[1];
             const resizedImageSize = atob(onlybase64).length;
+            const image = {
+              fileInfo: { name: file.name, size: resizedImageSize },
+              attachment: onlybase64
+            };
             if (resizedImageSize <= maxSize) {
               this.operatorRoundsService
-                .uploadAttachments$({ file: onlybase64 })
+                .uploadAttachments$({ file: image })
                 .pipe(
                   tap((response) => {
                     if (response) {
@@ -597,7 +627,7 @@ export class RoundPlanHeaderConfigurationComponent
         height: '100%',
         panelClass: 'slideshow-container',
         backdropClass: 'slideshow-backdrop',
-        data: slideshowImages
+        data: { images: slideshowImages, type: 'forms' }
       });
     }
   }

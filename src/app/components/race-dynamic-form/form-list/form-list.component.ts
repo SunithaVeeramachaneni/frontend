@@ -301,6 +301,7 @@ export class FormListComponent implements OnInit, OnDestroy {
   );
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
   nextToken = '';
+  includeAttachments = false;
   selectedForm: GetFormList = null;
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
