@@ -33,6 +33,7 @@ export class RoundPlanEditViewComponent implements OnInit, OnDestroy {
   selectedNode$: Observable<any>;
   selectedNodeLoadStatus = false;
   roundMetaDataSubscription: Subscription;
+  selectedNodeSubscription: Subscription;
 
   constructor(
     private dialog: MatDialog,
@@ -44,8 +45,8 @@ export class RoundPlanEditViewComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.selectedNode$ = this.operatorRoundsService.selectedNode$.pipe(
-      tap((data) => {
+    this.selectedNodeSubscription =
+      this.operatorRoundsService.selectedNode$.subscribe((data) => {
         if (data && Object.keys(data).length) {
           this.selectedNode = data;
           this.selectedNodeLoadStatus = true;
@@ -62,8 +63,7 @@ export class RoundPlanEditViewComponent implements OnInit, OnDestroy {
           this.selectedNodeInstances = [];
           this.cdrf.detectChanges();
         }
-      })
-    );
+      });
 
     this.route.data.subscribe((data) => {
       console.log(data);
@@ -146,5 +146,6 @@ export class RoundPlanEditViewComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.roundMetaDataSubscription.unsubscribe();
+    this.selectedNodeSubscription.unsubscribe();
   }
 }
