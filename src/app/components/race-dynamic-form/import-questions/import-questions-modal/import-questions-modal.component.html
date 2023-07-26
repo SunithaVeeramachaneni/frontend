@@ -1,15 +1,24 @@
 <div class="import-questions-modal">
   <div class="dis-flex heading-conatiner">
-    <h2 class="heading" translate>Import From</h2>
-    <mat-icon class="clear-icon" mat-dialog-close="true">clear</mat-icon>
+    <h2 id="importQuestionsHeading" class="heading" translate>Import From</h2>
+    <mat-icon
+      id="importQuestionClearIcon"
+      class="clear-icon"
+      mat-dialog-close="true"
+      >clear</mat-icon
+    >
   </div>
   <mat-tab-group class="body-container" animationDuration="0ms">
     <mat-tab>
-      <ng-template mat-tab-label>{{ 'templates' | translate }}</ng-template>
+      <ng-template id="importQuestionsTemplates" mat-tab-label>{{
+        'templates' | translate
+      }}</ng-template>
       <app-import-template-list></app-import-template-list>
     </mat-tab>
     <mat-tab>
-      <ng-template mat-tab-label>{{ 'forms' | translate }}</ng-template>
+      <ng-template id="importQuestionsForms" mat-tab-label>{{
+        'forms' | translate
+      }}</ng-template>
       <app-import-form-list></app-import-form-list>
     </mat-tab>
   </mat-tab-group>

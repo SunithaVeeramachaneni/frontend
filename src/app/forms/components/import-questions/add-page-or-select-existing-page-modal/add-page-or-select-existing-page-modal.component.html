@@ -2,6 +2,7 @@
   <div mat-dialog-content>
     <mat-radio-group [(ngModel)]="selectedPageOption">
       <mat-radio-button
+        id="addOrSelectPageBtn"
         color="primary"
         *ngFor="let pageOption of pageOptions"
         [value]="pageOption"
@@ -15,11 +16,16 @@
       *ngIf="selectedPageOption === 'existing'"
     >
       <mat-select
+        id="addOrSelectPage"
         [placeholder]="'select' | translate"
         [formControl]="selectedPageControl"
         [compareWith]="compareFn"
       >
-        <mat-option *ngFor="let page of data.pages" [value]="page">
+        <mat-option
+          id="addOrSelectPageName"
+          *ngFor="let page of data.pages"
+          [value]="page"
+        >
           {{ page.name }} {{ page.position }}
         </mat-option>
       </mat-select>
@@ -30,6 +36,7 @@
 
   <div mat-dialog-actions class="footer-btns">
     <button
+      id="addOrSelectPageCancelBtn"
       mat-button
       color="primary"
       class="buttons cancel-button"
@@ -37,6 +44,7 @@
       translate="cancel"
     ></button>
     <button
+      id="addOrSelectPageImportBtn"
       mat-raised-button
       color="primary"
       class="buttons import-btn"

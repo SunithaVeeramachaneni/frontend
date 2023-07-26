@@ -1,5 +1,6 @@
 <div>
   <span
+    id="hyperlinkResponseTitle"
     class="hyperlink"
     (click)="openURL(question.value)"
     *ngIf="question.value && question.value?.link; else addUrlBlock"
@@ -8,6 +9,10 @@
     }}</span
   >
   <ng-template #addUrlBlock>
-    <span translate="addLinkBtn" class="add-link"></span>
+    <span
+      id="hyperlinkResponseAddLink"
+      translate="addLinkBtn"
+      class="add-link"
+    ></span>
   </ng-template>
 </div>

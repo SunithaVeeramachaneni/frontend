@@ -1,12 +1,22 @@
 <div class="import-questions-modal">
   <div class="dis-flex heading-conatiner">
-    <h2 class="heading" translate>formsThatWillReflectChanges</h2>
-    <mat-icon class="clear-icon" mat-dialog-close="true">clear</mat-icon>
+    <h2 id="templateAffectedFormName" class="heading" translate>
+      formsThatWillReflectChanges
+    </h2>
+    <mat-icon
+      id="templateAffectedFormClearIcon"
+      class="clear-icon"
+      mat-dialog-close="true"
+      >clear</mat-icon
+    >
   </div>
   <div class="custom-form-field-gray-color search">
     <mat-form-field class="width-100" appearance="outline">
-      <mat-icon matPrefix class="searchIcon">search</mat-icon>
+      <mat-icon id="templateAffectedFormSearchIcon" matPrefix class="searchIcon"
+        >search</mat-icon
+      >
       <input
+        id="templateAffectedFormSearchText"
         matInput
         type="text"
         [placeholder]="'searchForms' | translate"
@@ -36,26 +46,36 @@
     *ngIf="(formsListCount$ | async) === 0 && (isLoading$ | async) === false"
     class="no-affected-forms"
   >
-    <svg-icon icon="icon-frame" class="affected-icon"></svg-icon>
-    <span class="affected-text" translate
+    <svg-icon
+      id="templateAffectedFormIcon"
+      icon="icon-frame"
+      class="affected-icon"
+    ></svg-icon>
+    <span id="templateAffectedFormLink" class="affected-text" translate
       >formsWillAppearOnceTemplateIsLinked</span
     >
   </div>
   <div mat-dialog-actions class="actions">
     <div>
-      <div *ngIf="(isLoading$ | async) === false" class="form-count">
+      <div
+        id="templateAffectedFormCount"
+        *ngIf="(isLoading$ | async) === false"
+        class="form-count"
+      >
         {{ affectedFormsCount }}
-        <span translate>affectedForms</span>
+        <span id="templateAffectedForm" translate>affectedForms</span>
       </div>
     </div>
     <div>
       <button
+        id="templateAffectedFormCloseBtn"
         mat-stroked-button
         mat-dialog-close="true"
         translate="cancel"
         class="close-btn"
       ></button>
       <button
+        id="templateAffectedFormDoneBtn"
         mat-raised-button
         (click)="markTemplateAsReady()"
         translate="done"

@@ -1,8 +1,13 @@
 <mat-toolbar class="form-toolbar">
   <div class="stepper-toolbar">
     <div class="width-10">
-      <button (click)="onGoBack(currentStep)" class="back-btn">
-        <svg-icon icon="icon-back-arrow" class="back-arrow"></svg-icon>
+      <button id="backBtn" (click)="onGoBack(currentStep)" class="back-btn">
+        <svg-icon
+          id="stepperHeaderBackIcon"
+          id="backBtnIcon"
+          icon="icon-back-arrow"
+          class="back-arrow"
+        ></svg-icon>
       </button>
     </div>
 
@@ -17,6 +22,7 @@
       >
         <div>
           <button
+            id="stepsBreadcrumb"
             class="steps-breadcrumb"
             (click)="onGotoStep(i)"
             [ngClass]="{
@@ -30,13 +36,19 @@
             [disabled]="currentStep < i"
           >
             <div class="index">
-              <span>{{ currentStep > i ? '&#x2713;' : i + 1 }} </span>
+              <span id="stepsNumber"
+                >{{ currentStep > i ? '&#x2713;' : i + 1 }}
+              </span>
             </div>
-            <div class="title pr-8">{{ step.title }}</div>
+            <div id="stepsTitle" class="title pr-8">{{ step.title }}</div>
           </button>
         </div>
         <div class="width-10">
-          <hr class="stepper-line" *ngIf="i !== steps.length - 1" />
+          <hr
+            id="stepsLine"
+            class="stepper-line"
+            *ngIf="i !== steps.length - 1"
+          />
         </div>
         <!-- DYNAMIC CONTENT -->
         <ng-content></ng-content>

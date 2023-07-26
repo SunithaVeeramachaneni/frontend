@@ -1,5 +1,6 @@
 <div mat-dialog-actions align="end" class="buttons">
   <button
+    id="cancelBtn"
     mat-stroked-button
     type="button"
     color="primary"
@@ -8,6 +9,7 @@
     translate="cancelBtn"
   ></button>
   <button
+    id="nextBtn"
     mat-raised-button
     type="submit"
     color="primary"
@@ -23,41 +25,67 @@
     <div class="width-5"></div>
     <div class="width-95">
       <div class="form-detials">
-        <h2 class="heading">
+        <h2 class="heading" id="formDetails">
           {{ 'setFormDetailsHeading' | translate }}
         </h2>
 
-        <p class="sub-heading" translate="setFormTypeHeading"></p>
+        <p
+          class="sub-heading"
+          id="formSubHeading"
+          translate="setFormTypeHeading"
+        ></p>
         <div class="formtype-flex">
           <mat-radio-group class="dis-flex" formControlName="formType">
             <div class="formtype-style">
               <mat-radio-button
+                id="standaloneRadioBtn"
                 class="radio-btns"
                 [value]="formConfigurationStatus.standalone"
                 [disabled]="this.formData.formExists"
               ></mat-radio-button>
-              <span class="radio-btn-text" translate="standalone"> </span>
-              <p class="radio-sub-text" translate="standaloneSubText"></p>
+              <span
+                class="radio-btn-text"
+                id="standaloneText"
+                translate="standalone"
+              >
+              </span>
+              <p
+                class="radio-sub-text"
+                id="standaloneSubText"
+                translate="standaloneSubText"
+              ></p>
             </div>
             <div class="formtype-style">
               <mat-radio-button
+                id="embeddedRadioBtn"
                 class="radio-btns"
                 [value]="formConfigurationStatus.embedded"
                 [disabled]="this.formData.formExists"
               ></mat-radio-button>
-              <span class="radio-btn-text" translate="embedded"> </span><br />
-              <p class="radio-sub-text" translate="embeddedSubText"></p>
+              <span
+                id="embeddedText"
+                class="radio-btn-text"
+                translate="embedded"
+              >
+              </span
+              ><br />
+              <p
+                id="standaloneSubText"
+                class="radio-sub-text"
+                translate="embeddedSubText"
+              ></p>
             </div>
           </mat-radio-group>
         </div>
         <hr class="horizontal-line" />
 
         <div class="form-name">
-          <p class="form-name-description">
+          <p class="form-name-description" id="formNameHeading">
             {{ 'addFormNameMandatory' | translate }}
           </p>
           <mat-form-field appearance="outline" class="width-100">
             <input
+              id="formName"
               type="text"
               name="formName"
               matInput
@@ -67,6 +95,7 @@
             <mat-error
               *ngIf="processValidationErrors('name')"
               class="m-5 error-fields"
+              id="formNameError"
             >
               {{
                 errors.name.name
@@ -75,9 +104,14 @@
               }}
             </mat-error>
           </mat-form-field>
-          <p class="form-name-description" translate="addFormDescription"></p>
+          <p
+            id="formDescriptionHeading"
+            class="form-name-description"
+            translate="addFormDescription"
+          ></p>
           <mat-form-field appearance="outline" class="width-100">
             <input
+              id="formDescription"
               type="text"
               matInput
               name="formDescription"
@@ -85,7 +119,7 @@
               formControlName="description"
             />
           </mat-form-field>
-          <p class="form-name-description">
+          <p class="form-name-description" id="plantHeading">
             {{ 'plantMandatory' | translate }}
           </p>
           <mat-form-field appearance="outline" class="width-100">
@@ -96,6 +130,7 @@
               [disabled]="this.formData.formExists"
             >
               <input
+                id="plantName"
                 class="searchable-input"
                 [placeholder]="'search' | translate"
                 (keyup)="onKeyPlant($event)"
@@ -103,6 +138,7 @@
               />
               <div class="scrollable-area">
                 <mat-option
+                  id="plantOptions"
                   [value]="plant.id"
                   *ngFor="let plant of plantInformation"
                   >{{ plant.plantId }} - {{ plant.name }}</mat-option
@@ -110,6 +146,7 @@
               </div>
             </mat-select>
             <mat-error
+              id="plantError"
               *ngIf="processValidationErrors('plantId')"
               class="m-t-5 error-fields"
             >
@@ -124,7 +161,9 @@
           </mat-form-field>
         </div>
         <div class="tags">
-          <p class="form-name-description m-b-0">{{ 'tags' | translate }}</p>
+          <p id="tagsHeading" class="form-name-description m-b-0">
+            {{ 'tags' | translate }}
+          </p>
           <mat-form-field class="chips-list width-100" appearance="outline">
             <mat-chip-list #chipList>
               <mat-chip
@@ -135,9 +174,12 @@
                 class="tags-mat-chips"
               >
                 {{ tag }}
-                <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                <mat-icon matChipRemove *ngIf="removable" id="cancelTag"
+                  >cancel</mat-icon
+                >
               </mat-chip>
               <input
+                id="AddTag"
                 [placeholder]="'startTypingTags' | translate"
                 [matChipInputFor]="chipList"
                 [matAutocomplete]="auto"
@@ -156,6 +198,7 @@
               <mat-option
                 *ngFor="let tag of filteredTags | async"
                 [value]="tag"
+                id="tagOptions"
               >
                 {{ tag }}
               </mat-option>
@@ -165,6 +208,7 @@
 
         <div class="notes-attachment" formGroupName="instructions">
           <p
+            id="notesAndAttachementsHeading"
             class="form-name-description m-b-0 m-t-20"
             translate="notesAndAttachment"
           ></p>
@@ -185,6 +229,7 @@
             </quill-material>
 
             <mat-error
+              id="notesAndAttachementsError"
               *ngIf="maxLengthWithoutBulletPoints(250)"
               class="m-5 error-fields"
             >
@@ -196,6 +241,7 @@
         <div class="add-attachments">
           <br />
           <input
+            id="addAttachments"
             type="file"
             class="file-upload"
             accept="image/jpeg,image/jpg,image/png,application/pdf"
@@ -205,17 +251,19 @@
           />
 
           <button
+            id="attachmentsBtn"
             mat-button
             color="primary"
             class="upload-button"
             (click)="formFileUpload.click()"
           >
-            <mat-icon class="icon-upload">link</mat-icon>
-            <span translate="addImagesAndPDFBtnNew"></span>
+            <mat-icon class="icon-upload" id="attachmentsIcon">link</mat-icon>
+            <span id="attachmentsText" translate="addImagesAndPDFBtnNew"></span>
           </button>
 
           <div class="attachments-container">
             <span
+              id="attachmentsTrack"
               *ngFor="
                 let image of filteredMediaType.mediaType;
                 index as i;
@@ -248,13 +296,18 @@
         </div>
 
         <div class="additional-details">
-          <p translate="additionalDetails" class="additional-details-text"></p>
+          <p
+            translate="additionalDetails"
+            id="additionalDetailsHeading"
+            class="additional-details-text"
+          ></p>
           <button
             *ngIf="
               headerDataForm.get('additionalDetails')['controls'].length < 5
             "
             class="add-button"
             (click)="addAdditionalDetails()"
+            id="additionalDetailsBtn"
           >
             {{ 'add' | translate }}
           </button>
@@ -265,8 +318,12 @@
             headerDataForm.get('additionalDetails')['controls']?.length > 0
           "
         >
-          <div class="width-45 label">{{ 'label' | translate }}</div>
-          <div class="width-45 m-l-20 value">{{ 'value' | translate }}</div>
+          <div class="width-45 label" id="labelHeading">
+            {{ 'label' | translate }}
+          </div>
+          <div class="width-45 m-l-20 value" id="valueHeading">
+            {{ 'value' | translate }}
+          </div>
         </div>
         <div formArrayName="additionalDetails">
           <div
@@ -282,6 +339,7 @@
                   class="m-l-5 symbol m-b-10 width-100"
                 >
                   <input
+                    id="labelValueText"
                     #labelInput
                     matInput
                     type="text"
@@ -292,11 +350,13 @@
                   />
                   <mat-autocomplete #autolabel="matAutocomplete">
                     <mat-option
+                      id="labelOption"
                       *ngFor="let label of filteredLabels$ | async"
                       [value]="label"
                     >
                       {{ label }}
                       <button
+                        id="removeBtn"
                         mat-button
                         class="remove-btn"
                         (click)="removeLabel(label, i)"
@@ -312,6 +372,7 @@
                     >
                       <ng-container>
                         <button
+                          id="labelBtn"
                           mat-button
                           color="primary"
                           class="p-0 add-new-button"
@@ -325,9 +386,11 @@
                             ].pristine
                           "
                         >
-                          <mat-icon class="m-r-5">add</mat-icon>
+                          <mat-icon class="m-r-5" id="addLabelIcon"
+                            >add</mat-icon
+                          >
 
-                          <span
+                          <span id="LabelText"
                             >{{ 'addNew' | translate }} ({{
                               headerDataForm.get('additionalDetails')[
                                 'controls'
@@ -340,6 +403,7 @@
                   </mat-autocomplete>
 
                   <mat-error
+                    id="labelError"
                     *ngIf="processValidationErrorsAdditionalDetails(i, 'label')"
                     class="m-t-5 error-fields"
                   >
@@ -361,6 +425,7 @@
                   class="m-l-20 symbol m-b-10 width-100 value-field"
                 >
                   <input
+                    id="valueText"
                     #valueInput
                     matInput
                     type="text"
@@ -371,11 +436,13 @@
                   />
                   <mat-autocomplete #autoValue="matAutocomplete">
                     <mat-option
+                      id="valueOptions"
                       *ngFor="let value of filteredValues$ | async"
                       [value]="value"
                     >
                       {{ value }}
                       <button
+                        id="removeValueBtn"
                         mat-button
                         class="remove-btn"
                         (click)="removeValue(value, i)"
@@ -392,9 +459,10 @@
                       "
                     >
                       <button
+                        id="addValueBtn"
                         mat-button
                         color="primary"
-                        class="p-0"
+                        class="p-0 add-new-button"
                         (click)="storeValueDetails(i)"
                         [disabled]="
                           headerDataForm.get('additionalDetails')['controls'][i]
@@ -403,9 +471,9 @@
                             .pristine
                         "
                       >
-                        <mat-icon class="m-r-5">add</mat-icon>
+                        <mat-icon id="addValueIcon" class="m-r-5">add</mat-icon>
 
-                        <span
+                        <span id="addValue"
                           >{{ 'addNew' | translate }} ({{
                             headerDataForm.get('additionalDetails')['controls'][
                               i
@@ -417,6 +485,7 @@
                   </mat-autocomplete>
 
                   <mat-error
+                    id="valueError"
                     *ngIf="processValidationErrorsAdditionalDetails(i, 'value')"
                     class="m-t-5 error-fields"
                   >
@@ -433,6 +502,7 @@
               </div>
               <div class="width-10 cancel-icon">
                 <svg-icon
+                  id="closeIcon"
                   icon="icon-closeIcon"
                   class="close-icon cursor-pointer"
                   (click)="deleteAdditionalDetails(i)"
