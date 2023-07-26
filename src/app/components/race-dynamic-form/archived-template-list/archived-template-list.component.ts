@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   OnDestroy,
   OnInit
@@ -247,6 +248,7 @@ export class ArchivedTemplateListComponent implements OnInit, OnDestroy {
     private usersService: UsersService,
     private headerService: HeaderService,
     private translateService: TranslateService,
+    private cdrf: ChangeDetectorRef,
     private dialog: MatDialog
   ) {}
 
@@ -430,6 +432,7 @@ export class ArchivedTemplateListComponent implements OnInit, OnDestroy {
               (item) => item.id !== template.id
             );
             this.dataSource = new MatTableDataSource(this.archivedTemplates);
+            this.cdrf.detectChanges();
             this.toast.show({
               text: 'Template "' + template.name + '" deleted successfully!',
               type: 'success'
@@ -449,6 +452,7 @@ export class ArchivedTemplateListComponent implements OnInit, OnDestroy {
           (item) => item.id !== template.id
         );
         this.dataSource = new MatTableDataSource(this.archivedTemplates);
+        this.cdrf.detectChanges();
         this.toast.show({
           text: 'Template "' + template.name + '" restored successfully!',
           type: 'success'

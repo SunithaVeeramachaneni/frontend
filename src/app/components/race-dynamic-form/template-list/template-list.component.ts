@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   OnDestroy,
   OnInit
@@ -293,6 +294,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
     private translateService: TranslateService,
     private router: Router,
     private dialog: MatDialog,
+    private cdrf: ChangeDetectorRef,
     private readonly store: Store<State>
   ) {}
 
@@ -491,7 +493,6 @@ export class TemplateListComponent implements OnInit, OnDestroy {
     this.raceDynamicFormService
       .fetchAllTemplateListNames$()
       .subscribe((templateNames) => {
-        console.log(templateNames);
         const createdTemplate = this.generateCopyTemplateName(
           template,
           templateNames
@@ -562,6 +563,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
                 );
               this.allTemplates = [newTemplate, ...this.allTemplates];
               this.dataSource = new MatTableDataSource(this.allTemplates);
+              this.cdrf.detectChanges();
               this.toast.show({
                 text: 'Template "' + template.name + '" copied successfully!',
                 type: 'success'
@@ -587,6 +589,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
               (item) => item.id !== template.id
             );
             this.dataSource = new MatTableDataSource(this.allTemplates);
+            this.cdrf.detectChanges();
             this.toast.show({
               text: 'Template "' + template.name + '" archived successfully!',
               type: 'success'
