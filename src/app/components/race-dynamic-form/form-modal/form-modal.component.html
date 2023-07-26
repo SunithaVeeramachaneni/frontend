@@ -1,0 +1,36 @@
+<app-dynamic-stepper
+  [steps]="steps"
+  [currentStep]="currentStep"
+  [showGoBack]="true"
+  (goBack)="goBack()"
+  (gotoStep)="onGotoStep($event)"
+  (gotoNextStep)="gotoNextStep()"
+  (gotoPreviousStep)="gotoPreviousStep()"
+>
+  <div stepsContent>
+    <!-- STEP 1 -->
+    <div [hidden]="currentStep !== 0">
+      <app-form-header-configuration
+        [data]="data"
+        [formData]="formData"
+        (gotoNextStep)="gotoNextStep()"
+      ></app-form-header-configuration>
+    </div>
+
+    <!-- STEP 2 -->
+    <div [hidden]="currentStep !== 1">
+      <app-form-detail-configuration
+        [data]="data"
+        (gotoNextStep)="gotoNextStep()"
+      ></app-form-detail-configuration>
+    </div>
+
+    <!-- STEP 3 -->
+    <div [hidden]="currentStep !== 2">
+      <app-pdf-builder
+        [moduleName]="'RDF'"
+        (publishedEvent)="publishedEventHandler()"
+      ></app-pdf-builder>
+    </div>
+  </div>
+</app-dynamic-stepper>
