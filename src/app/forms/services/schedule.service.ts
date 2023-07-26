@@ -311,6 +311,54 @@ export class ScheduleConfigurationService {
     return obj;
   }
 
+  addMissingTimeIntervals(data, timeSlots) {
+    const newObjects = [];
+
+    data = data.map((item) => ({
+      startTime: this.addLeadingZero(item.startTime),
+      endTime: this.addLeadingZero(item.endTime)
+    }));
+
+    data = this.sortArray(data, timeSlots);
+
+    if (data[0].startTime !== timeSlots[0]) {
+      const newObject = {
+        startTime: timeSlots[0],
+        endTime: this.subtractTime(data[0].startTime, 0, 1),
+        isBook: false
+      };
+      newObjects.push(newObject);
+    }
+
+    for (let i = 0; i < data.length - 1; i++) {
+      const currentEndTime = this.addLeadingZero(
+        this.addTime(data[i].endTime, 0, 1)
+      );
+      const nextStartTime = this.addLeadingZero(data[i + 1].startTime);
+      if (currentEndTime !== nextStartTime) {
+        const newObject = {
+          startTime: currentEndTime,
+          endTime: nextStartTime,
+          isBook: false
+        };
+        newObjects.push(newObject);
+      }
+    }
+    data.push(...newObjects);
+    data = this.sortArray(data, timeSlots);
+    return data;
+  }
+
+  addLeadingZeroData(timeString) {
+    const [time, ampm] = timeString.split(' ');
+    const [hours, minutes] = time.split(':');
+
+    const paddedHours = hours.padStart(2, '0');
+    const paddedMinutes = minutes.padStart(2, '0');
+
+    return `${paddedHours}:${paddedMinutes} ${ampm}`;
+  }
+
   private getDateString(data?: Date): string {
     const currentDate = data ? new Date(data) : new Date();
     const date = currentDate.getDate();

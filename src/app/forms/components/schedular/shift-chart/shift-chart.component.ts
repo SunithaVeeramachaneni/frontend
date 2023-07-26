@@ -491,7 +491,7 @@ export class ShiftChartComponent implements OnInit, OnChanges {
       index: timeDiff,
       startTime: payload.startTime,
       endTime: payload.endTime,
-      isBook: true
+      isBook: payload?.isBook === false ? false : true
     };
     this.dataArrays.push(obj);
     this.slotsArray.push(this.createItemFormGroup());

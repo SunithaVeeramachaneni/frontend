@@ -142,6 +142,7 @@ export class ScheduleConfigurationComponent
   plantTimezoneMap: any = {};
   placeHolder = '_ _';
   selectedShifts = [];
+  selectedShift: any;
   private onDestroy$ = new Subject();
   private shiftDetails: {
     [key: string]: { startTime: string; endTime: string }[];
@@ -189,11 +190,15 @@ export class ScheduleConfigurationComponent
       const shiftsSelected = [];
       Object.entries(this.shiftApiResponse).forEach(([key, value]: any) => {
         if (key === 'null') {
+          value = this.scheduleConfigurationService.addMissingTimeIntervals(
+            value,
+            this.timeSlots
+          );
           this.shiftSlots.push(
             this.addShiftDetails(false, {
               null: {
-                startTime: shiftDefaultPayload.null[0].startTime,
-                endTime: shiftDefaultPayload.null[0].endTime,
+                startTime: shiftDefaultPayload?.null[0]?.startTime,
+                endTime: shiftDefaultPayload?.null[0]?.endTime,
                 payload: value
               }
             })
@@ -201,6 +206,16 @@ export class ScheduleConfigurationComponent
         } else {
           shiftsSelected.push(key);
           const foundShift = this.allShifts.find((s) => s.id === key);
+          this.selectedShift =
+            this.scheduleConfigurationService.generateTimeSlots(
+              foundShift?.startTime,
+              foundShift?.endTime
+            );
+
+          value = this.scheduleConfigurationService.addMissingTimeIntervals(
+            value,
+            this.selectedShift
+          );
           if (foundShift) {
             this.shiftSlots.push(
               this.addShiftDetails(false, {
