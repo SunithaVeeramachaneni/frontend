@@ -5,16 +5,21 @@
     [ngClass]="{ active: pageIndex === i + 1 }"
   >
     <div class="page-header" *ngIf="moduleType !== 'formDetailView'">
-      <div class="page-name">{{ page.name }}</div>
-      <div class="task-progress-bar">
+      <div id="previewPageName" class="page-name">{{ page.name }}</div>
+      <div id="previewPageSectionLength" class="task-progress-bar">
         0/{{ page.sections.length }}
-        <span class="filledTxt" translate="filled"></span>
+        <span
+          id="previewPageFilled"
+          class="filledTxt"
+          translate="filled"
+        ></span>
       </div>
       <hr />
     </div>
     <div *ngFor="let section of page.sections" class="preview-content">
       <div class="section-header">
         <mat-icon
+          id="previewExpandMore"
           (click)="toggleSectionOpenState()"
           *ngIf="isSectionOpenState === true"
           class="fix-arrow"
@@ -22,6 +27,7 @@
           expand_more
         </mat-icon>
         <mat-icon
+          id="previewRightArrow"
           (click)="toggleSectionOpenState()"
           *ngIf="isSectionOpenState === false"
           class="fix-arrow"
@@ -29,8 +35,12 @@
           chevron_right
         </mat-icon>
 
-        <span class="section-name">{{ section.name }}</span>
-        <span class="section-count">0/{{ section.questions.length }}</span>
+        <span id="previewSectionName" class="section-name">{{
+          section.name
+        }}</span>
+        <span id="previewSectionLength" class="section-count"
+          >0/{{ section.questions.length }}</span
+        >
       </div>
 
       <div *ngIf="isSectionOpenState === true">
@@ -44,6 +54,7 @@
       </div>
     </div>
     <button
+      id="previewSubmitBtn"
       *ngIf="
         pageIndex === pageData.length &&
         page.sections.length !== 0 &&

@@ -5,7 +5,7 @@ import {
   OnInit
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { FullScreenFormCreationComponent } from '../full-screen-form-creation/full-screen-form-creation.component';
+import { FormModalComponent } from './form-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { State, getFormMetadata } from 'src/app/forms/state';
@@ -13,12 +13,12 @@ import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-form-view',
+  selector: 'app-form-edit-view',
   template: ``,
   styles: [''],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FormViewComponent implements OnInit, OnDestroy {
+export class FormEditViewComponent implements OnInit, OnDestroy {
   formMetadata;
   formMetaDataSubscription: Subscription;
 
@@ -72,7 +72,7 @@ export class FormViewComponent implements OnInit, OnDestroy {
         this.formMetadata = data;
       });
 
-    this.dialog.open(FullScreenFormCreationComponent, {
+    this.dialog.open(FormModalComponent, {
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',

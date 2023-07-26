@@ -2,18 +2,23 @@
 <div>
   <label>
     <img
+      id="arrayResponseImg"
       class="img-array"
       (click)="openBottomSheet()"
       src="assets/rdf-forms-icons/array-arrow.svg"
       alt="img-array"
     />
   </label>
-  <span class="array-heading">
+  <span id="arrayResponseTypeQuestion" class="array-heading">
     {{ (question.name ? question.name : 'typeQuestion') | translate }}
   </span>
 
   <div class="add-new-button">
-    <svg-icon icon="icon-add-new" class="add-new-icon" ></svg-icon>
-    <label translate="addNew"></label>
+    <svg-icon
+      id="arrayResponseAddIcon"
+      icon="icon-add-new"
+      class="add-new-icon"
+    ></svg-icon>
+    <label id="arrayResponseAddNew" translate="addNew"></label>
   </div>
 </div>

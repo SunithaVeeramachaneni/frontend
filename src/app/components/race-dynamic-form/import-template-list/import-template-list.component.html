@@ -4,15 +4,23 @@
 >
   <div class="custom-form-field-gray-color search">
     <mat-form-field class="width-100" appearance="outline">
-      <mat-icon matPrefix class="searchIcon">search</mat-icon>
+      <mat-icon id="importTemplateListSearchIcon" matPrefix class="searchIcon"
+        >search</mat-icon
+      >
       <input
+        id="importTemplateListSearchText"
         matInput
         type="text"
         [placeholder]="'searchForms' | translate"
         autocomplete="off"
         [formControl]="searchTemplates"
       />
-      <svg-icon matSuffix icon="icon-filterIcon" class="filter-icon"></svg-icon>
+      <svg-icon
+        id="importTemplateListFilterIcon"
+        matSuffix
+        icon="icon-filterIcon"
+        class="filter-icon"
+      ></svg-icon>
     </mat-form-field>
   </div>
 

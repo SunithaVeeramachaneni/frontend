@@ -1,6 +1,7 @@
 <div>
   <mat-button-toggle-group>
     <mat-button-toggle
+      id="visibleInputTitle"
       *ngFor="let question of question.value.value"
       [value]="question.title"
       [ngStyle]="{

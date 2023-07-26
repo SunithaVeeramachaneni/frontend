@@ -1,5 +1,5 @@
 <span class="tag">
-  <label translate="tag"></label>&nbsp;
+  <label id="selectTags" translate="tag"></label>&nbsp;
   <select
     [(ngModel)]="tagAnswer"
     (ngModelChange)="dataChanged()"
@@ -8,10 +8,26 @@
       color: tagAnswer === getNoneTag() ? '#3d5afe' : '#f44336'
     }"
   >
-    <option value="None" translate="noneTag" class="none-field"></option>
-    <option value="Danger" translate="dangerTag" class="other-field"></option>
-    <option value="Caution" translate="cautionTag" class="other-field"></option>
     <option
+      id="selectTagNone"
+      value="None"
+      translate="noneTag"
+      class="none-field"
+    ></option>
+    <option
+      id="selectTagDanger"
+      value="Danger"
+      translate="dangerTag"
+      class="other-field"
+    ></option>
+    <option
+      id="selectTagCaution"
+      value="Caution"
+      translate="cautionTag"
+      class="other-field"
+    ></option>
+    <option
+      id="selectTagInfo"
       value="Information"
       translate="informationTag"
       class="other-field"

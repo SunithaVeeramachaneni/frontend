@@ -19,8 +19,8 @@ import { FormListComponent } from './form-list/form-list.component';
 import { FormDetailComponent } from './form-detail/form-detail.component';
 import { ResponseSetComponent } from './response-set/response-set.component';
 import { PublicLibraryComponent } from './public-library/public-library.component';
-import { FormConfigurationModalComponent } from './form-configuration-modal/form-configuration-modal.component';
-import { FormConfigurationComponent } from './form-configuration/form-configuration.component';
+import { FormHeaderConfigurationComponent } from './form-header-configuration/form-header-configuration.component';
+import { FormDetailConfigurationComponent } from './form-detail-configuration/form-detail-configuration.component';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -47,7 +47,6 @@ import { EffectsModule } from '@ngrx/effects';
 import { FormConfigurationEffects } from 'src/app/forms/state/form-configuration.effects';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { SelectQuestionsDialogComponent } from 'src/app/forms/components/add-logic/select-questions-dialog/select-questions-dialog.component';
-import { AvatarComponent } from './form-configuration/avatar.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ArchivedListComponent } from './archived-list/archived-list.component';
 import { ArchivedFormListComponent } from './archived-form-list/archived-form-list.component';
@@ -82,8 +81,8 @@ import { UnitOfMeasurementEffects } from 'src/app/forms/state/unit-of-measuremen
 import { QuickResponseEffects } from 'src/app/forms/state/quick-responses.effects';
 import { GlobalResponseEffects } from 'src/app/forms/state/global-response.effects';
 import { InspectionObservationsComponent } from './inspection-observations/inspection-observations.component';
-import { FullScreenFormCreationComponent } from './full-screen-form-creation/full-screen-form-creation.component';
-import { FormViewComponent } from './full-screen-form-creation/form-view.component';
+import { FormModalComponent } from './form-modal/form-modal.component';
+import { FormEditViewComponent } from './form-modal/form-edit-view.component';
 import { ImportTemplateListComponent } from 'src/app/components/race-dynamic-form/import-template-list/import-template-list.component';
 import { ImportFormListComponent } from 'src/app/components/race-dynamic-form/import-form-list/import-form-list.component';
 import { TemplateAffectedFormsModalComponent } from './template-configuration/template-affected-forms-modal/template-affected-forms-modal.component';
@@ -101,10 +100,9 @@ export const customTranslateLoader = (http: HttpClient) =>
     FormDetailComponent,
     ResponseSetComponent,
     PublicLibraryComponent,
-    FormConfigurationModalComponent,
-    FormConfigurationComponent,
+    FormHeaderConfigurationComponent,
+    FormDetailConfigurationComponent,
     SelectQuestionsDialogComponent,
-    AvatarComponent,
     ArchivedListComponent,
     ArchivedFormListComponent,
     ArchivedTemplateListComponent,
@@ -126,8 +124,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     TemplateContainerComponent,
     EditTemplateNameModalComponent,
     InspectionObservationsComponent,
-    FullScreenFormCreationComponent,
-    FormViewComponent,
+    FormModalComponent,
+    FormEditViewComponent,
     ImportTemplateListComponent,
     ImportFormListComponent,
     TemplateAffectedFormsModalComponent,
@@ -198,10 +196,9 @@ export const customTranslateLoader = (http: HttpClient) =>
     FormDetailComponent,
     ResponseSetComponent,
     PublicLibraryComponent,
-    FormConfigurationModalComponent,
-    FormConfigurationComponent,
+    FormHeaderConfigurationComponent,
+    FormDetailConfigurationComponent,
     SelectQuestionsDialogComponent,
-    AvatarComponent,
     TemplateConfigurationComponent,
     QuillMaterialComponent
   ]
