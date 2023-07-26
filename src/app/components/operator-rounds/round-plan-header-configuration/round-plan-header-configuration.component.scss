@@ -1,23 +1,7 @@
 @import '../../../../scss/colors.scss';
 
 .form-header-modal {
-  background: $light-blue-bg;
-
-  .form-toolbar {
-    height: 65px;
-    background-color: $white;
-    border-bottom: 1px solid $border-color;
-
-    .back-btn {
-      border: none;
-      background-color: transparent;
-    }
-
-    .back-arrow {
-      height: 20px;
-      width: 20px;
-    }
-  }
+  margin-top: 30px;
 
   .form-content {
     height: calc(100vh - 75px);
@@ -98,16 +82,6 @@
         margin: 5px 5px !important;
       }
 
-      .skip-btn {
-        margin-right: 10px;
-        color: $radio-button-checked;
-        height: 29px;
-        font-weight: normal;
-        line-height: normal;
-        border: 1px solid $blue-main;
-        margin-left: -70px;
-        margin-top: 5px;
-      }
       .close-icon {
         height: 20px;
         width: 20px;
@@ -192,13 +166,6 @@
     font-weight: 800;
     font-size: 14px;
   }
-  .buttons {
-    display: flex;
-    justify-content: end;
-    padding: 15px 0 15px 0;
-    margin-right: 0;
-    width: 100%;
-  }
 
   mat-form-field {
     display: inline-block;
@@ -237,14 +204,6 @@
 .scrollable-area {
   max-height: 200px;
   overflow: auto;
-}
-
-.next-btn {
-  background-color: $radio-button-checked;
-  border-color: $radio-button-checked;
-  height: 29px;
-  font-weight: normal;
-  line-height: normal;
 }
 
 .searchable-input {
@@ -346,4 +305,33 @@
 .mat-error {
   margin-top: 16px;
   margin-left: 20px;
+}
+
+.buttons {
+  border-bottom: 1px solid $border-color;
+  min-height: 34px;
+
+  .next-btn {
+    background-color: $radio-button-checked;
+    border-color: $radio-button-checked;
+    float: right;
+    margin-right: 22px;
+    font-weight: normal;
+    line-height: normal;
+    height: 34px;
+  }
+
+  .skip-btn {
+    float: right;
+    color: $radio-button-checked;
+    height: 34px;
+    font-weight: normal;
+    line-height: normal;
+    border: 1px solid $blue-main;
+  }
+
+  ::ng-deep .mat-raised-button[disabled] {
+    color: $disabled-text-color;
+    background-color: $gray2-bg;
+  }
 }

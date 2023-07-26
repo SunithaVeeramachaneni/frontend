@@ -5,7 +5,7 @@
       [selectedIndex]="getSelectedIndex()"
       (selectedTabChange)="onTabChange($event)"
     >
-      <mat-tab [label]="'Forms' | translate">
+      <mat-tab id="schedulerForm" [label]="'Forms' | translate">
         <app-lazy-load-container>
           <ng-template #body>
             <app-forms
@@ -15,7 +15,7 @@
           </ng-template>
         </app-lazy-load-container>
       </mat-tab>
-      <mat-tab [label]="'Inspections' | translate">
+      <mat-tab id="schedulerInspections" [label]="'Inspections' | translate">
         <app-lazy-load-container>
           <ng-template #body>
             <app-inspection

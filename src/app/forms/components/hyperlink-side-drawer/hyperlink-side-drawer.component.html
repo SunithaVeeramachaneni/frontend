@@ -1,13 +1,18 @@
 <div class="app-customizer">
   <mat-card class="p-0">
     <mat-card-title class="m-0 light-gray">
-      <div class="hyperlink-heading" translate="hyperlink"></div>
+      <div
+        id="hyperlinkHeading"
+        class="hyperlink-heading"
+        translate="hyperlink"
+      ></div>
     </mat-card-title>
     <div [formGroup]="hyperlinkForm">
       <mat-form-field appearance="outline" class="m-r-10 width-100">
-        <mat-label translate>title</mat-label>
+        <mat-label id="hyperlinkTitle" translate>title</mat-label>
         <div>
           <input
+            id="hyperlinkText"
             matInput
             formControlName="displayText"
             [placeholder]="'untitledLink' | translate"
@@ -16,9 +21,10 @@
         </div>
       </mat-form-field>
       <mat-form-field appearance="outline" class="m-r-10 width-100">
-        <mat-label translate>url</mat-label>
+        <mat-label id="hyperlinkUrl" translate>url</mat-label>
         <div>
           <input
+            id="hyperlinkUrlText"
             matInput
             formControlName="hyperlink"
             [placeholder]="'url' | translate"
@@ -26,7 +32,10 @@
           />
         </div>
       </mat-form-field>
-      <mat-error *ngIf="processValidationErrors('hyperlink')">
+      <mat-error
+        id="hyperlinkName"
+        *ngIf="processValidationErrors('hyperlink')"
+      >
         {{
           errors.hyperlink.name
             | translate
@@ -41,12 +50,14 @@
 
     <div class="buttons">
       <button
+        id="hyperlinkCancelBtn"
         mat-stroked-button
         (click)="cancelHyperlink()"
         class="cancel-response-btn"
         translate="cancel"
       ></button>
       <button
+        id="hyperlinkApplyBtn"
         mat-raised-button
         (click)="submitHyperlink()"
         color="primary"

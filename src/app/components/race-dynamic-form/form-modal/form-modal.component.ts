@@ -19,12 +19,12 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-full-screen-form-creation',
-  templateUrl: './full-screen-form-creation.component.html',
-  styleUrls: ['./full-screen-form-creation.component.scss'],
+  selector: 'app-form-modal',
+  templateUrl: './form-modal.component.html',
+  styleUrls: ['./form-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FullScreenFormCreationComponent implements OnInit, OnDestroy {
+export class FormModalComponent implements OnInit, OnDestroy {
   steps: Step[] = [
     { title: 'Form Details', content: '' },
     { title: 'Add Questions', content: '' },
@@ -37,7 +37,7 @@ export class FullScreenFormCreationComponent implements OnInit, OnDestroy {
   authoredFormDetailSubscription: Subscription;
 
   constructor(
-    public dialogRef: MatDialogRef<FullScreenFormCreationComponent>,
+    public dialogRef: MatDialogRef<FormModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data,
     private store: Store<State>,
     private router: Router
