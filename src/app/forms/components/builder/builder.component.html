@@ -89,12 +89,14 @@
                       "
                     >
                       <span
+                        id="builderEmptySection"
                         class="sectionEmpty"
                         translate="sectionEmptyMessage"
                       >
                       </span>
                       <div class="floating-btns empty-section">
                         <button
+                          id="builderQuestionsBtn"
                           class="questions-btn"
                           (click)="
                             addQuestion(
@@ -106,10 +108,12 @@
                           "
                         >
                           <svg-icon
+                            id="builderAddQuestionIcon"
                             icon="icon-add-question"
                             class="add-question-icon"
                           ></svg-icon>
                           <p
+                            id="builderAddQuestionText"
                             class="questions-delete-btn-text"
                             translate="question"
                           ></p>
@@ -200,6 +204,7 @@
               *ngIf="props.sectionIds[pageIndex].length !== 0"
             >
               <button
+                id="builderQuestionBtn"
                 class="questions-btn"
                 (click)="
                   addQuestion(
@@ -211,22 +216,33 @@
                 "
               >
                 <svg-icon
+                  id="builderQuesIcon"
                   icon="icon-add-question"
                   class="add-question-icon"
                 ></svg-icon>
-                <p class="questions-delete-btn-text" translate="question"></p>
+                <p
+                  id="builderQuestionText"
+                  class="questions-delete-btn-text"
+                  translate="question"
+                ></p>
               </button>
               <br />
 
-              <button class="delete-btn">
+              <button id="builderDeleteBtn" class="delete-btn">
                 <svg-icon
+                  id="builderDeleteIcon"
                   icon="icon-delete-question"
                   class="add-question-icon"
                 ></svg-icon>
-                <p class="questions-delete-btn-text" translate="delete"></p>
+                <p
+                  id="builderDeleteText"
+                  class="questions-delete-btn-text"
+                  translate="delete"
+                ></p>
               </button>
             </div>
             <button
+              id="builderAddSection"
               class="add-section-btn"
               [ngClass]="{
                 'add-section-btn': props.sectionIds[pageIndex].length !== 0,
@@ -236,6 +252,7 @@
               (click)="addSection(pageIndex)"
             >
               <svg-icon
+                id="builderAddSectionIcon"
                 icon="icon-add-section"
                 class="add-section-btn-icon"
               ></svg-icon>
@@ -254,12 +271,24 @@
     }"
   >
     <div>
-      <svg-icon icon="icon-add-page" class="add-page-icon"></svg-icon>
+      <svg-icon
+        id="builderAddPageIcon"
+        icon="icon-add-page"
+        class="add-page-icon"
+      ></svg-icon>
     </div>
-    <div class="empty-text" translate="emptyRoundsPlan"></div>
+    <div
+      id="builderEmptyRound"
+      class="empty-text"
+      translate="emptyRoundsPlan"
+    ></div>
     <div>
-      <button class="add-page-btn" (click)="addPage()">
-        <svg-icon icon="icon-add-page" class="icon-add-page"></svg-icon>
+      <button id="builderAddPageBtn" class="add-page-btn" (click)="addPage()">
+        <svg-icon
+          id="builderAddPage"
+          icon="icon-add-page"
+          class="icon-add-page"
+        ></svg-icon>
         {{ 'addPage' | translate }}
       </button>
     </div>

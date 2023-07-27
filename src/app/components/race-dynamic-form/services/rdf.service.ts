@@ -1331,4 +1331,36 @@ export class RaceDynamicFormService {
       environment.rdfApiUrl,
       'template-reference/formId/' + formId
     );
+
+  downloadSampleFormTemplate = (
+    formType: String,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> => {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('formType', formType.toString());
+
+    return this.appService.downloadFile(
+      environment.rdfApiUrl,
+      'forms/download/sample-template?' + params.toString(),
+      info,
+      true
+    );
+  };
+
+  downloadFailure = (
+    body: { rows: any },
+    formType: String,
+    info: ErrorInfo = {} as ErrorInfo
+  ) => {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('formType', formType.toString());
+
+    return this.appService.downloadFile(
+      environment.rdfApiUrl,
+      'forms/download/failure?' + params.toString(),
+      info,
+      false,
+      body
+    );
+  };
 }

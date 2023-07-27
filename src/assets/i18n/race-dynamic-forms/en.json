@@ -375,5 +375,14 @@
   "archiveTemplateModalSubHeading1": "Are you sure you want to Archive the template? You will not be able to import questions once you archive this template.",
   "archiveTemplateModalSubHeading2": "This template has links to some forms please ensure that the template has no links in order to archive it.",
   "deleteTemplateModalHeading": "Confirm Delete?",
-  "deleteTemplateModalSubHeading": "Are you sure you want to delete the template? you will not be able to restore the template once it is deleted."
+  "deleteTemplateModalSubHeading": "Are you sure you want to delete the template? you will not be able to restore the template once it is deleted.",
+  "uploadExcel": "Upload Excel",
+  "uploadEmbedded": "Embedded (For mWorkorder)",
+  "uploadStandalone": "Standalone (For mInspections)",
+  "downloadTemplate": "Download Excel Template",
+  "review": "Review",
+  "successfullyUpload": "Successfully uploaded",
+  "failedUpload": "Failed to uploaded",
+  "closeBtn": "Close",
+  "downloadExcel": "Download Excel"
 }
