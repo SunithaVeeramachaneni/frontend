@@ -3,27 +3,42 @@
     <mat-card-title class="m-0 light-gray">
       <span>
         <span class="cancel-side-drawer" (click)="cancel()">
-          <mat-icon class="dialog-close">close</mat-icon>
-          <h2 class="close-text">{{ 'close' | translate }}</h2>
+          <mat-icon id="scheduleConfigurationCloseIcon" class="dialog-close"
+            >close</mat-icon
+          >
+          <h2 id="scheduleConfigurationCloseText" class="close-text">
+            {{ 'close' | translate }}
+          </h2>
         </span>
-        <h2 class="center schedule-text">{{ 'scheduling' | translate }}</h2>
+        <h2 id="scheduleConfigurationText" class="center schedule-text">
+          {{ 'scheduling' | translate }}
+        </h2>
       </span>
       <div class="heading-schedule" translate>
         <div class="left">
           <div>
             <img
+              id="scheduleConfigurationImg"
               alt="Form logo"
               class="plus-icon ng-star-inserted"
               [src]="selectedDetails?.formLogo"
             />
           </div>
           <div>
-            <p class="form-name">{{ selectedDetails?.name }}</p>
-            <p class="form-description">{{ selectedDetails?.description }}</p>
+            <p id="scheduleConfigurationDetailName" class="form-name">
+              {{ selectedDetails?.name }}
+            </p>
+            <p
+              id="scheduleConfigurationDetailDescription"
+              class="form-description"
+            >
+              {{ selectedDetails?.description }}
+            </p>
           </div>
         </div>
         <div class="mt-12">
           <button
+            id="scheduleConfigurationBtn"
             class="schedule-button"
             mat-raised-button
             [disabled]="
@@ -49,21 +64,21 @@
         autocomplete="off"
       >
         <div>
-          <p class="field-info">
+          <p id="scheduleConfigurationPlantName" class="field-info">
             {{ 'planName' | translate }}
           </p>
           <div>
-            <p class="field-name">
+            <p id="scheduleConfigurationFieldName" class="field-name">
               {{ selectedDetails?.name || placeHolder }}
             </p>
           </div>
         </div>
         <div>
-          <p class="field-info">
+          <p id="scheduleConfigurationPlanDesHeading" class="field-info">
             {{ 'planDescription' | translate }}
           </p>
           <div>
-            <p class="field-name">
+            <p id="scheduleConfigurationDesText" class="field-name">
               {{ selectedDetails?.description || placeHolder }}
             </p>
           </div>
@@ -72,36 +87,55 @@
         <ng-container>
           <div>
             <br />
-            <p translate class="field-info">plant</p>
+            <p id="scheduleConfigurationPlant" translate class="field-info">
+              plant
+            </p>
             <mat-form-field appearance="outline" class="width-100 cursor">
               <input
+                id="scheduleConfigurationPlantText"
                 disabled
                 type="text"
                 matInput
                 class="cursor"
                 [value]="selectedDetails?.plant"
               />
-              <mat-icon matSuffix class="cursor">arrow_drop_down</mat-icon>
+              <mat-icon
+                id="scheduleConfigurationDropDown"
+                matSuffix
+                class="cursor"
+                >arrow_drop_down</mat-icon
+              >
             </mat-form-field>
           </div>
           <br />
           <div>
-            <p translate class="field-info">timeZone</p>
+            <p id="scheduleConfigurationTimeZone" translate class="field-info">
+              timeZone
+            </p>
             <mat-form-field appearance="outline" class="width-100 cursor">
               <input
+                id="scheduleConfigurationTimeZoneText"
                 disabled
                 type="text"
                 matInput
                 class="cursor"
                 [value]="plantTimeZone"
               />
-              <mat-icon matSuffix class="cursor">arrow_drop_down</mat-icon>
+              <mat-icon
+                id="scheduleConfigurationTimeZoneDropDown"
+                matSuffix
+                class="cursor"
+                >arrow_drop_down</mat-icon
+              >
             </mat-form-field>
           </div>
         </ng-container>
-        <div class="schedule">{{ 'scheduleBy' | translate }}</div>
+        <div id="scheduleConfigurationScheduleBy" class="schedule">
+          {{ 'scheduleBy' | translate }}
+        </div>
         <mat-radio-group formControlName="scheduleType">
           <mat-radio-button
+            id="scheduleConfigurationScheduleType"
             color="primary"
             *ngFor="let scheduleType of scheduleTypes"
             [value]="scheduleType"
@@ -116,9 +150,12 @@
         >
           <div class="by-frequency">
             <div class="dis-flex">
-              <p class="f-w-400">{{ 'repeatEvery' | translate }}</p>
+              <p id="scheduleConfigurationRepeatEvery" class="f-w-400">
+                {{ 'repeatEvery' | translate }}
+              </p>
               <mat-form-field appearance="fill" class="repeat-num">
                 <input
+                  id="scheduleConfigurationRepeatNum"
                   type="number"
                   matInput
                   min="1"
@@ -128,6 +165,7 @@
               <mat-form-field appearance="fill" class="repeat-day">
                 <mat-select formControlName="repeatEvery">
                   <mat-option
+                    id="scheduleConfigurationRepeatOption"
                     *ngFor="let repeatEvery of repeatTypes"
                     [value]="repeatEvery"
                     >{{ repeatEvery }}</mat-option
@@ -138,7 +176,7 @@
             <ng-container
               *ngIf="schedulerConfigForm.get('repeatEvery').value === 'week'"
             >
-              <div class="row-title">
+              <div id="scheduleConfigurationRepeatOn" class="row-title">
                 {{ 'repeatOn' | translate }}
               </div>
               <mat-button-toggle-group
@@ -147,6 +185,7 @@
                 multiple
               >
                 <mat-button-toggle
+                  id="scheduleConfigurationDayOfWeek"
                   *ngFor="let dayOfWeek of daysOfWeek; let i = index"
                   [value]="i"
                   >{{ dayOfWeek.slice(0, 1).toUpperCase() }}</mat-button-toggle
@@ -156,7 +195,7 @@
             <ng-container
               *ngIf="schedulerConfigForm.get('repeatEvery').value === 'month'"
             >
-              <div class="row-title">
+              <div id="scheduleConfigurationRepeatOnMonth" class="row-title">
                 {{ 'repeatOn' | translate }}
               </div>
               <div formArrayName="monthlyDaysOfWeek">
@@ -165,6 +204,7 @@
                   class="weeks-of-month"
                 >
                   <div
+                    id="scheduleConfigurationWeekOfMonth"
                     class="row-title"
                     class="m-r-40"
                     [ngClass]="{ 'm-r-36': i === 1 }"
@@ -178,6 +218,7 @@
                       multiple
                     >
                       <mat-button-toggle
+                        id="scheduleConfigurationMonth"
                         *ngFor="let dayOfWeek of daysOfWeek; let i = index"
                         [value]="i"
                         >{{
@@ -189,7 +230,7 @@
                 </div>
               </div>
             </ng-container>
-            <div class="row-title">
+            <div id="scheduleConfigurationEnd" class="row-title">
               {{ 'ends' | translate }}
             </div>
             <mat-radio-group
@@ -197,6 +238,7 @@
               formControlName="scheduleEndType"
             >
               <mat-radio-button
+                id="scheduleConfigurationEndType"
                 color="primary"
                 *ngFor="let scheduleEndType of scheduleEndTypes"
                 [value]="scheduleEndType"
@@ -205,6 +247,7 @@
                 <div class="on" *ngIf="scheduleEndType === 'on'">
                   <mat-form-field appearance="fill">
                     <input
+                      id="scheduleConfigurationEndOnText"
                       matInput
                       type="text"
                       formControlName="scheduleEndOn"
@@ -212,6 +255,7 @@
                       (click)="scheduleEndOn.open()"
                     />
                     <input
+                      id="scheduleConfigurationEndOnDate"
                       type="text"
                       matInput
                       [matDatepicker]="scheduleEndOn"
@@ -231,6 +275,7 @@
                 <div class="after" *ngIf="scheduleEndType === 'after'">
                   <mat-form-field appearance="fill" class="occurrences-num">
                     <input
+                      id="scheduleConfigurationEndOccurrence"
                       matInput
                       type="number"
                       min="1"
@@ -239,6 +284,7 @@
                   </mat-form-field>
                   <mat-form-field class="occurrences" appearance="fill">
                     <input
+                      id="scheduleConfigurationEndOccText"
                       matInput
                       type="text"
                       formControlName="scheduleEndOccurrencesText"
@@ -250,7 +296,9 @@
             </mat-radio-group>
           </div>
           <mat-form-field appearance="outline" class="width-100">
-            <mat-label translate>startDate</mat-label>
+            <mat-label id="scheduleConfigStartDate" translate
+              >startDate</mat-label
+            >
             <input matInput formControlName="startDate" readonly />
             <input
               matInput
@@ -280,7 +328,7 @@
             class="width-100"
             *ngIf="schedulerConfigForm.get('scheduleEndType').value === 'after'"
           >
-            <mat-label translate>endDate</mat-label>
+            <mat-label id="scheduleConfigEndDate" translate>endDate</mat-label>
             <input matInput formControlName="endDate" readonly />
             <input
               matInput
@@ -302,7 +350,9 @@
           *ngIf="schedulerConfigForm.get('scheduleType').value === 'byDate'"
         >
           <div class="by-date">
-            <p class="f-w-500 f-s-120" translate>selectDates</p>
+            <p id="scheduleConfigSelectDate" class="f-w-500 f-s-120" translate>
+              selectDates
+            </p>
             <mat-calendar
               #calendar
               [minDate]="currentDate"
@@ -315,7 +365,11 @@
         <ng-container>
           <div>
             <br />
-            <div class="shift-dropdown" translate="shifts"></div>
+            <div
+              id="scheduleConfigShifts"
+              class="shift-dropdown"
+              translate="shifts"
+            ></div>
             <div>
               <mat-form-field class="width-100" appearance="outline">
                 <mat-label translate="shifts"></mat-label>
@@ -324,9 +378,10 @@
                   multiple
                   (selectionChange)="onShiftChange($event)"
                 >
-                  <mat-select-trigger>
+                  <mat-select-trigger id="scheduleConfigInitialShift">
                     {{ initialShiftSelected }}
                     <span
+                      id="scheduleConfigShiftMore"
                       *ngIf="shiftSlots?.value?.length > 3"
                       class="example-additional-selection"
                     >
@@ -335,24 +390,33 @@
                     </span>
                   </mat-select-trigger>
                   <mat-option
+                    id="scheduleConfigShiftsName"
                     [value]="shifts?.id"
                     *ngFor="let shifts of shiftsInformation"
                     >{{ shifts?.name }}
-                    <span class="float-right">
+                    <span id="scheduleConfigSHiftTime" class="float-right">
                       {{ shifts?.startTime }} - {{ shifts?.endTime }}
                     </span></mat-option
                   >
                 </mat-select>
               </mat-form-field>
             </div>
-            <p translate="doNotSelectAnyShift"></p>
+            <p id="scheduleConfigNoShift" translate="doNotSelectAnyShift"></p>
             <div class="mt-12" *ngIf="!isShiftsSelected">
-              <h1 translate="whenToRunRounds"></h1>
-              <p class="margin-3 sub-text" translate="selectSlotsBelow"></p>
+              <h1 id="scheduleConfigRunRounds" translate="whenToRunRounds"></h1>
+              <p
+                id="scheduleConfigSelectSlot"
+                class="margin-3 sub-text"
+                translate="selectSlotsBelow"
+              ></p>
             </div>
             <div class="mt-12" *ngIf="isShiftsSelected">
-              <h1 translate="roundGenerationSlots"></h1>
+              <h1
+                id="scheduleConfigGenerateSlots"
+                translate="roundGenerationSlots"
+              ></h1>
               <p
+                id="scheduleConfigSlotWithoutOverLap"
                 class="margin-3 sub-text"
                 translate="defaultSlotInMultipleSlotsWithoutOverlapping"
               ></p>
@@ -377,9 +441,12 @@
         <ng-container>
           <div formGroupName="assignmentDetails" class="assign-to">
             <div class="dis-flex">
-              <div class="title" translate>assignTo</div>
+              <div id="scheduleConfigAssignTo" class="title" translate>
+                assignTo
+              </div>
               <mat-radio-group class="radio-group" formControlName="type">
                 <mat-radio-button
+                  id="scheduleConfigAssignType"
                   color="primary"
                   *ngFor="let assignType of assignTypes; let i = index"
                   [value]="assignType"
@@ -395,25 +462,30 @@
               [matMenuTriggerFor]="menu"
               #menuTrigger="matMenuTrigger"
             >
-              <mat-label translate>select</mat-label>
+              <mat-label id="scheduleConfigSelect" translate>select</mat-label>
               <input
+                id="scheduleConfigSelectText"
                 type="text"
                 matInput
                 formControlName="displayValue"
                 class="cursor"
               />
-              <mat-icon matSuffix class="cursor">arrow_drop_down</mat-icon>
+              <mat-icon id="scheduleConfigDropDown" matSuffix class="cursor"
+                >arrow_drop_down</mat-icon
+              >
             </mat-form-field>
-            <div class="info" translate>assignToInfo</div>
+            <div id="scheduleConfigAssignToInfo" class="info" translate>
+              assignToInfo
+            </div>
           </div>
           <div class="forms-count">
-            <p class="title">
+            <p id="scheduleConfigGeneration" class="title">
               {{
                 (isFormModule ? 'inspectionsGeneration' : 'roundsGeneration')
                   | translate
               }}
             </p>
-            <div class="info m-b-5">
+            <div id="scheduleConfigCountInfo" class="info m-b-5">
               {{
                 (isFormModule
                   ? 'advanceInspectionsCountInfo'
@@ -422,10 +494,11 @@
               }}
             </div>
             <mat-form-field appearance="outline" class="width-100">
-              <mat-label>
+              <mat-label id="scheduleConfigDaysCount">
                 {{ 'daysCount' | translate }}
               </mat-label>
               <input
+                id="scheduleConfigAdvanceFormCount"
                 type="number"
                 matInput
                 min="0"
@@ -433,6 +506,7 @@
                 formControlName="advanceFormsCount"
               />
               <input
+                id="scheduleConfigAdvanceRoundCount"
                 type="number"
                 matInput
                 min="0"
@@ -441,6 +515,7 @@
               />
             </mat-form-field>
             <mat-error
+              id="scheduleConfigAdvanceFormCountError"
               *ngIf="
                 isFormModule && processValidationErrors('advanceFormsCount')
               "
@@ -460,6 +535,7 @@
               }}
             </mat-error>
             <mat-error
+              id="scheduleConfigAdvanceRoundCountError"
               *ngIf="
                 !isFormModule && processValidationErrors('advanceRoundsCount')
               "

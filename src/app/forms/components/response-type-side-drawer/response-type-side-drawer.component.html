@@ -7,13 +7,24 @@
     *ngIf="sliderOpenState.isOpen && question.id === sliderOpenState.questionId"
   >
     <mat-card-title class="m-0 light-gray">
-      <div class="mcq-heading" translate="slider"></div>
+      <div
+        id="responseTypeSliderText"
+        class="mcq-heading"
+        translate="slider"
+      ></div>
     </mat-card-title>
     <mat-card-content>
       <div class="dis-flex">
         <div class="width-50">
-          <label for="min" translate="from" class="values"></label><br />
+          <label
+            id="responseTypeSliderForm"
+            for="min"
+            translate="from"
+            class="values"
+          ></label
+          ><br />
           <input
+            id="responseTypeSliderFormType"
             id="min"
             type="number"
             class="slider-inputs"
@@ -22,7 +33,13 @@
           />
         </div>
         <div class="width-50 text-align-end">
-          <label for="max" translate="to" class="values"></label><br />
+          <label
+            id="responseTypeSliderTo"
+            for="max"
+            translate="to"
+            class="values"
+          ></label
+          ><br />
           <input
             id="max"
             type="number"
@@ -43,7 +60,12 @@
         <input matSliderThumb />
       </mat-slider>
       <div class="margin-20">
-        <label for="incre" translate="increment" class="values"></label>
+        <label
+          id="responseTypeSliderIncrement"
+          for="incre"
+          translate="increment"
+          class="values"
+        ></label>
         <br />
         <input
           id="incre"
@@ -56,6 +78,7 @@
       <br />
       <br />
       <button
+        id="responseTypeSliderCancelBtn"
         mat-stroked-button
         color="primary"
         class="cancel-slider"
@@ -63,6 +86,7 @@
         translate="cancel"
       ></button>
       <button
+        id="responseTypeSliderApplyBtn"
         mat-raised-button
         color="primary"
         class="apply-slider-btn"
@@ -76,10 +100,18 @@
 <div class="app-customizer" *ngIf="multipleChoiceOpenState">
   <mat-card class="p-0" *ngIf="multipleChoiceOpenState === true">
     <mat-card-title class="m-0 light-gray">
-      <div class="mcq-heading" translate="multipleChoice"></div>
+      <div
+        id="responseTypeSliderMCQ"
+        class="mcq-heading"
+        translate="multipleChoice"
+      ></div>
     </mat-card-title>
     <div [formGroup]="responseForm">
-      <div class="margin response-heading" translate="response"></div>
+      <div
+        id="responseTypeSliderMCQText"
+        class="margin response-heading"
+        translate="response"
+      ></div>
       <input type="hidden" formControlName="id" />
 
       <mat-card-content>
@@ -92,6 +124,7 @@
             <div *ngFor="let response of getResponseList(); let i = index">
               <div [formGroupName]="i" class="dis-flex response-list">
                 <input
+                  id="responseTypeSliderTitle"
                   matInput
                   formControlName="title"
                   [placeholder]="'responseTitle' | translate"
@@ -101,6 +134,7 @@
                 />
                 <div>
                   <input
+                    id="responseTypeSliderColor"
                     matInput
                     class="input-forms"
                     type="color"
@@ -110,12 +144,14 @@
                     [hidden]="respType === 'globalResponse'"
                   />
                   <button
+                    id="responseTypeSliderDelete"
                     mat-flat-button
                     (click)="deleteResponse(i)"
                     color="#545F70"
                     class="delete-btn"
                   >
                     <svg-icon
+                      id="responseTypeSliderDeleteIcon"
                       icon="icon-delete-icon"
                       class="delete-btn-icon"
                     ></svg-icon>
@@ -125,6 +161,7 @@
             </div>
           </div>
           <button
+            id="responseTypeSliderAddResponseBtn"
             mat-flat-button
             (click)="initResponse()"
             class="add-response"
@@ -137,12 +174,14 @@
 
   <div class="actions-footer">
     <button
+      id="responseTypeSliderCancelResBtn"
       mat-stroked-button
       class="cancel-response-btn"
       (click)="cancelResponse()"
       translate="cancel"
     ></button>
     <button
+      id="responseTypeSliderSubmitBtn"
       mat-raised-button
       (click)="submitResponses()"
       class="submit-response-btn"
@@ -168,15 +207,23 @@
     "
   >
     <mat-card-title class="m-0 light-gray">
-      <div class="mcq-heading" translate="rangeSelectorHeading"></div>
+      <div
+        id="responseTypeSliderRangeText"
+        class="mcq-heading"
+        translate="rangeSelectorHeading"
+      ></div>
     </mat-card-title>
     <mat-card-content class="matCardContent">
       <div class="rangeLimitContainer" [formGroup]="rangeMetadataForm">
         <div class="limit">
           <div class="limitContent">
             <div class="limitValue">
-              <span translate="lowerLimitTxt"></span>
+              <span
+                id="responseTypeSliderRangeLowerLimit"
+                translate="lowerLimitTxt"
+              ></span>
               <input
+                id="responseTypeSliderLimitText"
                 matInput
                 type="number"
                 autocomplete="off"
@@ -185,13 +232,17 @@
               />
             </div>
             <div class="limitAction">
-              <label translate="lowerLimitConditionTxt"></label>
+              <label
+                id="responseTypeSliderLowerCondText"
+                translate="lowerLimitConditionTxt"
+              ></label>
               <mat-radio-group
                 class="limitRadioGroup"
                 formControlName="minAction"
                 [disabled]="!rangeMetadataForm.get('min').value"
               >
                 <mat-radio-button
+                  id="responseTypeSliderLowerAction"
                   *ngFor="let action of lowerLimitActions"
                   class="limitRadioOption"
                   [value]="action"
@@ -217,15 +268,21 @@
             <div class="messageHead">
               <span class="titleRow">
                 <svg-icon
+                  id="responseTypeSliderTitleRowIcon"
                   class="titleRowIcon"
                   [icon]="getImage(rangeMetadataForm.get('minAction').value)"
                 >
                 </svg-icon>
-                <span class="title">
+                <span id="responseTypeSliderMinAction" class="title">
                   {{ rangeMetadataForm.get('minAction').value }}
                 </span>
               </span>
-              <mat-icon class="editIcon" (click)="focusMinMsg()">edit</mat-icon>
+              <mat-icon
+                id="responseTypeSliderEditIcon"
+                class="editIcon"
+                (click)="focusMinMsg()"
+                >edit</mat-icon
+              >
             </div>
             <div class="messageInput">
               <textarea
@@ -246,8 +303,12 @@
         <div class="limit">
           <div class="limitContent">
             <div class="limitValue">
-              <span translate="upperLimitTxt"></span>
+              <span
+                id="responseTypeSliderUpperLimit"
+                translate="upperLimitTxt"
+              ></span>
               <input
+                id="responseTypeSliderUpperLimitText"
                 matInput
                 type="number"
                 autocomplete="off"
@@ -256,13 +317,17 @@
               />
             </div>
             <div class="limitAction">
-              <label translate="upperLimitConditionTxt"></label>
+              <label
+                id="responseTypeSliderUpperLimCond"
+                translate="upperLimitConditionTxt"
+              ></label>
               <mat-radio-group
                 class="limitRadioGroup"
                 formControlName="maxAction"
                 [disabled]="!rangeMetadataForm.get('max').value"
               >
                 <mat-radio-button
+                  id="responseTypeSliderUpperLimitAction"
                   *ngFor="let action of upperLimitActions"
                   class="limitRadioOption"
                   [value]="action"
@@ -288,15 +353,21 @@
             <div class="messageHead">
               <span class="titleRow">
                 <svg-icon
+                  id="responseTypeSliderTitleRow"
                   class="titleRowIcon"
                   [icon]="getImage(rangeMetadataForm.get('maxAction').value)"
                 >
                 </svg-icon>
-                <span class="title">{{
+                <span id="responseTypeSliderMaxAction" class="title">{{
                   rangeMetadataForm.get('maxAction').value
                 }}</span>
               </span>
-              <mat-icon class="editIcon" (click)="focusMaxMsg()">edit</mat-icon>
+              <mat-icon
+                id="responseTypeSliderMaxEdit"
+                class="editIcon"
+                (click)="focusMaxMsg()"
+                >edit</mat-icon
+              >
             </div>
             <div class="messageInput">
               <textarea
@@ -318,12 +389,14 @@
   </mat-card>
   <div class="rangeSelectorFooter">
     <button
+      id="responseTypeSliderCancelRangeBtn"
       mat-stroked-button
       class="cancelBtn"
       (click)="cancelRangeSelection()"
       translate="cancel"
     ></button>
     <button
+      id="responseTypeSliderSubmitRangeBtn"
       mat-raised-button
       (click)="submitRangeSelection()"
       color="primary"
