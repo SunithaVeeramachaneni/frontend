@@ -1,5 +1,6 @@
 <div mat-dialog-actions align="end" class="buttons">
   <button
+    id="templateConfigurationModelCancelBtn"
     mat-stroked-button
     type="button"
     color="primary"
@@ -8,6 +9,7 @@
     translate="cancelBtn"
   ></button>
   <button
+    id="templateConfigurationModelNextBtn"
     mat-raised-button
     type="submit"
     color="primary"
@@ -23,34 +25,68 @@
     <div class="width-5"></div>
     <div class="width-95">
       <div class="form-details">
-        <h2 class="heading" translate="templateDetailsHeading"></h2>
-        <p class="sub-heading" translate="setTemplateTypeHeading"></p>
+        <h2
+          id="templateConfigurationModelHeading"
+          class="heading"
+          translate="templateDetailsHeading"
+        ></h2>
+        <p
+          id="templateConfigurationModelSubHeading"
+          class="sub-heading"
+          translate="setTemplateTypeHeading"
+        ></p>
         <div class="formtype-flex">
           <mat-radio-group class="dis-flex" formControlName="formType">
             <div class="formtype-style">
               <mat-radio-button
+                id="templateConfigurationModelStandaloneType"
                 class="radio-btns"
                 [value]="formConfigurationStatus.standalone"
                 [disabled]="this.templateData.templateExists"
               ></mat-radio-button>
-              <span class="radio-btn-text" translate="standalone"> </span>
-              <p class="radio-sub-text" translate="standaloneSubText"></p>
+              <span
+                class="radio-btn-text"
+                id="templateConfigurationModelStandalone"
+                translate="standalone"
+              >
+              </span>
+              <p
+                class="radio-sub-text"
+                id="templateConfigurationModelStandaloneText"
+                translate="standaloneSubText"
+              ></p>
             </div>
             <div class="formtype-style">
               <mat-radio-button
+                id="templateConfigurationModelStandaloneRadio"
                 class="radio-btns"
                 [value]="formConfigurationStatus.embedded"
                 [disabled]="this.templateData.templateExists"
               ></mat-radio-button>
-              <span class="radio-btn-text" translate="embedded"> </span><br />
-              <p class="radio-sub-text" translate="embeddedSubText"></p>
+              <span
+                class="radio-btn-text"
+                id="templateConfigurationModelEmbedded"
+                translate="embedded"
+              >
+              </span
+              ><br />
+              <p
+                class="radio-sub-text"
+                id="templateConfigurationModelEmbeddedText"
+                translate="embeddedSubText"
+              ></p>
             </div>
           </mat-radio-group>
         </div>
         <div class="form-name">
-          <p class="form-name-description" translate="templateName"></p>
+          <p
+            id="templateConfigurationModelName"
+            class="form-name-description"
+            translate="templateName"
+          ></p>
           <mat-form-field appearance="outline" class="width-100">
             <input
+              id="templateConfigurationModelNameText"
               type="text"
               name="formName"
               matInput
@@ -58,6 +94,7 @@
               formControlName="name"
             />
             <mat-error
+              id="templateConfigurationModelNameError"
               *ngIf="processValidationErrors('name')"
               class="error-fields"
             >
@@ -71,9 +108,14 @@
               }}
             </mat-error>
           </mat-form-field>
-          <p class="form-name-description" translate="templateDescription"></p>
+          <p
+            id="templateConfigurationModelDescription"
+            class="form-name-description"
+            translate="templateDescription"
+          ></p>
           <mat-form-field appearance="outline" class="width-100">
             <input
+              id="templateConfigurationModelDescriptionText"
               type="text"
               matInput
               name="formDescription"
