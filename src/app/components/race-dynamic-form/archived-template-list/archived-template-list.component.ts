@@ -19,7 +19,7 @@ import {
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { MatTableDataSource } from '@angular/material/table';
 
-import { CellClickActionEvent } from 'src/app/interfaces';
+import { CellClickActionEvent, Permission, UserInfo } from 'src/app/interfaces';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { UsersService } from '../../user-management/services/users.service';
 import { HeaderService } from 'src/app/shared/services/header.service';
@@ -27,6 +27,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DeleteTemplateModalComponent } from '../delete-template-modal/delete-template-modal.component';
 import { ToastService } from 'src/app/shared/toast';
+import { LoginService } from '../../login/services/login.service';
 
 @Component({
   selector: 'app-archived-template-list',
@@ -240,6 +241,7 @@ export class ArchivedTemplateListComponent implements OnInit, OnDestroy {
   lastPublishedBy = [];
   createdBy = [];
   fetchArchivedTemplatesSubscription: Subscription;
+  userInfo$: Observable<UserInfo>;
   private onDestroy$ = new Subject();
 
   constructor(
@@ -248,6 +250,7 @@ export class ArchivedTemplateListComponent implements OnInit, OnDestroy {
     private usersService: UsersService,
     private headerService: HeaderService,
     private translateService: TranslateService,
+    private loginService: LoginService,
     private cdrf: ChangeDetectorRef,
     private dialog: MatDialog
   ) {}
@@ -290,8 +293,11 @@ export class ArchivedTemplateListComponent implements OnInit, OnDestroy {
       )
       .subscribe(() => this.isLoading$.next(false));
 
+    this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
+      tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
+    );
+
     this.configOptions.allColumns = this.columns;
-    this.prepareMenuActions();
   }
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
@@ -323,17 +329,33 @@ export class ArchivedTemplateListComponent implements OnInit, OnDestroy {
 
   configOptionsChangeHandler = (event): void => {};
 
-  prepareMenuActions(): void {
-    const menuActions = [
-      {
+  prepareMenuActions(permissions: Permission[]): void {
+    const menuActions = [];
+
+    if (
+      this.loginService.checkUserHasPermission(
+        permissions,
+        'RESTORE_ARCHIVED_TEMPLATE'
+      )
+    ) {
+      menuActions.push({
         title: 'Restore',
         action: 'restore'
-      },
-      {
+      });
+    }
+
+    if (
+      this.loginService.checkUserHasPermission(
+        permissions,
+        'DELETE_ARCHIVED_TEMPLATE'
+      )
+    ) {
+      menuActions.push({
         title: 'Delete',
         action: 'delete'
-      }
-    ];
+      });
+    }
+
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
     this.configOptions = { ...this.configOptions };
@@ -424,7 +446,7 @@ export class ArchivedTemplateListComponent implements OnInit, OnDestroy {
     deleteTemplateRef.afterClosed().subscribe((res) => {
       if (res === 'delete') {
         this.raceDynamicFormService
-          .updateTemplate$(template.id, {
+          .archiveDeleteTemplate$(template.id, {
             isDeleted: true
           })
           .subscribe(() => {
@@ -444,7 +466,7 @@ export class ArchivedTemplateListComponent implements OnInit, OnDestroy {
 
   onRestoreTemplate(template) {
     this.raceDynamicFormService
-      .updateTemplate$(template.id, {
+      .archiveDeleteTemplate$(template.id, {
         isArchived: false
       })
       .subscribe(() => {

@@ -19,7 +19,7 @@ import {
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { MatTableDataSource } from '@angular/material/table';
 
-import { CellClickActionEvent } from 'src/app/interfaces';
+import { CellClickActionEvent, Permission, UserInfo } from 'src/app/interfaces';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { Router } from '@angular/router';
 import { slideInOut } from 'src/app/animations';
@@ -28,7 +28,10 @@ import { HeaderService } from 'src/app/shared/services/header.service';
 import { TranslateService } from '@ngx-translate/core';
 import { TemplateConfigurationModalComponent } from '../template-configuration-modal/template-configuration-modal.component';
 import { MatDialog } from '@angular/material/dialog';
-import { formConfigurationStatus, permissions } from 'src/app/app.constants';
+import {
+  formConfigurationStatus,
+  permissions as perms
+} from 'src/app/app.constants';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/forms/state';
 import { generateCopyNumber, generateCopyRegex } from '../utils/utils';
@@ -281,8 +284,9 @@ export class TemplateListComponent implements OnInit, OnDestroy {
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   lastPublishedBy = [];
   createdBy = [];
-  readonly permissions = permissions;
+  readonly perms = perms;
   fetchAllTemplatesSubscription: Subscription;
+  userInfo$: Observable<UserInfo>;
   private onDestroy$ = new Subject();
 
   constructor(
@@ -335,8 +339,11 @@ export class TemplateListComponent implements OnInit, OnDestroy {
       )
       .subscribe(() => this.isLoading$.next(false));
 
+    this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
+      tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
+    );
+
     this.configOptions.allColumns = this.columns;
-    this.prepareMenuActions();
   }
 
   onCloseViewDetail() {
@@ -390,21 +397,45 @@ export class TemplateListComponent implements OnInit, OnDestroy {
 
   configOptionsChangeHandler = (event): void => {};
 
-  prepareMenuActions(): void {
-    const menuActions = [
-      {
+  prepareMenuActions(permissions: Permission[]): void {
+    const menuActions = [];
+
+    if (
+      this.loginService.checkUserHasPermission(
+        permissions,
+        'UPDATE_FORM_TEMPLATE'
+      )
+    ) {
+      menuActions.push({
         title: 'Edit',
         action: 'edit'
-      },
-      {
+      });
+    }
+
+    if (
+      this.loginService.checkUserHasPermission(
+        permissions,
+        'COPY_FORM_TEMPLATE'
+      )
+    ) {
+      menuActions.push({
         title: 'Copy',
         action: 'copy'
-      },
-      {
+      });
+    }
+
+    if (
+      this.loginService.checkUserHasPermission(
+        permissions,
+        'ARCHIVE_FORM_TEMPLATE'
+      )
+    ) {
+      menuActions.push({
         title: 'Archive',
         action: 'archive'
-      }
-    ];
+      });
+    }
+
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
     this.configOptions = { ...this.configOptions };
@@ -580,7 +611,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
     archiveTemplateRef.afterClosed().subscribe((res) => {
       if (res === 'archive') {
         this.raceDynamicFormService
-          .updateTemplate$(template.id, {
+          .archiveDeleteTemplate$(template.id, {
             isArchived: true,
             archivedBy: this.loginService.getLoggedInEmail()
           })

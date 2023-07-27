@@ -1,4 +1,4 @@
-<div class="list-view">
+<div class="list-view" *ngIf="userInfo$ | async">
   <div class="main-container">
     <div class="forms-header">
       <h2 id="templateListHeading" class="heading" translate="templates"></h2>
@@ -43,7 +43,7 @@
           translate="createNew"
           class="create-new-btn"
           (click)="openCreateTemplateModal()"
-          *appCheckUserHasPermission="[permissions.createFormTemplate]"
+          *appCheckUserHasPermission="[perms.createFormTemplate]"
         ></button>
       </span>
     </div>

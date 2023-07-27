@@ -891,6 +891,15 @@ export class RaceDynamicFormService {
       }
     );
 
+  archiveDeleteTemplate$ = (templateId: string, templateMetadata: any) =>
+    this.appService.patchData(
+      environment.rdfApiUrl,
+      `templates/${templateId}/archive-delete`,
+      {
+        data: templateMetadata
+      }
+    );
+
   deleteTemplate$ = (templateId: string) =>
     this.appService._removeData(
       environment.rdfApiUrl,

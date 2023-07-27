@@ -79,6 +79,11 @@ export const permissions = Object.freeze({
   createFormTemplate: 'CREATE_FORM_TEMPLATE',
   updateFormTemplate: 'UPDATE_FORM_TEMPLATE',
   viewArchivedForms: 'VIEW_ARCHIVED_FORMS',
+  viewArchivedTemplates: 'VIEW_ARCHIVED_TEMPLATES',
+  archiveTemplate: 'ARCHIVE_FORM_TEMPLATE',
+  copyTemplate: 'COPY_FORM_TEMPLATE',
+  restoreTemplate: 'RESTORE_ARCHIVED_TEMPLATE',
+  deleteTemplate: 'DELETE_ARCHIVED_TEMPLATE',
   viewFormScheduler: 'VIEW_FORM_SCHEDULER',
   scheduleInspection: 'SCHEDULE_FORM',
 
