@@ -356,19 +356,22 @@
               </p>
             </div>
             <div class="flex-custom">
-              <h4 class="create-name">
-                <div *ngFor="let shiftDetail of slotArr; let i = index">
-                  <span id="formDetailShiftName" class="make-bold"
-                    >{{ shiftObj[shiftDetail[i]].name }} :</span
-                  >
-                  <ng-container *ngFor="let shift of shiftDetail[i + 1]">
-                    <span id="formDetailShiftTime">
-                      {{ convertTo12HourFormat(shift.startTime) }} -
-                      {{ convertTo12HourFormat(shift.endTime) }}
-                    </span>
-                  </ng-container>
+              <div class="create-name" *ngIf="slotArr">
+                <div
+                  *ngFor="let shiftDetail of slotArr; let i = index"
+                  class="in-column"
+                >
+                  <div class="make-bold">{{ shiftObj[shiftDetail[0]] }} :</div>
+                  <div class="in-row">
+                    <ng-container *ngFor="let shift of shiftDetail[1]">
+                      <span>
+                        {{ convertTo12HourFormat(shift.startTime) }} -
+                        {{ convertTo12HourFormat(shift.endTime) }}
+                      </span>
+                    </ng-container>
+                  </div>
                 </div>
-              </h4>
+              </div>
             </div>
           </div>
         </ng-container>
