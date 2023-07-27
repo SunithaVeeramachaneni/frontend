@@ -2,3 +2,19 @@
   width: 296px !important;
   height: 354px !important;
 }
+.datetime-picker-position {
+  position: absolute;
+  top: 100px;
+  left: 100px;
+}
+
+::ng-deep .mat-form-field-appearance-legacy .mat-form-field-infix {
+  padding-bottom: 20px;
+}
+
+::ng-deep .ngx-mat-timepicker-spacer {
+  padding-bottom: 8px;
+}
+.form-field {
+  display: none;
+}

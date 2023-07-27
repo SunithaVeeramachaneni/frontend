@@ -462,6 +462,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       this.users$
     ]).pipe(
       map(([forms, scrollData, formScheduleConfigurations, shifts, plants]) => {
+        this.isLoading$.next(false);
         shifts?.items?.forEach((shift) => {
           this.shiftIdNameMap[shift.id] = shift.name;
         });
@@ -573,10 +574,14 @@ export class FormsComponent implements OnInit, OnDestroy {
       if (this.formScheduleConfigurations[form.id]?.shiftDetails) {
         Object.keys(this.formScheduleConfigurations[form.id]?.shiftDetails).map(
           (shiftId) => {
-            shift += this.shiftIdNameMap[shiftId] + ',';
+            if (shiftId !== 'null') {
+              shift += this.shiftIdNameMap[shiftId] + ',';
+            }
           }
         );
-        form.shift = shift;
+        if (shift) {
+          form.shift = shift.substring(0, shift.length - 1);
+        }
       }
       return form;
     });
@@ -603,7 +608,6 @@ export class FormsComponent implements OnInit, OnDestroy {
               unscheduled: unscheduledCount
             };
           }
-          this.isLoading$.next(false);
         })
       );
   }
@@ -721,7 +725,7 @@ export class FormsComponent implements OnInit, OnDestroy {
   openFormHandler(row: ScheduleFormDetail): void {
     this.hideFormDetail = false;
     this.scheduleConfigEventHandler({ slideInOut: 'out' });
-    this.formDetail = { ...row };
+    this.formDetail = { ...row, formId: row.id };
     this.menuState = 'in';
     this.zIndexDelay = 400;
   }
