@@ -105,6 +105,9 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     if (this.selectedForm) {
+      if (this.selectedForm?.status === 'skipped') {
+        this.selectedForm.isViewPdf = false;
+      }
       this.toggleLoader(true);
 
       let formDetail$: any =
