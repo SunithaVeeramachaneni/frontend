@@ -81,18 +81,20 @@ export class FormResolverService implements Resolve<FormConfigurationState> {
           formDetail[0] ?? {};
         if (instructions) {
           const { notes, attachments, pdfDocs } = JSON.parse(instructions);
-          const attachmentPromises = attachments?.map((attachmentId) =>
-            this.raceDynamicFormService
-              .getAttachmentsById$(attachmentId)
-              .toPromise()
-              .then()
-          );
-          const pdfPromises = pdfDocs?.map((pdfId) =>
-            this.raceDynamicFormService
-              .getAttachmentsById$(pdfId)
-              .toPromise()
-              .then()
-          );
+          const attachmentPromises =
+            attachments?.map((attachmentId) =>
+              this.raceDynamicFormService
+                .getAttachmentsById$(attachmentId)
+                .toPromise()
+                .then()
+            ) || [];
+          const pdfPromises =
+            pdfDocs?.map((pdfId) =>
+              this.raceDynamicFormService
+                .getAttachmentsById$(pdfId)
+                .toPromise()
+                .then()
+            ) || [];
           Promise.all(attachmentPromises).then((result) => {
             this.raceDynamicFormService.attachmentsMapping$.next(result);
           });

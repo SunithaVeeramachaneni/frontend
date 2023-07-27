@@ -41,30 +41,126 @@
         </mat-form-field>
         <button
           id="formsListCreateNewBtn"
-          *appCheckUserHasPermission="[perms.createForm]"
+          *appCheckUserHasPermission="[perms.createForm, perms.importForm]"
+          [matMenuTriggerFor]="menu"
           class="create-new-btn"
-          (click)="openFormCreationModal(null)"
           translate="createNew"
         ></button>
-        <!-- <mat-menu #menu="matMenu" backdropClass="template-list">
-          <button mat-menu-item (click)="openCreateFromTemplateModal()">
+        <mat-menu
+          id="createFormMEnu"
+          #menu="matMenu"
+          backdropClass="template-list"
+        >
+          <button
+            id="uploadExcelMenu"
+            mat-menu-item
+            [matMenuTriggerFor]="uploadMenu"
+          >
             <svg-icon
-              icon="icon-Template-icon"
-              class="add-template-icon"
+              id="uploadExcelIcon"
+              icon="icon-excel1"
+              class="add-manually-icon"
             ></svg-icon>
-            <span class="create-template">
-              {{ 'createFromTemplate' | translate }}</span
+            <span
+              id="uploadExcelSpan"
+              class="create-template"
+              translate="uploadExcel"
             >
+            </span>
           </button>
 
-          <button mat-menu-item (click)="openFormCreationModal(null)">
+          <button
+            mat-menu-item
+            (click)="openFormCreationModal(null)"
+            id="createManuallyButton"
+          >
             <svg-icon
+              id="addManuallyIcon"
               icon="icon-add-manually"
               class="add-manually-icon"
             ></svg-icon>
             {{ 'createManually' | translate }}
           </button>
-        </mat-menu> -->
+        </mat-menu>
+
+        <mat-menu #uploadMenu="matMenu" id="formTypeUploadMenu">
+          <button
+            id="embeddedUploaderButton"
+            mat-menu-item
+            (click)="embeddedUploader.click()"
+          >
+            <span id="uploadEmbeddedSpan" translate="uploadEmbedded"></span>
+          </button>
+          <button
+            id="standaloneUploaderButton"
+            mat-menu-item
+            (click)="standaloneUploader.click()"
+          >
+            <span id="uploadStandaloneSpan" translate="uploadStandalone"></span>
+          </button>
+        </mat-menu>
+
+        <button
+          id="moreButton"
+          mat-raised-button
+          [matMenuTriggerFor]="moreMenu"
+          class="more-btn"
+          *appCheckUserHasPermission="[perms.importLocations]"
+        >
+          <mat-icon id="moreMenuIcon" class="menu-icon">more_horiz</mat-icon>
+        </button>
+        <mat-menu id="moreMenu" #moreMenu="matMenu">
+          <button
+            id="templateMenuButton"
+            mat-menu-item
+            class="menu-buttons"
+            [matMenuTriggerFor]="templateMenu"
+          >
+            <svg-icon
+              id="excelIconMenu"
+              icon="icon-excel1"
+              class="menu-icons"
+            ></svg-icon>
+            <span id="downloadTemplateSpan" translate="downloadTemplate"></span>
+          </button>
+        </mat-menu>
+        <mat-menu id="downloadTemplateMeny" #templateMenu="matMenu">
+          <button
+            id="downloadEmbeddedTemplateButton"
+            mat-menu-item
+            (click)="downloadTemplate('Embedded')"
+          >
+            <span id="downloadEmbeddedSpan" translate="uploadEmbedded"></span>
+          </button>
+          <button
+            id="downloadStandloneTemplateButton"
+            mat-menu-item
+            (click)="downloadTemplate('Standalone')"
+          >
+            <span
+              id="downloadStandaloneSpan"
+              translate="uploadStandalone"
+            ></span>
+          </button>
+        </mat-menu>
+        <input
+          id="standaloneUploader"
+          hidden
+          type="file"
+          #standaloneUploader
+          accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+          (change)="uploadFile($event, 'Standalone')"
+          (click)="resetFile($event)"
+        />
+        <input
+          id="embeddedUploader"
+          hidden
+          type="file"
+          #embeddedUploader
+          accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+          (change)="uploadFile($event, 'Embedded')"
+          (click)="resetFile($event)"
+        />
       </div>
     </div>
 

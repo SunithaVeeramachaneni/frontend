@@ -22,8 +22,13 @@
         class="center mb-5"
       ></svg-icon>
       <mat-progress-bar
-        *ngIf="!isSuccess && !isFailure"
+        *ngIf="!isSuccess && !isFailure && type !== 'forms'"
         mode="indeterminate"
+      ></mat-progress-bar>
+      <mat-progress-bar
+        *ngIf="!isSuccess && !isFailure && type === 'forms'"
+        mode="determinate"
+        [value]="((successCount + failedCount) / totalCount) * 100"
       ></mat-progress-bar>
       <mat-progress-bar
         *ngIf="isSuccess"
@@ -56,8 +61,30 @@
       ></button>
     </div>
     <div *ngIf="isReviewed">
-      <div class="success-message">
-        <div id="uploadResponseSuccessCount">
+      <div class="success-message" *ngIf="failedCount === 0">
+        <div class="only-success-message" id="uploadResponseOnlySuccessCount">
+          <svg-icon
+            icon="icon-upload-success"
+            class="upload-icon"
+            id="uploadOnlySuccessResponseIcon"
+          ></svg-icon>
+          <p>
+            {{ successCount }} {{ type }} {{ 'successfullyUpload' | translate }}
+          </p>
+        </div>
+      </div>
+      <div class="success-message" *ngIf="successCount === 0">
+        <div class="only-failure-message" id="uploadResponseOnlyFailureCount">
+          <svg-icon
+            icon="icon-upload-error"
+            class="upload-icon"
+            id="uploadOnlyFailureResponseIcon"
+          ></svg-icon>
+          <p>{{ failedCount }} {{ type }} {{ 'failedUpload' | translate }}</p>
+        </div>
+      </div>
+      <div class="success-message" *ngIf="successCount > 0 && failedCount > 0">
+        <div class="success-box" id="uploadResponseSuccessCount">
           <svg-icon
             id="uploadResponseIcon"
             icon="icon-upload-success"
@@ -65,7 +92,7 @@
           ></svg-icon>
           {{ successCount }} {{ type }} {{ 'successfullyUpload' | translate }}
         </div>
-        <div id="uploadResponsefailCount">
+        <div class="failure-box" id="uploadResponsefailCount">
           <svg-icon
             id="uploadResponseErrorIcon"
             icon="icon-upload-error"

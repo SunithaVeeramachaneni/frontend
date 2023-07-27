@@ -3,19 +3,27 @@
   *ngIf="{ formMetadata: formMetadata$ | async }"
 >
   <div class="dis-flex heading-conatiner">
-    <h2 class="heading" translate>selectRoundPlan</h2>
-    <mat-icon class="clear-icon" mat-dialog-close="true">clear</mat-icon>
+    <h2 id="importTaskHeading" class="heading" translate>selectRoundPlan</h2>
+    <mat-icon
+      id="importTaskClearIcon"
+      class="clear-icon"
+      mat-dialog-close="true"
+      >clear</mat-icon
+    >
   </div>
   <div class="search">
     <mat-form-field class="width-100" appearance="outline">
       <input
+        id="importTaskSearchText"
         matInput
         [placeholder]="'search' | translate"
         class="width-100"
         autocomplete="off"
         [formControl]="searchRoundPlan"
       />
-      <mat-icon matSuffix class="icon">search</mat-icon>
+      <mat-icon id="importTaskSearchIcon" matSuffix class="icon"
+        >search</mat-icon
+      >
     </mat-form-field>
   </div>
   <div
@@ -32,8 +40,8 @@
         [ngClass]="{ active: selectedItem === i }"
       >
         <div class="width-100">
-          <p class="form-name">{{ form.name }}</p>
-          <p class="form-des">
+          <p id="importTaskName" class="form-name">{{ form.name }}</p>
+          <p id="importTaskDescription" class="form-des">
             {{
               (form.description ? form.description : 'formDescription')
                 | translate
@@ -45,13 +53,19 @@
         </div> -->
       </li>
     </div>
-    <div class="dis-flex no-records" *ngIf="forms.data.length === 0" translate>
+    <div
+      id="importTaskNoResults"
+      class="dis-flex no-records"
+      *ngIf="forms.data.length === 0"
+      translate
+    >
       noResults
     </div>
   </div>
 
   <div mat-dialog-actions class="actions">
     <button
+      id="importTaskSelectBtn"
       mat-raised-button
       color="primary"
       [disabled]="disableSelectBtn"
@@ -59,6 +73,7 @@
       translate="select"
     ></button>
     <button
+      id="importTaskCloseBtn"
       mat-stroked-button
       mat-dialog-close="true"
       translate="close"

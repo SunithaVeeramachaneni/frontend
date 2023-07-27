@@ -40,7 +40,7 @@ import { LocationService } from '../services/location.service';
 import { downloadFile } from 'src/app/shared/utils/fileUtils';
 import { LoginService } from 'src/app/components/login/services/login.service';
 import { slideInOut } from 'src/app/animations';
-import { UploadResponseModalComponent } from '../../upload-response-modal/upload-response-modal.component';
+import { UploadResponseModalComponent } from '../../../../shared/components/upload-response-modal/upload-response-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 import { HeaderService } from 'src/app/shared/services/header.service';
