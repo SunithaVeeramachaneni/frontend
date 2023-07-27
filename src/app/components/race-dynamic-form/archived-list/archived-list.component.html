@@ -5,16 +5,16 @@
   >
     <div class="main-container">
       <div class="forms-header">
-        <h2 class="heading" translate="archived"></h2>
+        <h2 id="archivedListHeading" class="heading" translate="archived"></h2>
         <span class="custom-form-field-gray-color search">
           <span
             class="no-of-forms"
             *ngIf="archivedFormsListCount$ | async as totalCount"
           >
-            <span class="forms-count">
+            <span id="archivedListCount" class="forms-count">
               {{ totalCount | count }}
             </span>
-            <span class="forms-text">{{
+            <span id="archivedListCountText" class="forms-text">{{
               'archived'
                 | translate
                   : {
@@ -24,8 +24,11 @@
           </span>
 
           <mat-form-field appearance="outline">
-            <mat-icon matPrefix class="searchIcon">search</mat-icon>
+            <mat-icon id="archivedListSearchIcon" matPrefix class="searchIcon"
+              >search</mat-icon
+            >
             <input
+              id="archivedListSearchText"
               matInput
               type="text"
               [placeholder]="'searchArchivedForm' | translate"
@@ -33,6 +36,7 @@
               [formControl]="searchForm"
             />
             <svg-icon
+              id="archivedListFilterIcon"
               cdkOverlayOrigin
               #trigger="cdkOverlayOrigin"
               (click)="isPopoverOpen = !isPopoverOpen"

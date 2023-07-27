@@ -61,6 +61,7 @@ export interface InspectionDetailResponse {
 }
 
 export interface ScheduleFormDetail extends Form {
+  formId: string;
   schedule: string;
   scheduleDates: string;
   tasks: number;

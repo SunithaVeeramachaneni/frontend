@@ -93,6 +93,9 @@ export class FormConfigurationEffects {
               forkJoin([
                 this.raceDynamicFormService.publishAuthoredFormDetail$({
                   formlistID: authoredFormDetail.formListId,
+                  isEmbeddedForm:
+                    formDetail.formMetadata.formType ===
+                    formConfigurationStatus.embedded,
                   updateAuthoredForm: {
                     formStatus: formConfigurationStatus.published,
                     formDetailPublishStatus: formConfigurationStatus.published,
@@ -168,6 +171,9 @@ export class FormConfigurationEffects {
               forkJoin([
                 this.raceDynamicFormService.publishAuthoredFormDetail$({
                   formlistID: authoredFormDetail.formListId,
+                  isEmbeddedForm:
+                    formDetail.formMetadata.formType ===
+                    formConfigurationStatus.embedded,
                   updateAuthoredForm: {
                     formStatus: formConfigurationStatus.published,
                     formDetailPublishStatus: formConfigurationStatus.published,

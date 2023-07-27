@@ -1,9 +1,9 @@
 <div *ngIf="userInfo$ | async" class="issues-list">
   <span class="no-of-issues" *ngIf="issuesCount$ | async as totalCount">
-    <span class="issues-count">
+    <span id="issuesListCount" class="issues-count">
       {{ totalCount | count }}
     </span>
-    <span class="issues-text">
+    <span id="issuesListCountText" class="issues-text">
       {{
         'issues'
           | translate
@@ -15,8 +15,11 @@
   </span>
   <span class="custom-form-field-gray-color">
     <mat-form-field appearance="outline" class="issues-search">
-      <mat-icon matPrefix class="searchIcon">search</mat-icon>
+      <mat-icon id="issuesListSearchIcon" matPrefix class="searchIcon"
+        >search</mat-icon
+      >
       <input
+        id="issuesListSearchText"
         matInput
         type="text"
         [placeholder]="'search' | translate"
@@ -24,6 +27,7 @@
         [formControl]="searchIssue"
       />
       <svg-icon
+        id="issuesListFilterIcon"
         icon="icon-filterIcon"
         matSuffix
         cdkOverlayOrigin

@@ -4,30 +4,42 @@
       <div class="main-carosuel-iphone">
         <div class="iphone-header">
           <div class="dis-flex p-5 p-b-0">
-            <div class="width-60 status-bar-left">9:41</div>
+            <div id="iphoneEmbeddedTime" class="width-60 status-bar-left">
+              9:41
+            </div>
             <div class="width-40 iphone-status-bar-right m-r-10">
-              <mat-icon class="status-bar-icons">signal_cellular_alt</mat-icon>
-              <mat-icon class="status-bar-icons">wifi</mat-icon>
-              <mat-icon class="status-bar-icons battery_full-icon">
+              <mat-icon id="iphoneEmbeddedSignal" class="status-bar-icons"
+                >signal_cellular_alt</mat-icon
+              >
+              <mat-icon id="iphoneEmbeddedWifi" class="status-bar-icons"
+                >wifi</mat-icon
+              >
+              <mat-icon
+                id="iphoneEmbeddedBattery"
+                class="status-bar-icons battery_full-icon"
+              >
                 battery_full
               </mat-icon>
             </div>
           </div>
-          <mat-icon class="back-button"> keyboard_arrow_left </mat-icon>
+          <mat-icon id="iphoneEmbeddedArrowLeft" class="back-button">
+            keyboard_arrow_left
+          </mat-icon>
           <div class="dis-flex">
             <div class="width-10 m-t-12">
               <img
+                id="iphoneEmbeddedFileIcon"
                 src="assets/rdf-forms-icons/file-icon.png"
                 alt="file-icons"
                 class="file-icon"
               />
             </div>
             <div class="width-90 form-div">
-              <span class="form-name">
+              <span id="iphoneEmbeddedFormId" class="form-name">
                 {{ formMetadata.embeddedFormId }}
               </span>
               <br />
-              <span class="form-description">
+              <span id="iphoneEmbeddedFormName" class="form-description">
                 {{ formMetadata.name ? formMetadata.name : 'Unititled Form' }}
               </span>
             </div>
@@ -43,8 +55,16 @@
         </div>
 
         <div>
-          <button class="btns" translate="submit"></button>
-          <button class="btns" translate="save"></button>
+          <button
+            id="iphoneEmbeddedSubmitBtn"
+            class="btns"
+            translate="submit"
+          ></button>
+          <button
+            id="iphoneEmbeddedSaveBtn"
+            class="btns"
+            translate="save"
+          ></button>
         </div>
       </div>
     </div>

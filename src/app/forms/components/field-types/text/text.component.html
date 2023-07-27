@@ -1,10 +1,11 @@
-<label translate="type"></label>&nbsp;
+<label id="text" translate="type"></label>&nbsp;
 
 <select
+  id="selectTextAns"
   [(ngModel)]="textAnswer"
   (ngModelChange)="dataChanged()"
   class="text-field-select"
 >
-  <option value="TF" translate="shortAns"></option>
-  <option value="LTV" translate="longAns"></option>
+  <option id="selectShortAns" value="TF" translate="shortAns"></option>
+  <option id="selectLongAns" value="LTV" translate="longAns"></option>
 </select>

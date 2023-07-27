@@ -4,6 +4,7 @@
       <input type="hidden" formControlName="position" />
       <div class="section-header">
         <mat-icon
+          id="sectionExpandMore"
           (click)="toggleIsOpenState()"
           *ngIf="sectionForm.get('isOpen').value === true"
           class="section-arrow"
@@ -11,6 +12,7 @@
           expand_more
         </mat-icon>
         <mat-icon
+          id="sectionArrow"
           (click)="toggleIsOpenState()"
           *ngIf="sectionForm.get('isOpen').value === false"
           class="section-arrow"
@@ -21,13 +23,19 @@
           *ngIf="sectionForm.get('isImported').value === true"
           class="tooltip"
         >
-          <svg-icon icon="icon-Unlink" class="icon-unlink"> </svg-icon>
+          <svg-icon
+            id="sectionUnlinkIcon"
+            icon="icon-Unlink"
+            class="icon-unlink"
+          >
+          </svg-icon>
           <span
             *ngIf="!sectionForm.get('templateName').value?.length"
             class="tooltip-text"
             translate="template"
           ></span>
           <span
+            id="sectionTemplateName"
             class="tooltip-text"
             *ngIf="sectionForm.get('templateName').value?.length"
             >{{ sectionForm.get('templateName').value }}</span
@@ -36,6 +44,7 @@
 
         <a class="width-60">
           <input
+            id="sectionText"
             #sectionName
             type="text"
             autofocus
@@ -48,6 +57,7 @@
             (blur)="sectionForm.get('name').disable()"
           />
           <button
+            id="sectionEditBtn"
             mat-icon-button
             (click)="editSection()"
             class="edit-icon"
@@ -57,31 +67,34 @@
             "
           >
             <svg-icon
+              id="sectionEditIcon"
               icon="icon-edit-icon-white"
               class="edit-icon-img"
             ></svg-icon>
           </button>
         </a>
         <div class="sectionHeadRight">
-          <span class="sectionTaskCount">
+          <span id="sectionQuestionCount" class="sectionTaskCount">
             {{ sectionQuestionsCount }}
           </span>
 
           <button
+            id="sectionMoreOption"
             [matMenuTriggerFor]="sectionMenu"
             class="more-icon"
             aria-label="More Options"
           >
-            <mat-icon>more_horiz</mat-icon>
+            <mat-icon id="sectionMoreIcon">more_horiz</mat-icon>
           </button>
           <mat-menu #sectionMenu="matMenu">
             <button
+              id="sectionDeleteBtn"
               mat-menu-item
               (click)="deleteSection()"
               [disabled]="isTemplate"
               class="text-red"
             >
-              <span translate="deleteSection"></span>
+              <span id="sectionDelete" translate="deleteSection"></span>
             </button>
           </mat-menu>
         </div>
@@ -97,8 +110,9 @@
         <ng-content></ng-content>
       </div>
 
-      <button class="add-section-btn" (click)="addSection()">
+      <button id="sectionAddBtn" class="add-section-btn" (click)="addSection()">
         <svg-icon
+          id="sectionAddIcon"
           icon="icon-add-section"
           class="add-section-btn-icon"
         ></svg-icon>

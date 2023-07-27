@@ -6,15 +6,16 @@
 >
   <div class="header">
     <div>
-      <span>{{
+      <span id="hierarchyContainerCount">{{
         'totalAssetsCount' | translate : { count: totalAssetsLocationsCount }
       }}</span>
       <button
+        id="hierarchyContainerAddBtn"
         class="addBtn"
         *ngIf="hierarchy.length"
         (click)="openHierarchyModal()"
       >
-        <mat-icon class="addIcon">add</mat-icon>
+        <mat-icon id="hierarchyContainerAddIcon" class="addIcon">add</mat-icon>
       </button>
     </div>
     <mat-button-toggle-group
@@ -23,6 +24,7 @@
       (change)="toggleHierarchyMode($event)"
     >
       <mat-button-toggle
+        id="hierarchyContainerToggleBtn"
         value="asset_hierarchy"
         class="toggle-btn"
         [ngClass]="{
@@ -30,6 +32,7 @@
         }"
       >
         <svg-icon
+          id="hierarchyContainerImgIcon"
           [icon]="
             getImage('asset-hierarchy', hierarchyMode === 'asset_hierarchy')
           "
@@ -37,6 +40,7 @@
         ></svg-icon>
       </mat-button-toggle>
       <mat-button-toggle
+        id="hierarchyContainerRoutePlan"
         value="route_plan"
         class="toggle-btn"
         [ngClass]="{
@@ -44,20 +48,24 @@
         }"
       >
         <svg-icon
+          id="hierarchyContainerToggleIcon"
           [icon]="getImage('round-plan', hierarchyMode === 'route_plan')"
           class="toggle-btn-icon"
         ></svg-icon>
       </mat-button-toggle>
     </mat-button-toggle-group>
 
-    <span *ngIf="hierarchy.length">
+    <span id="hierarchyContainerTaskCount" *ngIf="hierarchy.length">
       {{ 'totalTasksCount' | translate : { count: totalTasksCount } }}
     </span>
   </div>
   <span class="custom-form-field-gray-color search" *ngIf="hierarchy.length">
     <mat-form-field appearance="outline" class="searchField">
-      <mat-icon matPrefix class="searchIcon">search</mat-icon>
+      <mat-icon id="hierarchyContainerSearchIcon" matPrefix class="searchIcon"
+        >search</mat-icon
+      >
       <input
+        id="hierarchyContainerSearchText"
         matInput
         type="text"
         [placeholder]="'search' | translate"
@@ -79,8 +87,10 @@
             <div class="nodeContent">
               <img [src]="option.image" />
               <div class="description">
-                <span class="title">{{ option.name }}</span>
-                <span class="subTitle">
+                <span id="hierarchyContainerName" class="title">{{
+                  option.name
+                }}</span>
+                <span id="hierarchyContainerType" class="subTitle">
                   {{
                     'nodeSubTitle'
                       | translate
@@ -97,6 +107,7 @@
       </mat-autocomplete>
 
       <svg-icon
+        id="hierarchyContainerCloseIcon"
         icon="icon-close"
         matSuffix
         *ngIf="searchHierarchyKey.value.length"
@@ -111,7 +122,7 @@
     [ngClass]="{ displayGrid: hierarchyMode !== 'asset_hierarchy' }"
   >
     <div *ngIf="!filteredHierarchyList.length" class="emptySearchResult">
-      <span>
+      <span id="hierarchyContainerLocationFound">
         {{
           'noAssetsOrLocationsFound'
             | translate : { searchKey: searchHierarchyKey.value }
@@ -138,8 +149,9 @@
     </div>
   </div>
   <div *ngIf="!hierarchy.length" class="emptyHierarchy">
-    <span translate="noAssetsAdded"></span>
+    <span id="hierarchyContainerNoAssetAdded" translate="noAssetsAdded"></span>
     <button
+      id="hierarchyContainerAssetBtn"
       mat-raised-button
       color="primary"
       (click)="openHierarchyModal()"
