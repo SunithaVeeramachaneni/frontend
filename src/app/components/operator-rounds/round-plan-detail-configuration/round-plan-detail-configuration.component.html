@@ -20,8 +20,13 @@
 >
   <div class="dis-flex form-header">
     <div class="dis-flex width-55">
-      <svg-icon icon="icon-round-plans-icon" class="plans-icon"></svg-icon>
+      <svg-icon
+        id="roundPlanDetailIcon"
+        icon="icon-round-plans-icon"
+        class="plans-icon"
+      ></svg-icon>
       <input
+        id="roundPlanDetailText"
         hidden
         type="file"
         #formImageuploader
@@ -35,6 +40,7 @@
         >
           <a class="width-90">
             <input
+              id="roundPlanDetailNameText"
               #name
               type="text"
               [size]="name.value !== '' ? getSize(name.value) : 20"
@@ -47,6 +53,7 @@
             />
 
             <mat-error
+              id="roundPlanDetailNameError"
               *ngIf="processValidationErrors('name')"
               class="error-fields"
             >
@@ -61,11 +68,16 @@
             </mat-error>
           </a>
           <button
+            id="roundPlanDetailEditNameBtn"
             (click)="editFormName()"
             class="edit-icon"
             *ngIf="formConfiguration.get('name').disabled === true"
           >
-            <svg-icon icon="icon-edit-icon" class="edit-icon-img"></svg-icon>
+            <svg-icon
+              id="roundPlanDetailEditNameIcon"
+              icon="icon-edit-icon"
+              class="edit-icon-img"
+            ></svg-icon>
           </button>
         </a>
         <br />
@@ -75,6 +87,7 @@
             class="width-62"
           >
             <input
+              id="roundPlanDetailDescriptionText"
               type="text"
               class="form_description_input"
               placeholder="{{ 'addFormDesc' | translate }}"
@@ -84,7 +97,9 @@
             />
           </a>
           <span
-            ><span class="plant">{{ 'plant' | translate }}:</span>
+            ><span id="roundPlanDetailPlant" class="plant"
+              >{{ 'plant' | translate }}:</span
+            >
             {{ ' ' + formMetadata?.plant }}</span
           >
         </div>
@@ -92,6 +107,7 @@
     </div>
     <div class="dis-flex width-45 justify-content-end">
       <div
+        id="roundPlanDetailChangesSaved"
         class="save-status"
         [hidden]="
           props.formSaveStatus !== formConfigurationStatus.saved ||
@@ -102,6 +118,7 @@
         {{ 'changesSaved' | translate }}
       </div>
       <div
+        id="roundPlanDetailSavingChanges"
         class="save-status"
         [hidden]="
           props.formSaveStatus !== formConfigurationStatus.saving ||
@@ -111,6 +128,7 @@
         {{ 'savingChanges' | translate }}
       </div>
       <div
+        id="roundPlanDetailChangesPublished"
         class="save-status"
         [hidden]="
           formDetailPublishStatus !== formConfigurationStatus.published ||
@@ -120,6 +138,7 @@
         {{ 'changesPublished' | translate }}
       </div>
       <div
+        id="roundPlanDetailPublishingChanges"
         class="save-status"
         [hidden]="
           formDetailPublishStatus !== formConfigurationStatus.publishing ||
@@ -130,6 +149,7 @@
       </div>
 
       <button
+        id="roundPlanDetailPreviewBtn"
         mat-stroked-button
         class="preview-btn"
         (click)="togglePreview()"
@@ -137,6 +157,7 @@
       >
         <span>
           <svg-icon
+            id="roundPlanDetailPreviewIcon"
             [icon]="getImage('preview', isPreviewActive)"
             class="preview-btn-icon"
           ></svg-icon>
@@ -144,12 +165,13 @@
         </span>
       </button>
       <button
+        id="roundPlanDetailNextBtn"
         mat-stroked-button
         class="next-btn"
         (click)="goToPDFBuilderConfiguration()"
       >
         <span>
-          <span translate="next"></span>
+          <span id="roundPlanDetailNextText" translate="next"></span>
         </span>
       </button>
     </div>
@@ -177,6 +199,7 @@
         >
           <div class="selectedNode">
             <span
+              id="roundPlanDetailNodeInstance"
               class="selectedNodeTitle"
               *ngIf="selectedNodeInstances?.length > 1; else singleInstance"
             >
@@ -185,7 +208,10 @@
               }}
             </span>
             <ng-template #singleInstance>
-              <span class="selectedNodeTitle">
+              <span
+                id="roundPlanDetailSingleInstance"
+                class="selectedNodeTitle"
+              >
                 {{
                   'singleInstance'
                     | translate
@@ -196,6 +222,7 @@
               </span>
             </ng-template>
             <button
+              id="roundPlanDetailImportTaskBtn"
               mat-stroked-button
               class="import-btn"
               translate="importBtn"
@@ -216,7 +243,7 @@
       </div>
       <div *ngIf="props.hierarchyMode === 'route_plan'">
         <div class="selectedNode">
-          <span class="selectedNodeTitle">
+          <span id="roundPlanDetailTaskSelected" class="selectedNodeTitle">
             {{
               'tasksOfSelectedNode' | translate : { name: selectedNode.name }
             }}

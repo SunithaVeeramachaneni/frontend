@@ -1,6 +1,6 @@
 <div id="shift-container" *ngIf="slots?.length > 0">
   <ng-container>
-    <h1 class="mt-5" *ngIf="shift?.value?.id">
+    <h1 id="shiftChartName" class="mt-5" *ngIf="shift?.value?.id">
       {{ shift?.value?.name }}: {{ shift?.value?.startTime }}-{{
         shift?.value?.endTime
       }}
@@ -10,7 +10,7 @@
         <tr>
           <ng-container *ngFor="let slot of slots; let last = last">
             <td class="slot pr-20 pl-15">
-              <b>{{ slot }}</b>
+              <b id="shiftChartSlot">{{ slot }}</b>
             </td>
           </ng-container>
         </tr>
@@ -18,23 +18,29 @@
           <td [attr.colspan]="slots?.length - 1" class="slot">
             <div class="main-content slotBackground">
               <div class="left left-margin">
-                <p>{{ 'slot' | translate }} {{ getInitialTime }}</p>
+                <p id="shiftChartSlotInitialTime">
+                  {{ 'slot' | translate }} {{ getInitialTime }}
+                </p>
               </div>
               <div>
                 <ng-container>
                   <button
+                    id="shiftChartMenuBtn"
                     [matMenuTriggerFor]="menu"
                     class="more-icon"
                     aria-label="More Options"
                   >
                     <svg-icon
+                      id="shiftChartMoreIcon"
                       icon="icon-more"
                       class="more-icon-no-color"
                     ></svg-icon>
                   </button>
                 </ng-container>
                 <mat-menu #menu="matMenu" xPosition="before">
-                  <button mat-menu-item translate>removeBtn</button>
+                  <button id="shiftChartRemoveBtn" mat-menu-item translate>
+                    removeBtn
+                  </button>
                 </mat-menu>
               </div>
             </div>
@@ -66,7 +72,7 @@
               *ngIf="dataArrays[index]?.isBook === true"
             >
               <div class="left left-margin">
-                <p>
+                <p id="shiftChartSlotTime">
                   {{ 'slot' | translate }} {{ dataArrays[index]?.startTime }} -
                   {{ dataArrays[index]?.endTime }}
                 </p>
@@ -74,11 +80,13 @@
               <div>
                 <ng-container>
                   <button
+                    id="shiftChartMoreBtn"
                     [matMenuTriggerFor]="menu"
                     class="more-icon"
                     aria-label="More Options"
                   >
                     <svg-icon
+                      id="shiftChartMenuIcon"
                       icon="icon-more"
                       class="more-icon-no-color"
                     ></svg-icon>
@@ -86,6 +94,7 @@
                 </ng-container>
                 <mat-menu #menu="matMenu" xPosition="before">
                   <button
+                    id="shiftChartRemoveSlotBtn"
                     mat-menu-item
                     translate
                     (click)="onRemoveRow(index, dataArrays[index])"
@@ -106,7 +115,9 @@
             class="slot"
             (click)="onAddSlot(slot, index)"
           >
-            <b class="cursor">{{ 'slot' | translate }} +</b>
+            <b id="shiftChartAddSlot" class="cursor"
+              >{{ 'slot' | translate }} +</b
+            >
           </td>
         </tr>
       </table>

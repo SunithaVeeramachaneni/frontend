@@ -1,14 +1,17 @@
 <div class="assets-modal">
   <div class="dis-flex heading-conatiner">
-    <button class="back-btn">
-      <svg-icon icon="icon-back-arrow"></svg-icon>
+    <button id="assetsModalBackBtn" class="back-btn">
+      <svg-icon id="assetsModalBackIcon" icon="icon-back-arrow"></svg-icon>
     </button>
-    <h2 class="heading" translate>Select Assets</h2>
+    <h2 id="assetsModalSelectAsset" class="heading" translate>Select Assets</h2>
   </div>
   <div class="search">
     <mat-form-field class="width-100" appearance="outline">
-      <mat-icon matSuffix class="icon">search</mat-icon>
+      <mat-icon id="assetsModalSearchIcon" matSuffix class="icon"
+        >search</mat-icon
+      >
       <input
+        id="assetsModalSearchText"
         matInput
         [placeholder]="'Search Asset' | translate"
         class="width-100"
@@ -28,22 +31,26 @@
         </div> -->
       </li>
     </div>
-    <div class="dis-flex no-records" translate>noResults</div>
+    <div id="assetsModalNoResult" class="dis-flex no-records" translate>
+      noResults
+    </div>
   </div>
 
   <div mat-dialog-actions class="actions">
     <button
+      id="assetsModalCancelBtn"
       mat-stroked-button
       mat-dialog-close="true"
       translate="Cancel"
     ></button>
     <button
+      id="assetsModalAddBtn"
       mat-raised-button
       color="primary"
       translate="Add"
       (click)="assets()"
     ></button>
-    </div>
+  </div>
 </div>
 
 <ng-template #loadingForms>
