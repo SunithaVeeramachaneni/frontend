@@ -12,7 +12,7 @@
   "setFormTypeHeading": "Select Form type",
   "setTemplateTypeHeading": "Select Template Type",
   "standalone": "Standalone",
-  "embedded": "Embedded",
+  "embedded": "Embedded (SAP)",
   "embeddedSubText": "On Publishing form will show in your mWorkorder app",
   "addFormName": "Form Name",
   "addFormNameMandatory": "Form Name *",
