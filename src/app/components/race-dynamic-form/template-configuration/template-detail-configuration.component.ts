@@ -4,7 +4,9 @@ import {
   ChangeDetectionStrategy,
   OnDestroy,
   ViewChild,
-  ElementRef
+  ElementRef,
+  Output,
+  EventEmitter
 } from '@angular/core';
 import {
   FormBuilder,
@@ -18,6 +20,7 @@ import {
   debounceTime,
   distinctUntilChanged,
   pairwise,
+  startWith,
   takeUntil,
   tap
 } from 'rxjs/operators';
@@ -33,19 +36,9 @@ import {
   getQuestionCounter,
   State
 } from 'src/app/forms/state';
-import {
-  BuilderConfigurationActions,
-  GlobalResponseActions,
-  QuickResponseActions,
-  UnitOfMeasurementActions
-} from 'src/app/forms/state/actions';
-import { HeaderService } from 'src/app/shared/services/header.service';
-import { BreadcrumbService } from 'xng-breadcrumb';
+import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
 import { ActivatedRoute, Router } from '@angular/router';
-import {
-  formConfigurationStatus,
-  graphQLDefaultLimit
-} from 'src/app/app.constants';
+import { formConfigurationStatus } from 'src/app/app.constants';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { MatDialog } from '@angular/material/dialog';
 import { RaceDynamicFormService } from '../services/rdf.service';
@@ -53,13 +46,14 @@ import { EditTemplateNameModalComponent } from '../edit-template-name-modal/edit
 import { TemplateAffectedFormsModalComponent } from './template-affected-forms-modal/template-affected-forms-modal.component';
 
 @Component({
-  selector: 'app-template-configuration',
-  templateUrl: './template-configuration.component.html',
-  styleUrls: ['./template-configuration.component.scss'],
+  selector: 'app-template-detail-configuration',
+  templateUrl: './template-detail-configuration.component.html',
+  styleUrls: ['./template-detail-configuration.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TemplateConfigurationComponent implements OnInit, OnDestroy {
+export class TemplateDetailConfigurationComponent implements OnInit, OnDestroy {
   @ViewChild('name') formName: ElementRef;
+  @Output() markReadyEvent = new EventEmitter<void>();
   selectedNode = { id: null };
   formConfiguration: FormGroup;
   formMetadata$: Observable<FormMetadata>;
@@ -86,8 +80,6 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private store: Store<State>,
-    private headerService: HeaderService,
-    private breadcrumbService: BreadcrumbService,
     private router: Router,
     private route: ActivatedRoute,
     private dialog: MatDialog,
@@ -131,7 +123,7 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.onDestroy$))
         .subscribe((res) => {
           this.allTemplates = res.rows.filter(
-            (item) => item.id !== this.formDetails.formMetadata.id
+            (item) => item.id !== this.formDetails?.formMetadata?.id
           );
         });
     }
@@ -139,6 +131,7 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
 
     this.formConfiguration.valueChanges
       .pipe(
+        startWith({}),
         debounceTime(500),
         distinctUntilChanged(),
         takeUntil(this.onDestroy$),
@@ -198,7 +191,7 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
                     );
                   }
                 });
-              } else {
+              } else if (prev.description !== curr.description) {
                 this.store.dispatch(
                   BuilderConfigurationActions.updateFormMetadata({
                     formMetadata: curr,
@@ -236,11 +229,6 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
           },
           { emitEvent: false }
         );
-        const formName = name ? name : 'Untitled Form';
-        this.headerService.setHeaderTitle(formName);
-        this.breadcrumbService.set('@templateName', {
-          label: formName
-        });
       })
     );
     this.questionCounter$ = this.store.select(getQuestionCounter).pipe(
@@ -373,13 +361,22 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
   }
 
   publishFormDetail() {
-    const dialogRef = this.dialog.open(TemplateAffectedFormsModalComponent, {
-      maxWidth: '50vw',
-      maxHeight: '82vh',
-      height: '100%',
-      width: '100%',
-      data: {
-        templateId: this.formMetadata.id
+    const templateDialogRef = this.dialog.open(
+      TemplateAffectedFormsModalComponent,
+      {
+        maxWidth: '50vw',
+        maxHeight: '82vh',
+        height: '100%',
+        width: '100%',
+        data: {
+          templateId: this.formMetadata.id
+        }
+      }
+    );
+    templateDialogRef.afterClosed().subscribe((res) => {
+      if (res?.published) {
+        this.router.navigate(['forms/templates']);
+        this.markReadyEvent.emit();
       }
     });
   }
@@ -410,9 +407,5 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.onDestroy$.next();
     this.onDestroy$.complete();
-    this.store.dispatch(BuilderConfigurationActions.resetFormConfiguration());
-    this.store.dispatch(UnitOfMeasurementActions.resetUnitOfMeasurementList());
-    this.store.dispatch(QuickResponseActions.resetQuickResponses());
-    this.store.dispatch(GlobalResponseActions.resetGlobalResponses());
   }
 }

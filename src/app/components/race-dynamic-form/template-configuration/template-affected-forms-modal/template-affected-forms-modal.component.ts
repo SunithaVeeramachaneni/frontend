@@ -324,7 +324,7 @@ export class TemplateAffectedFormsModalComponent implements OnInit {
       );
   }
   markTemplateAsReady() {
-    this.dialogRef.close();
+    this.dialogRef.close({ published: true });
     this.store.dispatch(
       BuilderConfigurationActions.updateIsFormDetailPublished({
         isFormDetailPublished: true

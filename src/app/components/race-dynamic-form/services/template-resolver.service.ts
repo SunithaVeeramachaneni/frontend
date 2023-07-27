@@ -26,7 +26,6 @@ export class TemplateResolverService {
       this.roundPlanResolverServive.getResponseTypeDetails();
       return of({} as FormConfigurationState);
     }
-    this.store.dispatch(BuilderConfigurationActions.resetFormConfiguration());
     return this.raceDynamicFormService.fetchTemplateById$(id).pipe(
       map((form) => {
         this.store.dispatch(
@@ -42,8 +41,6 @@ export class TemplateResolverService {
           isPublic,
           formStatus,
           formType,
-          tags,
-          instructions,
           authoredFormTemplateDetails
         } = form.rows[0];
         const { counter, pages } = authoredFormTemplateDetails[0];
@@ -55,9 +52,7 @@ export class TemplateResolverService {
           formLogo,
           isPublic,
           formStatus,
-          formType,
-          tags,
-          instructions
+          formType
         };
         this.roundPlanResolverServive.getResponseTypeDetails(id);
 
