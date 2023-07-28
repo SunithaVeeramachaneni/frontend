@@ -123,12 +123,14 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
 
   checkTemplateNameExists(name: string): Observable<boolean> {
     if (name !== this.templateData?.formMetadata?.name) {
-      return this.rdfService.fetchAllTemplates$().pipe(
-        map((templateList) =>
-          templateList.rows.filter((template) => template.name === name)
-        ),
-        map((templates) => !templates.length)
-      );
+      return this.rdfService
+        .fetchTemplates$({ isArchived: false, isDeleted: false })
+        .pipe(
+          map((templateList: any) =>
+            templateList.rows.filter((template) => template.name === name)
+          ),
+          map((templates: any[]) => !templates.length)
+        );
     } else {
       return of(true);
     }
