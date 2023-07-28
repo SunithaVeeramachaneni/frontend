@@ -885,10 +885,27 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
 
   onLogicDelete(section: any, question: any, event: any) {
     const sections = this.createForm.get('sections') as FormArray;
+    const checkData = sections?.value.filter(
+      (item) => item?.uid === section?.value?.uid
+    );
     let sectionIndex = 0;
-    for (let i = 0; i < sections.value.length; i++) {
-      if (sections.value[i].uid === section.value.uid) {
-        sectionIndex = i;
+    // Duplicate sections exist
+    if (checkData?.length > 1) {
+      for (let i = 0; i < sections?.value.length; i++) {
+        if (
+          sections.value[i].uid === section?.value.uid &&
+          sections.value[i]?.position === section?.value?.position
+        ) {
+          sectionIndex = i;
+        }
+      }
+    } else {
+      // Unique sections exist
+      sectionIndex = 0;
+      for (let i = 0; i < sections.value.length; i++) {
+        if (sections.value[i].uid === section.value.uid) {
+          sectionIndex = i;
+        }
       }
     }
     const sectionControl = sections.at(sectionIndex) as FormArray;
