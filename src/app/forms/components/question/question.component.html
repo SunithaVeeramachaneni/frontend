@@ -403,6 +403,7 @@
                 class="action"
               >
                 <button
+                  id="questionAddLogicBtn"
                   mat-button
                   color="primary"
                   [ngClass]="
@@ -417,7 +418,7 @@
                   "
                 >
                   <mat-icon class="icon">link</mat-icon>
-                  <span>{{
+                  <span id="questionAddLinkBtn">{{
                     questionForm.get('value').value.title
                       ? questionForm.get('value').value.title
                       : ('addLinkBtn' | translate)
@@ -431,7 +432,7 @@
                 class="action"
               >
                 <label translate="range"></label>&nbsp;
-                <span class="range-values">
+                <span id="questionRange" class="range-values">
                   {{ questionForm.get('value').value.min }} -
                   {{ questionForm.get('value').value.max }}
                 </span>

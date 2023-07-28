@@ -358,8 +358,7 @@ export class HierarchyContainerComponent implements OnInit {
   }
 
   openHierarchyModal = () => {
-    const dialogRef = this.dialog
-      .open(HierarchyModalComponent, {
+    const dialogRef = this.dialog.open(HierarchyModalComponent, {
       disableClose: true
     });
     dialogRef
@@ -369,7 +368,7 @@ export class HierarchyContainerComponent implements OnInit {
         this.store.dispatch(
           HierarchyActions.updateSelectedHierarchyList({
             selectedHierarchy: selectedHierarchyList || []
-          }),
+          })
         );
         this.store.dispatch(
           BuilderConfigurationActions.updateFormStatuses({

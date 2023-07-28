@@ -52,6 +52,7 @@ import { NgxImageCompressService } from 'ngx-image-compress';
 import { PDFDocument } from 'pdf-lib';
 import { RoundPlanModalComponent } from '../round-plan-modal/round-plan-modal.component';
 import { Router } from '@angular/router';
+import { cloneDeep } from 'lodash-es';
 
 @Component({
   selector: 'app-round-plan-header-configuration',
@@ -131,7 +132,7 @@ export class RoundPlanHeaderConfigurationComponent
     this.operatorRoundsService.getDataSetsByType$('tags').subscribe((tags) => {
       if (tags && tags.length) {
         this.allTags = tags[0].values;
-        this.originalTags = JSON.parse(JSON.stringify(tags[0].values));
+        this.originalTags = cloneDeep(tags[0].values);
         this.tagsCtrl.setValue('');
         this.cdrf.detectChanges();
       }

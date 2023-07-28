@@ -121,6 +121,7 @@ import { DynamicStepperComponent } from './components/stepper/dynamic-stepper/dy
 import { StepsHeaderComponent } from './components/stepper/steps-header/steps-header.component';
 import { MatStepperModule } from '@angular/material/stepper';
 import { UploadImagePreviewComponent } from './components/upload-image-preview/upload-image-preview.component';
+import { FormUpdateDeleteProgressComponent } from './components/form-update-delete-progress/form-update-delete-progress.component';
 @NgModule({
   declarations: [
     FormWidgetComponent,
@@ -196,6 +197,7 @@ import { UploadImagePreviewComponent } from './components/upload-image-preview/u
     ShiftMenuItemComponent,
     ShiftDateChangeWarningModalComponent,
     DynamicStepperComponent,
+    FormUpdateDeleteProgressComponent,
     StepsHeaderComponent
   ],
   imports: [
@@ -286,7 +288,8 @@ import { UploadImagePreviewComponent } from './components/upload-image-preview/u
     DynamicStepperComponent,
     StepsHeaderComponent,
     InstructionPdfComponent,
-    ShiftMenuItemComponent
+    ShiftMenuItemComponent,
+    FormUpdateDeleteProgressComponent
   ]
 })
 export class FormModule {}

@@ -126,21 +126,13 @@ export class InspectionComponent implements OnInit, OnDestroy {
   assignedTo: string[] = [];
   schedules: string[] = [];
   assigneePosition: any;
-  columns: Column[] = [
+  partialColumns: Partial<Column>[] = [
     {
       id: 'name',
       displayName: 'Name',
       type: 'string',
       controlType: 'string',
-      order: 1,
-      searchable: false,
-      sortable: false,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
       titleStyle: {
         'font-weight': '500',
         'font-size': '100%',
@@ -148,15 +140,13 @@ export class InspectionComponent implements OnInit, OnDestroy {
         'overflow-wrap': 'anywhere'
       },
       hasSubtitle: true,
-      showMenuOptions: false,
       subtitleColumn: 'description',
       subtitleStyle: {
         'font-size': '80%',
         color: 'darkgray',
         'overflow-wrap': 'anywhere'
       },
-      hasPreTextImage: true,
-      hasPostTextImage: false
+      hasPreTextImage: true
     },
     {
       id: 'plant',
@@ -164,22 +154,9 @@ export class InspectionComponent implements OnInit, OnDestroy {
       type: 'string',
       controlType: 'string',
       controlValue: ',',
-      order: 2,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
-      titleStyle: { width: '125px' },
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      titleStyle: { width: '125px' }
     },
     {
       id: 'shift',
@@ -197,22 +174,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
         ],
         displayType: 'text'
       },
-      order: 3,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      visible: true
     },
     {
       id: 'scheduledAtDisplay',
@@ -230,22 +193,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
         ],
         displayType: 'text'
       },
-      order: 4,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      visible: true
     },
 
     {
@@ -264,22 +213,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
         ],
         displayType: 'text'
       },
-      order: 5,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      visible: true
     },
     {
       id: 'tasksCompleted',
@@ -287,62 +222,25 @@ export class InspectionComponent implements OnInit, OnDestroy {
       type: 'string',
       controlType: 'space-between',
       controlValue: ',',
-      order: 6,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
-      titleStyle: { width: '125px' },
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      titleStyle: { width: '125px' }
     },
     {
       id: 'schedule',
       displayName: 'Schedule',
       type: 'string',
       controlType: 'string',
-      order: 7,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      visible: true
     },
     {
       id: 'status',
       displayName: 'Status',
       type: 'string',
       controlType: 'string',
-      order: 8,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
       titleStyle: {
         textTransform: 'capitalize',
         fontWeight: 500,
@@ -358,9 +256,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
         color: '#92400E',
         borderRadius: '12px'
       },
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false,
       hasConditionalStyles: true
     },
     {
@@ -378,24 +273,11 @@ export class InspectionComponent implements OnInit, OnDestroy {
         ],
         displayType: 'text'
       },
-      order: 9,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      visible: true
     }
   ];
+  columns: Column[] = [];
   configOptions: ConfigOptions = {
     tableID: 'inspectionsTable',
     rowsExpandable: false,
@@ -505,6 +387,9 @@ export class InspectionComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.columns = this.raceDynamicFormService.updateConfigOptionsFromColumns(
+      this.partialColumns
+    );
     this.plantService.getPlantTimeZoneMapping();
     this.plantMapSubscription =
       this.plantService.plantTimeZoneMapping$.subscribe((data) => {

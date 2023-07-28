@@ -119,7 +119,7 @@ export class TemplateDetailConfigurationComponent implements OnInit, OnDestroy {
       }, 1000);
     } else {
       this.raceDynamicFormService
-        .fetchAllTemplates$()
+        .fetchTemplates$({ isArchived: false, isDeleted: false })
         .pipe(takeUntil(this.onDestroy$))
         .subscribe((res) => {
           this.allTemplates = res.rows.filter(
@@ -369,7 +369,8 @@ export class TemplateDetailConfigurationComponent implements OnInit, OnDestroy {
         height: '100%',
         width: '100%',
         data: {
-          templateId: this.formMetadata.id
+          templateId: this.formMetadata.id,
+          templateType: this.formMetadata.formType
         }
       }
     );

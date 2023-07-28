@@ -13,17 +13,20 @@ import {
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { isEqual } from 'lodash-es';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
   pairwise,
+  take,
   takeUntil,
   tap
 } from 'rxjs/operators';
 import { State } from 'src/app/forms/state/builder/builder-state.selectors';
 import { SectionEvent, Section } from 'src/app/interfaces';
 import { BuilderConfigurationActions } from '../../state/actions';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmModalPopupComponent } from 'src/app/components/race-dynamic-form/confirm-modal-popup/confirm-modal-popup/confirm-modal-popup.component';
 
 @Component({
   selector: 'app-section',
@@ -33,6 +36,7 @@ import { BuilderConfigurationActions } from '../../state/actions';
 })
 export class SectionComponent implements OnInit, OnDestroy {
   @ViewChild('sectionName') sectionName: ElementRef;
+
   @Input() isTemplate: boolean;
   @Input() set pageIndex(pageIndex: number) {
     this._pageIndex = pageIndex;
@@ -104,7 +108,11 @@ export class SectionComponent implements OnInit, OnDestroy {
   private _sectionQuestionsCount: number;
   private onDestroy$ = new Subject();
 
-  constructor(private fb: FormBuilder, private store: Store<State>) {}
+  constructor(
+    private fb: FormBuilder,
+    private dialog: MatDialog,
+    private store: Store<State>
+  ) {}
 
   ngOnInit() {
     this.sectionForm.valueChanges
@@ -156,12 +164,56 @@ export class SectionComponent implements OnInit, OnDestroy {
     this.sectionName.nativeElement.focus();
   }
 
-  deleteSection() {
+  copySection() {
     this.sectionEvent.emit({
       pageIndex: this.pageIndex,
       sectionIndex: this.sectionIndex,
       section: this.sectionForm.getRawValue(),
-      type: 'delete'
+      type: 'copy'
+    });
+  }
+
+  deleteSection() {
+    if (!this.isTemplate) {
+      this.sectionEvent.emit({
+        pageIndex: this.pageIndex,
+        sectionIndex: this.sectionIndex,
+        section: this.sectionForm.getRawValue(),
+        type: 'delete'
+      });
+      return;
+    }
+    const dialogRef = this.dialog.open(ConfirmModalPopupComponent, {
+      maxWidth: 'max-content',
+      maxHeight: 'max-content',
+      data: {
+        popupTexts: {
+          primaryBtnText: 'yes',
+          secondaryBtnText: 'cancel',
+          title: 'confirmDelete?',
+          subtitle:
+            'deleteTemplateSectionSubtitle'
+        }
+      }
+    });
+    dialogRef.afterClosed().subscribe((data) => {
+      if (data === 'primary') {
+        this.sectionEvent.emit({
+          pageIndex: this.pageIndex,
+          sectionIndex: this.sectionIndex,
+          section: this.sectionForm.getRawValue(),
+          type: 'delete'
+        });
+      }
+    });
+  }
+
+  unlinkSection() {
+    this.sectionEvent.emit({
+      pageIndex: this.pageIndex,
+      sectionIndex: this.sectionIndex,
+      section: this.sectionForm.getRawValue(),
+      type: 'unlink'
     });
   }
 

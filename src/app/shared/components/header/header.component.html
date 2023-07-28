@@ -2,13 +2,19 @@
   class="min-toolbar"
   [ngClass]="{ 'open-close-header': menustate === true }"
 >
-  <button mat-icon-button (click)="openSidenav()" aria-label="Side Menu Toggle">
+  <button
+    id="headerOpenSideNav"
+    mat-icon-button
+    (click)="openSidenav()"
+    aria-label="Side Menu Toggle"
+  >
     <mat-icon class="menu-icon">menu</mat-icon>
   </button>
 
   <div class="width-50" (click)="closeSidenav()">
     <div>
       <h6
+        id="headerTitle"
         class="header-title"
         *ngIf="this.headerTitle$ | async as headerTitle; else headerLoading"
       >
@@ -52,6 +58,7 @@
           *ngIf="!slackVerification.slackInstalled"
           class="connectToSlackButton"
           (click)="connectToSlack(slackVerification)"
+          id="headerConnectToSlack"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -78,6 +85,7 @@
           Connect to Slack
         </div>
         <mat-icon
+          id="headerChatBubbleWarn"
           #collabButton
           class="collabButton"
           aria-label="Collaboration Dialog trigger button"
@@ -89,6 +97,7 @@
           chat_bubble_outline
         </mat-icon>
         <mat-icon
+          id="headerChatBubbleOutLine"
           #collabButton
           class="collabButton"
           aria-label="Collaboration Dialog trigger button"
@@ -114,6 +123,7 @@
         class="userPresence"
       >
         <img
+          id="headerProfileImg"
           [src]="profileImage(userDetails.profileImage)"
           class="profile"
           alt="Profile Image"
@@ -128,7 +138,12 @@
       </div>
       <div class="with-company-logo" *ngIf="tenantLogo">
         <span class="helper"> </span>
-        <img [src]="tenantLogo" alt="Tenant Logo" class="logo" />
+        <img
+          id="headerTenantLogo"
+          [src]="tenantLogo"
+          alt="Tenant Logo"
+          class="logo"
+        />
       </div>
     </div>
 
@@ -154,16 +169,26 @@
           class="profile-image"
           alt="Profile Image"
         />
-        <p class="loggedin-user-name">
+        <p id="headerUserDetailsName" class="loggedin-user-name">
           {{ userDetails.firstName }} {{ userDetails.lastName }}
         </p>
         <p class="loggedin-user-role">{{ userDetails.title }}</p>
         <p class="loggedin-user-email">{{ userDetails.email }}</p>
         <mat-nav-list class="p-0">
-          <a mat-list-item class="profile-signout" (click)="userSettings()">
+          <a
+            id="headerProfile"
+            mat-list-item
+            class="profile-signout"
+            (click)="userSettings()"
+          >
             Profile
           </a>
-          <a mat-list-item class="profile-signout" (click)="signout()">
+          <a
+            id="headerSignOut"
+            mat-list-item
+            class="profile-signout"
+            (click)="signout()"
+          >
             Sign Out
           </a>
         </mat-nav-list>

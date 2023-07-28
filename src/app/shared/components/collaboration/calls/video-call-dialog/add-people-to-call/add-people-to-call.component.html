@@ -1,6 +1,7 @@
 <div class="peoplesTabBody">
   <div class="searchBar">
     <input
+      id="addPeopleToCallText"
       matInput
       placeholder="{{ 'searchPeople' | translate }}"
       name="searchKey"
@@ -10,7 +11,12 @@
       autocomplete="off"
       class="searchInput"
     />
-    <button disabled mat-icon-button class="searchMore">
+    <button
+      id="addPeopleToCallMoreBtn"
+      disabled
+      mat-icon-button
+      class="searchMore"
+    >
       <mat-icon>more_horiz</mat-icon>
     </button>
   </div>
@@ -32,7 +38,11 @@
         </mat-checkbox>
         <div class="icon-button" mat-list-icon>
           <div class="userPresence">
-            <img class="icon" [src]="user.profileImage" />
+            <img
+              id="addPeopleToCallImg"
+              class="icon"
+              [src]="user.profileImage"
+            />
             <div
               class="statusCircle"
               [ngClass]="{
@@ -43,14 +53,17 @@
           </div>
         </div>
         <div class="userNameAndTitle">
-          <b>{{ user.firstName }} {{ user.lastName }}</b>
-          <span>{{ user.title }}</span>
+          <b id="addPeopleToCallUserName"
+            >{{ user.firstName }} {{ user.lastName }}</b
+          >
+          <span id="addPeopleToCallUserTitle">{{ user.title }}</span>
         </div>
       </div>
     </div>
   </div>
   <div class="bottomActions" *ngIf="!fetchActiveUsersInprogress">
     <button
+      id="addPeopleToCallCancelBtn"
       mat-stroked-button
       class="actionBtn"
       disabled="{{ fetchActiveUsersInprogress }}"
@@ -59,6 +72,7 @@
       translate="cancel"
     ></button>
     <button
+      id="addPeopleToCallAddBtn"
       mat-raised-button
       class="actionBtn"
       disabled="{{ fetchActiveUsersInprogress }}"

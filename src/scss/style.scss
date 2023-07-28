@@ -655,6 +655,12 @@ button.mat-menu-item {
   padding-top: 10px !important;
 }
 
+.select-questions-dialog {
+  mat-dialog-container {
+    padding: 25px !important;
+  }
+}
+
 .mat-input-element:disabled {
   color: $black;
   opacity: 0.6;
