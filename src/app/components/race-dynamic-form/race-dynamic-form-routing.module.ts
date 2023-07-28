@@ -41,7 +41,7 @@ const routes: Routes = [
         }
       },
       {
-        path: 'archived',
+        path: 'archived/:tabIndex',
         component: ArchivedListComponent,
         canActivate: [AuthGuard],
         data: {

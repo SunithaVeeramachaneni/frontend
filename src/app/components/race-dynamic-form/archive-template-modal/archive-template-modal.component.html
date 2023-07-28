@@ -1,31 +1,41 @@
-<div>
-  <div class="widget-delete-modal">
-    <div *ngIf="this.templateData.formsUsageCount === 0">
-      <p class="cancel-title" translate="archiveTemplateModalHeading1"></p>
-      <p
-        class="cancel-subtitle"
-        translate="archiveTemplateModalSubHeading1"
-      ></p>
-    </div>
-    <div *ngIf="this.templateData.formsUsageCount !== 0">
-      <p class="cancel-title" translate="archiveTemplateModalHeading2"></p>
-      <p
-        class="cancel-subtitle"
-        translate="archiveTemplateModalSubHeading2"
-      ></p>
-    </div>
-    <button
-      mat-raised-button
-      [disabled]="this.templateData.formsUsageCount !== 0"
-      class="delete-btn"
-      (click)="archiveTemplate('archive')"
-      translate="yes"
-    ></button>
-    <button
-      mat-button
-      class="cancel-btn"
-      (click)="archiveTemplate('cancel')"
-      translate="no"
-    ></button>
+<div class="archive-template-modal">
+  <div *ngIf="this.templateData.formsUsageCount === 0">
+    <p
+      id="archiveTemplateModalHeading"
+      class="cancel-title"
+      translate="archiveTemplateModalHeading1"
+    ></p>
+    <p
+      id="archiveTemplateModalSubHeading"
+      class="cancel-subtitle"
+      translate="archiveTemplateModalSubHeading1"
+    ></p>
   </div>
+  <div *ngIf="this.templateData.formsUsageCount !== 0">
+    <p
+      id="archiveTemplateModalHeading"
+      class="cancel-title"
+      translate="archiveTemplateModalHeading2"
+    ></p>
+    <p
+      id="archiveTemplateModalSubHeading"
+      class="cancel-subtitle"
+      translate="archiveTemplateModalSubHeading2"
+    ></p>
+  </div>
+  <button
+    id="archiveTemplateModalArchiveBtn"
+    mat-raised-button
+    [disabled]="this.templateData.formsUsageCount !== 0"
+    class="delete-btn"
+    (click)="archiveTemplate('archive')"
+    translate="yes"
+  ></button>
+  <button
+    id="archiveTemplateModalCancelBtn"
+    mat-button
+    class="cancel-btn"
+    (click)="archiveTemplate('cancel')"
+    translate="no"
+  ></button>
 </div>

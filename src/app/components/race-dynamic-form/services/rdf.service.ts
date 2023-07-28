@@ -32,7 +32,8 @@ import { oppositeOperatorMap } from 'src/app/shared/utils/fieldOperatorMappings'
 import { ResponseSetService } from '../../master-configurations/response-set/services/response-set.service';
 import { TranslateService } from '@ngx-translate/core';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
-import { isEmpty, omitBy } from 'lodash-es';
+import { cloneDeep, isEmpty, omitBy } from 'lodash-es';
+import { Column } from '@innovapptive.com/dynamictable/lib/interfaces';
 
 const limit = 10000;
 
@@ -426,7 +427,7 @@ export class RaceDynamicFormService {
     let askQuestions = [];
     let evidenceQuestions = [];
     let notificationGlobalIndex = 0;
-    const logicsT = JSON.parse(JSON.stringify(logics));
+    const logicsT = cloneDeep(logics);
     const questionLogics = logicsT.filter(
       (logic) => logic.questionId === questionId
     );
@@ -1363,4 +1364,36 @@ export class RaceDynamicFormService {
       body
     );
   };
+
+  updateConfigOptionsFromColumns(columns: Partial<Column>[]) {
+    const allColumns: Column[] = columns.map((column, index) => {
+      const defaultColumn: Column = {
+        id: '',
+        displayName: '',
+        type: '',
+        controlType: '',
+        order: 0,
+        showMenuOptions: false,
+        subtitleColumn: '',
+        searchable: false,
+        sortable: false,
+        hideable: false,
+        visible: false,
+        movable: false,
+        stickable: false,
+        sticky: false,
+        groupable: false,
+        titleStyle: {},
+        subtitleStyle: {},
+        hasPreTextImage: false,
+        hasPostTextImage: false
+      };
+      return {
+        ...defaultColumn,
+        ...column,
+        order: index + 1
+      };
+    });
+    return allColumns;
+  }
 }

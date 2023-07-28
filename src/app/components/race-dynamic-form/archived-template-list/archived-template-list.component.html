@@ -3,10 +3,10 @@
     <div class="forms-header">
       <span class="custom-form-field-gray-color search">
         <span class="no-of-forms" *ngIf="templatesCount$ | async as totalCount">
-          <span class="forms-count">
+          <span id="archivedTemplateListTemplateCount" class="templates-count">
             {{ totalCount | count }}
           </span>
-          <span class="forms-text">{{
+          <span id="archivedTemplateListTemplateText" class="templates-text">{{
             'templates'
               | translate
                 : {
@@ -15,8 +15,14 @@
           }}</span>
         </span>
         <mat-form-field appearance="outline">
-          <mat-icon matPrefix class="searchIcon">search</mat-icon>
+          <mat-icon
+            id="archivedTemplateListSearchIcon"
+            matPrefix
+            class="searchIcon"
+            >search</mat-icon
+          >
           <input
+            id="archivedTemplateListSearchTemplates"
             matInput
             type="text"
             [placeholder]="'searchTemplates' | translate"
@@ -24,6 +30,7 @@
             [formControl]="searchTemplates"
           />
           <svg-icon
+            id="archivedTemplateListFilterIcon"
             icon="icon-filterIcon"
             class="filter-icon"
             cdkOverlayOrigin

@@ -1,10 +1,22 @@
-<mat-tab-group animationDuration="0ms">
-  <mat-tab>
+<mat-tab-group
+  animationDuration="0ms"
+  [selectedIndex]="getSelectedIndex()"
+  (selectedTabChange)="onTabChange($event)"
+>
+  <mat-tab id="archiveTemplates">
     <ng-template mat-tab-label>{{ 'templates' | translate }}</ng-template>
-    <app-archived-template-list></app-archived-template-list>
+    <app-lazy-load-container>
+      <ng-template #body>
+        <app-archived-template-list></app-archived-template-list>
+      </ng-template>
+    </app-lazy-load-container>
   </mat-tab>
-  <mat-tab>
+  <mat-tab id="archiveForms">
     <ng-template mat-tab-label>{{ 'forms' | translate }}</ng-template>
-    <app-archived-form-list></app-archived-form-list>
+    <app-lazy-load-container>
+      <ng-template #body>
+        <app-archived-form-list></app-archived-form-list>
+      </ng-template>
+    </app-lazy-load-container>
   </mat-tab>
 </mat-tab-group>

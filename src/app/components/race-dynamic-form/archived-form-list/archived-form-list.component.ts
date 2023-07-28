@@ -1,5 +1,10 @@
 /* eslint-disable no-underscore-dangle */
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit
+} from '@angular/core';
 import {
   BehaviorSubject,
   combineLatest,
@@ -26,12 +31,21 @@ import {
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { MatTableDataSource } from '@angular/material/table';
 
-import { TableEvent, LoadEvent, SearchEvent } from 'src/app/interfaces';
+import {
+  TableEvent,
+  LoadEvent,
+  SearchEvent,
+  UserInfo,
+  Permission
+} from 'src/app/interfaces';
+
 import {
   formConfigurationStatus,
   graphQLDefaultLimit,
-  routingUrls
+  routingUrls,
+  permissions as perms
 } from 'src/app/app.constants';
+
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { ToastService } from 'src/app/shared/toast';
 import { MatDialog } from '@angular/material/dialog';
@@ -39,6 +53,7 @@ import { ArchivedDeleteModalComponent } from '../archived-delete-modal/archived-
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { HeaderService } from 'src/app/shared/services/header.service';
+import { LoginService } from '../../login/services/login.service';
 
 interface FormTableUpdate {
   action: 'restore' | 'delete' | null;
@@ -48,39 +63,30 @@ interface FormTableUpdate {
 @Component({
   selector: 'app-archived-form-list',
   templateUrl: './archived-form-list.component.html',
-  styleUrls: ['./archived-form-list.component.scss']
+  styleUrls: ['./archived-form-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ArchivedFormListComponent implements OnInit, OnDestroy {
-  columns: Column[] = [
+  partialColumns: Partial<Column>[] = [
     {
       id: 'name',
       displayName: 'Recents',
       type: 'string',
       controlType: 'string',
-      order: 1,
-      searchable: false,
-      sortable: false,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
       titleStyle: {
         'font-weight': '500',
         'font-size': '90%',
         'overflow-wrap': 'anywhere'
       },
       hasSubtitle: true,
-      showMenuOptions: false,
       subtitleColumn: 'description',
       subtitleStyle: {
         'font-size': '80%',
         color: 'darkgray',
         'overflow-wrap': 'anywhere'
       },
-      hasPreTextImage: true,
-      hasPostTextImage: false
+      hasPreTextImage: true
     },
     {
       id: 'plant',
@@ -88,22 +94,9 @@ export class ArchivedFormListComponent implements OnInit, OnDestroy {
       type: 'string',
       controlType: 'string',
       isMultiValued: true,
-      order: 2,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
-      titleStyle: { color: '' },
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      titleStyle: { color: '' }
     },
     {
       id: 'isArchivedAt',
@@ -111,46 +104,21 @@ export class ArchivedFormListComponent implements OnInit, OnDestroy {
       type: 'timeAgo',
       controlType: 'string',
       isMultiValued: true,
-      order: 2,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
-      titleStyle: { color: '' },
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      titleStyle: { color: '' }
     },
     {
       id: 'publishedDate',
       displayName: 'Last Published',
       type: 'timeAgo',
       controlType: 'string',
-      order: 3,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      groupable: true
     }
   ];
+  columns: Column[] = [];
   configOptions: ConfigOptions = {
     tableID: 'formsTable',
     rowsExpandable: false,
@@ -204,17 +172,22 @@ export class ArchivedFormListComponent implements OnInit, OnDestroy {
   triggerCountUpdate = false;
   readonly routingUrls = routingUrls;
   currentRouteUrl$: Observable<string>;
+  userInfo$: Observable<UserInfo>;
   private onDestroy$ = new Subject();
 
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private readonly toast: ToastService,
+    private readonly loginService: LoginService,
     public dialog: MatDialog,
     private commonService: CommonService,
     private headerService: HeaderService
   ) {}
 
   ngOnInit(): void {
+    this.columns = this.raceDynamicFormService.updateConfigOptionsFromColumns(
+      this.partialColumns
+    );
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
       tap(() => {
         this.headerService.setHeaderTitle(routingUrls.archivedForms.title);
@@ -233,9 +206,11 @@ export class ArchivedFormListComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe(() => this.isLoading$.next(true));
+    this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
+      tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
+    );
     this.getDisplayedForms();
     this.configOptions.allColumns = this.columns;
-    this.prepareMenuActions();
     this.getFilters();
     this.getAllArchivedForms();
     this.archivedFormsListCount$ = combineLatest([
@@ -388,17 +363,26 @@ export class ArchivedFormListComponent implements OnInit, OnDestroy {
     this.fetchForms$.next(event);
   };
 
-  prepareMenuActions(): void {
-    const menuActions = [
-      {
+  prepareMenuActions(permissions: Permission[]): void {
+    const menuActions = [];
+    if (
+      this.loginService.checkUserHasPermission(
+        permissions,
+        'RESTORE_ARCHIVED_FORM'
+      )
+    ) {
+      menuActions.push({
         title: 'Restore',
         action: 'restore'
-      },
-      {
+      });
+    }
+    if (this.loginService.checkUserHasPermission(permissions, 'DELETE_FORM')) {
+      menuActions.push({
         title: 'Delete',
         action: 'delete'
-      }
-    ];
+      });
+    }
+
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
     this.configOptions = { ...this.configOptions };

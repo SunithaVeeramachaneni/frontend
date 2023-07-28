@@ -25,14 +25,12 @@ import { MatTableDataSource } from '@angular/material/table';
 
 import {
   CellClickActionEvent,
-  Count,
   TableEvent,
   FormTableUpdate,
   Permission,
   UserInfo
 } from 'src/app/interfaces';
 import {
-  graphQLDefaultLimit,
   formConfigurationStatus,
   permissions as perms,
   defaultLimit
@@ -44,7 +42,6 @@ import { omit } from 'lodash-es';
 import { generateCopyNumber, generateCopyRegex } from '../utils/utils';
 import { slideInOut } from 'src/app/animations';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
-import { CreateFromTemplateModalComponent } from '../create-from-template-modal/create-from-template-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { LoginService } from '../../login/services/login.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
@@ -66,21 +63,13 @@ export class FormListComponent implements OnInit, OnDestroy {
   isPopoverOpen = false;
   status: any[] = ['Draft', 'Published'];
   filterJson: any[] = [];
-  columns: Column[] = [
+  partialColumns: Partial<Column>[] = [
     {
       id: 'name',
       displayName: 'Name',
       type: 'string',
       controlType: 'string',
-      order: 1,
-      searchable: false,
-      sortable: false,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
       titleStyle: {
         'font-weight': '500',
         'font-size': '100%',
@@ -88,7 +77,6 @@ export class FormListComponent implements OnInit, OnDestroy {
         'overflow-wrap': 'anywhere'
       },
       hasSubtitle: true,
-      showMenuOptions: false,
       subtitleColumn: 'description',
       subtitleStyle: {
         'font-size': '80%',
@@ -98,25 +86,15 @@ export class FormListComponent implements OnInit, OnDestroy {
         'max-width': '350px',
         'overflow-wrap': 'anywhere'
       },
-      hasPreTextImage: true,
-      hasPostTextImage: false
+      hasPreTextImage: true
     },
     {
       id: 'formStatus',
       displayName: 'Status',
       type: 'string',
       controlType: 'string',
-      order: 2,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
       groupable: true,
       titleStyle: {
         textTransform: 'capitalize',
@@ -133,9 +111,6 @@ export class FormListComponent implements OnInit, OnDestroy {
         color: '#92400E',
         borderRadius: '12px'
       },
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false,
       hasConditionalStyles: true
     },
     {
@@ -143,89 +118,37 @@ export class FormListComponent implements OnInit, OnDestroy {
       displayName: 'Plant',
       type: 'string',
       controlType: 'string',
-      order: 3,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      groupable: true
     },
     {
       id: 'formType',
       displayName: 'Form Type',
       type: 'string',
       controlType: 'string',
-      order: 4,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      groupable: true
     },
     {
       id: 'lastPublishedBy',
       displayName: 'Last Published By',
       type: 'number',
       controlType: 'string',
-      order: 5,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      groupable: true
     },
     {
       id: 'publishedDate',
       displayName: 'Last Published',
       type: 'timeAgo',
       controlType: 'string',
-      order: 6,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
       reverseSort: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      groupable: true
     },
     {
       id: 'author',
@@ -233,24 +156,12 @@ export class FormListComponent implements OnInit, OnDestroy {
       type: 'number',
       controlType: 'string',
       isMultiValued: true,
-      order: 7,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
-      titleStyle: { color: '' },
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      titleStyle: { color: '' }
     }
   ];
+  columns: Column[] = [];
 
   configOptions: ConfigOptions = {
     tableID: 'formsTable',
@@ -331,6 +242,9 @@ export class FormListComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.columns = this.raceDynamicFormService.updateConfigOptionsFromColumns(
+      this.partialColumns
+    );
     this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
     this.raceDynamicFormService.fetchForms$.next({} as TableEvent);
     this.searchForm = new FormControl('');
@@ -698,15 +612,6 @@ export class FormListComponent implements OnInit, OnDestroy {
     }
     this.nextToken = '';
     this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
-  }
-
-  openCreateFromTemplateModal() {
-    const dialogRef = this.dialog.open(CreateFromTemplateModalComponent, {});
-    dialogRef.afterClosed().subscribe((data) => {
-      if (data?.selectedTemplate) {
-        this.openFormCreationModal(data.selectedTemplate);
-      }
-    });
   }
 
   openFormCreationModal(data: any) {

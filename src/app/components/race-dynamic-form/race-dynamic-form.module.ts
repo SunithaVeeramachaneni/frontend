@@ -71,7 +71,6 @@ import { TemplateConfigurationModalComponent } from './template-configuration-mo
 import { TemplateConfigurationComponent } from './template-configuration/template-configuration.component';
 import { SaveTemplateConfirmModalComponent } from './save-template-confirm-modal/save-template-confirm-modal.component';
 import { SaveTemplateContainerComponent } from './save-template-container/save-template-container.component';
-import { CreateFromTemplateModalComponent } from './create-from-template-modal/create-from-template-modal.component';
 import { TemplateContainerComponent } from './template-container/template-container.component';
 import { EditTemplateNameModalComponent } from './edit-template-name-modal/edit-template-name-modal.component';
 import { unitOfMeasurementReducer } from 'src/app/forms/state/unit-of-measurement.reducer';
@@ -120,7 +119,6 @@ export const customTranslateLoader = (http: HttpClient) =>
     TemplateConfigurationComponent,
     SaveTemplateConfirmModalComponent,
     SaveTemplateContainerComponent,
-    CreateFromTemplateModalComponent,
     TemplateContainerComponent,
     EditTemplateNameModalComponent,
     InspectionObservationsComponent,

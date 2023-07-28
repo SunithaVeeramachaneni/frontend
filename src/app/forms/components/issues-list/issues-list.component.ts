@@ -79,21 +79,13 @@ export class IssuesListComponent implements OnInit, OnDestroy {
   }
   @Input() moduleName;
   assigneeDetails: AssigneeDetails;
-  columns: Column[] = [
+  partialColumns: Partial<Column>[] = [
     {
       id: 'title',
       displayName: 'Title',
       type: 'string',
       controlType: 'string',
-      order: 1,
-      searchable: false,
-      sortable: false,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
       titleStyle: {
         'font-weight': '500',
         'font-size': '100%',
@@ -101,81 +93,47 @@ export class IssuesListComponent implements OnInit, OnDestroy {
         'overflow-wrap': 'anywhere'
       },
       hasSubtitle: true,
-      showMenuOptions: false,
       subtitleColumn: 'description',
       subtitleStyle: {
         'font-size': '80%',
         color: 'darkgray',
         'overflow-wrap': 'anywhere'
       },
-      hasPreTextImage: true,
-      hasPostTextImage: false
+      hasPreTextImage: true
     },
     {
       id: 'locationAsset',
       displayName: 'Location/Asset',
       type: 'string',
       controlType: 'string',
-      order: 2,
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
       titleStyle: {
         'font-size': '100%'
       },
       hasSubtitle: true,
-      showMenuOptions: false,
       subtitleColumn: 'locationAssetDescription',
       subtitleStyle: {
         'font-size': '80%',
         color: 'darkgray'
-      },
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      }
     },
     {
       id: 'plant',
       displayName: 'Plant',
       type: 'string',
       controlType: 'string',
-      order: 3,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      groupable: true
     },
     {
       id: 'priority',
       displayName: 'Priority',
       type: 'number',
       controlType: 'string',
-      order: 4,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
       groupable: true,
       titleStyle: {
         textTransform: 'capitalize',
@@ -190,9 +148,6 @@ export class IssuesListComponent implements OnInit, OnDestroy {
         color: '#ff4033',
         borderRadius: '12px'
       },
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false,
       hasConditionalStyles: true
     },
     {
@@ -200,17 +155,8 @@ export class IssuesListComponent implements OnInit, OnDestroy {
       displayName: 'Status',
       type: 'string',
       controlType: 'string',
-      order: 5,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
       groupable: true,
       titleStyle: {
         textTransform: 'capitalize',
@@ -228,9 +174,6 @@ export class IssuesListComponent implements OnInit, OnDestroy {
         color: '#92400E',
         borderRadius: '12px'
       },
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false,
       hasConditionalStyles: true
     },
     {
@@ -238,70 +181,33 @@ export class IssuesListComponent implements OnInit, OnDestroy {
       displayName: 'Due Date',
       type: 'string',
       controlType: 'string',
-      order: 6,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      groupable: true
     },
     {
       id: 'notificationInfo',
       displayName: 'Notification No.',
       type: 'string',
       controlType: 'string',
-      order: 7,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      groupable: true
     },
     {
       id: 'assignedToDisplay',
       displayName: 'Assigned To',
       type: 'string',
       controlType: 'string',
-      order: 8,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
       groupable: true,
       titleStyle: {
         'overflow-wrap': 'anywhere'
-      },
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      }
     }
   ];
+  columns: Column[] = [];
   configOptions: ConfigOptions = {
     tableID: 'issuesTable',
     rowsExpandable: false,
@@ -400,6 +306,9 @@ export class IssuesListComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.columns = this.observationsService.updateConfigOptionsFromColumns(
+      this.partialColumns
+    );
     this.plantMapSubscription =
       this.plantService.plantTimeZoneMapping$.subscribe(
         (data) => (this.plantTimezoneMap = data)

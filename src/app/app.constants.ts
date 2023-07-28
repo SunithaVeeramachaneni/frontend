@@ -72,6 +72,7 @@ export const permissions = Object.freeze({
   deleteForm: 'DELETE_FORM',
   copyForm: 'COPY_FORM',
   archiveForm: 'ARCHIVE_FORM',
+  restoreForm: 'RESTORE_ARCHIVED_FORM',
   viewSubmissions: 'VIEW_SUBMISSIONS',
   downloadSubmission: 'DOWNLOAD_SUBMISSION',
   shareSubmission: 'SHARE_SUBMISSION',
@@ -231,7 +232,7 @@ export const routingUrls = {
     permission: permissions.viewFormTemplates
   },
   archivedForms: {
-    url: '/forms/archived',
+    url: '/forms/archived/0',
     title: 'Archived',
     permission: permissions.viewArchivedForms
   },
