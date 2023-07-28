@@ -30,7 +30,7 @@ import {
   toArray,
   map
 } from 'rxjs/operators';
-import { isEqual, uniqBy } from 'lodash-es';
+import { groupBy, isEqual, isUndefined } from 'lodash-es';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { RdfService } from '../services/rdf.service';
@@ -1116,7 +1116,8 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       position: [''],
       questions: section
         ? this.addQuestionsForCopySections(sc, section.value.questions)
-        : this.fb.array([this.initQuestion(sc, qc, uqc)])
+        : this.fb.array([this.initQuestion(sc, qc, uqc)]),
+      createdAt: new Date().toISOString()
     });
   };
 
@@ -1228,7 +1229,37 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   }
 
   removeDuplicateSectionsFromForm(form) {
-    const uniqueSections = uniqBy(form.sections, 'uid');
+    const uniqueSections = [];
+    Object.entries(groupBy(form?.sections, 'uid')).forEach(([_, sValue]) => {
+      if (sValue?.length > 0) {
+        if (sValue?.length > 1) {
+          // If there is not createdAt is present in sections
+          const sectionsWithNoCreatedAt = sValue?.every(
+            (s) => !isUndefined(s?.createdAt)
+          );
+          if (sectionsWithNoCreatedAt) {
+            const latestRecord = sValue?.reduce((latest, current) => {
+              const latestTimestamp = new Date(latest?.createdAt);
+              const currentTimestamp = new Date(current?.createdAt);
+              return latestTimestamp < currentTimestamp ? latest : current;
+            });
+            if (latestRecord) {
+              uniqueSections.push(latestRecord);
+            }
+          } else {
+            // createdAt not present in all objects in sections
+            const oldRecord = sValue?.find((s) => !s?.createdAt);
+            if (oldRecord) {
+              uniqueSections.push(oldRecord);
+            } else {
+              uniqueSections.push(...sValue.shift());
+            }
+          }
+        } else {
+          uniqueSections.push(...sValue);
+        }
+      }
+    });
     const updatedForm = { ...form, sections: uniqueSections };
     this.createForm.patchValue(
       { sections: uniqueSections },
