@@ -3,10 +3,22 @@
     <span [innerHTML]="'backgroundHeader' | translate"></span>
   </h1>
 
-  <svg-icon icon="icon-Powered_by" class="logo"></svg-icon>
+  <svg-icon
+    id="backgroundPoweredIcon"
+    icon="icon-Powered_by"
+    class="logo"
+  ></svg-icon>
   <ng-content></ng-content>
 
-  <svg-icon icon="icon-graphics_left" class="graphics-left"></svg-icon>
+  <svg-icon
+    id="backgroundGraphicLeft"
+    icon="icon-graphics_left"
+    class="graphics-left"
+  ></svg-icon>
 
-  <svg-icon icon="icon-graphics_right" class="graphics-right"></svg-icon>
+  <svg-icon
+    id="backgroundGraphicRight"
+    icon="icon-graphics_right"
+    class="graphics-right"
+  ></svg-icon>
 </div>

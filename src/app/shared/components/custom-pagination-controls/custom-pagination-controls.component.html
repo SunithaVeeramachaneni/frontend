@@ -1,17 +1,65 @@
 <div class="custom-pagination" *ngIf="p.getTotalItems()">
-  <div class="p-0" [class.disabled]="p.isFirstPage()" (click)="p.setCurrent(1)" tabindex="0">
-    <a><mat-icon class="pagination-mat-icon">first_page</mat-icon></a>
+  <div
+    id="customPaginationSetCurrent"
+    class="p-0"
+    [class.disabled]="p.isFirstPage()"
+    (click)="p.setCurrent(1)"
+    tabindex="0"
+  >
+    <a
+      ><mat-icon id="customPaginationFirstPage" class="pagination-mat-icon"
+        >first_page</mat-icon
+      ></a
+    >
   </div>
-  <div class="p-0" [class.disabled]="p.isFirstPage()" (click)="p.previous()" tabindex="0">
-    <a><mat-icon class="pagination-mat-icon">chevron_left</mat-icon></a>
+  <div
+    id="customPaginationPrevious"
+    class="p-0"
+    [class.disabled]="p.isFirstPage()"
+    (click)="p.previous()"
+    tabindex="0"
+  >
+    <a
+      ><mat-icon id="customPaginationChevLeft" class="pagination-mat-icon"
+        >chevron_left</mat-icon
+      ></a
+    >
   </div>
-  <div (click)="p.setCurrent(page.value)" *ngFor="let page of p.pages" [class.current]="p.getCurrent() === page.value" tabindex="0">
-    <a><span>{{ page.label }}</span></a>
+  <div
+    id="customPaginationPageValue"
+    (click)="p.setCurrent(page.value)"
+    *ngFor="let page of p.pages"
+    [class.current]="p.getCurrent() === page.value"
+    tabindex="0"
+  >
+    <a
+      ><span id="customPaginationLabel">{{ page.label }}</span></a
+    >
   </div>
-  <div class="p-0" [class.disabled]="p.isLastPage()" (click)="p.next()" tabindex="0">
-    <a><mat-icon class="pagination-mat-icon">chevron_right</mat-icon></a>
+  <div
+    id="customPaginationNext"
+    class="p-0"
+    [class.disabled]="p.isLastPage()"
+    (click)="p.next()"
+    tabindex="0"
+  >
+    <a
+      ><mat-icon id="customPaginationRight" class="pagination-mat-icon"
+        >chevron_right</mat-icon
+      ></a
+    >
   </div>
-  <div class="p-0" [class.disabled]="p.isLastPage()" (click)="p.setCurrent(p.getLastPage())" tabindex="0">
-    <a><mat-icon class="pagination-mat-icon">last_page</mat-icon></a>
+  <div
+    id="customPaginationLastPageClick"
+    class="p-0"
+    [class.disabled]="p.isLastPage()"
+    (click)="p.setCurrent(p.getLastPage())"
+    tabindex="0"
+  >
+    <a
+      ><mat-icon id="customPaginationLastPage" class="pagination-mat-icon"
+        >last_page</mat-icon
+      ></a
+    >
   </div>
 </div>
