@@ -1,13 +1,18 @@
 <div class="confirm-popup-modal">
-  <p class="title" *ngIf="data.popupTexts.title">
+  <p id="confirm-popup-title" class="title" *ngIf="data.popupTexts.title">
     {{ data.popupTexts.title | translate }}
   </p>
-  <p class="subtitle" *ngIf="data.popupTexts.subtitle">
+  <p
+    id="confirm-popup-subtitle"
+    class="subtitle"
+    *ngIf="data.popupTexts.subtitle"
+  >
     {{ data.popupTexts.subtitle | translate }}
   </p>
 
   <button
     mat-raised-button
+    id="confirm-popup-primary-btn"
     class="primary-btn"
     (click)="onPositiveAction()"
     *ngIf="data.popupTexts.primaryBtnText"
@@ -16,6 +21,7 @@
   </button>
   <button
     mat-button
+    id="confirm-popup-secondary-btn"
     class="secondary-btn"
     *ngIf="data.popupTexts.secondaryBtnText"
     (click)="onNegativeAction()"

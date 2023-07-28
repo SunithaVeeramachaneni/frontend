@@ -192,7 +192,7 @@ export class SectionComponent implements OnInit, OnDestroy {
           secondaryBtnText: 'cancel',
           title: 'confirmDelete?',
           subtitle:
-            'deletingTheSectionWillUnlinkTheElementsCreatedFromThisTemplate'
+            'deleteTemplateSectionSubtitle'
         }
       }
     });

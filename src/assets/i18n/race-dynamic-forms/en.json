@@ -369,7 +369,7 @@
   "template": "Template",
   "addNotes": "Add Notes",
   "confirmDelete?": "Confirm Delete?",
-  "deletingTheSectionWillUnlinkTheElementsCreatedFromThisTemplate": "Deleting the section will unlink the elements created from this Template.",
+  "deleteTemplateSectionSubtitle": "Deleting the section will unlink the elements created from this Template.",
   "unlinkSection": "Unlink Section",
   "copySection": "Copy Section",
   "archiveTemplateModalHeading1": "Confirm Archiving?",

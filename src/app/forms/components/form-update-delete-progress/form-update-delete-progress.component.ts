@@ -1,4 +1,10 @@
-import { Component, OnDestroy, OnInit, ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  ChangeDetectorRef,
+  ChangeDetectionStrategy
+} from '@angular/core';
 import { Subject } from 'rxjs';
 import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
 import {
@@ -11,7 +17,8 @@ import { FormUpdateProgressService } from '../../services/form-update-progress.s
 @Component({
   selector: 'app-form-update-delete-progress',
   templateUrl: './form-update-delete-progress.component.html',
-  styleUrls: ['./form-update-delete-progress.component.scss']
+  styleUrls: ['./form-update-delete-progress.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
   _isOpen: boolean;
@@ -30,6 +37,7 @@ export class FormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
     this.isOpen();
     this.isExpanded();
     this.formUpdateDeletePayload$().subscribe((payload) => {
+      this.cdr.detectChanges();
       if (payload?.formIds.length > 0) {
         this.resetCounters();
         payload.affectedForms.map((form) => {
