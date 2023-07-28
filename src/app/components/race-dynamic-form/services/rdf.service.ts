@@ -755,6 +755,7 @@ export class RaceDynamicFormService {
       )
       .map((p) => ({
         ...p,
+        id: p.inspectionId,
         preTextImage: {
           image: p.formLogo,
           style: {

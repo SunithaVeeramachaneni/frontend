@@ -224,7 +224,8 @@ export class RoundPlanHeaderConfigurationComponent
         name: this.roundData.formMetadata.name,
         description: this.roundData.formMetadata.description,
         plantId: this.roundData.formMetadata.plantId,
-        formStatus: this.roundData.formMetadata.formStatus
+        formStatus: this.roundData.formMetadata.formStatus,
+        instructions: this.roundData.formMetadata.instructions
       });
 
       const additionalDetailsArray =
@@ -439,7 +440,7 @@ export class RoundPlanHeaderConfigurationComponent
   }
 
   trackBySelectedattachments(index: number, el: any): string {
-    return el.id;
+    return el?.id;
   }
 
   onCancel(): void {
@@ -550,7 +551,7 @@ export class RoundPlanHeaderConfigurationComponent
                       this.filteredMediaType = {
                         mediaType: [
                           ...this.filteredMediaType.mediaType,
-                          this.base64result
+                          onlybase64
                         ]
                       };
                       this.cdrf.detectChanges();
@@ -919,5 +920,7 @@ export class RoundPlanHeaderConfigurationComponent
 
   ngOnDestroy() {
     this.formMetadataSubscrption.unsubscribe();
+    this.operatorRoundsService.attachmentsMapping$.next([]);
+    this.operatorRoundsService.pdfMapping$.next([]);
   }
 }
