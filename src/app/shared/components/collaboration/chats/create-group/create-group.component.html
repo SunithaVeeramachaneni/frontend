@@ -1,14 +1,21 @@
 <div class="chatsBody">
   <div class="conversationsList">
     <div class="participants">
-      <button mat-icon-button (click)="switchToConversationsView()">
+      <button
+        id="createGroupBtn"
+        mat-icon-button
+        (click)="switchToConversationsView()"
+      >
         <mat-icon>arrow_back</mat-icon>
       </button>
 
-      <span class="participantsTitle" translate>addParticipants</span>
+      <span id="createGroupAddParticipants" class="participantsTitle" translate
+        >addParticipants</span
+      >
     </div>
     <div class="searchBar">
       <input
+        id="createGroupSearchText"
         matInput
         placeholder="{{ 'searchPeople' | translate }}"
         name="searchKey"
@@ -30,12 +37,18 @@
           (click)="addParticipant(user)"
         >
           <div class="icon-button" mat-list-icon>
-            <img class="icon" [src]="user.profileImage" />
+            <img
+              id="createGroupUserImg"
+              class="icon"
+              [src]="user.profileImage"
+            />
           </div>
           <div mat-line>
-            <b>{{ user.firstName }} {{ user.lastName }}</b>
+            <b id="createGroupUserName"
+              >{{ user.firstName }} {{ user.lastName }}</b
+            >
           </div>
-          <div mat-line>{{ user.title }}</div>
+          <div id="createGroupUserTitle" mat-line>{{ user.title }}</div>
           <mat-divider></mat-divider>
         </mat-list-item>
       </mat-list>
@@ -43,11 +56,13 @@
   </div>
   <div class="conversationContent">
     <div class="centerText userList" *ngIf="!selectedUsers.length">
-      <span translate>selectUserToCreateGroup</span>
+      <span id="createGroupSelectUser" translate>selectUserToCreateGroup</span>
     </div>
 
     <div class="userList" *ngIf="selectedUsers.length">
-      <span class="participantLabel" translate>participants</span>
+      <span id="createGroupParticipant" class="participantLabel" translate
+        >participants</span
+      >
 
       <mat-list>
         <mat-list-item
@@ -55,15 +70,22 @@
           class="peopleList"
         >
           <div class="icon-button" mat-list-icon>
-            <img class="icon" [src]="user.profileImage" />
+            <img
+              id="createGroupProfilemg"
+              class="icon"
+              [src]="user.profileImage"
+            />
           </div>
           <div mat-line>
-            <span class="userName"
+            <span id="createGroupName" class="userName"
               >{{ user.firstName }} {{ user.lastName }}</span
             >
           </div>
-          <div mat-line class="userTitle">{{ user.title }}</div>
+          <div id="createGroupTitle" mat-line class="userTitle">
+            {{ user.title }}
+          </div>
           <button
+            id="createGroupRemoveParticipant"
             mat-icon-button
             (click)="removeParticipant(user)"
             [disabled]="user.disabled"
@@ -80,6 +102,7 @@
       <div class="messageInputBar">
         <div class="messageInputGroup">
           <input
+            id="createGroupGroupName"
             matInput
             class="messageInput"
             placeholder="Group Name"
@@ -92,6 +115,7 @@
             (keyup.enter)="onGroupCreateEnter(groupName, selectedUsers)"
           />
           <button
+            id="createGroupConvBtn"
             mat-flat-button
             class="convBtn"
             color="primary"
@@ -106,7 +130,7 @@
             "
             translate
           >
-            <span translate>createGroup</span>
+            <span id="createGroup" translate>createGroup</span>
             <mat-spinner
               class="displayInline"
               *ngIf="groupCreationInProgress"
@@ -115,6 +139,7 @@
             ></mat-spinner>
           </button>
           <button
+            id="createGroupUpdateMemBtn"
             mat-flat-button
             class="convBtn"
             color="primary"
@@ -126,7 +151,7 @@
             "
             (click)="updateGroupMembers()"
           >
-            <span translate>updateGroup</span>
+            <span id="createGroupUpdateGroup" translate>updateGroup</span>
             <mat-spinner
               class="displayInline"
               *ngIf="groupCreationInProgress"

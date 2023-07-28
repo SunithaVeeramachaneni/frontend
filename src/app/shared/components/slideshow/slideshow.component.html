@@ -1,12 +1,17 @@
 <div class="card-container">
-  <button (click)="close()" class="close-btn">
-    <svg-icon icon="icon-cancel-white-icon" class="cancel-icon"></svg-icon>
+  <button id="slideshowCloseBtn" (click)="close()" class="close-btn">
+    <svg-icon
+      id="slideshowCancelIcon"
+      icon="icon-cancel-white-icon"
+      class="cancel-icon"
+    ></svg-icon>
   </button>
   <mat-card class="slider-images-container">
     <div class="slide-wrapper">
       <ng-container *ngIf="data.type === 'forms'">
         <ng-container *ngFor="let image of data.images; let i = index">
           <img
+            id="slideshowImg"
             [src]="getImageSrc(image)"
             *ngIf="i === currentIndex"
             class="slide-images"
@@ -16,6 +21,7 @@
       <ng-container *ngIf="data.type !== 'forms'">
         <ng-container *ngFor="let image of data; let i = index">
           <img
+            id="slideshowCurrentImg"
             src="{{ image }}"
             *ngIf="i === currentIndex"
             class="slide-images"
@@ -34,6 +40,7 @@
           class="thumbnail-images"
         >
           <img
+            id="slideshowFormImg"
             [src]="getImageSrc(image)"
             width="70"
             height="70"
@@ -44,6 +51,7 @@
       <ng-container *ngIf="data.type !== 'forms'">
         <div *ngFor="let image of data; let i = index">
           <img
+            id="slideshowNoForms"
             src="{{ image }}"
             width="70"
             height="70"

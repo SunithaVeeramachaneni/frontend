@@ -8,9 +8,12 @@
   cdkDragBoundary="body"
 >
   <div class="dialogHeader">
-    <div class="headerTitle" translate>innoChatTitle</div>
+    <div id="collabInnoChatTitle" class="headerTitle" translate>
+      innoChatTitle
+    </div>
     <div>
       <button
+        id="collabRemoveBtn"
         mat-icon-button
         disableRipple
         class="closeBtn"
@@ -20,6 +23,7 @@
         <mat-icon>remove</mat-icon>
       </button>
       <button
+        id="collabUnflodLessBtn"
         mat-icon-button
         disableRipple
         class="closeBtn rotate90"
@@ -29,6 +33,7 @@
         <mat-icon>unfold_less</mat-icon>
       </button>
       <button
+        id="collabUnfoldMoreBtn"
         mat-icon-button
         disableRipple
         class="closeBtn rotate90"
@@ -39,6 +44,7 @@
       </button>
 
       <button
+        id="collabCloseBtn"
         mat-icon-button
         disableRipple
         class="closeBtn"
@@ -61,6 +67,7 @@
     class="buttonGroup"
   >
     <button
+      id="collabGroupChatsBtn"
       mat-button
       class="btnGroupBtn"
       [ngClass]="{'activeTab': selectedTab==='chats'}"
@@ -69,6 +76,7 @@
     ></button>
     <mat-divider class="groupBtnDivider"></mat-divider>
     <button
+      id="collabGroupCallBtn"
       mat-button
       class="btnGroupBtn"
       [ngClass]="{'activeTab': selectedTab==='calls'}"
@@ -77,6 +85,7 @@
     ></button>
     <mat-divider class="groupBtnDivider"></mat-divider>
     <button
+      id="collabGroupPeopleBtn"
       mat-button
       class="btnGroupBtn"
       [ngClass]="{'activeTab': selectedTab==='people'}"
