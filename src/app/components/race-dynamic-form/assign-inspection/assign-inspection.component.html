@@ -1,9 +1,15 @@
 <div id="assign-rounds">
   <mat-card>
     <mat-card-title class="m-0 light-gray dis-flex title">
-      <div class="heading" translate="selectAnOperator"></div>
+      <div
+        id="assignInspectionHeading"
+        class="heading"
+        translate="selectAnOperator"
+      ></div>
       <div class="cancel-side-drawer">
-        <mat-icon class="dialog-close">close</mat-icon>
+        <mat-icon id="assignInspectionCloseIcon" class="dialog-close"
+          >close</mat-icon
+        >
       </div>
     </mat-card-title>
     <mat-card-content (click)="$event.stopPropagation()">
@@ -13,8 +19,11 @@
       ></div>
       <span class="custom-form-field-gray-color">
         <mat-form-field appearance="outline" class="search width-100">
-          <mat-icon matPrefix class="searchIcon">search</mat-icon>
+          <mat-icon id="assignInspectionSearchIcon" matPrefix class="searchIcon"
+            >search</mat-icon
+          >
           <input
+            id="assignInspectionSearchText"
             matInput
             type="text"
             [placeholder]="'search' | translate"
@@ -25,22 +34,33 @@
       </span>
       <ng-container *ngFor="let user of filteredUsers$ | async">
         <div
+          id="assignInspectionSelectAssignee"
           mat-menu-item
           class="user-menu-item"
           (click)="selectAssignee(user)"
         >
           <img
+            id="assignInspectionProfileImg"
             [src]="user.profileImage"
             alt="Profile Image"
             class="profile-image"
           />
           <span class="user-info">
-            <span class="name">{{ user.firstName }} {{ user.lastName }}</span>
-            <span class="email">{{ user.email }}</span>
+            <span id="assignInspectionName" class="name"
+              >{{ user.firstName }} {{ user.lastName }}</span
+            >
+            <span id="assignInspectionEmail" class="email">{{
+              user.email
+            }}</span>
           </span>
         </div>
       </ng-container>
-      <div *ngIf="!filteredUsersCount" class="no-results" translate>
+      <div
+        id="assignInspectionNoResult"
+        *ngIf="!filteredUsersCount"
+        class="no-results"
+        translate
+      >
         noSearchResultsFound
       </div>
     </mat-card-content>

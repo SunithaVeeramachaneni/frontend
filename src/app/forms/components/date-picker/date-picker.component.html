@@ -1,6 +1,7 @@
 <div [formGroup]="dateGroup">
-  <mat-form-field>
+  <mat-form-field appearance="outline" class="form-field">
     <input
+      id="datePicker"
       matInput
       [ngxMatDatetimePicker]="picker"
       [min]="minDate"
@@ -15,6 +16,7 @@
       [enableMeridian]="true"
       (closed)="closedEvent()"
       class="date-picker-position"
+      (closed)="closedEvent()"
     ></ngx-mat-datetime-picker>
   </mat-form-field>
 </div>

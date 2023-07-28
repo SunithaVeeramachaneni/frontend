@@ -1,14 +1,20 @@
 <div class="cancel-modal">
-  <p class="cancel-title" translate="cancelModalHeading"></p>
-  <p class="cancel-subtitle" translate="cancelModalSubHeading"></p>
+  <p id="cancelTitle" class="cancel-title" translate="cancelModalHeading"></p>
+  <p
+    id="cancelSubtitle"
+    class="cancel-subtitle"
+    translate="cancelModalSubHeading"
+  ></p>
 
   <button
+    id="cancelYesBtn"
     mat-raised-button
     class="yes-btn"
     (click)="cancel('yes')"
     translate="yesBtn"
   ></button>
   <button
+    id="cancelNoBtn"
     mat-button
     class="no-btn"
     (click)="cancel('no')"

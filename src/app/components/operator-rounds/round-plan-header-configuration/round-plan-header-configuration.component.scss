@@ -1,0 +1,337 @@
+@import '../../../../scss/colors.scss';
+
+.form-header-modal {
+  margin-top: 30px;
+
+  .form-content {
+    height: calc(100vh - 75px);
+
+    .form-detials {
+      width: 600px;
+      border-radius: 5px;
+      margin: 15px auto;
+      padding: 50px;
+      background-color: $white;
+      box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.5);
+      overflow-y: auto;
+      max-height: calc(100vh - 220px);
+
+      .heading {
+        font-size: 130%;
+        font-weight: 500;
+        color: $black;
+        margin: 0 5px 15px 5px;
+      }
+
+      .sub-heading {
+        font-weight: 400;
+        font-size: 110%;
+        color: $text-color;
+        margin: 10px 5px;
+      }
+
+      .margin {
+        margin: 10px 5px;
+      }
+
+      .radio-btn-text {
+        font-weight: 400;
+        font-size: 110%;
+        color: $light-gray;
+        position: relative;
+        top: -2px;
+      }
+
+      .radio-sub-text {
+        font-weight: 400;
+        font-size: 90%;
+        color: $text-color;
+        opacity: 0.8;
+        margin: 0px 28px;
+      }
+
+      .form-name-description {
+        font-weight: 500;
+        font-size: 100%;
+        color: $black;
+        margin-left: 5px;
+        margin-right: 5px;
+        margin-top: 33px;
+      }
+
+      .form-field {
+        margin: 0 4px;
+      }
+
+      .form-name {
+        ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
+          padding: 6px 0px 13px 0 !important;
+        }
+        .error-fields {
+          margin-top: 14px;
+        }
+      }
+
+      .tags {
+        ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
+          padding: 17px 0 0 0 !important;
+        }
+      }
+
+      .tags-mat-chips {
+        margin: 5px 5px !important;
+      }
+
+      .close-icon {
+        height: 20px;
+        width: 20px;
+      }
+    }
+  }
+
+  .horizontal-line {
+    border: 1px solid $border-color;
+    margin: 20px 0;
+  }
+
+  .plan-name :after {
+    content: '*';
+  }
+
+  .add-btn {
+    color: $blue;
+    border: none;
+  }
+
+  .edit-unit-modal {
+    width: 400px;
+    height: auto;
+    overflow: hidden;
+    background: $white;
+    border-radius: 4px;
+
+    .cdk-text-field-autofill-monitored:not(:-webkit-autofill) {
+      color: $black;
+    }
+
+    .edit-modal-header {
+      display: flex;
+      justify-content: space-between;
+      padding: 15px;
+      border-bottom: 1px solid $border-color;
+
+      .cancel {
+        float: right;
+        cursor: pointer;
+      }
+
+      .heading {
+        font-size: 130%;
+        font-weight: 500;
+        margin: 0;
+      }
+    }
+
+    .unitType {
+      width: 97%;
+    }
+
+    .description {
+      width: 47%;
+      input {
+        color: $black;
+      }
+    }
+
+    .symbol {
+      width: 47%;
+      margin-left: 10px;
+      input {
+        color: $black;
+      }
+    }
+  }
+
+  .additional_details {
+    display: flex;
+    justify-content: space-between;
+    background-color: rgba(61, 90, 254, 0.08);
+    border-radius: 10px;
+    margin-top: 30px;
+    height: 38px;
+  }
+
+  .add-detail {
+    margin-left: 15px;
+    font-weight: 800;
+    font-size: 14px;
+  }
+
+  mat-form-field {
+    display: inline-block;
+    position: relative;
+    text-align: left;
+    margin-top: 10px;
+  }
+
+  .mat-error {
+    margin-top: 10px;
+  }
+
+  ::ng-deep .mat-form-field[_ngcontent-hbq-c404] {
+    margin: 0.25em 0;
+    margin-top: 6px;
+    margin-top: 10px;
+  }
+  ::ng-deep .display-toolbar .ql-toolbar.ql-snow {
+    display: block;
+    margin-top: 0px;
+    margin-left: 140px;
+  }
+  .form-header-modal[_ngcontent-qdp-c430] mat-form-field[_ngcontent-qdp-c430] {
+    margin-top: 2px;
+  }
+}
+
+.searchable-input {
+  width: 92%;
+  border: 1px solid $border-color;
+  padding: 5px;
+  border-radius: 4px;
+  margin: 10px 10px 10px 12px;
+}
+
+.scrollable-area {
+  max-height: 200px;
+  overflow: auto;
+}
+
+.searchable-input {
+  width: 92%;
+  border: 1px solid $border-color;
+  padding: 5px;
+  border-radius: 4px;
+  margin: 10px 10px 10px 12px;
+}
+
+.mat-form-field-appearance-outline .mat-form-field-wrapper {
+  margin: 0.25em 0;
+  margin-top: 26px;
+  position: relative;
+}
+
+.icon-upload {
+  -webkit-transform: rotate(120deg);
+  font-size: 150%;
+  margin-bottom: 5px;
+}
+.add-new-button {
+  width: 100%;
+  text-align: start;
+}
+
+.upload-button {
+  margin-top: -16px;
+}
+.attachments-container {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: 10px;
+  margin-bottom: 20px;
+}
+.add-button {
+  color: $blue-main;
+  border: none;
+  background: none;
+  float: right;
+  position: relative;
+  bottom: 14px;
+  right: 5px;
+}
+.additional-details {
+  background-color: $blue7;
+  border-radius: 8px;
+  height: 40px;
+}
+
+.additional-details-text {
+  font-weight: bold;
+  font-size: 120%;
+  position: relative;
+  top: 13px;
+  left: 10px;
+  margin: 0px;
+  padding-bottom: 10px;
+}
+
+.label-value-text {
+  display: flex;
+  margin: 15px 0 5px 10px;
+}
+
+.label,
+.value {
+  font-size: 120%;
+  font-weight: 500;
+}
+
+.cancel-icon {
+  position: relative;
+  top: 15px;
+  left: 35px;
+  cursor: pointer;
+}
+
+.mat-dialog-container {
+  height: 10px;
+  width: 10px;
+  float: left;
+}
+
+.remove-btn {
+  color: $disabled-color;
+  float: right;
+  cursor: pointer;
+  margin-top: 5px;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+::ng-deep .mat-option-text {
+  font-size: 100%;
+  display: flex;
+}
+.mat-error {
+  margin-top: 16px;
+  margin-left: 20px;
+}
+
+.buttons {
+  border-bottom: 1px solid $border-color;
+  min-height: 34px;
+
+  .next-btn {
+    background-color: $radio-button-checked;
+    border-color: $radio-button-checked;
+    float: right;
+    margin-right: 22px;
+    font-weight: normal;
+    line-height: normal;
+    height: 34px;
+  }
+
+  .skip-btn {
+    float: right;
+    color: $radio-button-checked;
+    height: 34px;
+    font-weight: normal;
+    line-height: normal;
+    border: 1px solid $blue-main;
+  }
+
+  ::ng-deep .mat-raised-button[disabled] {
+    color: $disabled-text-color;
+    background-color: $gray2-bg;
+  }
+}

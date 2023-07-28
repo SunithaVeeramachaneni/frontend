@@ -4,12 +4,23 @@
   </button>
   <mat-card class="slider-images-container">
     <div class="slide-wrapper">
-      <ng-container *ngFor="let image of data; let i = index">
-        <img
-          src="{{ image }}"
-          *ngIf="i === currentIndex"
-          class="slide-images"
-        />
+      <ng-container *ngIf="data.type === 'forms'">
+        <ng-container *ngFor="let image of data.images; let i = index">
+          <img
+            [src]="getImageSrc(image)"
+            *ngIf="i === currentIndex"
+            class="slide-images"
+          />
+        </ng-container>
+      </ng-container>
+      <ng-container *ngIf="data.type !== 'forms'">
+        <ng-container *ngFor="let image of data; let i = index">
+          <img
+            src="{{ image }}"
+            *ngIf="i === currentIndex"
+            class="slide-images"
+          />
+        </ng-container>
       </ng-container>
     </div>
   </mat-card>
@@ -17,14 +28,29 @@
     <mat-icon #previous class="prev-btn">keyboard_arrow_left</mat-icon>
 
     <div class="images">
-      <div *ngFor="let image of data; let i = index" class="thumbnail-images">
-        <img
-          src="{{ image }}"
-          width="70"
-          height="70"
-          (click)="currentIndex = i"
-        />
-      </div>
+      <ng-container *ngIf="data.type === 'forms'">
+        <div
+          *ngFor="let image of data.images; let i = index"
+          class="thumbnail-images"
+        >
+          <img
+            [src]="getImageSrc(image)"
+            width="70"
+            height="70"
+            (click)="currentIndex = i"
+          />
+        </div>
+      </ng-container>
+      <ng-container *ngIf="data.type !== 'forms'">
+        <div *ngFor="let image of data; let i = index">
+          <img
+            src="{{ image }}"
+            width="70"
+            height="70"
+            (click)="currentIndex = i"
+          />
+        </div>
+      </ng-container>
     </div>
 
     <mat-icon #next class="next-btn">keyboard_arrow_right</mat-icon>

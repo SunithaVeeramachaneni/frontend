@@ -19,11 +19,15 @@ import { FormListComponent } from './form-list/form-list.component';
 import { FormDetailComponent } from './form-detail/form-detail.component';
 import { ResponseSetComponent } from './response-set/response-set.component';
 import { PublicLibraryComponent } from './public-library/public-library.component';
-import { FormConfigurationModalComponent } from './form-configuration-modal/form-configuration-modal.component';
-import { FormConfigurationComponent } from './form-configuration/form-configuration.component';
+import { FormHeaderConfigurationComponent } from './form-header-configuration/form-header-configuration.component';
+import { FormDetailConfigurationComponent } from './form-detail-configuration/form-detail-configuration.component';
 
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialogModule } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogModule,
+  MatDialogRef
+} from '@angular/material/dialog';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -47,7 +51,6 @@ import { EffectsModule } from '@ngrx/effects';
 import { FormConfigurationEffects } from 'src/app/forms/state/form-configuration.effects';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { SelectQuestionsDialogComponent } from 'src/app/forms/components/add-logic/select-questions-dialog/select-questions-dialog.component';
-import { AvatarComponent } from './form-configuration/avatar.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ArchivedListComponent } from './archived-list/archived-list.component';
 import { ArchivedDeleteModalComponent } from './archived-delete-modal/archived-delete-modal.component';
@@ -65,8 +68,8 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { AssignInspectionComponent } from './assign-inspection/assign-inspection.component';
 import { TemplateListComponent } from './template-list/template-list.component';
 import { SaveTemplateNamingModalComponent } from './save-template-naming-modal/save-template-naming-modal.component';
-import { TemplateConfigurationModalComponent } from './template-configuration-modal/template-configuration-modal.component';
-import { TemplateConfigurationComponent } from './template-configuration/template-configuration.component';
+import { TemplateHeaderConfigurationComponent } from './template-header-configuration/template-header-configuration.component';
+import { TemplateDetailConfigurationComponent } from './template-configuration/template-detail-configuration.component';
 import { SaveTemplateConfirmModalComponent } from './save-template-confirm-modal/save-template-confirm-modal.component';
 import { SaveTemplateContainerComponent } from './save-template-container/save-template-container.component';
 import { CreateFromTemplateModalComponent } from './create-from-template-modal/create-from-template-modal.component';
@@ -79,13 +82,14 @@ import { UnitOfMeasurementEffects } from 'src/app/forms/state/unit-of-measuremen
 import { QuickResponseEffects } from 'src/app/forms/state/quick-responses.effects';
 import { GlobalResponseEffects } from 'src/app/forms/state/global-response.effects';
 import { InspectionObservationsComponent } from './inspection-observations/inspection-observations.component';
-import { FullScreenFormCreationComponent } from './full-screen-form-creation/full-screen-form-creation.component';
-import { FormViewComponent } from './full-screen-form-creation/form-view.component';
+import { FormModalComponent } from './form-modal/form-modal.component';
+import { FormEditViewComponent } from './form-modal/form-edit-view.component';
 import { ImportTemplateListComponent } from 'src/app/components/race-dynamic-form/import-template-list/import-template-list.component';
 import { ImportFormListComponent } from 'src/app/components/race-dynamic-form/import-form-list/import-form-list.component';
 import { TemplateAffectedFormsModalComponent } from './template-configuration/template-affected-forms-modal/template-affected-forms-modal.component';
 import { AffectedFormTemplateSliderComponent } from 'src/app/components/race-dynamic-form/affected-form-template-slider/affected-form-template-slider.component';
 import { QuillMaterialComponent } from 'src/app/shared/components/quill-material/quill-material.component';
+import { TemplateModalComponent } from './template-modal/template-modal.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/race-dynamic-forms/', '.json');
@@ -97,10 +101,9 @@ export const customTranslateLoader = (http: HttpClient) =>
     FormDetailComponent,
     ResponseSetComponent,
     PublicLibraryComponent,
-    FormConfigurationModalComponent,
-    FormConfigurationComponent,
+    FormHeaderConfigurationComponent,
+    FormDetailConfigurationComponent,
     SelectQuestionsDialogComponent,
-    AvatarComponent,
     ArchivedListComponent,
     AssignInspectionComponent,
     ArchivedDeleteModalComponent,
@@ -110,21 +113,22 @@ export const customTranslateLoader = (http: HttpClient) =>
     InspectionComponent,
     TemplateListComponent,
     SaveTemplateNamingModalComponent,
-    TemplateConfigurationModalComponent,
-    TemplateConfigurationComponent,
+    TemplateHeaderConfigurationComponent,
+    TemplateDetailConfigurationComponent,
     SaveTemplateConfirmModalComponent,
     SaveTemplateContainerComponent,
     CreateFromTemplateModalComponent,
     TemplateContainerComponent,
     EditTemplateNameModalComponent,
     InspectionObservationsComponent,
-    FullScreenFormCreationComponent,
-    FormViewComponent,
+    FormModalComponent,
+    FormEditViewComponent,
     ImportTemplateListComponent,
     ImportFormListComponent,
     TemplateAffectedFormsModalComponent,
     AffectedFormTemplateSliderComponent,
-    QuillMaterialComponent
+    QuillMaterialComponent,
+    TemplateModalComponent
   ],
   imports: [
     FormsModule,
@@ -184,17 +188,26 @@ export const customTranslateLoader = (http: HttpClient) =>
       GlobalResponseEffects
     ])
   ],
+  providers: [
+    {
+      provide: MatDialogRef,
+      useValue: {}
+    },
+    {
+      provide: MAT_DIALOG_DATA,
+      useValue: {}
+    }
+  ],
   exports: [
     FormContainerComponent,
     FormListComponent,
     FormDetailComponent,
     ResponseSetComponent,
     PublicLibraryComponent,
-    FormConfigurationModalComponent,
-    FormConfigurationComponent,
+    FormHeaderConfigurationComponent,
+    FormDetailConfigurationComponent,
     SelectQuestionsDialogComponent,
-    AvatarComponent,
-    TemplateConfigurationComponent,
+    TemplateDetailConfigurationComponent,
     QuillMaterialComponent
   ]
 })

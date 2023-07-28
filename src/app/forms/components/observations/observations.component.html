@@ -8,17 +8,21 @@
   >
     <div class="dis-flex charts">
       <div class="width-50 chart m-r-10" *ngIf="priorityData && statusData">
-        <h3 translate="openIssues"></h3>
+        <h3 id="observationOpenIssues" translate="openIssues"></h3>
         <div class="dis-flex">
           <div class="width-50">
-            <p class="center">{{ 'priority' | translate }}</p>
+            <p id="observationPriority" class="center">
+              {{ 'priority' | translate }}
+            </p>
             <app-donut-chart
               class="issue-chart"
               [options]="priorityData?.issues"
             ></app-donut-chart>
           </div>
           <div class="width-50">
-            <p class="center">{{ 'status' | translate }}</p>
+            <p id="observationStatus" class="center">
+              {{ 'status' | translate }}
+            </p>
             <app-donut-chart
               class="issue-chart"
               [options]="statusData?.issues"
@@ -27,17 +31,21 @@
         </div>
       </div>
       <div class="width-50 chart m-l-10" *ngIf="priorityData && statusData">
-        <h3 translate="openActions"></h3>
+        <h3 id="observationOpenAction" translate="openActions"></h3>
         <div class="dis-flex">
           <div class="width-50">
-            <p class="center">{{ 'priority' | translate }}</p>
+            <p id="observationActionPriority" class="center">
+              {{ 'priority' | translate }}
+            </p>
             <app-donut-chart
               class="issue-chart"
               [options]="priorityData?.actions"
             ></app-donut-chart>
           </div>
           <div class="width-50">
-            <p class="center">{{ 'status' | translate }}</p>
+            <p id="observationActionStatus" class="center">
+              {{ 'status' | translate }}
+            </p>
             <app-donut-chart
               class="issue-chart"
               [options]="statusData?.actions"
@@ -49,14 +57,18 @@
     <div class="tabs-header">
       <mat-tab-group animationDuration="0ms">
         <mat-tab>
-          <ng-template mat-tab-label>{{ 'issues' | translate }}</ng-template>
+          <ng-template id="observationIssues" mat-tab-label>{{
+            'issues' | translate
+          }}</ng-template>
           <app-issues-list
             [users$]="users$"
             [moduleName]="moduleName"
           ></app-issues-list>
         </mat-tab>
         <mat-tab>
-          <ng-template mat-tab-label>{{ 'actions' | translate }}</ng-template>
+          <ng-template id="observationActions" mat-tab-label>{{
+            'actions' | translate
+          }}</ng-template>
           <app-actions-list
             [users$]="users$"
             [moduleName]="moduleName"

@@ -21,6 +21,7 @@
           }"
         >
           <input
+            id="questionText"
             #name
             autocomplete="off"
             type="text"
@@ -55,21 +56,39 @@
             class="floating-btns"
             *ngIf="!isAskQuestion && questionForm.get('isOpen').value"
           >
-            <button class="questions-btn" (click)="addQuestion(true, true)">
+            <button
+              id="questionBtn"
+              class="questions-btn"
+              (click)="addQuestion(true, true)"
+            >
               <svg-icon
+                id="questionAddIcon"
                 icon="icon-add-question"
                 class="question-icon"
               ></svg-icon>
-              <p class="questions-delete-btn-text" translate="question"></p>
+              <p
+                id="question"
+                class="questions-delete-btn-text"
+                translate="question"
+              ></p>
             </button>
             <br />
 
-            <button class="delete-btn" (click)="deleteQuestion($event)">
+            <button
+              id="questionDeleteBtn"
+              class="delete-btn"
+              (click)="deleteQuestion($event)"
+            >
               <svg-icon
+                id="questionDeleteIcon"
                 icon="icon-delete-question"
                 class="question-icon"
               ></svg-icon>
-              <p class="questions-delete-btn-text" translate="delete"></p>
+              <p
+                id="questionDelete"
+                class="questions-delete-btn-text"
+                translate="delete"
+              ></p>
             </button>
           </div>
         </div>
@@ -98,6 +117,7 @@
         </div>
         <div *ngIf="isAskQuestion">
           <svg-icon
+            id="deleteQuestionBtn"
             icon="icon-delete-icon"
             class="delete-icon"
             (click)="deleteQuestion($event)"
@@ -118,6 +138,7 @@
           <div *ngIf="questionForm.get('fieldType').value !== 'IMG'">
             <div class="questionActionsRow">
               <button
+                id="questionAddLogicBtn"
                 mat-button
                 color="primary"
                 class="addLogicBtn"
@@ -131,8 +152,11 @@
                   addLogicToQuestion(pageIndex, questionForm.get('id').value)
                 "
               >
-                <mat-icon class="icon">link</mat-icon>
-                <span translate="addLogicBtn"></span>
+                <mat-icon id="questionLink" class="icon">link</mat-icon>
+                <span
+                  id="questionAddLogicBtnText"
+                  translate="addLogicBtn"
+                ></span>
               </button>
 
               <div
@@ -168,6 +192,7 @@
                   </span>
                 </div>
                 <input
+                  id="questionFile"
                   type="file"
                   class="file-upload"
                   accept="image/jpeg,image/jpg,image/png,application/pdf"
@@ -177,6 +202,7 @@
                 />
 
                 <button
+                  id="questionIsAskQuestionBtn"
                   mat-button
                   color="primary"
                   [ngClass]="
@@ -185,8 +211,13 @@
                   *ngIf="questionForm.get('fieldType').value === 'INST'"
                   (click)="instructionsFileUpload.click()"
                 >
-                  <mat-icon class="icon">link</mat-icon>
-                  <span translate="addImagesAndPDFBtn"></span>
+                  <mat-icon id="questionAskQuestionLink" class="icon"
+                    >link</mat-icon
+                  >
+                  <span
+                    id="questionAddImgPDFBtn"
+                    translate="addImagesAndPDFBtn"
+                  ></span>
                 </button>
 
                 <app-tag-select

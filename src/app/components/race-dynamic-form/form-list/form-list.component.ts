@@ -34,7 +34,8 @@ import {
 import {
   graphQLDefaultLimit,
   formConfigurationStatus,
-  permissions as perms
+  permissions as perms,
+  defaultLimit
 } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { RaceDynamicFormService } from '../services/rdf.service';
@@ -44,12 +45,13 @@ import { generateCopyNumber, generateCopyRegex } from '../utils/utils';
 import { slideInOut } from 'src/app/animations';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 import { CreateFromTemplateModalComponent } from '../create-from-template-modal/create-from-template-modal.component';
-import { FormConfigurationModalComponent } from '../form-configuration-modal/form-configuration-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { LoginService } from '../../login/services/login.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { UsersService } from '../../user-management/services/users.service';
-import { FullScreenFormCreationComponent } from '../full-screen-form-creation/full-screen-form-creation.component';
+import { downloadFile } from 'src/app/shared/utils/fileUtils';
+import { UploadResponseModalComponent } from '../../../shared/components/upload-response-modal/upload-response-modal.component';
+import { FormModalComponent } from '../form-modal/form-modal.component';
 
 @Component({
   selector: 'app-form-list',
@@ -291,7 +293,7 @@ export class FormListComponent implements OnInit, OnDestroy {
       form: {} as GetFormList
     });
   skip = 0;
-  limit = graphQLDefaultLimit;
+  limit = defaultLimit;
   searchForm: FormControl;
   addCopyFormCount = false;
   formsListCount$: Observable<number>;
@@ -301,6 +303,7 @@ export class FormListComponent implements OnInit, OnDestroy {
   );
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
   nextToken = '';
+  includeAttachments = false;
   selectedForm: GetFormList = null;
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
@@ -699,7 +702,7 @@ export class FormListComponent implements OnInit, OnDestroy {
   }
 
   openFormCreationModal(data: any) {
-    const dialogRef = this.dialog.open(FullScreenFormCreationComponent, {
+    const dialogRef = this.dialog.open(FormModalComponent, {
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',
@@ -730,6 +733,58 @@ export class FormListComponent implements OnInit, OnDestroy {
     };
     this.nextToken = '';
     this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
+  }
+
+  downloadTemplate(formType): void {
+    let fileName;
+    if (formType === formConfigurationStatus.standalone) {
+      fileName = 'Standalone_Form_Sample_Template';
+    } else {
+      fileName = 'Embedded_Form_Sample_Template';
+    }
+
+    this.raceDynamicFormService
+      .downloadSampleFormTemplate(formType, {
+        displayToast: true,
+        failureResponse: {}
+      })
+      .pipe(tap((data) => downloadFile(data, fileName)))
+      .subscribe(() => {
+        this.toast.show({
+          text: 'Template downloaded successfully!',
+          type: 'success'
+        });
+      });
+  }
+
+  resetFile(event: Event) {
+    const file = event.target as HTMLInputElement;
+    file.value = '';
+  }
+
+  uploadFile(event, formType) {
+    const file = event.target.files[0];
+    const dialogRef = this.dialog.open(UploadResponseModalComponent, {
+      data: {
+        file,
+        type: 'forms',
+        formType
+      },
+      disableClose: true
+    });
+
+    dialogRef.afterClosed().subscribe((res) => {
+      if (res.data) {
+        this.nextToken = '';
+        this.isLoading$.next(true);
+        this.formsListCountUpdate$.next(res.successCount);
+        this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
+        this.toast.show({
+          text: 'Forms uploaded successfully!',
+          type: 'success'
+        });
+      }
+    });
   }
 
   ngOnDestroy(): void {

@@ -1,19 +1,24 @@
 <div class="bg-white dis-flex instruction-pdf-container">
   <div>
-    <svg-icon icon="icon-pdfIcon" class="pdf-icon"></svg-icon>
+    <svg-icon
+      id="instructionPDFIcon"
+      icon="icon-pdfIcon"
+      class="pdf-icon"
+    ></svg-icon>
   </div>
   <div>
-    <span class="pdf-text">
-      {{ pdf.name }}
+    <span id="instructionPDFName" class="pdf-text">
+      {{ pdf?.name }}
     </span>
     <br />
-    <span class="pdf-sub-text">
-      {{ (pdf.size / 1024).toFixed(2) }}
+    <span id="instructionPDFSize" class="pdf-sub-text">
+      {{ (pdf?.size / 1024).toFixed(2) }}
       KB
     </span>
   </div>
   <div>
     <svg-icon
+      id="instructionPDFCancelIcon"
       icon="icon-red-cancel"
       class="close"
       (click)="triggerDelete()"

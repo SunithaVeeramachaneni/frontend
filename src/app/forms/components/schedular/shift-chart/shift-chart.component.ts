@@ -129,8 +129,7 @@ export class ShiftChartComponent implements OnInit, OnChanges {
         if (matchObject?.endTime === this.service.addTime(val, 0, 59)) {
           this.dataArrays[indexOfMatchObject].isBook = true;
           const endTime = this.dataArrays[indexOfMatchObject].endTime;
-          this.dataArrays[indexOfMatchObject].endTime =
-            this.service.subtractTime(endTime, 0, 0);
+          this.dataArrays[indexOfMatchObject].endTime = endTime;
           this.setShiftDetails();
           return;
         }
@@ -187,10 +186,11 @@ export class ShiftChartComponent implements OnInit, OnChanges {
         }
         this.dataArrays[indexOfMatchObject].index = timeDiff;
         this.dataArrays[indexOfMatchObject].isBook = true;
+        const indexDiff = Math.abs(oldIndex - timeDiff) - 1;
         obj = {
           index: Math.abs(oldIndex - timeDiff),
           startTime: this.service.subtractTime(val, 0, 0),
-          endTime: this.service.addTime(val, 1, 0),
+          endTime: this.service.addTime(val, indexDiff, 59),
           isBook: false
         };
         this.dataArrays.push(obj);
@@ -201,8 +201,24 @@ export class ShiftChartComponent implements OnInit, OnChanges {
           const findIndx = this.dataArrays.findIndex(
             (e) => e.startTime === val
           );
+          const myObj = this.dataArrays.filter((e) => e.startTime === val)[0];
+          // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+          obj = {
+            index: 1,
+            startTime: this.service.addTime(val, 1, 0),
+            endTime: myObj.endTime,
+            isBook: true
+          };
+          obj.index = this.service.getTimeDifference(
+            obj.startTime,
+            this.service.addTime(obj.endTime, 0, 1)
+          );
           this.dataArrays[findIndx].isBook = true;
           this.dataArrays[findIndx].endTime = this.service.addTime(val, 0, 59);
+          this.dataArrays[findIndx].index = findIndx;
+
+          this.dataArrays.push(obj);
+          this.slotsArray.push(this.createItemFormGroup());
           this.setShiftDetails();
           return;
         }
@@ -327,6 +343,13 @@ export class ShiftChartComponent implements OnInit, OnChanges {
           obj.endTime = this.service.subtractTime(obj.endTime, endTimeDiff, 0);
         }
       }
+      this.service.adjustStartEndTime(
+        this.dataArrays,
+        obj,
+        this.slots[0],
+        this.slots[this.slots.length - 1]
+      );
+
       this.dataArrays.push(obj);
       this.slotsArray.push(this.createItemFormGroup());
       this.dataArrays = this.service.sortArray(this.dataArrays, this.slots);
@@ -365,6 +388,11 @@ export class ShiftChartComponent implements OnInit, OnChanges {
         const idx = this.dataArrays.findIndex((e) => e === myData[0]);
         this.dataArrays.splice(idx, 1);
         this.slotsArray.removeAt(idx);
+        newObject.index = this.service.getTimeDifference(
+          newObject.startTime,
+          this.service.addTime(newObject.endTime, 0, 1)
+        );
+
         this.dataArrays.push(newObject);
         this.service.sortArray(this.dataArrays, this.slots);
       } else {

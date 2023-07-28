@@ -29,6 +29,7 @@ import { debounce } from './shared/utils/debounceMethod';
 import { PeopleService } from './shared/components/collaboration/people/people.service';
 import { SseService } from './shared/services/sse.service';
 import { DOCUMENT } from '@angular/common';
+declare const APP_VERSION: string;
 
 const {
   dashboard,
@@ -321,6 +322,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   displayLoader: boolean;
 
   isUserOnline = false;
+
+  readonly appVersion = APP_VERSION;
 
   constructor(
     private commonService: CommonService,

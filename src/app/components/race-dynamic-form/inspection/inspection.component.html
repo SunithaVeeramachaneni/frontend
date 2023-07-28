@@ -18,8 +18,10 @@
       <ng-container
         *ngIf="(isLoading$ | async) === false; else loadingInspections"
       >
-        <span class="inspections-count"> {{ inspectionsCount }} &nbsp; </span>
-        <span class="inspections-text">{{
+        <span id="inspectionCount" class="inspections-count">
+          {{ inspectionsCount }} &nbsp;
+        </span>
+        <span id="inspectionCountText" class="inspections-text">{{
           'inspectionPlural'
             | translate
               : {
@@ -37,8 +39,11 @@
       </ng-template>
     </span>
     <mat-form-field appearance="outline">
-      <mat-icon matPrefix class="searchIcon">search</mat-icon>
+      <mat-icon id="inspectionSearchIcon" matPrefix class="searchIcon"
+        >search</mat-icon
+      >
       <input
+        id="inspectionSearchText"
         matInput
         type="text"
         [placeholder]="'search' | translate"
@@ -47,6 +52,7 @@
       />
 
       <svg-icon
+        id="inspectionFilterIcon"
         icon="icon-filterIcon"
         cdkOverlayOrigin
         #trigger="cdkOverlayOrigin"
@@ -100,6 +106,7 @@
   </div>
   <ng-container *ngIf="users$ | async">
     <button
+      id="inspectionAssigneeBtn"
       class="hide-mat-menu"
       mat-button
       [matMenuTriggerFor]="assigneeMenu"
@@ -134,6 +141,7 @@
 
   <ng-container>
     <button
+      id="inspectionShiftMenu"
       class="hide-mat-menu"
       mat-button
       [matMenuTriggerFor]="shiftMenu"

@@ -9,10 +9,20 @@
   <mat-card class="p-0">
     <mat-card-title class="m-0 light-gray">
       <div class="slider-heading">
-        <button (click)="cancel()" class="back-btn">
-          <svg-icon icon="icon-back-arrow" class="back-arrow"></svg-icon>
+        <button
+          id="importTemplateQuestionsBackBtn"
+          (click)="cancel()"
+          class="back-btn"
+        >
+          <svg-icon
+            id="importTemplateQuestionsBackArrow"
+            icon="icon-back-arrow"
+            class="back-arrow"
+          ></svg-icon>
         </button>
-        <span class="import-questions-heading"
+        <span
+          id="importTemplateQuestionsHeading"
+          class="import-questions-heading"
           ><h2>{{ 'importQuestions' | translate }}</h2></span
         >
       </div>
@@ -21,11 +31,13 @@
       <div class="form-name">
         <mat-form-field class="width-40" appearance="outline">
           <mat-select
+            id="importTemplateQuestionsSelect"
             [placeholder]="'select' | translate"
             [formControl]="selectedTemplateControl"
             [compareWith]="compareFn"
           >
             <mat-option
+              id="importTemplateQuestionsName"
               *ngFor="let template of allTemplates"
               [value]="template"
             >
@@ -35,8 +47,14 @@
         </mat-form-field>
         <div class="custom-form-field-gray-color width-60 search">
           <mat-form-field class="width-100" appearance="outline">
-            <mat-icon matPrefix class="searchIcon">search</mat-icon>
+            <mat-icon
+              id="importTemplateQuestionsSearchIcon"
+              matPrefix
+              class="searchIcon"
+              >search</mat-icon
+            >
             <input
+              id="importTemplateQuestionsSearchForm"
               matInput
               type="text"
               [placeholder]="'searchForms' | translate"
@@ -49,7 +67,7 @@
       <div
         *ngFor="let section of selectedTemplateSections$ | async; let i = index"
       >
-        <p class="section-div">
+        <p id="importTemplateQuestionsSectionName" class="section-div">
           <mat-checkbox
             [checked]="section.checked"
             (change)="setSectionChecked($event.checked, section)"
@@ -60,19 +78,23 @@
         </p>
         <div *ngIf="section.isOpen === true">
           <div *ngFor="let question of section.questions" class="questions">
-            <span>{{ question.name }}</span>
+            <span id="importTemplateQuestionsQuestionName">{{
+              question.name
+            }}</span>
           </div>
         </div>
       </div>
     </mat-card-content>
     <div *ngIf="isFooter" class="import-form-footer">
       <button
+        id="importTemplateQuestionsCancelBtn"
         mat-stroked-button
         class="cancel-button"
         (click)="cancel()"
         translate="cancel"
       ></button>
       <button
+        id="importTemplateQuestionsUseBtn"
         [disabled]="sectionCheckedCount === 0"
         mat-raised-button
         color="primary"

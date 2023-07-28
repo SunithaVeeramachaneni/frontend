@@ -1,13 +1,15 @@
 <div class="userRemoveModal">
-  <p class="heading" translate="removeUserHeading"></p>
-  <p class="message" translate="removeUserMessage"></p>
+  <p id="removeUserHeading" class="heading" translate="removeUserHeading"></p>
+  <p id="removeUserMessage" class="message" translate="removeUserMessage"></p>
   <button
+    id="removeUserYesBtn"
     mat-raised-button
     class="yes-btn"
     (click)="deleteUser('yes')"
     translate="yesBtn"
   ></button>
   <button
+    id="removeUserNoBtn"
     mat-button
     class="no-btn"
     (click)="deleteUser('no')"

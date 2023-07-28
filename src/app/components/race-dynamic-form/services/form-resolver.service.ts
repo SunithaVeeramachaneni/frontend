@@ -27,7 +27,9 @@ export class FormResolverService implements Resolve<FormConfigurationState> {
     }
     this.store.dispatch(BuilderConfigurationActions.resetFormConfiguration());
     return forkJoin({
-      form: this.raceDynamicFormService.getFormById$(id),
+      form: this.raceDynamicFormService.getFormById$(id, {
+        includeAttachments: true
+      }),
       embeddedFormDetail: this.raceDynamicFormService.getEmbeddedFormId$(id),
       authoredFormDetail:
         this.raceDynamicFormService.getAuthoredFormDetailByFormId$(id),
@@ -77,6 +79,30 @@ export class FormResolverService implements Resolve<FormConfigurationState> {
         } = authoredFormDetail;
         const { id: formDetailId, _version: formDetailDynamoDBVersion } =
           formDetail[0] ?? {};
+        if (instructions) {
+          const { notes, attachments, pdfDocs } = JSON.parse(instructions);
+          const attachmentPromises =
+            attachments?.map((attachmentId) =>
+              this.raceDynamicFormService
+                .getAttachmentsById$(attachmentId)
+                .toPromise()
+                .then()
+            ) || [];
+          const pdfPromises =
+            pdfDocs?.map((pdfId) =>
+              this.raceDynamicFormService
+                .getAttachmentsById$(pdfId)
+                .toPromise()
+                .then()
+            ) || [];
+          Promise.all(attachmentPromises).then((result) => {
+            this.raceDynamicFormService.attachmentsMapping$.next(result);
+          });
+          Promise.all(pdfPromises).then((result) => {
+            this.raceDynamicFormService.pdfMapping$.next(result);
+          });
+        }
+
         const formMetadata = {
           id,
           name,
@@ -89,6 +115,7 @@ export class FormResolverService implements Resolve<FormConfigurationState> {
           tags,
           plantId,
           additionalDetails: JSON.parse(additionalDetails),
+          instructions: JSON.parse(instructions),
           plant: plant.name,
           embeddedFormId: embeddedFormId ? embeddedFormId : ''
         };

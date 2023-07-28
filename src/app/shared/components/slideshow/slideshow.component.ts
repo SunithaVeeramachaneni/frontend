@@ -10,6 +10,7 @@ import { fromEvent, merge } from 'rxjs';
 import { map, scan, startWith } from 'rxjs/operators';
 import { slideshowAnimation } from './slideshow.animations';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-slideshow',
@@ -24,10 +25,15 @@ export class SlideshowComponent implements AfterViewInit, OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<SlideshowComponent>,
-    @Inject(MAT_DIALOG_DATA) public data
+    @Inject(MAT_DIALOG_DATA) public data,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit() {}
+  getImageSrc = (source) => {
+    const base64Image = 'data:image/jpeg;base64,' + source;
+    return this.sanitizer.bypassSecurityTrustResourceUrl(base64Image);
+  };
 
   ngAfterViewInit() {
     const previous = fromEvent(

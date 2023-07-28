@@ -4,10 +4,12 @@
 >
   <div *ngFor="let section of pageData[0].sections; let i = index">
     <div class="section-name">
-      <p class="width-90 name">
+      <p id="previewEmbeddedName" class="width-90 name">
         {{ section.name ? section.name : 'Section Name' }}
       </p>
-      <mat-icon class="section-arrow"> keyboard_arrow_down </mat-icon>
+      <mat-icon id="previewEmbeddedArrow" class="section-arrow">
+        keyboard_arrow_down
+      </mat-icon>
     </div>
     <div *ngFor="let question of section.questions">
       <div class="dis-flex m-b-10 m-r-15">
@@ -15,19 +17,29 @@
           class="width-100 question-name dis-flex dis-flex-center"
           *ngIf="question.fieldType === 'USR'"
         >
-          <span class="font-90">{{ question.name }}</span>
-          <span class="font-90" translate="user"></span>
+          <span id="previewEmbeddedQuestionName" class="font-90">{{
+            question.name
+          }}</span>
+          <span
+            id="previewEmbeddedUser"
+            class="font-90"
+            translate="user"
+          ></span>
         </div>
         <div
           class="width-100 question-name dis-flex dis-flex-center"
           *ngIf="question.fieldType === 'SGF'"
         >
-          <span class="font-90">
+          <span id="previewEmbeddedQuestionType" class="font-90">
             {{ question.name ? question.name : 'Type Question' }}
             {{ question.required ? '*' : '' }}
           </span>
           <span>
-            <svg-icon icon="icon-signature" class="signature-icon"></svg-icon>
+            <svg-icon
+              id="previewEmbeddedSignIcon"
+              icon="icon-signature"
+              class="signature-icon"
+            ></svg-icon>
           </span>
         </div>
 
@@ -35,13 +47,17 @@
           class="width-100 dis-flex dis-flex-center question-name"
           *ngIf="question.fieldType === 'DFR'"
         >
-          <span class="font-90">
+          <span id="previewEmbeddedQuestionRequired" class="font-90">
             {{ question.name ? question.name : 'Type Question' }}
             {{ question.required ? '*' : '' }}
           </span>
           <span class="width-min">
-            <input type="date" class="input-fields" />
-            <input type="date" class="input-fields" />
+            <input id="previewEmbeddedDate" type="date" class="input-fields" />
+            <input
+              id="previewEmbeddedDateField"
+              type="date"
+              class="input-fields"
+            />
           </span>
         </div>
 
@@ -49,12 +65,13 @@
           class="width-100 question-name"
           *ngIf="question.fieldType === 'GAL'"
         >
-          <span class="font-90">
+          <span id="previewEmbeddedGALType" class="font-90">
             {{ question.name ? question.name : 'Type Question' }}
             {{ question.required ? '*' : '' }}
           </span>
           <span class="">
             <svg-icon
+              id="previewEmbeddedLocationIcon"
               icon="icon-location-view"
               class="location-icon"
             ></svg-icon>
@@ -77,6 +94,7 @@
             question.fieldType !== 'DFR' &&
             question.value !== 'LTV'
           "
+          id="previewEmbeddedLTVType"
         >
           {{ question.name ? question.name : 'Type Question' }}
           {{ question.required ? '*' : '' }}
@@ -94,6 +112,7 @@
               question.fieldType === 'ARD' ||
               question.value === 'LTV')
           "
+          id="previewEmbeddedVIType"
         >
           {{ question.name ? question.name : 'Type Question' }}
           {{ question.required ? '*' : '' }}
@@ -120,34 +139,57 @@
             question.fieldType !== 'USR' &&
             question.value !== 'LTV'
           "
+          id="previewEmbeddedNoValue"
         >
           <p
             class="m-0"
             *ngIf="question.fieldType === 'TF' && question.value !== 'LTV'"
           >
-            <input type="text" class="input-fields" />
+            <input id="previewEmbeddedText" type="text" class="input-fields" />
           </p>
 
           <p class="m-0" *ngIf="question.fieldType === 'DF'">
-            <input type="date" class="input-fields" />
+            <input
+              id="previewEmbeddedDFDate"
+              type="date"
+              class="input-fields"
+            />
           </p>
 
           <p *ngIf="question.fieldType === 'CB'" class="m-0 cb-input">
-            <input type="checkbox" id="option1" class="radio-checkbox" />
-            <label for="option1" class="radio-label"></label>
+            <input
+              id="previewEmbeddedCBType"
+              type="checkbox"
+              id="option1"
+              class="radio-checkbox"
+            />
+            <label
+              id="previewEmbeddedOption"
+              for="option1"
+              class="radio-label"
+            ></label>
           </p>
 
           <p *ngIf="question.fieldType === 'TIF'" class="m-0">
-            <input type="time" class="input-fields" />
+            <input
+              id="previewEmbeddedTIFTime"
+              type="time"
+              class="input-fields"
+            />
           </p>
 
           <p *ngIf="question.fieldType === 'NF'" class="m-0">
-            <input type="number" class="input-fields" />
+            <input
+              id="previewEmbeddedNFType"
+              type="number"
+              class="input-fields"
+            />
           </p>
 
           <p
             *ngIf="question.fieldType === 'LF'"
             class="default-value m-0 m-r-minus40"
+            id="previewEmbeddedLFValue"
           >
             {{ question.value }}
           </p>
@@ -156,26 +198,41 @@
             *ngIf="question.fieldType === 'HL'"
             class="default-value m-0 m-r-minus40"
           >
-            <a href=" question.value" target="_blank" class="hyderlink-value">{{
-              question.value
-            }}</a>
+            <a
+              id="previewEmbeddedHLValue"
+              href=" question.value"
+              target="_blank"
+              class="hyderlink-value"
+              >{{ question.value }}</a
+            >
           </p>
 
           <p *ngIf="question.fieldType === 'SF'" class="dis-flex m-0">
-            <input type="text" class="input-fields-with-icons" />
-            <svg-icon icon="icon-scan" class="scan-icon"></svg-icon>
+            <input
+              id="previewEmbeddedSFType"
+              type="text"
+              class="input-fields-with-icons"
+            />
+            <svg-icon
+              id="previewEmbeddedScanIcon"
+              icon="icon-scan"
+              class="scan-icon"
+            ></svg-icon>
           </p>
         </div>
       </div>
       <div class="width-100">
         <div *ngIf="question.fieldType === 'ATT'" class="attachment-div">
           <a class="attachment-btn">
-            <mat-icon class="attachment-btn-img">add</mat-icon>
+            <mat-icon id="previewEmbeddedATT" class="attachment-btn-img"
+              >add</mat-icon
+            >
           </a>
         </div>
 
         <div *ngIf="question.fieldType === 'IMG'">
           <img
+            id="previewEmbeddedIMG"
             [src]="question.value.objectURL"
             *ngIf="question.value.objectURL"
             alt="image"
@@ -185,6 +242,7 @@
 
         <div *ngIf="question.fieldType === 'RT'">
           <mat-slider
+            id="previewEmbeddedSlider"
             class="range-field"
             min="{{ question.value.min }}"
             max="{{ question.value.max }}"
@@ -193,10 +251,10 @@
             [displayWith]="formatLabel"
           >
           </mat-slider>
-          <span class="slider-min-value">
+          <span id="previewEmbeddedRTMin" class="slider-min-value">
             {{ question.value.min }}
           </span>
-          <span class="slider-max-value">
+          <span id="previewEmbeddedRTMax" class="slider-max-value">
             {{ question.value.max }}
           </span>
         </div>
@@ -205,7 +263,12 @@
           class="m-0"
           *ngIf="question.value === 'LTV' && question.fieldType === 'TF'"
         >
-          <textarea rows="3" cols="10" class="text-area-field"></textarea>
+          <textarea
+            id="previewEmbeddedTextArea"
+            rows="3"
+            cols="10"
+            class="text-area-field"
+          ></textarea>
         </p>
 
         <div *ngIf="question.fieldType === 'VI'" class="m-b-10">
@@ -219,6 +282,7 @@
                     color: ques.color
                   }"
                   *ngFor="let ques of question.value.value"
+                  id="previewEmbeddedVITitle"
                 >
                   {{ ques.title }}
                 </mat-button-toggle>
@@ -237,6 +301,7 @@
                   [ngStyle]="{
                     color: ques.color
                   }"
+                  id="previewEmbeddedDDTitle"
                 >
                   {{ ques.title }}
                 </mat-option>

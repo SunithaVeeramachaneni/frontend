@@ -1,17 +1,24 @@
 <div>
   <div class="widget-delete-modal">
-    <p class="cancel-title" translate="deleteArchivedFormModalHeading"></p>
     <p
+      id="deleteArchiveHeading"
+      class="cancel-title"
+      translate="deleteArchivedFormModalHeading"
+    ></p>
+    <p
+      id="deleteArchiveSubHeading"
       class="cancel-subtitle"
       translate="deleteArchivedFormModalSubHeading"
     ></p>
     <button
+      id="deleteArchiveDeleteBtn"
       mat-raised-button
       class="delete-btn"
       (click)="deleteForm('delete')"
       translate="deleteBtn"
     ></button>
     <button
+      id="deleteArchiveCancelBtn"
       mat-button
       class="cancel-btn"
       (click)="deleteForm('cancel')"

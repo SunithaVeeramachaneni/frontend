@@ -4,7 +4,7 @@
 /* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
 import { format, formatDistance } from 'date-fns';
-import { from, Observable, of, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
 import { map, mergeMap, toArray } from 'rxjs/operators';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
@@ -46,6 +46,8 @@ const APPNAME = 'MWORKORDER';
 export class RaceDynamicFormService {
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
+  attachmentsMapping$ = new BehaviorSubject<any>({});
+  pdfMapping$ = new BehaviorSubject<any>({});
   embeddedFormId;
 
   constructor(
@@ -83,6 +85,13 @@ export class RaceDynamicFormService {
       environment.rdfApiUrl,
       `upload-attachments`,
       file,
+      info
+    );
+  }
+  getAttachmentsById$(id, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
+    return this.appService._getResp(
+      environment.rdfApiUrl,
+      `upload-attachments/${id}`,
       info
     );
   }
@@ -311,11 +320,17 @@ export class RaceDynamicFormService {
       'arraybuffer'
     );
 
-  getFormById$(id: string) {
+  getFormById$(
+    id: string,
+    queryParams: { includeAttachments: boolean },
+    info: ErrorInfo = {} as ErrorInfo
+  ) {
     return this.appService._getRespById(
       environment.rdfApiUrl,
       `forms/list/`,
-      id
+      id,
+      info,
+      queryParams.toString()
     );
   }
 
@@ -738,6 +753,7 @@ export class RaceDynamicFormService {
       )
       .map((p) => ({
         ...p,
+        id: p.inspectionId,
         preTextImage: {
           image: p.formLogo,
           style: {
@@ -1291,4 +1307,36 @@ export class RaceDynamicFormService {
       'template-reference',
       data
     );
+
+  downloadSampleFormTemplate = (
+    formType: String,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> => {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('formType', formType.toString());
+
+    return this.appService.downloadFile(
+      environment.rdfApiUrl,
+      'forms/download/sample-template?' + params.toString(),
+      info,
+      true
+    );
+  };
+
+  downloadFailure = (
+    body: { rows: any },
+    formType: String,
+    info: ErrorInfo = {} as ErrorInfo
+  ) => {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('formType', formType.toString());
+
+    return this.appService.downloadFile(
+      environment.rdfApiUrl,
+      'forms/download/failure?' + params.toString(),
+      info,
+      false,
+      body
+    );
+  };
 }

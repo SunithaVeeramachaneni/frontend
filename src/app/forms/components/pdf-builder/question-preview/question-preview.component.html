@@ -1,28 +1,39 @@
 <div class="questionContainerPreview">
   <div class="questionRow">
-    <div class="questionTitle width-30" *ngIf="question.fieldType !== 'INST'">
+    <div
+      id="questionPreviewName"
+      class="questionTitle width-30"
+      *ngIf="question.fieldType !== 'INST'"
+    >
       {{ (question.name ? question.name : 'typeQuestion') | translate }}
     </div>
     <div class="questionTitle width-100" *ngIf="question.fieldType === 'INST'">
       <div [innerHTML]="question.name"></div>
     </div>
     <div class="fieldMockValue width-70" *ngIf="question.fieldType !== 'INST'">
-      <span *ngIf="htmlMocks.indexOf(question.fieldType) < 0">
+      <span
+        id="questionPreviewMockValue"
+        *ngIf="htmlMocks.indexOf(question.fieldType) < 0"
+      >
         {{ fieldTypeMockValues[question.fieldType] }}
       </span>
       <span *ngIf="htmlMocks.indexOf(question.fieldType) > -1">
         <div *ngIf="question.fieldType === 'LF'"></div>
         <div *ngIf="question.fieldType === 'VI'">
-          <span class="responseType-VI">Yes</span>
+          <span id="questionPreviewResType" class="responseType-VI">Yes</span>
         </div>
         <div *ngIf="question.fieldType === 'HL'">
-          <a href="">www.innovapptive.com</a>
+          <a id="questionPreviewLink" href="">www.innovapptive.com</a>
         </div>
         <div *ngIf="question.fieldType === 'DDM'">
-          <span class="responseType-VI">Yes</span>
+          <span id="questionPreviewResTypeDDM" class="responseType-VI"
+            >Yes</span
+          >
         </div>
         <div *ngIf="question.fieldType === 'CB'">
-          <span>Checked <input type="checkbox" checked readonly /></span>
+          <span id="questionPreviewResTypeCB"
+            >Checked <input type="checkbox" checked readonly
+          /></span>
         </div>
         <div *ngIf="question.fieldType === 'SGF'"></div>
       </span>
@@ -38,7 +49,7 @@
     class="w-100"
   >
     <div *ngIf="question.fieldType === 'LF'">
-      <span
+      <span id="questionPreviewMockText"
         >Sorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate
         libero et velit interdum, ac aliquet odio mattis. Class aptent taciti
         sociosqu ad litora torquent per conubia nostra, per inceptos
@@ -47,27 +58,44 @@
     </div>
     <div *ngIf="question.fieldType === 'INST'">
       <ul>
-        <li>Don't touch the transformer parts</li>
-        <li>Wear Safety helmet at all times</li>
-        <li>Complete SOP process till the end.</li>
+        <li id="questionPreviewMockTextOne">
+          Don't touch the transformer parts
+        </li>
+        <li id="questionPreviewMockTextTwo">Wear Safety helmet at all times</li>
+        <li id="questionPreviewMockTextThree">
+          Complete SOP process till the end.
+        </li>
       </ul>
       <div class="photosRow">
         <span class="photosHead"
-          ><mat-icon class="photoIcon">image</mat-icon> Photos</span
+          ><mat-icon id="questionPreviewImgIcon" class="photoIcon"
+            >image</mat-icon
+          >
+          Photos</span
         >
-        <span>2 Photos Added</span>
+        <span id="questionPreviewAddPhoto">2 Photos Added</span>
       </div>
       <div class="photosContainer" *ngIf="pdfConfigOptions.photos">
-        <img [src]="image" *ngFor="let image of dummyImages" class="image" />
+        <img
+          id="questionPreviewDummyImg"
+          [src]="image"
+          *ngFor="let image of dummyImages"
+          class="image"
+        />
       </div>
     </div>
     <div *ngIf="question.fieldType === 'ATT'">
       <div class="photosContainer" *ngIf="pdfConfigOptions.photos">
-        <img [src]="image" *ngFor="let image of dummyImages" class="image" />
+        <img
+          id="questionPreviewDummyPhotos"
+          [src]="image"
+          *ngFor="let image of dummyImages"
+          class="image"
+        />
       </div>
     </div>
     <div *ngIf="question.fieldType === 'LTV'">
-      <span
+      <span id="questionPreviewMockTextLTV"
         >Sorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate
         libero et velit interdum, ac aliquet odio mattis. Class aptent taciti
         sociosqu ad litora torquent per conubia nostra, per inceptos
@@ -76,42 +104,42 @@
     </div>
     <div *ngIf="question.fieldType === 'TAF'">
       <table class="mockTable w-100 text-center">
-        <tr class="mockTableRow headCell">
+        <tr id="questionPreviewMockCellOne" class="mockTableRow headCell">
           <th class="mockTableCell">Title</th>
           <th class="mockTableCell">ID</th>
           <th class="mockTableCell">Pressure</th>
           <th class="mockTableCell">Physical</th>
           <th class="mockTableCell">D(in mm)</th>
         </tr>
-        <tr class="mockTableRow">
+        <tr id="questionPreviewMockCellTwo" class="mockTableRow">
           <td class="mockTableCell headCell">1</td>
           <td class="mockTableCell">Value</td>
           <td class="mockTableCell">Value</td>
           <td class="mockTableCell">Value</td>
           <td class="mockTableCell">Value</td>
         </tr>
-        <tr class="mockTableRow">
+        <tr id="questionPreviewMockCellThree" class="mockTableRow">
           <td class="mockTableCell headCell">2</td>
           <td class="mockTableCell">Value</td>
           <td class="mockTableCell">Value</td>
           <td class="mockTableCell">Value</td>
           <td class="mockTableCell">Value</td>
         </tr>
-        <tr class="mockTableRow">
+        <tr id="questionPreviewMockCellFour" class="mockTableRow">
           <td class="mockTableCell headCell">3</td>
           <td class="mockTableCell">Value</td>
           <td class="mockTableCell">Value</td>
           <td class="mockTableCell">Value</td>
           <td class="mockTableCell">Value</td>
         </tr>
-        <tr class="mockTableRow">
+        <tr id="questionPreviewMockCellFive" class="mockTableRow">
           <td class="mockTableCell headCell">4</td>
           <td class="mockTableCell">Value</td>
           <td class="mockTableCell">Value</td>
           <td class="mockTableCell">Value</td>
           <td class="mockTableCell">Value</td>
         </tr>
-        <tr class="mockTableRow">
+        <tr id="questionPreviewMockCellSix" class="mockTableRow">
           <td class="mockTableCell headCell">5</td>
           <td class="mockTableCell">Value</td>
           <td class="mockTableCell">Value</td>
@@ -122,42 +150,42 @@
     </div>
     <div *ngIf="question.fieldType === 'ARD'">
       <table class="mockTable w-100 text-center">
-        <tr class="mockTableRow headCell">
+        <tr id="questionPreviewMockCellSeven" class="mockTableRow headCell">
           <th class="mockTableCell">Title</th>
           <th class="mockTableCell">ID</th>
           <th class="mockTableCell">Pressure</th>
           <th class="mockTableCell">Physical</th>
           <th class="mockTableCell">D(in mm)</th>
         </tr>
-        <tr class="mockTableRow">
+        <tr id="questionPreviewMockCellEight" class="mockTableRow">
           <td class="mockTableCell headCell">1</td>
           <td class="mockTableCell">Value</td>
           <td class="mockTableCell">Value</td>
           <td class="mockTableCell">Value</td>
           <td class="mockTableCell">Value</td>
         </tr>
-        <tr class="mockTableRow">
+        <tr id="questionPreviewMockCellNine" class="mockTableRow">
           <td class="mockTableCell headCell">2</td>
           <td class="mockTableCell">Value</td>
           <td class="mockTableCell">Value</td>
           <td class="mockTableCell">Value</td>
           <td class="mockTableCell">Value</td>
         </tr>
-        <tr class="mockTableRow">
+        <tr id="questionPreviewMockCellTen" class="mockTableRow">
           <td class="mockTableCell headCell">3</td>
           <td class="mockTableCell">Value</td>
           <td class="mockTableCell">Value</td>
           <td class="mockTableCell">Value</td>
           <td class="mockTableCell">Value</td>
         </tr>
-        <tr class="mockTableRow">
+        <tr id="questionPreviewMockCellEleven" class="mockTableRow">
           <td class="mockTableCell headCell">4</td>
           <td class="mockTableCell">Value</td>
           <td class="mockTableCell">Value</td>
           <td class="mockTableCell">Value</td>
           <td class="mockTableCell">Value</td>
         </tr>
-        <tr class="mockTableRow">
+        <tr id="questionPreviewMockCellTwelve" class="mockTableRow">
           <td class="mockTableCell headCell">5</td>
           <td class="mockTableCell">Value</td>
           <td class="mockTableCell">Value</td>
