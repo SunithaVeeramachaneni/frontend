@@ -2,7 +2,6 @@
   <div mat-dialog-content>
     <mat-radio-group [(ngModel)]="selectedPageOption">
       <mat-radio-button
-        id="addOrSelectPageBtn"
         color="primary"
         *ngFor="let pageOption of pageOptions"
         [value]="pageOption"
