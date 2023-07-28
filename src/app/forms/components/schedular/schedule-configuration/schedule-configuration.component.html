@@ -135,7 +135,6 @@
         </div>
         <mat-radio-group formControlName="scheduleType">
           <mat-radio-button
-            id="scheduleConfigurationScheduleType"
             color="primary"
             *ngFor="let scheduleType of scheduleTypes"
             [value]="scheduleType"
@@ -238,7 +237,6 @@
               formControlName="scheduleEndType"
             >
               <mat-radio-button
-                id="scheduleConfigurationEndType"
                 color="primary"
                 *ngFor="let scheduleEndType of scheduleEndTypes"
                 [value]="scheduleEndType"
@@ -446,7 +444,6 @@
               </div>
               <mat-radio-group class="radio-group" formControlName="type">
                 <mat-radio-button
-                  id="scheduleConfigAssignType"
                   color="primary"
                   *ngFor="let assignType of assignTypes; let i = index"
                   [value]="assignType"

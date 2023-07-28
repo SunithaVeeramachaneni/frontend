@@ -242,7 +242,6 @@
                 [disabled]="!rangeMetadataForm.get('min').value"
               >
                 <mat-radio-button
-                  id="responseTypeSliderLowerAction"
                   *ngFor="let action of lowerLimitActions"
                   class="limitRadioOption"
                   [value]="action"
@@ -327,7 +326,6 @@
                 [disabled]="!rangeMetadataForm.get('max').value"
               >
                 <mat-radio-button
-                  id="responseTypeSliderUpperLimitAction"
                   *ngFor="let action of upperLimitActions"
                   class="limitRadioOption"
                   [value]="action"
