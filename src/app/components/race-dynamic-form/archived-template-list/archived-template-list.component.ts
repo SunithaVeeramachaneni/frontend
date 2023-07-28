@@ -21,40 +21,21 @@ import { MatTableDataSource } from '@angular/material/table';
 
 import { CellClickActionEvent, Permission, UserInfo } from 'src/app/interfaces';
 import { RaceDynamicFormService } from '../services/rdf.service';
-import { Router } from '@angular/router';
-import { slideInOut } from 'src/app/animations';
 import { UsersService } from '../../user-management/services/users.service';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { TranslateService } from '@ngx-translate/core';
 import { MatDialog } from '@angular/material/dialog';
-import {
-  formConfigurationStatus,
-  permissions as perms
-} from 'src/app/app.constants';
-import { Store } from '@ngrx/store';
-import { State } from 'src/app/forms/state';
-import { generateCopyNumber, generateCopyRegex } from '../utils/utils';
-import { omit } from 'lodash-es';
-import { ArchiveTemplateModalComponent } from '../archive-template-modal/archive-template-modal.component';
-import { LoginService } from '../../login/services/login.service';
+import { DeleteTemplateModalComponent } from '../delete-template-modal/delete-template-modal.component';
 import { ToastService } from 'src/app/shared/toast';
-import { TemplateModalComponent } from '../template-modal/template-modal.component';
+import { LoginService } from '../../login/services/login.service';
 
 @Component({
-  selector: 'app-template-list',
-  templateUrl: './template-list.component.html',
-  styleUrls: ['./template-list.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: [slideInOut]
+  selector: 'app-archived-template-list',
+  templateUrl: './archived-template-list.component.html',
+  styleUrls: ['./archived-template-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TemplateListComponent implements OnInit, OnDestroy {
-  public menuState = 'out';
-  public affectedFormDetailState = 'out';
-  public affectedSliderState = 'out';
-  selectedForm: any = null;
-  affectedFormDetail: any = null;
-  selectedTemplate: any = null;
-  submissionSlider = 'out';
+export class ArchivedTemplateListComponent implements OnInit, OnDestroy {
   isPopoverOpen = false;
   status: any[] = ['Draft', 'Ready'];
   filterJson: any[] = [];
@@ -124,21 +105,8 @@ export class TemplateListComponent implements OnInit, OnDestroy {
       groupable: true
     },
     {
-      id: 'formsUsageCount',
-      displayName: 'Used in Forms',
-      type: 'number',
-      controlType: 'string',
-      sortable: true,
-      visible: true,
-      groupable: true,
-      titleStyle: {
-        color: '#3D5AFE',
-        'text-decoration': 'underline'
-      }
-    },
-    {
-      id: 'lastPublishedBy',
-      displayName: 'Modified By',
+      id: 'archivedBy',
+      displayName: 'Archived By',
       type: 'number',
       controlType: 'string',
       sortable: true,
@@ -156,7 +124,6 @@ export class TemplateListComponent implements OnInit, OnDestroy {
       titleStyle: { color: '' }
     }
   ];
-
   columns: Column[] = [];
 
   configOptions: ConfigOptions = {
@@ -191,7 +158,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
     createdBy: ''
   };
   dataSource: MatTableDataSource<any>;
-  allTemplates: any = [];
+  archivedTemplates: any = [];
   displayedTemplates: any[];
   templatesCount$: Observable<number>;
   searchTemplates: FormControl;
@@ -200,22 +167,19 @@ export class TemplateListComponent implements OnInit, OnDestroy {
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   lastPublishedBy = [];
   createdBy = [];
-  readonly perms = perms;
-  fetchAllTemplatesSubscription: Subscription;
+  fetchArchivedTemplatesSubscription: Subscription;
   userInfo$: Observable<UserInfo>;
   private onDestroy$ = new Subject();
 
   constructor(
     private readonly toast: ToastService,
     private readonly raceDynamicFormService: RaceDynamicFormService,
-    private readonly loginService: LoginService,
     private usersService: UsersService,
     private headerService: HeaderService,
     private translateService: TranslateService,
-    private router: Router,
-    private dialog: MatDialog,
+    private loginService: LoginService,
     private cdrf: ChangeDetectorRef,
-    private readonly store: Store<State>
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -228,18 +192,19 @@ export class TemplateListComponent implements OnInit, OnDestroy {
     );
 
     this.usersService.getUsersInfo$().subscribe(() => {
-      this.fetchAllTemplatesSubscription = this.raceDynamicFormService
-        .fetchTemplates$({ isArchived: false, isDeleted: false })
+      this.fetchArchivedTemplatesSubscription = this.raceDynamicFormService
+        .fetchTemplates$({ isArchived: true, isDeleted: false })
         .subscribe((res: any) => {
           this.templatesCount$ = of(res.rows.length);
-          this.allTemplates = res.rows.map((item) => ({
+          this.archivedTemplates = res.rows.map((item) => ({
             ...item,
             author: this.usersService.getUserFullName(item.author),
             lastPublishedBy: this.usersService.getUserFullName(
               item.lastPublishedBy
-            )
+            ),
+            archivedBy: this.usersService.getUserFullName(item.archivedBy)
           }));
-          this.displayedTemplates = this.allTemplates;
+          this.displayedTemplates = this.archivedTemplates;
           this.dataSource = new MatTableDataSource(this.displayedTemplates);
           this.isLoading$.next(false);
 
@@ -265,18 +230,6 @@ export class TemplateListComponent implements OnInit, OnDestroy {
     this.configOptions.allColumns = this.columns;
   }
 
-  onCloseViewDetail() {
-    this.selectedForm = null;
-    this.menuState = 'out';
-    this.affectedFormDetail = null;
-    this.affectedFormDetailState = 'out';
-  }
-
-  onCloseAffectedSlider() {
-    this.selectedTemplate = null;
-    this.affectedSliderState = 'out';
-  }
-
   cellClickActionHandler = (event: CellClickActionEvent): void => {
     const { columnId, row } = event;
     switch (columnId) {
@@ -286,10 +239,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
       case 'formType':
       case 'lastPublishedBy':
       case 'author':
-        this.showFormDetail(row);
-        break;
       case 'formsUsageCount':
-        this.showAffectedSlider(row);
         break;
       default:
     }
@@ -297,29 +247,11 @@ export class TemplateListComponent implements OnInit, OnDestroy {
 
   rowLevelActionHandler = ({ data, action }): void => {
     switch (action) {
-      case 'edit':
-        this.router
-          .navigate(['/forms/templates/edit', data.id], {
-            state: {
-              templateNamesList: this.allTemplates
-            }
-          })
-          .then(() => {
-            this.dialog.open(TemplateModalComponent, {
-              maxWidth: '100vw',
-              maxHeight: '100vh',
-              height: '100%',
-              width: '100%',
-              panelClass: 'full-screen-modal',
-              data: this.allTemplates
-            });
-          });
+      case 'delete':
+        this.deleteTemplate(data);
         break;
-      case 'copy':
-        this.copyTemplate(data);
-        break;
-      case 'archive':
-        this.onArchiveTemplate(data);
+      case 'restore':
+        this.onRestoreTemplate(data);
         break;
       default:
     }
@@ -333,36 +265,24 @@ export class TemplateListComponent implements OnInit, OnDestroy {
     if (
       this.loginService.checkUserHasPermission(
         permissions,
-        'UPDATE_FORM_TEMPLATE'
+        'RESTORE_ARCHIVED_TEMPLATE'
       )
     ) {
       menuActions.push({
-        title: 'Edit',
-        action: 'edit'
+        title: 'Restore',
+        action: 'restore'
       });
     }
 
     if (
       this.loginService.checkUserHasPermission(
         permissions,
-        'COPY_FORM_TEMPLATE'
+        'DELETE_ARCHIVED_TEMPLATE'
       )
     ) {
       menuActions.push({
-        title: 'Copy',
-        action: 'copy'
-      });
-    }
-
-    if (
-      this.loginService.checkUserHasPermission(
-        permissions,
-        'ARCHIVE_FORM_TEMPLATE'
-      )
-    ) {
-      menuActions.push({
-        title: 'Archive',
-        action: 'archive'
+        title: 'Delete',
+        action: 'delete'
       });
     }
 
@@ -377,7 +297,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
 
       const uniqueLastPublishedBy = Array.from(
         new Set(
-          this.allTemplates
+          this.archivedTemplates
             .map((item: any) => item.lastPublishedBy)
             .filter((item) => item != null)
         )
@@ -385,7 +305,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
       this.lastPublishedBy = uniqueLastPublishedBy;
       const uniqueCreatedBy = Array.from(
         new Set(
-          this.allTemplates
+          this.archivedTemplates
             .map((item: any) => item.author)
             .filter((item) => item != null)
         )
@@ -406,7 +326,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
 
   applySearchAndFilter(searchTerm: string) {
     this.isLoading$.next(true);
-    this.displayedTemplates = this.allTemplates
+    this.displayedTemplates = this.archivedTemplates
       .filter((item: any) =>
         item.name.toLocaleLowerCase().startsWith(searchTerm.toLocaleLowerCase())
       )
@@ -449,110 +369,24 @@ export class TemplateListComponent implements OnInit, OnDestroy {
     this.applySearchAndFilter(this.searchTemplates.value);
   }
 
-  copyTemplate(template) {
-    if (!template.id) return;
-    this.raceDynamicFormService
-      .fetchAllTemplateListNames$()
-      .subscribe((templateNames) => {
-        const createdTemplate = this.generateCopyTemplateName(
-          template,
-          templateNames
-        );
-        if (createdTemplate?.newName) {
-          const authoredFormTemplateDetails =
-            template.authoredFormTemplateDetails[0];
-          const preTextImage = template.preTextImage;
-          this.raceDynamicFormService
-            .createTemplate$({
-              ...omit(template, [
-                'id',
-                'preTextImage',
-                'authoredFormTemplateDetails',
-                'publishedDate'
-              ]),
-              name: createdTemplate.newName,
-              formStatus: formConfigurationStatus.draft,
-              isPublic: false
-            })
-            .subscribe((newTemplate) => {
-              if (!newTemplate) return;
-              if (
-                authoredFormTemplateDetails &&
-                Object.keys(authoredFormTemplateDetails).length
-              ) {
-                authoredFormTemplateDetails.formStatus =
-                  formConfigurationStatus.draft;
-                authoredFormTemplateDetails.pages = JSON.parse(
-                  authoredFormTemplateDetails?.pages || '[]'
-                );
-                authoredFormTemplateDetails.counter =
-                  authoredFormTemplateDetails?.counter || 0;
-                this.raceDynamicFormService
-                  .createAuthoredTemplateDetail$(
-                    newTemplate.id,
-                    authoredFormTemplateDetails
-                  )
-                  .subscribe();
-              }
-              authoredFormTemplateDetails.pages = JSON.stringify(
-                authoredFormTemplateDetails.pages
-              );
-              newTemplate.authoredFormTemplateDetails = [
-                authoredFormTemplateDetails
-              ];
-              newTemplate.formsUsageCount = 0;
-              newTemplate.counter =
-                newTemplate.authoredFormTemplateDetails[
-                  newTemplate.authoredFormTemplateDetails.length - 1
-                ]?.counter;
-              newTemplate.questionsCount =
-                JSON.parse(
-                  newTemplate.authoredFormTemplateDetails[
-                    newTemplate.authoredFormTemplateDetails.length - 1
-                  ]?.pages || '{}'
-                )[0]?.questions?.length || 0;
-              newTemplate.formStatus = formConfigurationStatus.draft;
-              newTemplate.formLogo = 'assets/rdf-forms-icons/formlogo.svg';
-              newTemplate.preTextImage = preTextImage;
-              if (newTemplate.author)
-                newTemplate.author = this.usersService.getUserFullName(
-                  newTemplate.author
-                );
-              if (newTemplate.lastPublishedBy)
-                newTemplate.lastPublishedBy = this.usersService.getUserFullName(
-                  newTemplate.lastPublishedBy
-                );
-              this.allTemplates = [newTemplate, ...this.allTemplates];
-              this.dataSource = new MatTableDataSource(this.allTemplates);
-              this.cdrf.detectChanges();
-              this.toast.show({
-                text: 'Template "' + template.name + '" copied successfully!',
-                type: 'success'
-              });
-            });
-        }
-      });
-  }
-
-  onArchiveTemplate(template) {
-    const archiveTemplateRef = this.dialog.open(ArchiveTemplateModalComponent, {
+  deleteTemplate(template) {
+    const deleteTemplateRef = this.dialog.open(DeleteTemplateModalComponent, {
       data: template
     });
-    archiveTemplateRef.afterClosed().subscribe((res) => {
-      if (res === 'archive') {
+    deleteTemplateRef.afterClosed().subscribe((res) => {
+      if (res === 'delete') {
         this.raceDynamicFormService
           .archiveDeleteTemplate$(template.id, {
-            isArchived: true,
-            archivedBy: this.loginService.getLoggedInEmail()
+            isDeleted: true
           })
           .subscribe(() => {
-            this.allTemplates = this.allTemplates.filter(
+            this.archivedTemplates = this.archivedTemplates.filter(
               (item) => item.id !== template.id
             );
-            this.dataSource = new MatTableDataSource(this.allTemplates);
+            this.dataSource = new MatTableDataSource(this.archivedTemplates);
             this.cdrf.detectChanges();
             this.toast.show({
-              text: 'Template "' + template.name + '" archived successfully!',
+              text: 'Template "' + template.name + '" deleted successfully!',
               type: 'success'
             });
           });
@@ -560,70 +394,29 @@ export class TemplateListComponent implements OnInit, OnDestroy {
     });
   }
 
-  openCreateTemplateModal() {
-    this.dialog.open(TemplateModalComponent, {
-      maxWidth: '100vw',
-      maxHeight: '100vh',
-      height: '100%',
-      width: '100%',
-      panelClass: 'full-screen-modal',
-      data: this.allTemplates
-    });
-  }
-
-  templateDetailActionHandler() {
-    this.router.navigate([`/forms/templates/edit/${this.selectedForm.id}`]);
-    this.openCreateTemplateModal();
-  }
-
-  affectedFormDetailActionHandler() {
-    this.router.navigate(['/forms/edit', this.affectedFormDetail.id]);
-    this.openCreateTemplateModal();
-  }
-
-  onClickAffectedFormDetail(event) {
-    this.affectedFormDetail = event;
-    this.affectedFormDetailState = 'in';
+  onRestoreTemplate(template) {
+    this.raceDynamicFormService
+      .archiveDeleteTemplate$(template.id, {
+        isArchived: false
+      })
+      .subscribe(() => {
+        this.archivedTemplates = this.archivedTemplates.filter(
+          (item) => item.id !== template.id
+        );
+        this.dataSource = new MatTableDataSource(this.archivedTemplates);
+        this.cdrf.detectChanges();
+        this.toast.show({
+          text: 'Template "' + template.name + '" restored successfully!',
+          type: 'success'
+        });
+      });
   }
 
   ngOnDestroy(): void {
-    if (this.fetchAllTemplatesSubscription) {
-      this.fetchAllTemplatesSubscription.unsubscribe();
+    if (this.fetchArchivedTemplatesSubscription) {
+      this.fetchArchivedTemplatesSubscription.unsubscribe();
     }
     this.onDestroy$.next();
     this.onDestroy$.complete();
-  }
-
-  showAffectedSlider(row: any): void {
-    if (row.formsUsageCount) {
-      this.selectedTemplate = row;
-      this.affectedSliderState = 'in';
-      this.onCloseViewDetail();
-    }
-  }
-
-  private showFormDetail(row: any): void {
-    this.selectedForm = row;
-    this.menuState = 'in';
-    this.onCloseAffectedSlider();
-  }
-
-  private generateCopyTemplateName(template, rows) {
-    if (rows?.length > 0) {
-      const listCopyNumbers: number[] = [];
-      const regex: RegExp = generateCopyRegex(template?.name);
-      rows?.forEach((row) => {
-        const matchObject = row?.name?.match(regex);
-        if (matchObject) {
-          listCopyNumbers.push(parseInt(matchObject[1], 10));
-        }
-      });
-      const newIndex: number = generateCopyNumber(listCopyNumbers);
-      const newName = `${template?.name} Copy(${newIndex})`;
-      return {
-        newName
-      };
-    }
-    return null;
   }
 }

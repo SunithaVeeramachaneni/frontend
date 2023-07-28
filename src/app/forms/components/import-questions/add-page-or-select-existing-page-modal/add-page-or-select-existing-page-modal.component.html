@@ -20,11 +20,7 @@
         [formControl]="selectedPageControl"
         [compareWith]="compareFn"
       >
-        <mat-option
-          id="addOrSelectPageName"
-          *ngFor="let page of data.pages"
-          [value]="page"
-        >
+        <mat-option *ngFor="let page of data.pages" [value]="page">
           {{ page.name }} {{ page.position }}
         </mat-option>
       </mat-select>

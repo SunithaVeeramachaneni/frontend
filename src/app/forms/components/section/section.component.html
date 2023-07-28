@@ -38,7 +38,7 @@
             id="sectionTemplateName"
             class="tooltip-text"
             *ngIf="sectionForm.get('templateName').value?.length"
-            >{{ sectionForm.get('templateName').value }}</span
+            >From {{ sectionForm.get('templateName').value }}</span
           >
         </div>
 
@@ -87,6 +87,20 @@
             <mat-icon id="sectionMoreIcon">more_horiz</mat-icon>
           </button>
           <mat-menu #sectionMenu="matMenu">
+            <button
+              *ngIf="sectionForm.get('isImported').value"
+              mat-menu-item
+              (click)="unlinkSection()"
+            >
+              <span translate="unlinkSection"></span>
+            </button>
+            <button
+              *ngIf="sectionForm.get('isImported').value"
+              mat-menu-item
+              (click)="copySection()"
+            >
+              <span translate="copySection"></span>
+            </button>
             <button
               id="sectionDeleteBtn"
               mat-menu-item

@@ -13,18 +13,18 @@ import {
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { isEqual } from 'lodash-es';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
   pairwise,
+  take,
   takeUntil,
   tap
 } from 'rxjs/operators';
 import { State } from 'src/app/forms/state/builder/builder-state.selectors';
 import { SectionEvent, Section } from 'src/app/interfaces';
 import { BuilderConfigurationActions } from '../../state/actions';
-
 @Component({
   selector: 'app-section',
   templateUrl: './section.component.html',
@@ -33,6 +33,7 @@ import { BuilderConfigurationActions } from '../../state/actions';
 })
 export class SectionComponent implements OnInit, OnDestroy {
   @ViewChild('sectionName') sectionName: ElementRef;
+
   @Input() isTemplate: boolean;
   @Input() set pageIndex(pageIndex: number) {
     this._pageIndex = pageIndex;
@@ -156,12 +157,30 @@ export class SectionComponent implements OnInit, OnDestroy {
     this.sectionName.nativeElement.focus();
   }
 
+  copySection() {
+    this.sectionEvent.emit({
+      pageIndex: this.pageIndex,
+      sectionIndex: this.sectionIndex,
+      section: this.sectionForm.getRawValue(),
+      type: 'copy'
+    });
+  }
+
   deleteSection() {
     this.sectionEvent.emit({
       pageIndex: this.pageIndex,
       sectionIndex: this.sectionIndex,
       section: this.sectionForm.getRawValue(),
       type: 'delete'
+    });
+  }
+
+  unlinkSection() {
+    this.sectionEvent.emit({
+      pageIndex: this.pageIndex,
+      sectionIndex: this.sectionIndex,
+      section: this.sectionForm.getRawValue(),
+      type: 'unlink'
     });
   }
 
