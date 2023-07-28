@@ -52,6 +52,7 @@ import { NgxImageCompressService } from 'ngx-image-compress';
 import { PDFDocument } from 'pdf-lib';
 import { RoundPlanModalComponent } from '../round-plan-modal/round-plan-modal.component';
 import { Router } from '@angular/router';
+import { cloneDeep } from 'lodash-es';
 
 @Component({
   selector: 'app-round-plan-header-configuration',
@@ -131,7 +132,7 @@ export class RoundPlanHeaderConfigurationComponent
     this.operatorRoundsService.getDataSetsByType$('tags').subscribe((tags) => {
       if (tags && tags.length) {
         this.allTags = tags[0].values;
-        this.originalTags = JSON.parse(JSON.stringify(tags[0].values));
+        this.originalTags = cloneDeep(tags[0].values);
         this.tagsCtrl.setValue('');
         this.cdrf.detectChanges();
       }
@@ -223,7 +224,8 @@ export class RoundPlanHeaderConfigurationComponent
         name: this.roundData.formMetadata.name,
         description: this.roundData.formMetadata.description,
         plantId: this.roundData.formMetadata.plantId,
-        formStatus: this.roundData.formMetadata.formStatus
+        formStatus: this.roundData.formMetadata.formStatus,
+        instructions: this.roundData.formMetadata.instructions
       });
 
       const additionalDetailsArray =
@@ -438,7 +440,7 @@ export class RoundPlanHeaderConfigurationComponent
   }
 
   trackBySelectedattachments(index: number, el: any): string {
-    return el.id;
+    return el?.id;
   }
 
   onCancel(): void {
@@ -549,7 +551,7 @@ export class RoundPlanHeaderConfigurationComponent
                       this.filteredMediaType = {
                         mediaType: [
                           ...this.filteredMediaType.mediaType,
-                          this.base64result
+                          onlybase64
                         ]
                       };
                       this.cdrf.detectChanges();
@@ -918,5 +920,7 @@ export class RoundPlanHeaderConfigurationComponent
 
   ngOnDestroy() {
     this.formMetadataSubscrption.unsubscribe();
+    this.operatorRoundsService.attachmentsMapping$.next([]);
+    this.operatorRoundsService.pdfMapping$.next([]);
   }
 }

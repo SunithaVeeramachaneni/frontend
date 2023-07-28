@@ -370,7 +370,7 @@ export class TemplateAffectedFormsModalComponent implements OnInit {
           })
         );
         this.formProgressService.formUpdateDeletePayload$.next(data);
-        this.dialogRef.close();
+        this.dialogRef.close({ published: true });
         this.router.navigate(['/forms/templates']);
       });
   }

@@ -32,7 +32,8 @@ import { oppositeOperatorMap } from 'src/app/shared/utils/fieldOperatorMappings'
 import { ResponseSetService } from '../../master-configurations/response-set/services/response-set.service';
 import { TranslateService } from '@ngx-translate/core';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
-import { isEmpty, omitBy } from 'lodash-es';
+import { cloneDeep, isEmpty, omitBy } from 'lodash-es';
+import { Column } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { SseService } from 'src/app/shared/services/sse.service';
 
 const limit = 10000;
@@ -460,7 +461,7 @@ export class RaceDynamicFormService {
     let askQuestions = [];
     let evidenceQuestions = [];
     let notificationGlobalIndex = 0;
-    const logicsT = JSON.parse(JSON.stringify(logics));
+    const logicsT = cloneDeep(logics);
     const questionLogics = logicsT.filter(
       (logic) => logic.questionId === questionId
     );
@@ -617,7 +618,8 @@ export class RaceDynamicFormService {
           lastPublishedBy: p.lastPublishedBy,
           author: p.author,
           publishedDate: p.publishedDate ? p.publishedDate : '',
-          isArchivedAt: p?.isArchivedAt ? p?.isArchivedAt : ''
+          isArchivedAt: p?.isArchivedAt ? p?.isArchivedAt : '',
+          archivedBy: p.archivedBy ? p.archivedBy : ''
         })) || [];
     return {
       count: resp?.count,
@@ -787,6 +789,7 @@ export class RaceDynamicFormService {
       )
       .map((p) => ({
         ...p,
+        id: p.inspectionId,
         preTextImage: {
           image: p.formLogo,
           style: {
@@ -853,18 +856,22 @@ export class RaceDynamicFormService {
         map((response) => (response === null ? inspectionDetail : response))
       );
 
-  fetchAllTemplates$ = () =>
+  fetchTemplates$ = (filter) =>
     this.appService
       ._getResp(
         environment.rdfApiUrl,
         'templates',
         { displayToast: true, failureResponse: {} },
         {
+          ...filter,
           limit: 0,
           skip: 0
         }
       )
       .pipe(map((data) => this.formatGetRdfFormsResponse({ items: data })));
+
+  fetchAllTemplateListNames$ = () =>
+    this.appService._getResp(environment.rdfApiUrl, 'templates/name');
 
   fetchTemplateByName$ = (name: string) =>
     this.appService
@@ -893,7 +900,7 @@ export class RaceDynamicFormService {
       )
       .pipe(map((data) => this.formatGetRdfFormsResponse({ items: data })));
 
-  createTemplate$ = (templateMetadata: FormMetadata) =>
+  createTemplate$ = (templateMetadata) =>
     this.appService._postData(environment.rdfApiUrl, 'templates', {
       data: templateMetadata
     });
@@ -915,6 +922,15 @@ export class RaceDynamicFormService {
     this.appService.patchData(
       environment.rdfApiUrl,
       `templates/${templateId}`,
+      {
+        data: templateMetadata
+      }
+    );
+
+  archiveDeleteTemplate$ = (templateId: string, templateMetadata: any) =>
+    this.appService.patchData(
+      environment.rdfApiUrl,
+      `templates/${templateId}/archive-delete`,
       {
         data: templateMetadata
       }
@@ -1334,11 +1350,22 @@ export class RaceDynamicFormService {
       'template-reference/' + `${payload.templateId}/` + `${payload.formId}`
     );
 
-  updateFormTemplateUsage$ = (data: any): Observable<any> =>
+  updateFormTemplateUsageByFormId$ = (data: any): Observable<any> =>
     this.appService.patchData(
       environment.rdfApiUrl,
-      'template-reference',
+      'template-reference/formId',
       data
+    );
+  copyTemplateReferenceByFormId$ = (data: any): Observable<any> =>
+    this.appService._postData(
+      environment.rdfApiUrl,
+      'template-reference/copy',
+      data
+    );
+  deleteTemplateReferenceByFormId$ = (formId: any): Observable<any> =>
+    this.appService._removeData(
+      environment.rdfApiUrl,
+      'template-reference/formId/' + formId
     );
   downloadSampleFormTemplate = (
     formType: String,
@@ -1397,4 +1424,36 @@ export class RaceDynamicFormService {
       formData
     );
   };
+
+  updateConfigOptionsFromColumns(columns: Partial<Column>[]) {
+    const allColumns: Column[] = columns.map((column, index) => {
+      const defaultColumn: Column = {
+        id: '',
+        displayName: '',
+        type: '',
+        controlType: '',
+        order: 0,
+        showMenuOptions: false,
+        subtitleColumn: '',
+        searchable: false,
+        sortable: false,
+        hideable: false,
+        visible: false,
+        movable: false,
+        stickable: false,
+        sticky: false,
+        groupable: false,
+        titleStyle: {},
+        subtitleStyle: {},
+        hasPreTextImage: false,
+        hasPostTextImage: false
+      };
+      return {
+        ...defaultColumn,
+        ...column,
+        order: index + 1
+      };
+    });
+    return allColumns;
+  }
 }

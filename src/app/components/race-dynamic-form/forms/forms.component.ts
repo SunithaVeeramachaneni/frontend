@@ -93,21 +93,13 @@ export class FormsComponent implements OnInit, OnDestroy {
   };
   assignedTo: string[] = [];
   schedules: string[] = [];
-  columns: Column[] = [
+  partialColumns: Partial<Column>[] = [
     {
       id: 'name',
       displayName: 'Name',
       type: 'string',
       controlType: 'string',
-      order: 1,
-      searchable: false,
-      sortable: false,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
       titleStyle: {
         'font-weight': '500',
         'font-size': '100%',
@@ -115,83 +107,40 @@ export class FormsComponent implements OnInit, OnDestroy {
         'overflow-wrap': 'anywhere'
       },
       hasSubtitle: true,
-      showMenuOptions: false,
       subtitleColumn: 'description',
       subtitleStyle: {
         'font-size': '80%',
         color: 'darkgray',
         'overflow-wrap': 'anywhere'
       },
-      hasPreTextImage: true,
-      hasPostTextImage: false
+      hasPreTextImage: true
     },
     {
       id: 'plant',
       displayName: 'Plant',
       type: 'string',
       controlType: 'string',
-      order: 2,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
       titleStyle: {
         'overflow-wrap': 'anywhere'
-      },
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      }
     },
     {
       id: 'shift',
       displayName: 'Shift',
       type: 'string',
       controlType: 'string',
-      order: 3,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      visible: true
     },
     {
       id: 'questions',
       displayName: 'Questions',
       type: 'number',
       controlType: 'string',
-      order: 4,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      visible: true
     },
     {
       id: 'schedule',
@@ -199,92 +148,41 @@ export class FormsComponent implements OnInit, OnDestroy {
       type: 'string',
       controlType: 'button',
       controlValue: 'Schedule',
-      order: 5,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
       titleStyle: {
         'overflow-wrap': 'anywhere'
-      },
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      }
     },
     {
       id: 'forms',
       displayName: 'Inspection Generated',
       type: 'number',
       controlType: 'string',
-      order: 6,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
-      titleStyle: { color: '#3d5afe' },
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      titleStyle: { color: '#3d5afe' }
     },
     {
       id: 'assignedTo',
       displayName: 'Assigned To',
       type: 'string',
       controlType: 'string',
-      order: 7,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
-      titleStyle: { 'overflow-wrap': 'anywhere' },
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      titleStyle: { 'overflow-wrap': 'anywhere' }
     },
     {
       id: 'scheduleDates',
       displayName: 'Starts - Ends',
       type: 'string',
       controlType: 'string',
-      order: 8,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
-      titleStyle: { 'overflow-wrap': 'anywhere' },
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      titleStyle: { 'overflow-wrap': 'anywhere' }
     }
   ];
+  columns: Column[] = [];
   configOptions: ConfigOptions = {
     tableID: 'plansTable',
     rowsExpandable: false,
@@ -386,6 +284,9 @@ export class FormsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.columns = this.raceDynamicFormService.updateConfigOptionsFromColumns(
+      this.partialColumns
+    );
     this.scheduleConfigEvent =
       this.scheduleConfigurationService.scheduleConfigEvent.subscribe(
         (value) => {
@@ -462,6 +363,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       this.users$
     ]).pipe(
       map(([forms, scrollData, formScheduleConfigurations, shifts, plants]) => {
+        this.isLoading$.next(false);
         shifts?.items?.forEach((shift) => {
           this.shiftIdNameMap[shift.id] = shift.name;
         });
@@ -573,10 +475,14 @@ export class FormsComponent implements OnInit, OnDestroy {
       if (this.formScheduleConfigurations[form.id]?.shiftDetails) {
         Object.keys(this.formScheduleConfigurations[form.id]?.shiftDetails).map(
           (shiftId) => {
-            shift += this.shiftIdNameMap[shiftId] + ',';
+            if (shiftId !== 'null') {
+              shift += this.shiftIdNameMap[shiftId] + ',';
+            }
           }
         );
-        form.shift = shift;
+        if (shift) {
+          form.shift = shift.substring(0, shift.length - 1);
+        }
       }
       return form;
     });
@@ -603,7 +509,6 @@ export class FormsComponent implements OnInit, OnDestroy {
               unscheduled: unscheduledCount
             };
           }
-          this.isLoading$.next(false);
         })
       );
   }
@@ -721,7 +626,7 @@ export class FormsComponent implements OnInit, OnDestroy {
   openFormHandler(row: ScheduleFormDetail): void {
     this.hideFormDetail = false;
     this.scheduleConfigEventHandler({ slideInOut: 'out' });
-    this.formDetail = { ...row };
+    this.formDetail = { ...row, formId: row.id };
     this.menuState = 'in';
     this.zIndexDelay = 400;
   }

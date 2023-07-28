@@ -13,11 +13,12 @@ import {
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { isEqual } from 'lodash-es';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
   pairwise,
+  take,
   takeUntil,
   tap
 } from 'rxjs/operators';
@@ -35,6 +36,7 @@ import { ConfirmModalPopupComponent } from 'src/app/components/race-dynamic-form
 })
 export class SectionComponent implements OnInit, OnDestroy {
   @ViewChild('sectionName') sectionName: ElementRef;
+
   @Input() isTemplate: boolean;
   @Input() set pageIndex(pageIndex: number) {
     this._pageIndex = pageIndex;
@@ -162,6 +164,15 @@ export class SectionComponent implements OnInit, OnDestroy {
     this.sectionName.nativeElement.focus();
   }
 
+  copySection() {
+    this.sectionEvent.emit({
+      pageIndex: this.pageIndex,
+      sectionIndex: this.sectionIndex,
+      section: this.sectionForm.getRawValue(),
+      type: 'copy'
+    });
+  }
+
   deleteSection() {
     if (!this.isTemplate) {
       this.sectionEvent.emit({
@@ -194,6 +205,15 @@ export class SectionComponent implements OnInit, OnDestroy {
           type: 'delete'
         });
       }
+    });
+  }
+
+  unlinkSection() {
+    this.sectionEvent.emit({
+      pageIndex: this.pageIndex,
+      sectionIndex: this.sectionIndex,
+      section: this.sectionForm.getRawValue(),
+      type: 'unlink'
     });
   }
 

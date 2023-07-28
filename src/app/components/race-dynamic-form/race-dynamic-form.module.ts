@@ -23,7 +23,11 @@ import { FormHeaderConfigurationComponent } from './form-header-configuration/fo
 import { FormDetailConfigurationComponent } from './form-detail-configuration/form-detail-configuration.component';
 
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialogModule } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogModule,
+  MatDialogRef
+} from '@angular/material/dialog';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -49,7 +53,10 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { SelectQuestionsDialogComponent } from 'src/app/forms/components/add-logic/select-questions-dialog/select-questions-dialog.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ArchivedListComponent } from './archived-list/archived-list.component';
+import { ArchivedFormListComponent } from './archived-form-list/archived-form-list.component';
+import { ArchivedTemplateListComponent } from './archived-template-list/archived-template-list.component';
 import { ArchivedDeleteModalComponent } from './archived-delete-modal/archived-delete-modal.component';
+import { DeleteTemplateModalComponent } from './delete-template-modal/delete-template-modal.component';
 import { ImportQuestionsModalComponent } from './import-questions/import-questions-modal/import-questions-modal.component';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -64,11 +71,10 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { AssignInspectionComponent } from './assign-inspection/assign-inspection.component';
 import { TemplateListComponent } from './template-list/template-list.component';
 import { SaveTemplateNamingModalComponent } from './save-template-naming-modal/save-template-naming-modal.component';
-import { TemplateConfigurationModalComponent } from './template-configuration-modal/template-configuration-modal.component';
-import { TemplateConfigurationComponent } from './template-configuration/template-configuration.component';
+import { TemplateHeaderConfigurationComponent } from './template-header-configuration/template-header-configuration.component';
+import { TemplateDetailConfigurationComponent } from './template-configuration/template-detail-configuration.component';
 import { SaveTemplateConfirmModalComponent } from './save-template-confirm-modal/save-template-confirm-modal.component';
 import { SaveTemplateContainerComponent } from './save-template-container/save-template-container.component';
-import { CreateFromTemplateModalComponent } from './create-from-template-modal/create-from-template-modal.component';
 import { TemplateContainerComponent } from './template-container/template-container.component';
 import { EditTemplateNameModalComponent } from './edit-template-name-modal/edit-template-name-modal.component';
 import { unitOfMeasurementReducer } from 'src/app/forms/state/unit-of-measurement.reducer';
@@ -85,6 +91,8 @@ import { ImportFormListComponent } from 'src/app/components/race-dynamic-form/im
 import { TemplateAffectedFormsModalComponent } from './template-configuration/template-affected-forms-modal/template-affected-forms-modal.component';
 import { AffectedFormTemplateSliderComponent } from 'src/app/components/race-dynamic-form/affected-form-template-slider/affected-form-template-slider.component';
 import { QuillMaterialComponent } from 'src/app/shared/components/quill-material/quill-material.component';
+import { ArchiveTemplateModalComponent } from './archive-template-modal/archive-template-modal.component';
+import { TemplateModalComponent } from './template-modal/template-modal.component';
 import { ConfirmModalPopupComponent } from './confirm-modal-popup/confirm-modal-popup/confirm-modal-popup.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
@@ -101,19 +109,22 @@ export const customTranslateLoader = (http: HttpClient) =>
     FormDetailConfigurationComponent,
     SelectQuestionsDialogComponent,
     ArchivedListComponent,
+    ArchivedFormListComponent,
+    ArchivedTemplateListComponent,
+    DeleteTemplateModalComponent,
     AssignInspectionComponent,
     ArchivedDeleteModalComponent,
+    ArchiveTemplateModalComponent,
     ImportQuestionsModalComponent,
     SchedulerComponent,
     FormsComponent,
     InspectionComponent,
     TemplateListComponent,
     SaveTemplateNamingModalComponent,
-    TemplateConfigurationModalComponent,
-    TemplateConfigurationComponent,
+    TemplateHeaderConfigurationComponent,
+    TemplateDetailConfigurationComponent,
     SaveTemplateConfirmModalComponent,
     SaveTemplateContainerComponent,
-    CreateFromTemplateModalComponent,
     TemplateContainerComponent,
     EditTemplateNameModalComponent,
     InspectionObservationsComponent,
@@ -124,7 +135,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     TemplateAffectedFormsModalComponent,
     AffectedFormTemplateSliderComponent,
     QuillMaterialComponent,
-    ConfirmModalPopupComponent
+    ConfirmModalPopupComponent,
+    TemplateModalComponent
   ],
   imports: [
     FormsModule,
@@ -184,6 +196,16 @@ export const customTranslateLoader = (http: HttpClient) =>
       GlobalResponseEffects
     ])
   ],
+  providers: [
+    {
+      provide: MatDialogRef,
+      useValue: {}
+    },
+    {
+      provide: MAT_DIALOG_DATA,
+      useValue: {}
+    }
+  ],
   exports: [
     FormContainerComponent,
     FormListComponent,
@@ -193,7 +215,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     FormHeaderConfigurationComponent,
     FormDetailConfigurationComponent,
     SelectQuestionsDialogComponent,
-    TemplateConfigurationComponent,
+    TemplateDetailConfigurationComponent,
     QuillMaterialComponent
   ]
 })

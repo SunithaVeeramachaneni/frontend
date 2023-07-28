@@ -1,11 +1,13 @@
 <div class="list-view" *ngIf="userInfo$ | async">
   <div class="main-container">
     <div class="forms-header">
-      <h2 class="heading" translate="myPlans"></h2>
+      <h2 id="roundPlanListName" class="heading" translate="myPlans"></h2>
       <div class="custom-form-field-gray-color search">
         <span class="no-of-forms" *ngIf="formsListCount$ | async as totalCount">
-          <span class="forms-count"> {{ totalCount | count }} &nbsp; </span>
-          <span class="forms-text">{{
+          <span id="roundPlanListCount" class="forms-count">
+            {{ totalCount | count }} &nbsp;
+          </span>
+          <span id="roundPlanListCountText" class="forms-text">{{
             'plans'
               | translate
                 : {
@@ -14,8 +16,11 @@
           }}</span>
         </span>
         <mat-form-field appearance="outline">
-          <mat-icon matPrefix class="searchIcon">search</mat-icon>
+          <mat-icon id="=roundPlanListSearchIcon" matPrefix class="searchIcon"
+            >search</mat-icon
+          >
           <input
+            id="roundPlanListSearchText"
             matInput
             type="text"
             [placeholder]="'searchForms' | translate"
@@ -24,6 +29,7 @@
           />
 
           <svg-icon
+            id="roundPlanListFilterIcon"
             icon="icon-filterIcon"
             cdkOverlayOrigin
             #trigger="cdkOverlayOrigin"
@@ -33,11 +39,16 @@
           ></svg-icon>
         </mat-form-field>
         <button
+          id="roundPlanListCreateBtn"
           class="create-new-btn"
           (click)="openRoundPlanCreationModal()"
           *appCheckUserHasPermission="[perms.createORPlan]"
         >
-          <span class="widgets-title" translate="createNew"></span>
+          <span
+            id="roundPlanListCreateText"
+            class="widgets-title"
+            translate="createNew"
+          ></span>
         </button>
       </div>
     </div>

@@ -1,7 +1,10 @@
 <ng-container *ngIf="this.title === 'Report Configuration'">
   <mat-form-field appearance="outline" class="search-bar">
-    <mat-icon matPrefix class="searchIcon">search</mat-icon>
+    <mat-icon id="commonFilterSearchIcon" matPrefix class="searchIcon"
+      >search</mat-icon
+    >
     <input
+      id="commonFilterSearchText"
       matInput
       [placeholder]="'searchWorkOrders' | translate"
       [(ngModel)]="searchValue"
@@ -14,8 +17,11 @@
 <ng-container *ngIf="this.title !== 'Report Configuration'">
   <span class="custom-form-field-gray-color">
     <mat-form-field appearance="outline" class="search-bar">
-      <mat-icon matPrefix class="search-icon">search</mat-icon>
+      <mat-icon id="commonFilterSearch" matPrefix class="search-icon"
+        >search</mat-icon
+      >
       <input
+        id="commonFilterSearchOrder"
         matInput
         [placeholder]="'searchWorkOrders' | translate"
         [(ngModel)]="searchValue"
@@ -25,6 +31,7 @@
       />
 
       <svg-icon
+        id="commonFilterFilterIcon"
         icon="icon-filterIcon"
         matSuffix
         cdkOverlayOrigin
@@ -53,19 +60,27 @@
       "
     >
       <div class="m-b-10 filter-header">
-        <span class="filter-modal-heading">{{ 'filter' | translate }}</span>
+        <span id="commonFilterText" class="filter-modal-heading">{{
+          'filter' | translate
+        }}</span>
         <button
+          id="commonFilterCancel"
           class="filter-modal-cancel"
           (click)="isPopoverOpen = false"
           aria-label="Close Filter"
         >
-          <svg-icon icon="icon-cancel-icon"></svg-icon>
+          <svg-icon
+            id="commonFilterCancelIcon"
+            icon="icon-cancel-icon"
+          ></svg-icon>
         </button>
       </div>
       <form #form="ngForm">
         <div class="filter-form-fields">
           <mat-form-field appearance="outline" class="mat-field">
-            <mat-label>{{ 'showOverdue' | translate }}</mat-label>
+            <mat-label id="commonFilterShowOverDue">{{
+              'showOverdue' | translate
+            }}</mat-label>
             <mat-select
               name="showOverdue"
               [(ngModel)]="showOverdue"
@@ -81,7 +96,9 @@
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="mat-field">
-            <mat-label>{{ 'priority' | translate }}</mat-label>
+            <mat-label id="commonFilterPriority">{{
+              'priority' | translate
+            }}</mat-label>
             <mat-select
               name="priority"
               multiple
@@ -101,7 +118,9 @@
             appearance="outline"
             class="mat-field"
           >
-            <mat-label>{{ 'kittingStatus' | translate }}</mat-label>
+            <mat-label id="commonFilterKittingStatus">{{
+              'kittingStatus' | translate
+            }}</mat-label>
             <mat-select
               name="kitStatus"
               multiple
@@ -115,6 +134,7 @@
           </mat-form-field>
         </div>
         <button
+          id="commonFilterApply"
           mat-raised-button
           color="primary"
           class="apply-filters-btn"
@@ -125,6 +145,7 @@
           {{ 'apply' | translate }}
         </button>
         <button
+          id="commonFilterReset"
           mat-button
           color="primary"
           class="reset-filters-btn"
@@ -141,7 +162,9 @@
       *ngIf="this.title === undefined"
     >
       <div class="m-b-10 filter-header">
-        <span class="filter-modal-heading">{{ 'filter' | translate }}</span>
+        <span id="commonFilterCloseFilter" class="filter-modal-heading">{{
+          'filter' | translate
+        }}</span>
         <button
           class="filter-modal-cancel"
           (click)="isPopoverOpen = false"
@@ -154,6 +177,7 @@
         <mat-form-field appearance="outline" class="width-100">
           <mat-icon matPrefix>search</mat-icon>
           <input
+            id="commonFilterAddFilterText"
             type="text"
             placeholder="Add Filter"
             matInput
@@ -168,7 +192,7 @@
               *ngFor="let col of reportColumns$ | async"
               [value]="col"
             >
-              <div (click)="addFilter(col)">
+              <div id="commonFilterDisplayName" (click)="addFilter(col)">
                 {{ col.displayName }}
               </div>
             </mat-option>
@@ -190,8 +214,11 @@
                   class="width-100"
                   *ngIf="filterForm.value.filterType !== 'daterange'"
                 >
-                  <mat-label>{{ filterForm.value.displayName }}</mat-label>
+                  <mat-label id="commonFilterFormName">{{
+                    filterForm.value.displayName
+                  }}</mat-label>
                   <input
+                    id="commonFilterDisplayText"
                     type="text"
                     placeholder="{{ filterForm.value.displayName }}"
                     value="{{ filterForm.value.displayText }}"
@@ -216,8 +243,11 @@
                   class="width-100"
                   *ngIf="filterForm.value.filterType === 'daterange'"
                 >
-                  <mat-label>{{ filterForm.value.displayName }}</mat-label>
+                  <mat-label id="commonFilterDisplayNameLabel">{{
+                    filterForm.value.displayName
+                  }}</mat-label>
                   <input
+                    id="commonFilteDisplayNameText"
                     type="text"
                     placeholder="{{ filterForm.value.displayName }}"
                     value="{{ filterForm.value.displayText }}"
@@ -246,10 +276,11 @@
             >
               <div [formGroupName]="i" class="filter-input-modal">
                 <div class="m-b-10">
-                  <span class="filter-modal-heading">
+                  <span id="commonFilterBy" class="filter-modal-heading">
                     Filter by {{ filterForm.value.displayName }}
                   </span>
                   <button
+                    id="commonFilterCloseFilterBtn"
                     class="filter-modal-cancel"
                     type="button"
                     (click)="isfilterTooltipOpen[i] = false"
@@ -266,13 +297,16 @@
                       filterForm.value.filterType !== 'daterange'
                     "
                   >
-                    <p class="operator-text">Operator</p>
+                    <p id="commonFilterOperator" class="operator-text">
+                      Operator
+                    </p>
                     <select
                       formControlName="operator"
                       name="operatorType"
                       class="operator-dropdown"
                     >
                       <option
+                        id="commonFilterOptions"
                         *ngFor="let option of filteredOptionsByType"
                         value="{{ option }}"
                       >
@@ -284,6 +318,7 @@
                   <div *ngIf="filterForm.value.filterType === 'string'">
                     <mat-form-field appearance="outline" class="width-100">
                       <input
+                        id="commonFilterStringOperand"
                         type="text"
                         matInput
                         name="stringOperand"
@@ -296,6 +331,7 @@
                   <div *ngIf="filterForm.value.filterType === 'number'">
                     <mat-form-field appearance="outline" class="width-100">
                       <input
+                        id="commonFilterNumber"
                         type="number"
                         name="inputValue"
                         matInput
@@ -324,6 +360,7 @@
 
                     <div *ngIf="filterForm.value.operator === 'custom'">
                       <button
+                        id="commonFilterCustomBtnText"
                         (focus)="rangePicker.open()"
                         class="select-date-range-btn"
                         aria-label="Open Date Range"
@@ -341,6 +378,7 @@
                           class="datepicker"
                         >
                           <input
+                            id="commonFilterBtn"
                             type="button"
                             matStartDate
                             name="startDate"
@@ -356,6 +394,7 @@
                         <mat-date-range-picker #rangePicker>
                           <mat-date-range-picker-actions>
                             <button
+                              id="commonFilterCancelBtn"
                               mat-button
                               matDateRangePickerCancel
                               aria-label="Cancel Date Range"
@@ -363,6 +402,7 @@
                               {{ 'cancel' | translate }}
                             </button>
                             <button
+                              id="commonFilterApplyBtn"
                               mat-raised-button
                               type="button"
                               color="primary"
@@ -379,7 +419,9 @@
 
                   <div *ngIf="filterForm.value.filterType === 'multi'">
                     <mat-form-field appearance="outline" class="width-100">
-                      <mat-label>{{ filterForm.value.displayName }}</mat-label>
+                      <mat-label id="commonFilterOperand">{{
+                        filterForm.value.displayName
+                      }}</mat-label>
                       <mat-select
                         multiple
                         name="inputValue"
@@ -400,7 +442,9 @@
 
                   <div *ngIf="filterForm.value.filterType === 'single'">
                     <mat-form-field appearance="outline" class="width-100">
-                      <mat-label>{{ filterForm.value.displayName }}</mat-label>
+                      <mat-label id="commonFilterName">{{
+                        filterForm.value.displayName
+                      }}</mat-label>
                       <mat-select name="inputValue" formControlName="operand">
                         <mat-option
                           name="singleOperand"
@@ -417,6 +461,7 @@
                   </div>
 
                   <button
+                    id="commonFilterSaveBtn"
                     class="save-btn"
                     mat-raised-button
                     type="button"
@@ -434,6 +479,7 @@
         </form>
       </div>
       <button
+        id="commonFilterApplyFilterBtn"
         mat-raised-button
         class="btn apply-filters-btn"
         (click)="applyFilters()"
@@ -444,6 +490,7 @@
         {{ 'apply' | translate }}
       </button>
       <button
+        id="commonFilterCancelFilterBtn"
         mat-button
         color="primary"
         class="btn reset-filters-btn"

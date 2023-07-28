@@ -6,11 +6,11 @@ import { FormResolverService } from '../race-dynamic-form/services/form-resolver
 import { FormContainerComponent } from './form-container/form-container.component';
 import { ArchivedListComponent } from './archived-list/archived-list.component';
 import { SchedulerComponent } from './scheduler/scheduler.component';
-import { TemplateConfigurationComponent } from './template-configuration/template-configuration.component';
 import { TemplateResolverService } from './services/template-resolver.service';
 import { TemplateContainerComponent } from './template-container/template-container.component';
 import { InspectionObservationsComponent } from './inspection-observations/inspection-observations.component';
 import { FormEditViewComponent } from './form-modal/form-edit-view.component';
+import { TemplateModalComponent } from './template-modal/template-modal.component';
 
 const routes: Routes = [
   {
@@ -41,7 +41,7 @@ const routes: Routes = [
         }
       },
       {
-        path: 'archived',
+        path: 'archived/:tabIndex',
         component: ArchivedListComponent,
         canActivate: [AuthGuard],
         data: {
@@ -64,17 +64,15 @@ const routes: Routes = [
         resolve: { form: TemplateResolverService },
         canActivate: [AuthGuard],
         data: {
-          breadcrumb: { label: 'Templates' },
           permissions: [permissions.viewFormTemplates]
         },
         children: [
           {
             path: 'edit/:id',
-            component: TemplateConfigurationComponent,
+            component: TemplateModalComponent,
             resolve: { form: TemplateResolverService },
             canActivate: [AuthGuard],
             data: {
-              breadcrumb: { label: 'Edit Template', alias: 'templateName' },
               permissions: [permissions.updateFormTemplate]
             }
           }

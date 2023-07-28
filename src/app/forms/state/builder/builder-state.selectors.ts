@@ -37,6 +37,9 @@ export const getModuleName = createSelector(
   (state) => state.moduleName
 );
 
+export const getFormConfigurationCounter = () =>
+  createSelector(selectFormConfigurationState, (state) => state.counter);
+
 export const getPagesCount = (subFormId) =>
   createSelector(selectFormConfigurationState, (state) => {
     let key = 'pages';
@@ -109,6 +112,27 @@ export const getSection = (
     return state[key]
       ?.find((page, index) => index === pageIndex)
       ?.sections.find((section, index) => index === sectionIndex);
+  });
+
+export const getImportedSectionsByTemplateId = (subFormId: string) =>
+  createSelector(selectFormConfigurationState, (state) => {
+    let key = 'pages';
+    if (subFormId) {
+      key = `${key}_${subFormId}`;
+    }
+    const importedSectionsByTemplateId = {};
+    for (const page of state[key] || []) {
+      for (const section of page.sections) {
+        if (section.isImported) {
+          if (!importedSectionsByTemplateId[section.templateId])
+            importedSectionsByTemplateId[section.templateId] = {};
+          importedSectionsByTemplateId[section.templateId][
+            section.externalSectionId
+          ] = 1;
+        }
+      }
+    }
+    return importedSectionsByTemplateId;
   });
 
 export const getTaskCountByPage = (pageIndex: number, subFormId: string) =>

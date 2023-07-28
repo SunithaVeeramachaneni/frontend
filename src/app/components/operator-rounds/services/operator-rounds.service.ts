@@ -26,7 +26,7 @@ import { formConfigurationStatus, dateFormat2 } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { isJson } from '../../race-dynamic-form/utils/utils';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
-import { isEmpty, omitBy } from 'lodash-es';
+import { cloneDeep, isEmpty, omitBy } from 'lodash-es';
 
 const limit = 10000;
 @Injectable({
@@ -379,7 +379,7 @@ export class OperatorRoundsService {
       formStatus
     } = formDetails;
     const flatHierarchy = this.assetHierarchyUtil.convertHierarchyToFlatList(
-      JSON.parse(JSON.stringify(hierarchy)),
+      cloneDeep(hierarchy),
       0
     );
     return this.appService._postData(
@@ -404,7 +404,7 @@ export class OperatorRoundsService {
       roundPlanDetails.form.formStatus;
     const { hierarchy } = roundPlanDetails.authoredFormDetail;
     const flatHierarchy = this.assetHierarchyUtil.convertHierarchyToFlatList(
-      JSON.parse(JSON.stringify(hierarchy)),
+      cloneDeep(hierarchy),
       0
     );
     return this.appService.patchData(
@@ -432,7 +432,7 @@ export class OperatorRoundsService {
       formStatus
     } = formDetails;
     const flatHierarchy = this.assetHierarchyUtil.convertHierarchyToFlatList(
-      JSON.parse(JSON.stringify(hierarchy)),
+      cloneDeep(hierarchy),
       0
     );
     return this.appService.patchData(
@@ -628,6 +628,7 @@ export class OperatorRoundsService {
       )
       .map((p) => ({
         ...p,
+        id: p.roundId,
         preTextImage: {
           image: 'assets/img/svg/rounds-icon.svg',
           style: {

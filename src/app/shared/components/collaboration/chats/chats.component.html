@@ -1,8 +1,15 @@
 <div class="chatsBody" *ngIf="selectedView === 'CHAT'">
   <div class="conversationsList">
     <div class="searchBar">
-      <input matInput placeholder="Search Users" disabled class="searchInput" />
+      <input
+        id="chatsSearchUserText"
+        matInput
+        placeholder="Search Users"
+        disabled
+        class="searchInput"
+      />
       <button
+        id="chatsSearchBtn"
         mat-icon-button
         class="searchMore"
         [matMenuTriggerFor]="menu"
@@ -11,9 +18,15 @@
         <mat-icon>more_horiz</mat-icon>
       </button>
       <mat-menu #menu="matMenu" xPosition="before">
-        <button mat-menu-item (click)="createGroup()">Create Group</button>
-        <button mat-menu-item disabled>Mute Messages</button>
-        <button mat-menu-item disabled>Delete Conversations</button>
+        <button id="chatsCreateGroupBtn" mat-menu-item (click)="createGroup()">
+          Create Group
+        </button>
+        <button id="chatsMuteMessageBtn" mat-menu-item disabled>
+          Mute Messages
+        </button>
+        <button id="chatsDeleteConvBtn" mat-menu-item disabled>
+          Delete Conversations
+        </button>
       </mat-menu>
     </div>
     <div class="userList" (scroll)="onConversationsListScrolled($event)">
@@ -39,7 +52,11 @@
             *ngIf="conversation.chatType === 'oneOnOne'"
           >
             <div class="userPresence">
-              <img class="icon" [src]="conversation.userInfo.profileImage" />
+              <img
+                id="chatsProfileImg"
+                class="icon"
+                [src]="conversation.userInfo.profileImage"
+              />
               <div
                 class="statusCircle"
                 [ngClass]="{
@@ -57,19 +74,28 @@
             <mat-icon class="icon group-icon">groups</mat-icon>
           </div>
           <div mat-line class="convTitle">
-            <span *ngIf="conversation.chatType === 'oneOnOne'" class="convName"
+            <span
+              id="chatsName"
+              *ngIf="conversation.chatType === 'oneOnOne'"
+              class="convName"
               >{{ conversation.userInfo.firstName }}
               {{ conversation.userInfo.lastName }}
             </span>
-            <span *ngIf="conversation.chatType === 'group'" class="convName"
+            <span
+              id="chatsConvoTopic"
+              *ngIf="conversation.chatType === 'group'"
+              class="convName"
               >{{ conversation.topic }}
             </span>
-            <span class="timeAgo">
+            <span id="chatsConvoDateTime" class="timeAgo">
               {{ conversation.latest.createdDateTime | timeAgo }}
             </span>
           </div>
           <div class="convDesc" mat-line>
-            <span [ngClass]="{ unreadCount: conversation.unreadCount }">
+            <span
+              id="chatsConvoUnreadCount"
+              [ngClass]="{ unreadCount: conversation.unreadCount }"
+            >
               {{ conversation.unreadCount }}</span
             >
             <span
@@ -92,7 +118,9 @@
           "
         >
           <div class="loadMore">
-            <span translate class="loadMoreText">loadingMore</span>
+            <span id="chatsLoadingMore" translate class="loadMoreText"
+              >loadingMore</span
+            >
             <mat-spinner strokeWidth="5" diameter="25"></mat-spinner>
           </div>
         </mat-list-item>
@@ -127,6 +155,7 @@
         >
           <div class="userPresence">
             <img
+              id="chatsUserProfileImg"
               class="icon mt-10"
               [src]="selectedConversation.userInfo.profileImage"
             />
@@ -150,11 +179,11 @@
           class="userTitle"
           *ngIf="selectedConversation.chatType === 'oneOnOne'"
         >
-          <span class="userName"
+          <span id="chatsUserName" class="userName"
             >{{ selectedConversation.userInfo.firstName }}
             {{ selectedConversation.userInfo.lastName }}
           </span>
-          <div mat-line class="userDescription">
+          <div id="chatsUserInfoTitle" mat-line class="userDescription">
             {{ selectedConversation.userInfo?.title }}
           </div>
         </div>
@@ -162,11 +191,14 @@
           class="userTitle groupTitle"
           *ngIf="selectedConversation.chatType === 'group'"
         >
-          <span class="userName">{{ selectedConversation.topic }} </span>
+          <span id="chatsSelectConvoTopic" class="userName"
+            >{{ selectedConversation.topic }}
+          </span>
           <div mat-line class="userDescription groupDescription">
             <span
+              id="chatsMemFirstName"
               *ngFor="
-                let member of selectedConversation.members | slice: 0:2;
+                let member of selectedConversation.members | slice : 0 : 2;
                 let i = index
               "
             >
@@ -174,6 +206,7 @@
             </span>
             <div *ngIf="selectedConversation.members.length > 2">
               <div
+                id="chatsMore"
                 (click)="isOpen = !isOpen"
                 cdkOverlayOrigin
                 #trigger="cdkOverlayOrigin"
@@ -197,7 +230,7 @@
                     <li
                       *ngFor="
                         let member of selectedConversation.members
-                          | slice: 2:selectedConversation.members.length;
+                          | slice : 2 : selectedConversation.members.length;
                         let i = index
                       "
                       class="member"
@@ -206,10 +239,12 @@
                         <img class="icon" [src]="member.profileImage" />
                       </div>
                       <div mat-line>
-                        <div class="memberName">
+                        <div id="chatsMemberName" class="memberName">
                           {{ member.firstName }} {{ member.lastName }}
                         </div>
-                        <div class="memberTitle">{{ member.title }}</div>
+                        <div id="chatsMemberTitle" class="memberTitle">
+                          {{ member.title }}
+                        </div>
                       </div>
                       <mat-divider class="horiz-divider"></mat-divider>
                     </li>
@@ -222,6 +257,7 @@
       </div>
       <div>
         <button
+          id="chatsAudioBtn"
           mat-icon-button
           color="primary"
           (click)="openAudioVideoCallDialog(selectedConversation, 'audio')"
@@ -229,6 +265,7 @@
           <mat-icon>phone</mat-icon>
         </button>
         <button
+          id="chatsVideoBtn"
           mat-icon-button
           color="primary"
           (click)="openAudioVideoCallDialog(selectedConversation, 'video')"
@@ -236,6 +273,7 @@
           <mat-icon>videocam</mat-icon>
         </button>
         <button
+          id="chatsSearchMoreBtn"
           mat-icon-button
           color="primary"
           class="searchMore"
@@ -246,6 +284,7 @@
         </button>
         <mat-menu #menu="matMenu" xPosition="before">
           <button
+            id="chatsAddPeopleBtn"
             mat-menu-item
             (click)="addPeopleToConversation(selectedConversation)"
           >
@@ -259,7 +298,7 @@
         <button mat-icon-button (click)="closePreview()">
           <mat-icon>close</mat-icon>
         </button>
-        <span>{{ selectedAttachment.name }}</span>
+        <span id="chatsSelectAttachName">{{ selectedAttachment.name }}</span>
       </div>
     </div>
     <mat-divider
@@ -294,21 +333,24 @@
             <div class="nameAndMessage">
               <div *ngIf="message.messageType === 'meeting'">
                 <div class="attachmentItemMeeting">
-                  <mat-icon mat-list-icon>videocam</mat-icon>
-                  <div mat-line class="attachmentTitle">
+                  <mat-icon id="chatsVideoCam" mat-list-icon>videocam</mat-icon>
+                  <div id="chatsMessageName" mat-line class="attachmentTitle">
                     {{ message.from.firstName }}
                     {{ message.from.lastName }} is Inviting you for a meeting.
                   </div>
                   <div mat-line class="attachmentSubTitle">
                     <div class="downloadBtn" (click)="openMeetingLink(message)">
-                      <mat-icon>videocam</mat-icon
-                      ><span class="downloadLabel">Join the meeting</span>
+                      <mat-icon id="chatsVideoCamIcon">videocam</mat-icon
+                      ><span id="chatsMeeting" class="downloadLabel"
+                        >Join the meeting</span
+                      >
                     </div>
                   </div>
                 </div>
               </div>
               <div class="messageContainerNonLoggedIn">
                 <span
+                  id="chatsMessage"
                   class="groupMessageFrom"
                   *ngIf="selectedConversation.chatType !== 'oneOnOne'"
                   >{{ message.from.firstName }}
@@ -319,7 +361,9 @@
                   *ngIf="message.message && message.message.length"
                   class="message"
                 ></div>
-                <span class="timestamp">{{ message.timestamp | timeAgo }}</span>
+                <span id="chatsTimeStamp" class="timestamp">{{
+                  message.timestamp | timeAgo
+                }}</span>
                 <div *ngIf="message.attachments && message.attachments.length">
                   <mat-list>
                     <mat-list-item
@@ -329,7 +373,7 @@
                       <div class="attachmentItemRow">
                         <div class="iconAndTitle">
                           <mat-icon>folder</mat-icon>
-                          <div class="attachmentTitle">
+                          <div id="chatsFileName" class="attachmentTitle">
                             {{ file.name }}
                           </div>
                         </div>
@@ -376,14 +420,16 @@
                 <div class="attachmentItemMeeting">
                   <!-- <div mat-line>{{ message.text }}</div> -->
                   <mat-icon mat-list-icon>videocam</mat-icon>
-                  <div mat-line class="attachmentTitle">
+                  <div id="chatsInviteName" mat-line class="attachmentTitle">
                     {{ message.from.firstName }}
                     {{ message.from.lastName }} is Inviting you for a meeting.
                   </div>
                   <div mat-line class="attachmentSubTitle">
                     <div class="downloadBtn" (click)="openMeetingLink(message)">
                       <mat-icon>videocam</mat-icon
-                      ><span class="downloadLabel">Join the meeting</span>
+                      ><span id="chatsJoinMeeting" class="downloadLabel"
+                        >Join the meeting</span
+                      >
                     </div>
                   </div>
                 </div>
@@ -403,7 +449,7 @@
                       <div class="attachmentItemRow">
                         <div class="iconAndTitle">
                           <mat-icon>folder</mat-icon>
-                          <div class="attachmentTitle">
+                          <div id="chatsFile" class="attachmentTitle">
                             {{ file.name }}
                           </div>
                         </div>
@@ -433,7 +479,9 @@
                     </mat-list-item>
                   </mat-list>
                 </div>
-                <span class="timestamp">{{ message.timestamp | timeAgo }}</span>
+                <span id="chatsTimeAgo" class="timestamp">{{
+                  message.timestamp | timeAgo
+                }}</span>
               </div>
             </div>
             <!-- <div class="conv-user-icon">
@@ -446,6 +494,7 @@
       <div *ngIf="showAttachmentPreview" class="attachmentPreview">
         <div class="previewContainer">
           <img
+            id="chatsPreviewImg"
             class="previewImg"
             *ngIf="
               selectedAttachment &&
@@ -506,6 +555,7 @@
       <mat-divider class="horiz-divider"></mat-divider>
       <div class="messageInputBar">
         <input
+          id="chatsUploadFile"
           #uploadFile
           type="file"
           multiple
@@ -515,6 +565,7 @@
         />
 
         <button
+          id="chatsUploadFileBtn"
           for="uploadFile"
           (click)="openAttachments()"
           class="attachmentIconBtn"
@@ -528,6 +579,7 @@
         </button>
         <div class="messageInputGroup">
           <input
+            id="chatsMessageText"
             matInput
             class="messageInput"
             placeholder="Enter Message.."
@@ -538,6 +590,7 @@
           />
           <div matSuffix>
             <button
+              id="chatsSendMessage"
               mat-icon-button
               [disabled]="
                 !showAttachmentPreview ||
@@ -562,14 +615,16 @@
           </div>
         </div>
 
-        <button mat-mini-fab class="audioRecord" disabled>
+        <button id="chatsAudioRecord" mat-mini-fab class="audioRecord" disabled>
           <mat-icon>mic</mat-icon>
         </button>
       </div>
     </div>
   </div>
   <div class="conversationContent centerText" *ngIf="!selectedConversation">
-    <span translate>selectConversationToSendMessage</span>
+    <span id="chatsSelectedConvo" translate
+      >selectConversationToSendMessage</span
+    >
   </div>
 </div>
 <div *ngIf="selectedView === 'CREATE_UPDATE_GROUP'">
