@@ -112,12 +112,12 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
 
       let formDetail$: any =
         this.raceDynamicFormService.getAuthoredFormDetailByFormId$(
-          this.selectedForm.formId,
+          this.selectedForm.id,
           this.formStatus
         );
       if (this.moduleName === 'OPERATOR_ROUNDS') {
         formDetail$ = this.operatorRoundsService.getAuthoredFormDetailByFormId$(
-          this.selectedForm.roundPlanId,
+          this.selectedForm.id,
           this.formStatus
         );
       }

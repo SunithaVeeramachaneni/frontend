@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable no-underscore-dangle */
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { format, formatDistance } from 'date-fns';
 import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
 import { map, mergeMap, toArray } from 'rxjs/operators';
@@ -34,6 +34,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 import { cloneDeep, isEmpty, omitBy } from 'lodash-es';
 import { Column } from '@innovapptive.com/dynamictable/lib/interfaces';
+import { SseService } from 'src/app/shared/services/sse.service';
 
 const limit = 10000;
 
@@ -55,9 +56,42 @@ export class RaceDynamicFormService {
     private responseSetService: ResponseSetService,
     private toastService: ToastService,
     private appService: AppService,
+    private sseService: SseService,
+    private zone: NgZone,
     private translate: TranslateService
   ) {}
 
+  /**
+   * Get event source (SSE)
+   */
+  private getServerSentEvent(
+    apiUrl: string,
+    urlString: string,
+    data: FormData
+  ): Observable<any> {
+    return new Observable((observer) => {
+      const eventSource = this.sseService.getEventSourceWithPost(
+        apiUrl,
+        urlString,
+        data
+      );
+      // Launch query
+      eventSource.stream();
+      // on answer from message listener
+      eventSource.onmessage = (event) => {
+        this.zone.run(() => {
+          observer.next(JSON.parse(event.data));
+        });
+      };
+      eventSource.onerror = (event) => {
+        this.zone.run(() => {
+          if (event.data) {
+            observer.error(JSON.parse(event.data));
+          }
+        });
+      };
+    });
+  }
   createTags$ = (
     tags: any,
     info: ErrorInfo = {} as ErrorInfo
@@ -1333,7 +1367,6 @@ export class RaceDynamicFormService {
       environment.rdfApiUrl,
       'template-reference/formId/' + formId
     );
-
   downloadSampleFormTemplate = (
     formType: String,
     info: ErrorInfo = {} as ErrorInfo
@@ -1363,6 +1396,32 @@ export class RaceDynamicFormService {
       info,
       false,
       body
+    );
+  };
+  updateAdhocFormOnTemplateChange$ = (
+    templateId: string,
+    formIds: [string]
+  ): Observable<any> => {
+    const formData = new FormData();
+    formData.append('templateId', templateId);
+    formData.append('formIds', JSON.stringify(formIds));
+    return this.getServerSentEvent(
+      environment.rdfApiUrl,
+      'templates/updateAdhocForms',
+      formData
+    );
+  };
+  updateEmbeddedFormOnTemplateChange$ = (
+    templateId: string,
+    formIds: [string]
+  ): Observable<any> => {
+    const formData = new FormData();
+    formData.append('templateId', templateId);
+    formData.append('formIds', JSON.stringify(formIds));
+    return this.getServerSentEvent(
+      environment.rdfApiUrl,
+      'templates/updateEmbeddedForms',
+      formData
     );
   };
 

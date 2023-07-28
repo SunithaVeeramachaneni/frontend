@@ -566,7 +566,11 @@ export const statusColors = {
   submitted: '#2C9E53',
   skipped: '#9E9E9E'
 };
-
+export const progressStatus = {
+  inprogress: 'in-progress',
+  success: 'success',
+  error: 'error'
+};
 export const responseCount = 1000;
 
 export const raceDynamicForms = 'RDF';

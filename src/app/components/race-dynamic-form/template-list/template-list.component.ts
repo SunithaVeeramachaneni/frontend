@@ -572,13 +572,18 @@ export class TemplateListComponent implements OnInit, OnDestroy {
   }
 
   templateDetailActionHandler() {
-    this.router.navigate([`/forms/templates/edit/${this.selectedForm.id}`]);
-    this.openCreateTemplateModal();
+    this.router
+      .navigate(['/forms/templates/edit', this.selectedForm.id], {
+        state: {
+          templateNamesList: this.allTemplates
+        }
+      })
+      .then(() => {
+        this.openCreateTemplateModal();
+      });
   }
-
   affectedFormDetailActionHandler() {
     this.router.navigate(['/forms/edit', this.affectedFormDetail.id]);
-    this.openCreateTemplateModal();
   }
 
   onClickAffectedFormDetail(event) {
