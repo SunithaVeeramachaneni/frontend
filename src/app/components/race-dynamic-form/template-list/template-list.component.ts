@@ -25,11 +25,11 @@ import { slideInOut } from 'src/app/animations';
 import { UsersService } from '../../user-management/services/users.service';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { TranslateService } from '@ngx-translate/core';
-import { TemplateConfigurationModalComponent } from '../template-configuration-modal/template-configuration-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { permissions } from 'src/app/app.constants';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/forms/state';
+import { TemplateModalComponent } from '../template-modal/template-modal.component';
 
 @Component({
   selector: 'app-template-list',
@@ -363,11 +363,22 @@ export class TemplateListComponent implements OnInit, OnDestroy {
   rowLevelActionHandler = ({ data, action }): void => {
     switch (action) {
       case 'edit':
-        this.router.navigate(['/forms/templates/edit', data.id], {
-          state: {
-            templateNamesList: this.allTemplates
-          }
-        });
+        this.router
+          .navigate(['/forms/templates/edit', data.id], {
+            state: {
+              templateNamesList: this.allTemplates
+            }
+          })
+          .then(() => {
+            this.dialog.open(TemplateModalComponent, {
+              maxWidth: '100vw',
+              maxHeight: '100vh',
+              height: '100%',
+              width: '100%',
+              panelClass: 'full-screen-modal',
+              data: this.allTemplates
+            });
+          });
         break;
 
       default:
@@ -467,7 +478,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
   }
 
   openCreateTemplateModal() {
-    this.dialog.open(TemplateConfigurationModalComponent, {
+    this.dialog.open(TemplateModalComponent, {
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',
@@ -479,10 +490,12 @@ export class TemplateListComponent implements OnInit, OnDestroy {
 
   templateDetailActionHandler() {
     this.router.navigate([`/forms/templates/edit/${this.selectedForm.id}`]);
+    this.openCreateTemplateModal();
   }
 
   affectedFormDetailActionHandler() {
     this.router.navigate(['/forms/edit', this.affectedFormDetail.id]);
+    this.openCreateTemplateModal();
   }
 
   onClickAffectedFormDetail(event) {

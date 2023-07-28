@@ -66,7 +66,6 @@ export class RoundPlanEditViewComponent implements OnInit, OnDestroy {
       });
 
     this.route.data.subscribe((data) => {
-      console.log(data);
       const { formConfigurationState, hierarchyState } = data.form || {};
 
       if (hierarchyState && Object.keys(hierarchyState).length) {
