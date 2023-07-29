@@ -70,7 +70,7 @@ $blue-color: #3d5afe;
 
 .scroll-content {
   overflow-y: scroll;
-  height: 65vh;
+  height: calc(100vh - 215px);
   padding: 10px;
 }
 
