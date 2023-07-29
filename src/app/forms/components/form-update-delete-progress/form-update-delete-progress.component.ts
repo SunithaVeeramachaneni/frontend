@@ -5,14 +5,16 @@ import {
   ChangeDetectorRef,
   ChangeDetectionStrategy
 } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
 import {
   progressStatus,
-  formConfigurationStatus
+  formConfigurationStatus,
+  routingUrls
 } from '../../../app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { FormUpdateProgressService } from '../../services/form-update-progress.service';
+import { CommonService } from 'src/app/shared/services/common.service';
 
 @Component({
   selector: 'app-form-update-delete-progress',
@@ -25,8 +27,14 @@ export class FormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
   _isExpanded: boolean;
   formMetadata: any[] = [];
   totalCompletedCount: number = 0;
+  currentRouteUrl$: Observable<string>;
+
   private onDestroy$ = new Subject();
+
+  readonly routingUrls = routingUrls;
+
   constructor(
+    private commonService: CommonService,
     private rdfService: RaceDynamicFormService,
     private cdr: ChangeDetectorRef,
     private formProgressService: FormUpdateProgressService,
@@ -36,6 +44,7 @@ export class FormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.isOpen();
     this.isExpanded();
+    this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$;
     this.formUpdateDeletePayload$().subscribe((payload) => {
       this.cdr.detectChanges();
       if (payload?.formIds.length > 0) {

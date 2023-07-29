@@ -12,7 +12,14 @@ import {
   takeUntil,
   tap
 } from 'rxjs/operators';
-import { BehaviorSubject, Observable, Subject, combineLatest, of } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+  Subject,
+  Subscription,
+  combineLatest,
+  of
+} from 'rxjs';
 import {
   Column,
   ConfigOptions
@@ -177,7 +184,7 @@ export class TemplateAffectedFormsModalComponent implements OnInit {
       }
     }
   };
-
+  affectedFormListSubscription$: Subscription;
   private onDestroy$ = new Subject();
 
   constructor(
@@ -207,7 +214,7 @@ export class TemplateAffectedFormsModalComponent implements OnInit {
       .subscribe(() => this.isLoading$.next(true));
     this.configOptions.allColumns = this.columns;
     this.getDisplayedForms();
-    this.formsListCount$.subscribe((count) => {
+    this.formsListCount$.pipe(takeUntil(this.onDestroy$)).subscribe((count) => {
       this.affectedFormsCount = count;
     });
   }
@@ -327,7 +334,7 @@ export class TemplateAffectedFormsModalComponent implements OnInit {
       );
   }
   markTemplateAsReady() {
-    this.raceDynamicFormService
+    this.affectedFormListSubscription$ = this.raceDynamicFormService
       .getAffectedFormList$({
         templateId: this.data.templateId,
         nextToken: '',
@@ -373,5 +380,13 @@ export class TemplateAffectedFormsModalComponent implements OnInit {
         this.dialogRef.close({ published: true });
         this.router.navigate(['/forms/templates']);
       });
+  }
+
+  ngOnDestroy(): void {
+    if (this.affectedFormListSubscription$) {
+      this.affectedFormListSubscription$.unsubscribe();
+    }
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 }
