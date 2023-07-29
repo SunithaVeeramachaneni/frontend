@@ -133,7 +133,7 @@ export class FormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
     }
   }
   isOpen() {
-    this.formProgressIsOpen().subscribe((isOpen) => {
+    this.formProgressService.formProgressIsOpen$.subscribe((isOpen) => {
       this._isOpen = isOpen;
     });
   }
@@ -141,7 +141,7 @@ export class FormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
     this.formProgressService.formProgressIsOpen$.next(isOpen ?? !this._isOpen);
   }
   isExpanded() {
-    this.formProgressisExpanded().subscribe((isExpanded) => {
+    this.formProgressService.formProgressisExpanded$.subscribe((isExpanded) => {
       this._isExpanded = isExpanded;
     });
   }
@@ -160,19 +160,12 @@ export class FormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
     }
   }
 
-  formProgressIsOpen() {
-    return this.formProgressService.formProgressIsOpen$;
-  }
-  formProgressisExpanded() {
-    return this.formProgressService.formProgressisExpanded$;
-  }
-
   ngOnDestroy(): void {
     this.formMetadata = [];
     this.totalCompletedCount = 0;
     this.formUpdateDeletePayload$().unsubscribe();
-    this.formProgressIsOpen().unsubscribe();
-    this.formProgressisExpanded().unsubscribe();
+    this.formProgressService.formProgressIsOpen$.unsubscribe();
+    this.formProgressService.formProgressisExpanded$.unsubscribe();
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }
