@@ -335,10 +335,10 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
         }),
         map((data) =>
           data.map((item) => {
-            if (item.plantId) {
+            if (item?.plantId) {
               item = {
                 ...item,
-                plant: `${item.plant.plantId} - ${item.plant.name}`
+                plant: `${item?.plant?.plantId} - ${item?.plant?.name}`
               };
             } else {
               item = { ...item, plant: '' };
@@ -391,9 +391,9 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
         if (objectKeys.length > 0) {
           const uniquePlants = plansList.rows
             .map((item) => {
-              if (item.plant) {
-                this.plantsIdNameMap[item.plant.plantId] = item.plant.id;
-                return `${item.plant.plantId} - ${item.plant.name}`;
+              if (item?.plant) {
+                this.plantsIdNameMap[item?.plant?.plantId] = item?.plant?.id;
+                return `${item?.plant?.plantId} - ${item?.plant?.name}`;
               }
               return '';
             })
