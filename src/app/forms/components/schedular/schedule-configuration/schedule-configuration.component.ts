@@ -245,6 +245,9 @@ export class ScheduleConfigurationComponent
       .get('repeatEvery')
       .valueChanges.pipe(takeUntil(this.onDestroy$))
       .subscribe((repeatEvery) => {
+        const startDate = new Date(
+          this.schedulerConfigForm.get('startDate').value
+        );
         switch (repeatEvery) {
           case 'day':
             this.schedulerConfigForm
@@ -255,7 +258,7 @@ export class ScheduleConfigurationComponent
               .patchValue(30);
             this.schedulerConfigForm
               .get('endDate')
-              .patchValue(format(addDays(new Date(), 29), 'd MMMM yyyy'));
+              .patchValue(format(addDays(startDate, 29), 'd MMMM yyyy'));
             this.updateAdvanceRoundsCountValidation(30);
             break;
           case 'week':
@@ -270,7 +273,7 @@ export class ScheduleConfigurationComponent
               .patchValue([getDay(new Date())]);
             this.schedulerConfigForm
               .get('endDate')
-              .patchValue(format(addDays(new Date(), 90), 'd MMMM yyyy'));
+              .patchValue(format(addDays(startDate, 90), 'd MMMM yyyy'));
             this.updateAdvanceRoundsCountValidation(30);
             break;
           case 'month':
@@ -283,7 +286,7 @@ export class ScheduleConfigurationComponent
             this.setMonthlyDaysOfWeek();
             this.schedulerConfigForm
               .get('endDate')
-              .patchValue(format(addDays(new Date(), 364), 'd MMMM yyyy'));
+              .patchValue(format(addDays(startDate, 364), 'd MMMM yyyy'));
             this.updateAdvanceRoundsCountValidation(30);
             break;
         }
@@ -336,12 +339,15 @@ export class ScheduleConfigurationComponent
               );
               break;
           }
+          const startDate = new Date(
+            this.schedulerConfigForm.get('startDate').value
+          );
           this.schedulerConfigForm
             .get('endDate')
             .patchValue(
               format(
                 addDays(
-                  new Date(),
+                  startDate,
                   days * this.schedulerConfigForm.get('repeatDuration').value -
                     1
                 ),
@@ -353,6 +359,17 @@ export class ScheduleConfigurationComponent
 
     this.schedulerConfigForm
       .get('repeatDuration')
+      .valueChanges.pipe(takeUntil(this.onDestroy$))
+      .subscribe(() => {
+        this.schedulerConfigForm
+          .get('scheduleEndOccurrences')
+          .patchValue(
+            this.schedulerConfigForm.get('scheduleEndOccurrences').value
+          );
+      });
+
+    this.schedulerConfigForm
+      .get('startDate')
       .valueChanges.pipe(takeUntil(this.onDestroy$))
       .subscribe(() => {
         this.schedulerConfigForm
