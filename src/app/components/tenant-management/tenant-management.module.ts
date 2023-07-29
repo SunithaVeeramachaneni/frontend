@@ -27,6 +27,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
+import { ApiKeyGenerationComponent } from './api-key-generation/api-key-generation.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/tenant-management/', '.json');
@@ -35,7 +36,8 @@ export const customTranslateLoader = (http: HttpClient) =>
   declarations: [
     TenantManagementContainerComponent,
     TenantsComponent,
-    TenantComponent
+    TenantComponent,
+    ApiKeyGenerationComponent
   ],
   imports: [
     CommonModule,
