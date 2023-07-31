@@ -106,7 +106,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
     'Submitted',
     'Assigned',
     'Partly-Open',
-    'Overdue'
+    'Overdue',
+    'Skipped'
   ];
   statusMap = {
     open: 'open',
@@ -114,7 +115,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
     assigned: 'assigned',
     partlyOpen: 'partly-open',
     inProgress: 'in-progress',
-    overdue: 'overdue'
+    overdue: 'overdue',
+    skipped: 'skipped'
   };
   filter = {
     status: '',
