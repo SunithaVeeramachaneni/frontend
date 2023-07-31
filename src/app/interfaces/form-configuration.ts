@@ -62,6 +62,7 @@ export interface Question {
   isResponseTypeModalOpen: boolean;
   unitOfMeasurement?: string;
   rangeMetadata?: NumberRangeMetadata;
+  skipIdGeneration?: boolean;
 }
 
 export interface SectionQuestions {
@@ -90,7 +91,7 @@ export interface SectionEvent {
   pageIndex: number;
   sectionIndex: number;
   section?: Section;
-  type: 'add' | 'update' | 'delete';
+  type: 'add' | 'update' | 'delete' | 'copy' | 'unlink';
 }
 
 export interface QuestionEvent {

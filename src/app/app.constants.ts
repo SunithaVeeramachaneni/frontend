@@ -72,6 +72,7 @@ export const permissions = Object.freeze({
   deleteForm: 'DELETE_FORM',
   copyForm: 'COPY_FORM',
   archiveForm: 'ARCHIVE_FORM',
+  restoreForm: 'RESTORE_ARCHIVED_FORM',
   viewSubmissions: 'VIEW_SUBMISSIONS',
   downloadSubmission: 'DOWNLOAD_SUBMISSION',
   shareSubmission: 'SHARE_SUBMISSION',
@@ -79,6 +80,11 @@ export const permissions = Object.freeze({
   createFormTemplate: 'CREATE_FORM_TEMPLATE',
   updateFormTemplate: 'UPDATE_FORM_TEMPLATE',
   viewArchivedForms: 'VIEW_ARCHIVED_FORMS',
+  viewArchivedTemplates: 'VIEW_ARCHIVED_TEMPLATES',
+  archiveTemplate: 'ARCHIVE_FORM_TEMPLATE',
+  copyTemplate: 'COPY_FORM_TEMPLATE',
+  restoreTemplate: 'RESTORE_ARCHIVED_TEMPLATE',
+  deleteTemplate: 'DELETE_ARCHIVED_TEMPLATE',
   viewFormScheduler: 'VIEW_FORM_SCHEDULER',
   scheduleInspection: 'SCHEDULE_FORM',
   importForm: 'IMPORT_FORM',
@@ -226,7 +232,7 @@ export const routingUrls = {
     permission: permissions.viewFormTemplates
   },
   archivedForms: {
-    url: '/forms/archived',
+    url: '/forms/archived/0',
     title: 'Archived',
     permission: permissions.viewArchivedForms
   },
@@ -560,7 +566,11 @@ export const statusColors = {
   submitted: '#2C9E53',
   skipped: '#9E9E9E'
 };
-
+export const progressStatus = {
+  inprogress: 'in-progress',
+  success: 'success',
+  error: 'error'
+};
 export const responseCount = 1000;
 
 export const raceDynamicForms = 'RDF';

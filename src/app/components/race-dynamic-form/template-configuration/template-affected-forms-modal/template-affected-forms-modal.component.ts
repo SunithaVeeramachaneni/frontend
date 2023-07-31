@@ -12,23 +12,33 @@ import {
   takeUntil,
   tap
 } from 'rxjs/operators';
-import { BehaviorSubject, Observable, Subject, combineLatest, of } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+  Subject,
+  Subscription,
+  combineLatest,
+  of
+} from 'rxjs';
 import {
   Column,
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { MatTableDataSource } from '@angular/material/table';
-import { graphQLDefaultLimit } from 'src/app/app.constants';
+import {
+  graphQLDefaultLimit,
+  graphQLDefaultMaxLimit
+} from 'src/app/app.constants';
 import { FormControl } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/state/app.state';
 import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
-import { ToastService } from 'src/app/shared/toast';
 import { TableEvent } from 'src/app/interfaces';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 import { Router } from '@angular/router';
 import { PlantsResponse } from 'src/app/interfaces/master-data-management/plants';
 import { PlantService } from 'src/app/components/master-configurations/plants/services/plant.service';
+import { FormUpdateProgressService } from 'src/app/forms/services/form-update-progress.service';
 
 @Component({
   selector: 'app-template-affected-forms-modal',
@@ -174,14 +184,14 @@ export class TemplateAffectedFormsModalComponent implements OnInit {
       }
     }
   };
-
+  affectedFormListSubscription$: Subscription;
   private onDestroy$ = new Subject();
 
   constructor(
     private store: Store<State>,
-    private toastService: ToastService,
     private router: Router,
     private raceDynamicFormService: RaceDynamicFormService,
+    private formProgressService: FormUpdateProgressService,
     private plantService: PlantService,
     public dialogRef: MatDialogRef<TemplateAffectedFormsModalComponent>,
 
@@ -204,7 +214,7 @@ export class TemplateAffectedFormsModalComponent implements OnInit {
       .subscribe(() => this.isLoading$.next(true));
     this.configOptions.allColumns = this.columns;
     this.getDisplayedForms();
-    this.formsListCount$.subscribe((count) => {
+    this.formsListCount$.pipe(takeUntil(this.onDestroy$)).subscribe((count) => {
       this.affectedFormsCount = count;
     });
   }
@@ -324,16 +334,59 @@ export class TemplateAffectedFormsModalComponent implements OnInit {
       );
   }
   markTemplateAsReady() {
-    this.dialogRef.close({ published: true });
-    this.store.dispatch(
-      BuilderConfigurationActions.updateIsFormDetailPublished({
-        isFormDetailPublished: true
+    this.affectedFormListSubscription$ = this.raceDynamicFormService
+      .getAffectedFormList$({
+        templateId: this.data.templateId,
+        nextToken: '',
+        limit: graphQLDefaultMaxLimit,
+        searchTerm: '',
+        fetchType: 'load'
       })
-    );
-    this.router.navigate(['/forms/templates']);
-    this.toastService.show({
-      type: 'success',
-      text: `${this.affectedFormsCount} Forms are updated.`
-    });
+      .pipe(
+        mergeMap(({ rows }) => {
+          const affectedFormData = {
+            templateId: this.data.templateId,
+            templateType: this.data.templateType,
+            formIds: [],
+            affectedForms: []
+          };
+          rows.map((item) => {
+            item.preTextImage = {
+              image: item?.formLogo,
+              style: {
+                width: '40px',
+                height: '40px',
+                marginRight: '10px'
+              },
+              condition: true
+            };
+            affectedFormData.formIds.push(item.id);
+            affectedFormData.affectedForms.push({
+              id: item.id,
+              name: item.name,
+              preTextImage: item.preTextImage
+            });
+          });
+          return of(affectedFormData);
+        })
+      )
+      .subscribe((data) => {
+        this.store.dispatch(
+          BuilderConfigurationActions.updateIsFormDetailPublished({
+            isFormDetailPublished: true
+          })
+        );
+        this.formProgressService.formUpdateDeletePayload$.next(data);
+        this.dialogRef.close({ published: true });
+        this.router.navigate(['/forms/templates']);
+      });
+  }
+
+  ngOnDestroy(): void {
+    if (this.affectedFormListSubscription$) {
+      this.affectedFormListSubscription$.unsubscribe();
+    }
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 }

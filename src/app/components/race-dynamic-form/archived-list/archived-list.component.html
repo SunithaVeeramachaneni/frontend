@@ -1,89 +1,22 @@
-<ng-container *ngIf="currentRouteUrl$ | async as currentRouteUrl">
-  <div
-    class="list-view"
-    *ngIf="currentRouteUrl === routingUrls.archivedForms.url"
-  >
-    <div class="main-container">
-      <div class="forms-header">
-        <h2 id="archivedListHeading" class="heading" translate="archived"></h2>
-        <span class="custom-form-field-gray-color search">
-          <span
-            class="no-of-forms"
-            *ngIf="archivedFormsListCount$ | async as totalCount"
-          >
-            <span id="archivedListCount" class="forms-count">
-              {{ totalCount | count }}
-            </span>
-            <span id="archivedListCountText" class="forms-text">{{
-              'archived'
-                | translate
-                  : {
-                      count: totalCount || 0
-                    }
-            }}</span>
-          </span>
-
-          <mat-form-field appearance="outline">
-            <mat-icon id="archivedListSearchIcon" matPrefix class="searchIcon"
-              >search</mat-icon
-            >
-            <input
-              id="archivedListSearchText"
-              matInput
-              type="text"
-              [placeholder]="'searchArchivedForm' | translate"
-              autocomplete="off"
-              [formControl]="searchForm"
-            />
-            <svg-icon
-              id="archivedListFilterIcon"
-              cdkOverlayOrigin
-              #trigger="cdkOverlayOrigin"
-              (click)="isPopoverOpen = !isPopoverOpen"
-              matSuffix
-              alt="Open Filter"
-              icon="icon-filterIcon"
-              class="common-filter-icon"
-            ></svg-icon>
-          </mat-form-field>
-        </span>
-        <ng-template
-          cdkConnectedOverlay
-          cdkConnectedOverlayPanelClass="custom-popover"
-          cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-          [cdkConnectedOverlayHasBackdrop]="true"
-          [cdkConnectedOverlayOpen]="isPopoverOpen"
-          [cdkConnectedOverlayOrigin]="trigger"
-          cdkConnectedOverlayWidth="400px"
-          (backdropClick)="isPopoverOpen = false"
-        >
-          <app-filter
-            [json]="filterJson"
-            (close)="isPopoverOpen = false"
-            (apply)="applyFilter($event)"
-            (reset)="resetFilter()"
-          ></app-filter>
-        </ng-template>
-      </div>
-
-      <div *ngIf="(formArchived$ | async) && (isLoading$ | async) === false">
-        <cwp-dynamictable
-          [dataSource]="dataSource"
-          [configOptions]="configOptions"
-          (fetchDataCallback)="handleTableEvent($event)"
-          (rowLevelActionHandler)="rowLevelActionHandler($event)"
-          class="width-100"
-        ></cwp-dynamictable>
-      </div>
-    </div>
-
-    <div *ngIf="isLoading$ | async">
-      <div class="padding-lr-20">
-        <div *ngFor="let number of ghostLoading">
-          <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
-          </ngx-shimmer-loading>
-        </div>
-      </div>
-    </div>
-  </div>
-</ng-container>
+<mat-tab-group
+  animationDuration="0ms"
+  [selectedIndex]="getSelectedIndex()"
+  (selectedTabChange)="onTabChange($event)"
+>
+  <mat-tab id="archiveTemplates">
+    <ng-template mat-tab-label>{{ 'templates' | translate }}</ng-template>
+    <app-lazy-load-container>
+      <ng-template #body>
+        <app-archived-template-list></app-archived-template-list>
+      </ng-template>
+    </app-lazy-load-container>
+  </mat-tab>
+  <mat-tab id="archiveForms">
+    <ng-template mat-tab-label>{{ 'forms' | translate }}</ng-template>
+    <app-lazy-load-container>
+      <ng-template #body>
+        <app-archived-form-list></app-archived-form-list>
+      </ng-template>
+    </app-lazy-load-container>
+  </mat-tab>
+</mat-tab-group>

@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   OnDestroy,
   OnInit
@@ -18,7 +19,7 @@ import {
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { MatTableDataSource } from '@angular/material/table';
 
-import { CellClickActionEvent } from 'src/app/interfaces';
+import { CellClickActionEvent, Permission, UserInfo } from 'src/app/interfaces';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { Router } from '@angular/router';
 import { slideInOut } from 'src/app/animations';
@@ -26,9 +27,17 @@ import { UsersService } from '../../user-management/services/users.service';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { TranslateService } from '@ngx-translate/core';
 import { MatDialog } from '@angular/material/dialog';
-import { permissions } from 'src/app/app.constants';
+import {
+  formConfigurationStatus,
+  permissions as perms
+} from 'src/app/app.constants';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/forms/state';
+import { generateCopyNumber, generateCopyRegex } from '../utils/utils';
+import { omit } from 'lodash-es';
+import { ArchiveTemplateModalComponent } from '../archive-template-modal/archive-template-modal.component';
+import { LoginService } from '../../login/services/login.service';
+import { ToastService } from 'src/app/shared/toast';
 import { TemplateModalComponent } from '../template-modal/template-modal.component';
 
 @Component({
@@ -49,21 +58,13 @@ export class TemplateListComponent implements OnInit, OnDestroy {
   isPopoverOpen = false;
   status: any[] = ['Draft', 'Ready'];
   filterJson: any[] = [];
-  columns: Column[] = [
+  partialColumns: Partial<Column>[] = [
     {
       id: 'name',
       displayName: 'Name',
       type: 'string',
       controlType: 'string',
-      order: 1,
-      searchable: false,
-      sortable: false,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
       titleStyle: {
         'font-weight': '500',
         'font-size': '100%',
@@ -71,54 +72,30 @@ export class TemplateListComponent implements OnInit, OnDestroy {
         'overflow-wrap': 'anywhere'
       },
       hasSubtitle: true,
-      showMenuOptions: false,
       subtitleColumn: 'description',
       subtitleStyle: {
         'font-size': '80%',
         color: 'darkgray',
         'overflow-wrap': 'anywhere'
       },
-      hasPreTextImage: true,
-      hasPostTextImage: false
+      hasPreTextImage: true
     },
     {
       id: 'questionsCount',
       displayName: 'Questions',
       type: 'number',
       controlType: 'string',
-      order: 2,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      groupable: true
     },
     {
       id: 'formStatus',
       displayName: 'Status',
       type: 'string',
       controlType: 'string',
-      order: 3,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
       groupable: true,
       titleStyle: {
         textTransform: 'capitalize',
@@ -135,9 +112,6 @@ export class TemplateListComponent implements OnInit, OnDestroy {
         color: '#92400E',
         borderRadius: '12px'
       },
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false,
       hasConditionalStyles: true
     },
     {
@@ -145,69 +119,31 @@ export class TemplateListComponent implements OnInit, OnDestroy {
       displayName: 'Template Type',
       type: 'string',
       controlType: 'string',
-      order: 4,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      groupable: true
     },
     {
       id: 'formsUsageCount',
       displayName: 'Used in Forms',
       type: 'number',
       controlType: 'string',
-      order: 5,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
       groupable: true,
       titleStyle: {
         color: '#3D5AFE',
         'text-decoration': 'underline'
-      },
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      }
     },
     {
       id: 'lastPublishedBy',
       displayName: 'Modified By',
       type: 'number',
       controlType: 'string',
-      order: 6,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      groupable: true
     },
     {
       id: 'author',
@@ -215,24 +151,13 @@ export class TemplateListComponent implements OnInit, OnDestroy {
       type: 'number',
       controlType: 'string',
       isMultiValued: true,
-      order: 7,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
-      titleStyle: { color: '' },
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      titleStyle: { color: '' }
     }
   ];
+
+  columns: Column[] = [];
 
   configOptions: ConfigOptions = {
     tableID: 'formsTable',
@@ -266,7 +191,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
     createdBy: ''
   };
   dataSource: MatTableDataSource<any>;
-  allTemplates: [];
+  allTemplates: any = [];
   displayedTemplates: any[];
   templatesCount$: Observable<number>;
   searchTemplates: FormControl;
@@ -275,21 +200,28 @@ export class TemplateListComponent implements OnInit, OnDestroy {
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   lastPublishedBy = [];
   createdBy = [];
-  readonly permissions = permissions;
+  readonly perms = perms;
   fetchAllTemplatesSubscription: Subscription;
+  userInfo$: Observable<UserInfo>;
   private onDestroy$ = new Subject();
 
   constructor(
+    private readonly toast: ToastService,
     private readonly raceDynamicFormService: RaceDynamicFormService,
+    private readonly loginService: LoginService,
     private usersService: UsersService,
     private headerService: HeaderService,
     private translateService: TranslateService,
     private router: Router,
     private dialog: MatDialog,
+    private cdrf: ChangeDetectorRef,
     private readonly store: Store<State>
   ) {}
 
   ngOnInit(): void {
+    this.columns = this.raceDynamicFormService.updateConfigOptionsFromColumns(
+      this.partialColumns
+    );
     this.searchTemplates = new FormControl('');
     this.headerService.setHeaderTitle(
       this.translateService.instant('templates')
@@ -297,7 +229,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
 
     this.usersService.getUsersInfo$().subscribe(() => {
       this.fetchAllTemplatesSubscription = this.raceDynamicFormService
-        .fetchAllTemplates$()
+        .fetchTemplates$({ isArchived: false, isDeleted: false })
         .subscribe((res: any) => {
           this.templatesCount$ = of(res.rows.length);
           this.allTemplates = res.rows.map((item) => ({
@@ -326,8 +258,11 @@ export class TemplateListComponent implements OnInit, OnDestroy {
       )
       .subscribe(() => this.isLoading$.next(false));
 
+    this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
+      tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
+    );
+
     this.configOptions.allColumns = this.columns;
-    this.prepareMenuActions();
   }
 
   onCloseViewDetail() {
@@ -380,20 +315,57 @@ export class TemplateListComponent implements OnInit, OnDestroy {
             });
           });
         break;
-
+      case 'copy':
+        this.copyTemplate(data);
+        break;
+      case 'archive':
+        this.onArchiveTemplate(data);
+        break;
       default:
     }
   };
 
   configOptionsChangeHandler = (event): void => {};
 
-  prepareMenuActions(): void {
-    const menuActions = [
-      {
+  prepareMenuActions(permissions: Permission[]): void {
+    const menuActions = [];
+
+    if (
+      this.loginService.checkUserHasPermission(
+        permissions,
+        'UPDATE_FORM_TEMPLATE'
+      )
+    ) {
+      menuActions.push({
         title: 'Edit',
         action: 'edit'
-      }
-    ];
+      });
+    }
+
+    if (
+      this.loginService.checkUserHasPermission(
+        permissions,
+        'COPY_FORM_TEMPLATE'
+      )
+    ) {
+      menuActions.push({
+        title: 'Copy',
+        action: 'copy'
+      });
+    }
+
+    if (
+      this.loginService.checkUserHasPermission(
+        permissions,
+        'ARCHIVE_FORM_TEMPLATE'
+      )
+    ) {
+      menuActions.push({
+        title: 'Archive',
+        action: 'archive'
+      });
+    }
+
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
     this.configOptions = { ...this.configOptions };
@@ -477,6 +449,117 @@ export class TemplateListComponent implements OnInit, OnDestroy {
     this.applySearchAndFilter(this.searchTemplates.value);
   }
 
+  copyTemplate(template) {
+    if (!template.id) return;
+    this.raceDynamicFormService
+      .fetchAllTemplateListNames$()
+      .subscribe((templateNames) => {
+        const createdTemplate = this.generateCopyTemplateName(
+          template,
+          templateNames
+        );
+        if (createdTemplate?.newName) {
+          const authoredFormTemplateDetails =
+            template.authoredFormTemplateDetails[0];
+          const preTextImage = template.preTextImage;
+          this.raceDynamicFormService
+            .createTemplate$({
+              ...omit(template, [
+                'id',
+                'preTextImage',
+                'authoredFormTemplateDetails',
+                'publishedDate'
+              ]),
+              name: createdTemplate.newName,
+              formStatus: formConfigurationStatus.draft,
+              isPublic: false
+            })
+            .subscribe((newTemplate) => {
+              if (!newTemplate) return;
+              if (
+                authoredFormTemplateDetails &&
+                Object.keys(authoredFormTemplateDetails).length
+              ) {
+                authoredFormTemplateDetails.formStatus =
+                  formConfigurationStatus.draft;
+                authoredFormTemplateDetails.pages = JSON.parse(
+                  authoredFormTemplateDetails?.pages || '[]'
+                );
+                authoredFormTemplateDetails.counter =
+                  authoredFormTemplateDetails?.counter || 0;
+                this.raceDynamicFormService
+                  .createAuthoredTemplateDetail$(
+                    newTemplate.id,
+                    authoredFormTemplateDetails
+                  )
+                  .subscribe();
+              }
+              authoredFormTemplateDetails.pages = JSON.stringify(
+                authoredFormTemplateDetails.pages
+              );
+              newTemplate.authoredFormTemplateDetails = [
+                authoredFormTemplateDetails
+              ];
+              newTemplate.formsUsageCount = 0;
+              newTemplate.counter =
+                newTemplate.authoredFormTemplateDetails[
+                  newTemplate.authoredFormTemplateDetails.length - 1
+                ]?.counter;
+              newTemplate.questionsCount =
+                JSON.parse(
+                  newTemplate.authoredFormTemplateDetails[
+                    newTemplate.authoredFormTemplateDetails.length - 1
+                  ]?.pages || '{}'
+                )[0]?.questions?.length || 0;
+              newTemplate.formStatus = formConfigurationStatus.draft;
+              newTemplate.formLogo = 'assets/rdf-forms-icons/formlogo.svg';
+              newTemplate.preTextImage = preTextImage;
+              if (newTemplate.author)
+                newTemplate.author = this.usersService.getUserFullName(
+                  newTemplate.author
+                );
+              if (newTemplate.lastPublishedBy)
+                newTemplate.lastPublishedBy = this.usersService.getUserFullName(
+                  newTemplate.lastPublishedBy
+                );
+              this.allTemplates = [newTemplate, ...this.allTemplates];
+              this.dataSource = new MatTableDataSource(this.allTemplates);
+              this.cdrf.detectChanges();
+              this.toast.show({
+                text: 'Template "' + template.name + '" copied successfully!',
+                type: 'success'
+              });
+            });
+        }
+      });
+  }
+
+  onArchiveTemplate(template) {
+    const archiveTemplateRef = this.dialog.open(ArchiveTemplateModalComponent, {
+      data: template
+    });
+    archiveTemplateRef.afterClosed().subscribe((res) => {
+      if (res === 'archive') {
+        this.raceDynamicFormService
+          .archiveDeleteTemplate$(template.id, {
+            isArchived: true,
+            archivedBy: this.loginService.getLoggedInEmail()
+          })
+          .subscribe(() => {
+            this.allTemplates = this.allTemplates.filter(
+              (item) => item.id !== template.id
+            );
+            this.dataSource = new MatTableDataSource(this.allTemplates);
+            this.cdrf.detectChanges();
+            this.toast.show({
+              text: 'Template "' + template.name + '" archived successfully!',
+              type: 'success'
+            });
+          });
+      }
+    });
+  }
+
   openCreateTemplateModal() {
     this.dialog.open(TemplateModalComponent, {
       maxWidth: '100vw',
@@ -489,13 +572,18 @@ export class TemplateListComponent implements OnInit, OnDestroy {
   }
 
   templateDetailActionHandler() {
-    this.router.navigate([`/forms/templates/edit/${this.selectedForm.id}`]);
-    this.openCreateTemplateModal();
+    this.router
+      .navigate(['/forms/templates/edit', this.selectedForm.id], {
+        state: {
+          templateNamesList: this.allTemplates
+        }
+      })
+      .then(() => {
+        this.openCreateTemplateModal();
+      });
   }
-
   affectedFormDetailActionHandler() {
     this.router.navigate(['/forms/edit', this.affectedFormDetail.id]);
-    this.openCreateTemplateModal();
   }
 
   onClickAffectedFormDetail(event) {
@@ -523,5 +611,24 @@ export class TemplateListComponent implements OnInit, OnDestroy {
     this.selectedForm = row;
     this.menuState = 'in';
     this.onCloseAffectedSlider();
+  }
+
+  private generateCopyTemplateName(template, rows) {
+    if (rows?.length > 0) {
+      const listCopyNumbers: number[] = [];
+      const regex: RegExp = generateCopyRegex(template?.name);
+      rows?.forEach((row) => {
+        const matchObject = row?.name?.match(regex);
+        if (matchObject) {
+          listCopyNumbers.push(parseInt(matchObject[1], 10));
+        }
+      });
+      const newIndex: number = generateCopyNumber(listCopyNumbers);
+      const newName = `${template?.name} Copy(${newIndex})`;
+      return {
+        newName
+      };
+    }
+    return null;
   }
 }

@@ -18,6 +18,7 @@ import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
 import { UsersService } from 'src/app/components/user-management/services/users.service';
 import { isEmpty, omitBy } from 'lodash-es';
+import { Column } from '@innovapptive.com/dynamictable/lib/interfaces';
 
 const placeHolder = '_ _';
 const dataPlaceHolder = '--';
@@ -501,6 +502,38 @@ export class ObservationsService {
       }
     });
     return filterJson;
+  }
+
+  updateConfigOptionsFromColumns(columns: Partial<Column>[]) {
+    const allColumns: Column[] = columns.map((column, index) => {
+      const defaultColumn: Column = {
+        id: '',
+        displayName: '',
+        type: '',
+        controlType: '',
+        order: 0,
+        showMenuOptions: false,
+        subtitleColumn: '',
+        searchable: false,
+        sortable: false,
+        hideable: false,
+        visible: false,
+        movable: false,
+        stickable: false,
+        sticky: false,
+        groupable: false,
+        titleStyle: {},
+        subtitleStyle: {},
+        hasPreTextImage: false,
+        hasPostTextImage: false
+      };
+      return {
+        ...defaultColumn,
+        ...column,
+        order: index + 1
+      };
+    });
+    return allColumns;
   }
 
   private formateGetObservationResponse(resp, type) {

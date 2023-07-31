@@ -74,7 +74,7 @@ export class RoundPlanConfigurationService {
     isTemplate: boolean,
     sectionQuestionsList: SectionQuestions[] = []
   ) {
-    const { sections, questions, counter } = this.getSectionsObject(
+    const { sections, questions, counter, logics } = this.getSectionsObject(
       pageIndex,
       addSections,
       addQuestions,
@@ -95,6 +95,15 @@ export class RoundPlanConfigurationService {
         counter
       })
     );
+    if (logics?.length)
+      this.store.dispatch(
+        BuilderConfigurationActions.addLogics({
+          logics,
+          pageIndex,
+          ...this.getFormConfigurationStatuses(),
+          subFormId: null
+        })
+      );
     this.store.dispatch(
       BuilderConfigurationActions.updatePageState({
         pageIndex,
@@ -216,6 +225,7 @@ export class RoundPlanConfigurationService {
     let sliceStart = 0;
     let questions: Question[] = [];
     let counter: number;
+    let logics: any[] = [];
 
     const sections = new Array(addSections).fill(0).map((s, sectionIndex) => {
       sectionCount = ++sectionCount;
@@ -232,13 +242,18 @@ export class RoundPlanConfigurationService {
           sliceStart +
             (sectionQuestionsList[sectionIndex]?.questions
               ? sectionQuestionsList[sectionIndex]?.questions?.length
-              : 1)
+              : addQuestions)
         )
         .map((q, questionIndex) => {
           counter = questionCounter + sliceStart + questionIndex + 1;
           return this.getQuestion(
             questionIndex,
-            section.id,
+            sectionQuestionsList[sectionIndex]?.questions[
+              questionIndex
+            ]?.sectionId?.startsWith('AQ')
+              ? sectionQuestionsList[sectionIndex]?.questions[questionIndex]
+                  ?.sectionId
+              : section.id,
             counter,
             sectionQuestionsList[sectionIndex]?.questions[questionIndex],
             isTemplate
@@ -247,6 +262,10 @@ export class RoundPlanConfigurationService {
 
       sliceStart += sectionQuestionsList[sectionIndex]?.questions?.length;
       questions = [...questions, ...sectionQuestions];
+      logics = [
+        ...logics,
+        ...(sectionQuestionsList[sectionIndex]?.logics || [])
+      ];
 
       return section;
     });
@@ -254,7 +273,8 @@ export class RoundPlanConfigurationService {
     return {
       sections,
       questions,
-      counter
+      counter,
+      logics
     };
   }
 
@@ -292,7 +312,9 @@ export class RoundPlanConfigurationService {
     isTemplate: boolean
   ) {
     return {
-      id: isTemplate
+      id: question?.skipIdGeneration
+        ? question.id
+        : isTemplate
         ? `TQ${questionCounter}_${new Date().getTime()}`
         : `Q${questionCounter}`,
       sectionId,
