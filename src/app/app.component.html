@@ -28,7 +28,6 @@
         class="innova-small-img"
       ></svg-icon>
     </div>
-    <div class="version" [hidden]="!menuOpenClose">{{ appVersion }}</div>
     <div class="sidebar-menu-items">
       <mat-nav-list
         class="menu-item"
@@ -130,6 +129,9 @@
           </ng-container>
         </div>
       </mat-nav-list>
+    </div>
+    <div class="version" [hidden]="!menuOpenClose">
+      Version {{ appVersion }}
     </div>
   </mat-sidenav>
 
