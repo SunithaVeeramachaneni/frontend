@@ -1649,7 +1649,11 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       this.getSections(this.createForm)[sectionIndex]
     );
     const selectedQuestion = questionsControl[questionIndex].value;
-    if (openOnFieldClick && Object.keys(selectedQuestion.value).length === 4) {
+    if (
+      openOnFieldClick &&
+      selectedQuestion &&
+      Object.keys(selectedQuestion?.value || [])?.length === 4
+    ) {
       return;
     }
     this.showFilterSection[sectionIndex + 1][questionIndex + 1] = true;
