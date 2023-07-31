@@ -30,7 +30,7 @@ import {
   toArray,
   map
 } from 'rxjs/operators';
-import { isEqual, uniqBy } from 'lodash-es';
+import { groupBy, uniqBy, isEqual, isUndefined } from 'lodash-es';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { RdfService } from '../services/rdf.service';
@@ -1077,6 +1077,29 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       table: this.fb.array([])
     });
 
+  prepareSectionUid(sc: number): string {
+    let uid = `uid${sc}`;
+    const alreadyExistSections = this.createForm?.value?.sections?.map(
+      (s) => s?.uid
+    );
+    if (alreadyExistSections?.length > 0) {
+      const isExist = alreadyExistSections?.find((a) => a === uid);
+      if (isExist) {
+        let count = 1;
+        uid = `uid${sc + count}`;
+        let i = 0;
+        while (i < alreadyExistSections?.length) {
+          if (alreadyExistSections[i] === uid) {
+            count += 1;
+            uid = `uid${sc + count}`;
+          }
+          i++;
+        }
+      }
+    }
+    return uid;
+  }
+
   initSection = (
     sc: number,
     qc: number,
@@ -1095,7 +1118,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       this.richTextEditorToolbarState[sc] = {};
 
     return this.fb.group({
-      uid: [`uid${sc}`],
+      uid: [this.prepareSectionUid(sc)],
       name: [
         {
           value:
@@ -1110,7 +1133,8 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       position: [''],
       questions: section
         ? this.addQuestionsForCopySections(sc, section.value.questions)
-        : this.fb.array([this.initQuestion(sc, qc, uqc)])
+        : this.fb.array([this.initQuestion(sc, qc, uqc)]),
+      createdAt: new Date().toISOString()
     });
   };
 
@@ -1221,7 +1245,48 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     );
   }
 
+  removeDuplicateSectionsFromForm(form) {
+    const uniqueSections = [];
+    Object.entries(groupBy(form?.sections, 'uid')).forEach(([_, sValue]) => {
+      if (sValue?.length > 0) {
+        if (sValue?.length > 1) {
+          // If there is not createdAt is present in sections
+          const sectionsWithNoCreatedAt = sValue?.every(
+            (s) => !isUndefined(s?.createdAt)
+          );
+          if (sectionsWithNoCreatedAt) {
+            const latestRecord = sValue?.reduce((latest, current) => {
+              const latestTimestamp = new Date(latest?.createdAt);
+              const currentTimestamp = new Date(current?.createdAt);
+              return latestTimestamp < currentTimestamp ? latest : current;
+            });
+            if (latestRecord) {
+              uniqueSections.push(latestRecord);
+            }
+          } else {
+            // createdAt not present in all objects in sections
+            const oldRecord = sValue?.find((s) => !s?.createdAt);
+            if (oldRecord) {
+              uniqueSections.push(oldRecord);
+            } else {
+              uniqueSections.push(...sValue.shift());
+            }
+          }
+        } else {
+          uniqueSections.push(...sValue);
+        }
+      }
+    });
+    const updatedForm = { ...form, sections: uniqueSections };
+    this.createForm.patchValue(
+      { sections: uniqueSections },
+      { emitEvent: false }
+    );
+    return updatedForm;
+  }
+
   publishFormRequest(form, info, publishedCount, requestType) {
+    form = this.removeDuplicateSectionsFromForm(form);
     return this.rdfService.publishForm$(form, info, requestType).pipe(
       tap((response) => {
         form.sections.forEach((section) => {
@@ -1273,11 +1338,12 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
 
   saveForm(ignoreStatus = false) {
     const { id, ...form } = this.createForm.getRawValue();
+    const updatedForm = this.removeDuplicateSectionsFromForm(form);
     if (id) {
       if (!ignoreStatus) {
         this.status$.next(this.saveProgress);
       }
-      return this.rdfService.updateForm$({ ...form, id }).pipe(
+      return this.rdfService.updateForm$({ ...updatedForm, id }).pipe(
         tap((updateForm) => {
           if (!ignoreStatus && Object.keys(updateForm).length) {
             this.status$.next(this.changesSaved);
@@ -1290,7 +1356,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       if (!ignoreStatus) {
         this.status$.next(this.saveProgress);
       }
-      return this.rdfService.createForm$(form).pipe(
+      return this.rdfService.createForm$(updatedForm).pipe(
         tap((createdForm) => {
           if (Object.keys(createdForm).length) {
             this.formId = createdForm.id;
