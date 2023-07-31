@@ -30,7 +30,7 @@ import {
   toArray,
   map
 } from 'rxjs/operators';
-import { isEqual } from 'lodash-es';
+import { isEqual, uniqBy } from 'lodash-es';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { RdfService } from '../services/rdf.service';
@@ -467,6 +467,23 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
           !this.createEditQuickResponse ||
           (responseType !== 'quickResponse' && responseType !== undefined)
         ) {
+          const tempResp = responses?.filter((item) => !item.formId);
+          if (this.formId) {
+            const addResp = responses.filter(
+              (item) => item?.formId === this.formId
+            );
+            tempResp.push(...addResp);
+            const quickResp = tempResp?.map((r) => ({
+              id: r?.id,
+              name: '',
+              values: r.values
+            }));
+            const uniqueResponse = uniqBy(
+              [...initial.data, ...quickResp],
+              'id'
+            );
+            initial.data = uniqueResponse;
+          }
           return initial;
         }
         if (Object.keys(response).length) {
