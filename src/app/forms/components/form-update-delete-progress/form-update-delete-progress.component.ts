@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import {
   Component,
   OnDestroy,
@@ -26,12 +27,10 @@ export class FormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
   _isOpen: boolean;
   _isExpanded: boolean;
   formMetadata: any[] = [];
-  totalCompletedCount: number = 0;
+  totalCompletedCount = 0;
   currentRouteUrl$: Observable<string>;
-
-  private onDestroy$ = new Subject();
-
   readonly routingUrls = routingUrls;
+  private onDestroy$ = new Subject();
 
   constructor(
     private commonService: CommonService,

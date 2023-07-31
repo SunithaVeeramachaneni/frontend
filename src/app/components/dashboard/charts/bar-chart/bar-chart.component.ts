@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import { DatePipe } from '@angular/common';
 import {
   Component,
@@ -5,7 +6,6 @@ import {
   Input,
   ChangeDetectionStrategy
 } from '@angular/core';
-import { EChartsOption } from 'echarts';
 
 @Component({
   selector: 'app-bar-chart',

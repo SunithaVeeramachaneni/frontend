@@ -17,8 +17,7 @@ import {
   SearchEvent,
   TableEvent,
   Count,
-  InspectionDetail,
-  FormMetadata
+  InspectionDetail
 } from './../../../interfaces';
 
 import {
@@ -29,14 +28,10 @@ import {
 import { ToastService } from 'src/app/shared/toast';
 import { isJson } from '../utils/utils';
 import { oppositeOperatorMap } from 'src/app/shared/utils/fieldOperatorMappings';
-import { ResponseSetService } from '../../master-configurations/response-set/services/response-set.service';
-import { TranslateService } from '@ngx-translate/core';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 import { cloneDeep, isEmpty, omitBy } from 'lodash-es';
 import { Column } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { SseService } from 'src/app/shared/services/sse.service';
-
-const limit = 10000;
 
 const VALIDFROM = '20221002135512';
 const VALIDTO = '99991230183000';
@@ -53,12 +48,10 @@ export class RaceDynamicFormService {
   embeddedFormId;
 
   constructor(
-    private responseSetService: ResponseSetService,
     private toastService: ToastService,
     private appService: AppService,
     private sseService: SseService,
-    private zone: NgZone,
-    private translate: TranslateService
+    private zone: NgZone
   ) {}
 
   /**
@@ -455,7 +448,7 @@ export class RaceDynamicFormService {
 
   getValidationExpression(questionId, question, questions, logics): any {
     let expression = '';
-    let validationMessage = '';
+    const validationMessage = '';
     let notificationExpression = '';
     let globalIndex = 0;
     let askQuestions = [];
@@ -949,11 +942,11 @@ export class RaceDynamicFormService {
     } = form;
     let payloads = [];
     pages.forEach((page) => {
-      let { questions, sections, logics } = page;
+      const { questions, sections, logics } = page;
 
       sections.forEach((section) => {
         const { name: sectionName, position: sectionPosition } = section;
-        let questionsBySection = questions.filter(
+        const questionsBySection = questions.filter(
           (item) => item.sectionId === section.id
         );
 
@@ -1100,7 +1093,7 @@ export class RaceDynamicFormService {
   }
 
   getNotificationInfo(question, logics) {
-    let notificationInfo = [];
+    const notificationInfo = [];
 
     const questionLogics = logics.filter(
       (logic) => logic.questionId === question.id
@@ -1368,7 +1361,7 @@ export class RaceDynamicFormService {
       'template-reference/formId/' + formId
     );
   downloadSampleFormTemplate = (
-    formType: String,
+    formType: string,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> => {
     const params: URLSearchParams = new URLSearchParams();
@@ -1384,7 +1377,7 @@ export class RaceDynamicFormService {
 
   downloadFailure = (
     body: { rows: any },
-    formType: String,
+    formType: string,
     info: ErrorInfo = {} as ErrorInfo
   ) => {
     const params: URLSearchParams = new URLSearchParams();

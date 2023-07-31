@@ -1,25 +1,13 @@
-import {
-  Inject,
-  Component,
-  OnInit,
-  Input,
-  Output,
-  EventEmitter
-} from '@angular/core';
+import { Inject, Component, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
-  Count,
   LoadEvent,
   Role,
   SearchEvent,
   TableEvent,
-  User,
-  UserDetails,
   UserTable
 } from 'src/app/interfaces';
-import { UsersService } from '../services/users.service';
 import { RolesPermissionsService } from '../services/roles-permissions.service';
-import { CommonService } from 'src/app/shared/services/common.service';
 import { MatTableDataSource } from '@angular/material/table';
 import {
   Column,
@@ -48,9 +36,6 @@ import {
   tap
 } from 'rxjs/operators';
 import { UserGroupService } from '../services/user-group.service';
-import { AddEditUserGroupModalComponent } from '../add-edit-user-group-modal/add-edit-user-group-modal.component';
-import { ToastService } from 'src/app/shared/toast';
-import { data_test } from '../../spare-parts/spare-parts-data';
 import { DomSanitizer } from '@angular/platform-browser';
 @Component({
   selector: 'app-select-user-usergroup-modal',
@@ -178,11 +163,8 @@ export class SelectUserUsergroupModalComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<SelectUserUsergroupModalComponent>,
-    private usersService: UsersService,
     private userGroupService: UserGroupService,
     private roleService: RolesPermissionsService,
-    private commonService: CommonService,
-    private toastService: ToastService,
     private sant: DomSanitizer
   ) {}
 

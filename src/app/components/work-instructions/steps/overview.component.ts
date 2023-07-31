@@ -1,3 +1,9 @@
+/* eslint-disable arrow-body-style */
+/* eslint-disable @typescript-eslint/dot-notation */
+/* eslint-disable @typescript-eslint/prefer-for-of */
+/* eslint-disable @typescript-eslint/member-ordering */
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable @typescript-eslint/naming-convention */
 import {
   Component,
   Input,
@@ -676,6 +682,11 @@ export class CustomStepperComponent
   extends CdkStepper
   implements OnInit, OnDestroy, AfterViewChecked
 {
+  @Output() allStepData: EventEmitter<any> = new EventEmitter<any>();
+  @Output() publishOnAddCloneSteps = new EventEmitter<boolean>();
+  @Input() selectedInstructionData;
+  allSteps: Step[];
+  instruction: Instruction;
   public selectedFormFactor = { id: '1', name: 'iPad' };
   public loadedImages: any = [];
   public instructions: any = [];
@@ -688,8 +699,7 @@ export class CustomStepperComponent
   public firstButton = true;
   public lastButton = false;
   titleProvided = false;
-  @Output() allStepData: EventEmitter<any> = new EventEmitter<any>();
-  @Output() publishOnAddCloneSteps = new EventEmitter<boolean>();
+
   public currentStepTitle = '';
   public tabs = ['HEADER'];
   public tabsObject = { HEADER: 'HEADER' };
@@ -708,9 +718,6 @@ export class CustomStepperComponent
   private unLoadedImagesSubscription: Subscription;
   private currentImgFromPreviewSectionSubscription: Subscription;
   private currentStepDetailsSectionSubscription: Subscription;
-  @Input() selectedInstructionData;
-  allSteps: Step[];
-  instruction: Instruction;
   private stepsSubscription: Subscription;
   private instructionSubscription: Subscription;
   private setUpdatedStepsCalled = false;
@@ -903,7 +910,7 @@ export class CustomStepperComponent
       });
     this.currentTabsSubscription = this._commonSvc.currentTabs.subscribe(
       ({ steps, removedStep }) => {
-        for (let step of steps) {
+        for (const step of steps) {
           this.tabsObject = { ...this.tabsObject, [step.StepId]: step.Title };
         }
         if (Object.keys(removedStep)) {

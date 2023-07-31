@@ -16,7 +16,6 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { getFormMetadata } from 'src/app/forms/state';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
-import { tap } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';
 import { FormService } from 'src/app/forms/services/form.service';
 

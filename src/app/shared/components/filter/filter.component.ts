@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
+/* eslint-disable @typescript-eslint/naming-convention */
+/* eslint-disable @angular-eslint/no-output-native */
+/* eslint-disable @typescript-eslint/member-ordering */
 import {
   Component,
   EventEmitter,

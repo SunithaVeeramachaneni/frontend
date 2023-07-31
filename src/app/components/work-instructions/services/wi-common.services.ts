@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/member-ordering */
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { ImportFileEventData, Step } from '../../../interfaces';
@@ -7,14 +8,11 @@ export interface IUploadedImageDetails {
   index?: number;
 }
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class WiCommonService {
-
-  constructor() { }
-
   private imgSourceFromUploadedSection = new Subject<IUploadedImageDetails>();
   private stepTitle = new Subject<string>();
-  private allSteps = new Subject<{ steps: Step[], removedStep: Step}>();
+  private allSteps = new Subject<{ steps: Step[]; removedStep: Step }>();
   private stepDetails = new Subject<any>();
   private imgArray = new Subject<[]>();
   private stepDetailsSaveSubject = new Subject<string>();
@@ -23,7 +21,8 @@ export class WiCommonService {
   private fetchWISubject = new BehaviorSubject<boolean>(true);
   private fetchCategoriesSubject = new BehaviorSubject<boolean>(true);
 
-  currentImgFromPreviewSection = this.imgSourceFromUploadedSection.asObservable();
+  currentImgFromPreviewSection =
+    this.imgSourceFromUploadedSection.asObservable();
   currentStepTitle = this.stepTitle.asObservable();
   unLoadedImages = this.imgArray.asObservable();
   currentStepDetails = this.stepDetails.asObservable();
@@ -33,6 +32,8 @@ export class WiCommonService {
   uploadInfoAction$ = this.uploadInfoSubject.asObservable();
   fetchWIAction$ = this.fetchWISubject.asObservable();
   fetchCategoriesAction$ = this.fetchCategoriesSubject.asObservable();
+
+  constructor() {}
 
   uploadImgToPreview(imageDetails: IUploadedImageDetails) {
     this.imgSourceFromUploadedSection.next(imageDetails);

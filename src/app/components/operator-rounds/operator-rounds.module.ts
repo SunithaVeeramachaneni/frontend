@@ -71,10 +71,7 @@ import { globalResponseReducer } from 'src/app/forms/state/global-responses.redu
 import { GlobalResponseEffects } from 'src/app/forms/state/global-response.effects';
 import { RoundObservationsComponent } from './round-observations/round-observations.component';
 import { RoundPlanEditViewComponent } from './round-plan-modal/round-plan-edit-view.component';
-import {
-  NgxMatDatetimePickerModule,
-  NgxMatTimepickerModule
-} from '@angular-material-components/datetime-picker';
+import { NgxMatDatetimePickerModule } from '@angular-material-components/datetime-picker';
 import { RoundPlanModalComponent } from './round-plan-modal/round-plan-modal.component';
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/operator-rounds/', '.json');

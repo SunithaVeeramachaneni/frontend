@@ -4,8 +4,7 @@ import {
   Component,
   HostListener,
   OnDestroy,
-  OnInit,
-  Inject
+  OnInit
 } from '@angular/core';
 import { CommonService } from './shared/services/common.service';
 import { Router, NavigationEnd } from '@angular/router';
@@ -28,7 +27,6 @@ import { UserIdleService } from 'angular-user-idle';
 import { debounce } from './shared/utils/debounceMethod';
 import { PeopleService } from './shared/components/collaboration/people/people.service';
 import { SseService } from './shared/services/sse.service';
-import { DOCUMENT } from '@angular/common';
 declare const APP_VERSION: string;
 
 const {
@@ -48,7 +46,6 @@ const {
   activeUsers,
   rolesPermissions,
   userGroups,
-  inActiveTenants,
   inActiveUsers,
   tenantManagement,
   raceDynamicForms,
@@ -338,8 +335,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     private imageUtils: ImageUtils,
     private dialog: MatDialog,
     private userIdle: UserIdleService,
-    private sseService: SseService,
-    @Inject(DOCUMENT) private document: Document
+    private sseService: SseService
   ) {}
 
   @HostListener('document:mousemove', ['$event'])

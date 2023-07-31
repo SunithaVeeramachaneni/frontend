@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import { map, tap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { BehaviorSubject, Observable, Subscription, of } from 'rxjs';
 import {
   Component,

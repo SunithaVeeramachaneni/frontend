@@ -29,7 +29,6 @@ import {
   CellClickActionEvent,
   Permission,
   TableEvent,
-  UserDetails,
   UserInfo
 } from 'src/app/interfaces';
 

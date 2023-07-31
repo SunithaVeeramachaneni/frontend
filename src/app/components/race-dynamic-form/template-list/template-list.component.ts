@@ -31,8 +31,6 @@ import {
   formConfigurationStatus,
   permissions as perms
 } from 'src/app/app.constants';
-import { Store } from '@ngrx/store';
-import { State } from 'src/app/forms/state';
 import { generateCopyNumber, generateCopyRegex } from '../utils/utils';
 import { omit } from 'lodash-es';
 import { ArchiveTemplateModalComponent } from '../archive-template-modal/archive-template-modal.component';
@@ -214,8 +212,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
     private translateService: TranslateService,
     private router: Router,
     private dialog: MatDialog,
-    private cdrf: ChangeDetectorRef,
-    private readonly store: Store<State>
+    private cdrf: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {

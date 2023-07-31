@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { RaceDynamicFormService } from '../../services/rdf.service';
 import {
@@ -45,7 +45,7 @@ import { FormUpdateProgressService } from 'src/app/forms/services/form-update-pr
   templateUrl: './template-affected-forms-modal.component.html',
   styleUrls: ['./template-affected-forms-modal.component.scss']
 })
-export class TemplateAffectedFormsModalComponent implements OnInit {
+export class TemplateAffectedFormsModalComponent implements OnInit, OnDestroy {
   ghostLoading = new Array(8).fill(0).map((v, i) => i);
   nextToken = '';
   fetchType = 'load';
@@ -194,7 +194,6 @@ export class TemplateAffectedFormsModalComponent implements OnInit {
     private formProgressService: FormUpdateProgressService,
     private plantService: PlantService,
     public dialogRef: MatDialogRef<TemplateAffectedFormsModalComponent>,
-
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
 

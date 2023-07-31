@@ -1,3 +1,8 @@
+/* eslint-disable @angular-eslint/no-output-on-prefix */
+/* eslint-disable @typescript-eslint/prefer-for-of */
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable @typescript-eslint/naming-convention */
+/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import {
   Component,
   OnInit,

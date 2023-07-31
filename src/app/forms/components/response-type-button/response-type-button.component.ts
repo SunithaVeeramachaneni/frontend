@@ -6,7 +6,6 @@ import {
   EventEmitter,
   ChangeDetectionStrategy
 } from '@angular/core';
-import { FormService } from '../../services/form.service';
 
 @Component({
   selector: 'app-response-type-button',
@@ -21,7 +20,7 @@ export class ResponseTypeButtonComponent implements OnInit {
   @Input() isImported: boolean;
   @Output() responseTypeOpenEvent: EventEmitter<boolean> =
     new EventEmitter<boolean>();
-  constructor(private formService: FormService) {}
+  constructor() {}
 
   ngOnInit(): void {}
 

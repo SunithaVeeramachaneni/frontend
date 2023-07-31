@@ -1,38 +1,22 @@
+/* eslint-disable @typescript-eslint/prefer-for-of */
+/* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable guard-for-in */
 import {
   ChangeDetectionStrategy,
   Component,
   OnInit,
   OnDestroy,
-  QueryList,
   ViewChild,
-  ViewChildren,
   DoCheck
 } from '@angular/core';
 import { MatOption } from '@angular/material/core';
 import { SparepartsService } from './spare-parts.service';
-import { data_test } from './spare-parts-data';
 import { WorkOrder, WorkOrders } from '../../interfaces/scc-work-order';
-import {
-  BehaviorSubject,
-  combineLatest,
-  Observable,
-  Subscription,
-  of
-} from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
 import { FormControl } from '@angular/forms';
-import {
-  map,
-  startWith,
-  filter,
-  tap,
-  mergeMap,
-  switchMap,
-  delay
-} from 'rxjs/operators';
+import { map, startWith, filter, tap, mergeMap } from 'rxjs/operators';
 import { WarehouseTechnician } from '../../interfaces/warehouse_technicians';
 import { DomSanitizer } from '@angular/platform-browser';
-import { CommonService } from '../../shared/services/common.service';
 import { DateSegmentService } from '../../shared/components/date-segment/date-segment.service';
 import { CommonFilterService } from '../../shared/components/common-filter/common-filter.service';
 import { MaintenanceService } from '../maintenance/maintenance.service';

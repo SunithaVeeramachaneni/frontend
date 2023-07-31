@@ -1,3 +1,7 @@
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable @typescript-eslint/prefer-for-of */
+/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable @typescript-eslint/naming-convention */
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MyOverlayRef } from '../../myoverlay-ref';
 import { ThemePalette } from '@angular/material/core';
@@ -242,9 +246,9 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
       ? assignedObjectsString.split(',')
       : [];
     let objectsValue = {};
-    for (let assignedObject of assignedObjects) {
+    for (const assignedObject of assignedObjects) {
       const details = assignedObject.split(':');
-      let [description, value] = details;
+      const [description, value] = details;
       if (
         description &&
         value &&
@@ -533,7 +537,7 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
         this.uploadInfo = info;
       });
 
-    let data = this.ref.data;
+    const data = this.ref.data;
     const { isAudioOrVideoFile, successUrl, failureUrl, s3Folder } = data;
     this.isAudioOrVideoFile = isAudioOrVideoFile;
     this.successUrl = successUrl;
@@ -566,7 +570,7 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
           )
           .subscribe((businessObjects) => {
             for (let fieldKey = 0; fieldKey < allKeys.length; fieldKey++) {
-              let steps = data[allKeys[fieldKey]];
+              const steps = data[allKeys[fieldKey]];
               if (steps && steps.length !== 0) {
                 const loggedInUser = JSON.parse(
                   localStorage.getItem('loggedInUser')
