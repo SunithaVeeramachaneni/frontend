@@ -23,3 +23,8 @@
   position: relative;
   left: -295px;
 }
+
+.date-range-form-field {
+  visibility: hidden;
+  width: 0;
+}

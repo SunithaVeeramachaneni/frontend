@@ -16,7 +16,7 @@
       >{{ customText | translate }}</mat-button-toggle
     >
   </mat-button-toggle-group>
-  <mat-form-field appearance="fill" style="visibility: hidden; width: 0">
+  <mat-form-field appearance="fill" class="date-range-form-field">
     <mat-date-range-input [rangePicker]="rangePicker">
       <input type="button" matStartDate [(ngModel)]="startDate" />
       <input type="button" matEndDate [(ngModel)]="endDate" />

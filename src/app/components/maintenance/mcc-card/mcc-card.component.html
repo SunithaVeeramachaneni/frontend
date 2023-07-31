@@ -37,8 +37,7 @@
 
     <span class="kit-number">{{ workOrder.headerText }}</span>
     <span class="display-flex">
-    
-      <svg-icon icon="icon-dataIcon"  class="list-icons"></svg-icon>
+      <svg-icon icon="icon-dataIcon" class="list-icons"></svg-icon>
       <span class="date-priority-label">{{ workOrder.workCenterInfo }} </span>
     </span>
     <span class="display-flex">
@@ -108,13 +107,13 @@
       value="{{ workOrder.operationProgress[2] * 100 }}"
       class="progress-bar-class"
     ></mat-progress-bar>
-    <div style="width: 100%" *ngIf="workOrder.isLoading">
+    <div class="width-100" *ngIf="workOrder.isLoading">
       <ngx-shimmer-loading [shape]="'circle'" [width]="'34px'">
       </ngx-shimmer-loading>
       <ngx-shimmer-loading
         [width]="'80%'"
         [height]="'20px'"
-        style="position: relative; top: -7px; left: 10px"
+        class="column-loader"
       >
       </ngx-shimmer-loading>
     </div>
@@ -152,7 +151,7 @@
         (click)="onAssignPress(workOrder)"
         class="assign-btn"
       >
-        <svg-icon icon="icon-assignIcon"  class="assign-btn-icon"></svg-icon>
+        <svg-icon icon="icon-assignIcon" class="assign-btn-icon"></svg-icon>
         <span class="assign-btn-text">{{ 'assign' | translate }}</span>
       </button>
     </ng-container>
@@ -193,8 +192,7 @@
         <span>
           <span class="kit-number">{{ operation.operationName }}</span>
           <span class="display-flex">
-           
-            <svg-icon icon="icon-dataIcon"  class="list-icons"></svg-icon>
+            <svg-icon icon="icon-dataIcon" class="list-icons"></svg-icon>
             <span class="date-priority-label">{{
               workOrder.workCenterInfo
             }}</span>
