@@ -39,7 +39,6 @@ export class ShiftService {
     },
     filter?: { [x: string]: string }
   ) {
-    console.log(queryParams);
     if (
       ['load', 'search'].includes(queryParams.fetchType) ||
       (['infiniteScroll'].includes(queryParams.fetchType) &&
