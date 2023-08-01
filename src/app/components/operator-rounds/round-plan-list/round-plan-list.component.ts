@@ -609,7 +609,9 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
         if (objectKeys.length > 0) {
           const uniqueLastPublishedBy = formsList.rows
             .map((item) => item.lastPublishedBy)
-            .filter((value, index, self) => self.indexOf(value) === index);
+            .filter(
+              (value, index, self) => self.indexOf(value) === index && value
+            );
           this.lastPublishedBy = [...uniqueLastPublishedBy];
 
           const uniqueLastModifiedBy = formsList.rows
