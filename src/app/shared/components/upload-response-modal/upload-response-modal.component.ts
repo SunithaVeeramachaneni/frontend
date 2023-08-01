@@ -68,10 +68,10 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
       this.successCount = 0;
       switch (type) {
         case 'assets':
-          this.observable = this.assetsService.uploadExcel(formData);
+          this.observable = this.getUploadDataSSE$('assets/upload', formData);
           break;
         case 'locations':
-          this.observable = this.locationService.uploadExcel(formData);
+          this.observable = this.getUploadDataSSE$('location/upload', formData);
           break;
         case 'response-set':
           this.observable = this.resposneSetService.uploadExcel(formData);
@@ -81,15 +81,16 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
           break;
       }
       this.observable?.subscribe((result) => {
+        console.log(result);
         if (Object.keys(result).length > 0) {
           this.title = 'All done!';
           this.message = `Adding all ${result?.totalCount} ${type}`;
           this.isSuccess = true;
-          if (type === 'forms' && !result?.isCompleted) {
+          if (['forms', 'locations'].includes(type) && !result?.isCompleted) {
             this.title = 'In-Progress';
             this.message = `Adding ${
               result?.successCount + result?.failedCount
-            } of ${result?.totalCount} Forms`;
+            } of ${result?.totalCount} ${type}`;
             this.isFailure = false;
             this.isSuccess = false;
           }
@@ -209,6 +210,49 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
       };
 
       eventSourceForms.onerror = (event) => {
+        this.zone.run(() => {
+          observer.error(JSON.parse(event.error));
+        });
+      };
+    });
+  };
+
+  getUploadDataSSE$ = (url, formData): Observable<any> => {
+    return new Observable((observer) => {
+      const eventSource = this.sseService.getEventSourceWithPost(
+        environment.masterConfigApiUrl,
+        url,
+        formData
+      );
+
+      eventSource.stream();
+      eventSource.onmessage = (event) => {
+        const eventData = JSON.parse(event.data);
+        const { successCount, failedCount, totalCount, failure, isError } =
+          eventData;
+        if (!isError) {
+          const isCompleted = successCount + failedCount === totalCount;
+          this.zone.run(() => {
+            observer.next({
+              totalCount,
+              failedCount,
+              successCount,
+              failure,
+              isCompleted
+            });
+          });
+
+          if (isCompleted) {
+            eventSource.close();
+          }
+        } else {
+          eventSource.close();
+          this.toastService.show({ type: 'info', text: eventData?.message });
+          this.zone.run(() => observer.next({}));
+        }
+      };
+
+      eventSource.onerror = (event) => {
         this.zone.run(() => {
           observer.error(JSON.parse(event.error));
         });
