@@ -132,8 +132,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
       visible: true,
       groupable: true,
       titleStyle: {
-        color: '#3D5AFE',
-        'text-decoration': 'underline'
+        color: '#3D5AFE'
       }
     },
     {
@@ -235,6 +234,8 @@ export class TemplateListComponent implements OnInit, OnDestroy {
           this.allTemplates = res.rows.map((item) => ({
             ...item,
             author: this.usersService.getUserFullName(item.author),
+            formsUsageCount:
+              item.formsUsageCount === 0 ? '_ _' : item.formsUsageCount,
             lastPublishedBy: this.usersService.getUserFullName(
               item.lastPublishedBy
             )
@@ -600,7 +601,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
   }
 
   showAffectedSlider(row: any): void {
-    if (row.formsUsageCount) {
+    if (row.formsUsageCount > 0) {
       this.selectedTemplate = row;
       this.affectedSliderState = 'in';
       this.onCloseViewDetail();
