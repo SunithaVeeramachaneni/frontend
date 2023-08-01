@@ -346,6 +346,9 @@
                                 minHeight: '24px',
                                 fontSize: '90%'
                               }"
+                              *ngIf="
+                                question.controls.value?.value?.values?.length
+                              "
                             >
                               {{
                                 question.controls.value.value?.values[0]
@@ -508,7 +511,7 @@
                                   <div>
                                     <div
                                       *ngFor="
-                                        let resp of quickResponsesData.data
+                                        let resp of quickResponsesData?.data
                                       "
                                       style="height: 36px"
                                     >
@@ -518,8 +521,8 @@
                                         class="quick-response"
                                         [ngClass]="{
                                           active:
-                                            currentQuestion?.controls.value
-                                              .value.id === resp.id
+                                            currentQuestion?.controls?.value
+                                              ?.value?.id === resp?.id
                                         }"
                                         (click)="
                                           handleFieldType(question, resp);
@@ -528,7 +531,7 @@
                                       >
                                         <mat-chip-list
                                           *ngFor="
-                                            let val of resp.values;
+                                            let val of resp?.values || [];
                                             let i = index
                                           "
                                         >
@@ -551,14 +554,14 @@
                                           </mat-chip>
                                         </mat-chip-list>
                                         <span
-                                          *ngIf="resp.values.length > 2"
+                                          *ngIf="resp?.values?.length > 2"
                                           style="
                                             margin-top: -10px;
                                             margin-left: 5px;
                                             font-weight: 400;
                                           "
                                         >
-                                          + ({{ resp.values.length - 2 }}
+                                          + ({{ resp?.values?.length - 2 }}
                                           more)
                                         </span>
                                       </button>
@@ -572,7 +575,7 @@
                                         (click)="
                                           handleResponses(
                                             'quickResponse',
-                                            resp.id
+                                            resp?.id
                                           );
                                           isMCQResponseOpen = true;
                                           togglePopOverOpenState(i, j)
@@ -628,11 +631,11 @@
                                       "
                                       [ngClass]="{
                                         active:
-                                          currentQuestion?.controls.value.value
-                                            .name === resp.name
+                                          currentQuestion?.controls?.value
+                                            ?.value?.name === resp?.name
                                       }"
                                     >
-                                      {{ resp.name }}
+                                      {{ resp?.name ?? '' }}
                                     </button>
                                     <button
                                       mat-flat-button
@@ -644,7 +647,7 @@
                                       (click)="
                                         handleResponses(
                                           'globalResponse',
-                                          resp.id
+                                          resp?.id
                                         );
                                         isMCQResponseOpen = true;
                                         togglePopOverOpenState(i, j)
@@ -1585,7 +1588,7 @@
                                                               >
                                                                 <mat-chip-list
                                                                   *ngFor="
-                                                                    let val of resp.values;
+                                                                    let val of resp?.values;
                                                                     let i = index
                                                                   "
                                                                 >
@@ -2367,7 +2370,7 @@
                                                     >
                                                       <mat-chip-list
                                                         *ngFor="
-                                                          let val of resp.values;
+                                                          let val of resp?.values;
                                                           let i = index
                                                         "
                                                       >

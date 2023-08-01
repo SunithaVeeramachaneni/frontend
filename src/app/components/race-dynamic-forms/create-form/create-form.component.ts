@@ -467,6 +467,23 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
           !this.createEditQuickResponse ||
           (responseType !== 'quickResponse' && responseType !== undefined)
         ) {
+          const tempResp = responses?.filter((item) => !item.formId);
+          if (this.formId) {
+            const addResp = responses.filter(
+              (item) => item?.formId === this.formId
+            );
+            tempResp.push(...addResp);
+            const quickResp = tempResp?.map((r) => ({
+              id: r?.id,
+              name: '',
+              values: r.values
+            }));
+            const uniqueResponse = uniqBy(
+              [...initial.data, ...quickResp],
+              'id'
+            );
+            initial.data = uniqueResponse;
+          }
           return initial;
         }
         if (Object.keys(response).length) {
@@ -1756,7 +1773,11 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       this.getSections(this.createForm)[sectionIndex]
     );
     const selectedQuestion = questionsControl[questionIndex].value;
-    if (openOnFieldClick && Object.keys(selectedQuestion.value).length === 4) {
+    if (
+      openOnFieldClick &&
+      selectedQuestion &&
+      Object.keys(selectedQuestion?.value || [])?.length === 4
+    ) {
       return;
     }
     this.showFilterSection[sectionIndex + 1][questionIndex + 1] = true;
