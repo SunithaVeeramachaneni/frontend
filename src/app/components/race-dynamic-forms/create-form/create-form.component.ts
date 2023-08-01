@@ -30,7 +30,7 @@ import {
   toArray,
   map
 } from 'rxjs/operators';
-import { groupBy, isEqual, isUndefined } from 'lodash-es';
+import { groupBy, uniqBy, isEqual, isUndefined } from 'lodash-es';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { RdfService } from '../services/rdf.service';
@@ -424,7 +424,6 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
                   });
                 });
               }
-
               return this.fb.group({
                 id,
                 name: qname,
@@ -446,7 +445,8 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
               uid,
               name: [{ value: name, disabled: true }],
               position,
-              questions: this.fb.array(questionsFormBuilderArray)
+              questions: this.fb.array(questionsFormBuilderArray),
+              createdAt: section?.createdAt ? section?.createdAt : undefined
             })
           );
         });
@@ -1229,6 +1229,11 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   }
 
   removeDuplicateSectionsFromForm(form) {
+    const uniqueSectionsLength = uniqBy(form?.sections, 'uid')?.length || 0;
+    if (uniqueSectionsLength === form?.sections?.length) {
+      return form;
+    }
+
     const uniqueSections = [];
     Object.entries(groupBy(form?.sections, 'uid')).forEach(([_, sValue]) => {
       if (sValue?.length > 0) {
@@ -1238,21 +1243,57 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
             (s) => !isUndefined(s?.createdAt)
           );
           if (sectionsWithNoCreatedAt) {
+            // Getting the old section record
             const latestRecord = sValue?.reduce((latest, current) => {
               const latestTimestamp = new Date(latest?.createdAt);
               const currentTimestamp = new Date(current?.createdAt);
               return latestTimestamp < currentTimestamp ? latest : current;
             });
+
+            // Remove all which are newer and duplicate
+            sValue?.forEach((value, idx) => {
+              if (
+                new Date(value?.createdAt).getTime() !==
+                new Date(latestRecord?.createdAt).getTime()
+              ) {
+                (this.createForm.get('sections') as FormArray).removeAt(idx);
+              }
+            });
+
+            // Push only unique section
             if (latestRecord) {
               uniqueSections.push(latestRecord);
             }
           } else {
             // createdAt not present in all objects in sections
             const oldRecord = sValue?.find((s) => !s?.createdAt);
+
             if (oldRecord) {
+              // Remove not pushed records
+              sValue?.forEach((value, idx) => {
+                const currentRecord = JSON.stringify(value);
+                const newRecord = JSON.stringify(oldRecord);
+                if (currentRecord !== newRecord) {
+                  (this.createForm.get('sections') as FormArray).removeAt(idx);
+                }
+              });
+
+              // Push only unique records
               uniqueSections.push(oldRecord);
             } else {
-              uniqueSections.push(...sValue.shift());
+              const sectionsArray = [...sValue];
+              if (sectionsArray.length > 0) {
+                const removeSections = sectionsArray.filter(
+                  (__, idx) => idx !== 0
+                );
+                // Remove not pushed records
+                removeSections?.forEach((___, rIdx) => {
+                  (this.createForm.get('sections') as FormArray).removeAt(rIdx);
+                });
+
+                // Push only first section
+                uniqueSections.push(sectionsArray[0]);
+              }
             }
           }
         } else {
