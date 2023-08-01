@@ -564,8 +564,9 @@ export class FormListComponent implements OnInit, OnDestroy {
   populateFilter() {
     combineLatest([
       this.usersService.getUsersInfo$(),
-      this.plantService.fetchAllPlants$()
-    ]).subscribe(([usersList, { items: plantsList }]) => {
+      this.plantService.fetchAllPlants$(),
+      this.raceDynamicFormService.fetchAllFormsList$()
+    ]).subscribe(([usersList, { items: plantsList }, formsList]) => {
       this.createdBy = usersList.map(
         (user) => `${user.firstName} ${user.lastName}`
       );
@@ -576,6 +577,10 @@ export class FormListComponent implements OnInit, OnDestroy {
         this.plantsIdNameMap[`${plant.plantId} - ${plant.name}`] = plant.id;
         return `${plant.plantId} - ${plant.name}`;
       });
+
+      this.lastPublishedBy = formsList.rows
+        .map((item) => item.lastPublishedBy)
+        .filter((value, index, self) => self.indexOf(value) === index && value);
 
       for (const item of this.filterJson) {
         if (item.column === 'status') {
