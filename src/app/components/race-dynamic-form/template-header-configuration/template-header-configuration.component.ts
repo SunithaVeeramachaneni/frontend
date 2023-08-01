@@ -11,8 +11,16 @@ import {
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatAutocomplete } from '@angular/material/autocomplete';
-import { BehaviorSubject, Observable, of, merge, Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of, Subscription, Subject } from 'rxjs';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  pairwise,
+  startWith,
+  takeUntil,
+  tap
+} from 'rxjs/operators';
 import {
   AbstractControl,
   FormBuilder,
@@ -33,6 +41,7 @@ import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
 import { Store } from '@ngrx/store';
 import { State, getFormMetadata } from 'src/app/forms/state';
 import { TemplateModalComponent } from '../template-modal/template-modal.component';
+import { isEqual } from 'lodash-es';
 
 @Component({
   selector: 'app-template-header-configuration',
@@ -61,6 +70,8 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
   labelSelected: any;
   deletedLabel = '';
   formMetadataSubscription: Subscription;
+  hasFormChanges = false;
+  private destroy$ = new Subject();
 
   constructor(
     private fb: FormBuilder,
@@ -101,6 +112,20 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
       });
 
     this.patchTemplateDetails();
+
+    this.headerDataForm.valueChanges
+      .pipe(
+        startWith({}),
+        debounceTime(100),
+        distinctUntilChanged(),
+        takeUntil(this.destroy$),
+        pairwise(),
+        tap(([previous, current]) => {
+          if (isEqual(previous, current)) this.hasFormChanges = false;
+          else this.hasFormChanges = true;
+        })
+      )
+      .subscribe();
   }
 
   validateTemplateName(control: AbstractControl) {
@@ -126,12 +151,15 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
 
   patchTemplateDetails() {
     if (Object.keys(this.templateData?.formMetadata).length !== 0) {
-      this.headerDataForm.patchValue({
-        name: this.templateData.formMetadata.name,
-        description: this.templateData.formMetadata.description,
-        formType: this.templateData.formMetadata.formType,
-        formStatus: this.templateData.formMetadata.formStatus
-      });
+      this.headerDataForm.patchValue(
+        {
+          name: this.templateData.formMetadata.name,
+          description: this.templateData.formMetadata.description,
+          formType: this.templateData.formMetadata.formType,
+          formStatus: this.templateData.formMetadata.formStatus
+        },
+        { emitEvent: false }
+      );
       this.headerDataForm.markAsDirty();
     }
   }
@@ -171,8 +199,12 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
               ...this.headerDataForm.value,
               id: this.templateData.formMetadata.id
             },
-            formStatus: formConfigurationStatus.draft,
-            formDetailPublishStatus: formConfigurationStatus.draft,
+            formStatus: this.hasFormChanges
+              ? formConfigurationStatus.draft
+              : this.headerDataForm.value.formStatus,
+            formDetailPublishStatus: this.hasFormChanges
+              ? formConfigurationStatus.draft
+              : this.headerDataForm.value.formStatus,
             formSaveStatus: formConfigurationStatus.saving
           })
         );
@@ -241,5 +273,7 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.formMetadataSubscription.unsubscribe();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
