@@ -160,6 +160,9 @@
         mat-stroked-button
         class="next-btn"
         (click)="publishOrShowPdf()"
+        [disabled]="
+          formStatus === formConfigurationStatus.published && isEmbeddedForm
+        "
       >
         {{ isEmbeddedForm ? ('publishBtn' | translate) : ('next' | translate) }}
       </button>

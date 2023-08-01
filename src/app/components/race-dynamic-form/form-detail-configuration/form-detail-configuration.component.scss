@@ -351,3 +351,9 @@
   display: flex;
   align-items: center;
 }
+
+.next-btn:disabled {
+  background-color: $disabled-color;
+  border-color: $disabled-color;
+  color: $white;
+}
