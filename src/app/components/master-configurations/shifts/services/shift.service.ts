@@ -39,25 +39,35 @@ export class ShiftService {
     },
     filter?: { [x: string]: string }
   ) {
+    console.log(queryParams);
     if (
       ['load', 'search'].includes(queryParams.fetchType) ||
       (['infiniteScroll'].includes(queryParams.fetchType) &&
         queryParams.next !== null)
     ) {
-      const params: URLSearchParams = new URLSearchParams();
-      params.set('limit', `${queryParams.limit}`);
-      params.set('next', queryParams.next);
-      params.set('searchTerm', queryParams?.searchKey.toLocaleLowerCase());
-
-      const activeFilter = {
-        isActive: {
-          eq: filter?.isActive
-        }
-      };
-      params.set('filter', JSON.stringify(activeFilter));
-
+      const shiftListFilter = JSON.stringify(
+        Object.fromEntries(
+          Object.entries({
+            searchTerm: {
+              contains: queryParams?.searchKey.toLocaleLowerCase()
+            },
+            ...(filter?.isActive && { isActive: { eq: filter.isActive } })
+          }).filter(([_, v]) => Object.values(v).some((x) => x !== ''))
+        )
+      );
       return this._appService
-        ._getResp(environment.masterConfigApiUrl, 'shifts?' + params.toString())
+        ._getResp(
+          environment.masterConfigApiUrl,
+          'shifts',
+          { displayToast: true, failureResponse: {} },
+          {
+            limit: `${queryParams.limit}`,
+            next: queryParams.next,
+            ...(Object.keys(shiftListFilter).length > 0 && {
+              filter: shiftListFilter
+            })
+          }
+        )
         .pipe(
           map((res) => {
             res.startAndEndTime = `${res.startTime} - ${res.endTime}`;
