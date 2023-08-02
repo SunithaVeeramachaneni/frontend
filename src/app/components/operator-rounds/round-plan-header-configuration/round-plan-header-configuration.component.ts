@@ -19,8 +19,16 @@ import {
   MatAutocompleteTrigger
 } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
-import { Observable, Subscription, merge, of } from 'rxjs';
-import { map, startWith, tap } from 'rxjs/operators';
+import { Observable, Subject, Subscription, merge, of } from 'rxjs';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  pairwise,
+  startWith,
+  takeUntil,
+  tap
+} from 'rxjs/operators';
 import {
   AbstractControl,
   FormArray,
@@ -52,7 +60,7 @@ import { NgxImageCompressService } from 'ngx-image-compress';
 import { PDFDocument } from 'pdf-lib';
 import { RoundPlanModalComponent } from '../round-plan-modal/round-plan-modal.component';
 import { Router } from '@angular/router';
-import { cloneDeep } from 'lodash-es';
+import { cloneDeep, isEqual } from 'lodash-es';
 
 @Component({
   selector: 'app-round-plan-header-configuration',
@@ -113,8 +121,10 @@ export class RoundPlanHeaderConfigurationComponent
   pdfFiles: any = { mediaType: [] };
   additionalDetails: FormArray;
   labelSelected: any;
+  hasFormChanges = false;
 
   formMetadataSubscrption: Subscription;
+  private destroy$ = new Subject();
 
   constructor(
     private fb: FormBuilder,
@@ -211,6 +221,20 @@ export class RoundPlanHeaderConfigurationComponent
         });
         this.cdrf.detectChanges();
       });
+
+    this.headerDataForm.valueChanges
+      .pipe(
+        startWith({}),
+        debounceTime(100),
+        distinctUntilChanged(),
+        takeUntil(this.destroy$),
+        pairwise(),
+        tap(([previous, current]) => {
+          if (isEqual(previous, current)) this.hasFormChanges = false;
+          else this.hasFormChanges = true;
+        })
+      )
+      .subscribe();
   }
 
   getAllPlantsData() {
@@ -220,13 +244,16 @@ export class RoundPlanHeaderConfigurationComponent
     });
 
     if (Object.keys(this.roundData?.formMetadata).length !== 0) {
-      this.headerDataForm.patchValue({
-        name: this.roundData.formMetadata.name,
-        description: this.roundData.formMetadata.description,
-        plantId: this.roundData.formMetadata.plantId,
-        formStatus: this.roundData.formMetadata.formStatus,
-        instructions: this.roundData.formMetadata.instructions
-      });
+      this.headerDataForm.patchValue(
+        {
+          name: this.roundData.formMetadata.name,
+          description: this.roundData.formMetadata.description,
+          plantId: this.roundData.formMetadata.plantId,
+          formStatus: this.roundData.formMetadata.formStatus,
+          instructions: this.roundData.formMetadata.instructions
+        },
+        { emitEvent: false }
+      );
 
       const additionalDetailsArray =
         this.roundData.formMetadata.additionalDetails;
@@ -408,7 +435,9 @@ export class RoundPlanHeaderConfigurationComponent
               moduleName: 'rdf',
               lastModifiedBy: this.loginService.getLoggedInUserName()
             },
-            formStatus: formConfigurationStatus.draft,
+            formStatus: this.hasFormChanges
+              ? formConfigurationStatus.draft
+              : this.headerDataForm.value.formStatus,
             formDetailPublishStatus: formConfigurationStatus.draft,
             formSaveStatus: formConfigurationStatus.saving
           })
@@ -429,7 +458,9 @@ export class RoundPlanHeaderConfigurationComponent
               lastModifiedBy: this.loginService.getLoggedInUserName()
             },
             formListDynamoDBVersion: this.roundData.formListDynamoDBVersion,
-            formStatus: formConfigurationStatus.draft,
+            formStatus: this.hasFormChanges
+              ? formConfigurationStatus.draft
+              : this.headerDataForm.value.formStatus,
             formDetailPublishStatus: formConfigurationStatus.draft,
             formSaveStatus: formConfigurationStatus.saving
           })
@@ -922,5 +953,7 @@ export class RoundPlanHeaderConfigurationComponent
     this.formMetadataSubscrption.unsubscribe();
     this.operatorRoundsService.attachmentsMapping$.next([]);
     this.operatorRoundsService.pdfMapping$.next([]);
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
