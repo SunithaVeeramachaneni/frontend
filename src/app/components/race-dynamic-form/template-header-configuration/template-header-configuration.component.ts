@@ -44,6 +44,7 @@ import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
 import { Store } from '@ngrx/store';
 import { State, getFormMetadata } from 'src/app/forms/state';
 import { TemplateModalComponent } from '../template-modal/template-modal.component';
+import { FormUpdateProgressService } from 'src/app/forms/services/form-update-progress.service';
 
 @Component({
   selector: 'app-template-header-configuration',
@@ -80,7 +81,8 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
     private readonly loginService: LoginService,
     private rdfService: RaceDynamicFormService,
     private store: Store<State>,
-    private cdrf: ChangeDetectorRef
+    private cdrf: ChangeDetectorRef,
+    private formProgressService: FormUpdateProgressService
   ) {}
 
   ngOnInit(): void {
@@ -169,6 +171,7 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
                 counter: 4
               })
               .subscribe(() => {
+                this.formProgressService.isTemplateCreated$.next(true);
                 this.router
                   .navigate(['/forms/templates/edit', template.id], {
                     state: { allTemplates: this.alltemplatesData }
@@ -177,6 +180,7 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
               });
           });
       } else if (this.templateData.templateExists === true) {
+        this.formProgressService.isTemplateCreated$.next(false);
         this.store.dispatch(
           BuilderConfigurationActions.updateFormMetadata({
             formMetadata: {
