@@ -88,7 +88,7 @@
         type="button"
         cdkOverlayOrigin
         #trigger="cdkOverlayOrigin"
-        style="display: none"
+        class="hidden-button"
         aria-label="Dummy"
       >
         {{ isOpen ? 'Close' : 'Open' }}
@@ -211,11 +211,7 @@
                 >
                   {{ customBtnText }}
                 </button>
-                <mat-form-field
-                  appearance="fill"
-                  class="example-form-field"
-                  style="visibility: hidden; width: 0"
-                >
+                <mat-form-field appearance="fill" class="date-field-form-field">
                   <mat-date-range-input
                     [rangePicker]="rangePicker"
                     formGroupName="operand"
