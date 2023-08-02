@@ -109,13 +109,16 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
         this.selectedForm.isViewPdf = false;
       }
       this.toggleLoader(true);
-
+      if (!this.selectedForm.formId)
+        this.selectedForm.formId = this.selectedForm.id;
       let formDetail$: any =
         this.raceDynamicFormService.getAuthoredFormDetailByFormId$(
           this.selectedForm.formId,
           this.formStatus
         );
       if (this.moduleName === 'OPERATOR_ROUNDS') {
+        if (!this.selectedForm.roundPlanId)
+          this.selectedForm.roundPlanId = this.selectedForm.id;
         formDetail$ = this.operatorRoundsService.getAuthoredFormDetailByFormId$(
           this.selectedForm.roundPlanId,
           this.formStatus
