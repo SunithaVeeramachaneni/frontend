@@ -407,7 +407,6 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
 
     this.route.params.subscribe((params) => {
       if (!params.id) {
-        console.log('ehjdbj');
         if (window.history.state.selectedTemplate) {
           this.store.dispatch(
             BuilderConfigurationActions.replacePagesAndCounter({
