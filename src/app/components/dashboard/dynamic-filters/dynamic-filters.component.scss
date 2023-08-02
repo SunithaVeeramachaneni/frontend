@@ -141,3 +141,12 @@
   .mat-list-item-content {
   padding: 0 !important;
 }
+
+.hidden-button {
+  display: none;
+}
+
+.date-field-form-field {
+  visibility: hidden;
+  width: 0;
+}

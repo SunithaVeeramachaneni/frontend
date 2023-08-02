@@ -209,6 +209,7 @@
   white-space: nowrap;
   width: 100px;
   line-height: 36px;
+  background-color: none;
 }
 
 .h-36 {
@@ -283,4 +284,8 @@
     border-bottom: 1px solid $border-color;
     border-top: none;
   }
+}
+
+.global-response-chip-list {
+  flex: 45%;
 }

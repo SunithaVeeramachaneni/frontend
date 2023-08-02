@@ -30,10 +30,7 @@
           <button (click)="isPopoverOpen = false" class="widgets-cancel">
             <svg-icon icon="icon-cancel-icon" class="cancel-icon"></svg-icon>
           </button>
-          <mat-form-field
-            appearance="outline"
-            style="width: 100%; margin-top: 10px"
-          >
+          <mat-form-field appearance="outline" class="width-100 m-t-10">
             <mat-icon matPrefix class="searchIcon">search</mat-icon>
             <input
               matInput
@@ -47,7 +44,9 @@
           <ng-container *ngFor="let dashboard of groupedWidgets">
             <p class="dashboard-heading">
               {{ dashboard.dashboardName }}
-              <span style="float: right">{{ dashboard.widgets.length }}</span>
+              <span class="f-right">
+                {{ dashboard.widgets.length }}
+              </span>
             </p>
             <div *ngFor="let widget of dashboard.widgets">
               <p class="dashboard-titles">

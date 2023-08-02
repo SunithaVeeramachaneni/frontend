@@ -177,7 +177,7 @@
               >
                 <mat-chip-list
                   *ngFor="let response of globalResponses"
-                  style="flex: 45%"
+                  class="global-response-chip-list"
                 >
                   <div
                     [ngClass]="{
@@ -190,7 +190,6 @@
                         handleMCQRepsonseSelection('globalResponse', response);
                         closeResponseType()
                       "
-                      style="background-color: none"
                       class="global-text"
                     >
                       {{ response?.name }}
