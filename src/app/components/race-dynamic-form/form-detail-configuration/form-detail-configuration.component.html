@@ -144,7 +144,7 @@
         mat-stroked-button
         class="import-btn"
         translate="importBtn"
-        (click)="importQuestions()"
+        (click)="importQuestions(0)"
       ></button>
 
       <!-- <button
@@ -160,6 +160,9 @@
         mat-stroked-button
         class="next-btn"
         (click)="publishOrShowPdf()"
+        [disabled]="
+          formStatus === formConfigurationStatus.published && isEmbeddedForm
+        "
       >
         {{ isEmbeddedForm ? ('publishBtn' | translate) : ('next' | translate) }}
       </button>
@@ -200,6 +203,7 @@
       [isEmbeddedForm]="isEmbeddedForm"
       [currentFormData]="currentFormData"
       (cancelSliderEvent)="cancelSlider($event)"
+      (backEvent)="backSlider($event)"
     ></app-import-questions-slider>
   </div>
 </div>
@@ -214,6 +218,7 @@
       [isEmbeddedForm]="isEmbeddedForm"
       [currentFormData]="currentFormData"
       (cancelSliderEvent)="cancelTemplateSlider($event)"
+      (backEvent)="backTemplateSlider($event)"
     ></app-import-template-questions-slider>
   </div>
 </div>
