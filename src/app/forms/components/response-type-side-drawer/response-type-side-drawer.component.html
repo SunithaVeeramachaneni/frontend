@@ -50,6 +50,9 @@
       </div>
       <label>Value</label>
       <mat-slider
+        [min]="sliderOptions.min"
+        [max]="sliderOptions.max"
+        [step]="sliderOptions.increment"
         color="primary"
         [(ngModel)]="sliderOptions.value"
         [ngModelOptions]="{ standalone: true }"
@@ -57,8 +60,6 @@
         showTickMarks
         thumbLabel
         discrete
-        [min]="sliderOptions.min"
-        [max]="sliderOptions.max"
       >
         <input matSliderThumb />
       </mat-slider>
