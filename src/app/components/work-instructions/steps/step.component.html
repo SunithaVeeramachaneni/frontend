@@ -1,6 +1,6 @@
 <section class="form-container">
   <header class="custom-header-height">
-    <div class="dis-flex" style="position: relative">
+    <div class="dis-flex">
       <div class="p-6 dis-flex width-80">
         <div class="prevbtn p-0">
           <button
@@ -85,7 +85,7 @@
       </div>
     </div>
   </header>
-  <div class="dis-flex custom-row p-r-0" style="height: 100%">
+  <div class="dis-flex custom-row p-r-0 h-100">
     <div *ngIf="!shownPreview" class="bg-white p-0 width-100">
       <ng-container
         *ngIf="selectedID.value === 0"
@@ -189,11 +189,7 @@
         </ng-container>
       </ng-container>
     </div>
-    <div
-      *ngIf="shownPreview"
-      class="bg-white p-0 width-40"
-      style="position: relative"
-    >
+    <div *ngIf="shownPreview" class="bg-white p-0 width-40 pos-relative">
       <ng-container
         *ngIf="selectedID.value === 0"
         [ngTemplateOutlet]="selected.content"

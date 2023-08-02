@@ -91,7 +91,6 @@ import { ImportFormListComponent } from 'src/app/components/race-dynamic-form/im
 import { TemplateAffectedFormsModalComponent } from './template-configuration/template-affected-forms-modal/template-affected-forms-modal.component';
 import { AffectedFormTemplateSliderComponent } from 'src/app/components/race-dynamic-form/affected-form-template-slider/affected-form-template-slider.component';
 import { QuillMaterialComponent } from 'src/app/shared/components/quill-material/quill-material.component';
-import { ArchiveTemplateModalComponent } from './archive-template-modal/archive-template-modal.component';
 import { TemplateModalComponent } from './template-modal/template-modal.component';
 import { ConfirmModalPopupComponent } from './confirm-modal-popup/confirm-modal-popup/confirm-modal-popup.component';
 
@@ -114,7 +113,6 @@ export const customTranslateLoader = (http: HttpClient) =>
     DeleteTemplateModalComponent,
     AssignInspectionComponent,
     ArchivedDeleteModalComponent,
-    ArchiveTemplateModalComponent,
     ImportQuestionsModalComponent,
     SchedulerComponent,
     FormsComponent,

@@ -15,3 +15,7 @@
   background: #eff2ff;
   color: #2a3eb1;
 }
+
+.user-settings-border {
+  border-right: 1px solid #bdbdbd;
+}

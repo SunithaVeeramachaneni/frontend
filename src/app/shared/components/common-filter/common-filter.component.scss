@@ -5,6 +5,10 @@
   padding: 0px 20px;
 }
 
+.max-height {
+  max-height: 350px;
+}
+
 .datepicker {
   z-index: 1100 !important;
 }
@@ -156,4 +160,9 @@
   .mat-list-item
   .mat-list-item-content {
   padding: 0 !important;
+}
+
+.date-range-form-field {
+  visibility: hidden;
+  width: 0;
 }

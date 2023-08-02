@@ -92,6 +92,15 @@ export class FormConfigurationService {
       questionCounter,
       sectionQuestionsList
     );
+    if (logics?.length)
+      this.store.dispatch(
+        BuilderConfigurationActions.addLogics({
+          logics,
+          pageIndex,
+          ...this.getFormConfigurationStatuses(),
+          subFormId: null
+        })
+      );
     this.store.dispatch(
       BuilderConfigurationActions.addSections({
         sections,
@@ -103,15 +112,7 @@ export class FormConfigurationService {
         counter
       })
     );
-    if (logics?.length)
-      this.store.dispatch(
-        BuilderConfigurationActions.addLogics({
-          logics,
-          pageIndex,
-          ...this.getFormConfigurationStatuses(),
-          subFormId: null
-        })
-      );
+
     this.store.dispatch(
       BuilderConfigurationActions.updatePageState({
         pageIndex,

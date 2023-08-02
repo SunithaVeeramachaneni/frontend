@@ -8,7 +8,11 @@
       >clear</mat-icon
     >
   </div>
-  <mat-tab-group class="body-container" animationDuration="0ms">
+  <mat-tab-group
+    [(selectedIndex)]="selectedIndex"
+    class="body-container"
+    animationDuration="0ms"
+  >
     <mat-tab>
       <ng-template id="importQuestionsTemplates" mat-tab-label>{{
         'templates' | translate
