@@ -24,7 +24,6 @@
           ></label
           ><br />
           <input
-            id="responseTypeSliderFormType"
             id="min"
             type="number"
             class="slider-inputs"
@@ -49,13 +48,18 @@
           />
         </div>
       </div>
+      <label>Value</label>
       <mat-slider
-        [max]="sliderOptions.max"
         [min]="sliderOptions.min"
+        [max]="sliderOptions.max"
         [step]="sliderOptions.increment"
+        color="primary"
         [(ngModel)]="sliderOptions.value"
         [ngModelOptions]="{ standalone: true }"
         class="width-100"
+        showTickMarks
+        thumbLabel
+        discrete
       >
         <input matSliderThumb />
       </mat-slider>
@@ -68,6 +72,7 @@
         ></label>
         <br />
         <input
+          min="1"
           id="incre"
           type="number"
           class="slider-inputs"
