@@ -217,7 +217,8 @@ export const getFormDetails = createSelector(
     formListDynamoDBVersion: state.formListDynamoDBVersion,
     formDetailDynamoDBVersion: state.formDetailDynamoDBVersion,
     authoredFormDetailDynamoDBVersion: state.authoredFormDetailDynamoDBVersion,
-    formDetailPublishStatus: state.formDetailPublishStatus
+    formDetailPublishStatus: state.formDetailPublishStatus,
+    skipAuthoredDetail: state.skipAuthoredDetail
   })
 );
 

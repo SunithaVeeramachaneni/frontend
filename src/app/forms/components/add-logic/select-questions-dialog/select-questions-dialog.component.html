@@ -41,7 +41,7 @@
     </span>
     <div>
       <div *ngFor="let section of sections">
-        <div id="selectQuestionSectionName" class="sectionHead">
+        <div class="sectionHead">
           {{ section.name }}
         </div>
         <div class="sectionContent">
@@ -54,7 +54,6 @@
                 [ngClass]="{
                   'strike-question': selectedQuestions.indexOf(question.id) > -1
                 }"
-                id="selectQuestionCheckBox"
               >
                 {{
                   question.name && question.name.length

@@ -26,6 +26,7 @@ export class FormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
   _isOpen: boolean;
   _isExpanded: boolean;
   formMetadata: any[] = [];
+  isTemplateCreated: boolean;
   totalCompletedCount: number = 0;
   currentRouteUrl$: Observable<string>;
 
@@ -44,6 +45,7 @@ export class FormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.isOpen();
     this.isExpanded();
+    this.templateCreated();
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$;
     this.formUpdateDeletePayload$().subscribe((payload) => {
       this.cdr.detectChanges();
@@ -72,10 +74,15 @@ export class FormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
           this.showToast();
           this.cdr.detectChanges();
         });
-      } else if (payload?.templateId) {
+      } else if (payload?.templateId && !this.isTemplateCreated) {
         this.toastService.show({
           type: 'success',
           text: `Template is updated successfully.`
+        });
+      } else if (payload?.templateId) {
+        this.toastService.show({
+          type: 'success',
+          text: `Template is created successfully.`
         });
       }
     });
@@ -158,6 +165,11 @@ export class FormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
       this.formMetadata = [];
       this.totalCompletedCount = 0;
     }
+  }
+  templateCreated() {
+    this.formProgressService.isTemplateCreated$.subscribe((data) => {
+      this.isTemplateCreated = data;
+    });
   }
 
   ngOnDestroy(): void {
