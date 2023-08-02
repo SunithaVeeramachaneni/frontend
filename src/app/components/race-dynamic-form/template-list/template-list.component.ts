@@ -223,7 +223,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
     );
     this.searchTemplates = new FormControl('');
     this.headerService.setHeaderTitle(
-      this.translateService.instant('Templates')
+      this.translateService.instant('templates')
     );
 
     this.usersService.getUsersInfo$().subscribe(() => {
