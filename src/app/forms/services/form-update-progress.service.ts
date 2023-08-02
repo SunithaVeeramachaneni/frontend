@@ -13,5 +13,8 @@ export class FormUpdateProgressService {
   formUpdateDeletePayload$: BehaviorSubject<any> = new BehaviorSubject<any>(
     null
   );
+  isTemplateCreated$: BehaviorSubject<boolean> = new BehaviorSubject<any>(
+    false
+  );
   constructor() {}
 }
