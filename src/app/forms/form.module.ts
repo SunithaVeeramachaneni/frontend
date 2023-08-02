@@ -9,14 +9,12 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { FormWidgetComponent } from './components/form-widget/form-widget.component';
 import { PageComponent } from './components/page/page.component';
 import { SectionComponent } from './components/section/section.component';
 import { QuestionComponent } from './components/question/question.component';
 import { ResponseTypeComponent } from './components/response-type/response-type.component';
 import { PreviewComponent } from './components/preview/preview.component';
 import { AddLogicComponent } from './components/add-logic/add-logic.component';
-import { AddFilterComponent } from './components/add-filter/add-filter.component';
 import { IphoneComponent } from './components/iphone/iphone.component';
 
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -124,7 +122,6 @@ import { UploadImagePreviewComponent } from './components/upload-image-preview/u
 import { FormUpdateDeleteProgressComponent } from './components/form-update-delete-progress/form-update-delete-progress.component';
 @NgModule({
   declarations: [
-    FormWidgetComponent,
     PageComponent,
     SectionComponent,
     QuestionComponent,
@@ -148,7 +145,6 @@ import { FormUpdateDeleteProgressComponent } from './components/form-update-dele
     PreviewQuestionComponent,
     PreviewComponent,
     AddLogicComponent,
-    AddFilterComponent,
     ResponseTypeSideDrawerComponent,
     TableComponent,
     ResponseTypeButtonComponent,
@@ -247,7 +243,6 @@ import { FormUpdateDeleteProgressComponent } from './components/form-update-dele
     OverlayModule
   ],
   exports: [
-    FormWidgetComponent,
     PageComponent,
     SectionComponent,
     QuestionComponent,
@@ -260,7 +255,6 @@ import { FormUpdateDeleteProgressComponent } from './components/form-update-dele
     HierarchyLocationsListComponent,
     HierarchyAssetsListComponent,
     ShowHierarchyPopupComponent,
-    AddFilterComponent,
     ImportQuestionsSliderComponent,
     ImportTemplateQuestionsSliderComponent,
     GlobalResponseTypeSideDrawerComponent,
