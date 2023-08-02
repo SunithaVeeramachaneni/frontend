@@ -221,19 +221,43 @@ export class UnitMeasurementService {
     });
   }
 
+  private formatUOMByOrder(rows) {
+    let order = 0;
+    const uRows = [];
+    Object.entries(groupBy(rows, 'unitList.name')).forEach(([, value]) => {
+      if (value?.length > 0) {
+        const sortedRows = value
+          ?.sort(
+            (a, b) =>
+              new Date(a?.createdAt).getTime() -
+              new Date(b?.createdAt).getTime()
+          )
+          .map((v) => ({
+            ...v,
+            order: order++
+          }));
+        uRows.push(...sortedRows);
+      }
+    });
+
+    return uRows?.sort((a, b) => a?.order - b?.order);
+  }
+
   private formatUnitOfMeasurementResponse(resp) {
-    const groupedData: any = groupBy(resp?.items, 'unitList.name');
-    const rows = resp?.items
-      ?.sort(
-        (a, b) =>
-          new Date(b?.createdAt).getTime() - new Date(a?.createdAt).getTime()
-      )
-      ?.map((item: any) => ({
-        ...item,
-        noOfUnits: groupedData[item?.unitList?.name]?.length ?? 0,
-        unitType: item?.unitList?.name,
-        isDefaultText: item?.isDefault ? 'Default' : ''
-      }));
+    const groupedData = groupBy(resp?.items, 'unitList.name');
+    const rows = this.formatUOMByOrder(
+      resp?.items
+        ?.sort(
+          (a, b) =>
+            new Date(b?.createdAt).getTime() - new Date(a?.createdAt).getTime()
+        )
+        ?.map((item: any) => ({
+          ...item,
+          noOfUnits: groupedData[item?.unitList?.name]?.length ?? 0,
+          unitType: item?.unitList?.name,
+          isDefaultText: item?.isDefault ? 'Default' : ''
+        }))
+    );
     const count = rows?.length || 0;
     const next = resp?.next;
     const filters = resp?.filters;

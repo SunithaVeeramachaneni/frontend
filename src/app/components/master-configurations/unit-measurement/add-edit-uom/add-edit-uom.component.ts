@@ -177,8 +177,20 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
           WhiteSpaceValidator.whiteSpace,
           WhiteSpaceValidator.trimWhiteSpace
         ]
-      ]
+      ],
+      order: [this.prepareOrder()]
     });
+  }
+
+  prepareOrder(): number {
+    let order = 0;
+    this.units = this.unitMeasurementForm.get('units') as FormArray;
+    if (this.units?.length > 0) {
+      order++;
+    } else {
+      order = 0;
+    }
+    return order;
   }
 
   addNewUmo(): void {
