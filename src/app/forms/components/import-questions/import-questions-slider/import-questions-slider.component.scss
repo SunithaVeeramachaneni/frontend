@@ -16,6 +16,19 @@
     font-size: 80%;
     border-bottom: 1px solid $gray9;
     margin: 0;
+
+    .back-btn {
+      border: none;
+      background-color: transparent;
+      margin-right: 8px;
+
+      .back-arrow {
+        height: 15px;
+        width: 15px;
+        position: relative;
+        top: 1px;
+      }
+    }
   }
 
   .form-name {

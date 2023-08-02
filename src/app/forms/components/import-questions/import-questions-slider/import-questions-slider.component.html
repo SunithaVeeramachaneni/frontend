@@ -9,8 +9,13 @@
 >
   <mat-card class="p-0">
     <mat-card-title class="m-0 light-gray">
-      <div id="importQuestionHeading" class="slider-heading">
-        {{ 'importQuestions' | translate }}
+      <div class="slider-heading">
+        <button id="importQuestionsBackArrow" (click)="back()" class="back-btn">
+          <svg-icon icon="icon-back-arrow" class="back-arrow"></svg-icon>
+        </button>
+        <span id="importQuestionHeading">{{
+          'importQuestions' | translate
+        }}</span>
       </div>
     </mat-card-title>
     <mat-card-content>
