@@ -12,10 +12,13 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ImportQuestionsModalComponent implements OnInit {
+  selectedIndex = 0;
   constructor(
     public dialogRef: MatDialogRef<ImportQuestionsModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.selectedIndex = this.data.tabIndex;
+  }
 }

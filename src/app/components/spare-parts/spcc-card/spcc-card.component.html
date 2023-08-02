@@ -4,7 +4,7 @@
   <span class="display-flex">
     <svg-icon icon="icon-date" class="list-icons"></svg-icon>
     <span class="date-priority-label">{{
-      workOrder.dueDate | date: 'd-MMM-yyyy'
+      workOrder.dueDate | date : 'd-MMM-yyyy'
     }}</span>
   </span>
   <span
@@ -58,11 +58,11 @@
       icon="icon-technicianProfile"
       class="technician-profile"
     ></svg-icon>
-    <div style="width: 100%" *ngIf="workOrder.isLoading">
+    <div class="width-100" *ngIf="workOrder.isLoading">
       <ngx-shimmer-loading
         [width]="'100%'"
         [height]="'20px'"
-        style="position: relative; left: 5px"
+        class="spcc-card-loader-position"
       >
       </ngx-shimmer-loading>
     </div>

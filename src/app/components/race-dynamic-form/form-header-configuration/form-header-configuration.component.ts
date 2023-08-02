@@ -19,8 +19,23 @@ import {
   MatAutocompleteTrigger
 } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
-import { BehaviorSubject, Observable, Subscription, merge, of } from 'rxjs';
-import { map, startWith, tap } from 'rxjs/operators';
+import {
+  BehaviorSubject,
+  Observable,
+  Subject,
+  Subscription,
+  merge,
+  of
+} from 'rxjs';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  pairwise,
+  startWith,
+  takeUntil,
+  tap
+} from 'rxjs/operators';
 import {
   AbstractControl,
   FormArray,
@@ -50,6 +65,7 @@ import { FormModalComponent } from '../form-modal/form-modal.component';
 import { NgxImageCompressService } from 'ngx-image-compress';
 import { PDFDocument } from 'pdf-lib';
 import { Router } from '@angular/router';
+import { isEqual } from 'lodash-es';
 
 @Component({
   selector: 'app-form-header-configuration',
@@ -101,6 +117,8 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   filteredMediaPdfType: any = [];
   base64result: string;
   pdfFiles: any = { mediaType: [] };
+  hasFormChanges = false;
+  private destroy$ = new Subject();
 
   constructor(
     public dialogRef: MatDialogRef<FormModalComponent>,
@@ -210,6 +228,20 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
         });
         this.cdrf.detectChanges();
       });
+
+    this.headerDataForm.valueChanges
+      .pipe(
+        startWith({}),
+        debounceTime(100),
+        distinctUntilChanged(),
+        takeUntil(this.destroy$),
+        pairwise(),
+        tap(([previous, current]) => {
+          if (isEqual(previous, current)) this.hasFormChanges = false;
+          else this.hasFormChanges = true;
+        })
+      )
+      .subscribe();
   }
 
   handleEditorFocus(focus: boolean) {
@@ -223,14 +255,17 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
       this.plantInformation = this.allPlantsData;
     });
     if (this.data?.formData) {
-      this.headerDataForm.patchValue({
-        name: this.data.formData.name,
-        description: this.data.formData.description,
-        formType: this.data.formData.formType,
-        plantId: this.data.formData.plantId,
-        formStatus: this.data.formData.formStatus,
-        instructions: this.data.formData.instructions
-      });
+      this.headerDataForm.patchValue(
+        {
+          name: this.data.formData.name,
+          description: this.data.formData.description,
+          formType: this.data.formData.formType,
+          plantId: this.data.formData.plantId,
+          formStatus: this.data.formData.formStatus,
+          instructions: this.data.formData.instructions
+        },
+        { emitEvent: false }
+      );
 
       const additionalDetailsArray = this.data.formData.additionalDetails;
 
@@ -407,7 +442,9 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
               additionalDetails: updatedAdditionalDetails,
               plant: plant?.name
             },
-            formStatus: formConfigurationStatus.draft,
+            formStatus: this.hasFormChanges
+              ? formConfigurationStatus.draft
+              : this.headerDataForm.value.formStatus,
             formDetailPublishStatus: formConfigurationStatus.draft,
             formSaveStatus: formConfigurationStatus.saving
           })
@@ -907,5 +944,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     this.formMetaDataSubscription.unsubscribe();
     this.rdfService.attachmentsMapping$.next([]);
     this.rdfService.pdfMapping$.next([]);
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

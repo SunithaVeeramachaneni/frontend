@@ -265,7 +265,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
         [key]: [...pageToBeUpdated],
         formStatus: action.formStatus,
         formDetailPublishStatus: action.formDetailPublishStatus,
-        formSaveStatus: action.formSaveStatus
+        formSaveStatus: action.formSaveStatus,
+        skipAuthoredDetail: true
       };
     }
   ),

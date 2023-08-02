@@ -84,6 +84,16 @@ export class RoundPlanConfigurationService {
       isEmbeddedForm,
       isTemplate
     );
+    if (logics?.length) {
+      this.store.dispatch(
+        BuilderConfigurationActions.addLogics({
+          logics,
+          pageIndex,
+          ...this.getFormConfigurationStatuses(),
+          subFormId
+        })
+      );
+    }
     this.store.dispatch(
       BuilderConfigurationActions.addSections({
         sections,
@@ -95,15 +105,7 @@ export class RoundPlanConfigurationService {
         counter
       })
     );
-    if (logics?.length)
-      this.store.dispatch(
-        BuilderConfigurationActions.addLogics({
-          logics,
-          pageIndex,
-          ...this.getFormConfigurationStatuses(),
-          subFormId: null
-        })
-      );
+
     this.store.dispatch(
       BuilderConfigurationActions.updatePageState({
         pageIndex,
