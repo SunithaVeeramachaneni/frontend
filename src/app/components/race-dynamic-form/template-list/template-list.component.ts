@@ -625,7 +625,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
   }
 
   showAffectedSlider(row: any): void {
-    if (row.formsUsageCount) {
+    if (row.formsUsageCount > 0) {
       this.selectedTemplate = row;
       this.affectedSliderState = 'in';
       this.onCloseViewDetail();

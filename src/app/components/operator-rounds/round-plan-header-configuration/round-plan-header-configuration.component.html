@@ -1,5 +1,6 @@
 <div mat-dialog-actions align="end" class="buttons">
   <button
+    id="roundPlanHeaderCancelBtn"
     mat-stroked-button
     type="button"
     color="primary"
@@ -8,6 +9,7 @@
     translate="cancelBtn"
   ></button>
   <button
+    id="roundPlanHeaderNextBtn"
     mat-raised-button
     type="submit"
     color="primary"
@@ -22,7 +24,7 @@
   <div class="dis-flex form-content">
     <div class="width-100">
       <div class="form-detials">
-        <h2 class="heading">
+        <h2 id="roundPlanHeader" class="heading">
           {{ 'setFormDetailsHeading' | translate }}
         </h2>
 
@@ -53,11 +55,15 @@
         <!-- <hr class="horizontal-line" /> -->
 
         <div class="form-name">
-          <p class="form-name-description m-t-0 m-b-0">
+          <p
+            id="roundPlanHeaderNameHeading"
+            class="form-name-description m-t-0 m-b-0"
+          >
             {{ 'addFormNameMandatory' | translate }}
           </p>
           <mat-form-field appearance="outline" class="width-100 form-field">
             <input
+              id="roundPlanHeaderName"
               type="text"
               name="formName"
               matInput
@@ -65,6 +71,7 @@
               formControlName="name"
             />
             <mat-error
+              id="roundPlanHeaderNameError"
               *ngIf="processValidationErrors('name')"
               class="m-5 error-fields"
             >
@@ -75,11 +82,15 @@
               }}
             </mat-error>
           </mat-form-field>
-          <p class="form-name-description m-t-20 m-b-0">
+          <p
+            id="roundPlanHeaderAddDesc"
+            class="form-name-description m-t-20 m-b-0"
+          >
             {{ 'addFormDescription' | translate }}
           </p>
           <mat-form-field appearance="outline" class="width-100 form-field">
             <input
+              id="roundPlanHeaderDesc"
               type="text"
               matInput
               name="formDescription"
@@ -87,17 +98,22 @@
               formControlName="description"
             />
           </mat-form-field>
-          <p class="form-name-description m-t-20 m-b-0">
+          <p
+            id="roundPlanHeaderPlan"
+            class="form-name-description m-t-20 m-b-0"
+          >
             {{ 'plantMandatory' | translate }}
           </p>
           <mat-form-field appearance="outline" class="width-100 form-field">
             <mat-select
+              id="roundPlanHeaderSelectPlant"
               formControlName="plantId"
               [placeholder]="'plant' | translate"
               (openedChange)="resetPlantSearchFilter()"
               [disabled]="roundData.roundExists"
             >
               <input
+                id="roundPlanHeaderPlantInput"
                 class="searchable-input"
                 [placeholder]="'search' | translate"
                 (keyup)="onKeyPlant($event)"
@@ -112,6 +128,7 @@
               </div>
             </mat-select>
             <mat-error
+              id="roundPlanHeaderPlantError"
               *ngIf="processValidationErrors('plantId')"
               class="m-t-5 error-fields"
             >
@@ -127,7 +144,10 @@
         </div>
 
         <div class="tags">
-          <p class="form-name-description m-b-0 m-t-20">
+          <p
+            id="roundPlanHeaderTags"
+            class="form-name-description m-b-0 m-t-20"
+          >
             {{ 'tags' | translate }}
           </p>
           <mat-form-field
@@ -143,9 +163,15 @@
                 class="tags-mat-chips"
               >
                 {{ tag }}
-                <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                <mat-icon
+                  id="roundPlanHeaderRemoveTag"
+                  matChipRemove
+                  *ngIf="removable"
+                  >cancel</mat-icon
+                >
               </mat-chip>
               <input
+                id="roundPlanHeaderTagsInput"
                 [placeholder]="'startTypingTags' | translate"
                 [matChipInputFor]="chipList"
                 [matAutocomplete]="auto"
@@ -173,6 +199,7 @@
 
         <div class="notes-attachment" formGroupName="instructions">
           <p
+            id="roundPlanHeaderNotesAttachments"
             class="form-name-description m-b-0 m-t-20"
             translate="notesAndAttachments"
           ></p>
@@ -192,6 +219,7 @@
             </quill-material>
 
             <mat-error
+              id="roundPlanHeaderNotesError"
               *ngIf="maxLengthWithoutBulletPoints(250)"
               class="m-5 error-fields"
             >
@@ -203,6 +231,7 @@
         <div class="add-attachments">
           <br />
           <input
+            id="roundPlanHeaderUploadFile"
             type="file"
             class="file-upload"
             accept="image/jpeg,image/jpg,image/png,application/pdf"
@@ -212,12 +241,15 @@
           />
 
           <button
+            id="roundPlanHeaderUploadBtn"
             mat-button
             color="primary"
             class="upload-button"
             (click)="roundPlanFileUpload.click()"
           >
-            <mat-icon class="icon-upload">link</mat-icon>
+            <mat-icon id="roundPlanHeaderLink" class="icon-upload"
+              >link</mat-icon
+            >
             <span translate="addImagesAndPDFBtnNew"></span>
           </button>
           <div class="attachments-container">
@@ -256,6 +288,7 @@
         <div class="additional-details">
           <p translate="additionalDetails" class="additional-details-text"></p>
           <button
+            id="roundPlanHeaderAdditionalDetailsBtn"
             *ngIf="
               headerDataForm.get('additionalDetails')['controls'].length < 5
             "
@@ -271,8 +304,12 @@
             headerDataForm.get('additionalDetails')['controls']?.length > 0
           "
         >
-          <div class="width-45 label">{{ 'label' | translate }}</div>
-          <div class="width-45 m-l-20 value">{{ 'value' | translate }}</div>
+          <div id="roundPlanHeaderLabel" class="width-45 label">
+            {{ 'label' | translate }}
+          </div>
+          <div id="roundPlanHeaderValue" class="width-45 m-l-20 value">
+            {{ 'value' | translate }}
+          </div>
         </div>
         <div formArrayName="additionalDetails">
           <div
@@ -288,6 +325,7 @@
                   class="m-l-5 symbol m-b-10 width-100"
                 >
                   <input
+                    id="roundPlanHeaderLabel"
                     #labelInput
                     matInput
                     type="text"
@@ -308,7 +346,9 @@
                         class="remove-btn"
                         (click)="removeLabel(label, i)"
                       >
-                        <span>{{ 'removeBtn' | translate }}</span>
+                        <span id="roundPlanHeaderRemoveBtn">{{
+                          'removeBtn' | translate
+                        }}</span>
                       </button>
                     </mat-option>
                     <mat-option
@@ -319,6 +359,7 @@
                     >
                       <ng-container>
                         <button
+                          id="roundPlanHeaderAddNewBtn"
                           mat-button
                           color="primary"
                           class="p-0 add-new-button"
@@ -332,9 +373,11 @@
                             ].pristine
                           "
                         >
-                          <mat-icon class="m-r-5">add</mat-icon>
+                          <mat-icon id="roundPlanHeaderAddNewIcon" class="m-r-5"
+                            >add</mat-icon
+                          >
 
-                          <span
+                          <span id="roundPlanHeaderAddNewText"
                             >{{ 'addNew' | translate }} ({{
                               headerDataForm.get('additionalDetails')[
                                 'controls'
@@ -347,6 +390,7 @@
                   </mat-autocomplete>
 
                   <mat-error
+                    id="roundPlanHeaderLabelError"
                     *ngIf="processValidationErrorsAdditionalDetails(i, 'label')"
                     class="m-t-5 error-fields"
                   >
@@ -368,6 +412,7 @@
                   class="m-l-20 symbol m-b-10 width-100"
                 >
                   <input
+                    id="roundPlanHeaderValueInput"
                     #valueInput
                     matInput
                     type="text"
@@ -387,7 +432,9 @@
                         class="remove-btn"
                         (click)="removeValue(value, i)"
                       >
-                        <span>{{ 'removeBtn' | translate }}</span>
+                        <span id="roundPlanHeaderRemoveValueBtn">{{
+                          'removeBtn' | translate
+                        }}</span>
                       </button>
                     </mat-option>
 
@@ -399,6 +446,7 @@
                       "
                     >
                       <button
+                        id="roundPlanHeaderValueBtn"
                         mat-button
                         color="primary"
                         class="p-0"
@@ -410,9 +458,11 @@
                             .pristine
                         "
                       >
-                        <mat-icon class="m-r-5">add</mat-icon>
+                        <mat-icon id="roundPlanHeaderAddValueIcon" class="m-r-5"
+                          >add</mat-icon
+                        >
 
-                        <span
+                        <span id="roundPlanHeaderAddValueText"
                           >{{ 'addNew' | translate }} ({{
                             headerDataForm.get('additionalDetails')['controls'][
                               i
@@ -424,6 +474,7 @@
                   </mat-autocomplete>
 
                   <mat-error
+                    id="roundPlanHeaderValueError"
                     *ngIf="processValidationErrorsAdditionalDetails(i, 'value')"
                     class="m-t-5 error-fields"
                   >
@@ -440,6 +491,7 @@
               </div>
               <div class="width-10 cancel-icon">
                 <svg-icon
+                  id="roundPlanHeaderCloseIcon"
                   icon="icon-closeIcon"
                   class="close-icon cursor-pointer"
                   (click)="deleteAdditionalDetails(i)"
