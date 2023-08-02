@@ -28,6 +28,7 @@ export class ImportQuestionsSliderComponent implements OnInit {
   @Input() title;
 
   @Output() cancelSliderEvent: EventEmitter<boolean> = new EventEmitter();
+  @Output() backEvent: EventEmitter<boolean> = new EventEmitter();
   importSectionQuestions: SectionQuestions[] = [];
   sectionIndexes$: Observable<any>;
   sectionIndexes: any;
@@ -139,6 +140,10 @@ export class ImportQuestionsSliderComponent implements OnInit {
 
   cancel() {
     this.cancelSliderEvent.emit(false);
+  }
+
+  back() {
+    this.backEvent.emit(false);
   }
 
   updateAllChecked(checked, question, section, page) {

@@ -22,7 +22,7 @@
       <ng-container
         *ngIf="allPlants$ | async as plantsList; else loadingPlants"
       >
-        <mat-form-field appearance="outline" style="margin: 0 10px">
+        <mat-form-field appearance="outline" class="m-0-10">
           <mat-label>{{ 'plants' | translate }}</mat-label>
           <mat-select
             multiple
@@ -74,7 +74,7 @@
           else loadingWorkCenters
         "
       >
-        <mat-form-field appearance="outline" style="margin-left: 15px">
+        <mat-form-field appearance="outline" class="m-l-15">
           <mat-label>{{ 'workCenters' | translate }}</mat-label>
           <mat-select
             multiple
@@ -114,11 +114,9 @@
               >
                 <p class="filter-option-id">
                   {{ workcenter.workCenterKey }}
-                  <span
-                    style="float: right"
-                    *ngIf="plantFilter.value?.length > 1"
-                    >{{ workCenterByPlant.plantId }}</span
-                  >
+                  <span class="f-right" *ngIf="plantFilter.value?.length > 1">
+                    {{ workCenterByPlant.plantId }}
+                  </span>
                 </p>
                 <p class="filter-option-desc">
                   {{ workcenter.workCenterDesc }}
@@ -243,13 +241,13 @@
 </div>
 
 <ng-template #loadingPlants>
-  <span style="margin: 0 10px; position: relative; top: 5px">
+  <span classs="m-0-10 loader-position">
     <ngx-shimmer-loading [width]="'180px'" [height]="'35px'">
     </ngx-shimmer-loading>
   </span>
 </ng-template>
 <ng-template #loadingWorkCenters>
-  <span style="position: relative; top: 5px">
+  <span class="loader-position">
     <ngx-shimmer-loading [width]="'180px'" [height]="'35px'">
     </ngx-shimmer-loading>
   </span>

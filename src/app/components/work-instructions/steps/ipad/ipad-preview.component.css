@@ -12,8 +12,7 @@
   overflow-x: hidden;
 }
 .ipad-view {
-  background: url('/assets/Images/iPad_big.png') top left
-    no-repeat;
+  background: url('/assets/Images/iPad_big.png') top left no-repeat;
   background-size: 100% 100%;
   width: 98%;
   height: 465px;
@@ -870,4 +869,15 @@
   overflow: hidden;
   display: block;
   color: black;
+}
+
+.tabs-list {
+  text-align: left;
+  display: flex;
+  height: 25px;
+}
+
+.hr-line {
+  margin-left: 30px;
+  border: 1px solid #cccccc;
 }

@@ -523,7 +523,7 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
     return !touched || this.errors[controlName] === null ? false : true;
   }
 
-  importQuestions(): void {
+  importQuestions(tabIndex): void {
     const dialogRef = this.dialog.open(ImportQuestionsModalComponent, {
       data: {
         selectedFormData: '',
@@ -531,7 +531,8 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
         openImportQuestionsSlider: false,
         openImportTemplateQuestionsSlider: false,
         isEmbeddedForm: this.isEmbeddedForm,
-        allTemplates: []
+        allTemplates: [],
+        tabIndex
       }
     });
 
@@ -556,8 +557,18 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
     this.openAppSider$ = of(event);
   }
 
+  backSlider(event) {
+    this.openAppSider$ = of(event);
+    this.importQuestions(1);
+  }
+
   cancelTemplateSlider(event) {
     this.openImportTemplateSider$ = of(event);
+  }
+
+  backTemplateSlider(event) {
+    this.openImportTemplateSider$ = of(event);
+    this.importQuestions(0);
   }
 
   publishOrShowPdf() {

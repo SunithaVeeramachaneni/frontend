@@ -495,13 +495,13 @@ export class BuilderComponent implements OnInit, OnDestroy {
         logic.id = newLogicIds[logic.id];
         logic.questionId = newQuestionIds[logic.questionId];
         logic.evidenceQuestions = logic.evidenceQuestions.map(
-          (item) => newQuestionIds[item]
+          (item) => newQuestionIds[item] || item
         );
         logic.hideQuestions = logic.hideQuestions.map(
-          (item) => newQuestionIds[item]
+          (item) => newQuestionIds[item] || item
         );
         logic.mandateQuestions = logic.mandateQuestions.map(
-          (item) => newQuestionIds[item]
+          (item) => newQuestionIds[item] || item
         );
         delete logic.questions;
         logicsArray.push(logic);
