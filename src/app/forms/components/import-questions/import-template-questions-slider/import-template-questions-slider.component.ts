@@ -46,6 +46,7 @@ export class ImportTemplateQuestionsSliderComponent
   @Input() allTemplates;
 
   @Output() cancelSliderEvent: EventEmitter<boolean> = new EventEmitter();
+  @Output() backEvent: EventEmitter<boolean> = new EventEmitter();
   sectionCheckedCount = 0;
   importSectionQuestions: SectionQuestions[] = [];
   sectionIndexes$: Observable<any>;
@@ -369,6 +370,10 @@ export class ImportTemplateQuestionsSliderComponent
 
   cancel() {
     this.cancelSliderEvent.emit(false);
+  }
+
+  back() {
+    this.backEvent.emit(false);
   }
 
   compareFn(option1: any, option2: any) {

@@ -458,7 +458,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
       questionId: this.questionId
     });
 
-    if (this.embeddedFormId) {
+    if (this.isEmbeddedForm && this.embeddedFormId) {
       this.rdfService
         .deleteAbapFormField$({
           FORMNAME: this.embeddedFormId,

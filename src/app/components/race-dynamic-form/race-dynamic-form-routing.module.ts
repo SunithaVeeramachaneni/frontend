@@ -64,6 +64,7 @@ const routes: Routes = [
         resolve: { form: TemplateResolverService },
         canActivate: [AuthGuard],
         data: {
+          breadcrumb: { label: 'Templates' },
           permissions: [permissions.viewFormTemplates]
         },
         children: [

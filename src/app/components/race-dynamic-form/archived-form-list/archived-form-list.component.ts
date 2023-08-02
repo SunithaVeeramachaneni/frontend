@@ -170,7 +170,6 @@ export class ArchivedFormListComponent implements OnInit, OnDestroy {
   plantsIdNameMap = {};
   triggerCountUpdate = false;
   readonly routingUrls = routingUrls;
-  currentRouteUrl$: Observable<string>;
   userInfo$: Observable<UserInfo>;
   private onDestroy$ = new Subject();
 
@@ -178,19 +177,12 @@ export class ArchivedFormListComponent implements OnInit, OnDestroy {
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private readonly toast: ToastService,
     private readonly loginService: LoginService,
-    public dialog: MatDialog,
-    private commonService: CommonService,
-    private headerService: HeaderService
+    public dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
     this.columns = this.raceDynamicFormService.updateConfigOptionsFromColumns(
       this.partialColumns
-    );
-    this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
-      tap(() => {
-        this.headerService.setHeaderTitle(routingUrls.archivedForms.title);
-      })
     );
     this.fetchForms$.next({ data: 'load' });
     this.fetchForms$.next({} as TableEvent);

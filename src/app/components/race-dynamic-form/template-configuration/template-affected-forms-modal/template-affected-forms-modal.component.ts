@@ -49,6 +49,7 @@ export class TemplateAffectedFormsModalComponent implements OnInit, OnDestroy {
   ghostLoading = new Array(8).fill(0).map((v, i) => i);
   nextToken = '';
   fetchType = 'load';
+  archived = 'Archived';
   searchForm: FormControl;
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   formsListCount$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
@@ -121,7 +122,7 @@ export class TemplateAffectedFormsModalComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
-      id: 'formStatus',
+      id: 'displayFormStatus',
       displayName: 'Status',
       type: 'string',
       controlType: 'string',
@@ -180,6 +181,10 @@ export class TemplateAffectedFormsModalComponent implements OnInit, OnDestroy {
       },
       published: {
         'background-color': '#2C9E53',
+        color: '#FFFFFF'
+      },
+      archived: {
+        'background-color': '#9E9E9E',
         color: '#FFFFFF'
       }
     }
@@ -271,6 +276,8 @@ export class TemplateAffectedFormsModalComponent implements OnInit, OnDestroy {
           rows.map((item) => {
             item.plant = '';
             if (item?.plantId) item.plant = this.plantsObject[item.plantId];
+            if (item.isArchived) item.displayFormStatus = this.archived;
+            else item.displayFormStatus = item.formStatus;
             item.preTextImage = {
               image: item?.formLogo,
               style: {

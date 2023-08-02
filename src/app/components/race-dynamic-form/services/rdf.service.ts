@@ -221,7 +221,8 @@ export class RaceDynamicFormService {
       createdBy: filterData?.createdBy,
       lastModifiedOn: filterData?.lastModifiedOn,
       plantId: filterData?.plant,
-      formType: filterData?.formType
+      formType: filterData?.formType,
+      publishedBy: filterData.publishedBy
     };
     const params = new URLSearchParams({
       next: queryParams.next,
@@ -573,6 +574,22 @@ export class RaceDynamicFormService {
     return this.appService
       ._getResp(environment.rdfApiUrl, 'forms/name')
       .pipe(map((res) => res.items));
+  }
+
+  fetchAllFormsList$() {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('searchTerm', '');
+    params.set('limit', '2000000');
+    params.set('next', '');
+    params.set('fetchType', '');
+    params.set('formStatus', 'All');
+    params.set('isArchived', 'false');
+    return this.appService
+      ._getResp(environment.rdfApiUrl, 'forms?' + params.toString(), {
+        displayToast: true,
+        failureResponse: {}
+      })
+      .pipe(map((res) => this.formatGetRdfFormsResponse(res)));
   }
 
   getAuthoredFormDetail$(formlistID: string) {
