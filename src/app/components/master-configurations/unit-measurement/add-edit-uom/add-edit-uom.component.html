@@ -225,7 +225,7 @@
       <button
         id="addEditUOMSaveBtn"
         mat-raised-button
-        [disabled]="!unitType || unitMeasurementForm?.invalid"
+        [disabled]="isFormValid"
         (click)="onSave()"
         class="save-btn"
       >
