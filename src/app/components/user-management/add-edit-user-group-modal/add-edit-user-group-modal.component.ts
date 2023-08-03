@@ -3,23 +3,12 @@ import {
   Component,
   OnInit,
   ChangeDetectionStrategy,
-  Input,
-  Inject,
-  Output,
-  ChangeDetectorRef,
-  EventEmitter
+  Inject
 } from '@angular/core';
-import {
-  FormControl,
-  FormBuilder,
-  Validators,
-  ValidatorFn,
-  AbstractControl,
-  ValidationErrors
-} from '@angular/forms';
+import { FormControl, FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
-import { UserGroupEvent, ValidationError } from 'src/app/interfaces';
+import { ValidationError } from 'src/app/interfaces';
 import { SelectUserUsergroupModalComponent } from '../select-user-usergroup-modal/select-user-usergroup-modal.component';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { UserGroupService } from '../services/user-group.service';
@@ -49,7 +38,6 @@ export class AddEditUserGroupModalComponent implements OnInit {
     private dailogRef: MatDialogRef<AddEditUserGroupModalComponent>,
     private fb: FormBuilder,
     private plantService: PlantService,
-    private cdrf: ChangeDetectorRef,
     private userGroupService: UserGroupService,
     @Inject(MAT_DIALOG_DATA)
     public data: any

@@ -1,5 +1,9 @@
+/* eslint-disable @angular-eslint/no-input-rename */
 import { Component, Input } from '@angular/core';
-import { PaginationControlsComponent, PaginationControlsDirective } from 'ngx-pagination';
+import {
+  PaginationControlsComponent,
+  PaginationControlsDirective
+} from 'ngx-pagination';
 
 @Component({
   selector: 'app-custom-pagination-controls',
@@ -7,12 +11,10 @@ import { PaginationControlsComponent, PaginationControlsDirective } from 'ngx-pa
   styleUrls: ['./custom-pagination-controls.component.css']
 })
 export class CustomPaginationControlsComponent extends PaginationControlsComponent {
-
   // tslint:disable-next-line: no-input-rename
   @Input('paginationData') p: PaginationControlsDirective;
 
   constructor() {
     super();
   }
-
 }

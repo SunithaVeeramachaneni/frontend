@@ -26,24 +26,13 @@ import {
 import { UserGroupService } from '../services/user-group.service';
 import { ToastService } from 'src/app/shared/toast';
 import {
-  Count,
   LoadEvent,
   Permission,
-  RowLevelActionEvent,
   SearchEvent,
-  TableEvent,
-  UserDetails
+  TableEvent
 } from 'src/app/interfaces';
 import { FormControl } from '@angular/forms';
-import {
-  debounceTime,
-  distinctUntilChanged,
-  filter,
-  map,
-  mergeMap,
-  switchMap,
-  tap
-} from 'rxjs/operators';
+import { filter, map, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { format } from 'date-fns';
 import { SelectUserUsergroupModalComponent } from '../select-user-usergroup-modal/select-user-usergroup-modal.component';
 import { MatDialog } from '@angular/material/dialog';

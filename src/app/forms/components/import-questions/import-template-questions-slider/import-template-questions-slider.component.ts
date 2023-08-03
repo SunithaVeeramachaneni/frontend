@@ -9,8 +9,8 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { cloneDeep, isEqual } from 'lodash-es';
-import { BehaviorSubject, Observable, Subject, Subscription, of } from 'rxjs';
+import { isEqual } from 'lodash-es';
+import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -28,7 +28,6 @@ import { SectionQuestions } from 'src/app/interfaces';
 import { AddPageOrSelectExistingPageModalComponent } from '../add-page-or-select-existing-page-modal/add-page-or-select-existing-page-modal.component';
 import { FormControl } from '@angular/forms';
 import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
-import { updateForm } from 'src/app/forms/state/builder/builder.actions';
 
 @Component({
   selector: 'app-import-template-questions-slider',

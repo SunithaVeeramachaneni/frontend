@@ -1,14 +1,11 @@
 import {
   Component,
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   EventEmitter,
   OnInit,
   Input,
   Output
 } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
-import { DomSanitizer } from '@angular/platform-browser';
 import { permissions } from 'src/app/app.constants';
 
 @Component({
@@ -18,18 +15,17 @@ import { permissions } from 'src/app/app.constants';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SPCCCardComponent implements OnInit {
-  readonly permissions = permissions;
-  constructor(private translateService: TranslateService) {}
-
-  @Input('workOrder') workOrder;
-  @Input('technicians') technicians;
-  @Output('assign') assign = new EventEmitter();
+  @Input() workOrder;
+  @Input() technicians;
+  @Output() assign = new EventEmitter();
   isDropdownOpen = false;
+  readonly permissions = permissions;
+
+  constructor() {}
+
   ngOnInit() {}
 
   assignTech = (technician, workOrder) => {
     this.assign.emit({ technician, workOrder });
   };
-
-  ngOnDestroy() {}
 }

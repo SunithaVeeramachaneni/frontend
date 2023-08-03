@@ -42,7 +42,6 @@ import {
   WidgetAction,
   WidgetsData
 } from 'src/app/interfaces';
-import { CommonService } from 'src/app/shared/services/common.service';
 import { ToastService } from 'src/app/shared/toast';
 import { DashboardService } from '../services/dashboard.service';
 import { WidgetService } from '../services/widget.service';
@@ -65,6 +64,25 @@ interface CreateUpdateDeleteWidget {
 })
 export class DashboardConfigurationComponent implements OnInit {
   @ViewChild('gridsterContainer', { static: false })
+  @Output()
+  dashboardActionHandler: EventEmitter<any> = new EventEmitter<any>();
+
+  @Input() set dashboard(dashboard: Dashboard) {
+    this._dashboard = dashboard ? dashboard : ({} as Dashboard);
+    this.dashboardControl.setValue(this.dashboard);
+    this.renderDashboard();
+  }
+  get dashboard(): Dashboard {
+    return this._dashboard;
+  }
+
+  @Input() set dashboardDisplayMode(dashboardDisplayMode: string) {
+    this._dashboardDisplayMode = dashboardDisplayMode;
+  }
+  get dashboardDisplayMode(): string {
+    return this._dashboardDisplayMode;
+  }
+
   gridsterContainer: ElementRef;
   dashboards$: Observable<Dashboard[]>;
   showAllDashboards = false;
@@ -83,24 +101,6 @@ export class DashboardConfigurationComponent implements OnInit {
       createdBy: 'dummy'
     }
   ];
-
-  @Output() dashboardActionHandler: EventEmitter<any> = new EventEmitter<any>();
-
-  @Input() set dashboard(dashboard: Dashboard) {
-    this._dashboard = dashboard ? dashboard : ({} as Dashboard);
-    this.dashboardControl.setValue(this.dashboard);
-    this.renderDashboard();
-  }
-  get dashboard(): Dashboard {
-    return this._dashboard;
-  }
-
-  @Input() set dashboardDisplayMode(dashboardDisplayMode: string) {
-    this._dashboardDisplayMode = dashboardDisplayMode;
-  }
-  get dashboardDisplayMode(): string {
-    return this._dashboardDisplayMode;
-  }
 
   widgetsDataOnLoadCreateUpdateDelete$: Observable<WidgetsData>;
   widgets: Widget[];
@@ -183,7 +183,6 @@ export class DashboardConfigurationComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     private spinner: NgxSpinnerService,
-    private commonService: CommonService,
     private widgetService: WidgetService,
     private dashboardService: DashboardService,
     private toast: ToastService

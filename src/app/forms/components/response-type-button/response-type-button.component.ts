@@ -8,7 +8,6 @@ import {
   ChangeDetectorRef,
   OnDestroy
 } from '@angular/core';
-import { FormService } from '../../services/form.service';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
@@ -28,10 +27,7 @@ export class ResponseTypeButtonComponent implements OnInit, OnDestroy {
 
   private onDestroy$ = new Subject();
 
-  constructor(
-    private formService: FormService,
-    private changeDetectorRef: ChangeDetectorRef
-  ) {}
+  constructor(private changeDetectorRef: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.questionForm.valueChanges
