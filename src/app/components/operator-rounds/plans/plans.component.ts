@@ -542,6 +542,9 @@ export class PlansComponent implements OnInit, OnDestroy {
             );
           }
           this.initial.data = this.formattingPlans(this.initial.data);
+          if (this.filter.assignedTo) {
+            this.initial.data = this.assingedToFilter(this.initial.data);
+          }
           this.skip = this.initial.data.length;
           return this.initial;
         }
@@ -649,6 +652,11 @@ export class PlansComponent implements OnInit, OnDestroy {
       }
       return plan;
     });
+  }
+  assingedToFilter(roundPlan) {
+    return roundPlan.filter((plan) =>
+      this.filter.assignedTo.includes(plan.assigneeToEmail)
+    );
   }
 
   getRoundPlanList() {
