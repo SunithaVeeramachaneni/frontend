@@ -1,5 +1,16 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { DateAdapter, MatDateFormats, MAT_DATE_FORMATS } from '@angular/material/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  Inject,
+  OnDestroy,
+  OnInit
+} from '@angular/core';
+import {
+  DateAdapter,
+  MatDateFormats,
+  MAT_DATE_FORMATS
+} from '@angular/material/core';
 import { MatCalendar } from '@angular/material/datepicker';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -43,15 +54,15 @@ export class FilterSidePanelComponent<D> implements OnDestroy {
     this.changeDate(mode, 1);
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next(); // will trigger unsubscription in takeUntil
+  }
+
   private changeDate(mode: 'month' | 'year', amount: -1 | 1): void {
     // increment or decrement month or year
     this.calendar.activeDate =
       mode === 'month'
         ? this.dateAdapter.addCalendarMonths(this.calendar.activeDate, amount)
         : this.dateAdapter.addCalendarYears(this.calendar.activeDate, amount);
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next(); // will trigger unsubscription in takeUntil
   }
 }

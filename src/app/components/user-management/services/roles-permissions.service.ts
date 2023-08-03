@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, from, Observable, of } from 'rxjs';
+import { from, Observable, of } from 'rxjs';
 import { map, mergeMap, toArray, shareReplay } from 'rxjs/operators';
 import { ErrorInfo, Role, Permission, RoleWithoutID } from 'src/app/interfaces';
 import { AppService } from 'src/app/shared/services/app.services';

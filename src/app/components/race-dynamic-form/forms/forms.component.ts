@@ -70,7 +70,6 @@ import { UsersService } from '../../user-management/services/users.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
 import { ShiftService } from '../../master-configurations/shifts/services/shift.service';
-import { CommonService } from 'src/app/shared/services/common.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ScheduleConfigurationService } from 'src/app/forms/services/schedule.service';
 
@@ -269,6 +268,7 @@ export class FormsComponent implements OnInit, OnDestroy {
   private _users$: Observable<UserDetails[]>;
   private onDestroy$ = new Subject();
   private scheduleConfigEvent: Subscription;
+
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private loginService: LoginService,

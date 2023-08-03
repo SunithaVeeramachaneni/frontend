@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import {
   ChangeDetectionStrategy,
   Component,
@@ -6,7 +7,6 @@ import {
   OnInit,
   Output
 } from '@angular/core';
-import { MatMenuTrigger } from '@angular/material/menu';
 
 @Component({
   selector: 'app-shift-menu-item',

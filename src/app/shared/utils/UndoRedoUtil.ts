@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { environment } from '../../../environments/environment';
 
 const UNDO_REDO_OFFSET = environment.undoRedoOffset || 5;

@@ -537,9 +537,9 @@ export class ObservationsService {
   }
 
   private formateGetObservationResponse(resp, type) {
-    resp.filters.assignedTo = resp.filters.assignedTo.map((email) => {
-      return this.userService.getUserFullName(email);
-    });
+    resp.filters.assignedTo = resp.filters.assignedTo.map((email) =>
+      this.userService.getUserFullName(email)
+    );
     const items = resp?.items?.sort(
       (a, b) =>
         new Date(b?.createdAt).getTime() - new Date(a?.createdAt).getTime()

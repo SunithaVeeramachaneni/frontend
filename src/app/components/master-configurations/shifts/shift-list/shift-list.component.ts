@@ -31,7 +31,6 @@ import {
 } from 'src/app/app.constants';
 import {
   CellClickActionEvent,
-  FormTableUpdate,
   Permission,
   TableEvent,
   UserInfo

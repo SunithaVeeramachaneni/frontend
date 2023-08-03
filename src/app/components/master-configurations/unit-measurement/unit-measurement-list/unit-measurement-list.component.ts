@@ -577,6 +577,7 @@ export class UnitMeasurementListComponent implements OnInit, OnDestroy {
   }
 
   applyFilters(data = []): void {
+    this.isLoading$.next(true);
     if (this.searchUom.value) {
       this.searchUom.patchValue('');
     }
@@ -587,6 +588,7 @@ export class UnitMeasurementListComponent implements OnInit, OnDestroy {
   }
 
   clearFilters(): void {
+    this.isLoading$.next(true);
     this.isPopoverOpen = false;
     this.filter = {
       status: '',

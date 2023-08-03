@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import {
-  ChangeDetectorRef,
   Component,
-  ElementRef,
   OnInit,
   ViewChild,
   Input,
@@ -12,19 +10,8 @@ import {
 } from '@angular/core';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatDialogRef } from '@angular/material/dialog';
-import {
-  MatAutocomplete,
-  MatAutocompleteSelectedEvent
-} from '@angular/material/autocomplete';
-import { MatChipInputEvent } from '@angular/material/chips';
-import {
-  BehaviorSubject,
-  Observable,
-  of,
-  merge,
-  Subscription,
-  Subject
-} from 'rxjs';
+import { MatAutocomplete } from '@angular/material/autocomplete';
+import { BehaviorSubject, Observable, of, Subscription, Subject } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -36,9 +23,7 @@ import {
 } from 'rxjs/operators';
 import {
   AbstractControl,
-  FormArray,
   FormBuilder,
-  FormControl,
   FormGroup,
   Validators
 } from '@angular/forms';
@@ -52,9 +37,6 @@ import {
 } from 'src/app/app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
-import { AppService } from 'src/app/shared/services/app.services';
-import { ToastService } from 'src/app/shared/toast';
-import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
 import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
 import { Store } from '@ngrx/store';
 import { State, getFormMetadata } from 'src/app/forms/state';
@@ -98,7 +80,6 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
     private readonly loginService: LoginService,
     private rdfService: RaceDynamicFormService,
     private store: Store<State>,
-    private cdrf: ChangeDetectorRef,
     private formProgressService: FormUpdateProgressService
   ) {}
 
