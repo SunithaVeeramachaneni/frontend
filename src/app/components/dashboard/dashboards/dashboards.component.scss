@@ -1,9 +1,11 @@
+@import '../../../../scss/colors.scss';
+
 .height-100 {
   height: 100%;
 }
 .all-dashboards {
   display: flex;
-  background: #ffffff;
+  background: $white;
   height: 100%;
   .left {
     width: 20%;
@@ -18,13 +20,13 @@
       align-items: center;
       display: flex;
       .more-icon {
-        color: #757575;
+        color: $light-gray;
         position: absolute;
         right: 0;
       }
       .left-head-text {
         font-size: 105%;
-        color: #212121;
+        color: $gray-bg;
         font-weight: bold;
       }
       .add-dashboard-plus-icon {
@@ -37,17 +39,17 @@
       margin-bottom: 10px;
     }
     .dashboards-list {
-      color: #757575;
-      border-bottom: 1px solid #eeeeee;
+      color: $light-gray;
+      border-bottom: 1px solid $gray;
       &:hover {
-        background: #eeeeee;
+        background: $gray;
         cursor: pointer;
       }
     }
   }
   .active-dashboard {
     background: rgba(61, 90, 254, 0.08);
-    color: #2a3eb1 !important;
+    color: $blue-head !important;
     font-weight: bold;
     font-size: 100%;
   }
@@ -79,7 +81,7 @@
   font-size: 80%;
   font-weight: 500;
   background: #3f51b5;
-  color: #ffff;
+  color: $white;
 }
 
 .display-flex {

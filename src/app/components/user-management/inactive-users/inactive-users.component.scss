@@ -1,5 +1,7 @@
+@import '../../../../scss/colors.scss';
+
 .inactive-users-main-container {
-  background-color: #ffffff;
+  background-color: $white;
 
   ::ng-deep .table-column {
     width: 25%;
@@ -8,7 +10,7 @@
 
 .inactive-users-header {
   padding: 3px 10px;
-  border-bottom: 1px solid #e7e7e7;
+  border-bottom: 1px solid $border-bottom;
   height: 42px;
 }
 
@@ -20,19 +22,19 @@
 .inactive-users-count {
   font-weight: 500;
   font-size: 110%;
-  color: #212121;
+  color: $gray-bg;
 }
 
 .inactive-users-text {
   font-weight: 500;
   font-size: 110%;
-  color: #9e9e9e;
+  color: $gray1;
   margin-left: 5px;
 }
 
 .add-role-btn {
-  background: #3d5afe;
-  color: #ffffff;
+  background: $blue-main;
+  color: $white;
 }
 
 .search-form-field {

@@ -1,3 +1,5 @@
+@import './colors.scss';
+
 .ghost-loading-mcc-spcc-container {
   display: flex;
   height: 90vh;
@@ -9,7 +11,7 @@
   }
 
   .column-header {
-    border-bottom: 1px solid #f2f2f2;
+    border-bottom: 1px solid $white2;
     padding: 10px 10px 5px 10px;
   }
 

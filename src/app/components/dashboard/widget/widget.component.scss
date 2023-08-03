@@ -1,3 +1,5 @@
+@import '../../../../scss/colors.scss';
+
 .chart-wrapper {
   height: 100%;
 }
@@ -7,7 +9,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  color: #f44336;
+  color: $red-main;
   padding: 0 50px;
 
   font-style: normal;
@@ -17,11 +19,11 @@
 }
 
 .edit-button {
-  background: #ffffff;
+  background: $white;
   min-width: auto;
   margin: 0px 3px;
-  color: #3d5afe;
-  border: 1px solid #3d5afe;
+  color: $blue-main;
+  border: 1px solid $blue-main;
   padding: 0px 10px 5px 10px;
   height: 36px;
 }

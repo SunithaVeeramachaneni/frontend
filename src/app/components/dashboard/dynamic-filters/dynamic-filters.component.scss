@@ -1,3 +1,5 @@
+@import '../../../../scss/colors.scss';
+
 .filter-form-fields {
   height: 85%;
   overflow-y: scroll;
@@ -88,7 +90,7 @@
 
 .select-date-range-btn {
   background: none;
-  border: 1px solid #e5e5e5;
+  border: 1px solid $border-color-gray;
   border-radius: 7px;
   height: 42px;
   width: 100%;
@@ -96,7 +98,7 @@
 
 .save-btn {
   float: right;
-  background-color: #3d5afe;
+  background-color: $blue-main;
   color: white;
   border: none;
   border-radius: 7px;
@@ -124,11 +126,11 @@
   line-height: 150%;
   align-items: center;
   letter-spacing: 0.15px;
-  color: #000000;
+  color: $black;
 }
 
 .filter-modal-cancel {
-  color: #757575;
+  color: $light-gray;
   float: right;
   background-color: white;
   border: none;

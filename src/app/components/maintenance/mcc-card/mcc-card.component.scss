@@ -1,10 +1,12 @@
+@import '../../../../scss/colors.scss';
+
 .kit-number {
   font-style: normal;
   font-weight: 600;
   font-size: 100%;
   line-height: 19px;
   align-items: center;
-  color: #000000;
+  color: $black;
   width: 100%;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -20,7 +22,7 @@
   font-size: 85%;
   line-height: 19px;
   align-items: center;
-  color: #76767b;
+  color: $gray-text;
   padding: 2px 0;
   margin-left: 5px;
   width: 100%;
@@ -36,7 +38,7 @@
   border-radius: 4px;
   width: 90%;
   height: 28px;
-  background: #f2f2f2;
+  background: $white2;
   border: none;
   color: black;
   font-weight: 600;
@@ -55,7 +57,7 @@
 
 .assign-btn-text {
   padding-left: 5px;
-  color: #000000;
+  color: $black;
   font-size: 80%;
   position: relative;
   top: -2px;
@@ -85,7 +87,7 @@
   line-height: 27px;
   align-items: center;
   text-align: center;
-  color: #ffffff;
+  color: $white;
   background-color: #f39f9b;
 }
 
@@ -98,7 +100,7 @@
   line-height: 27px;
   align-items: center;
   text-align: center;
-  color: #ffffff;
+  color: $white;
   background-color: #ff3b30;
 }
 
@@ -111,7 +113,7 @@
   line-height: 27px;
   align-items: center;
   text-align: center;
-  color: #ffffff;
+  color: $white;
   background-color: #ff9800;
 }
 
@@ -124,7 +126,7 @@
   line-height: 27px;
   align-items: center;
   text-align: center;
-  color: #ffffff;
+  color: $white;
   background-color: #4caf50;
 }
 
@@ -139,7 +141,7 @@
   line-height: 15px;
   align-items: center;
   text-align: center;
-  color: #ffffff;
+  color: $white;
   float: right;
 }
 
@@ -154,7 +156,7 @@
   line-height: 15px;
   align-items: center;
   text-align: center;
-  color: #ffffff;
+  color: $white;
   float: right;
 }
 
@@ -169,7 +171,7 @@
   line-height: 15px;
   align-items: center;
   text-align: center;
-  color: #ffffff;
+  color: $white;
   float: right;
 }
 
@@ -179,7 +181,7 @@
   font-style: normal;
   font-weight: 500;
   font-size: 95%;
-  color: #76767b;
+  color: $gray-text;
   letter-spacing: 0;
   background-color: white;
   border: none;
@@ -199,7 +201,7 @@
 }
 
 .operations-div {
-  border-left: 2px solid #e5e5e5;
+  border-left: 2px solid $border-color-gray;
   margin-left: 15px;
 }
 
@@ -214,7 +216,7 @@
   font-weight: 500;
   font-size: 100%;
   line-height: 16px;
-  color: #000000;
+  color: $black;
   width: 100%;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -238,7 +240,7 @@
   font-weight: 500;
   font-size: 100%;
   line-height: 16px;
-  color: #76767b;
+  color: $gray-text;
   width: 100%;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -248,7 +250,7 @@
 }
 
 ::ng-deep .maintenance-card .mat-progress-bar-fill::after {
-  background-color: #76767b;
+  background-color: $gray-text;
 }
 
 ::ng-deep .maintenance-card .mat-progress-bar-buffer {

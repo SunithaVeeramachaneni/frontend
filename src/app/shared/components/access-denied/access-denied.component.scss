@@ -1,12 +1,11 @@
-$gray-600: #757575;
-$white-color: #ffffff;
+@import '../../../../scss/colors.scss';
 
 .access-denied-container {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: $white-color;
+  background: $white;
   height: calc(100% - 79px);
 }
 
@@ -20,7 +19,7 @@ $white-color: #ffffff;
 .info2 {
   font-style: normal;
   font-weight: 400;
-  color: $gray-600;
+  color: $light-gray;
   line-height: 20px;
   font-size: 100%;
   margin: 0;

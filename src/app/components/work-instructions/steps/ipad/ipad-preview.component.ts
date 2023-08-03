@@ -13,7 +13,7 @@ import { State } from '../../state/instruction.reducer';
 @Component({
   selector: 'app-ipad-preview',
   templateUrl: './ipad-preview.component.html',
-  styleUrls: ['./ipad-preview.component.css']
+  styleUrls: ['./ipad-preview.component.scss']
 })
 export class IpadPreviewComponent implements OnInit, OnDestroy {
   @Input() titleProvided;

@@ -1,3 +1,5 @@
+@import '../../../../../scss/colors.scss';
+
 .mat-tab-body {
   padding: 10px !important;
 }
@@ -5,28 +7,64 @@
 .m-l-5 {
   margin-left: -5px;
 }
+
 .ipad-iphone-preview-block {
   overflow-y: scroll;
   height: calc(100vh - 175px);
   overflow-x: hidden;
 }
-.iphone-top-piece {
-  width: 147px;
-  height: 25px;
-  position: relative;
-  left: 12px;
-  top: -5px;
-}
-.iphone-view {
-  background: url('/assets/Images/iPhoneX.png') top left no-repeat;
+.ipad-view {
+  background: url('/assets/Images/iPad_big.png') top left no-repeat;
   background-size: 100% 100%;
-  width: 300px;
-  min-height: 596px;
-  height: auto !important;
+  width: 98%;
+  height: 465px;
   overflow: hidden;
-  margin: 0px auto 0;
+  margin: 0 auto;
 }
-
+@media screen and (min-height: 700px) {
+  .ipad-view {
+    width: 640px;
+    height: 480px;
+    margin: 0 auto;
+  }
+}
+@media only screen and (max-width: 1200px) {
+  .ipad-view {
+    width: 98%;
+    height: 400px;
+    margin: 0 auto;
+  }
+}
+@media only screen and (max-width: 1100px) {
+  .ipad-view {
+    width: 98%;
+    height: 370px;
+    margin: 0 auto;
+  }
+}
+@media only screen and (max-width: 990px) {
+  .ipad-view {
+    width: 98%;
+    height: 400px;
+    margin: 0 auto;
+  }
+}
+@media only screen and (max-width: 765px) {
+  .ipad-view {
+    width: 98%;
+    height: 470px;
+    margin-bottom: 40px;
+    margin: 0 auto;
+  }
+}
+@media only screen and (max-width: 595px) {
+  .ipad-view {
+    width: 98%;
+    height: 400px;
+    margin-bottom: 40px;
+    margin: 0 auto;
+  }
+}
 .ipad-view-default-content {
   margin: 0 auto;
   text-align: center;
@@ -36,19 +74,20 @@
   position: relative;
   height: 100%;
 }
+.ipad-content-image {
+  position: relative;
+  top: 65px;
+}
 
 .ipad-view-default-content p {
-  color: #76767b;
+  color: $gray-text;
   font-size: 120%;
 
   padding: 0 10px;
   text-align: center;
   margin: 0 10px;
 }
-.ipad-content-image {
-  position: relative;
-  top: 65px;
-}
+
 .form-factors {
   padding: 10px 10px;
 }
@@ -78,11 +117,51 @@
   height: 55px;
 }
 
-.col-carousel-iphone {
-  height: 255px;
-  float: left;
+.col-carousel-ipad {
+  padding: 0 10px;
+  height: 245px;
   position: relative;
-  left: 70px;
+  left: 45px;
+}
+@media only screen and (max-width: 1200px) {
+  .col-carousel-ipad {
+    padding: 0 10px;
+    height: 190px;
+    position: relative;
+    left: 45px;
+  }
+}
+@media only screen and (max-width: 1100px) {
+  .col-carousel-ipad {
+    padding: 0 10px;
+    height: 170px;
+    position: relative;
+    left: 45px;
+  }
+}
+@media only screen and (max-width: 990px) {
+  .col-carousel-ipad {
+    padding: 0 10px;
+    height: 190px;
+    position: relative;
+    left: 45px;
+  }
+}
+@media only screen and (max-width: 765px) {
+  .col-carousel-ipad {
+    padding: 0 10px;
+    height: 240px;
+    position: relative;
+    left: 45px;
+  }
+}
+@media only screen and (max-width: 595px) {
+  .col-carousel-ipad {
+    padding: 0 10px;
+    height: 190px;
+    position: relative;
+    left: 45px;
+  }
 }
 .carousel {
   position: relative;
@@ -152,13 +231,66 @@
 .arrow.right {
   transform: rotate(225deg);
 }
-.main-carosuel-iphone {
+
+.main-carosuel-ipad {
   background: white;
-  margin-top: -30px;
-  margin-left: 20px;
-  margin-right: 20px;
-  height: 560px;
-  border-radius: 20px;
+  margin-top: -25px;
+  margin-left: 25px;
+  margin-right: 25px;
+  height: 430px;
+  border-radius: 10px;
+}
+@media only screen and (max-width: 1200px) {
+  .main-carosuel-ipad {
+    background: white;
+    margin-top: -30px;
+    margin-left: 20px;
+    margin-right: 20px;
+    height: 363px;
+    border-radius: 10px;
+  }
+}
+@media only screen and (max-width: 1100px) {
+  .main-carosuel-ipad {
+    background: white;
+    margin-top: -30px;
+    margin-left: 20px;
+    margin-right: 20px;
+    height: 335px;
+    border-radius: 10px;
+  }
+}
+@media only screen and (max-width: 990px) {
+  .main-carosuel-ipad {
+    background: white;
+    margin-top: -30px;
+    margin-left: 20px;
+    margin-right: 20px;
+    height: 362px;
+    border-radius: 10px;
+  }
+}
+@media only screen and (max-width: 765px) {
+  .main-carosuel-ipad {
+    background: white;
+    margin-top: -28px;
+    margin-left: 10px;
+    margin-right: 10px;
+    height: 425px;
+    padding-left: -17px;
+    border-radius: 10px;
+  }
+}
+@media only screen and (max-width: 595px) {
+  .main-carosuel-ipad {
+    background: white;
+    margin-top: -31px;
+    margin-left: 2px;
+    margin-right: 1px;
+    height: 362px;
+    padding-left: -17px;
+    border-radius: 10px;
+  }
 }
 .position {
   margin-left: -40px;
@@ -168,14 +300,14 @@
   padding: 10px;
   position: relative;
   left: 15px;
-  height: 85px;
+  height: 65px;
 }
 @media only screen and (max-width: 1200px) {
   .col-thumbnail {
     padding: 10px;
     position: relative;
     left: 15px;
-    height: 70px;
+    height: 50px;
   }
 }
 @media only screen and (max-width: 765px) {
@@ -183,7 +315,7 @@
     padding: 10px;
     position: relative;
     left: 15px;
-    height: 85px;
+    height: 65px;
   }
 }
 @media only screen and (max-width: 595px) {
@@ -269,12 +401,10 @@
 .header {
   position: relative;
   top: -5px;
-  padding: 0 10px;
+  flex-wrap: nowrap;
+  padding: 0 15px;
 }
-.header-position {
-  position: relative;
-  top: -10px;
-}
+
 .header-left {
   text-align: left;
   position: relative;
@@ -282,10 +412,18 @@
 }
 .header-right {
   text-align: right;
-  right: 50px;
+  right: 35px;
 }
-.header-right-icon {
-  margin-right: -25px;
+.header-right-icons {
+  position: relative;
+  left: -5px;
+  height: 25px;
+  width: 25px;
+  margin-right: 5px;
+}
+.header-position {
+  position: relative;
+  top: -10px;
 }
 .header-title {
   font-size: 100%;
@@ -297,18 +435,63 @@
   left: 40px;
   float: left;
 }
-.scroll-header-iphone {
+
+.scroll-header {
   overflow-y: scroll;
-  height: 420px;
+  height: 310px;
   overflow-x: hidden;
-  margin-right: -1px;
 }
 
+@media only screen and (max-width: 1200px) {
+  .scroll-header {
+    overflow-y: scroll;
+    height: 262px;
+    overflow-x: hidden;
+  }
+}
+@media only screen and (max-width: 1100px) {
+  .scroll-header {
+    overflow-y: scroll;
+    height: 235px;
+    overflow-x: hidden;
+  }
+}
+@media only screen and (max-width: 990px) {
+  .scroll-header {
+    overflow-y: scroll;
+    height: 260px;
+    overflow-x: hidden;
+  }
+}
+@media only screen and (max-width: 765px) {
+  .scroll-header {
+    overflow-y: scroll;
+    height: 300px;
+    overflow-x: hidden;
+  }
+}
+@media only screen and (max-width: 595px) {
+  .scroll-header {
+    overflow-y: scroll;
+    height: 230px;
+    overflow-x: hidden;
+  }
+}
+
+.header-body {
+  margin-left: 5px;
+  margin-right: 0px;
+  margin-top: 7px;
+}
+.wi-step-cnt {
+  font-weight: 500;
+  margin-left: 5px;
+}
 .preview-steps-title {
   padding-top: 5px;
   position: relative;
-  top: -50px;
-  margin: 0 10px 0 20px;
+  top: -40px;
+  margin: 0 10px 0 12px;
   padding-left: 0;
   list-style: none;
 }
@@ -318,50 +501,37 @@
 }
 
 .icon-background {
-  background: #e5e5e5;
-  color: #3678af;
+  background: $border-color-gray;
+  color: $blue11;
+  width: 35px;
+  height: 35px;
+  padding-top: 5px;
+  border-radius: 50%;
+  background: $border-color-gray;
+  color: $blue11;
   width: 30px;
   height: 30px;
   padding: 7px 0 0px 0px;
-  border-radius: 50%;
   margin-right: 10px;
   font-size: 120%;
 }
-
-.icon-background-more {
-  background: #e5e5e5;
-  color: #3678af;
-  width: 25px;
-  height: 25px;
-  border-radius: 50%;
-  font-size: 170%;
-}
-
 .icons {
   width: 25px;
   height: 25px;
 }
-
-.header-body {
-  margin-left: 5px;
-  margin-right: 5px;
-  margin-top: 7px;
+.warning-icon {
+  position: relative;
+  left: 5px;
 }
-
-.wi-step-cnt {
-  font-weight: 500;
-  margin-left: 5px;
-}
-
-.prev-button-iphone {
+.prev-button-ipad {
   padding-right: 12px;
   border: none;
-  background-color: #e5e5e5;
-  color: #3678af;
+  background-color: $border-color-gray;
+  color: $blue11;
   border-radius: 5px;
   white-space: nowrap;
-  margin-left: 5px;
-  width: 90px;
+  float: left;
+  margin-left: 15px;
   height: 31px;
   cursor: default;
 }
@@ -369,26 +539,14 @@
 .allsteps-button {
   padding: 0px 18px 0px 10px;
   border: none;
-  background-color: #e5e5e5;
+  background-color: $border-color-gray;
   color: #3678af;
   border-radius: 5px;
   white-space: nowrap;
   height: 30px;
   cursor: default;
 }
-.allsteps-button-iphone {
-  border: none;
-  background-color: #e5e5e5;
-  color: #3678af;
-  border-radius: 50%;
-  white-space: nowrap;
-  height: 35px;
-  width: 35px;
-  position: relative;
-  top: -2px;
-  cursor: default;
-}
-.next-button-iphone {
+.next-button-ipad {
   padding-left: 12px;
   border: none;
   background-color: #3678af;
@@ -396,8 +554,7 @@
   border-radius: 5px;
   white-space: nowrap;
   float: right;
-  margin-right: 5px;
-  width: 80px;
+  margin-right: 15px;
   height: 31px;
   cursor: default;
 }
@@ -405,6 +562,10 @@
 .foot-btns-data {
   position: relative;
   top: -4px;
+}
+.all-steps {
+  position: relative;
+  left: 8px;
 }
 .foot-button {
   position: relative;
@@ -446,6 +607,7 @@
 
   margin-bottom: 3px;
 }
+
 .editor-listvalues .bullet-icon {
   font-size: 80%;
   padding: 0;
@@ -462,25 +624,66 @@
   font-weight: 500;
 }
 
-.steps-data-iphone {
-  /* overflow-y:scroll;
-    height:135px; */
-  margin-right: 20px;
-  margin-left: -10px;
-  margin-bottom: 5px;
-}
-.scrollable-iPhone {
-  overflow-x: hidden;
+.steps-data-ipad {
   overflow-y: scroll;
-  height: 445px;
-  margin-left: -30px;
-  padding-left: 0;
+  overflow-x: hidden;
+  height: 245px;
+  margin-right: 35px;
+  margin-left: 35px;
 }
-
+@media only screen and (max-width: 1200px) {
+  .steps-data-ipad {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    height: 190px;
+    margin-right: 35px;
+    margin-left: 35px;
+  }
+}
+@media only screen and (max-width: 1100px) {
+  .steps-data-ipad {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    height: 170px;
+    margin-right: 35px;
+    margin-left: 35px;
+  }
+}
+@media only screen and (max-width: 990px) {
+  .steps-data-ipad {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    height: 190px;
+    margin-right: 20px;
+    margin-left: 20px;
+  }
+}
+@media only screen and (max-width: 765px) {
+  .steps-data-ipad {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    height: 240px;
+    margin-right: 20px;
+    margin-left: 20px;
+  }
+}
+@media only screen and (max-width: 595px) {
+  .steps-data-ipad {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    height: 190px;
+    margin-right: 20px;
+    margin-left: 20px;
+  }
+}
 .pos {
   float: right;
   position: relative;
   right: 15px;
+}
+.status-bar-row {
+  margin-bottom: 10px;
+  flex-wrap: nowrap;
 }
 
 .status-bar-left {
@@ -505,13 +708,6 @@
   font-weight: bolder;
   width: 10px;
   margin-right: 3px;
-}
-
-.battery_full-icon {
-  transform: rotate(90deg);
-  position: relative;
-  top: -7px;
-  left: -3px;
 }
 
 .status-bar-icons-battery {
@@ -539,7 +735,7 @@
 
 .start-with-voice-btn {
   color: #4a85b6;
-  background: #e5e5e5;
+  background: $border-color-gray;
   display: inline-flex;
   border: none;
   padding: 4px 10px 2px 23px;
@@ -550,7 +746,7 @@
 
 .start-btn {
   background-color: #3678af;
-  color: #ffffff;
+  color: $white;
   border: none;
   padding: 3px 0px 0px 0px;
   border-radius: 7px;
@@ -558,26 +754,25 @@
   margin-left: 4px;
   white-space: nowrap;
   cursor: default;
-  margin-top: 10px;
 }
 .header-tab-row {
-  margin-left: 0px;
+  padding: 0 5px 0 15px;
 }
 
 .header-tab-title {
   text-align: left;
   font-weight: bold;
-  margin: 0 10px;
+  margin: 0;
   font-size: 130%;
 }
 .header-tab {
-  background-color: #e5e5e5;
+  background-color: $border-color-gray;
+  border-radius: 5px;
   border-left: 5px solid white;
   border-right: 5px solid white;
-  border-radius: 10px;
   margin-bottom: 1rem;
   align-self: start;
-  padding: 10px 0 !important;
+  padding: 10px 0;
 }
 .header-tab-btns {
   text-align: right;
@@ -627,31 +822,30 @@
 }
 
 .header-tab-hr-m0 {
-  margin: 0;
-  height: 0px;
+  margin-top: 5px;
   border: 0.5px solid #d5d5d5;
+  height: 0px;
 }
 
 .button-increment {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background-color: #e5e5e5;
+  background-color: $border-color-gray;
   border: none;
   font-size: 80%;
   position: relative;
   top: 5px;
   cursor: default;
 }
+
 .header-step-title {
   font-style: normal;
   font-weight: bold;
   font-size: 90%;
   letter-spacing: 0.8px;
-  color: #25282b;
+  color: $gray11;
   padding-left: 2px;
-  text-align: left;
-  height: 35px;
   margin-left: 15px;
   line-height: 2em;
 }
@@ -666,18 +860,12 @@
   margin-top: 7px;
 }
 
-.home-indicator {
-  position: absolute;
-  bottom: -70px;
-  right: 4px;
-}
-
 .mat-form-field-appearance-outline .mat-form-field-infix {
   padding: 0.5em 0 1em 0 !important;
 }
 
 .ellipsis-tools {
-  width: 200px;
+  width: 150px;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
@@ -685,7 +873,9 @@
   color: black;
 }
 
-.h-25 {
+.tabs-list {
+  text-align: left;
+  display: flex;
   height: 25px;
 }
 

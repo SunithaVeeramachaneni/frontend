@@ -1,3 +1,5 @@
+@import '../../../../../scss/colors.scss';
+
 ::ng-deep .mat-dialog-container {
   padding: 25px !important;
 }
@@ -18,9 +20,9 @@
   background: #eff6ff;
   border-radius: 6px;
   justify-content: flex-start;
-  color: #1e40af;
+  color: $blue5;
   .mat-icon {
-    color: #60a5fa;
+    color: $blue6;
     margin-right: 5px;
     margin-top: -30px;
   }
@@ -35,7 +37,7 @@
 .currentQuestion {
   font-size: 110%;
   font-weight: 500;
-  color: #000000;
+  color: $black;
   line-height: 1pt;
   margin: 0px;
 }

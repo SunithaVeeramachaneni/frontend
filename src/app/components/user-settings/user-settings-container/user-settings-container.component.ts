@@ -4,7 +4,7 @@ import { HeaderService } from 'src/app/shared/services/header.service';
 @Component({
   selector: 'app-user-settings-container',
   templateUrl: './user-settings-container.component.html',
-  styleUrls: ['./user-settings-container.component.css']
+  styleUrls: ['./user-settings-container.component.scss']
 })
 export class UserSettingsContainerComponent implements OnInit {
   constructor(private headerService: HeaderService) {}

@@ -14,7 +14,7 @@
 }
 
 .form-container header {
-  border-bottom: 1px solid #e5e5e5;
+  border-bottom: 1px solid $border-color-gray;
 }
 
 .custom-header-height {
@@ -39,7 +39,7 @@
 }
 
 .add-step-btn button:hover {
-  background-color: #dbe6ff;
+  background-color: $lavendar;
 }
 
 .header-btn {
@@ -47,7 +47,7 @@
   top: calc(100vh - 60px);
   width: 160px;
   height: 36px;
-  background: #ffffff;
+  background: $white;
   border: 1px solid $blue-main;
   font-style: normal;
   font-weight: 500;
@@ -59,7 +59,7 @@
 }
 
 .header-btn:hover {
-  background-color: #dbe6ff;
+  background-color: $lavendar;
 }
 
 .step-btn {
@@ -68,7 +68,7 @@
   right: 20px;
   width: 160px;
   height: 36px;
-  background: #ffffff;
+  background: $white;
   border: 1px solid $blue-main;
   font-style: normal;
   font-weight: 500;
@@ -88,7 +88,7 @@
 }
 
 .step-btn:hover {
-  background-color: #dbe6ff;
+  background-color: $lavendar;
 }
 
 .example-step-navigation-bar {
@@ -102,14 +102,14 @@
   border: 0;
   margin: 0 10px;
   padding: 10px;
-  color: #76767b;
+  color: $gray-text;
   text-transform: uppercase;
 }
 
 .example-step.example-active {
-  border-bottom: 1px solid #1351d8;
+  border-bottom: 1px solid $blue-primary;
   font-weight: 700;
-  color: #1351d8;
+  color: $blue-primary;
   line-height: 1.7rem;
 }
 
@@ -121,14 +121,14 @@ input:focus {
 .example-nav-button {
   background: transparent;
   border: 0;
-  color: #76767b;
+  color: $gray-text;
 }
 
 .header-add-step {
   margin-right: 30px;
   width: 160px;
   height: 36px;
-  border: 1px solid #1351d8;
+  border: 1px solid $blue-primary;
 }
 
 .header-add-step-text {
@@ -148,7 +148,7 @@ input:focus {
   font-weight: 500;
   font-size: 80%;
   text-transform: uppercase;
-  color: #76767b;
+  color: $gray-text;
   background: transparent;
   border: none;
   margin-right: 15px;

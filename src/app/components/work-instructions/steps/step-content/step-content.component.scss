@@ -1,3 +1,5 @@
+@import '../../../../../scss/colors.scss';
+
 mat-form-field {
   width: 100%;
 }
@@ -29,7 +31,7 @@ h2 {
   font-size: 100%;
   line-height: 20px;
   letter-spacing: 0.25px;
-  color: #ffffff;
+  color: $white;
   text-align: center;
   padding: 10px;
   position: absolute;
@@ -62,7 +64,7 @@ h2 {
 
 .file-images {
   border-radius: 10px;
-  border: 3px #fff solid;
+  border: 3px $white solid;
   width: 60px;
   height: 60px;
   padding: 0;
@@ -92,7 +94,7 @@ h2 {
 .delete-forever-icon {
   position: relative;
   top: 0;
-  color: #76767b;
+  color: $gray-text;
   cursor: pointer;
 }
 
@@ -118,7 +120,7 @@ h2 {
   font-weight: normal;
   font-size: 120%;
   line-height: 19px;
-  color: #25282b;
+  color: $gray11;
 }
 
 .vertical-center-icons {
@@ -150,7 +152,7 @@ h2 {
   font-weight: normal;
   font-size: 120%;
   line-height: 19px;
-  color: #76767b;
+  color: $gray-text;
   padding-top: 9px;
   padding-left: 0;
   margin: 0 auto;
@@ -162,13 +164,13 @@ h2 {
   font-style: normal;
   font-weight: normal;
   font-size: 100%;
-  color: #76767b;
+  color: $gray-text;
 }
 
 .uploadfilecontainertitle .upload-btn {
   background: transparent;
-  border: 1px solid #1351d8;
-  color: #1351d8;
+  border: 1px solid $blue-primary;
+  color: $blue-primary;
   border-radius: 8px;
   -webkit-border-radius: 8px;
   -moz-border-radius: 8px;
@@ -179,7 +181,7 @@ h2 {
 }
 
 .uploadfilecontainertitle .upload-img {
-  color: #1351d8;
+  color: $blue-primary;
   position: relative;
   left: 15px;
 
@@ -221,7 +223,7 @@ h2 {
 
 .files-list .delete-file mat-icon,
 .files-list .edit-file mat-icon {
-  color: #76767b;
+  color: $gray-text;
   font-size: 160%;
 }
 
@@ -300,7 +302,7 @@ h2 {
 
 .step-action {
   cursor: pointer;
-  color: #76767b;
+  color: $gray-text;
   position: relative;
   top: 2px;
 }
@@ -309,7 +311,7 @@ button.btn-hide-show-preview {
   font-weight: 500;
   font-size: 90%;
   text-transform: uppercase;
-  color: #76767b;
+  color: $gray-text;
   position: relative;
   top: 10px;
   outline: none;
@@ -338,7 +340,7 @@ button.btn-hide-show-preview {
   position: absolute;
   top: 0;
   right: 10px;
-  background: #76767b;
+  background: $gray-text;
 }
 
 .mat-form-field-appearance-outline .mat-form-field-wrapper {

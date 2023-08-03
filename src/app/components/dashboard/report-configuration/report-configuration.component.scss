@@ -65,7 +65,7 @@
 
 .column1 {
   width: 22%;
-  border-right: 1px solid #bdbdbd;
+  border-right: 1px solid $disabled-color;
   padding-right: 10px;
 }
 
@@ -78,7 +78,7 @@
   font-style: normal;
   font-weight: normal;
   font-size: 90%;
-  color: #757575;
+  color: $light-gray;
   margin-bottom: 0;
 }
 
@@ -89,7 +89,7 @@
 .edit-icon {
   position: relative;
   top: 1px;
-  color: #757575;
+  color: $light-gray;
   cursor: pointer;
 }
 
@@ -99,7 +99,7 @@
 }
 
 .group-by-div {
-  border: 1px solid #eeeeee;
+  border: 1px solid $gray;
   padding: 15px;
   height: 200px;
   overflow-y: scroll;
@@ -110,7 +110,7 @@
   font-style: normal;
   font-weight: normal;
   font-size: 100%;
-  color: #757575;
+  color: $light-gray;
 }
 
 .report-button {
@@ -136,11 +136,11 @@
 }
 
 .cancel-button {
-  background: #ffffff;
+  background: $white;
   min-width: auto;
   margin: 0px 3px;
-  color: #3d5afe;
-  border: 1px solid #3d5afe;
+  color: $blue-main;
+  border: 1px solid $blue-main;
   padding: 0px 10px;
   height: 35px;
 }
@@ -154,8 +154,8 @@
 }
 
 .save-button {
-  background: #3d5afe;
-  color: #ffffff;
+  background: $blue-main;
+  color: $white;
   cursor: pointer;
   min-width: auto;
   border: none;
@@ -163,8 +163,8 @@
 
 .save-button-arrow {
   width: 30px;
-  background: #3d5afe;
-  color: #ffffff;
+  background: $blue-main;
+  color: $white;
   cursor: pointer;
 }
 
@@ -178,8 +178,8 @@
   .mat-button-toggle-disabled
   .mat-button-toggle-button {
   cursor: default;
-  background: #e0e0e0;
-  color: #bdbdbd;
+  background: $border-color;
+  color: $disabled-color;
 }
 
 .no-of-records {

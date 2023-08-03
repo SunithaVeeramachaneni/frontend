@@ -1,8 +1,10 @@
+@import '../../../../scss/colors.scss';
+
 .user-modal {
   width: 360px;
   overflow: hidden;
   padding: 20px;
-  background: #ffffff;
+  background: $white;
   border-radius: 4px;
 }
 
@@ -57,7 +59,7 @@
 .custom-mat-form-field-white-color {
   ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
     border-radius: 8px;
-    background: #ffffff;
+    background: $white;
   }
 
   ::ng-deep .mat-form-field-flex > .mat-form-field-infix {
@@ -83,8 +85,8 @@
 .add-user-btn {
   text-transform: capitalize;
   float: right;
-  background: #3d5afe;
-  color: #ffffff;
+  background: $blue-main;
+  color: $white;
   height: 29px;
   font-weight: normal;
   line-height: normal;
@@ -92,7 +94,7 @@
 }
 
 .cancel-btn {
-  color: #76767b;
+  color: $gray-text;
   float: right;
   background: transparent;
   height: 29px;
@@ -121,7 +123,7 @@
 }
 
 .permissions-modal {
-  background-color: #ffffff;
+  background-color: $white;
   width: 330px;
   height: 350px;
   padding: 15px 0px;
@@ -163,6 +165,6 @@
 .info-icon {
   margin-top: 10px;
   float: right;
-  color: #9e9e9e;
+  color: $gray1;
   font-size: 140%;
 }

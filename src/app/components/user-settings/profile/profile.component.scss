@@ -1,21 +1,20 @@
-$white-color: #ffffff;
-$blue-color: #3d5afe;
+@import '../../../../scss/colors.scss';
 
 .profile-container {
   position: relative;
 }
 
 .profile-heading {
-  color: #212121;
+  color: $gray-bg;
   font-size: 140%;
   font-weight: 500;
 }
 
 .edit-btn {
   float: right;
-  color: $blue-color;
+  color: $blue-main;
   box-shadow: none;
-  background-color: $white-color;
+  background-color: $white;
   border: 1px solid rgba(61, 90, 254, 0.5);
   margin-top: -7px;
   padding-top: 2px;
@@ -23,9 +22,9 @@ $blue-color: #3d5afe;
 
 .save-btn {
   float: right;
-  background-color: $blue-color;
+  background-color: $blue-main;
   box-shadow: none;
-  color: $white-color;
+  color: $white;
   margin-top: -7px;
   border: 1px solid transparent;
   margin-left: 15px;
@@ -34,8 +33,8 @@ $blue-color: #3d5afe;
 
 .cancel-btn {
   float: right;
-  color: $blue-color;
-  background-color: $white-color;
+  color: $blue-main;
+  background-color: $white;
   border: 1px solid rgba(61, 90, 254, 0.5);
   box-shadow: none;
   margin-top: -7px;
@@ -43,7 +42,7 @@ $blue-color: #3d5afe;
 }
 
 .change-remove-btn {
-  color: $blue-color;
+  color: $blue-main;
   font-size: 90%;
   font-weight: 500;
   border: none;
@@ -52,7 +51,7 @@ $blue-color: #3d5afe;
 }
 
 .change-remove-btn:disabled {
-  color: #e0e0e0;
+  color: $border-color;
   cursor: auto;
 }
 
@@ -81,7 +80,7 @@ $blue-color: #3d5afe;
 
   ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
     border-radius: 8px;
-    background: $white-color;
+    background: $white;
   }
 
   ::ng-deep .mat-form-field-flex > .mat-form-field-infix {
@@ -133,11 +132,11 @@ $blue-color: #3d5afe;
   ::ng-deep
     .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float
     .mat-form-field-label {
-    color: #757575;
+    color: $light-gray;
   }
 
   ::ng-deep .mat-input-element:disabled {
-    color: #000000;
+    color: $black;
     font-size: 110%;
   }
 
@@ -146,7 +145,7 @@ $blue-color: #3d5afe;
   }
 
   ::ng-deep .country-selector:disabled {
-    color: #000000;
+    color: $black;
   }
 }
 

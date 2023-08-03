@@ -56,13 +56,13 @@
   .forms-count {
     font-weight: 500;
     font-size: 110%;
-    color: #212121;
+    color: $gray-bg;
   }
 
   .forms-text {
     font-weight: 500;
     font-size: 110%;
-    color: #9e9e9e;
+    color: $gray1;
     margin-left: -1px;
 
     .ghost-loading {

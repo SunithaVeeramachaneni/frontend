@@ -1,7 +1,7 @@
 @import '../../../scss/colors.scss';
 
 .content {
-  background-color: #f2f2f2;
+  background-color: $white2;
   min-height: 100%;
 }
 
@@ -72,7 +72,7 @@
   font-size: 100%;
   align-items: center;
   letter-spacing: 0.25px;
-  color: #ffffff;
+  color: $white;
   padding-left: 5px;
 }
 
@@ -105,7 +105,7 @@
   font-style: normal;
   font-weight: 600;
   font-size: 120%;
-  color: #000000;
+  color: $black;
 }
 
 .recents-favorites-list {
@@ -127,7 +127,7 @@
 .no-fav {
   text-align: center;
   width: 90%;
-  background: #f2f2f2;
+  background: $white2;
   margin: 0 20px;
   border-radius: 5px;
   padding: 10px;
@@ -142,7 +142,7 @@
 }
 .row-gap {
   height: 20px;
-  background: #f2f2f2;
+  background: $white2;
   position: relative;
   top: 10px;
 }
@@ -152,7 +152,7 @@
   font-weight: 600;
   font-size: 110%;
   line-height: 18px;
-  color: #25282b;
+  color: $gray11;
   max-width: 100%;
   display: block;
   white-space: nowrap;
@@ -188,7 +188,7 @@
   font-size: 95%;
   line-height: 10px;
   letter-spacing: 0.25px;
-  color: #76767b;
+  color: $gray-text;
   text-overflow: ellipsis;
   outline: none;
 }
@@ -199,7 +199,7 @@
   font-size: 95%;
   text-align: right;
   letter-spacing: 0.25px;
-  color: #76767b;
+  color: $gray-text;
   float: right;
 }
 
@@ -235,7 +235,7 @@
 .arrow-button {
   background-color: $blue-main;
   border: none;
-  border-left: 1px solid #25282b;
+  border-left: 1px solid $gray11;
 }
 
 .draft-icon {
@@ -260,7 +260,7 @@
 
   font-style: normal;
   font-weight: normal;
-  color: #ffffff;
+  color: $white;
   margin-left: 10px;
   text-align: center;
   margin-top: -7px;
@@ -280,7 +280,7 @@
   font-weight: normal;
   font-size: 100%;
   line-height: 19px;
-  color: #25282b;
+  color: $gray11;
   position: relative;
   top: -5px;
 }

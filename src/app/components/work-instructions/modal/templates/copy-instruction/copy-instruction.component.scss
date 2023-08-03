@@ -1,3 +1,5 @@
+@import '../../../../../../scss/colors.scss';
+
 .copy-ins {
   background-color: white;
   width: 460px;
@@ -14,7 +16,7 @@
   font-style: normal;
   font-weight: 600;
   font-size: 200%;
-  color: #25282b;
+  color: $gray11;
   padding: 20px 20px 10px 20px;
 }
 
@@ -31,7 +33,7 @@
   font-style: normal;
   font-weight: 600;
   font-size: 120%;
-  color: #25282b;
+  color: $gray11;
 }
 .recent-wi-img {
   width: 80px;
@@ -42,7 +44,7 @@
 .no-fav {
   text-align: center;
   width: 93%;
-  background: #f2f2f2;
+  background: $white2;
   margin: 15px auto;
   border-radius: 5px;
   padding: 10px;
@@ -50,7 +52,7 @@
 }
 
 .form-input {
-  background: #ffffff;
+  background: $white;
   border: 1px solid #cccccc;
   box-sizing: border-box;
   border-radius: 8px;
@@ -73,9 +75,9 @@
 }
 
 .nav-tabs .nav-link.active {
-  color: #1351d8;
-  background-color: #fff;
-  border-bottom: 3px solid #1351d8;
+  color: $blue-primary;
+  background-color: $white;
+  border-bottom: 3px solid $blue-primary;
 }
 
 .nav-tabs .nav-link {
@@ -91,7 +93,7 @@
   justify-content: center;
   letter-spacing: 0.4px;
   text-transform: uppercase;
-  color: #76767b;
+  color: $gray-text;
 }
 
 .tabs-heading {
@@ -100,7 +102,7 @@
 
 .tab-content {
   margin-top: 0px;
-  background: #fff;
+  background: $white;
   border: none;
 }
 
@@ -117,7 +119,7 @@
   font-weight: 600;
   font-size: 100%;
   line-height: 21px;
-  color: #25282b;
+  color: $gray11;
 }
 
 .tabs-recent-subtitle {
@@ -126,13 +128,13 @@
   font-size: 100%;
   line-height: 20px;
   letter-spacing: 0.25px;
-  color: #76767b;
+  color: $gray-text;
   margin-top: 7px;
 }
 
 .tabs-recent-add {
-  background: #ffffff;
-  border: 1px solid #1351d8;
+  background: $white;
+  border: 1px solid $blue-primary;
   box-sizing: border-box;
   border-radius: 8px;
   padding: 6px 14px;
@@ -149,7 +151,7 @@
   display: flex;
   align-items: center;
   letter-spacing: 0.25px;
-  color: #1351d8;
+  color: $blue-primary;
 }
 
 .table td {
@@ -205,16 +207,16 @@
   align-items: center;
   letter-spacing: 0.25px;
   text-transform: uppercase;
-  color: #ffffff;
+  color: $white;
 }
 .create-button {
-  background-color: #1351d8;
+  background-color: $blue-primary;
   border: none;
 }
 .arrow-button {
-  background-color: #1351d8;
+  background-color: $blue-primary;
   border: none;
-  border-left: 1px solid #25282b;
+  border-left: 1px solid $gray11;
 }
 
 .draft-icon {
@@ -239,7 +241,7 @@
 
   font-style: normal;
   font-weight: normal;
-  color: #ffffff;
+  color: $white;
   margin-left: 5px;
   margin-top: 5px;
   text-align: center;
@@ -259,7 +261,7 @@
   font-weight: normal;
   font-size: 100%;
   line-height: 19px;
-  color: #25282b;
+  color: $gray11;
   padding-left: 10px;
   position: relative;
   top: 2px;
@@ -281,7 +283,7 @@
   min-width: 588px;
   height: 560px;
   pointer-events: auto;
-  background-color: #fff;
+  background-color: $white;
   background-clip: padding-box;
   border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 0.3rem;
@@ -306,8 +308,8 @@
 }
 .search-box {
   width: 88%;
-  background-color: #f2f2f2;
-  border: 1px solid #f2f2f2;
+  background-color: $white2;
+  border: 1px solid $white2;
   border-radius: 5px;
   height: 36px;
 }
@@ -369,7 +371,7 @@
 }
 
 .input-group-text {
-  background: #f2f2f2;
+  background: $white2;
   border: none;
 }
 

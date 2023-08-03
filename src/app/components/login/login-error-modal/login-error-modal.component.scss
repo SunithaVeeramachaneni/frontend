@@ -1,13 +1,11 @@
-$gray-600: #757575;
-$white-color: #ffffff;
-$red-color: #f44336;
+@import '../../../../scss/colors.scss';
 
 .login-error-modal {
   width: 455px;
   height: auto;
   overflow: hidden;
   padding: 44px;
-  background: $white-color;
+  background: $white;
   border-radius: 4px;
 
   p {
@@ -37,7 +35,7 @@ $red-color: #f44336;
     font-weight: 400;
     font-size: 110%;
     line-height: 24px;
-    color: $red-color;
+    color: $red-main;
   }
 
   .info3 {
@@ -45,13 +43,13 @@ $red-color: #f44336;
     font-weight: 400;
     font-size: 110%;
     line-height: 24px;
-    color: $gray-600;
+    color: $light-gray;
   }
 
   .okay-btn {
     background-color: #006bb5;
     border: none;
-    color: $white-color;
+    color: $white;
     width: 100px;
     height: 35px;
     float: right;

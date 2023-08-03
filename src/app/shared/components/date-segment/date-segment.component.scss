@@ -1,7 +1,9 @@
+@import '../../../../scss/colors.scss';
+
 ::ng-deep .date-segment .mat-button-toggle-group {
   height: 34px;
   align-items: center;
-  border: 1px solid #f2f2f2;
+  border: 1px solid $white2;
 }
 
 ::ng-deep

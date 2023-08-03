@@ -1,3 +1,5 @@
+@import '../../../../scss/colors.scss';
+
 .mat-divider {
   display: block;
   margin: 0;
@@ -16,7 +18,7 @@
   font-size: 100%;
   line-height: 20px;
   letter-spacing: 0.25px;
-  color: #25282b;
+  color: $gray11;
   margin-top: 10px;
   margin-bottom: 10px;
   padding: 0;
@@ -34,7 +36,7 @@
   font-weight: 500;
   font-size: 90%;
   text-transform: uppercase;
-  color: #76767b;
+  color: $gray-text;
   position: relative;
   right: 0px;
   text-align: right !important;
@@ -60,7 +62,7 @@
   font-weight: normal;
   font-size: 120%;
   line-height: 19px;
-  color: #76767b;
+  color: $gray-text;
   padding-top: 8px;
   padding-left: 160px;
 }

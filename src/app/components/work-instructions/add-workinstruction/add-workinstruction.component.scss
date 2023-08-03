@@ -9,7 +9,7 @@
 
 .wi-status-container {
   height: auto;
-  background: #ffffff;
+  background: $white;
   display: flex;
   flex-wrap: wrap;
   margin-right: -15px;
@@ -22,7 +22,7 @@ input[type='text']:focus {
 
 .mat-raised-button,
 .mat-stroked-button {
-  color: #76767b;
+  color: $gray-text;
 }
 
 .disabled {
@@ -68,7 +68,7 @@ input[type='text']:focus {
 }
 
 .wi-status-container ul.wi-status li:first-child {
-  border-right: 1px solid #e5e5e5;
+  border-right: 1px solid $border-color-gray;
   height: 30px;
   padding: 0 5px;
   margin-right: 10px;
@@ -77,17 +77,17 @@ input[type='text']:focus {
 }
 
 .paginate-steps-container {
-  border-top: 1px solid #e5e5e5;
-  border-bottom: 1px solid #e5e5e5;
-  /*background: #fff;*/
+  border-top: 1px solid $border-color-gray;
+  border-bottom: 1px solid $border-color-gray;
+  /*background: $white;*/
   height: 60px;
   padding: 0;
   width: 100%;
 }
 
 .paginate-steps {
-  background: #fff;
-  border-bottom: 1px solid #e5e5e5;
+  background: $white;
+  border-bottom: 1px solid $border-color-gray;
 }
 
 .mat-tab-body {
@@ -106,7 +106,7 @@ input[type='text']:focus {
   line-height: 19px;
   display: flex;
   align-items: center;
-  color: #76767b;
+  color: $gray-text;
   padding: 10px;
   background-color: white;
   white-space: nowrap;
@@ -157,14 +157,14 @@ input[type='text']:focus {
 }
 
 .dis-publish {
-  background: #e5e5e5;
+  background: $border-color-gray;
   font-style: normal;
   font-weight: 500;
   font-size: 100%;
   line-height: 20px;
   align-items: center;
   letter-spacing: 0.25px;
-  color: #76767b;
+  color: $gray-text;
   position: relative;
   left: 3px;
   /* top: 2px; */
@@ -177,7 +177,7 @@ input[type='text']:focus {
   line-height: 20px;
   align-items: center;
   letter-spacing: 0.25px;
-  color: #ffffff;
+  color: $white;
   position: relative;
   left: 3px;
   /* top: 2px; */
@@ -205,7 +205,7 @@ input[type='text']:focus {
 }
 
 .btn-primary {
-  color: #fff;
+  color: $white;
   background-color: $blue-main;
   border-color: $blue-main;
 }

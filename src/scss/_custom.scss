@@ -1,4 +1,4 @@
-@import 'colors.scss';
+@import './colors.scss';
 
 .p-0 {
   padding: 0;
@@ -362,7 +362,7 @@
 }
 
 .fnt-white {
-  color: #ffffff;
+  color: $white;
 }
 
 .text-red {
@@ -370,11 +370,11 @@
 }
 
 .bg-white {
-  background-color: #ffffff;
+  background-color: $white;
 }
 
 .bg-lightgray {
-  background-color: #e5e5e5;
+  background-color: $border-color-gray;
 }
 
 .bg-red {
@@ -511,7 +511,7 @@ a {
 .custom-modal-card .yes-btn {
   background-color: #ff3b30;
   border: 1px solid #ff3b30;
-  color: #ffffff;
+  color: $white;
   border-radius: 5px;
   cursor: pointer;
   -webkit-justify-content: center;
@@ -543,8 +543,8 @@ a {
 }
 
 .btn-outline-blue {
-  border: 1px solid #1351d8;
-  color: #1351d8;
+  border: 1px solid $blue-primary;
+  color: $blue-primary;
 }
 
 .recent-wi-img {
@@ -617,7 +617,7 @@ a {
 }
 
 .mat-tab-label-container {
-  background: #fff;
+  background: $white;
 }
 
 .editor {
@@ -675,7 +675,7 @@ body {
 }
 
 .fnt-gray {
-  color: #25282b;
+  color: $gray11;
 }
 
 .bg-sky-blue {
@@ -688,7 +688,7 @@ body {
   background-color: #34c759;
 }
 .bg-blue {
-  background-color: #5856d6;
+  background-color: $action-raised;
 }
 .sky-blue {
   color: #2196f3;
@@ -702,7 +702,7 @@ body {
   color: #34c759;
 }
 .blue {
-  color: #5856d6;
+  color: $action-raised;
 }
 
 .mat-raised-button[disabled]:not([class*='mat-elevation-z']) {
@@ -753,7 +753,7 @@ body {
 
 .mat-error {
   font-size: 80%;
-  color: #f44336;
+  color: $red-main;
   margin-bottom: 10px;
 }
 
@@ -766,8 +766,8 @@ body {
   min-width: auto;
   width: auto;
   overflow: hidden;
-  background: #000000;
-  color: #ffffff;
+  background: $black;
+  color: $white;
   border-width: 1px;
   border-style: solid;
   border-color: #dddddd #d6d6d6 #cfcfcf;
@@ -779,7 +779,7 @@ body {
 .alert-success,
 .alert-danger {
   background: #2c2c2c;
-  color: #ffffff;
+  color: $white;
   margin-bottom: -5px;
 }
 

@@ -1,9 +1,11 @@
+@import '../../../../scss/colors.scss';
+
 .report-delete-modal {
   width: auto;
   height: auto;
   overflow: hidden;
   padding: 20px;
-  background: #ffffff;
+  background: $white;
   border-radius: 4px;
 }
 
@@ -28,7 +30,7 @@
   font-style: normal;
   font-weight: 500;
   font-size: 120%;
-  color: #3d5afe;
+  color: $blue-main;
   cursor: pointer;
 }
 
@@ -64,7 +66,7 @@
   font-weight: 500;
   font-size: 140%;
   line-height: 21px;
-  color: #212121;
+  color: $gray-bg;
 }
 
 .widgets-cancel {
@@ -81,7 +83,7 @@
   font-weight: normal;
   font-size: 100%;
   line-height: 16px;
-  color: #757575;
+  color: $light-gray;
   margin-top: 5px;
 }
 
@@ -90,6 +92,6 @@
   font-weight: normal;
   font-size: 100%;
   line-height: 19px;
-  color: #212121;
+  color: $gray-bg;
   margin-left: 10px;
 }

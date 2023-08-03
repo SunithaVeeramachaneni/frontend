@@ -1,3 +1,5 @@
+@import '../../../../scss/colors.scss';
+
 .assignee-modal {
   height: 220px;
   padding: 20px 0;
@@ -13,7 +15,7 @@
   font-weight: 900;
   font-size: 80%;
   line-height: 21px;
-  color: #000000;
+  color: $black;
   margin-left: 20px;
 }
 
@@ -40,21 +42,21 @@
   line-height: 24px;
   letter-spacing: 0.3px;
   text-transform: uppercase;
-  color: #76767b;
+  color: $gray-text;
   float: right;
   --background-hover: none;
 }
 
 .save-btn {
   margin-right: 20px;
-  background-color: #1351d8;
-  color: #ffffff;
+  background-color: $blue-primary;
+  color: $white;
 }
 
 .save-btn:disabled {
   margin-right: 20px;
-  background-color: #e5e5e5;
-  color: #8a8a8c;
+  background-color: $border-color-gray;
+  color: $gray5;
 }
 
 .mat-field {

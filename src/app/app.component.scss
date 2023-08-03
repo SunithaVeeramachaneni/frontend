@@ -35,20 +35,20 @@ li {
   font-style: normal;
   font-weight: 500;
   font-size: 110%;
-  color: #76767b;
+  color: $gray-text;
   cursor: pointer;
 }
 
 .menu-item li:hover {
-  background-color: #eeeeee;
+  background-color: $gray;
 }
 
 .menu-item li.selected {
-  border-left: 5px solid #2a3eb1;
+  border-left: 5px solid $blue-head;
 }
 
 .menu-item li.selected .sidebar-icons {
-  background-color: #2a3eb1;
+  background-color: $blue-head;
 }
 
 .submenu {
@@ -61,7 +61,7 @@ li {
 }
 
 .submenu.subSelected {
-  color: #2a3eb1;
+  color: $blue-head;
   background: #f0f3ff;
   border-radius: 8px;
   width: 95%;
@@ -121,7 +121,7 @@ li.selected .sidebar-icons {
 }
 
 .menu-name.active {
-  color: #2a3eb1;
+  color: $blue-head;
 }
 
 .menu-name:hover {
@@ -179,7 +179,7 @@ mat-sidenav {
 
 mat-sidenav {
   width: 280px;
-  background-color: #ffffff;
+  background-color: $white;
   -webkit-transform: translate3d(-100%, 0px, 0px);
   transform: translate3d(-100%, 0px, 0px);
   visibility: visible;

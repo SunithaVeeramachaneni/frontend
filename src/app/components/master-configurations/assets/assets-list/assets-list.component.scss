@@ -90,7 +90,7 @@
   .asset-text {
     font-weight: 500;
     font-size: 110%;
-    color: #9e9e9e;
+    color: $gray1;
     margin-left: 5px;
 
     .ghost-loading {
@@ -103,7 +103,7 @@
   .asset-count {
     font-weight: 500;
     font-size: 110%;
-    color: #212121;
+    color: $gray-bg;
     position: relative;
     left: 4px;
   }

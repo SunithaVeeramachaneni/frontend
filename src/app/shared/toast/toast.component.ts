@@ -9,7 +9,7 @@ import { ToastService } from './toast.service';
 @Component({
   selector: 'app-toast',
   templateUrl: './toast.component.html',
-  styleUrls: ['toast.component.css'],
+  styleUrls: ['toast.component.scss'],
   animations: [toastAnimations.fadeToast]
 })
 export class ToastComponent implements OnInit, OnDestroy {

@@ -1,3 +1,5 @@
+@import '../../../scss/colors.scss';
+
 .maintenance-page {
   height: 120vh;
   padding: 20px 0;
@@ -10,7 +12,7 @@
 
 .header-filters {
   display: flex;
-  background-color: #ffffff;
+  background-color: $white;
   padding-top: 10px;
   height: 50px;
 }
@@ -22,7 +24,7 @@
 }
 
 .plants-workcenters {
-  background: #ffffff;
+  background: $white;
   margin-top: -52px;
 }
 
@@ -39,7 +41,7 @@
 }
 
 .unassigned-workorder-list {
-  border-top: 10px solid #5856d6;
+  border-top: 10px solid $action-raised;
   width: 100%;
   margin: 0;
   border-radius: 8px;
@@ -100,7 +102,7 @@
   font-weight: bold;
   font-size: 150%;
   line-height: 26px;
-  color: #000000;
+  color: $black;
 }
 
 .kit-heading {
@@ -108,7 +110,7 @@
   font-weight: 500;
   font-size: 100%;
   line-height: 16px;
-  color: #000000;
+  color: $black;
 }
 
 .filter-option {
@@ -121,7 +123,7 @@
 
 .filter-option-id {
   margin: 0px 0px;
-  color: #757575;
+  color: $light-gray;
   height: 19px;
 }
 

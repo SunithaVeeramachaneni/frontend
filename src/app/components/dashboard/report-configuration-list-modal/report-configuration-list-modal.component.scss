@@ -1,3 +1,5 @@
+@import '../../../../scss/colors.scss';
+
 .report-configuration {
   width: 570px;
   height: 475px;
@@ -33,7 +35,7 @@
 }
 
 .content-right-div {
-  border-left: 1px solid #bdbdbd;
+  border-left: 1px solid $disabled-color;
   width: 50%;
 }
 
@@ -47,7 +49,7 @@
   font-weight: 500;
   padding-left: 20px;
   font-size: 110%;
-  color: #212121;
+  color: $gray-bg;
 }
 
 .list-group-item {
@@ -55,7 +57,7 @@
   padding: 10px 0px 10px 20px;
   font-weight: 400;
   font-size: 100%;
-  color: #000000;
+  color: $black;
   cursor: pointer;
 }
 
@@ -72,18 +74,18 @@ li {
 }
 
 .footer {
-  border-top: 1px solid #bdbdbd;
+  border-top: 1px solid $disabled-color;
 }
 
 .cancel-button {
-  color: #3d5afe;
+  color: $blue-main;
   margin-right: 10px;
 }
 
 .no-report-objects {
   text-align: center;
   width: 80%;
-  background: #f2f2f2;
+  background: $white2;
   margin: 0 20px;
   border-radius: 5px;
   padding: 10px;

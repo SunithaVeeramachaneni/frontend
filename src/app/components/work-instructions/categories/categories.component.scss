@@ -14,7 +14,7 @@
   font-style: normal;
   font-weight: 600;
   line-height: 21px;
-  color: #25282b;
+  color: $gray11;
   padding-left: 13px;
 }
 
@@ -35,7 +35,7 @@
 }
 
 .categories-button:hover {
-  background-color: #dbe6ff;
+  background-color: $lavendar;
 }
 
 .categories-icon {
@@ -100,7 +100,7 @@
   font-weight: 600;
   font-size: 115%;
   line-height: 21px;
-  color: #25282b;
+  color: $gray11;
   margin-bottom: 5px;
   text-decoration: none;
   text-overflow: ellipsis;
@@ -115,14 +115,14 @@
   font-size: 85%;
   line-height: 20px;
   letter-spacing: 0.25px;
-  color: #76767b;
+  color: $gray-text;
   margin-bottom: 0px;
 }
 
 .no-categories {
   text-align: center;
   width: 100%;
-  background: #f2f2f2;
+  background: $white2;
   margin: 0 auto;
   border-radius: 5px;
   padding: 10px;
@@ -152,7 +152,7 @@
 }
 
 .mat-menu-item:hover {
-  background-color: #dbe6ff;
+  background-color: $lavendar;
 }
 
 button:focus {
@@ -168,7 +168,7 @@ button:focus {
   border-radius: 7px;
 }
 .card:hover {
-  background-color: #dbe6ff;
+  background-color: $lavendar;
   opacity: 1;
 }
 
@@ -178,13 +178,13 @@ button:focus {
 }
 
 .custom-card a {
-  color: #25282b;
+  color: $gray11;
 }
 
 .no-fav {
   text-align: center;
   width: 95%;
-  background: #f2f2f2;
+  background: $white2;
   margin: 0 20px;
   border-radius: 5px;
   padding: 10px;

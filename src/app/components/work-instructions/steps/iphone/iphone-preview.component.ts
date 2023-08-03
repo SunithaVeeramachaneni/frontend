@@ -5,7 +5,7 @@ import { SelectedInstructionData } from '../overview.component';
 @Component({
   selector: 'app-iphone-preview',
   templateUrl: './iphone-preview.component.html',
-  styleUrls: ['./iphone-preview.component.css']
+  styleUrls: ['./iphone-preview.component.scss']
 })
 export class IphonePreviewComponent implements OnInit, OnDestroy {
   @Input() titleProvided;

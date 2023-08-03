@@ -2,7 +2,7 @@
 
 .modal-card {
   width: 460px;
-  background-color: #ffffff;
+  background-color: $white;
   border-radius: 5px;
   height: 510px;
 }
@@ -37,7 +37,7 @@
   font-weight: 400;
   line-height: 1.5;
   color: #495057;
-  background-color: #fff;
+  background-color: $white;
   background-clip: padding-box;
   border: 1px solid #ced4da;
   border-radius: 0.25rem;
@@ -56,12 +56,12 @@
   font-weight: normal;
   font-size: 110%;
   line-height: 19px;
-  color: #25282b;
+  color: $gray11;
   margin-bottom: 7px;
 }
 
 .form-input {
-  background: #ffffff;
+  background: $white;
   border: 1px solid #cccccc;
   box-sizing: border-box;
   border-radius: 8px;
@@ -105,7 +105,7 @@ label {
   font-weight: normal;
   font-size: 110%;
   line-height: 19px;
-  color: #76767b;
+  color: $gray-text;
   padding-top: 8px;
   text-align: center;
   position: relative;
@@ -160,7 +160,7 @@ label {
   font-size: 100%;
   line-height: 20px;
   letter-spacing: 1.25px;
-  color: #ffffff;
+  color: $white;
   float: right;
   cursor: pointer;
   border: none;
@@ -174,7 +174,7 @@ label {
 .save-btn:disabled {
   width: 131px;
   height: 36px;
-  background: #e5e5e5;
+  background: $border-color-gray;
   border-radius: 8px;
 
   font-style: normal;
@@ -187,7 +187,7 @@ label {
 }
 
 .char-count {
-  color: #76767b;
+  color: $gray-text;
 }
 
 .upload-img {

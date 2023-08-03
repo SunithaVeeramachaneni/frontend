@@ -1,9 +1,11 @@
+@import '../../../../scss/colors.scss';
+
 .permissions-revoke-modal {
   width: 467px;
   height: auto;
   overflow: hidden;
   padding: 24px;
-  background: #ffffff;
+  background: $white;
   border-radius: 4px;
 
   p {
@@ -25,9 +27,9 @@
   }
 
   .okay-btn {
-    background: #3d5afe;
+    background: $blue-main;
     border-radius: 4px;
-    color: #ffffff;
+    color: $white;
     float: right;
     border: none;
   }

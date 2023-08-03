@@ -32,7 +32,7 @@ li.breadcrumb-item {
   font-weight: normal;
   font-size: 100%;
   line-height: 19px;
-  color: #1351d8;
+  color: $blue-primary;
 }
 
 li.breadcrumb-item.active span {
@@ -41,12 +41,12 @@ li.breadcrumb-item.active span {
 }
 
 .mat-select-panel .mat-option.mat-selected:not(.mat-option-multiple) {
-  background: #dbe6ff;
+  background: $lavendar;
 }
 
 .mat-primary .mat-option.mat-selected:not(.mat-option-disabled) {
   color: rgba(0, 0, 0, 0.87);
-  background: #dbe6ff;
+  background: $lavendar;
 }
 
 .mat-chip-list-wrapper {
@@ -352,11 +352,11 @@ textarea.mat-input-element {
 }
 
 .copy-ins .modal-body .mat-tab-label:hover {
-  background-color: #dbe6ff !important;
+  background-color: $lavendar !important;
 }
 
 .copy-ins .modal-body .mat-tab-label-active:hover {
-  background-color: #ffffff !important;
+  background-color: $white !important;
 }
 
 .swal2-styled.swal2-confirm {
@@ -432,7 +432,7 @@ button.mat-menu-item {
   }
 
   .mat-form-field-appearance-outline .mat-form-field-outline {
-    background-color: #e5e5e5;
+    background-color: $border-color-gray;
     border-radius: 4px;
   }
 
@@ -442,20 +442,20 @@ button.mat-menu-item {
 }
 
 .mat-button-toggle {
-  background: #f2f2f2;
+  background: $white2;
   border: none;
 
   font-style: normal;
   font-weight: normal;
 
-  color: #7d7d7d;
+  color: $dark-gray;
 }
 
 .mat-button-toggle-checked {
-  background: #f2f2f2;
+  background: $white2;
   font-style: normal;
   font-weight: 500;
-  color: #000000;
+  color: $black;
 }
 
 .gridster .gridster-row {
@@ -498,7 +498,7 @@ button.mat-menu-item {
 }
 
 .mat-column-createdAt {
-  color: #757575;
+  color: $light-gray;
 }
 
 .sidebar-menu-panel {
@@ -562,7 +562,7 @@ button.mat-menu-item {
   }
 
   .mat-form-field-appearance-outline .mat-form-field-outline {
-    background: #eeeeee;
+    background: $gray;
     border-radius: 4px;
   }
 
@@ -592,7 +592,7 @@ button.mat-menu-item {
   }
 
   .mat-form-field-appearance-outline .mat-form-field-outline {
-    background: #ffffff;
+    background: $white;
     border-radius: 4px;
   }
 
@@ -612,7 +612,7 @@ button.mat-menu-item {
 .searchIcon {
   position: relative;
   top: 2px;
-  color: #757575;
+  color: $light-gray;
   right: 2px;
 }
 
@@ -643,7 +643,7 @@ button.mat-menu-item {
 
 .mat-column-actions {
   font-size: 100% !important;
-  border-left: 1px solid #eeeeee;
+  border-left: 1px solid $gray;
 
   mat-icon {
     font-size: 160%;

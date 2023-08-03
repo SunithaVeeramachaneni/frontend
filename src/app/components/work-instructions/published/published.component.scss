@@ -1,3 +1,5 @@
+@import '../../../../scss/colors.scss';
+
 .publish-main {
   height: 95vh;
   margin-right: 14px;
@@ -13,8 +15,8 @@
 .published-table-title h2 {
   margin: 0;
   padding: 15px 0px;
-  color: #000000;
-  background: #fff;
+  color: $black;
+  background: $white;
   font-size: 200%;
   font-weight: 600;
 }
@@ -25,7 +27,7 @@
   position: relative;
   left: -15px;
   top: -10px;
-  color: #bdbdbd;
+  color: $disabled-color;
 }
 
 .mat-icon-star {
@@ -33,7 +35,7 @@
   top: 6px;
 }
 .font-color {
-  color: #000000;
+  color: $black;
 }
 
 .arrow {
@@ -74,7 +76,7 @@ tbody th {
 }
 
 tbody td {
-  color: #212121;
+  color: $gray-bg;
   text-align: left;
   font-weight: normal;
   font-size: 100%;
@@ -98,7 +100,7 @@ tbody tr td:nth-child(5) {
 }
 
 .pagination-main {
-  background-color: #ffffff;
+  background-color: $white;
   height: 45px;
   padding-top: 10px;
 }

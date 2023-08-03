@@ -1,7 +1,9 @@
+@import '../../../../scss/colors.scss';
+
 .user-settings-body {
   height: 90vh;
   margin-right: 14px;
-  background-color: #ffffff;
+  background-color: $white;
   display: flex;
   border-radius: 8px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
@@ -13,9 +15,9 @@
 
 .is-active {
   background: #eff2ff;
-  color: #2a3eb1;
+  color: $blue-head;
 }
 
 .user-settings-border {
-  border-right: 1px solid #bdbdbd;
+  border-right: 1px solid $disabled-color;
 }

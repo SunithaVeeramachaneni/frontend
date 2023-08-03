@@ -51,7 +51,7 @@
   }
 
   .response-list {
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid $border-color;
     height: 45px;
   }
 
@@ -146,7 +146,7 @@
   background: none;
   font-size: 130%;
   font-weight: 500;
-  color: #000000;
+  color: $black;
 }
 
 .global_response_description_input {
@@ -154,6 +154,6 @@
   background: none;
   font-size: 90%;
   font-weight: 200;
-  color: #000000;
+  color: $black;
   height: 24px;
 }

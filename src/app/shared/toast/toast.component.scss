@@ -1,3 +1,5 @@
+@import '../../../scss/colors.scss';
+
 .toast {
   position: relative;
   display: flex;
@@ -8,8 +10,8 @@
   min-width: auto;
   width: auto;
   overflow: hidden;
-  background: #000000;
-  color: #ffffff;
+  background: $black;
+  color: $white;
   border-width: 1px;
   border-style: solid;
   border-color: #dddddd #d6d6d6 #cfcfcf;

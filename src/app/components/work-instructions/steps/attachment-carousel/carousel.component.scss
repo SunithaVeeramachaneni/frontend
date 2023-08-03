@@ -1,3 +1,5 @@
+@import '../../../../../scss/colors.scss';
+
 .col-carousel {
   padding: 0 10px;
   height: 295px;
@@ -132,7 +134,7 @@
 .icon-background {
   color: #3678af;
   border-radius: 50%;
-  background: #e5e5e5;
+  background: $border-color-gray;
   width: 30px;
   height: 30px;
   padding: 7px 0 0px 0px;
@@ -143,7 +145,7 @@
 .prev-allsteps-button {
   padding: 0px 5px 5px 10px;
   border: none;
-  background-color: #e5e5e5;
+  background-color: $border-color-gray;
   color: #3678af;
   border-radius: 5px;
 }

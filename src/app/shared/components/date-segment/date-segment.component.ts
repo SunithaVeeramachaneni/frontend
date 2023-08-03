@@ -8,7 +8,7 @@ import { format } from 'date-fns';
 @Component({
   selector: 'app-date-segment',
   templateUrl: './date-segment.component.html',
-  styleUrls: ['./date-segment.component.css']
+  styleUrls: ['./date-segment.component.scss']
 })
 export class DateSegmentComponent implements OnInit {
   @Output() dateRangeEvent = new EventEmitter<any>();

@@ -11,7 +11,7 @@ import { ErrorHandlerService } from '../../../../../shared/error-handler/error-h
 @Component({
   selector: 'app-copy-instruction',
   templateUrl: './copy-instruction.component.html',
-  styleUrls: ['./copy-instruction.component.css']
+  styleUrls: ['./copy-instruction.component.scss']
 })
 export class CopyInstructionComponent implements OnInit {
   public recentsFavorites = 0;

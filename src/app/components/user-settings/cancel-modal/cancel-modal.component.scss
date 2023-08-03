@@ -1,9 +1,11 @@
+@import '../../../../scss/colors.scss';
+
 .cancel-modal {
   width: 400px;
   height: auto;
   overflow: hidden;
   padding: 17px;
-  background: #ffffff;
+  background: $white;
   border-radius: 4px;
 }
 
@@ -21,14 +23,14 @@
 .yes-btn {
   background: #f6685e;
   border-radius: 4px;
-  color: #ffffff;
+  color: $white;
   float: right;
   border: none;
 }
 
 .no-btn {
-  color: #3d5afe;
-  background: #ffffff;
+  color: $blue-main;
+  background: $white;
   border-radius: 4px;
   float: right;
   border: none;

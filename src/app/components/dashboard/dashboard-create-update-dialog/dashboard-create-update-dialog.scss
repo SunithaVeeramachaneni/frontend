@@ -1,3 +1,5 @@
+@import '../../../../scss/colors.scss';
+
 .dashboard-create-update-dialog {
   overflow: hidden;
   padding: 20px;
@@ -40,9 +42,9 @@
   font-weight: 500;
   font-size: 100%;
   letter-spacing: 0.15px;
-  color: #ffffff;
+  color: $white;
   border-radius: 4px;
-  background-color: #3d5afe;
+  background-color: $blue-main;
   float: right;
   cursor: pointer;
 }
@@ -63,7 +65,7 @@
   }
 
   .mat-form-field-appearance-outline .mat-form-field-outline {
-    background: #ffffff;
+    background: $white;
     border-radius: 4px;
   }
 }

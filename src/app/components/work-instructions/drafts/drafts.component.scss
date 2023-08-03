@@ -1,10 +1,12 @@
+@import '../../../../scss/colors.scss';
+
 .drafts-main {
   height: 95vh;
   margin-right: 14px;
 }
 
 .header-drafts {
-  background: white;
+  background: $white;
   height: 50px;
   padding: 0px 10px;
   justify-content: flex-end;
@@ -13,8 +15,8 @@
 .drafts-table-title h2 {
   margin: 0;
   padding: 15px 0px;
-  color: #000000;
-  background: #fff;
+  color: $black;
+  background: $white;
   font-size: 200%;
   font-weight: 600;
 }
@@ -25,14 +27,14 @@
   position: relative;
   left: -15px;
   top: -10px;
-  color: #bdbdbd;
+  color: $disabled-color;
 }
 .mat-icon-star {
   position: relative;
   top: 6px;
 }
 .font-color {
-  color: #000000;
+  color: $black;
 }
 
 .arrow {
@@ -43,12 +45,12 @@
 }
 
 .arrow-inactive {
-  color: white;
+  color: $white;
 }
 
 table {
   width: 100%;
-  background: white;
+  background: $white;
   margin-top: 14px;
 }
 
@@ -61,19 +63,19 @@ thead th {
   border-top: none;
   text-align: left;
   font-weight: 500;
-  color: #000;
+  color: $black;
   font-size: 110%;
 }
 
 tbody th {
   text-align: left;
   font-weight: 500;
-  color: #000;
+  color: $white;
   font-size: 110%;
 }
 
 tbody td {
-  color: #212121;
+  color: $gray-bg;
   text-align: left;
   font-weight: normal;
   font-size: 100%;
@@ -97,7 +99,7 @@ tbody tr td:nth-child(5) {
 }
 
 .pagination-main {
-  background-color: #ffffff;
+  background-color: $white;
   height: 45px;
   padding-top: 10px;
 }

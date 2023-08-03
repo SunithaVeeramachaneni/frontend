@@ -1,10 +1,4 @@
-$blue-color: #3d5afe;
-$white-color: #ffffff;
-$black-color: #000000;
-$gray-600: #757575;
-$gray-900: #212121;
-$border: 1px solid #e0e0e0;
-$blue-color: #3d5afe;
+@import '../../../../scss/colors.scss';
 
 .m-t-minus-25 {
   margin-top: -25px;
@@ -22,7 +16,7 @@ $blue-color: #3d5afe;
 }
 
 .main-tenant-container {
-  background-color: #ffffff;
+  background-color: $white;
   position: relative;
   height: 100%;
 
@@ -32,40 +26,40 @@ $blue-color: #3d5afe;
 }
 
 .tenant-header {
-  border-bottom: 1px solid #e7e7e7;
+  border-bottom: 1px solid $border-bottom;
   padding: 12px 12px 20px 12px;
 }
 
 .adding-tenant-text {
   font-weight: 500;
   font-size: 150%;
-  color: #000000;
+  color: $black;
   position: relative;
   top: 5px;
 }
 
 .cancel-btn {
   float: right;
-  color: $blue-color;
-  border: 1px solid $blue-color;
-  background-color: #ffffff;
+  color: $blue-main;
+  border: 1px solid $blue-main;
+  background-color: $white;
   box-shadow: none;
   margin-right: 14px;
 }
 
 .next-btn {
   float: right;
-  background-color: $blue-color;
+  background-color: $blue-main;
   box-shadow: none;
-  color: #ffffff;
+  color: $white;
 }
 
 .save-btn,
 .edit-btn {
   float: right;
-  background-color: $blue-color;
+  background-color: $blue-main;
   box-shadow: none;
-  color: #ffffff;
+  color: $white;
 }
 
 .scroll-content {
@@ -120,16 +114,16 @@ $blue-color: #3d5afe;
   margin-top: 25px;
 
   .browse-btn {
-    color: $blue-color;
-    border: 1px solid $blue-color;
-    background-color: $white-color;
+    color: $blue-main;
+    border: 1px solid $blue-main;
+    background-color: $white;
     box-shadow: none;
   }
 
   .browse-btn:disabled {
-    color: $gray-600;
-    border: 1px solid $gray-600;
-    background-color: $white-color;
+    color: $light-gray;
+    border: 1px solid $light-gray;
+    background-color: $white;
     box-shadow: none;
   }
 
@@ -146,7 +140,7 @@ $blue-color: #3d5afe;
   }
 
   .remove-btn {
-    color: $blue-color;
+    color: $blue-main;
     font-size: 90%;
     font-weight: 500;
     border: none;
@@ -154,7 +148,7 @@ $blue-color: #3d5afe;
   }
 
   .remove-btn:disabled {
-    color: $gray-600;
+    color: $light-gray;
     cursor: auto;
   }
 
@@ -162,7 +156,7 @@ $blue-color: #3d5afe;
     font-style: normal;
     font-weight: 400;
     font-size: 110%;
-    color: $gray-600;
+    color: $light-gray;
     line-height: 28px;
     letter-spacing: 0.35px;
   }
@@ -171,7 +165,7 @@ $blue-color: #3d5afe;
     font-style: normal;
     font-weight: 400;
     font-size: 100%;
-    color: $gray-900;
+    color: $gray-bg;
     line-height: 28px;
     letter-spacing: 0.35px;
   }
@@ -180,7 +174,7 @@ $blue-color: #3d5afe;
     font-style: normal;
     font-weight: 500;
     font-size: 100%;
-    color: $gray-900;
+    color: $gray-bg;
     line-height: 22px;
   }
 
@@ -188,7 +182,7 @@ $blue-color: #3d5afe;
     font-style: normal;
     font-weight: 400;
     font-size: 100%;
-    color: $gray-600;
+    color: $light-gray;
     line-height: 20px;
   }
 
@@ -205,7 +199,7 @@ $blue-color: #3d5afe;
       font-size: 160%;
       margin: 0;
       padding: 16px;
-      color: $black-color;
+      color: $black;
       line-height: 32px;
       text-align: left;
       width: 50%;
@@ -217,9 +211,9 @@ $blue-color: #3d5afe;
     }
 
     .user {
-      border-top: $border;
-      border-left: $border;
-      border-bottom: $border;
+      border-top: 1px solid $border-color;
+      border-left: 1px solid $border-color;
+      border-bottom: 1px solid $border-color;
       border-top-left-radius: 5px;
       border-bottom-left-radius: 5px;
       float: right;
@@ -234,7 +228,7 @@ $blue-color: #3d5afe;
     }
 
     .without-company-logo {
-      border: $border;
+      border: 1px solid $border-color;
       border-top-right-radius: 5px;
       border-bottom-right-radius: 5px;
       float: right;
@@ -242,9 +236,9 @@ $blue-color: #3d5afe;
     }
 
     .with-company-logo {
-      border-top: $border;
-      border-right: $border;
-      border-bottom: $border;
+      border-top: 1px solid $border-color;
+      border-right: 1px solid $border-color;
+      border-bottom: 1px solid $border-color;
       border-top-right-radius: 5px;
       border-bottom-right-radius: 5px;
       float: right;
@@ -267,7 +261,7 @@ $blue-color: #3d5afe;
       text-align: center;
       letter-spacing: 0.4px;
       text-transform: uppercase;
-      color: $black-color;
+      color: $black;
       opacity: 0.3;
       white-space: nowrap;
     }
@@ -282,7 +276,7 @@ $blue-color: #3d5afe;
 
 .ideal-dimension-text {
   letter-spacing: 0.35px;
-  color: $gray-600;
+  color: $light-gray;
   font-size: 110%;
 }
 

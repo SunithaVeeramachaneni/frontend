@@ -1,3 +1,5 @@
+@import './colors.scss';
+
 .popover {
   position: absolute;
   top: 0;
@@ -21,7 +23,7 @@
   line-break: auto;
   font-size: 110%;
   word-wrap: break-word;
-  background-color: #fff;
+  background-color: $white;
   background-clip: padding-box;
   border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 0.3rem;
@@ -55,7 +57,7 @@
 .bs-popover-auto[data-popper-placement^='top'] > .popover-arrow::after {
   bottom: 1px;
   border-width: 0.5rem 0.5rem 0;
-  border-top-color: #fff;
+  border-top-color: $white;
 }
 
 .bs-popover-end > .popover-arrow,
@@ -74,7 +76,7 @@
 .bs-popover-auto[data-popper-placement^='right'] > .popover-arrow::after {
   left: 1px;
   border-width: 0.5rem 0.5rem 0.5rem 0;
-  border-right-color: #fff;
+  border-right-color: $white;
 }
 
 .bs-popover-bottom > .popover-arrow,
@@ -91,7 +93,7 @@
 .bs-popover-auto[data-popper-placement^='bottom'] > .popover-arrow::after {
   top: 1px;
   border-width: 0 0.5rem 0.5rem 0.5rem;
-  border-bottom-color: #fff;
+  border-bottom-color: $white;
 }
 .bs-popover-bottom .popover-header::before,
 .bs-popover-auto[data-popper-placement^='bottom'] .popover-header::before {
@@ -121,7 +123,7 @@
 .bs-popover-auto[data-popper-placement^='left'] > .popover-arrow::after {
   right: 1px;
   border-width: 0.5rem 0 0.5rem 0.5rem;
-  border-left-color: #fff;
+  border-left-color: $white;
 }
 
 .popover-header {

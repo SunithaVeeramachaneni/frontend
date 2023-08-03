@@ -1,3 +1,5 @@
+@import '../../../../scss/colors.scss';
+
 .mat-icon-play-circle {
   cursor: pointer;
   margin-right: 10px;
@@ -10,7 +12,7 @@
   line-height: 143%;
   align-items: center;
   letter-spacing: 0.15px;
-  color: #000000;
+  color: $black;
   margin-left: 20px;
 }
 

@@ -1,3 +1,5 @@
+@import '../../../scss/colors.scss';
+
 .spare-parts-body {
   height: 100%;
   margin-right: 14px;
@@ -10,7 +12,7 @@
 
 .header-filters {
   display: flex;
-  background-color: #ffffff;
+  background-color: $white;
   height: 50px;
   padding-top: 10px;
 }
@@ -22,7 +24,7 @@
 }
 
 .plants-workcenters {
-  background: #ffffff;
+  background: $white;
   margin-top: -52px;
 }
 
@@ -49,7 +51,7 @@
   font-weight: bold;
   font-size: 150%;
   line-height: 26px;
-  color: #000000;
+  color: $black;
 }
 
 .kit-heading {
@@ -57,7 +59,7 @@
   font-weight: 500;
   font-size: 100%;
   line-height: 16px;
-  color: #000000;
+  color: $black;
 }
 
 .kits-required {
@@ -70,7 +72,7 @@
 }
 
 .assign-for-picking {
-  border-top: 10px solid #5856d6;
+  border-top: 10px solid $action-raised;
   width: 100%;
   margin: 0;
   border-radius: 8px;
@@ -130,7 +132,7 @@
 
 .filter-option-id {
   margin: 0px 0px;
-  color: #757575;
+  color: $light-gray;
   height: 19px;
 }
 
