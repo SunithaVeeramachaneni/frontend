@@ -1,3 +1,4 @@
+/* eslint-disable arrow-body-style */
 import { Injectable } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { from, of } from 'rxjs';

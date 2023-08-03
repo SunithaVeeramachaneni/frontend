@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/prefer-for-of */
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable guard-for-in */
 import {
   Component,
@@ -389,7 +391,7 @@ export class MaintenanceComponent implements OnInit, OnDestroy, DoCheck {
   };
 
   public filterKitStatus = (workOrderKitStatus, kitStatus) => {
-    if (kitStatus === null || kitStatus.length == 0) {
+    if (kitStatus === null || kitStatus.length === 0) {
       return true;
     } else {
       for (let i = 0; i < kitStatus.length; i++) {
@@ -417,11 +419,11 @@ export class MaintenanceComponent implements OnInit, OnDestroy, DoCheck {
   };
 
   filterAssignee = (technician, assignee) => {
-    if (assignee === null || assignee.length == 0) {
+    if (assignee === null || assignee.length === 0) {
       return true;
     } else {
       for (let i = 0; i < assignee.length; i++) {
-        if (technician && assignee[i].personName == technician.personName) {
+        if (technician && assignee[i].personName === technician.personName) {
           return true;
         }
       }

@@ -6,7 +6,6 @@ import {
 } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
-import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { MatDialog } from '@angular/material/dialog';
@@ -157,7 +156,6 @@ export class ReportConfigurationComponent implements OnInit {
     private route: ActivatedRoute,
     private dynamictableFilterService: DynamictableFilterService,
     public dialog: MatDialog,
-    private fb: FormBuilder,
     private breadcrumbService: BreadcrumbService,
     private headerService: HeaderService,
     private loginService: LoginService
@@ -763,5 +761,4 @@ export class ReportConfigurationComponent implements OnInit {
       };
     }
   };
-
 }

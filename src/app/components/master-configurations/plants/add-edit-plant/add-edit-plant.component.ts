@@ -16,7 +16,6 @@ import {
   FormGroup,
   Validators
 } from '@angular/forms';
-import { distinctUntilChanged } from 'rxjs/operators';
 import { ValidationError } from 'src/app/interfaces';
 import { PlantService } from '../services/plant.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';

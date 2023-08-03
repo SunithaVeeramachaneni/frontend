@@ -451,7 +451,7 @@ export class AddLogicComponent implements OnInit, OnDestroy {
     if (this.isEmbeddedForm) {
       logic.action = action;
       logic.askEvidence = `${this.questionId}_${index}_EVIDENCE`;
-      let newEmitObject = {
+      const newEmitObject = {
         ...emitObject,
         askEvidence: logic.askEvidence,
         type: 'ask_evidence_create',

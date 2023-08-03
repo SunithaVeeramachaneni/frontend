@@ -1,10 +1,9 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable @typescript-eslint/member-ordering */
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { ErrorInfo } from 'src/app/interfaces';
 import { AppService } from 'src/app/shared/services/app.services';
-import { HttpClient } from '@angular/common/http';
 
 import { environment } from '../../../../../environments/environment';
 
@@ -12,7 +11,7 @@ import { environment } from '../../../../../environments/environment';
   providedIn: 'root'
 })
 export class PeopleService {
-  constructor(private appService: AppService, private http: HttpClient) {}
+  constructor(private appService: AppService) {}
 
   private updateUserPresenceSubject = new BehaviorSubject<any>({});
 

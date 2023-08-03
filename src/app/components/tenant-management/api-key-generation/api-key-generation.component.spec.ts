@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PublicLibraryComponent } from './public-library.component';
+import { ApiKeyGenerationComponent } from './api-key-generation.component';
 
-describe('PublicLibraryComponent', () => {
-  let component: PublicLibraryComponent;
-  let fixture: ComponentFixture<PublicLibraryComponent>;
+describe('ApiKeyGenerationComponent', () => {
+  let component: ApiKeyGenerationComponent;
+  let fixture: ComponentFixture<ApiKeyGenerationComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PublicLibraryComponent ]
+      declarations: [ ApiKeyGenerationComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(PublicLibraryComponent);
+    fixture = TestBed.createComponent(ApiKeyGenerationComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
