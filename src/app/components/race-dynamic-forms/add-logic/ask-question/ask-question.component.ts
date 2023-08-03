@@ -283,8 +283,9 @@ export class AskQuestionComponent implements OnInit {
     if (!this.popOverOpenState[sc][qc]) this.popOverOpenState[sc][qc] = false;
     if (!this.richTextEditorToolbarState[sc][qc])
       this.richTextEditorToolbarState[sc][qc] = false;
+    const questionId = this.rdfService.generateUUID(20);
     return this.fb.group({
-      id: [`Q${uqc}`],
+      id: [questionId],
       name: [''],
       fieldType: [this.fieldType.type],
       position: [''],
