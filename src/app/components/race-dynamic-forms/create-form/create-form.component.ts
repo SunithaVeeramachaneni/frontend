@@ -1147,6 +1147,10 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       const uqc = this.getCounter();
       questionsForm.push(this.initQuestion(sc, index + 1, uqc, q));
     });
+    const counter = this.createForm.get('counter')?.value ?? 0;
+    this.createForm
+      .get('counter')
+      .setValue(counter > 0 ? counter - 1 : counter);
     this.createForm.patchValue({ isPublishedTillSave: false });
     return questionsForm;
   };
