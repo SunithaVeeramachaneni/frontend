@@ -28,53 +28,67 @@ export class HttpRequestInterceptor implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
     const { tenantId } = this.tenantService.getTenantInfo();
-    const configId = tenantId;
-    if (request.headers.get('authorization') === null) {
-      const protectedResource = this.getProtectedResource(request.url);
+    const protectedResource = this.getProtectedResource(request.url);
+    const authorization = request.headers.get('authorization');
 
-      if (protectedResource && Object.keys(protectedResource).length) {
-        const { urls } = protectedResource;
-        const { token_type, access_token, access_token_expires_at } =
-          JSON.parse(sessionStorage.getItem(hash(urls))) || {};
+    if (
+      authorization === null &&
+      protectedResource &&
+      Object.keys(protectedResource).length
+    ) {
+      const { urls } = protectedResource;
+      const { token_type, access_token, access_token_expires_at } =
+        JSON.parse(sessionStorage.getItem(hash(urls))) || {};
 
-        if (
-          access_token &&
-          new Date().getTime() < access_token_expires_at - 30000
-        ) {
-          const cloneRequest = request.clone({
-            headers: request.headers.set(
-              'authorization',
-              `${token_type} ${access_token}`
-            )
-          });
-          return next.handle(cloneRequest);
-        } else {
-          return this.authConfigService
-            .getAccessTokenUsingRefreshToken$(protectedResource)
-            .pipe(
-              switchMap((response) => {
-                if (Object.keys(response).length) {
-                  const cloneRequest = request.clone({
-                    headers: request.headers.set(
-                      'authorization',
-                      // eslint-disable-next-line @typescript-eslint/dot-notation
-                      `${response['token_type']} ${response['access_token']}`
-                    )
-                  });
-                  return next.handle(cloneRequest);
-                } else {
-                  return next.handle(request);
-                }
-              })
-            );
-        }
-      } else {
-        return next.handle(request);
+      if (
+        access_token &&
+        new Date().getTime() < access_token_expires_at - 30000
+      ) {
+        const cloneRequest = request.clone({
+          headers: request.headers
+            .set('authorization', `${token_type} ${access_token}`)
+            .set('tenantid', tenantId)
+        });
+        return next.handle(cloneRequest);
       }
-    } else {
-      const cloneRequest = request.clone({});
+
+      return this.authConfigService
+        .getAccessTokenUsingRefreshToken$(protectedResource)
+        .pipe(
+          switchMap((response) => {
+            if (Object.keys(response).length) {
+              const cloneRequest = request.clone({
+                headers: request.headers
+                  .set(
+                    'authorization',
+                    // eslint-disable-next-line @typescript-eslint/dot-notation
+                    `${response['token_type']} ${response['access_token']}`
+                  )
+                  .set('tenantid', tenantId)
+              });
+              return next.handle(cloneRequest);
+            } else {
+              const cloneRequest = request.clone({
+                headers: request.headers.set('tenantid', tenantId)
+              });
+              return next.handle(cloneRequest);
+            }
+          })
+        );
+    }
+
+    if (
+      authorization !== null &&
+      protectedResource &&
+      Object.keys(protectedResource).length
+    ) {
+      const cloneRequest = request.clone({
+        headers: request.headers.set('tenantid', tenantId)
+      });
       return next.handle(cloneRequest);
     }
+
+    return next.handle(request);
   }
 
   getProtectedResource(requestUrl: string) {

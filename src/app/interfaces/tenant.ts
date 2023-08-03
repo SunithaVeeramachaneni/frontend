@@ -32,6 +32,7 @@ export interface Tenant {
   updatedAt?: string;
   amplifyConfig?: any;
   configurations?: any;
+  apiKeysInfo?: ApiKeyInfo[];
 }
 
 export interface ProtectedResource {
@@ -118,4 +119,19 @@ export interface S3Details {
   secretAccessKey: string;
   bucket: string;
   region: string;
+}
+
+export interface ApiKeyInfo {
+  description: string;
+  expiresOn: string;
+  apiKey: string;
+}
+
+export interface ApiKeysInfoObject {
+  apiKeysInfo: ApiKeyInfo[];
+}
+
+export interface ApiKeyEvent {
+  type: 'create' | 'delete';
+  apiKeyInfo: ApiKeyInfo;
 }
