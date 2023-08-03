@@ -278,6 +278,7 @@ export class RoundPlanDetailConfigurationComponent
       this.store.select(getSelectedHierarchyList)
     ]).pipe(
       tap(([formDetails, selectedHierarchyList]) => {
+        console.log('selected hierarchy List', selectedHierarchyList);
         const {
           formMetadata,
           formStatus,

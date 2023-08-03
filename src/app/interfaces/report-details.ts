@@ -84,6 +84,7 @@ export interface CellClickActionEvent {
   row: any;
   columnId: string;
   element?: string;
+  option?: string;
 }
 
 export interface Count {

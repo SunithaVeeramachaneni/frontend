@@ -76,6 +76,8 @@ import {
   NgxMatTimepickerModule
 } from '@angular-material-components/datetime-picker';
 import { RoundPlanModalComponent } from './round-plan-modal/round-plan-modal.component';
+import { SchedulerModalComponent } from './scheduler-modal/scheduler-modal.component';
+import { TaskLevelSchedulerComponent } from './task-level-scheduler/task-level-scheduler.component';
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/operator-rounds/', '.json');
 
@@ -99,7 +101,9 @@ export const customTranslateLoader = (http: HttpClient) =>
     AssetsModalComponent,
     RoundObservationsComponent,
     RoundPlanModalComponent,
-    RoundPlanEditViewComponent
+    RoundPlanEditViewComponent,
+    SchedulerModalComponent,
+    TaskLevelSchedulerComponent
   ],
   imports: [
     FormsModule,

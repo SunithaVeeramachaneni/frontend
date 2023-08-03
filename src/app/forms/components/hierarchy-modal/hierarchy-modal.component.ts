@@ -45,6 +45,12 @@ export class HierarchyModalComponent implements OnInit {
       this.store.select(getSelectedHierarchyList)
     ]).pipe(
       tap(([masterHierarchyList, selectedHierarchyList]) => {
+        console.log(
+          'selectedHierarachyList',
+          selectedHierarchyList,
+          'masterHierarchy',
+          masterHierarchyList
+        );
         this.masterHierarchyList = masterHierarchyList;
         this.selectedHierarchyList = selectedHierarchyList;
         this.hierarchyLoaded = true;

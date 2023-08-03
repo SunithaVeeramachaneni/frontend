@@ -70,12 +70,14 @@ import {
   ScheduleConfigEvent,
   ScheduleConfigurationComponent
 } from 'src/app/forms/components/schedular/schedule-configuration/schedule-configuration.component';
+import { SchedulerModalComponent } from '../scheduler-modal/scheduler-modal.component';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
 import { ShiftService } from '../../master-configurations/shifts/services/shift.service';
 import { ScheduleConfigurationService } from 'src/app/forms/services/schedule.service';
 import { MatDialog } from '@angular/material/dialog';
 import { graphQLDefaultMaxLimit } from 'src/app/app.constants';
+import { TaskLevelSchedulerComponent } from '../task-level-scheduler/task-level-scheduler.component';
 
 @Component({
   selector: 'app-plans',
@@ -254,8 +256,11 @@ export class PlansComponent implements OnInit, OnDestroy {
       id: 'schedule',
       displayName: 'Schedule',
       type: 'string',
-      controlType: 'button',
-      controlValue: 'Schedule',
+      controlType: 'menu',
+      controlValue: {
+        buttonName: 'Schedule',
+        menuButtonNames: ['Header Level', 'Task Level']
+      },
       order: 7,
       hasSubtitle: false,
       showMenuOptions: false,
@@ -712,12 +717,23 @@ export class PlansComponent implements OnInit, OnDestroy {
   }
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
-    const { columnId, row } = event;
+    console.log('event:', event);
+    const { columnId, row, option } = event;
     const activeShifts = this.prepareActiveShifts(row);
     switch (columnId) {
       case 'schedule':
         if (!row.schedule) {
-          this.openScheduleConfigHandler({ ...row, shifts: activeShifts });
+          if (option === 'Header Level') {
+            this.openScheduleConfigHandler(
+              { ...row, shifts: activeShifts },
+              false
+            );
+          } else {
+            this.openTaskLevelScheduleConfigHandler(
+              { ...row, shifts: activeShifts },
+              true
+            );
+          }
         } else {
           this.openRoundPlanHandler({ ...row, shifts: activeShifts });
         }
@@ -823,7 +839,7 @@ export class PlansComponent implements OnInit, OnDestroy {
     this.router.navigate([`/operator-rounds/edit/${this.roundPlanDetail.id}`]);
   }
 
-  openScheduleConfigHandler(row: RoundPlanDetail) {
+  openScheduleConfigHandler(row: RoundPlanDetail, isTaskLevel: boolean) {
     this.scheduleRoundPlanDetail = { ...row };
     const dialogRef = this.dialog.open(ScheduleConfigurationComponent, {
       disableClose: true,
@@ -837,6 +853,7 @@ export class PlansComponent implements OnInit, OnDestroy {
         roundPlanDetail: this.scheduleRoundPlanDetail,
         hidden: this.hideScheduleConfig,
         moduleName: 'OPERATOR_ROUNDS',
+        isTaskLevel: isTaskLevel,
         assigneeDetails: this.assigneeDetails
       }
     });
@@ -855,6 +872,34 @@ export class PlansComponent implements OnInit, OnDestroy {
         this.scheduleConfigEventHandler(data);
       }
     });
+  }
+
+  openTaskLevelScheduleConfigHandler(
+    row: RoundPlanDetail,
+    isTaskLevel: boolean
+  ) {
+    this.scheduleRoundPlanDetail = { ...row };
+    const dialogRef = this.dialog.open(SchedulerModalComponent, {
+      disableClose: true,
+      backdropClass: 'schedule-configuration-modal',
+      maxWidth: '100vw',
+      maxHeight: '100vh',
+      height: '100%',
+      width: '100%',
+      panelClass: 'full-screen-modal',
+      data: {
+        roundPlanDetail: this.scheduleRoundPlanDetail,
+        hidden: this.hideScheduleConfig,
+        moduleName: 'OPERATOR_ROUNDS',
+        isTaskLevel: isTaskLevel,
+        assigneeDetails: this.assigneeDetails
+      }
+    });
+    this.hideScheduleConfig = false;
+    this.closeRoundPlanHandler();
+    this.scheduleConfigState = 'in';
+    this.zIndexScheduleDelay = 400;
+    dialogRef.afterClosed().subscribe((data) => {});
   }
 
   scheduleConfigEventHandler(event: ScheduleConfigEvent) {
@@ -947,7 +992,10 @@ export class PlansComponent implements OnInit, OnDestroy {
     const activeShifts = this.prepareActiveShifts(data);
     switch (action) {
       case 'schedule':
-        this.openScheduleConfigHandler({ ...data, shifts: activeShifts });
+        this.openScheduleConfigHandler(
+          { ...data, shifts: activeShifts },
+          false
+        );
         break;
       case 'showDetails':
         this.openRoundPlanHandler({ ...data, shifts: activeShifts });

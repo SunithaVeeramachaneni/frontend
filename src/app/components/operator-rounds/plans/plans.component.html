@@ -7,7 +7,7 @@
       [moduleName]="'OPERATOR_ROUNDS'"
       [hidden]="hideRoundPlanDetail"
       (formDetailAction)="roundPlanDetailActionHandler()"
-      (scheduleRoundPlan)="openScheduleConfigHandler($event)"
+      (scheduleRoundPlan)="openScheduleConfigHandler($event, false)"
       [formStatus]="formConfigurationStatus.published"
       [scheduleConfiguration]="
         roundPlanScheduleConfigurations[roundPlanDetail?.id]

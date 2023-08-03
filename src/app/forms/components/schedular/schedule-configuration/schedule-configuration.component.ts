@@ -111,6 +111,7 @@ export class ScheduleConfigurationComponent
 {
   @ViewChild('menuTrigger', { static: false }) menuTrigger: MatMenuTrigger;
   @ViewChild(MatCalendar) calendar: MatCalendar<Date>;
+  @Output() gotoNextStep = new EventEmitter<void>();
   assigneeDetails: AssigneeDetails;
   moduleName: 'OPERATOR_ROUNDS' | 'RDF';
   plantMapSubscription: Subscription;
@@ -142,6 +143,7 @@ export class ScheduleConfigurationComponent
   plantTimezoneMap: any = {};
   placeHolder = '_ _';
   selectedShifts = [];
+  isTaskLevel: any;
   private onDestroy$ = new Subject();
   private shiftDetails: {
     [key: string]: { startTime: string; endTime: string }[];
@@ -237,10 +239,16 @@ export class ScheduleConfigurationComponent
 
   ngOnInit(): void {
     if (this.data) {
-      const { formDetail, roundPlanDetail, moduleName, assigneeDetails } =
-        this.data;
+      const {
+        formDetail,
+        roundPlanDetail,
+        moduleName,
+        isTaskLevel,
+        assigneeDetails
+      } = this.data;
       this.assigneeDetails = assigneeDetails;
       this.moduleName = moduleName;
+      this.isTaskLevel = isTaskLevel;
 
       // If the module name is RDF
       if (formDetail && moduleName === 'RDF') {
@@ -1362,6 +1370,9 @@ export class ScheduleConfigurationComponent
         .join(', ');
     }
     return '';
+  }
+  headerLevelScheduling() {
+    this.gotoNextStep.emit();
   }
 
   ngOnDestroy(): void {
