@@ -1,10 +1,10 @@
 <div class="bg-white categories-div categories-grid">
-  <div class="categories-header" style="display: flex">
-    <div class="categories-row-heading" style="width: 80%">
+  <div class="categories-header dis-flex">
+    <div class="categories-row-heading width-80">
       <svg-icon icon="icon-categories" class="categories-icon"></svg-icon>
       <span class="categories-heading">Categories</span>
     </div>
-    <div style="width: 20%">
+    <div class="width-20">
       <button
         type="button"
         class="btn btn-link font-weight-bold btn-link-custom categories-button"
@@ -49,8 +49,7 @@
         >
           <a [routerLink]="['/work-instructions/category', obj.CId]">
             <img
-              class="card-img-top"
-              style="height: 100px; width: 100%"
+              class="card-img-top width-100 h-100px"
               [ngStyle]="getS3CoverImageStyles(obj.Cover_Image)"
               [hidden]="!getImageSrc(obj.Cover_Image, obj.CId)"
               [attr.src]="getImageSrc(obj.Cover_Image, obj.CId)"
@@ -77,7 +76,7 @@
                 [matMenuTriggerFor]="menu"
                 (menuOpened)="menuOpened(i)"
                 (menuClosed)="menuClosed()"
-                style="margin-right: 20px"
+                class="m-r-20"
                 *appCheckUserHasPermission="[
                   permissions.updateCategory,
                   permissions.deleteCategory
@@ -114,8 +113,7 @@
           <a [routerLink]="['/work-instructions/category', obj.CId]"
             ><img
               #image
-              style="height: 100px; width: 100%"
-              class="card-img-top"
+              class="card-img-top width-100 h-100px"
               src="{{ obj.Cover_Image }}"
               alt=""
           /></a>
