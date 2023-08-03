@@ -690,4 +690,29 @@ export class RdfService {
     ]);
     return oppositeOperatorMap.get(operator);
   };
+
+  generateUUID(length = 20): string {
+    let d: number = new Date().getTime();
+    let d2: number =
+      (typeof performance !== 'undefined' &&
+        performance.now &&
+        performance.now() * 1000) ||
+      0;
+    const str = 'xxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
+    const uuid: string = str.replace(/[xy]/g, (c) => {
+      let r: number = Math.random() * 16;
+      if (d > 0) {
+        // eslint-disable-next-line no-bitwise
+        r = (d + r) % 16 | 0;
+        d = Math.floor(d / 16);
+      } else {
+        // eslint-disable-next-line no-bitwise
+        r = (d2 + r) % 16 | 0;
+        d2 = Math.floor(d2 / 16);
+      }
+      // eslint-disable-next-line no-bitwise
+      return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
+    });
+    return length ? uuid.slice(0, length) : uuid;
+  }
 }

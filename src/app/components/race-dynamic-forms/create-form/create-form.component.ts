@@ -1042,8 +1042,9 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       );
     });
 
+    const questionId = this.rdfService.generateUUID(20);
     return this.fb.group({
-      id: [`Q${uqc}`],
+      id: [questionId],
       name,
       fieldType,
       position,
@@ -1117,8 +1118,10 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     if (!this.richTextEditorToolbarState[sc])
       this.richTextEditorToolbarState[sc] = {};
 
+    const sectionId = this.rdfService.generateUUID(20);
+
     return this.fb.group({
-      uid: [this.prepareSectionUid(sc)],
+      uid: [sectionId],
       name: [
         {
           value:
@@ -1144,6 +1147,10 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       const uqc = this.getCounter();
       questionsForm.push(this.initQuestion(sc, index + 1, uqc, q));
     });
+    const counter = this.createForm.get('counter')?.value ?? 0;
+    this.createForm
+      .get('counter')
+      .setValue(counter > 0 ? counter - 1 : counter);
     this.createForm.patchValue({ isPublishedTillSave: false });
     return questionsForm;
   };
