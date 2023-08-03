@@ -1252,13 +1252,101 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     );
   }
 
+  removeDuplicateQuestions(sections) {
+    sections?.forEach((section) => {
+      const uniqueQuestionsLength =
+        uniqBy(section?.questions, 'id')?.length || 0;
+      if (uniqueQuestionsLength !== section?.questions?.length) {
+        const uniqueQuestions = [];
+        const sectionControl = this.createForm.get('sections') as FormArray;
+        const sectionIdx = sectionControl?.value?.findIndex(
+          (s) => s?.uid === section?.uid
+        );
+        const currentSectionControl = sectionControl?.controls[sectionIdx];
+        const questionControls = currentSectionControl?.get(
+          'questions'
+        ) as FormArray;
+        Object.entries(groupBy(section?.questions, 'id')).forEach(
+          ([, sValue]) => {
+            if (sValue?.length > 0) {
+              if (sValue?.length > 1) {
+                // If there is not createdAt is present in sections
+                const sectionsWithNoCreatedAt = sValue?.every(
+                  (s) => !isUndefined(s?.createdAt)
+                );
+                if (sectionsWithNoCreatedAt) {
+                  // Getting the old section record
+                  const latestRecord = sValue?.reduce((latest, current) => {
+                    const latestTimestamp = new Date(latest?.createdAt);
+                    const currentTimestamp = new Date(current?.createdAt);
+                    return latestTimestamp < currentTimestamp
+                      ? latest
+                      : current;
+                  });
+                  // Remove all which are newer and duplicate
+                  sValue?.forEach((value, idx) => {
+                    if (
+                      new Date(value?.createdAt).getTime() !==
+                      new Date(latestRecord?.createdAt).getTime()
+                    ) {
+                      questionControls.removeAt(idx);
+                    }
+                  });
+
+                  // Push only unique section
+                  if (latestRecord) {
+                    uniqueQuestions.push(latestRecord);
+                  }
+                } else {
+                  // createdAt not present in all objects in sections
+                  const oldRecord = sValue?.find((s) => !s?.createdAt);
+                  if (oldRecord) {
+                    // Remove not pushed records
+                    sValue?.forEach((value, idx) => {
+                      const currentRecord = JSON.stringify(value);
+                      const newRecord = JSON.stringify(oldRecord);
+                      if (currentRecord !== newRecord) {
+                        questionControls.removeAt(idx);
+                      }
+                    });
+                    uniqueQuestions.push(oldRecord);
+                  } else {
+                    const sectionsArray = [...sValue];
+                    if (sectionsArray.length > 0) {
+                      const removeSections = sectionsArray.filter(
+                        (__, idx) => idx !== 0
+                      );
+                      // Remove not pushed records
+                      removeSections?.forEach((___, rIdx) => {
+                        questionControls.removeAt(rIdx);
+                      });
+                      uniqueQuestions.push(sectionsArray[0]);
+                    }
+                  }
+                }
+              } else {
+                uniqueQuestions.push(...sValue);
+              }
+            }
+          }
+        );
+        // eslint-disable-next-line no-param-reassign
+        section.questions = uniqueQuestions;
+      }
+    });
+    return sections;
+  }
+
   removeDuplicateSectionsFromForm(form) {
     const uniqueSectionsLength = uniqBy(form?.sections, 'uid')?.length || 0;
     if (uniqueSectionsLength === form?.sections?.length) {
-      return form;
+      return {
+        ...form,
+        sections: this.removeDuplicateQuestions(form?.sections)
+      };
     }
 
-    const uniqueSections = [];
+    let uniqueSections = [];
     Object.entries(groupBy(form?.sections, 'uid')).forEach(([_, sValue]) => {
       if (sValue?.length > 0) {
         if (sValue?.length > 1) {
@@ -1325,6 +1413,9 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
         }
       }
     });
+
+    uniqueSections = this.removeDuplicateQuestions(uniqueSections);
+
     const updatedForm = { ...form, sections: uniqueSections };
     this.createForm.patchValue(
       { sections: uniqueSections },
