@@ -322,6 +322,7 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
 
   cancel() {
     this.assetForm.reset();
+    this.assetForm?.get('parentType').setValue('location');
     this.slideInOut.emit('out');
   }
 
