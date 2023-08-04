@@ -223,24 +223,24 @@ export class UnitMeasurementService {
 
   private formatUOMByOrder(rows) {
     let order = 0;
-    const uRows = [];
-    Object.entries(groupBy(rows, 'unitList.name')).forEach(([, value]) => {
+    const formattedRows = [];
+    const groupedRows = groupBy(rows, 'unitList.name');
+    Object.values(groupedRows).forEach((value) => {
       if (value?.length > 0) {
         const sortedRows = value
-          ?.sort(
+          .sort(
             (a, b) =>
               new Date(a?.createdAt).getTime() -
               new Date(b?.createdAt).getTime()
           )
-          .map((v) => ({
-            ...v,
+          .map((row) => ({
+            ...row,
             order: order++
           }));
-        uRows.push(...sortedRows);
+        formattedRows.push(...sortedRows);
       }
     });
-
-    return uRows?.sort((a, b) => a?.order - b?.order);
+    return formattedRows.sort((a, b) => a.order - b.order);
   }
 
   private formatUnitOfMeasurementResponse(resp) {
