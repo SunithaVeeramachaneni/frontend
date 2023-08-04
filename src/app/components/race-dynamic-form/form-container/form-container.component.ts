@@ -2,9 +2,9 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  ViewChild,
   OnInit
 } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { routingUrls } from 'src/app/app.constants';
@@ -12,6 +12,7 @@ import { CommonService } from 'src/app/shared/services/common.service';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
+import { FormListComponent } from '../form-list/form-list.component';
 
 @Component({
   selector: 'app-form-container',
@@ -22,13 +23,13 @@ import { PlantService } from '../../master-configurations/plants/services/plant.
 export class FormContainerComponent implements OnInit {
   currentRouteUrl$: Observable<string>;
   readonly routingUrls = routingUrls;
+  @ViewChild(FormListComponent) formListComponent: FormListComponent;
 
   constructor(
     private commonService: CommonService,
     private breadcrumbService: BreadcrumbService,
     private cdrf: ChangeDetectorRef,
     private headerService: HeaderService,
-    private dialog: MatDialog,
     private plantService: PlantService
   ) {}
 
@@ -49,5 +50,17 @@ export class FormContainerComponent implements OnInit {
         }
       })
     );
+  }
+
+  openFormCreationModal(data: any) {
+    this.formListComponent.openFormCreationModal(data);
+  }
+
+  uploadFile(event, formType) {
+    this.formListComponent.uploadFile(event, formType);
+  }
+
+  resetFile(event) {
+    this.formListComponent.resetFile(event);
   }
 }

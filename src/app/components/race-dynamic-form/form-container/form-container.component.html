@@ -1,27 +1,59 @@
 <div *ngIf="currentRouteUrl$ | async as currentRouteUrl" class="template-list">
   <ng-container *ngIf="currentRouteUrl === routingUrls.raceDynamicForms.url">
-    <!-- <div class="dis-flex container-padding">
-      <button class="widgets" [matMenuTriggerFor]="menu">
+    <div class="dis-flex container-padding">
+      <button class="widgets" (click)="openFormCreationModal(null)">
         <svg-icon icon="icon-add-form" class="add-form-icon"></svg-icon>
         <span class="widgets-title" translate="createForm"></span>
       </button>
-      <mat-menu #menu="matMenu" backdropClass="template-list">
-        <button mat-menu-item (click)="openCreateFromTemplateModal()">
-          {{ 'createFromTemplate' | translate }}
-        </button>
-        <button mat-menu-item (click)="openFormCreationModal(null)">
-          {{ 'createNew' | translate }}
-        </button>
-      </mat-menu>
-      <button class="widgets" [disabled]="true">
+      <button class="widgets" (click)="openFormCreationModal(null)">
+        <svg-icon icon="icon-add-form-ai" class="add-form-icon"></svg-icon>
+        <span class="widgets-title" translate="createFormAI"></span>
+      </button>
+      <button class="widgets" [disabled]="true" *ngIf="false">
         <svg-icon icon="icon-import-excel" class="import-excel-icon"></svg-icon>
         <span class="widgets-title" translate="importForm"></span>
       </button>
-      <button class="widgets" [disabled]="true">
+      <button class="widgets" [matMenuTriggerFor]="uploadMenu">
         <svg-icon icon="icon-export-excel" class="import-excel-icon"></svg-icon>
-        <span class="widgets-title" translate="exportExcel"></span>
+        <span class="widgets-title" translate="uploadExcel"></span>
       </button>
-    </div> -->
+
+      <mat-menu #uploadMenu="matMenu" id="formTypeUploadMenu">
+        <button
+          id="embeddedUploaderButton"
+          mat-menu-item
+          (click)="embeddedUploader.click()"
+        >
+          <span id="uploadEmbeddedSpan" translate="uploadEmbedded"></span>
+        </button>
+        <button
+          id="standaloneUploaderButton"
+          mat-menu-item
+          (click)="standaloneUploader.click()"
+        >
+          <span id="uploadStandaloneSpan" translate="uploadStandalone"></span>
+        </button>
+      </mat-menu>
+
+      <input
+        id="standaloneUploader"
+        hidden
+        type="file"
+        #standaloneUploader
+        accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        (change)="uploadFile($event, 'Standalone')"
+        (click)="resetFile($event)"
+      />
+      <input
+        id="embeddedUploader"
+        hidden
+        type="file"
+        #embeddedUploader
+        accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        (change)="uploadFile($event, 'Embedded')"
+        (click)="resetFile($event)"
+      />
+    </div>
 
     <app-form-list></app-form-list>
   </ng-container>
