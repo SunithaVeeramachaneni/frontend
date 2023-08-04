@@ -26,6 +26,7 @@ import {
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { MatTableDataSource } from '@angular/material/table';
 import {
+  formConfigurationStatus,
   graphQLDefaultLimit,
   graphQLDefaultMaxLimit
 } from 'src/app/app.constants';
@@ -377,6 +378,11 @@ export class TemplateAffectedFormsModalComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe((data) => {
+        this.store.dispatch(
+          BuilderConfigurationActions.updateFormPublishStatus({
+            formDetailPublishStatus: formConfigurationStatus.ready
+          })
+        );
         this.store.dispatch(
           BuilderConfigurationActions.updateIsFormDetailPublished({
             isFormDetailPublished: true
