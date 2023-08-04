@@ -387,5 +387,7 @@
   "failedUpload": "Failed to uploaded",
   "closeBtn": "Close",
   "downloadExcel": "Download Excel",
-  "createFormAI": "Generate using AI"
+  "createFormAI": "Generate using AI",
+  "createFormUsingAi": "Generate Form Using AI",
+  "enterPrompt": "Enter Prompt"
 }

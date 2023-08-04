@@ -13,7 +13,8 @@ import { HeaderService } from 'src/app/shared/services/header.service';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { FormListComponent } from '../form-list/form-list.component';
-
+import { CreateAiFormModalComponent } from '../create-ai-form-modal/create-ai-form-modal.component';
+import { MatDialog } from '@angular/material/dialog';
 @Component({
   selector: 'app-form-container',
   templateUrl: './form-container.component.html',
@@ -30,7 +31,8 @@ export class FormContainerComponent implements OnInit {
     private breadcrumbService: BreadcrumbService,
     private cdrf: ChangeDetectorRef,
     private headerService: HeaderService,
-    private plantService: PlantService
+    private plantService: PlantService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -62,5 +64,17 @@ export class FormContainerComponent implements OnInit {
 
   resetFile(event) {
     this.formListComponent.resetFile(event);
+  }
+  openCreateAIFormsModal() {
+    const createAIFormRef = this.dialog.open(CreateAiFormModalComponent, {
+      maxWidth: '50vw',
+      maxHeight: '82vh',
+      height: '100%',
+      width: '100%',
+      data: {}
+    });
+    createAIFormRef.afterClosed().subscribe((res) => {
+      console.log('closed');
+    });
   }
 }

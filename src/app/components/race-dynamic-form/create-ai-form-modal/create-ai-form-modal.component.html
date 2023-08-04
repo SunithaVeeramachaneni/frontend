@@ -1,0 +1,41 @@
+<div class="create-ai-form-modal">
+  <div class="dis-flex heading-container">
+    <h2 class="heading" translate>createFormUsingAi</h2>
+    <mat-icon
+      id="createAiFormModalClearIcon"
+      class="clear-icon"
+      mat-dialog-close="true"
+      >clear</mat-icon
+    >
+  </div>
+  <form
+    [formGroup]="promptFormData"
+    (ngSubmit)="onPromptSubmit()"
+    class="prompt-form"
+  >
+    <label for="prompt" translate> enterPrompt </label>
+    <div class="prompt-container">
+      <div class="prompt-container-icon">
+        <svg-icon icon="icon-add-form-ai" class="icon"></svg-icon>
+      </div>
+      <div class="prompt-container-input">
+        <textarea
+          id="prompt"
+          name="prompt"
+          formControlName="prompt"
+          placeholder="Type the topic of the form"
+          class="prompt-input"
+          rows="1"
+          (keyup.enter)="onPromptSubmit()"
+        ></textarea>
+      </div>
+      <div class="prompt-container-icon">
+        <svg-icon
+          icon="icon-send-form-ai"
+          class="icon"
+          (click)="onPromptSubmit()"
+        ></svg-icon>
+      </div>
+    </div>
+  </form>
+</div>
