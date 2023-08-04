@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { RaceDynamicFormService } from '../services/rdf.service';
 @Component({
   selector: 'app-create-ai-form-modal',
   templateUrl: './create-ai-form-modal.component.html',
@@ -9,7 +10,12 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 export class CreateAiFormModalComponent implements OnInit {
   @Inject(MAT_DIALOG_DATA) public data: any;
   promptFormData: FormGroup;
-  constructor(private fb: FormBuilder) {}
+  sections = [];
+  formTitle = '';
+  constructor(
+    private fb: FormBuilder,
+    private rdfService: RaceDynamicFormService
+  ) {}
 
   ngOnInit(): void {
     this.promptFormData = this.fb.group({
@@ -24,6 +30,20 @@ export class CreateAiFormModalComponent implements OnInit {
     });
   }
   onPromptSubmit() {
-    console.log(this.promptFormData.value.prompt.trim());
+    const prompt = this.promptFormData.value.prompt.trim();
+    this.rdfService
+      .createSectionsFromPrompt$(prompt, {
+        displayToast: true,
+        failureResponse: {}
+      })
+      .subscribe((data) => {
+        if (Object.keys(data)?.length) {
+          const { formTitle, sections } = data;
+          this.formTitle = formTitle;
+          this.sections = sections;
+        } else {
+          console.log('ERROR');
+        }
+      });
   }
 }

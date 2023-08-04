@@ -1466,4 +1466,15 @@ export class RaceDynamicFormService {
     });
     return allColumns;
   }
+
+  createSectionsFromPrompt$ = (
+    prompt: String,
+    info: ErrorInfo = {} as ErrorInfo
+  ) =>
+    this.appService._postData(
+      environment.rdfApiUrl,
+      'ai/sections',
+      { prompt },
+      info
+    );
 }

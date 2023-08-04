@@ -8,11 +8,7 @@
       >clear</mat-icon
     >
   </div>
-  <form
-    [formGroup]="promptFormData"
-    (ngSubmit)="onPromptSubmit()"
-    class="prompt-form"
-  >
+  <form [formGroup]="promptFormData" class="prompt-form">
     <label for="prompt" translate> enterPrompt </label>
     <div class="prompt-container">
       <div class="prompt-container-icon">
@@ -25,17 +21,25 @@
           formControlName="prompt"
           placeholder="Type the topic of the form"
           class="prompt-input"
-          rows="1"
-          (keyup.enter)="onPromptSubmit()"
+          rows="3"
         ></textarea>
       </div>
       <div class="prompt-container-icon">
-        <svg-icon
-          icon="icon-send-form-ai"
-          class="icon"
-          (click)="onPromptSubmit()"
-        ></svg-icon>
+        <button (click)="onPromptSubmit()">
+          <svg-icon icon="icon-send-form-ai" class="icon"></svg-icon>
+        </button>
       </div>
     </div>
   </form>
+  <div class="sections" *ngIf="formTitle?.length > 0">
+    <span>Title: {{ formTitle }}</span> <br />
+    <span>Generated Sections:</span> <br />
+    <ul>
+      <ng-container *ngFor="let section of sections">
+        <li>
+          {{ section.sectionName }}
+        </li>
+      </ng-container>
+    </ul>
+  </div>
 </div>
