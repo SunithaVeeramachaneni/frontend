@@ -99,6 +99,8 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   plantInformation = [];
   changedValues: any;
   addNewShow = new BehaviorSubject<boolean>(false);
+  formCreateLoading$ = new BehaviorSubject<boolean>(false);
+  forms = [];
   headerDataForm: FormGroup;
   errors: ValidationError = {};
   convertedDetail = {};
@@ -171,7 +173,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     } = this.data;
     this.isCreateAI = isCreateAI;
     this.promptFormData = this.fb.group({
-      plantId: ['', Validators.required],
+      plantId: [{}, Validators.required],
       prompt: [
         '',
         [
@@ -264,6 +266,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   }
 
   onPromptSubmit() {
+    this.formCreateLoading$.next(true);
     const prompt = this.promptFormData.value.prompt.trim();
     this.rdfService
       .createSectionsFromPrompt$(prompt, {
@@ -272,12 +275,12 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
       })
       .subscribe((data) => {
         if (Object.keys(data)?.length) {
-          const { formTitle, sections } = data;
-          this.formTitle = formTitle;
-          this.sections = sections;
+          const { forms } = data;
+          this.forms = forms;
         } else {
           console.log('ERROR');
         }
+        this.formCreateLoading$.next(false);
       });
   }
 

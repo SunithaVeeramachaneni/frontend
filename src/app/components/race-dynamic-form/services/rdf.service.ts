@@ -1477,4 +1477,42 @@ export class RaceDynamicFormService {
       { prompt },
       info
     );
+
+  regenerateSectionsFromTitle$ = (
+    prompt: String,
+    info: ErrorInfo = {} as ErrorInfo
+  ) =>
+    this.appService._postData(
+      environment.rdfApiUrl,
+      'ai/sections/regenerate',
+      { prompt },
+      info
+    );
+
+  regenerateQuestionsForSections$ = (
+    formTitle: String,
+    sectionName: String,
+    info: ErrorInfo = {} as ErrorInfo
+  ) =>
+    this.appService._postData(
+      environment.rdfApiUrl,
+      'ai/forms/regenerate',
+      { formTitle, sectionName },
+      info
+    );
+
+  createFromsFromPrompt$ = (
+    forms: any,
+    plantId: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ) => {
+    const formData = new FormData();
+    formData.append('forms', JSON.stringify(forms));
+    formData.append('plantId', plantId);
+    return this.getServerSentEvent(
+      environment.rdfApiUrl,
+      '/ai/forms',
+      formData
+    );
+  };
 }

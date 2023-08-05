@@ -551,7 +551,10 @@
               <div class="scrollable-area">
                 <mat-option
                   id="plantOptions"
-                  [value]="plant.id"
+                  [value]="{
+                    id: plant.id,
+                    name: plant.plantId + ' - ' + plant.name
+                  }"
                   *ngFor="let plant of plantInformation"
                   >{{ plant.plantId }} - {{ plant.name }}</mat-option
                 >
@@ -609,6 +612,12 @@
           </div>
         </form>
       </div>
+    </div>
+    <div class="ai-propmt-container">
+      <span *ngIf="formCreateLoading$ | async as formCreateLoading">{{
+        'formGenerationText'
+          | translate : this.promptFormData.value.plantId.name
+      }}</span>
     </div>
   </div>
 </div>
