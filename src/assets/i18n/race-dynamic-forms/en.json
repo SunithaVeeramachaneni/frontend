@@ -393,5 +393,9 @@
   "formCreateAIHeading": "What form would you like to create?",
   "formCreateAISelectPlant": "Hi, Please select the plant to create a form.",
   "selectPlant": "Select Plant",
-  "formGenerationText": "Your forms will be generated with following Titles and Sections for the Plant: {plant}. You can always edit them, or continue as is:"
+  "formGenerationText": "Your forms will be generated with following Titles and Sections for the Plant: {plant}. You can always edit them, or continue as is:",
+  "formGenerationLoader": "Hold On, We are generating your forms...",
+  "sections": "Sections",
+  "regenerateForms": "Not happy with the generated response?",
+  "regenerateResponse": "Regenerate Response"
 }

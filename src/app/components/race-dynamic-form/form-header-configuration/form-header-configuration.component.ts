@@ -74,6 +74,7 @@ import { isEqual } from 'lodash-es';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
+  @ViewChild('name') formName: ElementRef;
   @ViewChild('tagsInput', { static: false })
   tagsInput: ElementRef<HTMLInputElement>;
   @ViewChild('auto', { static: false }) matAutocomplete: MatAutocomplete;
@@ -100,6 +101,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   changedValues: any;
   addNewShow = new BehaviorSubject<boolean>(false);
   formCreateLoading$ = new BehaviorSubject<boolean>(false);
+  isPromptGenerated$ = new BehaviorSubject<boolean>(true);
   forms = [];
   headerDataForm: FormGroup;
   errors: ValidationError = {};
@@ -110,6 +112,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   isOpen = new FormControl(false);
   isCreateAI: boolean;
   promptFormData: FormGroup;
+  generatedPromptForm: FormGroup;
   sections = [];
   formTitle = '';
 
@@ -172,6 +175,9 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
       formData: { isCreateAI }
     } = this.data;
     this.isCreateAI = isCreateAI;
+    this.generatedPromptForm = this.fb.group({
+      generatedForms: this.fb.array([])
+    });
     this.promptFormData = this.fb.group({
       plantId: [{}, Validators.required],
       prompt: [
@@ -263,10 +269,61 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
+
+    // const tempData = [
+    //   {
+    //     formTitle: 'Daily Inspection of Water Boiler',
+    //     sections: [
+    //       {
+    //         sectionName: 'Boiler Exterior Inspection'
+    //       },
+    //       {
+    //         sectionName: 'Boiler Interior Inspection'
+    //       },
+    //       {
+    //         sectionName: 'Boiler Safety System Inspection'
+    //       }
+    //     ]
+    //   },
+    //   {
+    //     formTitle: 'Lube Oil Inspection',
+    //     sections: [
+    //       {
+    //         sectionName: 'Oil Level Check'
+    //       },
+    //       {
+    //         sectionName: 'Oil Filter Inspection'
+    //       },
+    //       {
+    //         sectionName: 'Oil Temperature Measurement'
+    //       }
+    //     ]
+    //   }
+    // ];
+    // tempData.forEach((form) => {
+    //   this.addToGeneratedForm(form);
+    //   console.log(this.generatedForms);
+    // });
   }
 
+  get generatedForms(): FormArray {
+    return this.generatedPromptForm.get('generatedForms') as FormArray;
+  }
+
+  getSize(value) {
+    if (value && value === value.toUpperCase()) {
+      return value.length;
+    }
+    return value.length - 1;
+  }
+  editFormName() {
+    // this.formConfiguration.get('name').enable();
+    this.formName.nativeElement.focus();
+  }
   onPromptSubmit() {
+    console.log(this.promptFormData.value.plantId.name);
     this.formCreateLoading$.next(true);
+    this.isPromptGenerated$.next(false);
     const prompt = this.promptFormData.value.prompt.trim();
     this.rdfService
       .createSectionsFromPrompt$(prompt, {
@@ -277,11 +334,28 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
         if (Object.keys(data)?.length) {
           const { forms } = data;
           this.forms = forms;
+          this.forms.forEach((form) => {
+            this.addToGeneratedForm(form);
+          });
+          this.isPromptGenerated$.next(true);
         } else {
           console.log('ERROR');
         }
         this.formCreateLoading$.next(false);
       });
+  }
+  addToGeneratedForm(form) {
+    let sectionStr = '<ul>';
+    form?.sections?.forEach((section) => {
+      sectionStr += `<li>${section?.sectionName}</li>`;
+    });
+    sectionStr += '</ul>';
+    this.generatedForms.push(
+      this.fb.group({
+        formTitle: [form?.formTitle, [Validators.required]],
+        sections: [sectionStr, [Validators.required]]
+      })
+    );
   }
 
   handleEditorFocus(focus: boolean) {

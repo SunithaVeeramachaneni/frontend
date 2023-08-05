@@ -309,7 +309,7 @@
     align-items: start;
     margin-top: 50px;
     overflow-y: auto;
-    padding: 0px 10px;
+    padding: 0px 10px 50px 10px;
     height: calc(100vh - 150px);
     .ai-prompt-container {
       display: flex;
@@ -384,6 +384,138 @@
             height: 20px;
             width: 20px;
           }
+        }
+      }
+    }
+    .prompt-form-loader-container {
+      display: flex;
+      flex-direction: row;
+      justify-content: start;
+      align-items: center;
+      .prompt-form-loader {
+        margin: 20px 10px;
+        font-size: 150%;
+        font-weight: 500;
+      }
+      .loader-icon {
+        margin: 5px;
+        width: 25px;
+        mix-blend-mode: multiply;
+      }
+    }
+    .prompt-form-result-text {
+      font-size: 120%;
+      font-weight: 400;
+      margin: 20px 0px;
+    }
+    .prompt-generated-form-container {
+      display: flex;
+      align-items: start;
+      flex-direction: column;
+      background-color: $white;
+      padding: 15px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+      margin-bottom: 30px;
+      width: calc(100% - 45px);
+
+      .prompt-generated-form-title-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        .prompt-generated-form-title {
+          font-size: 150%;
+          font-weight: 500;
+        }
+        .form_title_input {
+          border: none;
+          cursor: pointer;
+          max-width: 90%;
+          background: none;
+          font-size: 140%;
+          font-weight: 500;
+          text-overflow: ellipsis;
+          padding: 3px 10px;
+          display: inline-block;
+          white-space: nowrap;
+          overflow: hidden;
+        }
+
+        input[type='text']:focus {
+          outline: none;
+          caret-color: $light-gray;
+        }
+
+        .edit-icon {
+          border: none;
+          background-color: transparent;
+          position: relative;
+          left: -10px;
+          .edit-icon-img {
+            width: 15px;
+            height: 15px;
+          }
+        }
+      }
+      .prompt-generated-form-section-heading {
+        font-size: 120%;
+        font-weight: 500;
+        margin: 10px 5px 0px 55px;
+      }
+      .prompt-generated-form-section-container {
+        margin: 10px 0px;
+        display: flex;
+        justify-content: start;
+        align-items: center;
+        width: 100%;
+        .prompt-regenerate-form-section {
+          .prompt-regenerate-section-btn {
+            margin-right: 10px;
+            width: max-content;
+            height: max-content;
+            padding: 10px;
+            outline: none;
+            border: 1px solid $border-color-gray;
+            border-radius: 5px;
+            background-color: transparent;
+            .icon {
+              width: 20px;
+              height: 20px;
+            }
+          }
+          .prompt-generated-section-field {
+            width: 100%;
+          }
+        }
+      }
+    }
+    .prompt-regenerate-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      margin: 0px 10px;
+      .prompt-regenerate-title {
+        font-weight: 500;
+      }
+      .prompt-regenerate-btn {
+        background-color: transparent;
+        border: 1px solid $blue-main;
+        outline: none;
+        cursor: pointer;
+        color: $blue-main;
+        color: $blue-main;
+        font-weight: 500;
+        padding: 5px 10px 5px 5px;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        .icon {
+          height: 20px;
+          width: 20px;
+          margin: 5px;
         }
       }
     }

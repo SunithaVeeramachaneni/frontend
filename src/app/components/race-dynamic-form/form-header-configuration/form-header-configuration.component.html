@@ -613,11 +613,127 @@
         </form>
       </div>
     </div>
-    <div class="ai-propmt-container">
-      <span *ngIf="formCreateLoading$ | async as formCreateLoading">{{
-        'formGenerationText'
-          | translate : this.promptFormData.value.plantId.name
-      }}</span>
+
+    <div
+      *ngIf="formCreateLoading$ | async"
+      class="prompt-form-loader-container"
+    >
+      <img src="assets/Images/ai-form-loader.gif" alt="" class="loader-icon" />
+      <span class="prompt-form-loader">
+        {{ 'formGenerationLoader' | translate }}</span
+      >
     </div>
+    <ng-container *ngIf="isPromptGenerated$ | async">
+      <span class="prompt-form-result-text">
+        {{
+          'formGenerationText'
+            | translate
+              : { plant: 'Plant ID 1690888454624 - Plant Name 1690888454624' }
+        }}</span
+      >
+      <form [formGroup]="generatedPromptForm" class="width-100">
+        <div formArrayName="generatedForms" class="width-100">
+          <div *ngFor="let form of generatedForms.controls; let i = index">
+            <div [formGroupName]="i">
+              <div class="prompt-generated-form-container">
+                <div class="prompt-generated-form-title-container">
+                  <img
+                    src="assets/rdf-forms-icons/formlogo.svg"
+                    class="prompt-generated-form-title-icon"
+                    alt=""
+                  />
+                  <a matTooltip="" class="dis-inline">
+                    <a class="width-90">
+                      <input
+                        id="formNameText"
+                        #name
+                        type="text"
+                        [size]="name.value !== '' ? getSize(name.value) : 20"
+                        class="form_title_input"
+                        formControlName="formTitle"
+                        autofocus="true"
+                        autocomplete="off"
+                        value="{{ form.get('formTitle').value }}"
+                        (keyup.enter)="form.get('formTitle').disable()"
+                        (blur)="form.get('formTitle').disable()"
+                      />
+
+                      <!-- <mat-error
+                      id="formNameError"
+                      *ngIf="processValidationErrors('formTitle')"
+                      class="error-fields"
+                    >
+                      {{
+                        errors.name.name
+                          | translate
+                            : {
+                                name: 'name' | translate,
+                                length: errors.name.length
+                              }
+                      }}
+                    </mat-error> -->
+                    </a>
+                    <button
+                      id="formNameEditBtn"
+                      (click)="editFormName()"
+                      class="edit-icon"
+                      *ngIf="form.get('formTitle').disabled === true"
+                    >
+                      <svg-icon
+                        id="formNameEditIcon"
+                        icon="icon-edit-icon"
+                        class="edit-icon-img"
+                      ></svg-icon>
+                    </button>
+                  </a>
+                </div>
+                <p class="prompt-generated-form-section-heading" translate>
+                  sections
+                </p>
+                <div class="prompt-generated-form-section-container">
+                  <div class="prompt-regenerate-form-section">
+                    <button class="prompt-regenerate-section-btn">
+                      <svg-icon
+                        icon="icon-regenerate-section-ai"
+                        class="icon"
+                      ></svg-icon>
+                    </button>
+                  </div>
+                  <mat-form-field class="width-100" appearance="outline">
+                    <quill-material
+                      [ngClass]="{
+                        'display-toolbar': isOpen.value
+                      }"
+                      formControlName="sections"
+                      [placeholder]="'addNotes' | translate"
+                      class="prompt-generated-section-field"
+                      (editorFocus)="handleEditorFocus($event)"
+                    >
+                    </quill-material>
+
+                    <mat-error
+                      id="notesAndAttachementsError"
+                      *ngIf="maxLengthWithoutBulletPoints(250)"
+                      class="m-5 error-fields"
+                    >
+                      {{ 'errorExceedingLimit' | translate }}
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+      <div class="prompt-regenerate-container">
+        <p class="prompt-regenerate-title" translate>regenerateForms</p>
+        <div class="prompt-regenerate-btn" (click)="onPromptSubmit()" translate>
+          <svg-icon icon="icon-regenerate-section-ai" class="icon"></svg-icon>
+          regenerateResponse
+        </div>
+      </div>
+    </ng-container>
+    <!-- *ngIf="isPromptGenerated$ | async" -->
+    <!-- { plant: this.promptFormData.value.plantId.name } -->
   </div>
 </div>
