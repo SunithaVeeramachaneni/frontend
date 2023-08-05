@@ -55,7 +55,7 @@ export class FormContainerComponent implements OnInit {
   }
 
   openFormCreationModal(data: any) {
-    this.formListComponent.openFormCreationModal(data);
+    this.formListComponent.openFormCreationModal({ isCreateAI: false });
   }
 
   uploadFile(event, formType) {
