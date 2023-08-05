@@ -1,6 +1,6 @@
 <div class="create-ai-form-modal">
   <div class="dis-flex heading-container">
-    <h2 class="heading" translate>createFormUsingAi</h2>
+    <h4 class="heading" translate>createFormUsingAi</h4>
     <mat-icon
       id="createAiFormModalClearIcon"
       class="clear-icon"
@@ -9,7 +9,7 @@
     >
   </div>
   <form [formGroup]="promptFormData" class="prompt-form">
-    <label for="prompt" translate> enterPrompt </label>
+    <label for="prompt" class="prompt-title" translate> enterPrompt </label>
     <div class="prompt-container">
       <div class="prompt-container-icon">
         <svg-icon icon="icon-add-form-ai" class="icon"></svg-icon>
@@ -21,7 +21,7 @@
           formControlName="prompt"
           placeholder="Type the topic of the form"
           class="prompt-input"
-          rows="3"
+          rows="1"
         ></textarea>
       </div>
       <div class="prompt-container-icon">

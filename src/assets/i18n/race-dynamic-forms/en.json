@@ -389,5 +389,8 @@
   "downloadExcel": "Download Excel",
   "createFormAI": "Generate using AI",
   "createFormUsingAi": "Generate Form Using AI",
-  "enterPrompt": "Enter Prompt"
+  "enterPrompt": "Enter Prompt",
+  "formCreateAIHeading": "What form would you like to create?",
+  "formCreateAISelectPlant": "Hi, Please select the plant to create a form.",
+  "selectPlant": "Select Plant"
 }

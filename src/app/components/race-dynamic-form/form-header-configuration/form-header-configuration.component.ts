@@ -106,6 +106,10 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   deletedLabel = '';
   isDisabled = false;
   isOpen = new FormControl(false);
+  isCreateAI: boolean;
+  promptFormData: FormGroup;
+  sections = [];
+  formTitle = '';
 
   plantFilterInput = '';
   readonly formConfigurationStatus = formConfigurationStatus;
@@ -162,6 +166,21 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    const {
+      formData: { isCreateAI }
+    } = this.data;
+    this.isCreateAI = isCreateAI;
+    this.promptFormData = this.fb.group({
+      plantId: ['', Validators.required],
+      prompt: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(10),
+          Validators.maxLength(200)
+        ]
+      ]
+    });
     this.headerDataForm = this.fb.group({
       name: [
         '',
@@ -244,6 +263,24 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
+  onPromptSubmit() {
+    const prompt = this.promptFormData.value.prompt.trim();
+    this.rdfService
+      .createSectionsFromPrompt$(prompt, {
+        displayToast: true,
+        failureResponse: {}
+      })
+      .subscribe((data) => {
+        if (Object.keys(data)?.length) {
+          const { formTitle, sections } = data;
+          this.formTitle = formTitle;
+          this.sections = sections;
+        } else {
+          console.log('ERROR');
+        }
+      });
+  }
+
   handleEditorFocus(focus: boolean) {
     if (this.isOpen.value !== focus) {
       this.isOpen.setValue(focus);
@@ -270,8 +307,8 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
       const additionalDetailsArray = this.data.formData.additionalDetails;
 
       const tagsValue = this.data.formData.tags;
-
-      this.updateAdditionalDetailsArray(additionalDetailsArray);
+      if (additionalDetailsArray?.length)
+        this.updateAdditionalDetailsArray(additionalDetailsArray);
       this.patchTags(tagsValue);
 
       this.headerDataForm.markAsDirty();
