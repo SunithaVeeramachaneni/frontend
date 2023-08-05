@@ -45,6 +45,13 @@ export class FormModalComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.totalSteps = this.steps.length;
+    const {
+      formData: { isCreateAI }
+    } = this.data;
+
+    if (isCreateAI) {
+      this.steps[0].title = 'Generate From AI';
+    }
 
     this.authoredFormDetailSubscription = this.store
       .select(getFormDetails)

@@ -66,15 +66,16 @@ export class FormContainerComponent implements OnInit {
     this.formListComponent.resetFile(event);
   }
   openCreateAIFormsModal() {
-    const createAIFormRef = this.dialog.open(CreateAiFormModalComponent, {
-      maxWidth: '50vw',
-      maxHeight: '82vh',
-      height: '100%',
-      width: '100%',
-      data: {}
-    });
-    createAIFormRef.afterClosed().subscribe((res) => {
-      console.log('closed');
-    });
+    this.formListComponent.openFormCreationModal({ isCreateAI: true });
+    // const createAIFormRef = this.dialog.open(CreateAiFormModalComponent, {
+    //   maxWidth: '50vw',
+    //   maxHeight: '82vh',
+    //   height: '100%',
+    //   width: '100%',
+    //   data: {}
+    // });
+    // createAIFormRef.afterClosed().subscribe((res) => {
+    //   console.log('closed');
+    // });
   }
 }
