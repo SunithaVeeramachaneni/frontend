@@ -75,11 +75,11 @@ export class AiFormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
           }
         });
         this.calculateProgress();
-        this.formProgressService.aiFormProgressIsOpen$.next(true);
         delete payload.affectedForms;
         this.updateProgress$(payload).subscribe((event) => {
           if (!this.firstEvent) {
             this.firstEvent = true;
+            this.formProgressService.aiFormProgressIsOpen$.next(true);
             this.putFormInStore(event, payload.plant);
           } else {
             this.updateForm(event);
@@ -117,7 +117,7 @@ export class AiFormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
     if (this.formMetadata.length === 0) {
       this.isOpenToggle(false);
     } else {
-      this.isOpenToggle(true);
+      // this.isOpenToggle(true);
     }
     this.totalCompletedCount = this.formMetadata.filter(
       (form) => form.progressStatus !== progressStatus.inprogress
