@@ -641,7 +641,10 @@
                     class="prompt-generated-form-title-icon"
                     alt=""
                   />
-                  <a matTooltip="" class="dis-inline">
+                  <a
+                    matTooltip="{{ form.get('formTitle').value }}"
+                    class="dis-inline"
+                  >
                     <a class="width-90">
                       <input
                         id="formNameText"
@@ -652,7 +655,6 @@
                         formControlName="formTitle"
                         autofocus="true"
                         autocomplete="off"
-                        value="{{ form.get('formTitle').value }}"
                         (keyup.enter)="form.get('formTitle').disable()"
                         (blur)="form.get('formTitle').disable()"
                       />
@@ -691,14 +693,29 @@
                 </p>
                 <div class="prompt-generated-form-section-container">
                   <div class="prompt-regenerate-form-section">
-                    <button class="prompt-regenerate-section-btn">
-                      <svg-icon
-                        icon="icon-regenerate-section-ai"
-                        class="icon"
-                      ></svg-icon>
+                    <button
+                      class="prompt-regenerate-section-btn"
+                      (click)="onSectionRegenerate(i)"
+                      [disabled]="disableRegenerateIdx.includes(i.toString())"
+                    >
+                      <div
+                        [ngClass]="[
+                          disableRegenerateIdx.includes(i.toString())
+                            ? 'disabled'
+                            : ''
+                        ]"
+                      >
+                        <svg-icon
+                          icon="icon-regenerate-section-ai"
+                          class="icon"
+                        ></svg-icon>
+                      </div>
                     </button>
                   </div>
-                  <mat-form-field class="width-100" appearance="outline">
+                  <mat-form-field
+                    class="width-100 margin-top--6"
+                    appearance="outline"
+                  >
                     <quill-material
                       [ngClass]="{
                         'display-toolbar': isOpen.value

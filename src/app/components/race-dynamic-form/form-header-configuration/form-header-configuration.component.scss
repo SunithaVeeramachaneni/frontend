@@ -416,7 +416,7 @@
       padding: 15px;
       border-radius: 5px;
       box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
-      margin-bottom: 30px;
+      margin-bottom: 15px;
       width: calc(100% - 45px);
 
       .prompt-generated-form-title-container {
@@ -467,8 +467,11 @@
         margin: 10px 0px;
         display: flex;
         justify-content: start;
-        align-items: center;
+        align-items: start;
         width: 100%;
+        .margin-top--6 {
+          margin-top: -6px;
+        }
         .prompt-regenerate-form-section {
           .prompt-regenerate-section-btn {
             margin-right: 10px;
@@ -483,9 +486,23 @@
               width: 20px;
               height: 20px;
             }
+            .disabled {
+              opacity: 0.5;
+              cursor: not-allowed;
+              animation: rotation 2s infinite linear;
+            }
+            @keyframes rotation {
+              from {
+                transform: rotate(359deg);
+              }
+              to {
+                transform: rotate(0deg);
+              }
+            }
           }
           .prompt-generated-section-field {
             width: 100%;
+            margin-top: -6px;
           }
         }
       }

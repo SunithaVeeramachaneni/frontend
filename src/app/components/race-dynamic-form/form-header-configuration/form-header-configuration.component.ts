@@ -102,6 +102,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   addNewShow = new BehaviorSubject<boolean>(false);
   formCreateLoading$ = new BehaviorSubject<boolean>(false);
   isPromptGenerated$ = new BehaviorSubject<boolean>(false);
+  disableRegenerateIdx = [];
   forms = [];
   headerDataForm: FormGroup;
   errors: ValidationError = {};
@@ -319,6 +320,26 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   editFormName() {
     // this.formConfiguration.get('name').enable();
     this.formName.nativeElement.focus();
+  }
+  onSectionRegenerate(idx: number) {
+    this.disableRegenerateIdx.push(idx.toString());
+    const formName = this.generatedForms.controls[idx].value.formTitle;
+    this.rdfService.regenerateSectionsFromTitle$(formName).subscribe((data) => {
+      if (data?.sections?.length > 0) {
+        let sectionStr = '<ul>';
+        data?.sections?.forEach((section) => {
+          sectionStr += `<li>${section?.sectionName}</li>`;
+        });
+        sectionStr += '</ul>';
+        data.sections = sectionStr;
+        this.generatedForms.controls[idx].patchValue(data);
+      }
+      this.disableRegenerateIdx.splice(
+        this.disableRegenerateIdx.findIndex((i) => i === idx.toString()),
+        1
+      );
+      this.cdrf.detectChanges();
+    });
   }
   onPromptSubmit() {
     console.log(this.promptFormData.value.plantId.name);
