@@ -66,6 +66,7 @@ import { NgxImageCompressService } from 'ngx-image-compress';
 import { PDFDocument } from 'pdf-lib';
 import { Router } from '@angular/router';
 import { isEqual } from 'lodash-es';
+import { getRequestCounter } from 'src/app/forms/state/builder/builder-state.selectors';
 
 @Component({
   selector: 'app-form-header-configuration',
@@ -116,6 +117,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   generatedPromptForm: FormGroup;
   sections = [];
   formTitle = '';
+  requestCounter = 0;
 
   plantFilterInput = '';
   readonly formConfigurationStatus = formConfigurationStatus;
@@ -270,41 +272,6 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
-
-    // const tempData = [
-    //   {
-    //     formTitle: 'Daily Inspection of Water Boiler',
-    //     sections: [
-    //       {
-    //         sectionName: 'Boiler Exterior Inspection'
-    //       },
-    //       {
-    //         sectionName: 'Boiler Interior Inspection'
-    //       },
-    //       {
-    //         sectionName: 'Boiler Safety System Inspection'
-    //       }
-    //     ]
-    //   },
-    //   {
-    //     formTitle: 'Lube Oil Inspection',
-    //     sections: [
-    //       {
-    //         sectionName: 'Oil Level Check'
-    //       },
-    //       {
-    //         sectionName: 'Oil Filter Inspection'
-    //       },
-    //       {
-    //         sectionName: 'Oil Temperature Measurement'
-    //       }
-    //     ]
-    //   }
-    // ];
-    // tempData.forEach((form) => {
-    //   this.addToGeneratedForm(form);
-    //   console.log(this.generatedForms);
-    // });
   }
 
   get generatedForms(): FormArray {
@@ -324,35 +291,48 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   onSectionRegenerate(idx: number) {
     this.disableRegenerateIdx.push(idx.toString());
     const formName = this.generatedForms.controls[idx].value.formTitle;
-    this.rdfService.regenerateSectionsFromTitle$(formName).subscribe((data) => {
-      if (data?.sections?.length > 0) {
-        let sectionStr = '<ul>';
-        data?.sections?.forEach((section) => {
-          sectionStr += `<li>${section?.sectionName}</li>`;
-        });
-        sectionStr += '</ul>';
-        data.sections = sectionStr;
-        this.generatedForms.controls[idx].patchValue(data);
-      }
-      this.disableRegenerateIdx.splice(
-        this.disableRegenerateIdx.findIndex((i) => i === idx.toString()),
-        1
-      );
-      this.cdrf.detectChanges();
-    });
+    this.store
+      .select(getRequestCounter)
+      .subscribe((count) => (this.requestCounter = count));
+
+    this.rdfService
+      .regenerateSectionsFromTitle$(formName, this.requestCounter)
+      .subscribe((data) => {
+        if (data?.sections?.length > 0) {
+          let sectionStr = '<ul>';
+          data?.sections?.forEach((section) => {
+            sectionStr += `<li>${section?.sectionName}</li>`;
+          });
+          sectionStr += '</ul>';
+          data.sections = sectionStr;
+          this.generatedForms.controls[idx].patchValue(data);
+        }
+        this.disableRegenerateIdx.splice(
+          this.disableRegenerateIdx.findIndex((i) => i === idx.toString()),
+          1
+        );
+        this.cdrf.detectChanges();
+      });
   }
   onPromptSubmit() {
     console.log(this.promptFormData.value.plantId.name);
     this.formCreateLoading$.next(true);
     this.isPromptGenerated$.next(false);
     const prompt = this.promptFormData.value.prompt.trim();
+    this.store
+      .select(getRequestCounter)
+      .subscribe((count) => (this.requestCounter = count));
     this.rdfService
-      .createSectionsFromPrompt$(prompt, {
+      .createSectionsFromPrompt$(prompt, this.requestCounter, {
         displayToast: true,
         failureResponse: {}
       })
       .subscribe((data) => {
+        this.store.dispatch(
+          BuilderConfigurationActions.incrementRequestCounter()
+        );
         if (Object.keys(data)?.length) {
+          this.generatedForms.clear();
           const { forms } = data;
           this.forms = forms;
           this.forms.forEach((form) => {
@@ -499,130 +479,201 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   }
 
   next() {
-    const additionalinfoArray = this.headerDataForm.get(
-      'additionalDetails'
-    ) as FormArray;
-    const updatedAdditionalDetails = additionalinfoArray.value.map(
-      (additionalinfo) => ({
-        FIELDLABEL: additionalinfo.label,
-        DEFAULTVALUE: additionalinfo.value,
-        UIFIELDTYPE: 'LF'
-      })
-    );
+    if (!this.isCreateAI) {
+      const additionalinfoArray = this.headerDataForm.get(
+        'additionalDetails'
+      ) as FormArray;
+      const updatedAdditionalDetails = additionalinfoArray.value.map(
+        (additionalinfo) => ({
+          FIELDLABEL: additionalinfo.label,
+          DEFAULTVALUE: additionalinfo.value,
+          UIFIELDTYPE: 'LF'
+        })
+      );
 
-    const newTags = [];
+      const newTags = [];
 
-    this.headerDataForm
-      .get('instructions.attachments')
-      .setValue(this.filteredMediaTypeIds.mediaIds);
-    this.headerDataForm
-      .get('instructions.pdfDocs')
-      .setValue(this.filteredMediaPdfTypeIds);
-    this.tags.forEach((selectedTag) => {
-      if (this.originalTags.indexOf(selectedTag) < 0) {
-        newTags.push(selectedTag);
-      }
-    });
-    if (newTags.length) {
-      const dataSet = {
-        type: 'tags',
-        values: newTags
-      };
-      this.rdfService.createTags$(dataSet).subscribe((response) => {
-        // do nothing
+      this.headerDataForm
+        .get('instructions.attachments')
+        .setValue(this.filteredMediaTypeIds.mediaIds);
+      this.headerDataForm
+        .get('instructions.pdfDocs')
+        .setValue(this.filteredMediaPdfTypeIds);
+      this.tags.forEach((selectedTag) => {
+        if (this.originalTags.indexOf(selectedTag) < 0) {
+          newTags.push(selectedTag);
+        }
       });
-    }
-
-    const plant = this.allPlantsData.find(
-      (p) => p.id === this.headerDataForm.get('plantId').value
-    );
-
-    if (this.headerDataForm.valid) {
-      const userName = this.loginService.getLoggedInUserName();
-      if (this.formData.formExists === false) {
-        this.store.dispatch(
-          BuilderConfigurationActions.addFormMetadata({
-            formMetadata: {
-              ...this.headerDataForm.value,
-              additionalDetails: updatedAdditionalDetails,
-              plant: plant.name
-            },
-            formDetailPublishStatus: formConfigurationStatus.draft,
-            formSaveStatus: formConfigurationStatus.saving
-          })
-        );
-        this.store.dispatch(
-          BuilderConfigurationActions.updateCreateOrEditForm({
-            createOrEditForm: true
-          })
-        );
-        this.store.dispatch(
-          BuilderConfigurationActions.createForm({
-            formMetadata: {
-              ...this.headerDataForm.value,
-              additionalDetails: updatedAdditionalDetails,
-              pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG,
-              author: userName,
-              formLogo: 'assets/rdf-forms-icons/formlogo.svg'
-            }
-          })
-        );
-        this.router.navigate(['/forms/create']);
-      } else if (this.formData.formExists === true) {
-        this.store.dispatch(
-          BuilderConfigurationActions.updateFormMetadata({
-            formMetadata: {
-              ...this.headerDataForm.value,
-              id: this.formData.formMetadata.id,
-              additionalDetails: updatedAdditionalDetails,
-              plant: plant?.name
-            },
-            formStatus: this.hasFormChanges
-              ? formConfigurationStatus.draft
-              : this.headerDataForm.value.formStatus,
-            formDetailPublishStatus: formConfigurationStatus.draft,
-            formSaveStatus: formConfigurationStatus.saving
-          })
-        );
-        this.store.dispatch(
-          BuilderConfigurationActions.updateCreateOrEditForm({
-            createOrEditForm: true
-          })
-        );
-        this.store.dispatch(
-          BuilderConfigurationActions.updateForm({
-            formMetadata: {
-              ...this.headerDataForm.value,
-              id: this.formData.formMetadata.id,
-              additionalDetails: updatedAdditionalDetails,
-              pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG
-            },
-            formListDynamoDBVersion: this.formData.formListDynamoDBVersion
-          })
-        );
+      if (newTags.length) {
+        const dataSet = {
+          type: 'tags',
+          values: newTags
+        };
+        this.rdfService.createTags$(dataSet).subscribe((response) => {
+          // do nothing
+        });
       }
 
-      if (this.data?.formData && this.data?.type === 'add') {
-        this.rdfService
-          .updateTemplate$(this.data.formData.id, {
-            formsUsageCount: this.data.formData.formsUsageCount + 1
-          })
-          .subscribe(() => {
+      const plant = this.allPlantsData.find(
+        (p) => p.id === this.headerDataForm.get('plantId').value
+      );
+
+      if (this.headerDataForm.valid) {
+        const userName = this.loginService.getLoggedInUserName();
+        if (this.formData.formExists === false) {
+          this.store.dispatch(
+            BuilderConfigurationActions.addFormMetadata({
+              formMetadata: {
+                ...this.headerDataForm.value,
+                additionalDetails: updatedAdditionalDetails,
+                plant: plant.name
+              },
+              formDetailPublishStatus: formConfigurationStatus.draft,
+              formSaveStatus: formConfigurationStatus.saving
+            })
+          );
+          this.store.dispatch(
+            BuilderConfigurationActions.updateCreateOrEditForm({
+              createOrEditForm: true
+            })
+          );
+          this.store.dispatch(
+            BuilderConfigurationActions.createForm({
+              formMetadata: {
+                ...this.headerDataForm.value,
+                additionalDetails: updatedAdditionalDetails,
+                pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG,
+                author: userName,
+                formLogo: 'assets/rdf-forms-icons/formlogo.svg'
+              }
+            })
+          );
+          this.router.navigate(['/forms/create']);
+        } else if (this.formData.formExists === true) {
+          this.store.dispatch(
+            BuilderConfigurationActions.updateFormMetadata({
+              formMetadata: {
+                ...this.headerDataForm.value,
+                id: this.formData.formMetadata.id,
+                additionalDetails: updatedAdditionalDetails,
+                plant: plant?.name
+              },
+              formStatus: this.hasFormChanges
+                ? formConfigurationStatus.draft
+                : this.headerDataForm.value.formStatus,
+              formDetailPublishStatus: formConfigurationStatus.draft,
+              formSaveStatus: formConfigurationStatus.saving
+            })
+          );
+          this.store.dispatch(
+            BuilderConfigurationActions.updateCreateOrEditForm({
+              createOrEditForm: true
+            })
+          );
+          this.store.dispatch(
+            BuilderConfigurationActions.updateForm({
+              formMetadata: {
+                ...this.headerDataForm.value,
+                id: this.formData.formMetadata.id,
+                additionalDetails: updatedAdditionalDetails,
+                pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG
+              },
+              formListDynamoDBVersion: this.formData.formListDynamoDBVersion
+            })
+          );
+        }
+
+        if (this.data?.formData && this.data?.type === 'add') {
+          this.rdfService
+            .updateTemplate$(this.data.formData.id, {
+              formsUsageCount: this.data.formData.formsUsageCount + 1
+            })
+            .subscribe(() => {
+              this.store.dispatch(
+                BuilderConfigurationActions.replacePagesAndCounter({
+                  pages: JSON.parse(
+                    this.data.formData.authoredFormTemplateDetails[0].pages
+                  ),
+                  counter: this.data.formData.counter
+                })
+              );
+              this.gotoNextStep.emit();
+            });
+        } else {
+          this.gotoNextStep.emit();
+        }
+      }
+    } else {
+      const formsArray = this.generatedForms.value.map((form) => {
+        const { formTitle, sections: formSections } = form;
+        const sections = this.getSectionsArrayFromHTML(formSections);
+        return {
+          formTitle,
+          sections
+        };
+      });
+
+      const forms = {
+        forms: formsArray
+      };
+
+      this.store
+        .select(getRequestCounter)
+        .subscribe((count) => (this.requestCounter = count));
+
+      const plantId = this.promptFormData.value.plantId.id;
+      const plant = this.promptFormData.value.plantId.name;
+      console.log(forms);
+      this.rdfService
+        .createFromsFromPrompt$(forms, plantId, this.requestCounter)
+        .subscribe((data) => {
+          const {
+            isAllFormCompleted,
+            isCompletedForm,
+            formlistID,
+            section,
+            formList
+          } = data;
+          console.log(data);
+          this.store.dispatch(
+            BuilderConfigurationActions.incrementRequestCounter()
+          );
+          if (section) {
             this.store.dispatch(
-              BuilderConfigurationActions.replacePagesAndCounter({
-                pages: JSON.parse(
-                  this.data.formData.authoredFormTemplateDetails[0].pages
-                ),
-                counter: this.data.formData.counter
+              BuilderConfigurationActions.addFormMetadata({
+                formMetadata: {
+                  ...formList,
+                  plant
+                },
+                formDetailPublishStatus: formConfigurationStatus.draft,
+                formSaveStatus: formConfigurationStatus.saving
               })
             );
-            this.gotoNextStep.emit();
-          });
-      } else {
-        this.gotoNextStep.emit();
-      }
+            this.store.dispatch(
+              BuilderConfigurationActions.updateCreateOrEditForm({
+                createOrEditForm: true
+              })
+            );
+            this.router.navigate(['/forms/create']);
+            console.log(section);
+          }
+        });
     }
   }
+
+  getSectionsArrayFromHTML(inputString: String) {
+    const regex = /<li>(.*?)<\/li>/g;
+    const matches = inputString.match(regex);
+
+    const sectionsArray = matches.map((match) => {
+      const sectionName = match.replace(/<\/?li>/g, '');
+      return { sectionName };
+    });
+
+    console.log(sectionsArray);
+    return sectionsArray;
+  }
+
   trackBySelectedattachments(index: number, el: any): string {
     return el?.id;
   }

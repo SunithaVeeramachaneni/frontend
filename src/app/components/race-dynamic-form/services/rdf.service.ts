@@ -1469,50 +1469,53 @@ export class RaceDynamicFormService {
 
   createSectionsFromPrompt$ = (
     prompt: String,
+    requestCounter: Number,
     info: ErrorInfo = {} as ErrorInfo
   ) =>
     this.appService._postData(
       environment.rdfApiUrl,
       'ai/sections',
-      { prompt },
+      { prompt, requestCounter },
       info
     );
 
   regenerateSectionsFromTitle$ = (
     prompt: String,
+    requestCounter: Number,
     info: ErrorInfo = {} as ErrorInfo
   ) =>
     this.appService._postData(
       environment.rdfApiUrl,
       'ai/sections/regenerate',
-      { prompt },
+      { prompt, requestCounter },
       info
     );
 
   regenerateQuestionsForSections$ = (
     formTitle: String,
     sectionName: String,
+    sectionId: String,
+    counter: Number,
+    requestCounter: Number,
     info: ErrorInfo = {} as ErrorInfo
   ) =>
     this.appService._postData(
       environment.rdfApiUrl,
       'ai/forms/regenerate',
-      { formTitle, sectionName },
+      { formTitle, sectionName, sectionId, counter, requestCounter },
       info
     );
 
   createFromsFromPrompt$ = (
     forms: any,
     plantId: string,
+    requestCounter: Number,
     info: ErrorInfo = {} as ErrorInfo
   ) => {
     const formData = new FormData();
     formData.append('forms', JSON.stringify(forms));
     formData.append('plantId', plantId);
-    return this.getServerSentEvent(
-      environment.rdfApiUrl,
-      '/ai/forms',
-      formData
-    );
+    formData.append('requestCounter', requestCounter.toString());
+    return this.getServerSentEvent(environment.rdfApiUrl, 'ai/forms', formData);
   };
 }

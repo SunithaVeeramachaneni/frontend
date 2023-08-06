@@ -9,6 +9,7 @@
     translate="cancelBtn"
   ></button>
   <button
+    *ngIf="!this.isCreateAI"
     id="nextBtn"
     mat-raised-button
     type="submit"
@@ -16,6 +17,17 @@
     class="next-btn"
     (click)="next()"
     [disabled]="headerDataForm.invalid"
+    translate="nextBtn"
+  ></button>
+  <button
+    *ngIf="this.isCreateAI"
+    id="nextBtn"
+    mat-raised-button
+    type="submit"
+    color="primary"
+    class="next-btn"
+    (click)="next()"
+    [disabled]="promptFormData.invalid"
     translate="nextBtn"
   ></button>
 </div>

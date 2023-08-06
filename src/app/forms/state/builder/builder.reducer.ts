@@ -32,6 +32,7 @@ export interface FormConfigurationState {
   isFormCreated: boolean;
   moduleName: string;
   skipAuthoredDetail: boolean;
+  requestCounter: number;
 }
 
 const initialState = {
@@ -51,11 +52,19 @@ const initialState = {
   authoredFormDetailDynamoDBVersion: 0,
   isFormCreated: false,
   moduleName: 'operator-rounds',
-  skipAuthoredDetail: false
+  skipAuthoredDetail: false,
+  requestCounter: 0
 };
 
 export const formConfigurationReducer = createReducer<FormConfigurationState>(
   initialState,
+  on(
+    BuilderConfigurationActions.incrementRequestCounter,
+    (state, action): FormConfigurationState => ({
+      ...state,
+      requestCounter: state.requestCounter + 1
+    })
+  ),
   on(
     BuilderConfigurationActions.addFormMetadata,
     (state, action): FormConfigurationState => ({

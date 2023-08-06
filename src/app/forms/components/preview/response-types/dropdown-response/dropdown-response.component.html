@@ -1,5 +1,5 @@
 <!-- Dropdown -->
-<div *ngIf="question.value.value.length > 4">
+<div *ngIf="question.value.value.length > 3">
   <mat-form-field appearance="outline" class="dropdown">
     <mat-select [multiple]="question.multi" [placeholder]="'enter' | translate">
       <mat-option
@@ -15,7 +15,7 @@
 </div>
 
 <!-- Dropdown -->
-<div *ngIf="question.value.value.length <= 4">
+<div *ngIf="question.value.value.length <= 3">
   <mat-button-toggle-group>
     <mat-button-toggle
       id="downDownResponseQuestion"

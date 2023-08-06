@@ -17,6 +17,11 @@ const selectFormConfigurationState = createSelector(
   (state) => state.formConfiguration
 );
 
+export const getRequestCounter = createSelector(
+  selectFormConfigurationState,
+  (state) => state.requestCounter
+);
+
 export const getFormMetadata = createSelector(
   selectFormConfigurationState,
   (state) => state.formMetadata

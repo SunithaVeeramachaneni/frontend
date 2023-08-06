@@ -32,7 +32,7 @@ export class CreateAiFormModalComponent implements OnInit {
   onPromptSubmit() {
     const prompt = this.promptFormData.value.prompt.trim();
     this.rdfService
-      .createSectionsFromPrompt$(prompt, {
+      .createSectionsFromPrompt$(prompt, 0, {
         displayToast: true,
         failureResponse: {}
       })

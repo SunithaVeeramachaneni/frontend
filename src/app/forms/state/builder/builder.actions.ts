@@ -339,6 +339,10 @@ export const resetFormConfiguration = createAction(
   '[Builder Configuration] resetFormConfiguration'
 );
 
+export const incrementRequestCounter = createAction(
+  '[Builder Configuration] incrementCounter'
+);
+
 export const initPages = createAction(
   '[Form Configuration Component] initPages',
   props<{ pages: any[]; subFormId: string }>()
