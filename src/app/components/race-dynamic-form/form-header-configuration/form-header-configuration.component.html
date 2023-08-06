@@ -618,6 +618,7 @@
                   <mat-form-field appearance="outline">
                     <textarea
                       [disabled]="this.promptFormData.get('plantId').invalid"
+                      (keyup.alt)="onPromptSubmit()"
                       class="prompt-input"
                       id="prompt"
                       matInput

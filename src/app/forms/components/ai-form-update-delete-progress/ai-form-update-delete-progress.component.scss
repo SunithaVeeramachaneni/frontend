@@ -73,6 +73,9 @@
     .mat-spinner circle {
       stroke: $green3;
     }
+    .single-form-progress:hover {
+      background-color: $gray2;
+    }
   }
   .shrink {
     max-height: 0px !important;

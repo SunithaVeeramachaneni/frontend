@@ -319,7 +319,7 @@
       width: 100%;
 
       .ai-form-prompt-heading {
-        font-size: 150%;
+        font-size: 140%;
         font-weight: 500;
       }
       .ai-chat-container {
@@ -330,6 +330,7 @@
         border-radius: 5px;
         box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
         width: calc(100% - 45px);
+        margin-bottom: 20px;
         .prompt-form {
           font-weight: 500;
         }
@@ -576,13 +577,14 @@
 }
 .loader-ai-forms {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   width: 100%;
   margin-top: 150px;
   align-items: center;
   justify-content: center;
   .full-screen-loader-icon {
     mix-blend-mode: multiply;
+    height: 200px;
   }
   p {
     font-size: 150%;
