@@ -86,6 +86,8 @@ export class AiFormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
             );
 
             this.formMetadata[idx].progressStatus = progressStatus.success;
+            this.formMetadata[idx].uid = event.uid;
+            this.formMetadata[idx].formlistID = event.formlistID;
             this.calculateProgress();
             // this.showToast();
             this.cdr.detectChanges();
@@ -183,6 +185,15 @@ export class AiFormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
     ) {
       this.formMetadata = [];
       this.totalCompletedCount = 0;
+    }
+  }
+
+  redirectForm(form) {
+    console.log(form);
+    if (form.formlistID) {
+      this.router.navigate([`forms/edit/${form.formlistID}`], {
+        queryParams: { isCreateAI: true }
+      });
     }
   }
 

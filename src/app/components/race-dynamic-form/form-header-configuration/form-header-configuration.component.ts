@@ -64,7 +64,7 @@ import { OperatorRoundsService } from '../../operator-rounds/services/operator-r
 import { FormModalComponent } from '../form-modal/form-modal.component';
 import { NgxImageCompressService } from 'ngx-image-compress';
 import { PDFDocument } from 'pdf-lib';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { isEqual } from 'lodash-es';
 import { getRequestCounter } from 'src/app/forms/state/builder/builder-state.selectors';
 import { FormUpdateProgressService } from 'src/app/forms/services/form-update-progress.service';
@@ -153,6 +153,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     public dialog: MatDialog,
     private imageCompress: NgxImageCompressService,
     private router: Router,
+    private route: ActivatedRoute,
     private formAiGenService: FormUpdateProgressService
   ) {
     this.rdfService.getDataSetsByType$('tags').subscribe((tags) => {
@@ -288,6 +289,13 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
+
+    this.route.queryParams.subscribe((params) => {
+      console.log(params);
+      if (params.isCreateAI) {
+        this.gotoNextStep.emit();
+      }
+    });
   }
 
   get generatedForms(): FormArray {
@@ -442,7 +450,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   }
 
   patchTags(values: any[]): void {
-    this.tags = values;
+    this.tags = values || [];
   }
 
   updateAdditionalDetailsArray(values: any[]): void {
@@ -547,7 +555,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
       this.headerDataForm
         .get('instructions.pdfDocs')
         .setValue(this.filteredMediaPdfTypeIds);
-      this.tags.forEach((selectedTag) => {
+      this.tags?.forEach((selectedTag) => {
         if (this.originalTags.indexOf(selectedTag) < 0) {
           newTags.push(selectedTag);
         }

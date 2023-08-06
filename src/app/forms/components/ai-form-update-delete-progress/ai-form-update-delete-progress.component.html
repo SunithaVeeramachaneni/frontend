@@ -35,7 +35,15 @@
         _isExpanded ? 'expand' : 'shrink'
       ]"
     >
-      <div class="single-form-progress" *ngFor="let form of formMetadata">
+      <div
+        [ngClass]="{
+          'ripple-container': form.progressStatus === 'success',
+          'cursor-waiting': form.progressStatus === 'in-progress'
+        }"
+        class="single-form-progress"
+        *ngFor="let form of formMetadata"
+        (click)="redirectForm(form)"
+      >
         <div class="form-metadata">
           <img class="form-icon" src="{{ form.preTextImage.image }}" alt="" />
           <span class="form-name">{{ form.formTitle }}</span>

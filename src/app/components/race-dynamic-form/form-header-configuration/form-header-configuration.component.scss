@@ -466,10 +466,16 @@
           font-size: 140%;
           font-weight: 500;
           text-overflow: ellipsis;
-          padding: 3px 10px;
+          padding: 3px 10px 3px 3px;
           display: inline-block;
           white-space: nowrap;
           overflow: hidden;
+        }
+        .form-text-input {
+          font-size: 140%;
+          border: none;
+          font-weight: 500;
+          padding: 3px 3px 3px 10px;
         }
 
         input[type='text']:focus {

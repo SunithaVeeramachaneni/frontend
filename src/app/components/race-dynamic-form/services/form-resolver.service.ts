@@ -21,6 +21,7 @@ export class FormResolverService implements Resolve<FormConfigurationState> {
 
   resolve(route: ActivatedRouteSnapshot): Observable<FormConfigurationState> {
     const id = route.params.id;
+    console.log(route.params);
     if (id === undefined) {
       this.roundPlanResolverServive.getResponseTypeDetails();
       return of({} as FormConfigurationState);

@@ -320,7 +320,7 @@ export class RaceDynamicFormService {
   }
 
   updateForm$(formMetaDataDetails) {
-    const { plant, embeddedFormId, ...formMetadata } =
+    const { plant, embeddedFormId, isCreateAI, ...formMetadata } =
       formMetaDataDetails.formMetadata;
     if (!formMetadata.id) {
       return;

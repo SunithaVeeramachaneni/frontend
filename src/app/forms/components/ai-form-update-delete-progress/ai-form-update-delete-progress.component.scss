@@ -89,3 +89,15 @@
   max-height: 0px !important;
   box-shadow: none;
 }
+
+.cursor-waiting {
+  cursor: wait;
+}
+
+.ripple-container {
+  position: relative;
+  display: inline-block;
+  padding: 20px;
+  cursor: pointer;
+  overflow: hidden;
+}
