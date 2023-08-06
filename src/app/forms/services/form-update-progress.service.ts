@@ -5,6 +5,9 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class FormUpdateProgressService {
+  aiFormLoading$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
+    false
+  );
   formProgressIsOpen$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
     false
   );

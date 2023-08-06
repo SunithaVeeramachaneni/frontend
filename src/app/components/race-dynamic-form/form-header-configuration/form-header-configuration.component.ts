@@ -116,6 +116,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   isDisabled = false;
   isOpen = new FormControl(false);
   isCreateAI: boolean;
+  isAiFormLoading: boolean = false;
   promptFormData: FormGroup;
   generatedPromptForm: FormGroup;
   sections = [];
@@ -251,7 +252,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
 
     this.getAllPlantsData();
     this.retrieveDetails();
-
+    this.getAiFormLoading();
     this.rdfService.attachmentsMapping$
       .pipe(map((data) => (Array.isArray(data) ? data : [])))
       .subscribe((attachments) => {
@@ -292,7 +293,13 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   get generatedForms(): FormArray {
     return this.generatedPromptForm.get('generatedForms') as FormArray;
   }
-
+  getAiFormLoading() {
+    this.formAiGenService.aiFormLoading$.subscribe((data) => {
+      if (this.isAiFormLoading && !data) this.gotoNextStep.emit();
+      this.isAiFormLoading = data;
+      this.cdrf.detectChanges();
+    });
+  }
   startListening() {
     if (annyang) {
       this.promptFormData.get('prompt').setValue('');
@@ -669,6 +676,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
       const plant = this.promptFormData.value.plantId.name;
       console.log(forms);
       this.formAiGenService.aiFormGeneratePayload$.next(forms);
+      this.formAiGenService.aiFormLoading$.next(true);
       // this.rdfService
       //   .createFormsFromPrompt$(forms, plantId, this.requestCounter)
       //   .subscribe((data) => {

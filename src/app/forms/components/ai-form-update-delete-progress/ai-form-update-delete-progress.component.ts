@@ -19,6 +19,8 @@ import { CommonService } from 'src/app/shared/services/common.service';
 import { Store } from '@ngrx/store';
 import { State, getFormMetadata } from 'src/app/forms/state';
 import { getRequestCounter } from '../../state/builder/builder-state.selectors';
+import { BuilderConfigurationActions } from '../../state/actions';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-ai-form-update-delete-progress',
   templateUrl: './ai-form-update-delete-progress.component.html',
@@ -32,6 +34,7 @@ export class AiFormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
   totalCompletedCount = 0;
   isTemplateCreated: boolean;
   currentRouteUrl$: Observable<string>;
+  firstEvent: boolean = false;
   readonly routingUrls = routingUrls;
   private onDestroy$ = new Subject();
 
@@ -41,7 +44,8 @@ export class AiFormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private formProgressService: FormUpdateProgressService,
     private toastService: ToastService,
-    private store: Store<State>
+    private store: Store<State>,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -71,6 +75,11 @@ export class AiFormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
         delete payload.affectedForms;
         this.updateProgress$(payload).subscribe((event) => {
           console.log(event);
+          if (!this.firstEvent) {
+            this.firstEvent = true;
+            this.putFormInStore(event, payload.plant);
+          }
+          this.formProgressService.aiFormLoading$.next(false);
           if (event?.isCompletedForm) {
             const idx = this.formMetadata.findIndex(
               (form) => form.uid === event.uid
@@ -175,6 +184,26 @@ export class AiFormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
       this.formMetadata = [];
       this.totalCompletedCount = 0;
     }
+  }
+
+  putFormInStore(event, plant) {
+    this.store.dispatch(
+      BuilderConfigurationActions.addFormMetadata({
+        formMetadata: {
+          ...event.formList,
+          additionalDetails: event.formList.additionalDetails,
+          plant
+        },
+        formDetailPublishStatus: formConfigurationStatus.draft,
+        formSaveStatus: formConfigurationStatus.saving
+      })
+    );
+    this.store.dispatch(
+      BuilderConfigurationActions.updateCreateOrEditForm({
+        createOrEditForm: true
+      })
+    );
+    this.router.navigate(['/forms/create']);
   }
 
   ngOnDestroy(): void {
