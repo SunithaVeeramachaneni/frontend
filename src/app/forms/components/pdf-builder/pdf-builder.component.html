@@ -211,30 +211,37 @@
           >
             {{ 'publishingChanges' | translate }}
           </div>
-          <button
-            id="pdfBuilderPublishBtn"
-            mat-raised-button
-            class="publish-btn"
-            (click)="publish()"
-            [disabled]="
-              formStatus === 'Published' ||
-              props.authoredFormDetail.isFormDetailPublished ||
-              (getAssetsLocationsTasksAdded && moduleName !== raceDynamicForms)
-            "
-          >
-            <span>
-              <svg-icon
-                id="pdfBuilderPublishIcon"
-                icon="icon-upload-white"
-                class="publish-btn-icon"
-              ></svg-icon>
-              <span
-                id="pdfBuilderPublishText"
-                class="publish"
-                translate="publishBtn"
-              ></span>
-            </span>
-          </button>
+          <div>
+            <button
+              id="pdfBuilderPublishBtn"
+              mat-raised-button
+              class="publish-btn"
+              (click)="publish()"
+              [disabled]="
+                formStatus === 'Published' ||
+                props.authoredFormDetail.isFormDetailPublished ||
+                (getAssetsLocationsTasksAdded &&
+                  moduleName !== raceDynamicForms)
+              "
+            >
+              <span>
+                <svg-icon
+                  id="pdfBuilderPublishIcon"
+                  icon="icon-upload-white"
+                  class="publish-btn-icon"
+                ></svg-icon>
+                <span
+                  id="pdfBuilderPublishText"
+                  class="publish"
+                  translate="publishBtn"
+                ></span>
+              </span>
+            </button>
+            <p>
+              <input type="checkbox" />
+              <span> Save in Public Library </span>
+            </p>
+          </div>
         </div>
       </div>
       <div *ngIf="formMetadata$ | async as formMetadata" class="pdf-container">

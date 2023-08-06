@@ -251,7 +251,7 @@ export class AiFormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
       counter
     };
 
-    const questions: Question[] = questionsArray;
+    const questions: Question[] = [];
 
     const sections: Section[] = [section];
     const pageIndex = 0;
@@ -270,11 +270,13 @@ export class AiFormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
     );
 
     this.router.navigate(['/forms/create']);
+
+    this.addQuestionWithDelay(id, questionsArray, 0);
   }
 
   updateForm(event) {
     const { section: sectionObject, isCompletedForm } = event;
-    if (!isCompletedForm) {
+    if (isCompletedForm !== true) {
       const {
         id,
         name,
@@ -292,7 +294,7 @@ export class AiFormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
       };
 
       const sections: Section[] = [section];
-      const questions: Question[] = questionsArray;
+      const questions: Question[] = [];
       const pageIndex = 0;
       const sectionIndex = position - 1;
 
@@ -308,27 +310,39 @@ export class AiFormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
         })
       );
 
-      // let questionTimeOut;
-      // for (const question of questionsArray) {
-      //   clearTimeout(questionTimeOut);
-      //   questionTimeOut = setTimeout(() => {
-      //     const questions: Question[] = [question];
-      //     const sectionId = id;
-      //     const questionIndex = question.position;
-      //     const counter = this.questionCount + 1;
-      //     this.store.dispatch(
-      //       BuilderConfigurationActions.addQuestions({
-      //         questions,
-      //         pageIndex,
-      //         sectionId,
-      //         questionIndex,
-      //         counter,
-      //         ...this.roundPlanConfigurationServce.getFormConfigurationStatuses()
-      //       })
-      //     );
-      //   }, 500);
-      // }
+      this.addQuestionWithDelay(id, questionsArray, 0);
+
+      console.log('SECTION COMPLETED');
     }
+  }
+
+  addQuestionWithDelay(id, questionsArray, questionIndex) {
+    if (questionIndex >= questionsArray.length) {
+      return; // Base case: All questions added
+    }
+
+    const currentQuestion = questionsArray[questionIndex];
+    console.log('QUESTION: ', currentQuestion);
+
+    const questions: Question[] = [currentQuestion];
+    const sectionId = id;
+    const counter = this.questionCount + 1;
+    const pageIndex = 0;
+
+    this.store.dispatch(
+      BuilderConfigurationActions.addQuestions({
+        questions,
+        pageIndex,
+        sectionId,
+        questionIndex: currentQuestion.position,
+        counter,
+        ...this.roundPlanConfigurationServce.getFormConfigurationStatuses()
+      })
+    );
+
+    setTimeout(() => {
+      this.addQuestionWithDelay(id, questionsArray, questionIndex + 1); // Recurse to the next question
+    }, 500);
   }
 
   ngOnDestroy(): void {
