@@ -101,7 +101,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   changedValues: any;
   addNewShow = new BehaviorSubject<boolean>(false);
   formCreateLoading$ = new BehaviorSubject<boolean>(false);
-  isPromptGenerated$ = new BehaviorSubject<boolean>(true);
+  isPromptGenerated$ = new BehaviorSubject<boolean>(false);
   forms = [];
   headerDataForm: FormGroup;
   errors: ValidationError = {};

@@ -627,8 +627,7 @@
       <span class="prompt-form-result-text">
         {{
           'formGenerationText'
-            | translate
-              : { plant: 'Plant ID 1690888454624 - Plant Name 1690888454624' }
+            | translate : { plant: this.promptFormData.value.plantId.name }
         }}</span
       >
       <form [formGroup]="generatedPromptForm" class="width-100">
@@ -733,7 +732,5 @@
         </div>
       </div>
     </ng-container>
-    <!-- *ngIf="isPromptGenerated$ | async" -->
-    <!-- { plant: this.promptFormData.value.plantId.name } -->
   </div>
 </div>
