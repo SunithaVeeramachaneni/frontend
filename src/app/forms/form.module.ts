@@ -120,6 +120,7 @@ import { StepsHeaderComponent } from './components/stepper/steps-header/steps-he
 import { MatStepperModule } from '@angular/material/stepper';
 import { UploadImagePreviewComponent } from './components/upload-image-preview/upload-image-preview.component';
 import { FormUpdateDeleteProgressComponent } from './components/form-update-delete-progress/form-update-delete-progress.component';
+import { AiFormUpdateDeleteProgressComponent } from './components/ai-form-update-delete-progress/ai-form-update-delete-progress.component';
 @NgModule({
   declarations: [
     PageComponent,
@@ -194,6 +195,7 @@ import { FormUpdateDeleteProgressComponent } from './components/form-update-dele
     ShiftDateChangeWarningModalComponent,
     DynamicStepperComponent,
     FormUpdateDeleteProgressComponent,
+    AiFormUpdateDeleteProgressComponent,
     StepsHeaderComponent
   ],
   imports: [
@@ -283,7 +285,8 @@ import { FormUpdateDeleteProgressComponent } from './components/form-update-dele
     StepsHeaderComponent,
     InstructionPdfComponent,
     ShiftMenuItemComponent,
-    FormUpdateDeleteProgressComponent
+    FormUpdateDeleteProgressComponent,
+    AiFormUpdateDeleteProgressComponent
   ]
 })
 export class FormModule {}

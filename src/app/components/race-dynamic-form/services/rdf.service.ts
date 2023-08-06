@@ -1506,7 +1506,7 @@ export class RaceDynamicFormService {
       info
     );
 
-  createFromsFromPrompt$ = (
+  createFormsFromPrompt$ = (
     forms: any,
     plantId: string,
     requestCounter: Number,

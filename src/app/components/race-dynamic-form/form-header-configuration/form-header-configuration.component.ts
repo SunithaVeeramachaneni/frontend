@@ -67,7 +67,8 @@ import { PDFDocument } from 'pdf-lib';
 import { Router } from '@angular/router';
 import { isEqual } from 'lodash-es';
 import { getRequestCounter } from 'src/app/forms/state/builder/builder-state.selectors';
-
+import { FormUpdateProgressService } from 'src/app/forms/services/form-update-progress.service';
+import { v4 as uuidv4 } from 'uuid';
 @Component({
   selector: 'app-form-header-configuration',
   templateUrl: './form-header-configuration.component.html',
@@ -144,7 +145,8 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     private operatorRoundService: OperatorRoundsService,
     public dialog: MatDialog,
     private imageCompress: NgxImageCompressService,
-    private router: Router
+    private router: Router,
+    private formAiGenService: FormUpdateProgressService
   ) {
     this.rdfService.getDataSetsByType$('tags').subscribe((tags) => {
       if (tags && tags.length) {
@@ -608,56 +610,60 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
         const { formTitle, sections: formSections } = form;
         const sections = this.getSectionsArrayFromHTML(formSections);
         return {
+          uid: uuidv4(),
           formTitle,
           sections
         };
       });
 
-      const forms = {
-        forms: formsArray
-      };
-
       this.store
         .select(getRequestCounter)
         .subscribe((count) => (this.requestCounter = count));
+      const forms = {
+        forms: formsArray,
+        plantId: this.promptFormData.value.plantId.id,
+        plant: this.promptFormData.value.plantId.name,
+        requestCounter: this.requestCounter
+      };
 
       const plantId = this.promptFormData.value.plantId.id;
       const plant = this.promptFormData.value.plantId.name;
       console.log(forms);
-      this.rdfService
-        .createFromsFromPrompt$(forms, plantId, this.requestCounter)
-        .subscribe((data) => {
-          const {
-            isAllFormCompleted,
-            isCompletedForm,
-            formlistID,
-            section,
-            formList
-          } = data;
-          console.log(data);
-          this.store.dispatch(
-            BuilderConfigurationActions.incrementRequestCounter()
-          );
-          if (section) {
-            this.store.dispatch(
-              BuilderConfigurationActions.addFormMetadata({
-                formMetadata: {
-                  ...formList,
-                  plant
-                },
-                formDetailPublishStatus: formConfigurationStatus.draft,
-                formSaveStatus: formConfigurationStatus.saving
-              })
-            );
-            this.store.dispatch(
-              BuilderConfigurationActions.updateCreateOrEditForm({
-                createOrEditForm: true
-              })
-            );
-            this.router.navigate(['/forms/create']);
-            console.log(section);
-          }
-        });
+      this.formAiGenService.aiFormGeneratePayload$.next(forms);
+      // this.rdfService
+      //   .createFormsFromPrompt$(forms, plantId, this.requestCounter)
+      //   .subscribe((data) => {
+      //     const {
+      //       isAllFormCompleted,
+      //       isCompletedForm,
+      //       formlistID,
+      //       section,
+      //       formList
+      //     } = data;
+      //     console.log(data);
+      //     this.store.dispatch(
+      //       BuilderConfigurationActions.incrementRequestCounter()
+      //     );
+      //     if (section) {
+      //       this.store.dispatch(
+      //         BuilderConfigurationActions.addFormMetadata({
+      //           formMetadata: {
+      //             ...formList,
+      //             plant
+      //           },
+      //           formDetailPublishStatus: formConfigurationStatus.draft,
+      //           formSaveStatus: formConfigurationStatus.saving
+      //         })
+      //       );
+      //       this.store.dispatch(
+      //         BuilderConfigurationActions.updateCreateOrEditForm({
+      //           createOrEditForm: true
+      //         })
+      //       );
+      //       this.router.navigate(['/forms/create']);
+      //       console.log(section);
+      //     }
+      //   });
     }
   }
 

@@ -16,5 +16,11 @@ export class FormUpdateProgressService {
   isTemplateCreated$: BehaviorSubject<boolean> = new BehaviorSubject<any>(
     false
   );
+  aiFormProgressIsOpen$: BehaviorSubject<boolean> =
+    new BehaviorSubject<boolean>(false);
+  aiFormProgressisExpanded$: BehaviorSubject<boolean> =
+    new BehaviorSubject<boolean>(true);
+  aiFormGeneratePayload$: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+
   constructor() {}
 }
