@@ -69,6 +69,8 @@ import { isEqual } from 'lodash-es';
 import { getRequestCounter } from 'src/app/forms/state/builder/builder-state.selectors';
 import { FormUpdateProgressService } from 'src/app/forms/services/form-update-progress.service';
 import { v4 as uuidv4 } from 'uuid';
+import * as annyang from 'annyang';
+
 @Component({
   selector: 'app-form-header-configuration',
   templateUrl: './form-header-configuration.component.html',
@@ -119,6 +121,10 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   sections = [];
   formTitle = '';
   requestCounter = 0;
+  isSpeechRecgonitionOn = false;
+  transcript = '';
+  inactivityTimeout: any;
+  inactivityDuration = 2000;
 
   plantFilterInput = '';
   readonly formConfigurationStatus = formConfigurationStatus;
@@ -185,14 +191,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     });
     this.promptFormData = this.fb.group({
       plantId: [{}, Validators.required],
-      prompt: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(10),
-          Validators.maxLength(200)
-        ]
-      ]
+      prompt: ['', [Validators.required]]
     });
     this.headerDataForm = this.fb.group({
       name: [
@@ -226,6 +225,20 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
         pdfDocs: ''
       })
     });
+
+    if (annyang) {
+      const commands = {
+        '*text': (text: string) => {
+          this.transcript += ' ' + text;
+          console.log('Listened:', this.transcript); // Log recognized text to console
+          this.promptFormData.get('prompt').setValue(this.transcript);
+          this.resetInactivityTimeout();
+        }
+      };
+      annyang.addCommands(commands);
+    } else {
+      console.log('annyang not supported');
+    }
 
     this.formMetaDataSubscription = this.store
       .select(getFormMetadata)
@@ -280,12 +293,38 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     return this.generatedPromptForm.get('generatedForms') as FormArray;
   }
 
+  startListening() {
+    if (annyang) {
+      this.promptFormData.get('prompt').setValue('');
+      this.isSpeechRecgonitionOn = true;
+      annyang.start();
+    }
+  }
+
+  stopListening() {
+    if (annyang) {
+      this.isSpeechRecgonitionOn = false;
+      annyang.abort();
+      console.log(this.transcript);
+      this.transcript = '';
+    }
+  }
+
+  resetInactivityTimeout() {
+    clearTimeout(this.inactivityTimeout);
+    this.inactivityTimeout = setTimeout(() => {
+      this.stopListening();
+      this.onPromptSubmit();
+    }, this.inactivityDuration);
+  }
+
   getSize(value) {
     if (value && value === value.toUpperCase()) {
       return value.length;
     }
     return value.length - 1;
   }
+
   editFormName() {
     // this.formConfiguration.get('name').enable();
     this.formName.nativeElement.focus();

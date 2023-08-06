@@ -51,6 +51,7 @@ export class FormModalComponent implements OnInit, OnDestroy {
 
     if (isCreateAI) {
       this.steps[0].title = 'Generate From AI';
+      this.steps[1].title = 'Review Questions';
     }
 
     this.authoredFormDetailSubscription = this.store

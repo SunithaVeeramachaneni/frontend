@@ -38,6 +38,7 @@
             ],
             "scripts": [
               "node_modules/popper.js/dist/umd/popper.min.js",
+              "node_modules/annyang/dist/annyang.min.js",
               "src/assets/external_api.js"
             ],
             "aot": false,
