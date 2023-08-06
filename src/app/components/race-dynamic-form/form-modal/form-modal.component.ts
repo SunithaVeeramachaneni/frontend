@@ -50,7 +50,7 @@ export class FormModalComponent implements OnInit, OnDestroy {
     } = this.data;
 
     if (isCreateAI) {
-      this.steps[0].title = 'Generate From AI';
+      this.steps[0].title = 'Generate using AI';
       this.steps[1].title = 'Review Questions';
     }
 
