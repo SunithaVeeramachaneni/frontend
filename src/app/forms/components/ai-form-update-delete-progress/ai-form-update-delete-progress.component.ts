@@ -17,10 +17,12 @@ import { ToastService } from 'src/app/shared/toast';
 import { FormUpdateProgressService } from '../../services/form-update-progress.service';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { Store } from '@ngrx/store';
-import { State, getFormMetadata } from 'src/app/forms/state';
+import { State, getFormMetadata, getSectionIndexes } from 'src/app/forms/state';
 import { getRequestCounter } from '../../state/builder/builder-state.selectors';
 import { BuilderConfigurationActions } from '../../state/actions';
 import { Router } from '@angular/router';
+import { RoundPlanConfigurationService } from '../../services/round-plan-configuration.service';
+import { Page, Question, Section } from 'src/app/interfaces';
 @Component({
   selector: 'app-ai-form-update-delete-progress',
   templateUrl: './ai-form-update-delete-progress.component.html',
@@ -35,6 +37,8 @@ export class AiFormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
   isTemplateCreated: boolean;
   currentRouteUrl$: Observable<string>;
   firstEvent: boolean = false;
+  sectionIndexes$: Observable<any>;
+  questionCount = 0;
   readonly routingUrls = routingUrls;
   private onDestroy$ = new Subject();
 
@@ -43,6 +47,7 @@ export class AiFormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
     private rdfService: RaceDynamicFormService,
     private cdr: ChangeDetectorRef,
     private formProgressService: FormUpdateProgressService,
+    private roundPlanConfigurationServce: RoundPlanConfigurationService,
     private toastService: ToastService,
     private store: Store<State>,
     private router: Router
@@ -53,7 +58,6 @@ export class AiFormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
     this.isExpanded();
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$;
     this.formUpdateDeletePayload$().subscribe((payload) => {
-      console.log(payload);
       if (payload?.forms.length > 0) {
         this.resetCounters();
         payload.forms.map((form) => {
@@ -74,10 +78,11 @@ export class AiFormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
         this.formProgressService.aiFormProgressIsOpen$.next(true);
         delete payload.affectedForms;
         this.updateProgress$(payload).subscribe((event) => {
-          console.log(event);
           if (!this.firstEvent) {
             this.firstEvent = true;
             this.putFormInStore(event, payload.plant);
+          } else {
+            this.updateForm(event);
           }
           this.formProgressService.aiFormLoading$.next(false);
           if (event?.isCompletedForm) {
@@ -106,7 +111,6 @@ export class AiFormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
       return { sectionName };
     });
 
-    console.log(sectionsArray);
     return sectionsArray;
   }
   calculateProgress() {
@@ -157,7 +161,6 @@ export class AiFormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
   isOpen() {
     this.formProgressService.aiFormProgressIsOpen$.subscribe((isOpen) => {
       this._isOpen = isOpen;
-      console.log(this._isOpen);
     });
   }
   isOpenToggle(isOpen?: boolean) {
@@ -169,7 +172,6 @@ export class AiFormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
     this.formProgressService.aiFormProgressisExpanded$.subscribe(
       (isExpanded) => {
         this._isExpanded = isExpanded;
-        console.log(this._isExpanded);
       }
     );
   }
@@ -189,7 +191,6 @@ export class AiFormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
   }
 
   redirectForm(form) {
-    console.log(form);
     if (form.formlistID) {
       this.router.navigate([`forms/edit/${form.formlistID}`], {
         queryParams: { isCreateAI: true }
@@ -198,11 +199,11 @@ export class AiFormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
   }
 
   putFormInStore(event, plant) {
+    const { section: sectionObject, formList, counter } = event;
     this.store.dispatch(
       BuilderConfigurationActions.addFormMetadata({
         formMetadata: {
-          ...event.formList,
-          additionalDetails: event.formList.additionalDetails,
+          ...formList,
           plant
         },
         formDetailPublishStatus: formConfigurationStatus.draft,
@@ -214,7 +215,120 @@ export class AiFormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
         createOrEditForm: true
       })
     );
+    this.questionCount = counter;
+
+    // ADD PAGE
+    const page: Page = {
+      name: 'Page 1',
+      isOpen: true,
+      position: 1,
+      logics: [],
+      questions: [],
+      sections: []
+    };
+    this.store.dispatch(
+      BuilderConfigurationActions.addPage({
+        subFormId: '',
+        page,
+        pageIndex: 0,
+        counter: 0,
+        ...this.roundPlanConfigurationServce.getFormConfigurationStatuses()
+      })
+    );
+
+    const {
+      id,
+      name,
+      isOpen,
+      position,
+      questions: questionsArray
+    } = sectionObject;
+    const section: Section = {
+      id,
+      name,
+      isOpen,
+      position,
+      counter
+    };
+
+    const questions: Question[] = questionsArray;
+
+    const sections: Section[] = [section];
+    const pageIndex = 0;
+    const sectionIndex = position - 1;
+
+    this.store.dispatch(
+      BuilderConfigurationActions.addSections({
+        sections,
+        questions,
+        pageIndex,
+        sectionIndex,
+        ...this.roundPlanConfigurationServce.getFormConfigurationStatuses(),
+        subFormId: '',
+        counter
+      })
+    );
+
     this.router.navigate(['/forms/create']);
+  }
+
+  updateForm(event) {
+    const { section: sectionObject, isCompletedForm } = event;
+    if (!isCompletedForm) {
+      const {
+        id,
+        name,
+        isOpen,
+        position,
+        questions: questionsArray
+      } = sectionObject;
+
+      const section: Section = {
+        id,
+        name,
+        isOpen,
+        position,
+        counter: 0
+      };
+
+      const sections: Section[] = [section];
+      const questions: Question[] = questionsArray;
+      const pageIndex = 0;
+      const sectionIndex = position - 1;
+
+      this.store.dispatch(
+        BuilderConfigurationActions.addSections({
+          sections,
+          questions,
+          pageIndex,
+          sectionIndex,
+          ...this.roundPlanConfigurationServce.getFormConfigurationStatuses(),
+          subFormId: '',
+          counter: 0
+        })
+      );
+
+      // let questionTimeOut;
+      // for (const question of questionsArray) {
+      //   clearTimeout(questionTimeOut);
+      //   questionTimeOut = setTimeout(() => {
+      //     const questions: Question[] = [question];
+      //     const sectionId = id;
+      //     const questionIndex = question.position;
+      //     const counter = this.questionCount + 1;
+      //     this.store.dispatch(
+      //       BuilderConfigurationActions.addQuestions({
+      //         questions,
+      //         pageIndex,
+      //         sectionId,
+      //         questionIndex,
+      //         counter,
+      //         ...this.roundPlanConfigurationServce.getFormConfigurationStatuses()
+      //       })
+      //     );
+      //   }, 500);
+      // }
+    }
   }
 
   ngOnDestroy(): void {

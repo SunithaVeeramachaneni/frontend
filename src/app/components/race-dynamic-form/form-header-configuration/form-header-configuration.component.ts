@@ -232,14 +232,11 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
       const commands = {
         '*text': (text: string) => {
           this.transcript += ' ' + text;
-          console.log('Listened:', this.transcript); // Log recognized text to console
           this.promptFormData.get('prompt').setValue(this.transcript);
           this.resetInactivityTimeout();
         }
       };
       annyang.addCommands(commands);
-    } else {
-      console.log('annyang not supported');
     }
 
     this.formMetaDataSubscription = this.store
@@ -291,7 +288,6 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
       .subscribe();
 
     this.route.queryParams.subscribe((params) => {
-      console.log(params);
       if (params.isCreateAI) {
         this.gotoNextStep.emit();
       }
@@ -320,7 +316,6 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     if (annyang) {
       this.isSpeechRecgonitionOn = false;
       annyang.abort();
-      console.log(this.transcript);
       this.transcript = '';
     }
   }
@@ -371,7 +366,6 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
       });
   }
   onPromptSubmit() {
-    console.log(this.promptFormData.value.plantId.name);
     this.formCreateLoading$.next(true);
     this.isPromptGenerated$.next(false);
     const prompt = this.promptFormData.value.prompt.trim();
@@ -395,8 +389,6 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
             this.addToGeneratedForm(form);
           });
           this.isPromptGenerated$.next(true);
-        } else {
-          console.log('ERROR');
         }
         this.formCreateLoading$.next(false);
       });
@@ -680,45 +672,8 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
         requestCounter: this.requestCounter
       };
 
-      const plantId = this.promptFormData.value.plantId.id;
-      const plant = this.promptFormData.value.plantId.name;
-      console.log(forms);
       this.formAiGenService.aiFormGeneratePayload$.next(forms);
       this.formAiGenService.aiFormLoading$.next(true);
-      // this.rdfService
-      //   .createFormsFromPrompt$(forms, plantId, this.requestCounter)
-      //   .subscribe((data) => {
-      //     const {
-      //       isAllFormCompleted,
-      //       isCompletedForm,
-      //       formlistID,
-      //       section,
-      //       formList
-      //     } = data;
-      //     console.log(data);
-      //     this.store.dispatch(
-      //       BuilderConfigurationActions.incrementRequestCounter()
-      //     );
-      //     if (section) {
-      //       this.store.dispatch(
-      //         BuilderConfigurationActions.addFormMetadata({
-      //           formMetadata: {
-      //             ...formList,
-      //             plant
-      //           },
-      //           formDetailPublishStatus: formConfigurationStatus.draft,
-      //           formSaveStatus: formConfigurationStatus.saving
-      //         })
-      //       );
-      //       this.store.dispatch(
-      //         BuilderConfigurationActions.updateCreateOrEditForm({
-      //           createOrEditForm: true
-      //         })
-      //       );
-      //       this.router.navigate(['/forms/create']);
-      //       console.log(section);
-      //     }
-      //   });
     }
   }
 
@@ -731,7 +686,6 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
       return { sectionName };
     });
 
-    console.log(sectionsArray);
     return sectionsArray;
   }
 

@@ -170,7 +170,7 @@ export class RoundPlanConfigurationService {
     );
   }
 
-  private getFormConfigurationStatuses() {
+  getFormConfigurationStatuses() {
     return {
       formStatus: formConfigurationStatus.draft,
       formDetailPublishStatus: formConfigurationStatus.draft,
