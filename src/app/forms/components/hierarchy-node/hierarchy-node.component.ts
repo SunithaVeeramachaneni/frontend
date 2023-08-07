@@ -105,10 +105,10 @@ export class HierarchyNodeComponent implements OnInit {
 
   nodeCheckboxToggled = (event: MatCheckboxChange | any) => {
     const { checked } = event;
-    this.isParentCheckedData = {
-      masterToggle: true,
-      checked
-    };
+
+    this.isParentCheckedData.masterToggle = true;
+    this.isParentCheckedData.checked = checked;
+
     this.checkboxToggleHandler.emit({
       ...this.masterData,
       isSelected: checked
@@ -156,11 +156,8 @@ export class HierarchyNodeComponent implements OnInit {
     } else {
       this.handlePreviouslySelectedChildren();
     }
-
-    this.isParentCheckedData = {
-      checked,
-      masterToggle: true
-    };
+    this.isParentCheckedData.checked = checked;
+    this.isParentCheckedData.masterToggle = true;
 
     this.checkboxToggleHandler.emit(this.masterData);
   };
