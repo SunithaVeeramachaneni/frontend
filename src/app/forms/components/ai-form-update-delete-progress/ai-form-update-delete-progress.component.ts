@@ -36,7 +36,7 @@ export class AiFormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
   totalCompletedCount = 0;
   isTemplateCreated: boolean;
   currentRouteUrl$: Observable<string>;
-  firstEvent: boolean = false;
+  firstEvent: boolean = true;
   sectionIndexes$: Observable<any>;
   questionCount = 0;
   readonly routingUrls = routingUrls;
@@ -73,12 +73,13 @@ export class AiFormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
             );
             this.formMetadata[idx].progressStatus = progressStatus.inprogress;
           }
+          this.formProgressService.aiFirstFormComplete$.next(false);
         });
         this.calculateProgress();
         delete payload.affectedForms;
         this.updateProgress$(payload).subscribe((event) => {
-          if (!this.firstEvent) {
-            this.firstEvent = true;
+          if (this.firstEvent) {
+            this.firstEvent = false;
             this.formProgressService.aiFormProgressIsOpen$.next(true);
             this.putFormInStore(event, payload.plant);
           } else {
@@ -86,6 +87,7 @@ export class AiFormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
           }
           this.formProgressService.aiFormLoading$.next(false);
           if (event?.isCompletedForm) {
+            this.formProgressService.aiFirstFormComplete$.next(true);
             const idx = this.formMetadata.findIndex(
               (form) => form.uid === event.uid
             );

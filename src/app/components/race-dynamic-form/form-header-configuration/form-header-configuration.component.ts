@@ -1142,6 +1142,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.formAiGenService.aiFormLoading$.next(false);
     this.formMetaDataSubscription.unsubscribe();
     this.rdfService.attachmentsMapping$.next([]);
     this.rdfService.pdfMapping$.next([]);

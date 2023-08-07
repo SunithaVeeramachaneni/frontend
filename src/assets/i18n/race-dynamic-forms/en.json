@@ -394,7 +394,7 @@
   "formCreateAISelectPlant": "Hi, Please select a plant to generate forms.",
   "selectPlant": "Select Plant",
   "formGenerationText": "Your forms will be generated with following Titles and Sections.",
-  "formGenerationLoader": "Hold on, We are generating forms for you...",
+  "formGenerationLoader": "Sit tight! AI is doing its magic...",
   "sections": "Sections",
   "regenerateForms": "Not happy with the generated response?",
   "regenerateResponse": "Regenerate Response",
