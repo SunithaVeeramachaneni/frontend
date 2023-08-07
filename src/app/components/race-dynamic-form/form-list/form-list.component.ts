@@ -49,6 +49,7 @@ import { UsersService } from '../../user-management/services/users.service';
 import { downloadFile } from 'src/app/shared/utils/fileUtils';
 import { UploadResponseModalComponent } from '../../../shared/components/upload-response-modal/upload-response-modal.component';
 import { FormModalComponent } from '../form-modal/form-modal.component';
+import { DialogServiceService } from 'src/app/forms/services/dialog-service.service';
 
 @Component({
   selector: 'app-form-list',
@@ -238,7 +239,8 @@ export class FormListComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private loginService: LoginService,
     private usersService: UsersService,
-    private plantService: PlantService
+    private plantService: PlantService,
+    private dialogService: DialogServiceService
   ) {}
 
   ngOnInit(): void {
@@ -631,7 +633,15 @@ export class FormListComponent implements OnInit, OnDestroy {
         type: 'add'
       }
     });
+    this.dialogService.dialogRef$ = dialogRef;
+    this.dialogService.isOpen = true;
     dialogRef.afterClosed().subscribe((result) => {
+      this.dialogService.isOpen = false;
+      if (result?.isCreateAI || result.data.isCreateAI) {
+        this.router.navigate([`forms/edit/${result?.formId}`], {
+          queryParams: { isCreateAI: true }
+        });
+      }
       const formData = result.data === undefined ? {} : result;
       if (Object.keys(formData.data).length !== 0) {
         this.isLoading$.next(true);
