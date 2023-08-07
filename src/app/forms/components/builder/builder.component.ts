@@ -49,6 +49,7 @@ import { RoundPlanConfigurationService } from 'src/app/forms/services/round-plan
 import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
 import { v4 as uuidv4 } from 'uuid';
 import { cloneDeep } from 'lodash-es';
+import { FormUpdateProgressService } from '../../services/form-update-progress.service';
 
 @Component({
   selector: 'app-builder',
@@ -116,7 +117,8 @@ export class BuilderComponent implements OnInit, OnDestroy {
   constructor(
     private store: Store<State>,
     private roundPlanConfigurationService: RoundPlanConfigurationService,
-    private raceDynamicFormService: RaceDynamicFormService
+    private raceDynamicFormService: RaceDynamicFormService,
+    private formUpdateProgressService: FormUpdateProgressService
   ) {}
 
   initSubscriptions() {
@@ -631,7 +633,9 @@ export class BuilderComponent implements OnInit, OnDestroy {
       );
     }
   }
-
+  isAiFirstFormComplete() {
+    return this.formUpdateProgressService.aiFirstFormComplete$;
+  }
   addSection(pageIndex) {
     this.isEmptyPage[pageIndex] = false;
     this.sectionEventHandler({ pageIndex, type: 'add', sectionIndex: 0 });

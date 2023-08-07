@@ -23,6 +23,9 @@ import { BuilderConfigurationActions } from '../../state/actions';
 import { Router } from '@angular/router';
 import { RoundPlanConfigurationService } from '../../services/round-plan-configuration.service';
 import { Page, Question, Section } from 'src/app/interfaces';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { FormModalComponent } from 'src/app/components/race-dynamic-form/form-modal/form-modal.component';
+import { DialogServiceService } from '../../services/dialog-service.service';
 @Component({
   selector: 'app-ai-form-update-delete-progress',
   templateUrl: './ai-form-update-delete-progress.component.html',
@@ -36,7 +39,7 @@ export class AiFormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
   totalCompletedCount = 0;
   isTemplateCreated: boolean;
   currentRouteUrl$: Observable<string>;
-  firstEvent: boolean = false;
+  firstEvent: boolean = true;
   sectionIndexes$: Observable<any>;
   questionCount = 0;
   readonly routingUrls = routingUrls;
@@ -46,11 +49,13 @@ export class AiFormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
     private commonService: CommonService,
     private rdfService: RaceDynamicFormService,
     private cdr: ChangeDetectorRef,
+    private dialog: MatDialog,
     private formProgressService: FormUpdateProgressService,
     private roundPlanConfigurationServce: RoundPlanConfigurationService,
     private toastService: ToastService,
     private store: Store<State>,
-    private router: Router
+    private router: Router,
+    private dialogService: DialogServiceService
   ) {}
 
   ngOnInit(): void {
@@ -73,12 +78,13 @@ export class AiFormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
             );
             this.formMetadata[idx].progressStatus = progressStatus.inprogress;
           }
+          this.formProgressService.aiFirstFormComplete$.next(false);
         });
         this.calculateProgress();
         delete payload.affectedForms;
         this.updateProgress$(payload).subscribe((event) => {
-          if (!this.firstEvent) {
-            this.firstEvent = true;
+          if (this.firstEvent) {
+            this.firstEvent = false;
             this.formProgressService.aiFormProgressIsOpen$.next(true);
             this.putFormInStore(event, payload.plant);
           } else {
@@ -86,6 +92,7 @@ export class AiFormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
           }
           this.formProgressService.aiFormLoading$.next(false);
           if (event?.isCompletedForm) {
+            this.formProgressService.aiFirstFormComplete$.next(true);
             const idx = this.formMetadata.findIndex(
               (form) => form.uid === event.uid
             );
@@ -192,9 +199,19 @@ export class AiFormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
 
   redirectForm(form) {
     if (form.formlistID) {
-      this.router.navigate([`forms/edit/${form.formlistID}`], {
-        queryParams: { isCreateAI: true }
-      });
+      if (this.dialogService.isOpen) {
+        this.dialogService.dialogRef$.close({
+          isCreateAI: true,
+          formId: form.formlistID
+        });
+      } else {
+        this.dialogService.openModal();
+        this.dialogService.dialogRef$.close({
+          isCreateAI: true,
+          formId: form.formlistID
+        });
+        this.dialogService.closeModal();
+      }
     }
   }
 
@@ -311,8 +328,6 @@ export class AiFormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
       );
 
       this.addQuestionWithDelay(id, questionsArray, 0);
-
-      console.log('SECTION COMPLETED');
     }
   }
 
@@ -322,8 +337,6 @@ export class AiFormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
     }
 
     const currentQuestion = questionsArray[questionIndex];
-    console.log('QUESTION: ', currentQuestion);
-
     const questions: Question[] = [currentQuestion];
     const sectionId = id;
     const counter = this.questionCount + 1;
@@ -342,7 +355,7 @@ export class AiFormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
 
     setTimeout(() => {
       this.addQuestionWithDelay(id, questionsArray, questionIndex + 1); // Recurse to the next question
-    }, 500);
+    }, 600);
   }
 
   ngOnDestroy(): void {

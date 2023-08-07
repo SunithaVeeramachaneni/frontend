@@ -636,6 +636,29 @@ ul {
 .form-status {
   display: flex;
   align-items: center;
+  .pdf-publish-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .save-to-libary-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 8px 10px;
+      margin-right: 10px;
+      border: 1px solid #e0e0e0;
+      font-weight: 600;
+      background: white;
+      border-radius: 5px;
+      .icon {
+        width: 20px;
+      }
+      .save-to-library-text {
+        cursor: pointer;
+        margin: 0px 5px;
+      }
+    }
+  }
 }
 .save-status {
   font-weight: 500;

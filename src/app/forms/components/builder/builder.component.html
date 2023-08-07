@@ -260,6 +260,19 @@
             </button>
           </ng-container>
         </div>
+        <div
+          *ngIf="(isAiFirstFormComplete() | async) === false"
+          class="prompt-form-loader-container"
+        >
+          <img
+            src="assets/Images/ai-form-loader.gif"
+            alt=""
+            class="loader-icon"
+          />
+          <span class="prompt-form-loader">
+            {{ 'formGenerationLoader' | translate }}</span
+          >
+        </div>
       </app-page>
     </ng-container>
   </div>

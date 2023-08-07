@@ -184,6 +184,11 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.route.queryParams.subscribe((params) => {
+      if (params.isCreateAI) {
+        this.gotoNextStep.emit();
+      }
+    });
     const {
       formData: { isCreateAI }
     } = this.data;
@@ -286,12 +291,6 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
-
-    this.route.queryParams.subscribe((params) => {
-      if (params.isCreateAI) {
-        this.gotoNextStep.emit();
-      }
-    });
   }
 
   get generatedForms(): FormArray {
@@ -1142,6 +1141,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.formAiGenService.aiFormLoading$.next(false);
     this.formMetaDataSubscription.unsubscribe();
     this.rdfService.attachmentsMapping$.next([]);
     this.rdfService.pdfMapping$.next([]);

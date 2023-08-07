@@ -211,7 +211,14 @@
           >
             {{ 'publishingChanges' | translate }}
           </div>
-          <div>
+          <div class="pdf-publish-container">
+            <div class="save-to-libary-container">
+              <img class="icon" src="assets/Images/icon-library.png" alt="" />
+              <label for="save-to-library" class="save-to-library-text">
+                Save in Public Library
+              </label>
+              <input id="save-to-library" type="checkbox" />
+            </div>
             <button
               id="pdfBuilderPublishBtn"
               mat-raised-button
@@ -237,10 +244,6 @@
                 ></span>
               </span>
             </button>
-            <p>
-              <input type="checkbox" />
-              <span> Save in Public Library </span>
-            </p>
           </div>
         </div>
       </div>

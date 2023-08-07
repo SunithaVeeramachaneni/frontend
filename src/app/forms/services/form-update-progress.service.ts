@@ -24,6 +24,8 @@ export class FormUpdateProgressService {
   aiFormProgressisExpanded$: BehaviorSubject<boolean> =
     new BehaviorSubject<boolean>(true);
   aiFormGeneratePayload$: BehaviorSubject<any> = new BehaviorSubject<any>(null);
-
+  aiFirstFormComplete$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
+    false
+  );
   constructor() {}
 }
