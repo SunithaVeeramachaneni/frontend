@@ -78,12 +78,6 @@ export class ScheduleConfigurationService {
     const firstHour = this.getHours(firstTime);
     const secondHour = this.getHours(secondTime);
     if (
-      firstTime.toLowerCase() === startTime.toLowerCase() &&
-      secondTime.toLowerCase() === nextDayStartTime.toLowerCase()
-    ) {
-      return (timeDifference = twelveHours + (firstHour === 0 ? 1 : firstHour));
-    }
-    if (
       firstTime.toLowerCase() !== startTime.toLowerCase() &&
       secondTime.toLowerCase() === nextDayStartTime.toLowerCase()
     ) {
@@ -122,6 +116,18 @@ export class ScheduleConfigurationService {
       if (current > end) {
         break;
       }
+    }
+    const checkExtraMint = this.hasMinutes(endTime);
+    if (
+      checkExtraMint !== 0 &&
+      !(startTime === '12:00 AM' && endTime === '11:59 PM')
+    ) {
+      endTime = new Date(end).toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+      });
+      timeSlots.push(endTime);
     }
     if (startTime === this.addTime(endTime, 0, 1)) {
       return TIME_SLOTS;
@@ -272,8 +278,8 @@ export class ScheduleConfigurationService {
     }
 
     return rows?.sort((a, b) => {
-      const aIndex = timeSlots.indexOf(a?.startTime);
-      const bIndex = timeSlots.indexOf(b?.startTime);
+      const aIndex = timeSlots?.indexOf(a?.startTime);
+      const bIndex = timeSlots?.indexOf(b?.startTime);
       return aIndex - bIndex;
     });
   }
@@ -286,7 +292,13 @@ export class ScheduleConfigurationService {
     return val;
   }
 
-  adjustStartEndTime(dataArrays, obj, slotStartTime, objStartLastTime) {
+  adjustStartEndTime(
+    dataArrays,
+    obj,
+    slotStartTime,
+    objStartLastTime,
+    allSlots
+  ) {
     const totalDiff = this.getTimeDifference(slotStartTime, objStartLastTime);
     let highestEndTime = '';
     dataArrays.forEach((item) => {
@@ -296,7 +308,7 @@ export class ScheduleConfigurationService {
     if (highestEndTime !== '') {
       let endTimeDiff = this.getTimeDifference(highestEndTime, obj?.startTime);
       if (totalDiff < endTimeDiff) {
-        this.sortArray(dataArrays, obj);
+        this.sortArray(dataArrays, allSlots);
         return obj;
       }
       if (endTimeDiff > 0) {
@@ -357,6 +369,13 @@ export class ScheduleConfigurationService {
     const paddedMinutes = minutes.padStart(2, '0');
 
     return `${paddedHours}:${paddedMinutes} ${ampm}`;
+  }
+
+  hasMinutes(time) {
+    const timeParts = time.split(':');
+    const minutes = parseInt(timeParts[1], 10);
+
+    return minutes;
   }
 
   private getDateString(data?: Date): string {
