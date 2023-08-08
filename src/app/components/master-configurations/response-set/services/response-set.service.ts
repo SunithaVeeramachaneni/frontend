@@ -18,6 +18,7 @@ import {
   DeleteResponseSet,
   ErrorInfo
 } from '../../../../interfaces';
+import { DateUtilService } from 'src/app/shared/utils/dateUtils';
 
 @Injectable({
   providedIn: 'root'
@@ -34,7 +35,10 @@ export class ResponseSetService {
 
   private maxLimit = '1000000';
 
-  constructor(private _appService: AppService) {}
+  constructor(
+    private _appService: AppService,
+    private readonly dateUtilService: DateUtilService
+  ) {}
 
   uploadExcel(
     form: FormData,
@@ -193,7 +197,8 @@ export class ResponseSetService {
               })
             : '',
           updatedAt:
-            p?.updatedAt && this.isValidDate(new Date(p?.updatedAt))
+            p?.updatedAt &&
+            this.dateUtilService.isValidDate(new Date(p?.updatedAt))
               ? p?.updatedAt
               : ''
         })) || [];
@@ -205,9 +210,5 @@ export class ResponseSetService {
       rows,
       next
     };
-  }
-
-  private isValidDate(date): boolean {
-    return date instanceof Date && !isNaN(date as unknown as number);
   }
 }
