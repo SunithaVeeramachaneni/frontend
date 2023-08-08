@@ -37,16 +37,13 @@ import {
 } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { Router } from '@angular/router';
-import { Store } from '@ngrx/store';
-import { State } from 'src/app/forms/state';
-import { FormConfigurationActions } from 'src/app/forms/state/actions';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { slideInOut } from 'src/app/animations';
-import { RoundPlanConfigurationModalComponent } from '../round-plan-configuration-modal/round-plan-configuration-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { PlantsResponse } from 'src/app/interfaces/master-data-management/plants';
 import { LoginService } from '../../login/services/login.service';
+import { RoundPlanModalComponent } from '../round-plan-modal/round-plan-modal.component';
 
 @Component({
   selector: 'app-round-plan-list',
@@ -63,11 +60,11 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
   filterJson: any[] = [];
   filter: any = {
     status: '',
-    modifiedBy: '',
     createdBy: '',
     lastModifiedOn: '',
     scheduleStartDate: '',
     scheduleEndDate: '',
+    publishedBy: '',
     plant: ''
   };
   columns: Column[] = [
@@ -248,12 +245,12 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
     conditionalStyles: {
       draft: {
-        'background-color': '#FEF3C7',
-        color: '#92400E'
+        'background-color': '#FFCC00',
+        color: '#000000'
       },
       published: {
-        'background-color': '#D1FAE5',
-        color: '#065f46'
+        'background-color': '#2C9E53',
+        color: '#FFFFFF'
       }
     }
   };
@@ -296,7 +293,6 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
     private readonly toast: ToastService,
     private readonly operatorRoundsService: OperatorRoundsService,
     private router: Router,
-    private readonly store: Store<State>,
     private dialog: MatDialog,
     private plantService: PlantService,
     private loginService: LoginService
@@ -600,10 +596,8 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
   onCloseViewDetail() {
     this.selectedForm = null;
     this.menuState = 'out';
-    this.store.dispatch(FormConfigurationActions.resetPages());
   }
   roundPlanDetailActionHandler(event) {
-    this.store.dispatch(FormConfigurationActions.resetPages());
     this.router.navigate([`/operator-rounds/edit/${this.selectedForm.id}`]);
   }
 
@@ -615,7 +609,9 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
         if (objectKeys.length > 0) {
           const uniqueLastPublishedBy = formsList.rows
             .map((item) => item.lastPublishedBy)
-            .filter((value, index, self) => self.indexOf(value) === index);
+            .filter(
+              (value, index, self) => self.indexOf(value) === index && value
+            );
           this.lastPublishedBy = [...uniqueLastPublishedBy];
 
           const uniqueLastModifiedBy = formsList.rows
@@ -625,6 +621,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
               }
               return '';
             })
+            .filter((value) => value)
             .filter((value, index, self) => self.indexOf(value) === index);
           this.lastModifiedBy = [...uniqueLastModifiedBy];
           const uniqueAuthoredBy = formsList.rows
@@ -649,8 +646,8 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
           for (const item of this.filterJson) {
             if (item.column === 'status') {
               item.items = this.status;
-            } else if (item.column === 'modifiedBy') {
-              item.items = this.lastModifiedBy;
+            } else if (item.column === 'publishedBy') {
+              item.items = this.lastPublishedBy;
             } else if (item.column === 'authoredBy') {
               item.items = this.authoredBy;
             } else if (item.column === 'plant') {
@@ -687,24 +684,32 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
   }
 
   openRoundPlanCreationModal() {
-    this.dialog.open(RoundPlanConfigurationModalComponent, {
+    const dialogRef = this.dialog.open(RoundPlanModalComponent, {
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',
       width: '100%',
       panelClass: 'full-screen-modal'
     });
+    dialogRef.afterClosed().subscribe((result) => {
+      const data = result === undefined ? {} : result;
+      if (Object.keys(data).length !== 0) {
+        this.isLoading$.next(true);
+        this.operatorRoundsService.fetchForms$.next({ data: 'search' });
+        this.formsListCountUpdate$.next(1);
+      }
+    });
   }
 
   resetFilter() {
     this.filter = {
       status: '',
-      modifiedBy: '',
       createdBy: '',
       lastModifiedOn: '',
       scheduleStartDate: '',
       scheduleEndDate: '',
-      plant: ''
+      plant: '',
+      publishedBy: ''
     };
     this.nextToken = '';
     this.operatorRoundsService.fetchForms$.next({ data: 'load' });
@@ -716,7 +721,6 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
   }
 
   private showFormDetail(row: RoundPlan): void {
-    this.store.dispatch(FormConfigurationActions.resetPages());
     this.selectedForm = row;
     this.menuState = 'in';
   }

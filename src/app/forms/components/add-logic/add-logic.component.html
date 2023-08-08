@@ -1,6 +1,6 @@
 <ng-container
   *ngIf="{
-    pageWiseLogicSectionAskQuestions: pageWiseLogicSectionAskQuestions$ | async,
+    pageWiseLogicsAskQuestions: pageWiseLogicsAskQuestions$ | async,
     questionLogics: questionLogics$ | async
   }"
 >
@@ -27,20 +27,42 @@
           <div class="tabContent" [formGroupName]="i">
             <div class="logicRow">
               <svg-icon
+                id="addLogicIcon"
                 icon="icon-delete-icon"
                 class="delete-icon"
                 (click)="deleteLogic(logic.value.id, questionId, pageIndex)"
               ></svg-icon>
-              <input type="hidden" formControlName="id" />
-              <input type="hidden" formControlName="logicTitle" />
-              <input type="hidden" formControlName="expression" />
+              <input id="addLogicId" type="hidden" formControlName="id" />
+              <input
+                id="addLogicLogicTitle"
+                type="hidden"
+                formControlName="logicTitle"
+              />
+              <input
+                id="addLogicExpression"
+                type="hidden"
+                formControlName="expression"
+              />
 
-              <input type="hidden" formControlName="action" />
-              <input type="hidden" formControlName="mandateAttachment" />
-              <input type="hidden" formControlName="raiseIssue" />
+              <input
+                id="addLogicAction"
+                type="hidden"
+                formControlName="action"
+              />
+              <input
+                id="addLogicMandateAttachment"
+                type="hidden"
+                formControlName="mandateAttachment"
+              />
+              <input
+                id="addLogicRaiseIssue"
+                type="hidden"
+                formControlName="raiseIssue"
+              />
 
-              <span translate="ifAnswer"></span>
+              <span id="addLogicIfAnswer" translate="ifAnswer"></span>
               <select
+                id="addLogic"
                 class="logicCondition"
                 formControlName="operator"
                 (ngModelChange)="operatorChanged(logic.value, i, $event)"
@@ -56,6 +78,7 @@
                 }"
               >
                 <option
+                  id="addLogicOptions"
                   class="logicOperator"
                   value="{{ operator.code }}"
                   *ngFor="let operator of fieldOperators"
@@ -65,6 +88,7 @@
               </select>
 
               <input
+                id="addLogicValue"
                 type="text"
                 class="logicValue"
                 formControlName="operand2"
@@ -72,6 +96,7 @@
                 *ngIf="dropDownTypes.indexOf(fieldType) < 0"
               />
               <select
+                id="addLogicSelect"
                 class="logicValue"
                 formControlName="operand2"
                 *ngIf="
@@ -81,6 +106,7 @@
               >
                 <!-- <ng-container *ngIf="fieldType !== 'CB'; else isCheckBox"> -->
                 <option
+                  id="addLogicOptionTitle"
                   class="logicOperator"
                   *ngFor="let option of quickResponseValues"
                   value="{{ option.title }}"
@@ -117,6 +143,7 @@
                 <!-- </ng-container> -->
                 <!-- <ng-template #isCheckBox> -->
                 <option
+                  id="addLogicOption"
                   class="logicOperator"
                   *ngFor="let option of checkBoxResponses"
                   value="{{ option }}"
@@ -126,8 +153,9 @@
                 <!-- </ng-template> -->
               </select>
 
-              <span translate="then"></span>
+              <span id="addLogicThen" translate="then"></span>
               <span
+                id="addLogicAskEvidence"
                 *ngIf="
                   logic.value.mandateAttachment ||
                   logic.value.evidenceQuestions.length
@@ -137,12 +165,14 @@
               >
               </span>
               <span
+                id="addLogicRaiseIssue"
                 *ngIf="logic.value.raiseIssue"
                 class="mandateAction"
                 translate="raiseIssue"
               >
               </span>
               <span
+                id="addLogicMandateQuestions"
                 *ngIf="logic.value.mandateQuestions.length"
                 class="mandateAction"
                 (click)="openSelectQuestionsDialog(logic.value, i, 'MANDATE')"
@@ -151,21 +181,24 @@
                 <mat-icon>edit</mat-icon>
               </span>
               <span
+                id="addLogicHideQuestions"
                 *ngIf="logic.value.hideQuestions.length"
                 class="mandateAction"
                 (click)="openSelectQuestionsDialog(logic.value, i, 'HIDE')"
               >
                 Hide ({{ logic.value.hideQuestions.length }}) Questions
-                <mat-icon>edit</mat-icon>
+                <mat-icon id="addLogicEditIcon">edit</mat-icon>
               </span>
               <span
+                id="addLogicAskQuestions"
                 *ngIf="logic.value.questions.length"
                 class="mandateAction"
-                (click)="triggerMenuAction('ask_questions', i, logic)"
+                (click)="triggerMenuAction('ask_questions', i, logic.value)"
                 translate="askQuestions"
               >
               </span>
               <span
+                id="addLogicRaiseNotification"
                 *ngIf="logic.value.raiseNotification"
                 class="mandateAction"
                 translate="raiseNotification"
@@ -175,6 +208,7 @@
               >
               </span>
               <button
+                id="addLogicBtn"
                 [disabled]="
                   !logic.value.operand2 || !logic.value.operand2.length
                 "
@@ -185,24 +219,28 @@
               ></button>
               <mat-menu #menu="matMenu">
                 <button
+                  id="addLogicMandateQuestionBtn"
                   class="logicActionMenuItem"
                   mat-menu-item
                   (click)="openSelectQuestionsDialog(logic.value, i, 'MANDATE')"
                   translate="mandateQuestions"
                 ></button>
                 <button
+                  id="addLogicHideQuestionBtn"
                   class="logicActionMenuItem"
                   mat-menu-item
                   (click)="openSelectQuestionsDialog(logic.value, i, 'HIDE')"
                   translate="hideQuestions"
                 ></button>
                 <button
+                  id="addLogicAskQuestionBtn"
                   class="logicActionMenuItem"
                   mat-menu-item
                   (click)="triggerMenuAction('ask_questions', i, logic.value)"
                   translate="askQuestions"
                 ></button>
                 <button
+                  id="addLogicAskEvdienceBtn"
                   class="logicActionMenuItem"
                   mat-menu-item
                   (click)="
@@ -211,6 +249,7 @@
                   translate="askEvidence"
                 ></button>
                 <button
+                  id="addLogicRaiseIssue"
                   *ngIf="
                     raiseIssueApplicableFields.includes(fieldType) &&
                     !isEmbeddedForm
@@ -221,6 +260,7 @@
                   translate="raiseIssue"
                 ></button>
                 <button
+                  id="addLogicRaiseNotification"
                   *ngIf="isEmbeddedForm"
                   class="logicActionMenuItem"
                   mat-menu-item
@@ -260,6 +300,7 @@
                       [questionIndex]="questionIndex"
                       [isAskQuestion]="true"
                       [subFormId]="selectedNodeId"
+                      [question]="questionObj"
                       [isAskQuestionFocusId]="isAskQuestionFocusId"
                       (click)="setIsAskQuestionFocusId(questionObj.id)"
                       (isAskedQuestionFocusId)="setIsAskQuestionFocusId($event)"
@@ -273,16 +314,15 @@
             </div>
             <div
               *ngIf="
-                pageWiseLogicSectionAskQuestions[pageIndex][logic.value.id]
-                  ?.length
+                pageWiseLogicsAskQuestions[pageIndex][logic.value.id]?.length
               "
               class="logicAskQuestions"
             >
               <ng-container
                 *ngFor="
-                  let questionObj of pageWiseLogicSectionAskQuestions[
-                    pageIndex
-                  ][logic.value.id];
+                  let questionObj of pageWiseLogicsAskQuestions[pageIndex][
+                    logic.value.id
+                  ];
                   trackBy: trackByQuestionIndex;
                   let questionIndex = index
                 "
@@ -299,6 +339,7 @@
                       [isAskQuestion]="true"
                       [subFormId]="selectedNodeId"
                       [isAskQuestionFocusId]="isAskQuestionFocusId"
+                      [question]="questionObj"
                       (click)="setIsAskQuestionFocusId(questionObj.id)"
                       (isAskedQuestionFocusId)="setIsAskQuestionFocusId($event)"
                       (questionEvent)="
@@ -314,10 +355,11 @@
         <mat-tab disabled>
           <ng-template mat-tab-label>
             <button
+              id="addLogicToQuestionBtn"
               mat-icon-button
               (click)="addLogicToQuestion(questionId, pageIndex)"
             >
-              <mat-icon>add_circle</mat-icon>
+              <mat-icon id="addLogicCircleIcon">add_circle</mat-icon>
             </button>
           </ng-template>
         </mat-tab>

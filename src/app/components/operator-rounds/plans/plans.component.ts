@@ -23,7 +23,6 @@ import {
   distinctUntilChanged,
   filter,
   map,
-  catchError,
   startWith,
   switchMap,
   takeUntil,
@@ -59,9 +58,6 @@ import {
 } from 'src/app/app.constants';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
 import { LoginService } from '../../login/services/login.service';
-import { FormConfigurationActions } from 'src/app/forms/state/actions';
-import { Store } from '@ngrx/store';
-import { State } from 'src/app/state/app.state';
 import { ActivatedRoute, Router } from '@angular/router';
 import { slideInOut } from 'src/app/animations';
 import { RoundPlanScheduleConfigurationService } from '../services/round-plan-schedule-configuration.service';
@@ -78,7 +74,6 @@ import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
 import { ShiftService } from '../../master-configurations/shifts/services/shift.service';
 import { ScheduleConfigurationService } from 'src/app/forms/services/schedule.service';
 import { MatDialog } from '@angular/material/dialog';
-import { graphQLDefaultMaxLimit } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-plans',
@@ -423,7 +418,6 @@ export class PlansComponent implements OnInit, OnDestroy {
   constructor(
     private readonly operatorRoundsService: OperatorRoundsService,
     private loginService: LoginService,
-    private store: Store<State>,
     private router: Router,
     private rpscService: RoundPlanScheduleConfigurationService,
     private datePipe: DatePipe,
@@ -546,6 +540,9 @@ export class PlansComponent implements OnInit, OnDestroy {
             );
           }
           this.initial.data = this.formattingPlans(this.initial.data);
+          if (this.filter.assignedTo) {
+            this.initial.data = this.assingedToFilter(this.initial.data);
+          }
           this.skip = this.initial.data.length;
           return this.initial;
         }
@@ -654,6 +651,11 @@ export class PlansComponent implements OnInit, OnDestroy {
       return plan;
     });
   }
+  assingedToFilter(roundPlan) {
+    return roundPlan.filter((plan) =>
+      this.filter.assignedTo.includes(plan.assigneeToEmail)
+    );
+  }
 
   getRoundPlanList() {
     const obj = {
@@ -668,6 +670,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       .getPlansList$({ ...obj, ...this.filter })
       .pipe(
         tap(({ scheduledCount, unscheduledCount, next }) => {
+          this.isLoading$.next(false);
           this.nextToken = next !== undefined ? next : null;
           const { scheduled, unscheduled } = this.roundPlanCounts;
           this.roundPlanCounts = {
@@ -803,7 +806,6 @@ export class PlansComponent implements OnInit, OnDestroy {
   closeRoundPlanHandler() {
     this.roundPlanDetail = null;
     this.formDetailState = 'out';
-    this.store.dispatch(FormConfigurationActions.resetPages());
     timer(400)
       .pipe(
         tap(() => {
@@ -817,7 +819,6 @@ export class PlansComponent implements OnInit, OnDestroy {
   openRoundPlanHandler(row: RoundPlanDetail): void {
     this.hideRoundPlanDetail = false;
     this.scheduleConfigEventHandler({ slideInOut: 'out' });
-    this.store.dispatch(FormConfigurationActions.resetPages());
     this.roundPlanDetail = { ...row, roundPlanId: row.id };
     this.formDetailState = 'in';
     this.zIndexDelay = 400;
@@ -825,7 +826,6 @@ export class PlansComponent implements OnInit, OnDestroy {
   }
 
   roundPlanDetailActionHandler() {
-    this.store.dispatch(FormConfigurationActions.resetPages());
     this.router.navigate([`/operator-rounds/edit/${this.roundPlanDetail.id}`]);
   }
 
@@ -974,9 +974,6 @@ export class PlansComponent implements OnInit, OnDestroy {
       if (roundPlanScheduleConfigurations[roundPlan.id]) {
         return {
           ...roundPlan,
-          schedule: this.getFormatedSchedule(
-            roundPlanScheduleConfigurations[roundPlan.id]
-          ),
           scheduleDates: this.getFormatedScheduleDates(
             roundPlanScheduleConfigurations[roundPlan.id],
             roundPlan.plantId

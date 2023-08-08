@@ -49,14 +49,15 @@
                 routerLinkActive="active"
                 (click)="selectedListElement(menuitem.title)"
               >
-              <svg-icon
-                [icon]=" getImage(
-                  menuitem.imageName,
-                  selectedMenu === menuitem.title
-                )
-              "
-              class="sidebar-icons"
-              ></svg-icon>
+                <svg-icon
+                  [icon]="
+                    getImage(
+                      menuitem.imageName,
+                      selectedMenu === menuitem.title
+                    )
+                  "
+                  class="sidebar-icons"
+                ></svg-icon>
                 <span class="menu-title" *ngIf="menuOpenClose">
                   {{ menuitem.title }}
                 </span>
@@ -129,6 +130,9 @@
         </div>
       </mat-nav-list>
     </div>
+    <div class="version" [hidden]="!menuOpenClose">
+      Version {{ appVersion }}
+    </div>
   </mat-sidenav>
 
   <mat-sidenav-content>
@@ -170,3 +174,6 @@
     }"
   ></ngx-shimmer-loading>
 </ng-template>
+<ng-container>
+  <app-form-update-delete-progress></app-form-update-delete-progress>
+</ng-container>

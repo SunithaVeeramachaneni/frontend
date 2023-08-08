@@ -1,0 +1,130 @@
+<div mat-dialog-actions align="end" class="buttons">
+  <button
+    id="templateConfigurationModelCancelBtn"
+    mat-stroked-button
+    type="button"
+    color="primary"
+    class="skip-btn"
+    (click)="onCancel()"
+    translate="cancelBtn"
+  ></button>
+  <button
+    id="templateConfigurationModelNextBtn"
+    mat-raised-button
+    type="submit"
+    color="primary"
+    class="next-btn"
+    (click)="next()"
+    [disabled]="headerDataForm.invalid || headerDataForm.pristine"
+    translate="nextBtn"
+  ></button>
+</div>
+
+<div class="form-header-modal" [formGroup]="headerDataForm">
+  <div class="dis-flex form-content">
+    <div class="width-5"></div>
+    <div class="width-95">
+      <div class="form-details">
+        <h2
+          id="templateConfigurationModelHeading"
+          class="heading"
+          translate="templateDetailsHeading"
+        ></h2>
+        <p
+          id="templateConfigurationModelSubHeading"
+          class="sub-heading"
+          translate="setTemplateTypeHeading"
+        ></p>
+        <div class="formtype-flex">
+          <mat-radio-group class="dis-flex" formControlName="formType">
+            <div class="formtype-style">
+              <mat-radio-button
+                id="templateConfigurationModelStandaloneType"
+                class="radio-btns"
+                [value]="formConfigurationStatus.standalone"
+                [disabled]="this.templateData.templateExists"
+              ></mat-radio-button>
+              <span
+                class="radio-btn-text"
+                id="templateConfigurationModelStandalone"
+                translate="standalone"
+              >
+              </span>
+              <p
+                class="radio-sub-text"
+                id="templateConfigurationModelStandaloneText"
+                translate="standaloneSubText"
+              ></p>
+            </div>
+            <div class="formtype-style">
+              <mat-radio-button
+                id="templateConfigurationModelStandaloneRadio"
+                class="radio-btns"
+                [value]="formConfigurationStatus.embedded"
+                [disabled]="this.templateData.templateExists"
+              ></mat-radio-button>
+              <span
+                class="radio-btn-text"
+                id="templateConfigurationModelEmbedded"
+                translate="embedded"
+              >
+              </span
+              ><br />
+              <p
+                class="radio-sub-text"
+                id="templateConfigurationModelEmbeddedText"
+                translate="embeddedSubText"
+              ></p>
+            </div>
+          </mat-radio-group>
+        </div>
+        <div class="form-name">
+          <p
+            id="templateConfigurationModelName"
+            class="form-name-description"
+            translate="templateName"
+          ></p>
+          <mat-form-field appearance="outline" class="width-100">
+            <input
+              id="templateConfigurationModelNameText"
+              type="text"
+              name="formName"
+              matInput
+              [placeholder]="'templateName' | translate"
+              formControlName="name"
+            />
+            <mat-error
+              id="templateConfigurationModelNameError"
+              *ngIf="processValidationErrors('name')"
+              class="error-fields"
+            >
+              {{
+                errors.name.name
+                  | translate
+                    : {
+                        name: 'Template name' | translate,
+                        length: errors.name.length
+                      }
+              }}
+            </mat-error>
+          </mat-form-field>
+          <p
+            id="templateConfigurationModelDescription"
+            class="form-name-description"
+            translate="templateDescription"
+          ></p>
+          <mat-form-field appearance="outline" class="width-100">
+            <input
+              id="templateConfigurationModelDescriptionText"
+              type="text"
+              matInput
+              name="formDescription"
+              [placeholder]="'addDescription' | translate"
+              formControlName="description"
+            />
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

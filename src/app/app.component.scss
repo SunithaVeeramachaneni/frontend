@@ -202,8 +202,8 @@ mat-sidenav {
 .sidebar-menu-items {
   overflow-y: auto;
   overflow-x: hidden;
-  height: calc(100vh - 65px);
-  margin-bottom: 65px;
+  height: calc(100vh - 110px);
+  margin-bottom: 15px;
 
   ::ng-deep .mat-list-base {
     padding-top: 0 !important;
@@ -225,4 +225,11 @@ mat-sidenav {
     width: 10px !important;
     height: 10px !important;
   }
+}
+.version {
+  color: $menu-icon-color;
+  width: 229px;
+  height: 14px;
+  text-align: center;
+  font-weight: 500;
 }

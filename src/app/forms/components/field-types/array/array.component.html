@@ -1,21 +1,38 @@
 <span class="array-field">
-  <button class="add-sub-fields-btn" (click)="addSubField()">
-    <svg-icon icon="icon-add-column" class="add-sub-fields-icon"></svg-icon>
-    <span class="add-sub-fields-text" translate="addSubFields"></span>
+  <button id="arrayBtn" class="add-sub-fields-btn" (click)="addSubField()">
+    <svg-icon
+      id="arrayAddColIcon"
+      icon="icon-add-column"
+      class="add-sub-fields-icon"
+    ></svg-icon>
+    <span
+      id="arrayAddFieldText"
+      class="add-sub-fields-text"
+      translate="addSubFields"
+    ></span>
   </button>
 
   <div
     class="array-content dis-flex"
     *ngFor="let array of arrayFields; let i = index"
   >
-    <button class="delete-button width-5" (click)="delete(i)">
+    <button
+      id="arrayDeleteBtn"
+      class="delete-button width-5"
+      (click)="delete(i)"
+    >
       <svg-icon icon="icon-delete-icon" class="delete-icon"></svg-icon>
     </button>
 
     <div class="width-65 question-input-box">
-      <svg-icon icon="icon-six-dots" class="m-l-10 six-dots"></svg-icon>
+      <svg-icon
+        id="arraySixDots"
+        icon="icon-six-dots"
+        class="m-l-10 six-dots"
+      ></svg-icon>
 
       <input
+        id="arrayText"
         autocomplete="off"
         type="text"
         [placeholder]="'typeQuestion' | translate"
@@ -23,7 +40,7 @@
       />
     </div>
 
-    <span class="divider">|</span>
+    <span id="arrayDivider" class="divider">|</span>
 
     <div class="width-30">
       <app-response-type-button

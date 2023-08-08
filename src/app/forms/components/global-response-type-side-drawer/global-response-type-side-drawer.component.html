@@ -1,13 +1,17 @@
 <div class="app-customizer">
   <mat-card class="p-0">
-    <mat-icon (click)="closeGlobalResponse()">close</mat-icon>
+    <mat-icon id="globalResponseCloseIcon" (click)="closeGlobalResponse()"
+      >close</mat-icon
+    >
     <mat-card-title class="m-0 light-gray">
       <div
+        id="globalResponseHeading"
         class="mcq-heading"
         translate="globalResponseHeading"
         [hidden]="isViewMode"
       ></div>
       <div
+        id="globalResponseEdit"
         class="mcq-heading"
         translate="editResponses"
         *ngIf="isViewMode"
@@ -16,6 +20,7 @@
     <div [formGroup]="responseForm">
       <div>
         <input
+          id="globalResponseUntitled"
           matInput
           formControlName="name"
           placeholder="Untitled Response Set"
@@ -25,6 +30,7 @@
           #formName
         />
         <input
+          id="globalResponseName"
           *ngIf="isViewMode"
           matInput
           disabled
@@ -34,6 +40,7 @@
       </div>
       <div>
         <input
+          id="globalResponseDescription"
           matInput
           formControlName="description"
           [placeholder]="'untitledDescription' | translate"
@@ -42,6 +49,7 @@
           [hidden]="isViewMode"
         />
         <input
+          id="globalResponseViewMode"
           *ngIf="isViewMode"
           matInput
           disabled
@@ -49,7 +57,11 @@
           class="global_response_description_input"
         />
       </div>
-      <div class="margin response-heading" translate="response"></div>
+      <div
+        id="globalResponse"
+        class="margin response-heading"
+        translate="response"
+      ></div>
       <mat-card-content>
         <div
           class="width-100 response-drop-list"
@@ -66,6 +78,7 @@
             <div *ngFor="let response of getResponseList(); let i = index">
               <div [formGroupName]="i" class="dis-flex response-list" cdkDrag>
                 <input
+                  id="globalResponseTitle"
                   #globalResponses
                   matInput
                   formControlName="title"
@@ -76,11 +89,13 @@
                 />
                 <div>
                   <button
+                    id="globalResponseDelete"
                     mat-flat-button
                     (click)="deleteResponse(i)"
                     class="delete-btn"
                   >
                     <svg-icon
+                      id="globalResponseDeleteIcon"
                       icon="icon-delete-icon"
                       class="delete-btn-icon"
                     ></svg-icon>
@@ -93,6 +108,7 @@
             <div *ngFor="let response of getResponseList(); let i = index">
               <div [formGroupName]="i" class="dis-flex response-list">
                 <input
+                  id="globalResponseList"
                   formControlName="title"
                   matInput
                   class="input-forms-view"
@@ -100,25 +116,28 @@
               </div>
             </div>
           </div>
-          <button
-            *ngIf="!isViewMode"
-            mat-flat-button
-            (click)="addResponse(getResponseCount())"
-            class="add-response"
-            translate="addRes"
-          ></button>
         </div>
+        <button
+          id="globalResponseAdd"
+          *ngIf="!isViewMode"
+          mat-flat-button
+          (click)="addResponse(getResponseCount())"
+          class="add-response"
+          translate="addRes"
+        ></button>
       </mat-card-content>
     </div>
   </mat-card>
   <div class="actions-footer" *ngIf="!isViewMode; else viewBlock">
     <button
+      id="globalResponseCancelBtn"
       mat-stroked-button
       class="cancel-response-btn"
       (click)="closeGlobalResponse()"
       translate="cancel"
     ></button>
     <button
+      id="globalResponseCreateBtn"
       mat-raised-button
       color="primary"
       class="submit-response-btn"
@@ -131,6 +150,7 @@
   <ng-template #viewBlock>
     <div class="actions-footer-view">
       <button
+        id="globalResponseEditBtn"
         mat-raised-button
         color="primary"
         class="edit-button"

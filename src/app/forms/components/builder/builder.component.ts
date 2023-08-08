@@ -3,11 +3,12 @@ import {
   Component,
   OnInit,
   ChangeDetectionStrategy,
-  Input
+  Input,
+  OnDestroy
 } from '@angular/core';
 
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
 import {
@@ -16,7 +17,9 @@ import {
   SectionEvent,
   Question,
   Section,
-  FormMetadata
+  FormMetadata,
+  Page,
+  SectionQuestions
 } from 'src/app/interfaces';
 
 import {
@@ -29,7 +32,10 @@ import {
   getSubFormPages,
   getQuestionCounter,
   getPageWiseSectionQuestions,
-  getPageWiseSections
+  getPageWiseSections,
+  getPageWiseQuestionLogics,
+  getImportedSectionsByTemplateId,
+  getFormConfigurationCounter
 } from 'src/app/forms/state/builder/builder-state.selectors';
 
 import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
@@ -40,6 +46,9 @@ import {
 } from '@angular/cdk/drag-drop';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { RoundPlanConfigurationService } from 'src/app/forms/services/round-plan-configuration.service';
+import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
+import { v4 as uuidv4 } from 'uuid';
+import { cloneDeep } from 'lodash-es';
 
 @Component({
   selector: 'app-builder',
@@ -47,7 +56,7 @@ import { RoundPlanConfigurationService } from 'src/app/forms/services/round-plan
   styleUrls: ['./builder.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class BuilderComponent implements OnInit {
+export class BuilderComponent implements OnInit, OnDestroy {
   @Input() set selectedNode(node: any) {
     this._selectedNode = node ? node : ({} as any);
     if (Object.keys(node).length) {
@@ -61,6 +70,8 @@ export class BuilderComponent implements OnInit {
   @Input() isPreviewActive;
   @Input() moduleName;
   @Input() isEmbeddedForm;
+  @Input() isTemplate;
+  @Input() formId;
 
   subFormPages$: Observable<any>;
   pageIndexes$: Observable<number[]>;
@@ -73,10 +84,30 @@ export class BuilderComponent implements OnInit {
   isEmptyPage: any = [];
   isEmptyPlan = true;
   pageWiseSections: any;
+  pageWiseSectionQuestions: any;
+  subFormPages: any;
+  questionCounter: any;
+  importedSectionsByTemplateId: any = {};
+  formConfigurationCounter: any;
   questionCounter$: Observable<number>;
   formMetadata$: Observable<FormMetadata>;
-  pageWiseSectionQuestions$: Observable<any>;
+  pageWiseSectionQuestions$: Observable<{
+    [key: number]: {
+      page: Page;
+      pageQuestionsCount: number;
+    } & {
+      [key: string]: {
+        section: Section;
+        questions: Question[];
+        questionsById: { [key: string]: Question };
+      };
+    };
+  }>;
   pageWiseSections$: Observable<any>;
+  pageWiseQuestionLogics$: Observable<any>;
+  importedSectionsByTemplateId$: Observable<any>;
+  getFormConfigurationCounter$: Observable<any>;
+  updateFormTemplateUsageByFormIdSubscription: Subscription;
 
   readonly formConfigurationStatus = formConfigurationStatus;
 
@@ -84,7 +115,8 @@ export class BuilderComponent implements OnInit {
 
   constructor(
     private store: Store<State>,
-    private roundPlanConfigurationService: RoundPlanConfigurationService
+    private roundPlanConfigurationService: RoundPlanConfigurationService,
+    private raceDynamicFormService: RaceDynamicFormService
   ) {}
 
   initSubscriptions() {
@@ -92,6 +124,7 @@ export class BuilderComponent implements OnInit {
       .select(getSubFormPages(this.selectedNode.id))
       .pipe(
         tap((pages) => {
+          this.subFormPages = pages;
           if (pages && pages.length === 0) {
             this.isEmptyPlan = true;
           } else {
@@ -118,14 +151,38 @@ export class BuilderComponent implements OnInit {
     this.questionIndexes$ = this.store
       .select(getQuestionIndexes(this.selectedNode.id))
       .pipe(tap((questionIndexes) => (this.questionIndexes = questionIndexes)));
-    this.questionCounter$ = this.store.select(getQuestionCounter);
-    this.pageWiseSectionQuestions$ = this.store.select(
-      getPageWiseSectionQuestions(this.selectedNode.id)
-    );
+    this.questionCounter$ = this.store
+      .select(getQuestionCounter)
+      .pipe(tap((questionCounter) => (this.questionCounter = questionCounter)));
+    this.pageWiseSectionQuestions$ = this.store
+      .select(getPageWiseSectionQuestions(this.selectedNode.id))
+      .pipe(
+        tap(
+          (pageWiseSectionQuestions) =>
+            (this.pageWiseSectionQuestions = pageWiseSectionQuestions)
+        )
+      );
     this.pageWiseSections$ = this.store
       .select(getPageWiseSections(this.selectedNode.id))
       .pipe(
         tap((pageWiseSections) => (this.pageWiseSections = pageWiseSections))
+      );
+    this.pageWiseQuestionLogics$ = this.store.select(
+      getPageWiseQuestionLogics(this.selectedNode.id)
+    );
+    this.importedSectionsByTemplateId$ = this.store
+      .select(getImportedSectionsByTemplateId(this.selectedNode.id))
+      .pipe(
+        tap((importedSectionsByTemplateId) => {
+          this.importedSectionsByTemplateId = importedSectionsByTemplateId;
+        })
+      );
+    this.getFormConfigurationCounter$ = this.store
+      .select(getFormConfigurationCounter())
+      .pipe(
+        tap((formConfigurationCounter) => {
+          this.formConfigurationCounter = formConfigurationCounter;
+        })
       );
   }
 
@@ -140,7 +197,8 @@ export class BuilderComponent implements OnInit {
       this.sectionIndexes,
       this.counter,
       this.selectedNode.id,
-      this.isEmbeddedForm
+      this.isEmbeddedForm,
+      this.isTemplate
     );
   }
 
@@ -156,7 +214,8 @@ export class BuilderComponent implements OnInit {
             this.sectionIndexes,
             this.counter,
             this.selectedNode.id,
-            this.isEmbeddedForm
+            this.isEmbeddedForm,
+            this.isTemplate
           );
         }
         break;
@@ -171,14 +230,37 @@ export class BuilderComponent implements OnInit {
         );
         break;
       case 'delete':
+        let hasImportedSections = false;
+        for (const section of this.pageWiseSections[pageIndex]) {
+          if (section.isImported) hasImportedSections = true;
+        }
+        if (hasImportedSections) {
+          const formTemplateUsage = this.getFormTemplateUsage(pageIndex, -1);
+          this.raceDynamicFormService
+            .updateFormTemplateUsageByFormId$({
+              formId: this.formId,
+              importedSections: formTemplateUsage
+            })
+            .subscribe(() => {
+              this.store.dispatch(
+                BuilderConfigurationActions.deletePage({
+                  pageIndex,
+                  ...this.getFormConfigurationStatuses(),
+                  subFormId: this.selectedNode.id
+                })
+              );
+            });
+        } else {
+          this.store.dispatch(
+            BuilderConfigurationActions.deletePage({
+              pageIndex,
+              ...this.getFormConfigurationStatuses(),
+              subFormId: this.selectedNode.id
+            })
+          );
+        }
         this.isEmptyPage[pageIndex] = false;
-        this.store.dispatch(
-          BuilderConfigurationActions.deletePage({
-            pageIndex,
-            ...this.getFormConfigurationStatuses(),
-            subFormId: this.selectedNode.id
-          })
-        );
+
         break;
     }
   }
@@ -196,7 +278,8 @@ export class BuilderComponent implements OnInit {
             this.sectionIndexes,
             this.counter,
             this.selectedNode.id,
-            this.isEmbeddedForm
+            this.isEmbeddedForm,
+            this.isTemplate
           );
         }
         break;
@@ -214,18 +297,89 @@ export class BuilderComponent implements OnInit {
         break;
 
       case 'delete':
-        this.store.dispatch(
-          BuilderConfigurationActions.deleteSection({
-            sectionIndex,
-            sectionId: section.id,
+        if (section.isImported) {
+          const formTemplateUsage = this.getFormTemplateUsage(
             pageIndex,
-            ...this.getFormConfigurationStatuses(),
-            subFormId: this.selectedNode.id
-          })
-        );
+            sectionIndex
+          );
+          this.raceDynamicFormService
+            .updateFormTemplateUsageByFormId$({
+              formId: this.formId,
+              importedSections: formTemplateUsage
+            })
+            .subscribe(() => {
+              this.store.dispatch(
+                BuilderConfigurationActions.deleteSection({
+                  sectionIndex,
+                  sectionId: section.id,
+                  pageIndex,
+                  ...this.getFormConfigurationStatuses(),
+                  subFormId: this.selectedNode.id
+                })
+              );
+            });
+        } else {
+          this.store.dispatch(
+            BuilderConfigurationActions.deleteSection({
+              sectionIndex,
+              sectionId: section.id,
+              pageIndex,
+              ...this.getFormConfigurationStatuses(),
+              subFormId: this.selectedNode.id
+            })
+          );
+        }
 
         this.isEmptyPage[pageIndex] =
           this.pageWiseSections[pageIndex].length === 0;
+        break;
+
+      case 'copy':
+        this.copySection(pageIndex, sectionIndex, section);
+        break;
+      case 'unlink':
+        if (section.isImported) {
+          const formTemplateUsage = this.getFormTemplateUsage(
+            pageIndex,
+            sectionIndex
+          );
+          this.raceDynamicFormService
+            .updateFormTemplateUsageByFormId$({
+              formId: this.formId,
+              importedSections: formTemplateUsage
+            })
+            .subscribe(() => {
+              delete section.isImported;
+              delete section.templateId;
+              delete section.templateName;
+              delete section.externalSectionId;
+              delete section.counter;
+              this.store.dispatch(
+                BuilderConfigurationActions.updateSection({
+                  section,
+                  sectionIndex,
+                  pageIndex,
+                  ...this.getFormConfigurationStatuses(),
+                  subFormId: this.selectedNode.id
+                })
+              );
+            });
+        } else {
+          delete section.isImported;
+          delete section.templateId;
+          delete section.templateName;
+          delete section.externalSectionId;
+          delete section.counter;
+          this.store.dispatch(
+            BuilderConfigurationActions.updateSection({
+              section,
+              sectionIndex,
+              pageIndex,
+              ...this.getFormConfigurationStatuses(),
+              subFormId: this.selectedNode.id
+            })
+          );
+        }
         break;
     }
   }
@@ -241,7 +395,8 @@ export class BuilderComponent implements OnInit {
             1,
             questionIndex,
             this.counter,
-            this.selectedNode.id
+            this.selectedNode.id,
+            this.isTemplate
           );
         }
         break;
@@ -271,6 +426,124 @@ export class BuilderComponent implements OnInit {
         );
         break;
     }
+  }
+
+  getFormTemplateUsage(pageIndex: number, sectionIndex: number) {
+    /*
+    if pageIndex is -1 it gives usage count for all pages
+    if pageIndex is given and sectionIndex is -1, it ignores that pageIndex [deletePage]
+    if pageIndex and sectionIndex is given, it ignores that setion from page [delete, unlink section]
+    */
+    const pages = this.subFormPages;
+    const importedSections = {};
+    // if some template section is delete we still have to send empty object so backend will handle and delete that entry from formtemplateusage
+    if (pageIndex !== -1) {
+      if (sectionIndex !== -1) {
+        const section = this.pageWiseSections[pageIndex][sectionIndex];
+        if (section.isImported) importedSections[section.templateId] = {};
+      } else {
+        const sections = this.pageWiseSections[pageIndex];
+        for (const section of sections) {
+          if (section.isImported) {
+            importedSections[section.templateId] = {};
+          }
+        }
+      }
+    }
+    for (let i = 0; i < pages.length; i++) {
+      if (pageIndex === -1 || !(i === pageIndex && sectionIndex === -1)) {
+        for (let j = 0; j < pages[i].sections.length; j++) {
+          if (pageIndex === -1 || !(i === pageIndex && j === sectionIndex)) {
+            const section = pages[i].sections[j];
+            if (section.isImported) {
+              if (!importedSections[section.templateId])
+                importedSections[section.templateId] = {};
+              importedSections[section.templateId][
+                section.externalSectionId
+              ] = 1;
+            }
+          }
+        }
+      }
+    }
+    return importedSections;
+  }
+
+  copySection(pageIndex, sectionIndex, section: Section) {
+    const page = cloneDeep(this.subFormPages[pageIndex]);
+    let questionCounter = this.formConfigurationCounter;
+    const sectionQuestionsList: SectionQuestions[] = [];
+    const questionsArray = [];
+    const sectionQuestions = {};
+    const newQuestionIds = {};
+    for (const question of page.questions || []) {
+      if (question.sectionId === section.id) {
+        newQuestionIds[question.id] = `Q${++questionCounter}`;
+        sectionQuestions[question.id] = 1;
+        question.id = newQuestionIds[question.id];
+        question.skipIdGeneration = true;
+        questionsArray.push(question);
+      }
+    }
+    const logicsArray = [];
+    const sectionLogics = {};
+    const newLogicIds = {};
+    for (const logic of page.logics || []) {
+      if (sectionQuestions[logic.questionId]) {
+        newLogicIds[logic.id] = uuidv4();
+        sectionLogics[`AQ_${logic.id}`] = 1;
+        logic.id = newLogicIds[logic.id];
+        logic.questionId = newQuestionIds[logic.questionId];
+        logic.evidenceQuestions = logic.evidenceQuestions.map(
+          (item) => newQuestionIds[item] || item
+        );
+        logic.hideQuestions = logic.hideQuestions.map(
+          (item) => newQuestionIds[item] || item
+        );
+        logic.mandateQuestions = logic.mandateQuestions.map(
+          (item) => newQuestionIds[item] || item
+        );
+        delete logic.questions;
+        logicsArray.push(logic);
+      }
+    }
+    const askQuestions = [];
+    for (const question of page.questions || []) {
+      if (
+        question.sectionId.startsWith('AQ_') &&
+        sectionLogics[question.sectionId]
+      ) {
+        question.id = `AQ_${uuidv4()}`;
+        question.sectionId = `AQ_${
+          newLogicIds[question.sectionId.substring(3)]
+        }`;
+        question.skipIdGeneration = true;
+        askQuestions.push(question);
+      }
+    }
+    delete section.isImported;
+    delete section.templateId;
+    delete section.externalSectionId;
+    delete section.counter;
+    delete section.id;
+    sectionQuestionsList.push({
+      section,
+      questions: [...questionsArray, ...askQuestions],
+      logics: logicsArray
+    });
+
+    this.roundPlanConfigurationService.addSections(
+      pageIndex,
+      1,
+      sectionQuestionsList[0].questions.length,
+      sectionIndex + 1,
+      this.sectionIndexes,
+      this.questionCounter,
+      this.selectedNode.id,
+      this.isEmbeddedForm,
+      this.isTemplate,
+      sectionQuestionsList
+    );
   }
 
   dropSection(event: CdkDragDrop<any>, pageIndex: number, subFormId: string) {
@@ -352,8 +625,9 @@ export class BuilderComponent implements OnInit {
         sectionIndex,
         1,
         questionIndex,
-        1,
-        subFormId
+        this.counter,
+        subFormId,
+        this.isTemplate
       );
     }
   }
@@ -361,5 +635,11 @@ export class BuilderComponent implements OnInit {
   addSection(pageIndex) {
     this.isEmptyPage[pageIndex] = false;
     this.sectionEventHandler({ pageIndex, type: 'add', sectionIndex: 0 });
+  }
+
+  ngOnDestroy() {
+    if (this.updateFormTemplateUsageByFormIdSubscription) {
+      this.updateFormTemplateUsageByFormIdSubscription.unsubscribe();
+    }
   }
 }

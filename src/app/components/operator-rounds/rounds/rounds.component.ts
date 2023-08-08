@@ -63,9 +63,6 @@ import {
 } from 'src/app/app.constants';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
 import { LoginService } from '../../login/services/login.service';
-import { FormConfigurationActions } from 'src/app/forms/state/actions';
-import { Store } from '@ngrx/store';
-import { State } from 'src/app/state/app.state';
 import { ActivatedRoute, Router } from '@angular/router';
 import { slideInOut } from 'src/app/animations';
 import { MatDialog } from '@angular/material/dialog';
@@ -89,7 +86,6 @@ import { ShiftDateChangeWarningModalComponent } from 'src/app/forms/components/s
 })
 export class RoundsComponent implements OnInit, OnDestroy {
   @ViewChildren(MatMenuTrigger) trigger: QueryList<MatMenuTrigger>;
-
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
       tap((users) => {
@@ -110,7 +106,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
     'Submitted',
     'Assigned',
     'Partly-Open',
-    'Overdue'
+    'Overdue',
+    'Skipped'
   ];
   statusMap = {
     open: 'open',
@@ -118,7 +115,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
     assigned: 'assigned',
     partlyOpen: 'partly-open',
     inProgress: 'in-progress',
-    overdue: 'overdue'
+    overdue: 'overdue',
+    skipped: 'skipped'
   };
   filter = {
     status: '',
@@ -376,7 +374,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
       hasPreTextImage: false,
       hasPostTextImage: false
     },
-
     {
       id: 'schedule',
       displayName: 'Schedule',
@@ -509,6 +506,10 @@ export class RoundsComponent implements OnInit, OnDestroy {
       overdue: {
         'background-color': statusColors.overdue,
         color: statusColors.white
+      },
+      skipped: {
+        'background-color': statusColors.skipped,
+        color: statusColors.white
       }
     }
   };
@@ -562,7 +563,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
   constructor(
     private readonly operatorRoundsService: OperatorRoundsService,
     private loginService: LoginService,
-    private store: Store<State>,
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private dialog: MatDialog,
@@ -614,7 +614,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
           this.fetchType = 'infiniteScroll';
-          return this.getRoundsList();
+          return this.getRoundsList(false);
         } else {
           return of({} as RoundDetailResponse);
         }
@@ -653,10 +653,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
             ...this.configOptions,
             tableHeight: 'calc(100vh - 150px)'
           };
-
           this.initial.data = rounds.rows.map((roundDetail) => ({
             ...roundDetail,
-
             dueDateDisplay: this.formatDate(
               roundDetail.dueDate,
               roundDetail.plantId
@@ -675,7 +673,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
           this.initial.data = this.initial.data.concat(
             scrollData.rows?.map((roundDetail) => ({
               ...roundDetail,
-
               dueDateDisplay: this.formatDate(
                 roundDetail.dueDate,
                 roundDetail.plantId
@@ -696,7 +693,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
         this.initial.data = this.formattingRound(this.initial.data);
         this.skip = this.initial.data.length;
         // Just a work around to improve the perforamce as we getting more records in the single n/w call. When small chunk of records are coming n/w call we can get rid of slice implementation
-
         const sliceStart = this.dataSource ? this.dataSource.data.length : 0;
         const dataSource = this.dataSource
           ? this.dataSource.data.concat(
@@ -733,7 +729,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
     });
   }
 
-  getRoundsList() {
+  getRoundsList(displayGhostLoading = true) {
     const obj = {
       next: this.nextToken,
       limit: this.limit,
@@ -742,7 +738,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       roundPlanId: this.roundPlanId,
       roundId: this.roundId
     };
-    this.isLoading$.next(true);
+    this.isLoading$.next(displayGhostLoading);
     return this.operatorRoundsService
       .getRoundsList$({ ...obj, ...this.filter })
       .pipe(
@@ -880,7 +876,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
   onCloseViewDetail() {
     this.selectedRound = null;
     this.formDetailState = 'out';
-    this.store.dispatch(FormConfigurationActions.resetPages());
     timer(400)
       .pipe(
         tap(() => {
@@ -893,7 +888,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
 
   openRoundHandler(row: RoundDetail): void {
     this.hideRoundDetail = false;
-    this.store.dispatch(FormConfigurationActions.resetPages());
     this.selectedRound = row;
     this.formDetailState = 'in';
     this.zIndexDelay = 400;
@@ -919,14 +913,12 @@ export class RoundsComponent implements OnInit, OnDestroy {
         this.downloadPDF(this.selectedRound);
       }
     } else {
-      this.store.dispatch(FormConfigurationActions.resetPages());
       this.router.navigate([`/operator-rounds/edit/${this.selectedRound.id}`]);
     }
   }
 
   downloadPDF(selectedForm) {
-    const roundPlanId = selectedForm.id;
-    const roundId = selectedForm.roundId;
+    const { id: roundId, roundPlanId } = selectedForm;
 
     const info: ErrorInfo = {
       displayToast: false,

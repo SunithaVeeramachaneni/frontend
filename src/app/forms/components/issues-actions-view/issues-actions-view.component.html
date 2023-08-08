@@ -6,11 +6,16 @@
   }"
 >
   <mat-toolbar class="form-toolbar">
-    <button (click)="onCancel()" class="back-btn">
-      <svg-icon icon="icon-back-arrow" class="back-arrow"></svg-icon>
+    <button id="issuesActionsViewBackBtn" (click)="onCancel()" class="back-btn">
+      <svg-icon
+        id="issuesActionsViewBackArrow"
+        icon="icon-back-arrow"
+        class="back-arrow"
+      ></svg-icon>
     </button>
-    <h4 class="heading">
+    <h4 id="issuesActionsViewHeading" class="heading">
       <mat-icon
+        id="issuesActionsViewLeftArrow"
         (click)="onPrevious()"
         class="arrows"
         [ngClass]="{ 'disabled-arrow': !isPreviousEnabled }"
@@ -20,6 +25,7 @@
       {{ this.issuesActionsDetailViewForm.get('title').value }}
       &nbsp;
       <mat-icon
+        id="issuesActionsViewArrowRight"
         (click)="onNext()"
         class="arrows"
         [ngClass]="{ 'disabled-arrow': !isNextEnabled }"
@@ -39,6 +45,19 @@
         [scrollTop]="scrollMe.scrollHeight"
       >
         <ng-container *ngFor="let history of logHistory.rows; let i = index">
+          <ng-container
+            *ngIf="
+              i === 0 ||
+              formatDate(history.createdAt) !==
+                formatDate(logHistory.rows[i - 1].createdAt)
+            "
+          >
+            <div class="date-divider">
+              <span id="issuesActionsViewCompareDates" class="date-card">
+                {{ compareDates(formatDate(history.createdAt)) }}
+              </span>
+            </div>
+          </ng-container>
           <div
             [ngClass]="{
               'text-align-right': history.username === userInfo.email
@@ -46,7 +65,7 @@
           >
             <ng-container *ngIf="history.type === 'Object'">
               <ng-container *ngIf="i === 0">
-                <div class="username-top">
+                <div id="issuesActionsViewUserName" class="username-top">
                   {{ history?.username | userNameByEmail }}
                 </div>
               </ng-container>
@@ -63,34 +82,45 @@
               <div class="issue-created">
                 <ng-container *ngIf="i === 0">
                   <span
+                    id="issuesActionsViewIssueCreated"
                     class="main-heading"
                     *ngIf="data.type === 'issue'"
                     translate="issueCreated"
                   >
                   </span>
                   <span
+                    id="issuesActionsViewActionCreated"
                     class="main-heading"
                     *ngIf="data.type === 'action'"
                     translate="actionCreated"
                   >
                   </span>
                   <br />
-                  <span class="data">
-                    <span class="sub-headings" translate="issueActionTitle">
+                  <span id="issuesActionsViewTitle" class="data">
+                    <span
+                      id="issuesActionsViewSubHeading"
+                      class="sub-headings"
+                      translate="issueActionTitle"
+                    >
                     </span>
                     {{ history.message.TITLE }}
                   </span>
                   <br />
                   <ng-container *ngIf="history.message.DESCRIPTION">
-                    <span class="data" *ngIf="data.type === 'action'">
+                    <span
+                      id="issuesActionsViewDescription"
+                      class="data"
+                      *ngIf="data.type === 'action'"
+                    >
                       <span class="sub-headings" translate="description"></span>
                       {{ history.message.DESCRIPTION }}
                     </span>
                     <br *ngIf="data.type === 'action'"
                   /></ng-container>
                   <ng-container *ngIf="history.message.ANLNR">
-                    <span class="data">
+                    <span id="issuesActionsViewANLNR" class="data">
                       <span
+                        id="issuesActionsViewMessage"
                         class="sub-headings"
                         translate="assetCreated"
                       ></span>
@@ -99,8 +129,9 @@
                     <br />
                   </ng-container>
                   <ng-container *ngIf="history.message.ASSIGNEE"
-                    ><span class="data">
+                    ><span id="issuesActionsViewAssignee" class="data">
                       <span
+                        id="issuesActionsViewAssigneAction"
                         class="sub-headings"
                         translate="assignedToAction"
                       ></span>
@@ -109,8 +140,9 @@
                     <br
                   /></ng-container>
                   <ng-container *ngIf="history.message.CATEGORY">
-                    <span class="data">
+                    <span id="issuesActionsViewMessageCategory" class="data">
                       <span
+                        id="issuesActionsViewCategoryCreated"
                         class="sub-headings"
                         translate="categoryCreated"
                       ></span>
@@ -119,18 +151,20 @@
                     <br />
                   </ng-container>
                   <ng-container *ngIf="history.message.DUEDATE">
-                    <span class="data">
+                    <span id="issuesActionsViewDueDate" class="data">
                       <span
+                        id="issuesActionsViewDateAndTime"
                         class="sub-headings"
                         translate="issueActionDueDateAndTime"
                       ></span>
-                      {{ formatDate(history.message.DUEDATE) }}
+                      {{ formatDateTime(history.message.DUEDATE) }}
                     </span>
                     <br />
                   </ng-container>
                   <ng-container *ngIf="history.message.PRIORITY">
-                    <span class="data">
+                    <span id="issuesActionsViewPriority" class="data">
                       <span
+                        id="issuesActionsViewActionPriority"
                         class="sub-headings"
                         translate="actionPriority"
                       ></span>
@@ -139,8 +173,9 @@
                     <br
                   /></ng-container>
                   <ng-container *ngIf="history.message.STATUS">
-                    <span class="data">
+                    <span id="issuesActionsViewStatus" class="data">
                       <span
+                        id="issuesActionsViewActionStatus"
                         class="sub-headings"
                         translate="actionStatus"
                       ></span>
@@ -148,35 +183,58 @@
                     </span>
                   </ng-container>
                   <br *ngIf="data.round !== placeholder" />
-                  <span class="data" *ngIf="data.round !== placeholder">
-                    <span class="sub-headings" translate="roundCreated"></span>
+                  <span
+                    id="issuesActionsViewRound"
+                    class="data"
+                    *ngIf="data.round !== placeholder"
+                  >
+                    <span
+                      id="issuesActionsViewRoundCreated"
+                      class="sub-headings"
+                      translate="roundCreated"
+                    ></span>
                     {{ data.round }}
                   </span>
                   <br *ngIf="data.location !== placeholder" />
-                  <span class="data" *ngIf="data.location !== placeholder">
+                  <span
+                    id="issuesActionsViewLocation"
+                    class="data"
+                    *ngIf="data.location !== placeholder"
+                  >
                     <span
+                      id="issuesActionsViewlocationCreated"
                       class="sub-headings"
                       translate="locationCreated"
                     ></span>
                     {{ data.location }}
                   </span>
                   <br *ngIf="data.plant !== placeholder" />
-                  <span class="data" *ngIf="data.plant !== placeholder">
-                    <span class="sub-headings" translate="plantCreated"></span>
+                  <span
+                    id="issuesActionsViewPlant"
+                    class="data"
+                    *ngIf="data.plant !== placeholder"
+                  >
+                    <span
+                      id="issuesActionsViewPlantCreated"
+                      class="sub-headings"
+                      translate="plantCreated"
+                    ></span>
                     {{ data.plant }}
                   </span>
                 </ng-container>
 
                 <ng-container *ngIf="i !== 0">
                   <ng-container *ngIf="history.message.STATUS">
-                    <span class="data">
+                    <span id="issuesActionsViewStatusHistory" class="data">
                       <span
+                        id="issuesActionsViewActionStatusUpdated"
                         class="sub-headings"
                         *ngIf="data.type === 'action'"
                         translate="actionStatusUpdated"
                       >
                       </span>
                       <span
+                        id="issuesActionsViewIssueStatusUpdated"
                         class="sub-headings"
                         *ngIf="data.type === 'issue'"
                         translate="issueStatusUpdated"
@@ -187,18 +245,21 @@
                     <br />
                   </ng-container>
                   <ng-container *ngIf="history.message.ASSIGNEE">
-                    <span class="data">
+                    <span id="issuesActionsViewUserName" class="data">
                       <span
+                        id="issuesActionsViewAddedTo"
                         *ngIf="history.message.assignmentType === 'add'"
                         class="sub-headings"
                         translate="assigneeAddedTo"
                       ></span>
                       <span
+                        id="issuesActionsViewAssigneeRemoved"
                         *ngIf="history.message.assignmentType === 'remove'"
                         class="sub-headings"
                         translate="assigneeRemovedTo"
                       ></span>
                       <span
+                        id="issuesActionsViewAssigneeUpdated"
                         *ngIf="!history?.message?.assignmentType"
                         class="sub-headings"
                         translate="assigneeUpdatedTo"
@@ -208,28 +269,38 @@
                     <br />
                   </ng-container>
                   <ng-container *ngIf="history.message.ERPNOTIF">
-                    <span class="data">
-                      <span class="sub-headings" translate="erpNotif"> </span>
+                    <span id="issuesActionsViewERFNotif" class="data">
+                      <span
+                        id="issuesActionsViewERPNotifHeading"
+                        class="sub-headings"
+                        translate="erpNotif"
+                      >
+                      </span>
                       {{ history.message.ERPNOTIF }}
                     </span>
                     <br />
                   </ng-container>
                   <ng-container *ngIf="history.message.PRIORITY">
-                    <span class="data">
-                      <span class="sub-headings" translate="priorityUpdated">
+                    <span id="issuesActionsViewPriorityHistory" class="data">
+                      <span
+                        id="issuesActionsViewPriorityUpdated"
+                        class="sub-headings"
+                        translate="priorityUpdated"
+                      >
                       </span>
                       {{ history.message.PRIORITY }}
                     </span>
                     <br />
                   </ng-container>
                   <ng-container *ngIf="history.message.DUEDATE">
-                    <span class="data">
+                    <span id="issuesActionsViewHistoryDueDate" class="data">
                       <span
+                        id="issuesActionsViewDueDateUpdate"
                         class="sub-headings"
                         translate="dueDateAndTimeUpdated"
                       >
                       </span>
-                      {{ formatDate(history.message.DUEDATE) }}
+                      {{ formatDateTime(history.message.DUEDATE) }}
                     </span>
                     <br />
                   </ng-container>
@@ -238,12 +309,15 @@
             </ng-container>
 
             <ng-container *ngIf="history.type === 'Message'">
-              <div class="message-created">{{ history.message }}</div>
+              <div id="issuesActionsViewHistoryMessage" class="message-created">
+                {{ history.message }}
+              </div>
             </ng-container>
 
             <ng-container *ngIf="history.type === 'Media'">
               <div class="media-created">
                 <img
+                  id="issuesActionsViewImg"
                   [src]="history?.message"
                   *ngIf="history?.message"
                   alt="Log History"
@@ -252,11 +326,11 @@
               </div>
             </ng-container>
           </div>
-
           <ng-container *ngIf="history?.message?.PHOTO?.length > 0">
             <div class="attachments-container mt-0">
               <div *ngFor="let photo of history?.message?.PHOTO">
                 <img
+                  id="issuesActionsViewAttachmentImg"
                   alt="images"
                   [src]="photo"
                   *ngIf="photo"
@@ -267,18 +341,20 @@
           </ng-container>
 
           <div
+            id="issuesActionsViewFormatTime"
             class="time"
             [ngClass]="{
               'text-align-right': history.username === userInfo.email
             }"
           >
-            {{ formatDate(history.createdAt) }}
+            {{ formatTime(history.createdAt) }}
           </div>
         </ng-container>
       </div>
       <div class="custom-form-field-white-color footer" #footer>
         <mat-form-field appearance="outline" class="width-90 margin">
           <textarea
+            id="issuesActionsViewTextArea"
             matInput
             matAutosize
             name=""
@@ -291,6 +367,7 @@
           >
           </textarea>
           <svg-icon
+            id="issuesActionsViewAttachmentIcon"
             icon="icon-add-attachment-icon"
             matSuffix
             class="add-attachment-icon"
@@ -298,6 +375,7 @@
           ></svg-icon>
         </mat-form-field>
         <input
+          id="issuesActionsViewFileType"
           hidden
           type="file"
           accept="image/x-png,image/jpeg,,image/jpg"
@@ -306,6 +384,7 @@
           (click)="resetFile($event)"
         />
         <svg-icon
+          id="issuesActionsViewSendImgIcon"
           icon="icon-send-message"
           class="send-message"
           (click)="createIssueOrActionHistory()"
@@ -329,8 +408,14 @@
         </div>
         <div class="custom-form-field-white-color footer" #footer>
           <mat-form-field appearance="outline" class="width-90 margin">
-            <input type="text" matInput [placeholder]="'type' | translate" />
+            <input
+              id="issuesActionsViewText"
+              type="text"
+              matInput
+              [placeholder]="'type' | translate"
+            />
             <svg-icon
+              id="issuesActionsViewAddAttachmentIcon"
               icon="icon-add-attachment-icon"
               matSuffix
               class="add-attachment-icon"
@@ -338,58 +423,88 @@
             ></svg-icon>
           </mat-form-field>
           <input
+            id="issuesActionsViewFIle"
             hidden
             type="file"
             accept="image/x-png,image/jpeg"
             #fileInput
             (change)="uploadFile($event)"
           />
-          <svg-icon icon="icon-send-message" class="send-message"></svg-icon>
+          <svg-icon
+            id="issuesActionsViewsendMessageIcon"
+            icon="icon-send-message"
+            class="send-message"
+          ></svg-icon>
         </div>
       </div>
     </ng-template>
     <div class="width-40 details-div form-fields">
       <div class="right-div p-5-0">
-        <div class="titles" translate="title"></div>
-        <div class="values">
+        <div
+          id="issuesActionsViewTitleHeading"
+          class="titles"
+          translate="title"
+        ></div>
+        <div id="issuesActionsViewDetailTitlle" class="values">
           {{ this.issuesActionsDetailViewForm.get('title').value }}
         </div>
       </div>
       <hr class="line" />
       <div class="right-div p-5-0">
-        <div class="titles" translate="des"></div>
-        <div class="values">
+        <div id="issuesActionsViewDes" class="titles" translate="des"></div>
+        <div id="issuesActionsViewDetailDescription" class="values">
           {{ this.issuesActionsDetailViewForm.get('description').value }}
         </div>
       </div>
       <ng-container *ngIf="data?.type === 'issue'">
         <hr class="line" />
         <div class="right-div p-5-0">
-          <div class="titles" translate="category"></div>
-          <div class="values">
+          <div
+            id="issuesActionsViewCategory"
+            class="titles"
+            translate="category"
+          ></div>
+          <div id="issuesActionsViewDetailCategory" class="values">
             {{ this.issuesActionsDetailViewForm.get('category').value }}
           </div>
         </div>
       </ng-container>
       <hr class="line" />
       <div class="right-div p-5-0">
-        <div class="titles" translate="round"></div>
-        <div class="values round-title" (click)="navigateToRounds()">
+        <div
+          id="issuesActionsViewFormRound"
+          class="titles"
+          translate="round"
+        ></div>
+        <div
+          id="issuesActionsViewDetailRound"
+          class="values round-title"
+          (click)="navigateToRounds()"
+        >
           {{ this.issuesActionsDetailViewForm.get('round').value }}
         </div>
       </div>
       <hr class="line" />
       <div class="right-div p-5-0">
-        <div class="titles" translate="plant"></div>
-        <div class="values">
+        <div
+          id="issuesActionsViewFOrmPlant"
+          class="titles"
+          translate="plant"
+        ></div>
+        <div id="issuesActionsViewPlantValue" class="values">
           {{ this.issuesActionsDetailViewForm.get('plant').value }}
         </div>
       </div>
       <hr class="line" />
       <div class="right-div p-5-0">
-        <div class="titles" translate="timeZone"></div>
+        <div
+          id="issuesActionsViewTimeZone"
+          class="titles"
+          translate="timeZone"
+        ></div>
         <div class="values">
           <span
+            id="issuesActionsViewTimeZoneValue"
             *ngIf="
               this.plantTimezoneMap[
                 this.issuesActionsDetailViewForm.get('plantId').value
@@ -403,6 +518,7 @@
             }}
           </span>
           <span
+            id="issuesActionsViewPlaceHolder"
             *ngIf="
               !this.plantTimezoneMap[
                 this.issuesActionsDetailViewForm.get('plantId').value
@@ -415,28 +531,36 @@
       </div>
       <hr class="line" />
       <div class="right-div p-5-0">
-        <div class="titles" translate="location"></div>
-        <div class="values">
+        <div
+          id="issuesActionsViewFormLocation"
+          class="titles"
+          translate="location"
+        ></div>
+        <div id="issuesActionsViewLocationValue" class="values">
           {{ this.issuesActionsDetailViewForm.get('location').value }}
         </div>
       </div>
       <hr class="line" />
       <div class="right-div p-5-0">
-        <div class="titles" translate="asset"></div>
-        <div class="values">
+        <div id="issuesActionsViewAsset" class="titles" translate="asset"></div>
+        <div id="issuesActionsViewAssetValue" class="values">
           {{ this.issuesActionsDetailViewForm.get('asset').value }}
         </div>
       </div>
       <hr class="line" />
       <div class="right-div p-5-0">
-        <div class="titles" translate="task"></div>
-        <div class="values">
+        <div id="issuesActionsViewTask" class="titles" translate="task"></div>
+        <div id="issuesActionsViewTaskValue" class="values">
           {{ this.issuesActionsDetailViewForm.get('task').value }}
         </div>
       </div>
       <hr class="line" />
       <div class="right-div">
-        <div class="titles m-t-15" translate="priority"></div>
+        <div
+          id="issuesActionsViewFormmPriority"
+          class="titles m-t-15"
+          translate="priority"
+        ></div>
         <div class="values dropdowns">
           <mat-form-field appearance="outline">
             <mat-select
@@ -448,6 +572,7 @@
             >
               <ng-container *ngIf="data?.type === 'issue'; else actions">
                 <mat-option
+                  id="issuesActionsViewPriorityOption"
                   *ngFor="let priority of priorities"
                   [value]="priority"
                   >{{ priority }}</mat-option
@@ -455,6 +580,7 @@
               </ng-container>
               <ng-template #actions>
                 <mat-option
+                  id="issuesActionsViewActionPriorityOption"
                   [value]="priority"
                   *ngFor="let priority of priorities | slice : 1 : 4"
                   >{{ priority }}
@@ -466,7 +592,11 @@
       </div>
       <hr class="line" />
       <div class="right-div">
-        <div class="titles m-t-15" translate="status"></div>
+        <div
+          id="issuesActionsViewStatusValue"
+          class="titles m-t-15"
+          translate="status"
+        ></div>
         <div class="values dropdowns">
           <mat-form-field appearance="outline">
             <mat-select
@@ -476,6 +606,7 @@
               "
             >
               <mat-option
+                id="issuesActionsViewStatusOption"
                 *ngFor="let status of statuses; let i = index"
                 [value]="status"
                 >{{ statusValues[i] }}</mat-option
@@ -486,16 +617,22 @@
       </div>
       <hr class="line" />
       <div class="right-div">
-        <div class="titles m-t-15" translate="dueDateAndTime"></div>
+        <div
+          id="issuesActionsViewDueDateTime"
+          class="titles m-t-15"
+          translate="dueDateAndTime"
+        ></div>
         <div class="values dropdowns">
           <mat-form-field appearance="outline">
             <input
+              id="issuesActionsViewDueDateValue"
               matInput
               type="text"
               formControlName="dueDateDisplayValue"
               readonly
             />
             <input
+              id="issuesActionsViewUpdateDueDate"
               matInput
               [ngxMatDatetimePicker]="picker"
               [min]="minDate"
@@ -518,7 +655,11 @@
       <hr class="line" />
 
       <div class="right-div">
-        <div class="titles m-t-15" translate="assignedTo"></div>
+        <div
+          id="issuesActionsViewAssignedTo"
+          class="titles m-t-15"
+          translate="assignedTo"
+        ></div>
         <ng-container *ngIf="users$ | async">
           <div class="values dropdowns">
             <mat-form-field
@@ -527,6 +668,7 @@
               #menuTrigger="matMenuTrigger"
             >
               <input
+                id="issuesActionsViewSelectAssignee"
                 class="searchable-input"
                 type="text"
                 [placeholder]="'selectAssignee' | translate"
@@ -534,7 +676,9 @@
                 formControlName="assignedToDisplay"
                 class="cursor"
               />
-              <mat-icon matSuffix class="cursor">arrow_drop_down</mat-icon>
+              <mat-icon id="issuesActionsViewDropDown" matSuffix class="cursor"
+                >arrow_drop_down</mat-icon
+              >
             </mat-form-field>
           </div>
 
@@ -551,9 +695,14 @@
       <hr class="line" *ngIf="data.type === 'issue'" />
 
       <div class="right-div p-5-0" *ngIf="data.type === 'issue'">
-        <div class="titles m-t-10" translate="erpnotification"></div>
+        <div
+          id="issuesActionsViewNotification"
+          class="titles m-t-10"
+          translate="erpnotification"
+        ></div>
         <div class="values" *ngIf="!isCreateNotification">
           <button
+            id="issuesActionsViewCreateNotification"
             *ngIf="!isNotificationNumber(data.notificationInfo)"
             mat-raised-button
             color="primary"
@@ -561,19 +710,23 @@
           >
             {{ 'create' | translate }}
           </button>
-          <span *ngIf="isNotificationNumber(data.notificationInfo)">{{
-            data.notificationInfo
-          }}</span>
+          <span
+            id="issuesActionsViewNotifInfo"
+            *ngIf="isNotificationNumber(data.notificationInfo)"
+            >{{ data.notificationInfo }}</span
+          >
         </div>
         <div class="values" *ngIf="isCreateNotification">
-          <span>{{ 'notificationCreation' | translate }}</span>
+          <span id="issuesActionsViewNotifCreation">{{
+            'notificationCreation' | translate
+          }}</span>
         </div>
       </div>
       <hr class="line" />
 
       <div class="right-div p-5-0">
         <div class="titles" translate="raisedBy"></div>
-        <div class="values">
+        <div id="issuesActionsViewRaisedBy" class="values">
           {{
             this.issuesActionsDetailViewForm.get('raisedBy')?.value
               | userNameByEmail
@@ -584,13 +737,14 @@
 
       <div class="right-div p-5-0">
         <div class="titles" translate="attachment"></div>
-        <div class="values">
+        <div id="issuesActionsViewFilteredLength" class="values">
           {{ filteredMediaType?.length }}
         </div>
       </div>
       <div class="attachments-container" *ngIf="filteredMediaType">
         <div *ngFor="let att of filteredMediaType; let i = index">
           <img
+            id="issuesActionsViewAttachmentfilterImg"
             [src]="att?.message"
             alt="images"
             *ngIf="att?.message"

@@ -41,6 +41,9 @@ export class DatePickerComponent implements OnInit {
   currentDate = new Date();
   _selectedDate: SelectedDate;
   mindate: any;
+  dateGroup: FormGroup = this.fb.group({
+    date: ''
+  });
   subscription: Subscription;
   constructor(private fb: FormBuilder) {}
 
@@ -51,9 +54,6 @@ export class DatePickerComponent implements OnInit {
       this.minDate = new Date();
     });
   }
-  dateGroup: FormGroup = this.fb.group({
-    date: ''
-  });
 
   onDateChange(event: MatDatetimePickerInputEvent<Date>) {
     this.dateChange.emit(event.value);

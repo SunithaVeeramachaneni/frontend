@@ -10,7 +10,7 @@
       autocomplete="off"
       class="searchInput"
     />
-    <button mat-icon-button class="searchMore">
+    <button id="peopleSearchMore" mat-icon-button class="searchMore">
       <mat-icon>more_vert</mat-icon>
     </button>
   </div>
@@ -27,7 +27,7 @@
       >
         <div class="icon-button" mat-list-icon>
           <div class="userPresence">
-            <img class="icon" [src]="user.profileImage" />
+            <img id="peopleProfileImg" class="icon" [src]="user.profileImage" />
             <div
               class="statusCircle"
               [ngClass]="{
@@ -38,10 +38,11 @@
           </div>
         </div>
         <div mat-line>
-          <b>{{ user.firstName }} {{ user.lastName }}</b>
+          <b id="peopleName">{{ user.firstName }} {{ user.lastName }}</b>
         </div>
-        <div mat-line>{{ user.title }}</div>
+        <div id="peopleTitle" mat-line>{{ user.title }}</div>
         <button
+          id="peopleCollab"
           [disabled]="user.collaborationDisabled"
           mat-icon-button
           color="primary"
@@ -56,6 +57,7 @@
         </button>
 
         <button
+          id="peopleAudio"
           mat-icon-button
           color="primary"
           (click)="openAudioVideoCallDialog(user, 'audio')"
@@ -63,6 +65,7 @@
           <mat-icon>phone</mat-icon>
         </button>
         <button
+          id="peopleVideo"
           mat-icon-button
           color="primary"
           (click)="openAudioVideoCallDialog(user, 'video')"

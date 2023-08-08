@@ -69,7 +69,10 @@ export class ActionsListComponent implements OnInit, OnDestroy {
   @Input() moduleName;
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
-      tap((users) => (this.assigneeDetails = { users }))
+      tap((users) => {
+        this.userFullNameByEmail = this.userService.getUsersInfo();
+        this.assigneeDetails = { users };
+      })
     );
   }
   get users$(): Observable<UserDetails[]> {
@@ -77,21 +80,13 @@ export class ActionsListComponent implements OnInit, OnDestroy {
   }
   assigneeDetails: AssigneeDetails;
   plantTimezoneMap = {};
-  columns: Column[] = [
+  partialColumns: Partial<Column>[] = [
     {
       id: 'title',
       displayName: 'Title',
       type: 'string',
       controlType: 'string',
-      order: 1,
-      searchable: false,
-      sortable: false,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
       titleStyle: {
         'font-weight': '500',
         'font-size': '100%',
@@ -100,81 +95,47 @@ export class ActionsListComponent implements OnInit, OnDestroy {
         'overflow-wrap': 'anywhere'
       },
       hasSubtitle: true,
-      showMenuOptions: false,
       subtitleColumn: 'description',
       subtitleStyle: {
         'font-size': '80%',
         color: 'darkgray',
         'overflow-wrap': 'anywhere'
       },
-      hasPreTextImage: true,
-      hasPostTextImage: false
+      hasPreTextImage: true
     },
     {
       id: 'locationAsset',
       displayName: 'Location/Asset',
       type: 'string',
       controlType: 'string',
-      order: 2,
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
       titleStyle: {
         'font-size': '100%'
       },
       hasSubtitle: true,
-      showMenuOptions: false,
       subtitleColumn: 'locationAssetDescription',
       subtitleStyle: {
         'font-size': '80%',
         color: 'darkgray'
-      },
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      }
     },
     {
       id: 'plant',
       displayName: 'Plant',
       type: 'string',
       controlType: 'string',
-      order: 3,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      groupable: true
     },
     {
       id: 'priority',
       displayName: 'Priority',
       type: 'number',
       controlType: 'string',
-      order: 4,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
       groupable: true,
       titleStyle: {
         textTransform: 'capitalize',
@@ -189,9 +150,6 @@ export class ActionsListComponent implements OnInit, OnDestroy {
         color: '#ff4033',
         borderRadius: '12px'
       },
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false,
       hasConditionalStyles: true
     },
     {
@@ -199,17 +157,8 @@ export class ActionsListComponent implements OnInit, OnDestroy {
       displayName: 'Status',
       type: 'string',
       controlType: 'string',
-      order: 5,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
       groupable: true,
       titleStyle: {
         textTransform: 'capitalize',
@@ -227,9 +176,6 @@ export class ActionsListComponent implements OnInit, OnDestroy {
         color: '#92400E',
         borderRadius: '12px'
       },
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false,
       hasConditionalStyles: true
     },
     {
@@ -237,70 +183,33 @@ export class ActionsListComponent implements OnInit, OnDestroy {
       displayName: 'Due Date',
       type: 'string',
       controlType: 'string',
-      order: 6,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      groupable: true
     },
     {
       id: 'assignedToDisplay',
       displayName: 'Assigned To',
       type: 'string',
       controlType: 'string',
-      order: 7,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
       groupable: true,
       titleStyle: {
         'overflow-wrap': 'anywhere'
-      },
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      }
     },
     {
       id: 'createdBy',
       displayName: 'Raised By',
       type: 'string',
       controlType: 'string',
-      order: 8,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      groupable: true
     }
   ];
+  columns: Column[] = [];
   configOptions: ConfigOptions = {
     tableID: 'actionsTable',
     rowsExpandable: false,
@@ -370,6 +279,18 @@ export class ActionsListComponent implements OnInit, OnDestroy {
   userInfo$: Observable<UserInfo>;
   initial: any;
   isModalOpened = false;
+  isPopoverOpen = false;
+  userFullNameByEmail: any;
+  filterJson = [];
+  filter = {
+    title: '',
+    location: '',
+    plant: '',
+    priority: '',
+    status: '',
+    dueDate: '',
+    assignedTo: ''
+  };
   readonly perms = perms;
   private _users$: Observable<UserDetails[]>;
   private onDestroy$ = new Subject();
@@ -384,6 +305,9 @@ export class ActionsListComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.columns = this.observationsService.updateConfigOptionsFromColumns(
+      this.partialColumns
+    );
     this.plantMapSubscription =
       this.plantService.plantTimeZoneMapping$.subscribe(
         (data) => (this.plantTimezoneMap = data)
@@ -407,6 +331,7 @@ export class ActionsListComponent implements OnInit, OnDestroy {
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
     );
+    this.getFilter();
     this.displayActions();
     this.configOptions.allColumns = this.columns;
   }
@@ -498,14 +423,18 @@ export class ActionsListComponent implements OnInit, OnDestroy {
       moduleName: this.moduleName
     };
 
-    return this.observationsService.getObservations$(obj).pipe(
-      mergeMap(({ rows, next, count }) => {
+    return this.observationsService.getObservations$(obj, this.filter).pipe(
+      mergeMap(({ rows, next, count, filters }) => {
         this.observationsService.actionsNextToken = next;
         this.isLoading$.next(false);
         if (count) {
           this.actionsCount$ = of(count);
         }
-        this.observationsService.actions$.next({ rows, next, count });
+        this.observationsService.actions$.next({ rows, next, count, filters });
+        this.filterJson = this.observationsService.prepareFilterData(
+          filters,
+          this.filterJson
+        );
         return of(rows as any[]);
       }),
       catchError(() => {
@@ -579,7 +508,9 @@ export class ActionsListComponent implements OnInit, OnDestroy {
               ...data,
               status,
               priority,
-              dueDate: dueDate ? format(new Date(dueDate), 'dd MMM, yyyy') : '',
+              dueDate: dueDate
+                ? format(new Date(dueDate), 'dd MMM, yyyy hh:mm a')
+                : '',
               assignedToDisplay: assignedToDisplay || '',
               assignedTo: assignedTo || ''
             };
@@ -602,9 +533,59 @@ export class ActionsListComponent implements OnInit, OnDestroy {
     }
   };
 
+  getFullNameToEmailArray(data: any) {
+    const emailArray = [];
+    data?.forEach((name: any) => {
+      emailArray.push(
+        Object.keys(this.userFullNameByEmail).find(
+          (email) => this.userFullNameByEmail[email].fullName === name
+        )
+      );
+    });
+    return emailArray;
+  }
+
+  applyFilters(data: any): void {
+    this.isLoading$.next(true);
+    this.isPopoverOpen = false;
+    for (const item of data) {
+      if (item.type === 'date' && item.value) {
+        this.filter[item.column] = item.value.toISOString();
+      } else if (item.column === 'assignedTo' && item.value) {
+        this.filter[item.column] = this.getFullNameToEmailArray(item.value);
+      } else {
+        this.filter[item.column] = item.value ?? '';
+      }
+    }
+    this.observationsService.actionsNextToken = '';
+    this.observationsService.fetchActions$.next({ data: 'load' });
+  }
+
+  clearFilters(): void {
+    this.isLoading$.next(true);
+    this.isPopoverOpen = false;
+    this.filter = {
+      title: '',
+      location: '',
+      plant: '',
+      priority: '',
+      status: '',
+      dueDate: '',
+      assignedTo: ''
+    };
+    this.observationsService.actionsNextToken = '';
+    this.observationsService.fetchActions$.next({ data: 'load' });
+  }
+
   ngOnDestroy(): void {
     this.plantMapSubscription.unsubscribe();
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  private getFilter(): void {
+    this.observationsService
+      .getFormsFilter()
+      .subscribe((res) => (this.filterJson = res));
   }
 }

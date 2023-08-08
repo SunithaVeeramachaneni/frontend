@@ -232,6 +232,8 @@ export class ScheduleConfigurationService {
       string?
     ];
 
+    timeString = this.convertTo24Hour(timeString);
+
     let hours: number = parseInt(hoursStr, 10);
     let minutes: number = parseInt(minutesStr, 10);
 

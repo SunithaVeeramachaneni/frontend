@@ -180,9 +180,15 @@ export class UsersService {
 
   setUsers(users: UserDetails[]) {
     this.usersInfoByEmail = users.reduce((acc, curr) => {
-      acc[curr.email] = { fullName: `${curr.firstName} ${curr.lastName}` };
+      acc[curr.email] = {
+        fullName: `${curr.firstName} ${curr.lastName}`,
+        isActive: curr.isActive
+      };
       return acc;
     }, {});
+  }
+  getUserIsActive(email: string): boolean {
+    return this.usersInfoByEmail[email]?.isActive;
   }
 
   getUsersInfo(): UsersInfoByEmail {
@@ -207,7 +213,8 @@ export class UsersService {
 
   createUser$ = (user: UserDetails, info: ErrorInfo = {} as ErrorInfo) => {
     const roleIds = user.roles.map((role) => role.id);
-    const createUser = { ...user, roleIds };
+    const usergroupIds = user.usergroup.map((usergroups) => usergroups.id);
+    const createUser = { ...user, roleIds, usergroupIds };
     return this.appService._postData(
       environment.userRoleManagementApiUrl,
       `users`,

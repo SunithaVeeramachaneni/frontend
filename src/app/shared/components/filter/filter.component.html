@@ -1,12 +1,17 @@
 <div class="filter-report-modal custom-form-field-white-color">
   <div class="m-b-10 filter-header">
-    <span class="filter-modal-heading">Filter</span>
+    <span id="filterText" class="filter-modal-heading">Filter</span>
     <button
+      id="filterCloseBtn"
       class="filter-modal-cancel"
       (click)="closeFilter()"
       aria-label="Close Filter"
     >
-      <svg-icon icon="icon-cancel-icon" class="filter-cancel"></svg-icon>
+      <svg-icon
+        id="filterCancelIcon"
+        icon="icon-cancel-icon"
+        class="filter-cancel"
+      ></svg-icon>
     </button>
   </div>
   <div class="filter-form-fields">
@@ -16,7 +21,7 @@
         appearance="outline"
         class="mat-field"
       >
-        <mat-label>{{ item.label }}</mat-label>
+        <mat-label id="filterLabel">{{ item.label }}</mat-label>
         <mat-select [(ngModel)]="item.value" name="showStatus">
           <mat-option *ngFor="let showdue of item.items" [value]="showdue">
             {{ showdue }}
@@ -28,7 +33,7 @@
         appearance="outline"
         class="mat-field"
       >
-        <mat-label>{{ item.label }}</mat-label>
+        <mat-label id="filterStatusLabel">{{ item.label }}</mat-label>
         <mat-select
           #matSelect
           multiple
@@ -36,8 +41,12 @@
           name="showStatus"
         >
           <div class="multiple-header">
-            <span>{{ item.label }}</span>
-            <button class="done-filters-btn" (click)="closeSelect(matSelect)">
+            <span id="doneLabel">{{ item.label }}</span>
+            <button
+              id="filterDoneBtn"
+              class="done-filters-btn"
+              (click)="closeSelect(matSelect)"
+            >
               {{ 'done' | translate }}
             </button>
           </div>
@@ -61,7 +70,7 @@
           "
         >
           <mat-form-field appearance="outline" class="mat-field">
-            <mat-label>{{ item.label }}</mat-label>
+            <mat-label id="filterShowDue">{{ item.label }}</mat-label>
             <mat-select [(ngModel)]="item.itemValue" name="showStatus">
               <mat-option *ngFor="let showdue of item.items" [value]="showdue">
                 {{ showdue }}
@@ -74,16 +83,20 @@
           *ngIf="item.itemValue && item.itemValue === 'Custom dates'"
         >
           <mat-form-field appearance="outline" class="mat-field">
-            <mat-label>Select Date</mat-label>
+            <mat-label id="filterSelectDate">Select Date</mat-label>
             <div class="date-picker-wrap">
               <input
+                id="filterDatePicker"
                 [(ngModel)]="item.value"
                 readonly=""
                 matInput
                 [matDatepicker]="picker"
                 (click)="picker.open()"
               />
-              <mat-icon matDatepickerToggleIcon (click)="picker.open()"
+              <mat-icon
+                id="filterDropDown"
+                matDatepickerToggleIcon
+                (click)="picker.open()"
                 >arrow_drop_down</mat-icon
               >
               <mat-datepicker #picker></mat-datepicker>
@@ -100,7 +113,7 @@
           "
         >
           <mat-form-field appearance="outline" class="mat-field">
-            <mat-label>Enter Schedule</mat-label>
+            <mat-label id="filterEnterSchedule">Enter Schedule</mat-label>
             <input [(ngModel)]="item.itemValue" type="number" matInput />
           </mat-form-field>
         </div>
@@ -110,7 +123,7 @@
         appearance="outline"
         class="mat-field date-picker"
       >
-        <mat-label>{{ item.label }}</mat-label>
+        <mat-label id="filterDatePickerLabel">{{ item.label }}</mat-label>
         <div class="date-picker-wrap">
           <input
             [(ngModel)]="item.value"
@@ -131,15 +144,17 @@
         class="mat-field date-picker"
         (click)="picker1.open()"
       >
-        <mat-label>{{ item.label }}</mat-label>
+        <mat-label id="filterStartDateLabel">{{ item.label }}</mat-label>
         <div class="date-picker-wrap">
           <mat-date-range-input [rangePicker]="picker1">
             <input
+              id="filterStartDate"
               matStartDate
               [(ngModel)]="item.startDate"
               [placeholder]="'startDate' | translate"
             />
             <input
+              id="filterEndDate"
               matEndDate
               [(ngModel)]="item.endDate"
               (dateInput)="dateRangeSelect(item)"
@@ -168,6 +183,7 @@
 
   <div class="footer">
     <button
+      id="filterApplyBtn"
       mat-raised-button
       class="btn apply-filters-btn"
       type="button"
@@ -179,6 +195,7 @@
       Apply
     </button>
     <button
+      id="filterResetBtn"
       mat-button
       color="primary"
       [disabled]="checkState()"

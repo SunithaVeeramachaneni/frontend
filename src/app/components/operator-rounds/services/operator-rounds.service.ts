@@ -26,9 +26,8 @@ import { formConfigurationStatus, dateFormat2 } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { isJson } from '../../race-dynamic-form/utils/utils';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
-import { isEmpty, omitBy } from 'lodash-es';
+import { cloneDeep, isEmpty, omitBy } from 'lodash-es';
 
-const limit = 10000;
 @Injectable({
   providedIn: 'root'
 })
@@ -38,7 +37,8 @@ export class OperatorRoundsService {
 
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
-
+  attachmentsMapping$ = new BehaviorSubject<any>({});
+  pdfMapping$ = new BehaviorSubject<any>({});
   selectedNode$ = this.selectedNodeSubject.asObservable();
   hierarchyMode$ = this.hierarchyModeSubject.asObservable();
   usersInfoByEmail: UsersInfoByEmail;
@@ -111,6 +111,22 @@ export class OperatorRoundsService {
       info
     );
 
+  uploadAttachments$(file, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
+    return this.appService._postData(
+      environment.operatorRoundsApiUrl,
+      `upload-attachments`,
+      file,
+      info
+    );
+  }
+  getAttachmentsById$(id, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
+    return this.appService._getResp(
+      environment.operatorRoundsApiUrl,
+      `upload-attachments/${id}`,
+      info
+    );
+  }
+
   createDataSet$ = (
     dataset: any,
     info: ErrorInfo = {} as ErrorInfo
@@ -175,11 +191,11 @@ export class OperatorRoundsService {
         'formStatus',
         filterData.status ? filterData.status : formStatus
       );
-      params.set('modifiedBy', filterData.modifiedBy ?? '');
       params.set('authoredBy', filterData.authoredBy ?? '');
       params.set('plantId', filterData.plant ?? '');
       params.set('createdBy', filterData.createdBy ?? '');
       params.set('lastModifiedOn', filterData.lastModifiedOn ?? '');
+      params.set('publishedBy', filterData.publishedBy ?? '');
       params.set(
         'scheduleStartDate',
         filterData.scheduleStartDate ? filterData.scheduleStartDate : ''
@@ -324,6 +340,7 @@ export class OperatorRoundsService {
         isArchived: false,
         isDeleted: false,
         pdfTemplateConfiguration: formListQuery.pdfTemplateConfiguration,
+        instructions: formListQuery.instructions,
         additionalDetails: formListQuery.additionalDetails
       }
     );
@@ -361,7 +378,7 @@ export class OperatorRoundsService {
       formStatus
     } = formDetails;
     const flatHierarchy = this.assetHierarchyUtil.convertHierarchyToFlatList(
-      JSON.parse(JSON.stringify(hierarchy)),
+      cloneDeep(hierarchy),
       0
     );
     return this.appService._postData(
@@ -386,7 +403,7 @@ export class OperatorRoundsService {
       roundPlanDetails.form.formStatus;
     const { hierarchy } = roundPlanDetails.authoredFormDetail;
     const flatHierarchy = this.assetHierarchyUtil.convertHierarchyToFlatList(
-      JSON.parse(JSON.stringify(hierarchy)),
+      cloneDeep(hierarchy),
       0
     );
     return this.appService.patchData(
@@ -414,7 +431,7 @@ export class OperatorRoundsService {
       formStatus
     } = formDetails;
     const flatHierarchy = this.assetHierarchyUtil.convertHierarchyToFlatList(
-      JSON.parse(JSON.stringify(hierarchy)),
+      cloneDeep(hierarchy),
       0
     );
     return this.appService.patchData(
@@ -637,7 +654,6 @@ export class OperatorRoundsService {
               )
             : 0
         }%`,
-        roundId: p.roundId,
         isViewPdf: p.isViewPdf
       }));
     return rows;

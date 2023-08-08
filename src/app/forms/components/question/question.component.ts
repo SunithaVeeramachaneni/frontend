@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable @typescript-eslint/member-ordering */
 /* eslint-disable no-underscore-dangle */
 import {
@@ -5,8 +6,6 @@ import {
   ElementRef,
   Input,
   OnInit,
-  QueryList,
-  ViewChildren,
   Output,
   EventEmitter,
   ChangeDetectionStrategy,
@@ -22,7 +21,7 @@ import {
   takeUntil,
   tap
 } from 'rxjs/operators';
-import { Observable, Subject, timer } from 'rxjs';
+import { Observable, Subject, asapScheduler, timer } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 
 import { ImageUtils } from 'src/app/shared/utils/imageUtils';
@@ -36,10 +35,7 @@ import {
   UnitOfMeasurement
 } from 'src/app/interfaces';
 import {
-  getQuestionByID,
-  getSectionQuestionsCount,
   State,
-  getQuestionLogics,
   getFormMetadata,
   getModuleName
 } from 'src/app/forms/state/builder/builder-state.selectors';
@@ -65,13 +61,14 @@ import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/ser
 })
 export class QuestionComponent implements OnInit, OnDestroy {
   @ViewChild('unitMenuTrigger') unitMenuTrigger: MatMenuTrigger;
-
   @ViewChild('name', { static: false }) name: ElementRef;
   @Output() questionEvent: EventEmitter<QuestionEvent> =
     new EventEmitter<QuestionEvent>();
   @ViewChild('insertImage') private insertImage: ElementRef;
 
   @Input() selectedNodeId: any;
+  @Input() isTemplate: boolean;
+  @Input() isImported: boolean;
 
   @Input() set questionId(id: string) {
     this._id = id;
@@ -134,6 +131,31 @@ export class QuestionComponent implements OnInit, OnDestroy {
   @Input() isEmbeddedForm;
 
   @Input() isAskQuestionFocusId: any;
+  @Input() set question(question: Question) {
+    if (question) {
+      if (
+        this.question?.isOpen !== question.isOpen &&
+        !isEqual(this.question, question)
+      ) {
+        this._question = question;
+        this.updateQuestion();
+      }
+    }
+  }
+
+  get question() {
+    return this._question;
+  }
+  @Input() set logics(logics: any) {
+    if (logics?.length) {
+      if (!isEqual(this.logics, logics)) {
+        this._logics = logics;
+      }
+    }
+  }
+  get logics() {
+    return this._logics;
+  }
   @Output() isAskedQuestionFocusId = new EventEmitter<any>();
 
   fieldType = { type: 'TF', description: 'Text Answer' };
@@ -196,8 +218,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
     rangeMetadata: {} as NumberRangeMetadata
   });
   question$: Observable<Question>;
-  question: Question;
-  sectionQuestionsCount$: Observable<number>;
   ignoreUpdateIsOpen: boolean;
   addQuestionClicked: boolean;
   isHyperLinkOpen = false;
@@ -208,7 +228,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   formMetadata$: Observable<FormMetadata>;
   moduleName$: Observable<string>;
   uom$: Observable<UnitOfMeasurement[]>;
-  embeddedFormId: string = '';
+  embeddedFormId = '';
 
   private _pageIndex: number;
   private _id: string;
@@ -217,8 +237,10 @@ export class QuestionComponent implements OnInit, OnDestroy {
   private _isAskQuestion: boolean;
   private _questionName: string;
   private _subFormId: string;
+  private _question: Question;
   private onDestroy$ = new Subject();
   private _isQuestionPublished: boolean;
+  private _logics: any = [];
 
   constructor(
     private dialog: MatDialog,
@@ -329,65 +351,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
       )
       .subscribe();
 
-    this.question$ = this.store
-      .select(
-        getQuestionByID(
-          this.pageIndex,
-          this.sectionId,
-          this.questionId,
-          this.selectedNodeId
-        )
-      )
-      .pipe(
-        tap((question) => {
-          if (question) {
-            if (
-              question.isOpen &&
-              !isEqual(question.isOpen, this.question?.isOpen)
-            ) {
-              if (question.fieldType !== 'INST') {
-                timer(0).subscribe(() => this.name.nativeElement.focus());
-              }
-            } else if (!question.isOpen) {
-              if (this.isAskQuestion) {
-                if (question.fieldType !== 'INST') {
-                  timer(0).subscribe(() => {
-                    if (
-                      this.name.nativeElement.id ===
-                        this.isAskQuestionFocusId ||
-                      this.isAskQuestionFocusId === ''
-                    ) {
-                      this.name.nativeElement.focus();
-                      this.isAskQuestionFocusId = this.name.nativeElement.id;
-                      this.isAskedQuestionFocusId.emit(
-                        this.name.nativeElement.id
-                      );
-                    }
-                  });
-                }
-              } else {
-                if (question.fieldType !== 'INST') {
-                  timer(0).subscribe(() => this.name.nativeElement.blur());
-                }
-              }
-            }
-            this.question = question;
-            this.questionForm.patchValue(question, {
-              emitEvent: false
-            });
-            this.rangeDisplayText = '';
-          }
-        })
-      );
-
-    this.sectionQuestionsCount$ = this.store.select(
-      getSectionQuestionsCount(
-        this.pageIndex,
-        this.sectionId,
-        this.selectedNodeId
-      )
-    );
-
     this.instructionTagColours[this.translate.instant('cautionTag')] =
       '#FFCC00';
     this.instructionTagColours[this.translate.instant('informationTag')] =
@@ -399,6 +362,40 @@ export class QuestionComponent implements OnInit, OnDestroy {
       '#000000';
     this.instructionTagTextColour[this.translate.instant('dangerTag')] =
       '#FFFFFF';
+  }
+
+  updateQuestion() {
+    if (this.question.isOpen) {
+      if (this.question.fieldType !== 'INST') {
+        timer(0, asapScheduler).subscribe(() =>
+          this.name.nativeElement.focus()
+        );
+      }
+    } else if (!this.question.isOpen) {
+      if (this.isAskQuestion) {
+        if (this.question.fieldType !== 'INST') {
+          timer(0).subscribe(() => {
+            if (
+              this.name.nativeElement.id === this.isAskQuestionFocusId ||
+              this.isAskQuestionFocusId === ''
+            ) {
+              this.name.nativeElement.focus();
+              this.isAskQuestionFocusId = this.name.nativeElement.id;
+              this.isAskedQuestionFocusId.emit(this.name.nativeElement.id);
+            }
+          });
+        }
+      } else {
+        if (this.question.fieldType !== 'INST') {
+          timer(0).subscribe(() => this.name.nativeElement.blur());
+        }
+      }
+    }
+    // this.question = question;
+    this.questionForm.patchValue(this.question, {
+      emitEvent: false
+    });
+    this.rangeDisplayText = '';
   }
 
   getRangeMetadata() {
@@ -461,7 +458,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
       questionId: this.questionId
     });
 
-    if (this.embeddedFormId) {
+    if (this.isEmbeddedForm && this.embeddedFormId) {
       this.rdfService
         .deleteAbapFormField$({
           FORMNAME: this.embeddedFormId,
@@ -642,12 +639,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
   setQuestionValue(event) {
     this.questionForm.get('value').setValue(event);
-  }
-
-  getQuestionLogics(pageIndex: number, questionId: string) {
-    return this.store.select(
-      getQuestionLogics(pageIndex, questionId, this.selectedNodeId)
-    );
   }
 
   addLogicToQuestion(pageIndex: number, questionId: string) {

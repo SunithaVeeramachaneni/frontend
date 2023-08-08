@@ -7,15 +7,10 @@
     formDetailPublishStatus: formDetailPublishStatus$ | async
   } as props"
 >
-  <div class="dialogHead">
-    <button (click)="onCancel()" class="back-btn">
-      <svg-icon icon="icon-back-arrow" class="back-arrow"></svg-icon>
-      <span class="back-btn-text" translate="backBtn"></span>
-    </button>
-  </div>
   <div class="dialogContainer">
     <div class="left">
       <h2
+        id="pdfBuilderConfig"
         class="configHead"
         translate="configuration"
         *ngIf="loadPDFBuilderConfig$ | async"
@@ -30,18 +25,26 @@
           </mat-checkbox>
         </span>
         <div class="group">
-          <span class="groupHead" translate="summaryPage"></span>
+          <span
+            id="pdfBuilderSummaryPage"
+            class="groupHead"
+            translate="summaryPage"
+          ></span>
           <span class="option">
             <mat-checkbox formControlName="logo" class="checkbox">
-              <span translate="logo"></span>
+              <span id="pdfBuilderLogo" translate="logo"></span>
             </mat-checkbox>
           </span>
         </div>
         <div class="group">
-          <span class="groupHead" translate="footer"></span>
+          <span
+            id="pdfBuilderFooter"
+            class="groupHead"
+            translate="footer"
+          ></span>
           <span class="option">
             <mat-checkbox formControlName="customText" class="checkbox">
-              <span translate="customText"></span>
+              <span id="pdfBuilderCustomText" translate="customText"></span>
             </mat-checkbox>
             <div class="customText">
               <div
@@ -49,16 +52,18 @@
                 class="customField"
               >
                 <mat-form-field class="field" appearance="outline">
-                  <mat-label translate="label"></mat-label>
+                  <mat-label id="pdfBuilderLabel" translate="label"></mat-label>
                   <input
+                    id="pdfBuilderLabelText"
                     matInput
                     formControlName="customTextLabel"
                     maxlength="25"
                   />
                 </mat-form-field>
                 <mat-form-field class="field" appearance="outline">
-                  <mat-label translate="field"></mat-label>
+                  <mat-label id="pdfBuilderField" translate="field"></mat-label>
                   <input
+                    id="pdfBuilderFieldText"
                     matInput
                     formControlName="customTextField"
                     maxlength="25"
@@ -69,13 +74,17 @@
           </span>
         </div>
         <div class="group">
-          <span class="groupHead" translate="bodyContent"></span>
+          <span
+            id="pdfBuilderBodyContent"
+            class="groupHead"
+            translate="bodyContent"
+          ></span>
           <span class="option">
             <mat-checkbox
               formControlName="actions"
               class="checkbox bottomBorder"
             >
-              <span translate="actions"></span>
+              <span id="pdfBuilderAction" translate="actions"></span>
             </mat-checkbox>
           </span>
           <span class="option">
@@ -83,7 +92,7 @@
               formControlName="issues"
               class="checkbox bottomBorder"
             >
-              <span translate="issues"></span>
+              <span id="pdfBuilderIssues" translate="issues"></span>
             </mat-checkbox>
           </span>
           <span class="option">
@@ -92,18 +101,26 @@
               class="checkbox bottomBorder"
               (change)="toggleQuestionPhotos($event)"
             >
-              <span translate="photos"></span>
+              <span id="pdfBuilderPhotos" translate="photos"></span>
             </mat-checkbox>
           </span>
 
           <span
             class="option"
-            formControlName="questions"
             class="checkbox bottomBorder questions"
             [ngClass]="{ indeterminate: areQuestionsIndeterminate() }"
             (click)="toggleAllQuestions($event)"
           >
-            <span translate="tasks"></span>
+            <span
+              id="pdfBuilderQuestions"
+              *ngIf="moduleName === raceDynamicForms"
+              translate="question"
+            ></span>
+            <span
+              id="pdfBuilderTask"
+              *ngIf="moduleName !== raceDynamicForms"
+              translate="tasks"
+            ></span>
           </span>
 
           <span class="option m-l-50">
@@ -112,7 +129,10 @@
               class="checkbox bottomBorder"
               (change)="toggleIncompleteQuestions($event)"
             >
-              <span translate="incompleteTasks"></span>
+              <span
+                id="pdfBuilderIncompleteTasks"
+                translate="incompleteTasks"
+              ></span>
             </mat-checkbox>
           </span>
 
@@ -122,7 +142,7 @@
               class="checkbox bottomBorder"
               (change)="toggleSkippedQuestions($event)"
             >
-              <span translate="skippedTasks"></span>
+              <span id="pdfBuilderSkippedTask" translate="skippedTasks"></span>
             </mat-checkbox>
           </span>
 
@@ -133,7 +153,10 @@
               [indeterminate]="areCompletedQuestionsIndeterminate()"
               (change)="toggleCompletedQuestions($event)"
             >
-              <span translate="completedTasks"></span>
+              <span
+                id="pdfBuilderCompleteTasks"
+                translate="completedTasks"
+              ></span>
             </mat-checkbox>
           </span>
         </div>
@@ -142,9 +165,14 @@
 
     <div class="right">
       <div class="view">
-        <span class="pdf-head" translate="pdfPreviewTxt"></span>
+        <span
+          id="pdfBuilderPreviewText"
+          class="pdf-head"
+          translate="pdfPreviewTxt"
+        ></span>
         <div class="form-status">
           <div
+            id="pdfBuilderChangesSaved"
             class="save-status"
             [hidden]="
               props.formSaveStatus !== formConfigurationStatus.saved ||
@@ -154,6 +182,7 @@
             {{ 'changesSaved' | translate }}
           </div>
           <div
+            id="pdfBuilderSavingChanges"
             class="save-status"
             [hidden]="
               props.formSaveStatus !== formConfigurationStatus.saving ||
@@ -163,6 +192,7 @@
             {{ 'savingChanges' | translate }}
           </div>
           <div
+            id="pdfBuilderChangesPublished"
             class="save-status"
             [hidden]="
               formDetailPublishStatus !== formConfigurationStatus.published ||
@@ -172,6 +202,7 @@
             {{ 'changesPublished' | translate }}
           </div>
           <div
+            id="pdfBuilderPublishingChanges"
             class="save-status"
             [hidden]="
               formDetailPublishStatus !== formConfigurationStatus.publishing ||
@@ -181,21 +212,27 @@
             {{ 'publishingChanges' | translate }}
           </div>
           <button
+            id="pdfBuilderPublishBtn"
             mat-raised-button
             class="publish-btn"
             (click)="publish()"
             [disabled]="
               formStatus === 'Published' ||
               props.authoredFormDetail.isFormDetailPublished ||
-              (getAssetsLocationsTasksAdded && data.moduleName !== 'RDF')
+              (getAssetsLocationsTasksAdded && moduleName !== raceDynamicForms)
             "
           >
             <span>
               <svg-icon
+                id="pdfBuilderPublishIcon"
                 icon="icon-upload-white"
                 class="publish-btn-icon"
               ></svg-icon>
-              <span class="publish" translate="publishBtn"></span>
+              <span
+                id="pdfBuilderPublishText"
+                class="publish"
+                translate="publishBtn"
+              ></span>
             </span>
           </button>
         </div>
@@ -248,9 +285,10 @@
           <div id="content" #content class="pdfPage">
             <div class="pageHeader">
               <span
+                id="pdfBuilderName"
                 class="formName-gray"
                 *ngIf="pdfBuilderConfigurationsForm.get('formTitle').value"
-                >{{ formMetadata.name }}</span
+                >{{ formMetadata?.name }}</span
               >
             </div>
             <div
@@ -266,16 +304,21 @@
                   class="tableHead-logo"
                   *ngIf="pdfBuilderConfigurationsForm.get('logo').value"
                 >
-                  <img [src]="innovapptiveLogo" class="tablelogo" />
+                  <img
+                    id="pdfBuilderLogo"
+                    [src]="innovapptiveLogo"
+                    class="tablelogo"
+                  />
                 </div>
                 <div class="tableHeading-text">
                   <span
+                    id="pdfBuilderFormTitle"
                     class="name"
                     *ngIf="pdfBuilderConfigurationsForm.get('formTitle').value"
-                    >{{ formMetadata.name }}</span
+                    >{{ formMetadata?.name }}</span
                   >
-                  <span class="discribe">{{
-                    formMetadata.description ? formMetadata.description : ''
+                  <span id="pdfBuilderFormDes" class="discribe">{{
+                    formMetadata?.description ? formMetadata?.description : '--'
                   }}</span>
                 </div>
               </div>
@@ -288,18 +331,21 @@
                 "
               >
                 <div
+                  id="pdfBuilderSubmittedOn"
                   class="w-33 f-s-8 submitted-by"
                   *ngIf="pdfBuilderConfigurationsForm.get('submittedOn').value"
                 >
                   Submitted On: 3/18/23, 10:00 PM
                 </div>
                 <div
+                  id="pdfBuilderSubmittedBy"
                   class="w-33 f-s-8"
                   *ngIf="pdfBuilderConfigurationsForm.get('submittedBy').value"
                 >
                   Submitted By: {{ currentUserName }}
                 </div>
                 <div
+                  id="pdfBuilderTaskCompleted"
                   class="w-33 f-s-8 tasks-completed"
                   *ngIf="
                     pdfBuilderConfigurationsForm.get('questionCompleted').value
@@ -314,16 +360,16 @@
               class="issuesRow"
             >
               <div class="tasksHead">
-                <span translate="questions"></span>
-                <span *ngIf="data.moduleName !== 'RDF'">
-                  <span
+                <span id="pdfBuilderQuestionsText" translate="questions"></span>
+                <span *ngIf="moduleName !== raceDynamicForms">
+                  <span id="pdfBuilderAssetLocCount"
                     >Total Locations: {{ totalLocationsCount }}, Assets:
                     {{ totalAssetsCount }}, Tasks:
                     {{ totalQuestionsCount }}
                   </span>
                 </span>
               </div>
-              <div *ngIf="data.moduleName !== 'RDF'">
+              <div *ngIf="moduleName !== raceDynamicForms">
                 <div class="actionCell" *ngIf="selectedFlatHierarchy">
                   <div
                     *ngFor="let node of selectedFlatHierarchy"
@@ -331,15 +377,18 @@
                   >
                     <div class="hierarchyNodeHead">
                       <div class="nodeLeft">
-                        <span class="nodeTitle">{{ node.name }}</span>
-                        <span class="nodeId">
+                        <span id="pdfBuilderNodeName" class="nodeTitle">{{
+                          node.name
+                        }}</span>
+                        <span id="pdfBuilderNodeId" class="nodeId">
                           {{ node.type === 'asset' ? 'Asset' : 'Location' }} ID:
-                          <span class="no-bold"
+                          <span id="pdfBuilderIdText" class="no-bold"
                             >{{ node.nodeId }} - {{ node.id }}</span
                           ></span
                         >
                       </div>
                       <div
+                        id="pdfBuilderPagesSec"
                         class="nodeRight"
                         *ngIf="getPagesOfNode(node.id) | async as totalPages"
                       >
@@ -362,7 +411,7 @@
                   </div>
                 </div>
               </div>
-              <div *ngIf="data.moduleName === 'RDF'">
+              <div *ngIf="moduleName === raceDynamicForms">
                 <div class="actionCell">
                   <div
                     class="hierarchyNodeContainer"
@@ -400,26 +449,34 @@
         class="tableHead-logo"
         *ngIf="pdfBuilderConfigurationsForm.get('logo').value"
       >
-        <img [src]="innovapptiveLogo" class="tablelogo" />
+        <img
+          id="pdfBuilderLandingPageLogo"
+          [src]="innovapptiveLogo"
+          class="tablelogo"
+        />
       </div>
       <div class="p-15">
         <div
+          id="pdfBuilderLandingName"
           class="formName"
           *ngIf="pdfBuilderConfigurationsForm.get('formTitle').value"
         >
-          {{ formMetadata.name }}
+          {{ formMetadata?.name }}
         </div>
         <div
+          id="pdfBuilderLandingId"
           class="roundId"
           *ngIf="pdfBuilderConfigurationsForm.get('formId').value"
         >
-          <b> Id:</b> {{ formMetadata.id }}
+          <b> Id:</b> {{ formMetadata?.id }}
         </div>
       </div>
 
       <div>
-        <b translate="actionStatus"></b> &nbsp;
-        <span id="submitted-color">Submitted</span>
+        <b id="pdfBuilderActionStatus" translate="actionStatus"></b> &nbsp;
+        <span id="pdfBuilderLandingSubmitted" id="submitted-color"
+          >Submitted</span
+        >
       </div>
     </div>
 
@@ -427,28 +484,38 @@
       <div class="tableHeading-text waterMark">
         <table class="landing-page-table">
           <tr class="bg-gray">
-            <th translate="des"></th>
+            <th id="pdfBuilderLandingDes" translate="des"></th>
           </tr>
           <tr>
-            <td>
-              {{ formMetadata.description ? formMetadata.description : '--' }}
+            <td id="pdfBuilderLandingDesText">
+              {{ formMetadata?.description ? formMetadata?.description : '--' }}
             </td>
           </tr>
         </table>
 
-        <h5 translate="summary"></h5>
+        <h5 id="pdfBuilderSummary" translate="summary"></h5>
         <table class="landing-page-table">
           <tr class="bg-gray">
-            <th class="width-35">{{ 'plant' | translate }}</th>
-            <th class="width-35" translate="schedule"></th>
-            <th class="width-35" translate="shift"></th>
+            <th id="pdfBuilderLandingPlant" class="width-35">
+              {{ 'plant' | translate }}
+            </th>
+            <th
+              id="pdfBuilderLandinfSchedule"
+              class="width-35"
+              translate="schedule"
+            ></th>
+            <th
+              id="pdfBuilderLandingShift"
+              class="width-35"
+              translate="shift"
+            ></th>
           </tr>
           <tr>
-            <td>
-              {{ ' ' + formMetadata.plant }}
+            <td id="pdfBuilderLandingPlantName">
+              {{ ' ' + formMetadata?.plant }}
             </td>
-            <td>Weekly</td>
-            <td>Shift A</td>
+            <td id="pdfBuilderLandingWeekly">Weekly</td>
+            <td id="pdfBuilderShiftType">Shift A</td>
           </tr>
         </table>
         <br />
@@ -462,67 +529,81 @@
           "
         >
           <tr class="bg-gray">
-            <th class="width-35" translate="due"></th>
+            <th id="pdfBuilderDue" class="width-35" translate="due"></th>
             <th
+              id="pdfBuilderLandingSubmittedOn"
               class="width-35"
               *ngIf="pdfBuilderConfigurationsForm.get('submittedOn').value"
               translate="submittedOn"
             ></th>
             <th
+              id="pdfBuilderLandingSubmittedBy"
               class="width-35"
               *ngIf="pdfBuilderConfigurationsForm.get('submittedBy').value"
               translate="submittedBy"
             ></th>
           </tr>
           <tr>
-            <td>Feb 02, 2023 - 8:11 AM</td>
-            <td>Feb 02, 2023 - 8:11 AM</td>
-            <td>{{ currentUserName }}</td>
+            <td id="pdfBuilderDueText">Feb 02, 2023 - 8:11 AM</td>
+            <td id="pdfBuilderSubmittedOnText">Feb 02, 2023 - 8:11 AM</td>
+            <td id="pdfBuilderSubmittedByText">{{ currentUserName }}</td>
           </tr>
         </table>
       </div>
 
       <div *ngIf="pdfBuilderConfigurationsForm.get('issues').value">
-        <h5 translate="issuesSummary"></h5>
+        <h5 id="pdfBuilderIssueSummary" translate="issuesSummary"></h5>
         <table class="landing-page-table">
           <tr>
             <th id="issue-color" translate="issuesRaised"></th>
-            <th class="resolved-color" translate="issuesResolved"></th>
+            <th
+              id="pdfBuilderIssueResolved"
+              class="resolved-color"
+              translate="issuesResolved"
+            ></th>
           </tr>
           <tr>
-            <td>3</td>
-            <td>0</td>
+            <td id="pdfBuilderIsssueRaised">3</td>
+            <td id="pdfBuilderIssueResolvedText">0</td>
           </tr>
         </table>
       </div>
       <div *ngIf="pdfBuilderConfigurationsForm.get('actions').value">
-        <h5 translate="actionsSummary"></h5>
+        <h5 id="pdfBuilderActionSummary" translate="actionsSummary"></h5>
         <table class="landing-page-table">
           <tr>
-            <th id="action-color" translate="actionsRaised"></th>
-            <th class="resolved-color" translate="actionsResolved"></th>
+            <th
+              id="pdfBuilderActionRaised"
+              id="action-color"
+              translate="actionsRaised"
+            ></th>
+            <th
+              id="pdfBuilderActionResolved"
+              class="resolved-color"
+              translate="actionsResolved"
+            ></th>
           </tr>
           <tr>
-            <td>3</td>
-            <td>0</td>
+            <td id="pdfBuilderActionRaisedText">3</td>
+            <td id="pdfBuilderActionResolvedText">0</td>
           </tr>
         </table>
       </div>
 
       <div *ngIf="pdfBuilderConfigurationsForm.get('questionCompleted').value">
-        <h5>{{ 'tasks' | translate }} Summary</h5>
+        <h5 id="pdfBuilderTaskSummary">{{ 'tasks' | translate }} Summary</h5>
         <table class="landing-page-table">
           <tr class="task-color">
-            <th translate="open"></th>
-            <th translate="skipped"></th>
-            <th translate="completed"></th>
-            <th translate="total"></th>
+            <th id="pdfBuilderOpen" translate="open"></th>
+            <th id="pdfBuilderSkipped" translate="skipped"></th>
+            <th id="pdfBuilderCompleted" translate="completed"></th>
+            <th id="pdfBuilderTotal" translate="total"></th>
           </tr>
           <tr>
-            <td>50</td>
-            <td>0</td>
-            <td>0</td>
-            <td>50</td>
+            <td id="pdfBuilderOpenText">50</td>
+            <td id="pdfBuilderSkippedText">0</td>
+            <td id="pdfBuilderCompletedText">0</td>
+            <td id="pdfBuilderTotalText">50</td>
           </tr>
         </table>
         <br />
@@ -531,19 +612,26 @@
         <div>
           <table class="landing-page-table">
             <tr class="bg-gray">
-              <th>{{ 'taskCompleted' | translate }} By</th>
-              <th translate="reportGeneratedOn"></th>
+              <th id="pdfBuilderTaskCompletedText">
+                {{ 'taskCompleted' | translate }} By
+              </th>
+              <th
+                id="pdfBuilderReportGeneratedOn"
+                translate="reportGeneratedOn"
+              ></th>
             </tr>
             <tr>
               <td>
                 <ol class="p-0 m-0">
-                  <li>1. Kate Alexander</li>
-                  <li>2. David April</li>
-                  <li>3. Henry David</li>
-                  <li>4. Mike Wills</li>
+                  <li id="pdfBuilderNameOne">1. Kate Alexander</li>
+                  <li id="pdfBuilderNameTwo">2. David April</li>
+                  <li id="pdfBuilderNameThree">3. Henry David</li>
+                  <li id="pdfBuilderNameFour">4. Mike Wills</li>
                 </ol>
               </td>
-              <td class="report-alignment">Feb 02, 2023 - 8:11 AM</td>
+              <td id="pdfBuilderReportDate" class="report-alignment">
+                Feb 02, 2023 - 8:11 AM
+              </td>
             </tr>
           </table>
         </div>
@@ -560,8 +648,8 @@
 <ng-template #pagesTemplate let-pages="pages">
   <div *ngFor="let page of pages" class="pageContainer">
     <div class="nodePageHeader">
-      <span class="nodePageTitle">{{ page.name }}</span>
-      <span class="nodePageRight"
+      <span id="pdfBuilderPageName" class="nodePageTitle">{{ page.name }}</span>
+      <span id="pdfBuilderPageSection" class="nodePageRight"
         >Sections: {{ page.sections.length }} • {{ 'tasks' | translate }}:
         {{ page.questions.length }}
       </span>
@@ -569,10 +657,10 @@
     <div *ngFor="let section of getSectionsWithQuestionsOfPage(page)">
       <div class="pageSection">
         <div class="sectionHeadRow">
-          <div class="sectionTitle">
+          <div id="pdfBuilderSectionName" class="sectionTitle">
             {{ section.name }}
           </div>
-          <div class="sectionRight">
+          <div id="pdfBuilderTaskLength" class="sectionRight">
             {{ 'tasks' | translate }}: {{ section.questions.length }}
           </div>
         </div>
@@ -592,9 +680,10 @@
   <div id="content" #content class="pdfPage">
     <div class="pageHeader">
       <span
+        id="pdfBuilderFormName"
         class="formName-gray"
         *ngIf="pdfBuilderConfigurationsForm.get('formTitle').value"
-        >{{ formMetadata.name }}</span
+        >{{ formMetadata?.name }}</span
       >
     </div>
     <div
@@ -602,72 +691,114 @@
       class="issuesRow"
     >
       <div class="issuesHead">
-        <span>Issues</span>
-        <span>Raised: 3</span>
+        <span id="pdfBuilderIssuesHeading">Issues</span>
+        <span id="pdfBuilderRaisedCount">Raised: 3</span>
       </div>
       <div class="issueCell">
         <div class="issue">
-          <div class="issueHead issueText">
-            <span class="label issueText">Issue: </span>
+          <div id="pdfBuilderIssuesText" class="issueHead issueText">
+            <span id="pdfBuilderIssuesHeading" class="label issueText"
+              >Issue:
+            </span>
             Oil Spillage from DC motor
           </div>
           <div class="issueBody">
             <div class="bg-yellow">
               <div class="issueRow">
-                <span class="label"> Description: </span>
-                <span class="description">
+                <span id="pdfBuilderIssuesDes" class="label">
+                  Description:
+                </span>
+                <span id="pdfBuilderIssuesDesText" class="description">
                   Oil spillage found on shop floor due to broken oil drainer.
                 </span>
               </div>
               <div class="issueRow">
-                <span class="label"> Asset : </span>
-                <span class="description">
+                <span id="pdfBuilderAsset" class="label"> Asset : </span>
+                <span id="pdfBuilderAssetDes" class="description">
                   170442 - Water Pump Water Pump Water Pump Water
                 </span>
               </div>
             </div>
             <div class="issueRow">
-              <span class="label"> {{ 'question' | translate }}: </span>
-              <span class="description"> Check water pressure. </span>
+              <span id="pdfBuilderIssueHeading" class="label">
+                {{ 'question' | translate }}:
+              </span>
+              <span id="pdfBuilderIssuesQuesText" class="description">
+                Check water pressure.
+              </span>
             </div>
             <div class="issueRow">
-              <span class="label"> Value: </span>
-              <span class="description"> 90 </span>
+              <span id="pdfBuilderIssueValue" class="label"> Value: </span>
+              <span id="pdfBuilderIssueValueText" class="description">
+                90
+              </span>
             </div>
             <div class="issueRow">
-              <span class="label"> Assigned to: </span>
-              <span class="description"> John, Krista, Marry, Alexander </span>
+              <span id="pdfBuilderIssueAssigned" class="label">
+                Assigned to:
+              </span>
+              <span id="pdfBuilderIssueAssignName" class="description">
+                John, Krista, Marry, Alexander
+              </span>
             </div>
             <div class="issueColumns">
               <div class="width-100">
                 <div class="p-5">
-                  <span class="label"> Raised By: </span>
-                  <span class="description"> Aron </span>
+                  <span id="pdfBuilderIssueRaiseBy" class="label">
+                    Raised By:
+                  </span>
+                  <span id="pdfBuilderRaiseDes" class="description">
+                    Aron
+                  </span>
                 </div>
                 <div class="p-5">
-                  <span class="label"> Status: </span>
-                  <span class="description status-color"> Open </span>
+                  <span id="pdfBuilderIssueStatus" class="label">
+                    Status:
+                  </span>
+                  <span
+                    id="pdfBuilderIssueStatusText"
+                    class="description status-color"
+                  >
+                    Open
+                  </span>
                 </div>
                 <div class="p-5">
-                  <span class="label"> Due Date : </span>
-                  <span class="description"> 3/25/23 </span>
+                  <span id="pdfBuilderDueDate" class="label"> Due Date : </span>
+                  <span id="pdfBuilderDueDateDes" class="description">
+                    3/25/23
+                  </span>
                 </div>
               </div>
 
               <div class="width-95">
                 <div class="bg-yellow">
                   <div class="p-5">
-                    <span class="label"> Priority: </span>
-                    <span class="description priority-color"> High </span>
+                    <span id="pdfBuilderPriority" class="label">
+                      Priority:
+                    </span>
+                    <span
+                      id="pdfBuilderPriorityDes"
+                      class="description priority-color"
+                    >
+                      High
+                    </span>
                   </div>
                   <div class="p-5">
-                    <span class="label"> Category: </span>
-                    <span class="description"> Safety </span>
+                    <span id="pdfBuilderCategory" class="label">
+                      Category:
+                    </span>
+                    <span id="pdfBuilderCategoryDes" class="description">
+                      Safety
+                    </span>
                   </div>
                 </div>
                 <div class="notification-position">
-                  <span class="label"> Notification No: </span>
-                  <span class="description"> 123456 </span>
+                  <span id="pdfBuilderNotification" class="label">
+                    Notification No:
+                  </span>
+                  <span id="pdfBuilderNotificationDes" class="description">
+                    123456
+                  </span>
                 </div>
               </div>
             </div>
@@ -675,67 +806,84 @@
         </div>
         <div class="issue">
           <div class="issueHead">
-            <span class="label">Issue: </span>
+            <span id="pdfBuilderIssue" class="label">Issue: </span>
             Pump - 100987 breakdown, production affected
           </div>
           <div class="issueBody">
             <div class="bg-yellow">
               <div class="issueRow">
-                <span class="label"> Description: </span>
-                <span class="description">
+                <span id="issueDescription" class="label"> Description: </span>
+                <span id="issueDesText" class="description">
                   Pump - 100987 seal failure due to cavitation and the pump is
                   not functioning.
                 </span>
               </div>
               <div class="issueRow">
-                <span class="label"> Asset: </span>
-                <span class="description">
+                <span id="issueAsset" class="label"> Asset: </span>
+                <span id="issueAssetDes" class="description">
                   170442 - Water Pump Water Pump Water Pump Water
                 </span>
               </div>
             </div>
             <div class="issueRow">
-              <span class="label"> {{ 'question' | translate }}: </span>
-              <span class="description"> Check water pressure. </span>
+              <span id="issueQuestion" class="label">
+                {{ 'question' | translate }}:
+              </span>
+              <span id="issueQuestionDes" class="description">
+                Check water pressure.
+              </span>
             </div>
             <div class="issueRow">
-              <span class="label"> Value: </span>
-              <span class="description"> 90 </span>
+              <span id="issueValue" class="label"> Value: </span>
+              <span id="issueValueDes" class="description"> 90 </span>
             </div>
             <div class="issueRow">
-              <span class="label"> Assigned to: </span>
-              <span class="description"> John, Krista, Marry, Alexander </span>
+              <span id="issueAssignTo" class="label"> Assigned to: </span>
+              <span id="issueAssignToName" class="description">
+                John, Krista, Marry, Alexander
+              </span>
             </div>
             <div class="issueColumns">
               <div class="width-100">
                 <div class="p-5">
-                  <span class="label"> Raised By: </span>
-                  <span class="description"> Aron </span>
+                  <span id="issueRaiseBy" class="label"> Raised By: </span>
+                  <span id="issueRaiseByDes" class="description"> Aron </span>
                 </div>
                 <div class="p-5">
-                  <span class="label"> Status: </span>
-                  <span class="description status-color"> Open </span>
+                  <span id="issueStatus" class="label"> Status: </span>
+                  <span id="issueStatusText" class="description status-color">
+                    Open
+                  </span>
                 </div>
                 <div class="p-5">
-                  <span class="label"> Due Date : </span>
-                  <span class="description"> 3/25/23 </span>
+                  <span id="issueDueDate" class="label"> Due Date : </span>
+                  <span id="issueDueDateDes" class="description">
+                    3/25/23
+                  </span>
                 </div>
               </div>
 
               <div class="width-95">
                 <div class="bg-yellow">
                   <div class="p-5">
-                    <span class="label"> Priority: </span>
-                    <span class="description priority-color"> High </span>
+                    <span id="issuePriority" class="label"> Priority: </span>
+                    <span
+                      id="issuePriorityHigh"
+                      class="description priority-color"
+                    >
+                      High
+                    </span>
                   </div>
                   <div class="p-5">
-                    <span class="label"> Category: </span>
-                    <span class="description"> Safety </span>
+                    <span id="issueCategory" class="label"> Category: </span>
+                    <span id="issueCategoryText" class="description">
+                      Safety
+                    </span>
                   </div>
                 </div>
                 <div class="notification-position p-5">
-                  <span class="label"> Notification No: </span>
-                  <span class="description"> 123456 </span>
+                  <span id="issueNotif" class="label"> Notification No: </span>
+                  <span id="issueNotifDes" class="description"> 123456 </span>
                 </div>
               </div>
             </div>
@@ -761,9 +909,10 @@
   <div id="content" #content class="pdfPage">
     <div class="pageHeader">
       <span
+        id="pdfBuilderActionName"
         class="formName-gray"
         *ngIf="pdfBuilderConfigurationsForm.get('formTitle').value"
-        >{{ formMetadata.name }}</span
+        >{{ formMetadata?.name }}</span
       >
     </div>
     <div *ngIf="!pdfBuilderConfigurationsForm.get('issues').value">
@@ -772,16 +921,21 @@
           class="tableHead-logo"
           *ngIf="pdfBuilderConfigurationsForm.get('logo').value"
         >
-          <img [src]="innovapptiveLogo" class="tablelogo" />
+          <img
+            id="pdfBuilderActionLogo"
+            [src]="innovapptiveLogo"
+            class="tablelogo"
+          />
         </div>
         <div class="tableHeading-text">
           <span
+            id="pdfBuilderActionFormtitle"
             class="name"
             *ngIf="pdfBuilderConfigurationsForm.get('formTitle').value"
-            >{{ formMetadata.name }}</span
+            >{{ formMetadata?.name }}</span
           >
-          <span class="discribe">{{
-            formMetadata.description ? formMetadata.description : ''
+          <span id="pdfBuilderActionDes" class="discribe">{{
+            formMetadata?.description ? formMetadata?.description : '--'
           }}</span>
         </div>
       </div>
@@ -794,18 +948,21 @@
         "
       >
         <div
+          id="pdfBuilderActionSubmittedOn"
           class="w-33 f-s-8"
           *ngIf="pdfBuilderConfigurationsForm.get('submittedOn').value"
         >
           Submitted On: 3/18/23, 10:00 PM
         </div>
         <div
+          id="pdfBuilderActionSubmittedBy"
           class="w-33 f-s-8"
           *ngIf="pdfBuilderConfigurationsForm.get('submittedBy').value"
         >
           Submitted By: {{ currentUserName }}
         </div>
         <div
+          id="pdfBuilderActionCompleted"
           class="w-33 f-s-8"
           *ngIf="pdfBuilderConfigurationsForm.get('questionCompleted').value"
         >
@@ -818,129 +975,184 @@
       class="issuesRow"
     >
       <div class="actionsHead">
-        <span>Actions</span>
-        <span>Raised: 3</span>
+        <span id="pdfBuilderActionHeading">Actions</span>
+        <span id="pdfBuilderActionsRaised">Raised: 3</span>
       </div>
       <div class="actionCell">
         <div class="action">
-          <div class="actionHead">
+          <div id="pdfBuilderActionText" class="actionHead">
             <span class="label">Action: </span>
             Please check the bearings of the motor of Equipment 1667229.
           </div>
           <div class="actionBody">
             <div class="bg-yellow">
               <div class="actionRow">
-                <span class="label"> Description: </span>
-                <span class="description">
+                <span id="pdfBuilderActionDesHeading" class="label">
+                  Description:
+                </span>
+                <span id="pdfBuilderActionDesText" class="description">
                   Bearing of the motor has worn out and needs to be replaced
                 </span>
               </div>
               <div class="actionRow">
-                <span class="label"> Asset : </span>
-                <span class="description">
+                <span id="pdfBuilderActionAsset" class="label"> Asset : </span>
+                <span id="pdfBuilderActionAssetText" class="description">
                   170442 - Water Pump Water Pump Water Pump Water
                 </span>
               </div>
             </div>
             <div class="actionRow">
-              <span class="label"> {{ 'question' | translate }}: </span>
-              <span class="description"> Check water pressure. </span>
+              <span id="pdfBuilderActionQuestion" class="label">
+                {{ 'question' | translate }}:
+              </span>
+              <span id="pdfBuilderActionDes" class="description">
+                Check water pressure.
+              </span>
             </div>
             <div class="actionRow">
-              <span class="label"> Value: </span>
-              <span class="description"> 90 </span>
+              <span id="pdfBuilderActionValue" class="label"> Value: </span>
+              <span id="pdfBuilderActionValueText" class="description">
+                90
+              </span>
             </div>
             <div class="actionRow">
-              <span class="label"> Assigned to: </span>
-              <span class="description"> John, Krista, Marry, Alexander </span>
+              <span id="pdfBuilderActionAssign" class="label">
+                Assigned to:
+              </span>
+              <span id="pdfBuilderActionAssignName" class="description">
+                John, Krista, Marry, Alexander
+              </span>
             </div>
 
             <div class="actionColumns">
               <div class="width-50">
                 <div class="p-5">
-                  <span class="label"> Raised By: </span>
-                  <span class="description"> Aron </span>
+                  <span id="pdfBuilderActionRaisedBy" class="label">
+                    Raised By:
+                  </span>
+                  <span id="pdfBuilderActionRaisedByText" class="description">
+                    Aron
+                  </span>
                 </div>
                 <div class="p-5">
-                  <span class="label"> Due Date : </span>
-                  <span class="description"> 3/25/23 </span>
+                  <span id="pdfBuilderActionDueDate" class="label">
+                    Due Date :
+                  </span>
+                  <span id="pdfBuilderActionDueDateText" class="description">
+                    3/25/23
+                  </span>
                 </div>
                 <div class="p-5">
-                  <span class="label"> Status: </span>
-                  <span class="description status-color"> Open </span>
+                  <span id="pdfBuilderActionStatusHeading" class="label">
+                    Status:
+                  </span>
+                  <span
+                    id="pdfBuilderActionStatusText"
+                    class="description status-color"
+                  >
+                    Open
+                  </span>
                 </div>
               </div>
 
               <div class="bg-yellow width-100">
                 <div class="p-5">
-                  <span class="label"> Priority: </span>
-                  <span class="description priority-color"> High </span>
+                  <span id="pdfBuilderActionPriority" class="label">
+                    Priority:
+                  </span>
+                  <span
+                    id="pdfBuilderActionPriorityText"
+                    class="description priority-color"
+                  >
+                    High
+                  </span>
                 </div>
                 <div class="p-5">
-                  <span class="label"> Category: </span>
-                  <span class="description"> Safety </span>
+                  <span id="pdfBuilderCategory" class="label"> Category: </span>
+                  <span id="pdfBuilderCategoryText" class="description">
+                    Safety
+                  </span>
                 </div>
               </div>
             </div>
           </div>
         </div>
         <div class="action">
-          <div class="actionHead">
+          <div id="pdfBuilderActionHeadingText" class="actionHead">
             <span class="label">Action: </span>
             Greasing required on the conveyor belt - 2A
           </div>
           <div class="actionBody">
             <div class="bg-yellow">
               <div class="actionRow">
-                <span class="label"> Description: </span>
-                <span class="description">
+                <span id="actionDes" class="label"> Description: </span>
+                <span id="actionDesText" class="description">
                   Belt is not running smoothly and belt speed has been reduced
                   due to low greasing. Please inspect and fix it on priority
                 </span>
               </div>
               <div class="actionRow">
-                <span class="label"> Asset: </span>
-                <span class="description">
+                <span id="actionAsset" class="label"> Asset: </span>
+                <span id="actionAssetText" class="description">
                   170442 - Water Pump Water Pump Water Pump Water
                 </span>
               </div>
             </div>
             <div class="actionRow">
-              <span class="label"> {{ 'question' | translate }}: </span>
-              <span class="description"> Check water pressure. </span>
+              <span id="actionQuestion" class="label">
+                {{ 'question' | translate }}:
+              </span>
+              <span id="actionQuestionDes" class="description">
+                Check water pressure.
+              </span>
             </div>
             <div class="actionRow">
-              <span class="label"> Value: </span>
-              <span class="description"> 90 </span>
+              <span id="actionValue" class="label"> Value: </span>
+              <span id="actionValueText" class="description"> 90 </span>
             </div>
             <div class="actionRow">
-              <span class="label"> Assigned to: </span>
-              <span class="description"> John, Krista, Marry, Alexander </span>
+              <span id="actionAssignTo" class="label"> Assigned to: </span>
+              <span id="actionAssignToText" class="description">
+                John, Krista, Marry, Alexander
+              </span>
             </div>
             <div class="actionColumns">
               <div class="width-50">
                 <div class="p-5">
-                  <span class="label"> Raised By: </span>
-                  <span class="description"> Aron </span>
+                  <span id="actionRaiseBy" class="label"> Raised By: </span>
+                  <span id="actionRaisedByText" class="description">
+                    Aron
+                  </span>
                 </div>
                 <div class="p-5">
-                  <span class="label"> Due Date : </span>
-                  <span class="description"> 3/25/23 </span>
+                  <span id="actionDueDate" class="label"> Due Date : </span>
+                  <span id="actionDueDateText" class="description">
+                    3/25/23
+                  </span>
                 </div>
                 <div class="p-5">
-                  <span class="label"> Status: </span>
-                  <span class="description status-color"> Open </span>
+                  <span id="actionStatusHeading" class="label"> Status: </span>
+                  <span id="actionStatusText" class="description status-color">
+                    Open
+                  </span>
                 </div>
               </div>
 
               <div class="bg-yellow width-100">
                 <div class="p-5">
-                  <span class="label"> Priority: </span>
-                  <span class="description priority-color"> High </span>
+                  <span id="actionPriority" class="label"> Priority: </span>
+                  <span
+                    id="actionPriorityText"
+                    class="description priority-color"
+                  >
+                    High
+                  </span>
                 </div>
                 <div class="p-5">
-                  <span class="label"> Category: </span>
-                  <span class="description"> Safety </span>
+                  <span id="actionCategory" class="label"> Category: </span>
+                  <span id="actionCategoryText" class="description">
+                    Safety
+                  </span>
                 </div>
               </div>
             </div>
@@ -957,11 +1169,16 @@
 </ng-template>
 <ng-template #footerTemplate let-footerData="footerData">
   <div class="w-33 poweredBy">
-    <span class="poweredByText">Powered By</span>
-    <svg-icon icon="icon-innova-big" class="footerLogo"></svg-icon>
+    <span id="pdfBuilderPoweredBy" class="poweredByText">Powered By</span>
+    <svg-icon
+      id="pdfBuilderFooterLogo"
+      icon="icon-innova-big"
+      class="footerLogo"
+    ></svg-icon>
   </div>
   <div class="w-33">
     <span
+      id="pdfBuilderCustomLabelField"
       class="customText"
       *ngIf="
         pdfBuilderConfigurationsForm.get('customText').value &&

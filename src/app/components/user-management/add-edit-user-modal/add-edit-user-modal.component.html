@@ -1,21 +1,37 @@
 <form class="user-modal" [formGroup]="userForm">
-  <span *ngIf="dialogText === 'editUser'" class="title" translate>
+  <span
+    id="addEditUser"
+    *ngIf="dialogText === 'editUser'"
+    class="title"
+    translate
+  >
     editUser
   </span>
-  <span *ngIf="dialogText === 'addUser'" class="title" translate>addUser</span>
+  <span
+    id="addUserText"
+    *ngIf="dialogText === 'addUser'"
+    class="title"
+    translate
+    >addUser</span
+  >
   <span class="dialog-close-btn" (click)="close()">
-    <mat-icon class="dialog-close">close</mat-icon>
+    <mat-icon id="addUserCloseIcon" class="dialog-close">close</mat-icon>
   </span>
 
   <div class="image-upload">
-    <img [src]="profileImage" class="user-profile-img" />
+    <img id="addEditUserImg" [src]="profileImage" class="user-profile-img" />
     <label for="file-input">
       <svg-icon
+        id="AddEditUserUploadIcon"
         icon="icon-upload-icon-tenant"
         class="file-upload-icon"
       ></svg-icon>
     </label>
-    <input type="hidden" formControlName="profileImageFileName" />
+    <input
+      id="addEditUserFileName"
+      type="hidden"
+      formControlName="profileImageFileName"
+    />
     <input
       id="file-input"
       type="file"
@@ -27,9 +43,12 @@
   <div class="custom-form-field-white-color">
     <div class="input-container">
       <mat-form-field appearance="outline" class="m-b-10 first-name m-t-10">
-        <mat-label>{{ 'firstName' | translate }}</mat-label>
+        <mat-label id="addEditUserFirstName">{{
+          'firstName' | translate
+        }}</mat-label>
         <input matInput formControlName="firstName" />
         <mat-error
+          id="addEditUserFirstNameError"
           *ngIf="processValidationErrors('firstName')"
           class="m-t-5 error-fields"
         >
@@ -44,9 +63,12 @@
         </mat-error>
       </mat-form-field>
       <mat-form-field appearance="outline" class="m-b-10 last-name m-t-10">
-        <mat-label>{{ 'lastName' | translate }}</mat-label>
+        <mat-label id="addEditUserLastName">{{
+          'lastName' | translate
+        }}</mat-label>
         <input matInput formControlName="lastName" />
         <mat-error
+          id="addEditUserLastNameError"
           *ngIf="processValidationErrors('lastName')"
           class="m-t-5 error-fields"
         >
@@ -66,9 +88,10 @@
       appearance="outline"
       class="input-container width-100 m-b-10 m-t-10"
     >
-      <mat-label>{{ 'title' | translate }}</mat-label>
+      <mat-label id="addEditUserTitle">{{ 'title' | translate }}</mat-label>
       <input matInput formControlName="title" />
       <mat-error
+        id="addEditUserTitleError"
         *ngIf="processValidationErrors('title')"
         class="m-t-5 error-fields"
       >
@@ -84,7 +107,9 @@
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="width-100 m-b-10 m-t-10">
-      <mat-label>{{ 'emailLabel' | translate }}</mat-label>
+      <mat-label id="addEditUserEmail">{{
+        'emailLabel' | translate
+      }}</mat-label>
       <input matInput formControlName="email" />
       <div matSuffix>
         <mat-spinner
@@ -93,15 +118,22 @@
           diameter="25"
         ></mat-spinner>
         <button *ngIf="emailValidated" mat-icon-button>
-          <mat-icon class="email-verified" *ngIf="isValidIDPUser"
+          <mat-icon
+            id="addEditUserValidEmailIcon"
+            class="email-verified"
+            *ngIf="isValidIDPUser"
             >check_circle</mat-icon
           >
-          <mat-icon class="email-not-verified" *ngIf="!isValidIDPUser"
+          <mat-icon
+            id="addEditUserInvalidEmailIcon"
+            class="email-not-verified"
+            *ngIf="!isValidIDPUser"
             >error_outline</mat-icon
           >
         </button>
       </div>
       <mat-error
+        id="addEditUserEmailError"
         *ngIf="processValidationErrors('email')"
         class="m-t-5 error-fields"
       >
@@ -116,16 +148,17 @@
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="width-100 m-b-10 m-t-10">
-      <mat-label>{{ 'roles' | translate }}</mat-label>
+      <mat-label id="addEditUserRoles">{{ 'roles' | translate }}</mat-label>
       <mat-select
         name="priority"
         multiple
         [compareWith]="objectComparisonFunction"
         formControlName="roles"
       >
-        <mat-select-trigger>
+        <mat-select-trigger id="addEditUserSelectRole">
           {{ roles.value[0]?.name }}
           <span
+            id="addEditUserLength"
             *ngIf="roles.value?.length > 1"
             class="example-additional-selection"
           >
@@ -136,23 +169,17 @@
         <mat-option
           *ngFor="let role of rolesInput; let i = index"
           [value]="role"
-          style="padding-right: 0"
-          class="roles-select"
+          class="roles-select p-r-0"
           [disabled]="role.name === superAdminText"
         >
-          <span>{{ role.name }}</span>
+          <span id="addEditUserRoleName">{{ role.name }}</span>
           <div (click)="$event.stopPropagation()" class="info-div">
             <mat-icon
+              id="addEditUserPermissionIcon"
               cdkOverlayOrigin
               (click)="getPermissions(role)"
               #trigger="cdkOverlayOrigin"
-              class="material-icons-outlined"
-              style="
-                margin-top: 10px;
-                float: right;
-                color: #9e9e9e;
-                font-size: 140%;
-              "
+              class="material-icons-outlined info-icon"
               (click)="isfilterTooltipOpen[i] = true"
             >
               info_border
@@ -170,12 +197,19 @@
           >
             <div class="permissions-modal">
               <div class="header custom-form-field-gray-color">
-                <span class="widgets-heading">Permissions</span>
+                <span id="addEditUserPermission" class="widgets-heading"
+                  >Permissions</span
+                >
                 <button
+                  id="addEditUserPermissionCancelBtn"
                   (click)="isfilterTooltipOpen[i] = false"
                   class="permissions-cancel"
                 >
-                  <mat-icon class="permissions-cancel-icon">close</mat-icon>
+                  <mat-icon
+                    id="addEditUserPermissionCancelIcon"
+                    class="permissions-cancel-icon"
+                    >close</mat-icon
+                  >
                 </button>
                 <app-permissions
                   [selectedRolePermissions$]="selectedRolePermissions$"
@@ -190,6 +224,7 @@
         </mat-option>
       </mat-select>
       <mat-error
+        id="addEditUserRoleError"
         *ngIf="
           userForm.controls.roles.errors?.selectOne &&
           userForm.controls.roles.touched
@@ -200,9 +235,50 @@
       </mat-error>
     </mat-form-field>
 
+    <mat-form-field appearance="outline" class="width-100 m-b-10 m-t-10">
+      <mat-label id="addEditUserGroups">{{
+        'userGroup' | translate
+      }}</mat-label>
+      <mat-select
+        name="priority"
+        multiple
+        [compareWith]="objectComparisonFunction"
+        formControlName="usergroup"
+      >
+        <mat-select-trigger id="addEditUserGroupsName">
+          {{ usergroup.value[0]?.name }}
+          <span
+            id="addEditUserGroupLength"
+            *ngIf="usergroup.value?.length > 1"
+            class="example-additional-selection"
+          >
+            ( + {{ usergroup.value.length - 1 }} more)
+          </span>
+        </mat-select-trigger>
+        <mat-option
+          *ngFor="let usergroup of usergroupInput; let i = index"
+          [value]="usergroup"
+          class="usergroup-select"
+        >
+          <span id="addEditUserGroupName">{{ usergroup.name }}</span>
+        </mat-option>
+      </mat-select>
+      <mat-error
+        *ngIf="
+          userForm.controls.usergroup.errors?.selectOne &&
+          userForm.controls.usergroup.touched
+        "
+        class="m-t-5 error-fields"
+        id="addEditUserGroupNameError"
+      >
+        {{ 'userGroupsRequired' | translate }}
+      </mat-error>
+    </mat-form-field>
     <div class="width-100 user-date-range m-b-10 m-t-10">
       <mat-form-field class="width-95 user-date-from" appearance="outline">
-        <mat-label>{{ 'validFrom' | translate }}</mat-label>
+        <mat-label id="addEditUserGroupValidate">{{
+          'validFrom' | translate
+        }}</mat-label>
         <input
           matInput
           [matDatepicker]="validFromPicker"
@@ -216,13 +292,16 @@
         ></mat-datepicker-toggle>
         <mat-datepicker #validFromPicker></mat-datepicker>
         <mat-error
+          id="addEditUserGroupValidateError"
           *ngIf="userForm.controls.validFrom.errors?.required"
           class="m-t-5 error-fields"
           >{{ 'validFromInvalid' | translate }}</mat-error
         >
       </mat-form-field>
       <mat-form-field appearance="outline" class="width-100">
-        <mat-label>{{ 'validThrough' | translate }}</mat-label>
+        <mat-label id="addEditUserGroupValidateThrough">{{
+          'validThrough' | translate
+        }}</mat-label>
         <input
           matInput
           [matDatepicker]="validThroughPicker"
@@ -235,6 +314,7 @@
         ></mat-datepicker-toggle>
         <mat-datepicker #validThroughPicker></mat-datepicker>
         <mat-error
+          id="addEditUserGroupError"
           *ngIf="userForm.controls.validThrough.errors?.required"
           class="m-t-5 error-fields"
           >{{ 'validThroughInvalid' | translate }}</mat-error
@@ -243,18 +323,20 @@
     </div>
 
     <mat-form-field appearance="outline" class="width-100 m-b-10 m-t-10">
-      <mat-label>{{ 'plant' | translate }}</mat-label>
+      <mat-label id="addEditUserGroupsPlant">{{
+        'plant' | translate
+      }}</mat-label>
       <mat-select formControlName="plantId">
         <mat-option
           *ngFor="let plant of data.plantsList"
           [value]="plant.id"
-          style="padding-right: 0"
-          class="roles-select"
+          class="roles-select p-r-0"
         >
-          <span>{{ plant.plantId }}</span>
+          <span id="addEditUserGroupPlantId">{{ plant.plantId }}</span>
         </mat-option>
       </mat-select>
       <mat-error
+        id="addEditUserGroupPlantError"
         *ngIf="
           userForm.controls.plantId.errors?.selectOne &&
           userForm.controls.plantId.touched
@@ -266,6 +348,7 @@
     </mat-form-field>
   </div>
   <button
+    id="addUserGroupBtn"
     *ngIf="dialogText === 'addUser'"
     mat-raised-button
     class="add-user-btn"
@@ -275,6 +358,7 @@
     translate="addUserBtn"
   ></button>
   <button
+    id="editUserGroupBtn"
     *ngIf="dialogText === 'editUser'"
     mat-raised-button
     class="add-user-btn"
@@ -284,6 +368,7 @@
     translate="editUserBtn"
   ></button>
   <button
+    id="cancelUserGroupBtn"
     mat-button
     class="cancel-btn"
     autofocus="false"

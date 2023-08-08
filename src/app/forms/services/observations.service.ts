@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
 import { format } from 'date-fns';
 import { BehaviorSubject, Observable, ReplaySubject, Subject } from 'rxjs';
@@ -16,6 +17,8 @@ import { API, graphqlOperation } from 'aws-amplify';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
 import { UsersService } from 'src/app/components/user-management/services/users.service';
+import { isEmpty, omitBy } from 'lodash-es';
+import { Column } from '@innovapptive.com/dynamictable/lib/interfaces';
 
 const placeHolder = '_ _';
 const dataPlaceHolder = '--';
@@ -26,13 +29,21 @@ export class ObservationsService {
   fetchIssues$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   issuesNextToken = '';
-  issues$: Subject<{ count: number; next: string; rows: any[] }> =
-    new Subject();
+  issues$: Subject<{
+    count: number;
+    next: string;
+    rows: any[];
+    filters: { [x: string]: string[] };
+  }> = new Subject();
   fetchActions$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   actionsNextToken = '';
-  actions$: Subject<{ count: number; next: string; rows: any[] }> =
-    new Subject();
+  actions$: Subject<{
+    count: number;
+    next: string;
+    rows: any[];
+    filters: { [x: string]: string[] };
+  }> = new Subject();
   observationChartCounts$ = new BehaviorSubject(null);
   statusColors = {
     open: '#e0e0e0',
@@ -79,22 +90,35 @@ export class ObservationsService {
     private readonly userService: UsersService
   ) {}
 
-  getObservations$(queryParams: {
-    next?: string;
-    limit: any;
-    searchKey: string;
-    type: string;
-    moduleName: string;
-  }) {
+  getObservations$(
+    queryParams: {
+      next?: string;
+      limit: any;
+      searchKey: string;
+      type: string;
+      moduleName: string;
+    },
+    filterParams = {},
+    info: ErrorInfo = {} as ErrorInfo
+  ) {
     const params: URLSearchParams = new URLSearchParams();
     params.set('searchTerm', queryParams?.searchKey);
     params.set('limit', queryParams?.limit);
     params.set('next', queryParams?.next);
     params.set('type', queryParams?.type);
+    const { displayToast, failureResponse = {} } = info;
     return this.appService
       ._getResp(
         environment.operatorRoundsApiUrl,
-        `${queryParams.moduleName}?` + params.toString()
+        `${queryParams.moduleName}`,
+        { displayToast, failureResponse },
+        {
+          searchTerm: queryParams.searchKey,
+          next: queryParams.next,
+          limit: queryParams.limit.toString(),
+          type: queryParams.type,
+          ...omitBy(filterParams, isEmpty)
+        }
       )
       .pipe(
         map((res) => this.formateGetObservationResponse(res, queryParams.type))
@@ -364,13 +388,16 @@ export class ObservationsService {
       const formattedDisplayNames: string[] = [];
       assignee.forEach((a) => {
         const foundAssignee = this.userService.getUserFullName(a);
-        if (foundAssignee) {
+        const isUserActive = this.userService.getUserIsActive(a);
+        if (foundAssignee && isUserActive) {
           formattedDisplayNames.push(foundAssignee);
         }
       });
       if (formattedDisplayNames?.length > 0) {
         if (formattedDisplayNames?.length > 1) {
-          return `${formattedDisplayNames[0]} + ${assignee?.length - 1} more`;
+          return `${formattedDisplayNames[0]} + ${
+            formattedDisplayNames?.length - 1
+          } more`;
         }
         return formattedDisplayNames[0];
       }
@@ -416,13 +443,14 @@ export class ObservationsService {
     const data = [];
     Object.entries(result).map(([key, value]) => {
       const leanKey = this.removeSpecialCharacter(key.toLowerCase());
+      const formattedKey = leanKey === 'low' ? 'Low' : key;
       color.push(
         action === 'priority'
           ? this.priorityColors[leanKey]
           : this.statusColors[leanKey]
       );
       data.push({
-        name: leanKey === 'inprogress' ? 'In Progress' : key,
+        name: formattedKey === 'inprogress' ? 'In Progress' : formattedKey,
         value
       });
     });
@@ -432,7 +460,86 @@ export class ObservationsService {
     };
   }
 
+  getFormsFilter(info: ErrorInfo = {} as ErrorInfo): Observable<
+    {
+      label: string;
+      items: string[];
+      column: string;
+      type: string;
+      value: string;
+    }[]
+  > {
+    return this.appService._getLocal(
+      '',
+      '/assets/json/observations-filter.json',
+      info
+    );
+  }
+
+  prepareFilterData(data, filterJson = []) {
+    filterJson?.forEach((item) => {
+      switch (item.column) {
+        case 'title':
+          item.items = data?.title ?? [];
+          break;
+        case 'location':
+          item.items = data?.location ?? [];
+          break;
+        case 'plant':
+          item.items = data?.plant ?? [];
+          break;
+        case 'priority':
+          item.items = data?.priority ?? [];
+          break;
+        case 'status':
+          item.items = data?.status ?? [];
+          break;
+        case 'assignedTo':
+          item.items = data?.assignedTo ?? [];
+          break;
+        default:
+          break;
+      }
+    });
+    return filterJson;
+  }
+
+  updateConfigOptionsFromColumns(columns: Partial<Column>[]) {
+    const allColumns: Column[] = columns.map((column, index) => {
+      const defaultColumn: Column = {
+        id: '',
+        displayName: '',
+        type: '',
+        controlType: '',
+        order: 0,
+        showMenuOptions: false,
+        subtitleColumn: '',
+        searchable: false,
+        sortable: false,
+        hideable: false,
+        visible: false,
+        movable: false,
+        stickable: false,
+        sticky: false,
+        groupable: false,
+        titleStyle: {},
+        subtitleStyle: {},
+        hasPreTextImage: false,
+        hasPostTextImage: false
+      };
+      return {
+        ...defaultColumn,
+        ...column,
+        order: index + 1
+      };
+    });
+    return allColumns;
+  }
+
   private formateGetObservationResponse(resp, type) {
+    resp.filters.assignedTo = resp.filters.assignedTo.map((email) =>
+      this.userService.getUserFullName(email)
+    );
     const items = resp?.items?.sort(
       (a, b) =>
         new Date(b?.createdAt).getTime() - new Date(a?.createdAt).getTime()
@@ -488,7 +595,8 @@ export class ObservationsService {
     return {
       rows,
       next: resp?.next,
-      count: resp?.count
+      count: resp?.count,
+      filters: resp?.filters
     };
   }
 

@@ -7,13 +7,16 @@
       <div class="main-container">
         <div class="locations-header">
           <div>
-            <h2 class="heading" translate="shifts"></h2>
+            <h2 id="shiftListHeading" class="heading" translate="shifts"></h2>
           </div>
           <div>
             <span class="custom-form-field-gray-color search">
               <mat-form-field appearance="outline">
-                <mat-icon matPrefix class="searchIcon">search</mat-icon>
+                <mat-icon id="shiftListSearchIcon" matPrefix class="searchIcon"
+                  >search</mat-icon
+                >
                 <input
+                  id="shiftListAutoComplete"
                   matInput
                   type="text"
                   [placeholder]="'searchShift' | translate"
@@ -21,6 +24,7 @@
                   [formControl]="searchShift"
                 />
                 <svg-icon
+                  id="shiftListFilterIcon"
                   matSuffix
                   icon="icon-filterIcon"
                   class="filter-icon"
@@ -28,9 +32,11 @@
               </mat-form-field>
             </span>
             <button
+              id="shiftListCreateNewBtn"
               mat-raised-button
               translate="createNew"
               class="create-new-btn"
+              *appCheckUserHasPermission="[perms.createShift]"
               (click)="addManually()"
             ></button>
           </div>

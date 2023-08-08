@@ -41,6 +41,7 @@
   "addSection": "Add Section",
   "question": "Task",
   "copy": "Copy",
+  "copySection": "Copy Section",
   "delete": "Delete",
   "edit": "Edit",
   "pattern": "{message}",
@@ -127,7 +128,6 @@
   "authoredBy": "Authored by",
   "preview": "Preview",
   "lastPublishedBy": "Last Published By",
-  "lastModifiedBy": "Last Modified By",
   "searchArchivedForm": "Search by Name/Description",
   "archived": "Archived",
   "deleteArchivedFormModalHeading": "Alert",
@@ -313,8 +313,11 @@
   "locationCreated": "Location: ",
   "plantCreated": "Plant: ",
   "categoryCreated": "Category: ",
+  "addImagesAndPDFBtnNew": "Add Images or PDF",
   "nodeId": "{type} Id: {id}",
   "typePlaceholder": "Type",
+  "errorExceedingLimit": "Notes cannot contain more than 250 characters",
+  "notesAndAttachments": "Notes And Attachments",
   "notificationCreation": "Notification Creation In-Progress",
   "actionPriority": "Priority: ",
   "actionStatus": "Status: ",
@@ -354,5 +357,7 @@
   "skipped": "Skipped",
   "total": "Total",
   "totalPages": "Total Pages",
-  "reportGeneratedOn": "Report Generated On"
+  "reportGeneratedOn": "Report Generated On",
+  "addNotes": "Add Notes",
+  "skippedReason": "Skipped Reason"
 }

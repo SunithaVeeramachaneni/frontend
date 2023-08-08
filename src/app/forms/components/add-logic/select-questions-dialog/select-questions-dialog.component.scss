@@ -1,8 +1,5 @@
 @import '../../../../../scss/colors.scss';
 
-::ng-deep .mat-dialog-container {
-  padding: 25px !important;
-}
 .dialogBody {
   max-height: 400px;
   .heading {

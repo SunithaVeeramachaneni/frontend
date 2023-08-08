@@ -2,8 +2,6 @@
   class="questions"
   [formGroup]="questionForm"
   *ngIf="{
-    question: question$ | async,
-    sectionQuestionsCount: sectionQuestionsCount$ | async,
     formMetadata: formMetadata$ | async,
     moduleName: moduleName$ | async,
     uom: uom$ | async
@@ -23,6 +21,7 @@
           }"
         >
           <input
+            id="questionText"
             #name
             autocomplete="off"
             type="text"
@@ -37,7 +36,7 @@
           <mat-form-field
             *ngIf="questionForm.get('fieldType').value === 'INST'"
             appearance="outline"
-            class="width-100"
+            class="width-100 instruction-question"
             placeholder="Type Question"
           >
             <quill-material
@@ -57,21 +56,39 @@
             class="floating-btns"
             *ngIf="!isAskQuestion && questionForm.get('isOpen').value"
           >
-            <button class="questions-btn" (click)="addQuestion(true, true)">
+            <button
+              id="questionBtn"
+              class="questions-btn"
+              (click)="addQuestion(true, true)"
+            >
               <svg-icon
+                id="questionAddIcon"
                 icon="icon-add-question"
                 class="question-icon"
               ></svg-icon>
-              <p class="questions-delete-btn-text" translate="question"></p>
+              <p
+                id="question"
+                class="questions-delete-btn-text"
+                translate="question"
+              ></p>
             </button>
             <br />
 
-            <button class="delete-btn" (click)="deleteQuestion($event)">
+            <button
+              id="questionDeleteBtn"
+              class="delete-btn"
+              (click)="deleteQuestion($event)"
+            >
               <svg-icon
+                id="questionDeleteIcon"
                 icon="icon-delete-question"
                 class="question-icon"
               ></svg-icon>
-              <p class="questions-delete-btn-text" translate="delete"></p>
+              <p
+                id="questionDelete"
+                class="questions-delete-btn-text"
+                translate="delete"
+              ></p>
             </button>
           </div>
         </div>
@@ -80,6 +97,7 @@
         <div class="width-30">
           <app-response-type-button
             [questionForm]="questionForm"
+            [isImported]="this.isImported"
             [fieldTypes]="fieldTypes"
             (responseTypeOpenEvent)="responseTypeOpenEventHandler($event)"
           >
@@ -99,6 +117,7 @@
         </div>
         <div *ngIf="isAskQuestion">
           <svg-icon
+            id="deleteQuestionBtn"
             icon="icon-delete-icon"
             class="delete-icon"
             (click)="deleteQuestion($event)"
@@ -119,6 +138,7 @@
           <div *ngIf="questionForm.get('fieldType').value !== 'IMG'">
             <div class="questionActionsRow">
               <button
+                id="questionAddLogicBtn"
                 mat-button
                 color="primary"
                 class="addLogicBtn"
@@ -132,8 +152,11 @@
                   addLogicToQuestion(pageIndex, questionForm.get('id').value)
                 "
               >
-                <mat-icon class="icon">link</mat-icon>
-                <span translate="addLogicBtn"></span>
+                <mat-icon id="questionLink" class="icon">link</mat-icon>
+                <span
+                  id="questionAddLogicBtnText"
+                  translate="addLogicBtn"
+                ></span>
               </button>
 
               <div
@@ -168,8 +191,8 @@
                     </app-instruction-pdf>
                   </span>
                 </div>
-                <br />
                 <input
+                  id="questionFile"
                   type="file"
                   class="file-upload"
                   accept="image/jpeg,image/jpg,image/png,application/pdf"
@@ -179,6 +202,7 @@
                 />
 
                 <button
+                  id="questionIsAskQuestionBtn"
                   mat-button
                   color="primary"
                   [ngClass]="
@@ -187,8 +211,13 @@
                   *ngIf="questionForm.get('fieldType').value === 'INST'"
                   (click)="instructionsFileUpload.click()"
                 >
-                  <mat-icon class="icon">link</mat-icon>
-                  <span translate="addImagesAndPDFBtn"></span>
+                  <mat-icon id="questionAskQuestionLink" class="icon"
+                    >link</mat-icon
+                  >
+                  <span
+                    id="questionAddImgPDFBtn"
+                    translate="addImagesAndPDFBtn"
+                  ></span>
                 </button>
 
                 <app-tag-select
@@ -374,6 +403,7 @@
                 class="action"
               >
                 <button
+                  id="questionAddLogicBtn"
                   mat-button
                   color="primary"
                   [ngClass]="
@@ -388,7 +418,7 @@
                   "
                 >
                   <mat-icon class="icon">link</mat-icon>
-                  <span>{{
+                  <span id="questionAddLinkBtn">{{
                     questionForm.get('value').value.title
                       ? questionForm.get('value').value.title
                       : ('addLinkBtn' | translate)
@@ -402,7 +432,7 @@
                 class="action"
               >
                 <label translate="range"></label>&nbsp;
-                <span class="range-values">
+                <span id="questionRange" class="range-values">
                   {{ questionForm.get('value').value.min }} -
                   {{ questionForm.get('value').value.max }}
                 </span>
@@ -447,20 +477,14 @@
                 ></app-drop-down>
               </span>
             </div>
-            <div
-              class="addLogicRow"
-              *ngIf="
-                getQuestionLogics(pageIndex, questionForm.get('id').value)
-                  | async as questionLogics
-              "
-            >
+            <div class="addLogicRow" *ngIf="logics.length">
               <app-add-logic
-                *ngIf="questionLogics.length"
                 [questionId]="questionForm.get('id').value"
                 [quickResponseValues]="questionForm.get('value').value"
                 [fieldType]="questionForm.get('fieldType').value"
                 [pageIndex]="pageIndex"
                 [sectionId]="sectionId"
+                [isTemplate]="isTemplate"
                 (logicEvent)="logicEventHandler($event)"
                 [selectedNodeId]="selectedNodeId"
                 [isEmbeddedForm]="isEmbeddedForm"

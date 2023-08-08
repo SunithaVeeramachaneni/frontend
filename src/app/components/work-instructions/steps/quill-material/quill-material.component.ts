@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/member-ordering */
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable @angular-eslint/no-host-metadata-property */
 import {
   Component,
   Input,
@@ -12,7 +15,11 @@ import {
   Output,
   EventEmitter
 } from '@angular/core';
-import { NG_VALUE_ACCESSOR, ControlValueAccessor, NgControl } from '@angular/forms';
+import {
+  NG_VALUE_ACCESSOR,
+  ControlValueAccessor,
+  NgControl
+} from '@angular/forms';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { Subject } from 'rxjs';
 import { FocusMonitor } from '@angular/cdk/a11y';
@@ -26,25 +33,35 @@ const SELECTOR = 'quill-material';
   selector: SELECTOR,
   templateUrl: './quill-material.component.html',
   styleUrls: ['./quill-material.component.css'],
-  providers: [{
-    provide: NG_VALUE_ACCESSOR,
-    useExisting: forwardRef(() => QuillMaterialComponent),
-    multi: true
-  },
-  {
-    provide: MatFormFieldControl,
-    useExisting: QuillMaterialComponent
-  }],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => QuillMaterialComponent),
+      multi: true
+    },
+    {
+      provide: MatFormFieldControl,
+      useExisting: QuillMaterialComponent
+    }
+  ],
   host: {
     '[id]': 'id',
     '[attr.aria-describedby]': 'describedBy'
   }
 })
-export class QuillMaterialComponent implements OnInit, DoCheck, OnDestroy, ControlValueAccessor, MatFormFieldControl<any> {
+export class QuillMaterialComponent
+  implements
+    OnInit,
+    DoCheck,
+    OnDestroy,
+    ControlValueAccessor,
+    MatFormFieldControl<any>
+{
   static nextId = 0;
   @HostBinding() id = `quill-material-${QuillMaterialComponent.nextId++}`;
 
-  @ViewChild('container', { read: ElementRef, static: true }) container: ElementRef;
+  @ViewChild('container', { read: ElementRef, static: true })
+  container: ElementRef;
 
   stateChanges = new Subject<void>();
 
@@ -61,7 +78,7 @@ export class QuillMaterialComponent implements OnInit, DoCheck, OnDestroy, Contr
     modules: {
       toolbar: [
         ['bold', 'italic', 'underline'],
-        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+        [{ list: 'ordered' }, { list: 'bullet' }]
       ]
     }
   };
@@ -129,8 +146,12 @@ export class QuillMaterialComponent implements OnInit, DoCheck, OnDestroy, Contr
     this.describedBy = ids.join(' ');
   }
 
-  constructor(public elRef: ElementRef, public injector: Injector, public fm: FocusMonitor) {
-    fm.monitor(elRef.nativeElement, true).subscribe(origin => {
+  constructor(
+    public elRef: ElementRef,
+    public injector: Injector,
+    public fm: FocusMonitor
+  ) {
+    fm.monitor(elRef.nativeElement, true).subscribe((origin) => {
       this.focused = !!origin;
       this.editorFocus.emit(this.focused);
       this.stateChanges.next();
@@ -140,7 +161,9 @@ export class QuillMaterialComponent implements OnInit, DoCheck, OnDestroy, Contr
   ngOnInit(): void {
     // avoid Cyclic Dependency
     this.ngControl = this.injector.get(NgControl);
-    if (this.ngControl != null) { this.ngControl.valueAccessor = this; }
+    if (this.ngControl != null) {
+      this.ngControl.valueAccessor = this;
+    }
 
     const editorRef = this.container.nativeElement.querySelector('.editor');
     const options = this.options || this.defaultOptions;
@@ -158,7 +181,8 @@ export class QuillMaterialComponent implements OnInit, DoCheck, OnDestroy, Contr
 
   ngDoCheck(): void {
     if (this.ngControl) {
-      this.errorState = this.ngControl.invalid && this.ngControl.touched && !this.focused;
+      this.errorState =
+        this.ngControl.invalid && this.ngControl.touched && !this.focused;
       this.stateChanges.next();
     }
   }
@@ -178,13 +202,13 @@ export class QuillMaterialComponent implements OnInit, DoCheck, OnDestroy, Contr
     }
   }
 
-  onChange = (delta: any) => { };
+  onChange = (delta: any) => {};
 
   registerOnChange(fn: (v: any) => void): void {
     this.onChange = fn;
   }
 
-  onTouched = () => { };
+  onTouched = () => {};
 
   registerOnTouched(fn: () => void): void {
     this.onTouched = fn;

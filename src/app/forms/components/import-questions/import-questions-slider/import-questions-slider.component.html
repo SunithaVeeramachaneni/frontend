@@ -9,14 +9,21 @@
 >
   <mat-card class="p-0">
     <mat-card-title class="m-0 light-gray">
-      <div class="slider-heading">{{ 'importQuestions' | translate }}</div>
+      <div class="slider-heading">
+        <button id="importQuestionsBackArrow" (click)="back()" class="back-btn">
+          <svg-icon icon="icon-back-arrow" class="back-arrow"></svg-icon>
+        </button>
+        <span id="importQuestionHeading">{{
+          'importQuestions' | translate
+        }}</span>
+      </div>
     </mat-card-title>
     <mat-card-content>
-      <div class="form-name">
+      <div id="importQuestionFormName" class="form-name">
         {{ selectedFormName }}
       </div>
       <div *ngFor="let page of selectedFormData">
-        <p *ngIf="!isEmbeddedForm">
+        <p id="importQuestionRight" *ngIf="!isEmbeddedForm">
           <mat-icon
             (click)="toggleIsOpen(page)"
             *ngIf="page.isOpen === false"
@@ -25,6 +32,7 @@
             chevron_right
           </mat-icon>
           <mat-icon
+            id="importQuestionExandMore"
             (click)="toggleIsOpen(page)"
             *ngIf="page.isOpen === true"
             class="page-arrow"
@@ -33,6 +41,7 @@
           </mat-icon>
 
           <mat-checkbox
+            id="importQuestionPageName"
             [checked]="page.checked"
             [indeterminate]="fewComplete(page)"
             (change)="setAllChecked($event.checked, page)"
@@ -44,6 +53,7 @@
           <div *ngFor="let section of page.sections; let i = index">
             <p class="section-div">
               <mat-icon
+                id="importQuestionPageDown"
                 (click)="toggleIsOpen(section)"
                 *ngIf="section.isOpen === false"
                 class="page-arrow"
@@ -51,6 +61,7 @@
                 chevron_right
               </mat-icon>
               <mat-icon
+                id="importQuestionExpandPage"
                 (click)="toggleIsOpen(section)"
                 *ngIf="section.isOpen === true"
                 class="page-arrow"
@@ -58,6 +69,7 @@
                 expand_more
               </mat-icon>
               <mat-checkbox
+                id="importQuestionSectionName"
                 [checked]="section.checked"
                 [indeterminate]="checkedSectionCount(section, page)"
                 (change)="setAllSectionChecked($event.checked, section)"
@@ -73,7 +85,9 @@
                     updateAllChecked($event.checked, question, section, page)
                   "
                 >
-                  <span>{{ question.name }}</span>
+                  <span id="importQuestionQuestionName">{{
+                    question.name
+                  }}</span>
                 </mat-checkbox>
               </div>
             </div>
@@ -83,12 +97,14 @@
     </mat-card-content>
     <div *ngIf="isFooter" class="import-form-footer">
       <button
+        id="importQuestionCancelBtn"
         mat-stroked-button
         class="cancel-button"
         (click)="cancel()"
         translate="cancel"
       ></button>
       <button
+        id="importQuestionUseBtn"
         mat-raised-button
         color="primary"
         class="use-button"

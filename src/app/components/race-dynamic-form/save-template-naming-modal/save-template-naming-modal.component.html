@@ -1,9 +1,17 @@
 <form class="save-template-naming-modal" [formGroup]="saveTemplateForm">
-  <span class="title" translate>saveTemplateNamingModalTitle</span>
+  <span class="title" id="saveTemplateNameTitle" translate
+    >saveTemplateNamingModalTitle</span
+  >
   <mat-form-field appearance="outline" class="input-container width-100 m-b-10">
-    <mat-label>{{ 'templateName' | translate }}</mat-label>
+    <mat-label id="saveTemplateName">{{
+      'templateName' | translate
+    }}</mat-label>
     <input matInput formControlName="templateName" />
-    <mat-error *ngIf="processValidationErrors()" class="m-t-15 error-fields">
+    <mat-error
+      *ngIf="processValidationErrors()"
+      class="m-t-15 error-fields"
+      id="saveTemplateNameError"
+    >
       {{
         errors.name
           | translate
@@ -15,6 +23,7 @@
     </mat-error>
   </mat-form-field>
   <button
+    id="saveTemplateNameBtn"
     mat-raised-button
     class="next-btn"
     type="submit"

@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
+/* eslint-disable @typescript-eslint/naming-convention */
+/* eslint-disable @angular-eslint/no-output-native */
+/* eslint-disable @typescript-eslint/member-ordering */
 import {
   Component,
   EventEmitter,
@@ -9,7 +13,11 @@ import {
 } from '@angular/core';
 import { FilterSidePanelComponent } from '../filter-side-panel/filter-side-panel.component';
 import { DatePipeDateAdapter } from '../../utils/DatePipeDateAdapter';
-import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
+import {
+  DateAdapter,
+  MAT_DATE_FORMATS,
+  MatOption
+} from '@angular/material/core';
 import { MatSelect } from '@angular/material/select';
 
 @Component({
@@ -102,6 +110,27 @@ export class FilterComponent implements OnInit, OnChanges {
   }
 
   closeSelect(select: MatSelect): void {
+    select.openedChange.subscribe((isOpened: boolean) => {
+      if (
+        !isOpened &&
+        (select.value === null || this.isOptionArrayEmpty(select.value))
+      ) {
+        this.resetSelector();
+      }
+    });
     select.close();
+  }
+
+  resetSelector(): void {
+    for (const item of this.json) {
+      if (item.itemValue) {
+        item.itemValue = '';
+      }
+    }
+    this.reset.emit(this.json);
+  }
+
+  isOptionArrayEmpty(options: MatOption[] | any[]): boolean {
+    return Array.isArray(options) && options.length === 0;
   }
 }

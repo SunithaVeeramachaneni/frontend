@@ -56,6 +56,7 @@ import { IssuesActionsViewComponent } from '../issues-actions-view/issues-action
 import { ObservationsService } from '../../services/observations.service';
 import { PlantService } from 'src/app/components/master-configurations/plants/services/plant.service';
 import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
+import { UsersService } from 'src/app/components/user-management/services/users.service';
 
 @Component({
   selector: 'app-issues-list',
@@ -67,7 +68,10 @@ import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
 export class IssuesListComponent implements OnInit, OnDestroy {
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
-      tap((users) => (this.assigneeDetails = { users }))
+      tap((users) => {
+        this.userFullNameByEmail = this.userService.getUsersInfo();
+        this.assigneeDetails = { users };
+      })
     );
   }
   get users$(): Observable<UserDetails[]> {
@@ -75,21 +79,13 @@ export class IssuesListComponent implements OnInit, OnDestroy {
   }
   @Input() moduleName;
   assigneeDetails: AssigneeDetails;
-  columns: Column[] = [
+  partialColumns: Partial<Column>[] = [
     {
       id: 'title',
       displayName: 'Title',
       type: 'string',
       controlType: 'string',
-      order: 1,
-      searchable: false,
-      sortable: false,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
       titleStyle: {
         'font-weight': '500',
         'font-size': '100%',
@@ -97,81 +93,47 @@ export class IssuesListComponent implements OnInit, OnDestroy {
         'overflow-wrap': 'anywhere'
       },
       hasSubtitle: true,
-      showMenuOptions: false,
       subtitleColumn: 'description',
       subtitleStyle: {
         'font-size': '80%',
         color: 'darkgray',
         'overflow-wrap': 'anywhere'
       },
-      hasPreTextImage: true,
-      hasPostTextImage: false
+      hasPreTextImage: true
     },
     {
       id: 'locationAsset',
       displayName: 'Location/Asset',
       type: 'string',
       controlType: 'string',
-      order: 2,
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
       titleStyle: {
         'font-size': '100%'
       },
       hasSubtitle: true,
-      showMenuOptions: false,
       subtitleColumn: 'locationAssetDescription',
       subtitleStyle: {
         'font-size': '80%',
         color: 'darkgray'
-      },
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      }
     },
     {
       id: 'plant',
       displayName: 'Plant',
       type: 'string',
       controlType: 'string',
-      order: 3,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      groupable: true
     },
     {
       id: 'priority',
       displayName: 'Priority',
       type: 'number',
       controlType: 'string',
-      order: 4,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
       groupable: true,
       titleStyle: {
         textTransform: 'capitalize',
@@ -186,9 +148,6 @@ export class IssuesListComponent implements OnInit, OnDestroy {
         color: '#ff4033',
         borderRadius: '12px'
       },
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false,
       hasConditionalStyles: true
     },
     {
@@ -196,17 +155,8 @@ export class IssuesListComponent implements OnInit, OnDestroy {
       displayName: 'Status',
       type: 'string',
       controlType: 'string',
-      order: 5,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
       groupable: true,
       titleStyle: {
         textTransform: 'capitalize',
@@ -224,9 +174,6 @@ export class IssuesListComponent implements OnInit, OnDestroy {
         color: '#92400E',
         borderRadius: '12px'
       },
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false,
       hasConditionalStyles: true
     },
     {
@@ -234,70 +181,33 @@ export class IssuesListComponent implements OnInit, OnDestroy {
       displayName: 'Due Date',
       type: 'string',
       controlType: 'string',
-      order: 6,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      groupable: true
     },
     {
       id: 'notificationInfo',
       displayName: 'Notification No.',
       type: 'string',
       controlType: 'string',
-      order: 7,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      groupable: true
     },
     {
       id: 'assignedToDisplay',
       displayName: 'Assigned To',
       type: 'string',
       controlType: 'string',
-      order: 8,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
       groupable: true,
       titleStyle: {
         'overflow-wrap': 'anywhere'
-      },
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      }
     }
   ];
+  columns: Column[] = [];
   configOptions: ConfigOptions = {
     tableID: 'issuesTable',
     rowsExpandable: false,
@@ -370,6 +280,19 @@ export class IssuesListComponent implements OnInit, OnDestroy {
   placeHolder = '_ _';
   plantTimezoneMap = {};
   readonly perms = perms;
+  userFullNameByEmail: any;
+  isPopoverOpen = false;
+
+  filterJson = [];
+  filter = {
+    title: '',
+    location: '',
+    plant: '',
+    priority: '',
+    status: '',
+    dueDate: '',
+    assignedTo: ''
+  };
   private _users$: Observable<UserDetails[]>;
   private onDestroy$ = new Subject();
 
@@ -378,10 +301,14 @@ export class IssuesListComponent implements OnInit, OnDestroy {
     private readonly loginService: LoginService,
     private plantService: PlantService,
     private readonly dialog: MatDialog,
-    private readonly cdrf: ChangeDetectorRef
+    private readonly cdrf: ChangeDetectorRef,
+    private userService: UsersService
   ) {}
 
   ngOnInit(): void {
+    this.columns = this.observationsService.updateConfigOptionsFromColumns(
+      this.partialColumns
+    );
     this.plantMapSubscription =
       this.plantService.plantTimeZoneMapping$.subscribe(
         (data) => (this.plantTimezoneMap = data)
@@ -405,6 +332,7 @@ export class IssuesListComponent implements OnInit, OnDestroy {
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
     );
+    this.getFilter();
     this.displayIssues();
     this.configOptions.allColumns = this.columns;
   }
@@ -509,14 +437,18 @@ export class IssuesListComponent implements OnInit, OnDestroy {
       type: 'issue',
       moduleName: this.moduleName
     };
-    return this.observationsService.getObservations$(obj).pipe(
-      mergeMap(({ rows, next, count }) => {
+    return this.observationsService.getObservations$(obj, this.filter).pipe(
+      mergeMap(({ rows, next, count, filters }) => {
         this.observationsService.issuesNextToken = next;
         this.isLoading$.next(false);
         if (count) {
           this.issuesCount$ = of(count);
         }
-        this.observationsService.issues$.next({ rows, next, count });
+        this.observationsService.issues$.next({ rows, next, count, filters });
+        this.filterJson = this.observationsService.prepareFilterData(
+          filters,
+          this.filterJson
+        );
         return of(rows as any[]);
       }),
       catchError(() => {
@@ -601,7 +533,9 @@ export class IssuesListComponent implements OnInit, OnDestroy {
                 ? notificationInfo
                 : this.placeHolder,
               priority,
-              dueDate: dueDate ? format(new Date(dueDate), 'dd MMM, yyyy') : '',
+              dueDate: dueDate
+                ? format(new Date(dueDate), 'dd MMM, yyyy hh:mm a')
+                : '',
               assignedToDisplay: assignedToDisplay || '',
               assignedTo: assignedTo || ''
             };
@@ -624,9 +558,59 @@ export class IssuesListComponent implements OnInit, OnDestroy {
     }
   };
 
+  getFullNameToEmailArray(data: any) {
+    const emailArray = [];
+    data?.forEach((name: any) => {
+      emailArray.push(
+        Object.keys(this.userFullNameByEmail).find(
+          (email) => this.userFullNameByEmail[email].fullName === name
+        )
+      );
+    });
+    return emailArray;
+  }
+
+  applyFilters(data: any): void {
+    this.isLoading$.next(true);
+    this.isPopoverOpen = false;
+    for (const item of data) {
+      if (item.type === 'date' && item.value) {
+        this.filter[item.column] = item.value.toISOString();
+      } else if (item.column === 'assignedTo' && item.value) {
+        this.filter[item.column] = this.getFullNameToEmailArray(item.value);
+      } else {
+        this.filter[item.column] = item.value ?? '';
+      }
+    }
+    this.observationsService.issuesNextToken = '';
+    this.observationsService.fetchIssues$.next({ data: 'load' });
+  }
+
+  clearFilters(): void {
+    this.isLoading$.next(true);
+    this.isPopoverOpen = false;
+    this.filter = {
+      title: '',
+      location: '',
+      plant: '',
+      priority: '',
+      status: '',
+      dueDate: '',
+      assignedTo: ''
+    };
+    this.observationsService.issuesNextToken = '';
+    this.observationsService.fetchIssues$.next({ data: 'load' });
+  }
+
   ngOnDestroy(): void {
     this.plantMapSubscription.unsubscribe();
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  private getFilter(): void {
+    this.observationsService
+      .getFormsFilter()
+      .subscribe((res) => (this.filterJson = res));
   }
 }

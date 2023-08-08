@@ -1,14 +1,7 @@
-<div
-  class="pages"
-  [formGroup]="pageForm"
-  *ngIf="{
-    page: page$ | async,
-    pagesCount: pagesCount$ | async,
-    pageTasksCount: pageTasksCount$ | async
-  } as props"
->
-  <div class="page-header" *ngIf="!isEmbeddedForm">
+<div class="pages" [formGroup]="pageForm">
+  <div class="page-header" *ngIf="!isEmbeddedForm && !isTemplate">
     <mat-icon
+      id="pageExpandIcon"
       (click)="toggleIsOpenState()"
       *ngIf="pageForm.get('isOpen').value === true"
       class="page-arrow"
@@ -16,6 +9,7 @@
       expand_more
     </mat-icon>
     <mat-icon
+      id="pageRightIcon"
       (click)="toggleIsOpenState()"
       *ngIf="pageForm.get('isOpen').value === false"
       class="page-arrow"
@@ -25,6 +19,7 @@
 
     <a class="width-60">
       <input
+        id="pageText"
         #pageName
         type="text"
         autofocus
@@ -38,29 +33,40 @@
       />
 
       <button
+        id="pageEditPage"
         mat-icon-button
         (click)="editPage()"
         class="edit-icon"
         *ngIf="pageForm.get('name').disabled === true"
       >
-        <svg-icon icon="icon-edit-icon" class="page-edit-icon"></svg-icon>
+        <svg-icon
+          id="pageEditIcon"
+          icon="icon-edit-icon"
+          class="page-edit-icon"
+        ></svg-icon>
       </button>
     </a>
 
     <div class="pageHeadRight">
-      <span class="pageTaskCount">
-        {{ props.pageTasksCount }}
+      <span id="pageQuestionCount" class="pageTaskCount">
+        {{ pageQuestionsCount }}
       </span>
       <button
+        id="pageMoreBtn"
         [matMenuTriggerFor]="pageMenu"
         class="more-icon"
         aria-label="More Options"
       >
-        <mat-icon>more_horiz</mat-icon>
+        <mat-icon id="pageMoreIcon">more_horiz</mat-icon>
       </button>
       <mat-menu #pageMenu="matMenu">
-        <button mat-menu-item (click)="deletePage()" class="text-red">
-          <span translate="deletePage"></span>
+        <button
+          id="pageDeletePageBtn"
+          mat-menu-item
+          (click)="deletePage()"
+          class="text-red"
+        >
+          <span id="pageDelete" translate="deletePage"></span>
         </button>
       </mat-menu>
     </div>
@@ -68,13 +74,22 @@
   <div
     *ngIf="pageForm.get('isOpen').value === true"
     class="section-content"
-    [ngClass]="{ 'page-header-embedded': isEmbeddedForm }"
+    [ngClass]="{ 'page-header-embedded': isEmbeddedForm || isTemplate }"
   >
     <ng-content></ng-content>
   </div>
 
-  <button class="add-page-btn" (click)="addPage()" *ngIf="!isEmbeddedForm">
-    <svg-icon icon="icon-add-page" class="add-page-btn-icon"></svg-icon>
+  <button
+    id="pageAddPageBtn"
+    class="add-page-btn"
+    (click)="addPage()"
+    *ngIf="!isEmbeddedForm && !isTemplate"
+  >
+    <svg-icon
+      id="pageAddPageIcon"
+      icon="icon-add-page"
+      class="add-page-btn-icon"
+    ></svg-icon>
     {{ 'addPage' | translate }}
   </button>
 </div>

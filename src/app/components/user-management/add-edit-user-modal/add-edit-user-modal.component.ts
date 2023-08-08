@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/dot-notation */
 /* eslint-disable no-underscore-dangle */
 import {
   Component,
@@ -19,7 +20,12 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Buffer } from 'buffer';
 import { HttpClient } from '@angular/common/http';
-import { Permission, Role, ValidationError } from 'src/app/interfaces';
+import {
+  Permission,
+  Role,
+  UserGroup,
+  ValidationError
+} from 'src/app/interfaces';
 import { BehaviorSubject, Observable } from 'rxjs';
 import {
   debounceTime,
@@ -27,8 +33,7 @@ import {
   distinctUntilChanged,
   first,
   map,
-  switchMap,
-  tap
+  switchMap
 } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { defaultProfile, superAdminText } from 'src/app/app.constants';
@@ -36,7 +41,6 @@ import { userRolePermissions } from 'src/app/app.constants';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { UsersService } from '../services/users.service';
 import { NgxImageCompressService } from 'ngx-image-compress';
-import { PlantService } from '../../master-configurations/plants/services/plant.service';
 @Component({
   selector: 'app-add-edit-user-modal',
   templateUrl: './add-edit-user-modal.component.html',
@@ -74,6 +78,7 @@ export class AddEditUserModalComponent implements OnInit {
       [this.checkIfUserExistsInIDP(), this.checkIfUserExistsInDB()]
     ),
     roles: new FormControl([], [this.matSelectValidator()]),
+    usergroup: new FormControl([], [this.matSelectValidator()]),
     profileImage: new FormControl(''),
     profileImageFileName: new FormControl(''),
     validFrom: new FormControl('', [Validators.required]),
@@ -83,8 +88,10 @@ export class AddEditUserModalComponent implements OnInit {
   emailValidated = false;
   isValidIDPUser = false;
   verificationInProgress = false;
+  previousEmail = '';
 
   rolesInput: any;
+  usergroupInput: any;
   dialogText: 'addUser' | 'editUser';
   isfilterTooltipOpen = [];
   displayedPermissions;
@@ -92,10 +99,14 @@ export class AddEditUserModalComponent implements OnInit {
   profileImage;
   permissionsList$: Observable<any>;
   rolesList$: Observable<Role[]>;
+  usergroupList$: Observable<UserGroup[]>;
   superAdminText = superAdminText;
   selectedRolePermissions$: Observable<any[]>;
   get roles() {
     return this.userForm.get('roles');
+  }
+  get usergroup() {
+    return this.userForm.get('usergroup');
   }
   rolePermissions: Permission[];
   userRolePermissions = userRolePermissions;
@@ -113,9 +124,7 @@ export class AddEditUserModalComponent implements OnInit {
     private usersService: UsersService,
     private http: HttpClient,
     private imageCompress: NgxImageCompressService,
-    @Inject(MAT_DIALOG_DATA)
-    public data: any,
-    private plantService: PlantService
+    @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
 
   matSelectValidator(): ValidatorFn {
@@ -170,10 +179,13 @@ export class AddEditUserModalComponent implements OnInit {
   }
 
   ngOnInit() {
-    const userDetails = this.data.user;
-    this.permissionsList$ = this.data.permissionsList$;
-    this.rolesInput = this.data.roles.rows;
-    this.rolesList$ = this.data.rolesList$;
+    const userDetails = this.data?.user;
+    this.permissionsList$ = this.data?.permissionsList$;
+    this.rolesInput = this.data?.roles?.rows;
+    this.rolesList$ = this.data?.rolesList$;
+    this.usergroupInput = this.data?.usergroup?.items;
+    this.usergroupList$ = this.data?.usergroupList$;
+
     if (Object.keys(userDetails).length === 0) {
       this.dialogText = 'addUser';
       this.profileImage = defaultProfile;
@@ -194,6 +206,11 @@ export class AddEditUserModalComponent implements OnInit {
       this.userForm.patchValue({
         profileImage: base64
       });
+      this.previousEmail = userDetails.email;
+      const idArray = userDetails?.userGroups?.split(',');
+      userDetails.usergroup = this.usergroupInput?.filter((g) =>
+        idArray?.includes(g?.id)
+      );
       this.userForm.patchValue(userDetails);
     }
 
@@ -307,6 +324,7 @@ export class AddEditUserModalComponent implements OnInit {
   }
 
   save() {
+    const newGroupsIds = this.usergroup?.value?.map((obj) => obj?.id);
     const profileImageFileName = this.userForm.get(
       'profileImageFileName'
     ).value;
@@ -316,13 +334,17 @@ export class AddEditUserModalComponent implements OnInit {
         profileImageFileName: 'default.png'
       });
     }
-    this.dialogRef.close({
+    const payload = {
       user: {
         ...this.data.user,
-        ...this.userForm.value
+        ...this.userForm.value,
+        userGroups: newGroupsIds?.toString()
       },
       action: this.dialogText === 'addUser' ? 'add' : 'edit'
-    });
+    };
+    if (this.dialogText === 'editUser')
+      payload.user.previousEmail = this.previousEmail;
+    this.dialogRef.close(payload);
   }
 
   close() {

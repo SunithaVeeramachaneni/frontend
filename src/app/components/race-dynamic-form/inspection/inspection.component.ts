@@ -59,9 +59,6 @@ import {
   dateTimeFormat5
 } from 'src/app/app.constants';
 import { LoginService } from '../../login/services/login.service';
-import { FormConfigurationActions } from 'src/app/forms/state/actions';
-import { Store } from '@ngrx/store';
-import { State } from 'src/app/state/app.state';
 import { ActivatedRoute, Router } from '@angular/router';
 import { slideInOut } from 'src/app/animations';
 import { RaceDynamicFormService } from '../services/rdf.service';
@@ -90,7 +87,10 @@ export class InspectionComponent implements OnInit, OnDestroy {
   @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
-      tap((users) => (this.assigneeDetails = { users }))
+      tap((users) => {
+        this.assigneeDetails = { users };
+        this.userFullNameByEmail = this.userService.getUsersInfo();
+      })
     );
   }
   get users$(): Observable<UserDetails[]> {
@@ -126,21 +126,13 @@ export class InspectionComponent implements OnInit, OnDestroy {
   assignedTo: string[] = [];
   schedules: string[] = [];
   assigneePosition: any;
-  columns: Column[] = [
+  partialColumns: Partial<Column>[] = [
     {
       id: 'name',
       displayName: 'Name',
       type: 'string',
       controlType: 'string',
-      order: 1,
-      searchable: false,
-      sortable: false,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
       titleStyle: {
         'font-weight': '500',
         'font-size': '100%',
@@ -148,15 +140,13 @@ export class InspectionComponent implements OnInit, OnDestroy {
         'overflow-wrap': 'anywhere'
       },
       hasSubtitle: true,
-      showMenuOptions: false,
       subtitleColumn: 'description',
       subtitleStyle: {
         'font-size': '80%',
         color: 'darkgray',
         'overflow-wrap': 'anywhere'
       },
-      hasPreTextImage: true,
-      hasPostTextImage: false
+      hasPreTextImage: true
     },
     {
       id: 'plant',
@@ -164,22 +154,9 @@ export class InspectionComponent implements OnInit, OnDestroy {
       type: 'string',
       controlType: 'string',
       controlValue: ',',
-      order: 2,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
-      titleStyle: { width: '125px' },
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      titleStyle: { width: '125px' }
     },
     {
       id: 'shift',
@@ -197,22 +174,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
         ],
         displayType: 'text'
       },
-      order: 3,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      visible: true
     },
     {
       id: 'scheduledAtDisplay',
@@ -230,22 +193,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
         ],
         displayType: 'text'
       },
-      order: 4,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      visible: true
     },
 
     {
@@ -264,22 +213,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
         ],
         displayType: 'text'
       },
-      order: 5,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      visible: true
     },
     {
       id: 'tasksCompleted',
@@ -287,62 +222,25 @@ export class InspectionComponent implements OnInit, OnDestroy {
       type: 'string',
       controlType: 'space-between',
       controlValue: ',',
-      order: 6,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
-      titleStyle: { width: '125px' },
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      titleStyle: { width: '125px' }
     },
     {
       id: 'schedule',
       displayName: 'Schedule',
       type: 'string',
       controlType: 'string',
-      order: 7,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      visible: true
     },
     {
       id: 'status',
       displayName: 'Status',
       type: 'string',
       controlType: 'string',
-      order: 8,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
       titleStyle: {
         textTransform: 'capitalize',
         fontWeight: 500,
@@ -358,9 +256,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
         color: '#92400E',
         borderRadius: '12px'
       },
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false,
       hasConditionalStyles: true
     },
     {
@@ -378,24 +273,11 @@ export class InspectionComponent implements OnInit, OnDestroy {
         ],
         displayType: 'text'
       },
-      order: 9,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      visible: true
     }
   ];
+  columns: Column[] = [];
   configOptions: ConfigOptions = {
     tableID: 'inspectionsTable',
     rowsExpandable: false,
@@ -472,6 +354,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
   plantsIdNameMap = {};
   openMenuStateDueDate = false;
   openMenuStateStartDate = false;
+  userFullNameByEmail = {};
 
   initial = {
     columns: this.columns,
@@ -492,7 +375,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private loginService: LoginService,
-    private store: Store<State>,
     private router: Router,
     private dialog: MatDialog,
     private toastService: ToastService,
@@ -505,6 +387,9 @@ export class InspectionComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.columns = this.raceDynamicFormService.updateConfigOptionsFromColumns(
+      this.partialColumns
+    );
     this.plantService.getPlantTimeZoneMapping();
     this.plantMapSubscription =
       this.plantService.plantTimeZoneMapping$.subscribe((data) => {
@@ -546,7 +431,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
           this.fetchType = 'infiniteScroll';
-          return this.getInspectionsList();
+          return this.getInspectionsList(false);
         } else {
           return of(
             {} as {
@@ -671,7 +556,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
     });
   }
 
-  getInspectionsList() {
+  getInspectionsList(displayGhostLoading = true) {
     const obj = {
       next: this.nextToken,
       limit: this.limit,
@@ -680,7 +565,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
       formId: this.formId,
       inspectionId: this.inspectionId
     };
-    this.isLoading$.next(true);
+    this.isLoading$.next(displayGhostLoading);
     return this.raceDynamicFormService
       .getInspectionsList$({ ...obj, ...this.filter })
       .pipe(
@@ -705,8 +590,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
 
           if (uniqueAssignTo?.length > 0) {
             uniqueAssignTo?.filter(Boolean).forEach((item) => {
-              if (item) {
-                this.assignedTo.push(item);
+              if (item && this.userFullNameByEmail[item] !== undefined) {
+                this.assignedTo.push(this.userFullNameByEmail[item].fullName);
               }
             });
           }
@@ -866,7 +751,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
   onCloseViewDetail() {
     this.selectedForm = null;
     this.menuState = 'out';
-    this.store.dispatch(FormConfigurationActions.resetPages());
     timer(400)
       .pipe(
         tap(() => {
@@ -879,7 +763,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
 
   openInspectionHandler(row: InspectionDetail): void {
     this.hideInspectionDetail = false;
-    this.store.dispatch(FormConfigurationActions.resetPages());
     this.selectedForm = row;
     this.menuState = 'in';
     this.zIndexDelay = 400;
@@ -905,14 +788,12 @@ export class InspectionComponent implements OnInit, OnDestroy {
         this.downloadPDF(this.selectedForm);
       }
     } else {
-      this.store.dispatch(FormConfigurationActions.resetPages());
       this.router.navigate([`/forms/edit/${this.selectedForm.id}`]);
     }
   }
 
   downloadPDF(selectedForm) {
-    const formId = selectedForm.id;
-    const inspectionId = selectedForm.inspectionId;
+    const { id: inspectionId, formId } = selectedForm;
 
     const info: ErrorInfo = {
       displayToast: false,
@@ -972,6 +853,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
       } else if (item.column === 'dueDate' && item.value) {
         this.filter[item.column] = item.value;
       } else if (item.type !== 'date' && item.value) {
+        this.filter[item.column] = item.value;
+      } else if (item.type === 'date' && item.value) {
         this.filter[item.column] = item.value;
       }
     }

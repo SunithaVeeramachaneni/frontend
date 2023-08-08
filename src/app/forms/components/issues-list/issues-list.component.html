@@ -1,9 +1,9 @@
 <div *ngIf="userInfo$ | async" class="issues-list">
   <span class="no-of-issues" *ngIf="issuesCount$ | async as totalCount">
-    <span class="issues-count">
+    <span id="issuesListCount" class="issues-count">
       {{ totalCount | count }}
     </span>
-    <span class="issues-text">
+    <span id="issuesListCountText" class="issues-text">
       {{
         'issues'
           | translate
@@ -15,21 +15,45 @@
   </span>
   <span class="custom-form-field-gray-color">
     <mat-form-field appearance="outline" class="issues-search">
-      <mat-icon matPrefix class="searchIcon">search</mat-icon>
+      <mat-icon id="issuesListSearchIcon" matPrefix class="searchIcon"
+        >search</mat-icon
+      >
       <input
+        id="issuesListSearchText"
         matInput
         type="text"
         [placeholder]="'search' | translate"
         autocomplete="off"
         [formControl]="searchIssue"
       />
-
       <svg-icon
-        matSuffix
+        id="issuesListFilterIcon"
         icon="icon-filterIcon"
+        matSuffix
+        cdkOverlayOrigin
+        #trigger="cdkOverlayOrigin"
+        (click)="isPopoverOpen = !isPopoverOpen"
         class="common-filter-icon"
       ></svg-icon>
     </mat-form-field>
+    <ng-template
+      cdkConnectedOverlay
+      cdkConnectedOverlayPanelClass="custom-popover"
+      cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+      [cdkConnectedOverlayHasBackdrop]="true"
+      [cdkConnectedOverlayOpen]="isPopoverOpen"
+      [cdkConnectedOverlayOrigin]="trigger"
+      cdkConnectedOverlayWidth="400px"
+      (backdropClick)="isPopoverOpen = false"
+    >
+      <app-filter
+        [json]="filterJson"
+        (close)="isPopoverOpen = false"
+        (apply)="applyFilters($event)"
+        (reset)="clearFilters()"
+        class="set-filter"
+      ></app-filter>
+    </ng-template>
   </span>
 
   <div *ngIf="(issues$ | async) && (isLoading$ | async) === false">

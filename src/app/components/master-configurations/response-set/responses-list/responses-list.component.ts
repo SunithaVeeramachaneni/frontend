@@ -29,7 +29,6 @@ import {
   CellClickActionEvent,
   Permission,
   TableEvent,
-  UserDetails,
   UserInfo
 } from 'src/app/interfaces';
 
@@ -43,7 +42,7 @@ import { LoginService } from 'src/app/components/login/services/login.service';
 import { ResponseSetService } from '../services/response-set.service';
 import { ToastService } from 'src/app/shared/toast';
 import { MatDialog } from '@angular/material/dialog';
-import { UploadResponseModalComponent } from '../../upload-response-modal/upload-response-modal.component';
+import { UploadResponseModalComponent } from '../../../../shared/components/upload-response-modal/upload-response-modal.component';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { CommonService } from 'src/app/shared/services/common.service';
 

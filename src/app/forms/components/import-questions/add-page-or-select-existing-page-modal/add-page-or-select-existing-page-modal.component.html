@@ -15,6 +15,7 @@
       *ngIf="selectedPageOption === 'existing'"
     >
       <mat-select
+        id="addOrSelectPage"
         [placeholder]="'select' | translate"
         [formControl]="selectedPageControl"
         [compareWith]="compareFn"
@@ -30,6 +31,7 @@
 
   <div mat-dialog-actions class="footer-btns">
     <button
+      id="addOrSelectPageCancelBtn"
       mat-button
       color="primary"
       class="buttons cancel-button"
@@ -37,6 +39,7 @@
       translate="cancel"
     ></button>
     <button
+      id="addOrSelectPageImportBtn"
       mat-raised-button
       color="primary"
       class="buttons import-btn"

@@ -1,0 +1,94 @@
+<div class="selectUser">
+  <div class="modal-header">
+    <div class="header-right-elements">
+      <button id="selectUserGroupCancel" (click)="onCancel()" class="back-btn">
+        <svg-icon
+          id="selectUserGroupBackIcon"
+          icon="icon-back-arrow"
+          class="back-arrow"
+        ></svg-icon>
+      </button>
+      <h2 id="selectUserGroupTitle" class="title">
+        {{ 'selectUser' | translate }}
+      </h2>
+    </div>
+
+    <div class="header-left-elements">
+      <span class="no-of-active-users">
+        <span id="selectUserGroupCount" class="active-users-count">
+          {{ (alluserCount$ | async) ? (alluserCount$ | async) : 0 }}
+        </span>
+        <span id="selectUserGroupActiveText" class="active-users-text">{{
+          'usersPlural'
+            | translate
+              : {
+                  count: (alluserCount$ | async) ? (alluserCount$ | async) : 0
+                }
+        }}</span>
+      </span>
+    </div>
+  </div>
+  <div class="table-container">
+    <div *ngIf="users$ | async as users">
+      <cwp-dynamictable
+        [dataSource]="dataSource"
+        [configOptions]="configOptions"
+        (fetchDataCallback)="handleTableEvent($event)"
+        (rowLevelActionHandler)="rowLevelActionHandler($event)"
+        class="table"
+      ></cwp-dynamictable>
+    </div>
+    <div *ngIf="isLoading$ | async">
+      <div class="ghost-loading">
+        <div *ngFor="let number of ghostLoading">
+          <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+          </ngx-shimmer-loading>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <span class="no-of-active-users">
+      <span id="selectUserGroupActiveCount" class="active-users-count">
+        {{ (selectedUsersCount$ | async) ? (selectedUsersCount$ | async) : 0 }}
+      </span>
+      <span id="selectedUserGroup" class="active-users-text">{{
+        'selectedUsers' | translate
+      }}</span>
+    </span>
+    <div class="footer-btns">
+      <button
+        id="selectUserGroupCancelBtn"
+        mat-button
+        class="cancel-btn"
+        autofocus="false"
+        mat-dialog-close
+        translate="cancelBtn"
+        (click)="onCancel()"
+        tabindex="-1"
+      ></button>
+
+      <button
+        id="selectUserGroupCreateBtn"
+        *ngIf="type === 'create'"
+        mat-raised-button
+        class="create-btn"
+        type="submit"
+        translate="createBtn"
+        mat-dialog-close
+        (click)="onCreate()"
+        [disabled]="disableBtn"
+      ></button>
+      <button
+        id="selectedUserGroupUpdateBtn"
+        *ngIf="type === 'update'"
+        mat-raised-button
+        class="create-btn"
+        type="submit"
+        translate="doneBtn"
+        (click)="updateUsers()"
+        [disabled]="disableBtn"
+      ></button>
+    </div>
+  </div>
+</div>

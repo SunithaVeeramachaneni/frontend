@@ -9,14 +9,12 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { FormWidgetComponent } from './components/form-widget/form-widget.component';
 import { PageComponent } from './components/page/page.component';
 import { SectionComponent } from './components/section/section.component';
 import { QuestionComponent } from './components/question/question.component';
 import { ResponseTypeComponent } from './components/response-type/response-type.component';
 import { PreviewComponent } from './components/preview/preview.component';
 import { AddLogicComponent } from './components/add-logic/add-logic.component';
-import { AddFilterComponent } from './components/add-filter/add-filter.component';
 import { IphoneComponent } from './components/iphone/iphone.component';
 
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -30,6 +28,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { OverlayModule } from '@angular/cdk/overlay';
 
 import { ResponseTypeSideDrawerComponent } from './components/response-type-side-drawer/response-type-side-drawer.component';
 
@@ -46,6 +45,7 @@ import { ImageComponent } from './components/field-types/image/image.component';
 import { GlobalResponseTypeSideDrawerComponent } from './components/global-response-type-side-drawer/global-response-type-side-drawer.component';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { ImportQuestionsSliderComponent } from './components/import-questions/import-questions-slider/import-questions-slider.component';
+import { ImportTemplateQuestionsSliderComponent } from './components/import-questions/import-template-questions-slider/import-template-questions-slider.component';
 import { AddPageOrSelectExistingPageModalComponent } from './components/import-questions/add-page-or-select-existing-page-modal/add-page-or-select-existing-page-modal.component';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatDividerModule } from '@angular/material/divider';
@@ -59,7 +59,7 @@ import { ShowHierarchyPopupComponent } from './components/show-hierarchy-popup/s
 import { QuillMaterialComponent } from './components/field-types/instructions/quill-material/quill-material.component';
 import { TagSelectComponent } from './components/field-types/instructions/tag-select/tag-select.component';
 import { InstructionImageComponent } from './components/field-types/instructions/instruction-image/instruction-image.component';
-import { InstructionPdfComponent } from './components/field-types/instructions/instruction-pdf/instruction-pdf.component';
+import { InstructionPdfComponent } from './components/instruction-pdf/instruction-pdf.component';
 import { InstructionPdfPreviewComponent } from './components/field-types/instructions/instruction-pdf-preview/instruction-pdf-preview.component';
 import { PDFBuilderComponent } from './components/pdf-builder/pdf-builder.component';
 import { CdkScrollableModule } from '@angular/cdk/scrolling';
@@ -115,9 +115,13 @@ import { PreviewForEmbeddedFormsComponent } from './components/preview-for-embed
 import { UserNameByEmailPipe } from './pipes';
 import { ShiftMenuItemComponent } from './components/shift-menu-item/shift-menu-item.component';
 import { ShiftDateChangeWarningModalComponent } from './components/shift-date-change-warning-modal/shift-date-change-warning-modal.component';
+import { DynamicStepperComponent } from './components/stepper/dynamic-stepper/dynamic-stepper.component';
+import { StepsHeaderComponent } from './components/stepper/steps-header/steps-header.component';
+import { MatStepperModule } from '@angular/material/stepper';
+import { UploadImagePreviewComponent } from './components/upload-image-preview/upload-image-preview.component';
+import { FormUpdateDeleteProgressComponent } from './components/form-update-delete-progress/form-update-delete-progress.component';
 @NgModule({
   declarations: [
-    FormWidgetComponent,
     PageComponent,
     SectionComponent,
     QuestionComponent,
@@ -141,7 +145,6 @@ import { ShiftDateChangeWarningModalComponent } from './components/shift-date-ch
     PreviewQuestionComponent,
     PreviewComponent,
     AddLogicComponent,
-    AddFilterComponent,
     ResponseTypeSideDrawerComponent,
     TableComponent,
     ResponseTypeButtonComponent,
@@ -154,6 +157,7 @@ import { ShiftDateChangeWarningModalComponent } from './components/shift-date-ch
     ImageComponent,
     GlobalResponseTypeSideDrawerComponent,
     ImportQuestionsSliderComponent,
+    ImportTemplateQuestionsSliderComponent,
     AddPageOrSelectExistingPageModalComponent,
     HyperlinkSideDrawerComponent,
     BuilderComponent,
@@ -179,7 +183,7 @@ import { ShiftDateChangeWarningModalComponent } from './components/shift-date-ch
     IssuesActionsViewComponent,
     AssignedToComponent,
     ObservationsComponent,
-
+    UploadImagePreviewComponent,
     RaiseNotificationDailogComponent,
     DatePickerComponent,
     ShiftChartComponent,
@@ -187,7 +191,10 @@ import { ShiftDateChangeWarningModalComponent } from './components/shift-date-ch
     PreviewForEmbeddedFormsComponent,
     UserNameByEmailPipe,
     ShiftMenuItemComponent,
-    ShiftDateChangeWarningModalComponent
+    ShiftDateChangeWarningModalComponent,
+    DynamicStepperComponent,
+    FormUpdateDeleteProgressComponent,
+    StepsHeaderComponent
   ],
   imports: [
     SharedModule,
@@ -231,10 +238,11 @@ import { ShiftDateChangeWarningModalComponent } from './components/shift-date-ch
     NgxEchartsModule.forRoot({
       echarts
     }),
-    MatToolbarModule
+    MatToolbarModule,
+    MatStepperModule,
+    OverlayModule
   ],
   exports: [
-    FormWidgetComponent,
     PageComponent,
     SectionComponent,
     QuestionComponent,
@@ -247,8 +255,8 @@ import { ShiftDateChangeWarningModalComponent } from './components/shift-date-ch
     HierarchyLocationsListComponent,
     HierarchyAssetsListComponent,
     ShowHierarchyPopupComponent,
-    AddFilterComponent,
     ImportQuestionsSliderComponent,
+    ImportTemplateQuestionsSliderComponent,
     GlobalResponseTypeSideDrawerComponent,
     BuilderComponent,
     PDFBuilderComponent,
@@ -264,12 +272,18 @@ import { ShiftDateChangeWarningModalComponent } from './components/shift-date-ch
     IssuesActionsViewComponent,
     AssignedToComponent,
     ObservationsComponent,
+    UploadImagePreviewComponent,
     DatePickerComponent,
     ShiftChartComponent,
     IphoneForEmbeddedFormsComponent,
     PreviewForEmbeddedFormsComponent,
     UserNameByEmailPipe,
-    ShiftMenuItemComponent
+    ShiftMenuItemComponent,
+    DynamicStepperComponent,
+    StepsHeaderComponent,
+    InstructionPdfComponent,
+    ShiftMenuItemComponent,
+    FormUpdateDeleteProgressComponent
   ]
 })
 export class FormModule {}

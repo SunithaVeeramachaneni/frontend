@@ -76,7 +76,7 @@
       </div>
     </div>
     <div class="drafts-favorites">
-      <div class="width-50 maximize-col" style="margin-right: 7px">
+      <div class="width-50 maximize-col m-r-7">
         <div class="bg-white drafts-favorites-div">
           <div class="recents-favorites-lst-header">
             <i class="fa fa-file-o draft-icon" aria-hidden="true"></i>
@@ -91,9 +91,9 @@
             <ng-container
               *ngIf="
                 workInstructions.drafts
-                  | filter: searchCriteria
-                  | sortBy: 'desc':'updated_at'
-                  | slice: 0:3 as result
+                  | filter : searchCriteria
+                  | sortBy : 'desc' : 'updated_at'
+                  | slice : 0 : 3 as result
               "
             >
               <app-dummy #recentDrafts [value]="result"></app-dummy>
@@ -133,10 +133,7 @@
                     </div>
                   </div>
 
-                  <div
-                    class="p-l-10 width-30"
-                    style="position: absolute; right: 0%"
-                  >
+                  <div class="p-l-10 width-30 position">
                     <span class="recent-edited">
                       Edited {{ obj.updated_at | timeAgo }}
                     </span>
@@ -178,7 +175,7 @@
           </div>
         </div>
       </div>
-      <div style="width: 50%; margin-left: 7px" class="maximize-col">
+      <div class="maximize-col width-50 m-l-7">
         <div class="bg-white drafts-favorites-div">
           <div class="recents-favorites-lst-header">
             <i class="fa fa-star-o favorite-icon" aria-hidden="true"></i>
@@ -193,9 +190,9 @@
             <ng-container
               *ngIf="
                 workInstructions.favorites
-                  | filter: searchCriteria
-                  | sortBy: 'desc':'updated_at'
-                  | slice: 0:3 as result
+                  | filter : searchCriteria
+                  | sortBy : 'desc' : 'updated_at'
+                  | slice : 0 : 3 as result
               "
             >
               <app-dummy #recentFavourites [value]="result"></app-dummy>
@@ -244,10 +241,7 @@
                     </div>
                   </div>
 
-                  <div
-                    class="p-l-10 width-30"
-                    style="position: absolute; right: 0%"
-                  >
+                  <div class="p-l-10 width-30 position">
                     <span class="recent-edited">
                       Edited {{ obj.updated_at | timeAgo }}
                     </span>

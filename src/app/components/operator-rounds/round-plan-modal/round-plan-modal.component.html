@@ -1,0 +1,34 @@
+<app-dynamic-stepper
+  [steps]="steps"
+  [currentStep]="currentStep"
+  [showGoBack]="true"
+  (goBack)="goBack()"
+  (gotoStep)="onGotoStep($event)"
+  (gotoNextStep)="gotoNextStep()"
+  (gotoPreviousStep)="gotoPreviousStep()"
+>
+  <div stepsContent>
+    <!-- STEP 1 -->
+    <div [hidden]="currentStep !== 0">
+      <app-round-plan-header-configuration
+        [roundData]="roundData"
+        (gotoNextStep)="gotoNextStep()"
+      ></app-round-plan-header-configuration>
+    </div>
+
+    <!-- STEP 2 -->
+    <div [hidden]="currentStep !== 1">
+      <app-round-plan-detail-configuration
+        (gotoNextStep)="gotoNextStep()"
+      ></app-round-plan-detail-configuration>
+    </div>
+
+    <!-- STEP 3 -->
+    <div [hidden]="currentStep !== 2">
+      <app-pdf-builder
+        [moduleName]="'OPERATOR_ROUNDS'"
+        (publishedEvent)="publishedEventHandler()"
+      ></app-pdf-builder>
+    </div>
+  </div>
+</app-dynamic-stepper>

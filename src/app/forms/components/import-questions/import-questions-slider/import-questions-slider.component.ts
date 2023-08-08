@@ -28,6 +28,7 @@ export class ImportQuestionsSliderComponent implements OnInit {
   @Input() title;
 
   @Output() cancelSliderEvent: EventEmitter<boolean> = new EventEmitter();
+  @Output() backEvent: EventEmitter<boolean> = new EventEmitter();
   importSectionQuestions: SectionQuestions[] = [];
   sectionIndexes$: Observable<any>;
   sectionIndexes: any;
@@ -80,9 +81,17 @@ export class ImportQuestionsSliderComponent implements OnInit {
     importFormData = importFormData.filter((page) => page.sections.length);
     importFormData.forEach((page) =>
       page.sections.forEach((section) => {
-        const questions = section.questions.filter(
-          (question) => question.sectionId === section.id
-        );
+        delete section.counter;
+        delete section.isImported;
+        delete section.templateId;
+        delete section.externalSectionId;
+        const questions = [];
+        section.questions.forEach((question) => {
+          if (question.sectionId === section.id) {
+            delete question.id;
+            questions.push(question);
+          }
+        });
         this.importSectionQuestions = [
           ...this.importSectionQuestions,
           { section, questions }
@@ -131,6 +140,10 @@ export class ImportQuestionsSliderComponent implements OnInit {
 
   cancel() {
     this.cancelSliderEvent.emit(false);
+  }
+
+  back() {
+    this.backEvent.emit(false);
   }
 
   updateAllChecked(checked, question, section, page) {

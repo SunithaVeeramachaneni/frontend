@@ -2,9 +2,9 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable no-underscore-dangle */
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { format, formatDistance } from 'date-fns';
-import { from, Observable, of, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
 import { map, mergeMap, toArray } from 'rxjs/operators';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
@@ -17,8 +17,7 @@ import {
   SearchEvent,
   TableEvent,
   Count,
-  InspectionDetail,
-  FormMetadata
+  InspectionDetail
 } from './../../../interfaces';
 
 import {
@@ -29,12 +28,10 @@ import {
 import { ToastService } from 'src/app/shared/toast';
 import { isJson } from '../utils/utils';
 import { oppositeOperatorMap } from 'src/app/shared/utils/fieldOperatorMappings';
-import { ResponseSetService } from '../../master-configurations/response-set/services/response-set.service';
-import { TranslateService } from '@ngx-translate/core';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
-import { isEmpty, omitBy } from 'lodash-es';
-
-const limit = 10000;
+import { cloneDeep, isEmpty, omitBy } from 'lodash-es';
+import { Column } from '@innovapptive.com/dynamictable/lib/interfaces';
+import { SseService } from 'src/app/shared/services/sse.service';
 
 const VALIDFROM = '20221002135512';
 const VALIDTO = '99991230183000';
@@ -46,15 +43,48 @@ const APPNAME = 'MWORKORDER';
 export class RaceDynamicFormService {
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
+  attachmentsMapping$ = new BehaviorSubject<any>({});
+  pdfMapping$ = new BehaviorSubject<any>({});
   embeddedFormId;
 
   constructor(
-    private responseSetService: ResponseSetService,
     private toastService: ToastService,
     private appService: AppService,
-    private translate: TranslateService
+    private sseService: SseService,
+    private zone: NgZone
   ) {}
 
+  /**
+   * Get event source (SSE)
+   */
+  private getServerSentEvent(
+    apiUrl: string,
+    urlString: string,
+    data: FormData
+  ): Observable<any> {
+    return new Observable((observer) => {
+      const eventSource = this.sseService.getEventSourceWithPost(
+        apiUrl,
+        urlString,
+        data
+      );
+      // Launch query
+      eventSource.stream();
+      // on answer from message listener
+      eventSource.onmessage = (event) => {
+        this.zone.run(() => {
+          observer.next(JSON.parse(event.data));
+        });
+      };
+      eventSource.onerror = (event) => {
+        this.zone.run(() => {
+          if (event.data) {
+            observer.error(JSON.parse(event.data));
+          }
+        });
+      };
+    });
+  }
   createTags$ = (
     tags: any,
     info: ErrorInfo = {} as ErrorInfo
@@ -78,7 +108,21 @@ export class RaceDynamicFormService {
       dataset,
       info
     );
-
+  uploadAttachments$(file, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
+    return this.appService._postData(
+      environment.rdfApiUrl,
+      `upload-attachments`,
+      file,
+      info
+    );
+  }
+  getAttachmentsById$(id, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
+    return this.appService._getResp(
+      environment.rdfApiUrl,
+      `upload-attachments/${id}`,
+      info
+    );
+  }
   getDataSetsByType$ = (
     datasetType: string,
     info: ErrorInfo = {} as ErrorInfo
@@ -177,7 +221,8 @@ export class RaceDynamicFormService {
       createdBy: filterData?.createdBy,
       lastModifiedOn: filterData?.lastModifiedOn,
       plantId: filterData?.plant,
-      formType: filterData?.formType
+      formType: filterData?.formType,
+      publishedBy: filterData.publishedBy
     };
     const params = new URLSearchParams({
       next: queryParams.next,
@@ -209,10 +254,6 @@ export class RaceDynamicFormService {
     params.set(
       'formStatus',
       filterData && filterData.status ? filterData.status : ''
-    );
-    params.set(
-      'modifiedBy',
-      filterData && filterData.modifiedBy ? filterData.modifiedBy : ''
     );
     params.set(
       'lastModifiedOn',
@@ -256,6 +297,7 @@ export class RaceDynamicFormService {
       | 'isPublic'
       | 'plantId'
       | 'pdfTemplateConfiguration'
+      | 'instructions'
       | 'additionalDetails'
     >
   ) {
@@ -271,6 +313,7 @@ export class RaceDynamicFormService {
       isPublic: formListQuery.isPublic,
       plantId: formListQuery.plantId,
       additionalDetails: formListQuery.additionalDetails,
+      instructions: formListQuery.instructions,
       isArchived: false,
       isDeleted: false
     });
@@ -306,11 +349,17 @@ export class RaceDynamicFormService {
       'arraybuffer'
     );
 
-  getFormById$(id: string) {
+  getFormById$(
+    id: string,
+    queryParams: { includeAttachments: boolean },
+    info: ErrorInfo = {} as ErrorInfo
+  ) {
     return this.appService._getRespById(
       environment.rdfApiUrl,
       `forms/list/`,
-      id
+      id,
+      info,
+      queryParams.toString()
     );
   }
 
@@ -400,13 +449,13 @@ export class RaceDynamicFormService {
 
   getValidationExpression(questionId, question, questions, logics): any {
     let expression = '';
-    let validationMessage = '';
+    const validationMessage = '';
     let notificationExpression = '';
     let globalIndex = 0;
     let askQuestions = [];
     let evidenceQuestions = [];
     let notificationGlobalIndex = 0;
-    const logicsT = JSON.parse(JSON.stringify(logics));
+    const logicsT = cloneDeep(logics);
     const questionLogics = logicsT.filter(
       (logic) => logic.questionId === questionId
     );
@@ -527,6 +576,22 @@ export class RaceDynamicFormService {
       .pipe(map((res) => res.items));
   }
 
+  fetchAllFormsList$() {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('searchTerm', '');
+    params.set('limit', '2000000');
+    params.set('next', '');
+    params.set('fetchType', '');
+    params.set('formStatus', 'All');
+    params.set('isArchived', 'false');
+    return this.appService
+      ._getResp(environment.rdfApiUrl, 'forms?' + params.toString(), {
+        displayToast: true,
+        failureResponse: {}
+      })
+      .pipe(map((res) => this.formatGetRdfFormsResponse(res)));
+  }
+
   getAuthoredFormDetail$(formlistID: string) {
     return from(
       this.appService._getResp(
@@ -563,7 +628,8 @@ export class RaceDynamicFormService {
           lastPublishedBy: p.lastPublishedBy,
           author: p.author,
           publishedDate: p.publishedDate ? p.publishedDate : '',
-          isArchivedAt: p?.isArchivedAt ? p?.isArchivedAt : ''
+          isArchivedAt: p?.isArchivedAt ? p?.isArchivedAt : '',
+          archivedBy: p.archivedBy ? p.archivedBy : ''
         })) || [];
     return {
       count: resp?.count,
@@ -657,7 +723,6 @@ export class RaceDynamicFormService {
     params.set('next', '');
     params.set('fetchType', 'load');
     params.set('isArchived', 'true');
-    params.set('modifiedBy', '');
     params.set('formStatus', '');
     params.set('authoredBy', '');
     params.set('lastModifiedOn', '');
@@ -801,18 +866,22 @@ export class RaceDynamicFormService {
         map((response) => (response === null ? inspectionDetail : response))
       );
 
-  fetchAllTemplates$ = () =>
+  fetchTemplates$ = (filter) =>
     this.appService
       ._getResp(
         environment.rdfApiUrl,
         'templates',
         { displayToast: true, failureResponse: {} },
         {
+          ...filter,
           limit: 0,
           skip: 0
         }
       )
       .pipe(map((data) => this.formatGetRdfFormsResponse({ items: data })));
+
+  fetchAllTemplateListNames$ = () =>
+    this.appService._getResp(environment.rdfApiUrl, 'templates/name');
 
   fetchTemplateByName$ = (name: string) =>
     this.appService
@@ -841,7 +910,7 @@ export class RaceDynamicFormService {
       )
       .pipe(map((data) => this.formatGetRdfFormsResponse({ items: data })));
 
-  createTemplate$ = (templateMetadata: FormMetadata) =>
+  createTemplate$ = (templateMetadata) =>
     this.appService._postData(environment.rdfApiUrl, 'templates', {
       data: templateMetadata
     });
@@ -868,6 +937,15 @@ export class RaceDynamicFormService {
       }
     );
 
+  archiveDeleteTemplate$ = (templateId: string, templateMetadata: any) =>
+    this.appService.patchData(
+      environment.rdfApiUrl,
+      `templates/${templateId}/archive-delete`,
+      {
+        data: templateMetadata
+      }
+    );
+
   deleteTemplate$ = (templateId: string) =>
     this.appService._removeData(
       environment.rdfApiUrl,
@@ -881,11 +959,11 @@ export class RaceDynamicFormService {
     } = form;
     let payloads = [];
     pages.forEach((page) => {
-      let { questions, sections, logics } = page;
+      const { questions, sections, logics } = page;
 
       sections.forEach((section) => {
         const { name: sectionName, position: sectionPosition } = section;
-        let questionsBySection = questions.filter(
+        const questionsBySection = questions.filter(
           (item) => item.sectionId === section.id
         );
 
@@ -1032,7 +1110,7 @@ export class RaceDynamicFormService {
   }
 
   getNotificationInfo(question, logics) {
-    let notificationInfo = [];
+    const notificationInfo = [];
 
     const questionLogics = logics.filter(
       (logic) => logic.questionId === question.id
@@ -1256,4 +1334,136 @@ export class RaceDynamicFormService {
       info
     );
   };
+
+  getAffectedFormList$(queryParams: {
+    templateId: string;
+    limit: number;
+    nextToken: string;
+    searchTerm?: string;
+    fetchType?: string;
+  }) {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('templateId', queryParams?.templateId);
+    params.set('limit', queryParams?.limit.toString());
+    params.set('searchTerm', queryParams?.searchTerm);
+    params.set('nextToken', queryParams?.nextToken);
+    params.set('fetchType', queryParams?.fetchType);
+    return this.appService._getResp(
+      environment.rdfApiUrl,
+      'template-reference/forms?' + params.toString()
+    );
+  }
+
+  getFormTemplateUsage$ = (payload: any): Observable<any> =>
+    this.appService._getResp(
+      environment.rdfApiUrl,
+      'template-reference/' + `${payload.templateId}/` + `${payload.formId}`
+    );
+
+  updateFormTemplateUsageByFormId$ = (data: any): Observable<any> =>
+    this.appService.patchData(
+      environment.rdfApiUrl,
+      'template-reference/formId',
+      data
+    );
+  copyTemplateReferenceByFormId$ = (data: any): Observable<any> =>
+    this.appService._postData(
+      environment.rdfApiUrl,
+      'template-reference/copy',
+      data
+    );
+  deleteTemplateReferenceByFormId$ = (formId: any): Observable<any> =>
+    this.appService._removeData(
+      environment.rdfApiUrl,
+      'template-reference/formId/' + formId
+    );
+  downloadSampleFormTemplate = (
+    formType: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> => {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('formType', formType.toString());
+
+    return this.appService.downloadFile(
+      environment.rdfApiUrl,
+      'forms/download/sample-template?' + params.toString(),
+      info,
+      true
+    );
+  };
+
+  downloadFailure = (
+    body: { rows: any },
+    formType: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ) => {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('formType', formType.toString());
+
+    return this.appService.downloadFile(
+      environment.rdfApiUrl,
+      'forms/download/failure?' + params.toString(),
+      info,
+      false,
+      body
+    );
+  };
+  updateAdhocFormOnTemplateChange$ = (
+    templateId: string,
+    formIds: [string]
+  ): Observable<any> => {
+    const formData = new FormData();
+    formData.append('templateId', templateId);
+    formData.append('formIds', JSON.stringify(formIds));
+    return this.getServerSentEvent(
+      environment.rdfApiUrl,
+      'templates/updateAdhocForms',
+      formData
+    );
+  };
+  updateEmbeddedFormOnTemplateChange$ = (
+    templateId: string,
+    formIds: [string]
+  ): Observable<any> => {
+    const formData = new FormData();
+    formData.append('templateId', templateId);
+    formData.append('formIds', JSON.stringify(formIds));
+    return this.getServerSentEvent(
+      environment.rdfApiUrl,
+      'templates/updateEmbeddedForms',
+      formData
+    );
+  };
+
+  updateConfigOptionsFromColumns(columns: Partial<Column>[]) {
+    const allColumns: Column[] = columns.map((column, index) => {
+      const defaultColumn: Column = {
+        id: '',
+        displayName: '',
+        type: '',
+        controlType: '',
+        order: 0,
+        showMenuOptions: false,
+        subtitleColumn: '',
+        searchable: false,
+        sortable: false,
+        hideable: false,
+        visible: false,
+        movable: false,
+        stickable: false,
+        sticky: false,
+        groupable: false,
+        titleStyle: {},
+        subtitleStyle: {},
+        hasPreTextImage: false,
+        hasPostTextImage: false
+      };
+      return {
+        ...defaultColumn,
+        ...column,
+        order: index + 1
+      };
+    });
+    return allColumns;
+  }
 }
