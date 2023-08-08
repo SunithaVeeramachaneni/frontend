@@ -53,16 +53,17 @@
   .response-list {
     border-bottom: 1px solid #e0e0e0;
     height: 45px;
+    position: relative;
   }
 
   .response-drop-list {
-    overflow-y: auto;
-    max-height: calc(100vh - 300px);
+    margin-bottom: 20px;
   }
 
   .input-forms {
     border: none;
     width: 90%;
+    margin-bottom: -23px;
 
     &:focus {
       border: none;
@@ -139,6 +140,11 @@
     background-color: $blue-main;
     color: $white;
   }
+}
+
+::ng-deep .error_div {
+  position: absolute;
+  bottom: -30px;
 }
 
 .global_response_name_input {

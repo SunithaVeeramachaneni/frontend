@@ -100,6 +100,19 @@
             formControlName="description"
           >
           </textarea>
+          <mat-error
+            id="addEditDescriptionError"
+            *ngIf="processValidationErrors('description')"
+            class="m-t-5 error-fields"
+          >
+            {{
+              errors.description.name
+                | translate
+                  : {
+                      name: 'description' | translate
+                    }
+            }}
+          </mat-error>
         </mat-form-field>
       </p>
       <p class="m-0">

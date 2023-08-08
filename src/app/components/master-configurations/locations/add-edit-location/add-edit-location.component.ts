@@ -104,7 +104,7 @@ export class AddEditLocationComponent implements OnInit {
         WhiteSpaceValidator.trimWhiteSpace
       ]),
       model: '',
-      description: '',
+      description: new FormControl('', [WhiteSpaceValidator.trimWhiteSpace]),
       parentId: '',
       plantsID: new FormControl('', [Validators.required])
     });

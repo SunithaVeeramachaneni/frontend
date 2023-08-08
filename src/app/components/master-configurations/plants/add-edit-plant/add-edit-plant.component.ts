@@ -162,8 +162,8 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
       ]),
       timeZone: new FormControl('', [Validators.required]),
       shifts: new FormControl('', []),
-      label: '',
-      field: ''
+      label: new FormControl('', [WhiteSpaceValidator.trimWhiteSpace]),
+      field: new FormControl('', [WhiteSpaceValidator.trimWhiteSpace])
     });
     this.plantForm.get('state').disable();
     this.plantForm.get('timeZone').disable();

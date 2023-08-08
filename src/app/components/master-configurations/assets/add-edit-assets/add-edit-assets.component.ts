@@ -125,8 +125,8 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
         WhiteSpaceValidator.whiteSpace,
         WhiteSpaceValidator.trimWhiteSpace
       ]),
-      model: '',
-      description: '',
+      model: new FormControl('', [WhiteSpaceValidator.trimWhiteSpace]),
+      description: new FormControl('', [WhiteSpaceValidator.trimWhiteSpace]),
       parentType: 'location',
       parentId: '',
       locationId: '',

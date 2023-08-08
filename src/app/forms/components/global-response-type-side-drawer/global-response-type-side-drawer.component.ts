@@ -35,6 +35,7 @@ import { ToastService } from 'src/app/shared/toast';
 
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { Subject, Subscription, timer } from 'rxjs';
+import { ValidationError } from 'src/app/interfaces';
 
 @Component({
   selector: 'app-global-response-type-side-drawer',
@@ -53,6 +54,7 @@ export class GlobalResponseTypeSideDrawerComponent
   isCreate = false;
   public isViewMode: boolean;
   public responseForm: FormGroup;
+  errors: ValidationError = {};
   public isResponseFormUpdated = false;
   public globalResponse: any;
   private globalResponseSubscription: Subscription;
@@ -81,7 +83,7 @@ export class GlobalResponseTypeSideDrawerComponent
         Validators.minLength(3),
         WhiteSpaceValidator.trimWhiteSpace
       ]),
-      description: new FormControl(''),
+      description: new FormControl('', [WhiteSpaceValidator.trimWhiteSpace]),
       responses: this.fb.array([])
     });
     this.responseForm.valueChanges
@@ -121,7 +123,10 @@ export class GlobalResponseTypeSideDrawerComponent
         items.forEach((item) => {
           this.responses.push(
             this.fb.group({
-              title: [item.title, [Validators.required]],
+              title: [
+                item.title,
+                [Validators.required, WhiteSpaceValidator.trimWhiteSpace]
+              ],
               color: ''
             })
           );
@@ -141,7 +146,7 @@ export class GlobalResponseTypeSideDrawerComponent
   addResponse(index: number) {
     this.responses.push(
       this.fb.group({
-        title: ['', [Validators.required]],
+        title: ['', [Validators.required, WhiteSpaceValidator.trimWhiteSpace]],
         color: ''
       })
     );
@@ -194,6 +199,40 @@ export class GlobalResponseTypeSideDrawerComponent
       return this.globalResponse?.description || 'Untitled Description';
     }
   };
+
+  processValidationErrors(controlName: string): any {
+    const touched = this.responseForm.get(controlName).touched;
+    const errors = this.responseForm.get(controlName).errors;
+    this.errors[controlName] = null;
+    if (touched && errors) {
+      Object.keys(errors).forEach((messageKey) => {
+        this.errors[controlName] = {
+          name: messageKey,
+          length: errors[messageKey]?.requiredLength
+        };
+      });
+    }
+    return !touched || this.errors[controlName] === null ? false : true;
+  }
+
+  processValidationErrorsFormArrays(controlName: string, index): any {
+    const formControlName = this.responseForm.get(controlName);
+    const formArray = this.responseForm.get(controlName) as FormArray;
+    const formControl: any = formArray?.at(index);
+    const touched = formControl?.controls.title.touched;
+
+    const errors = formControl?.controls.title.errors;
+    this.errors[controlName] = null;
+    if (touched && errors) {
+      Object.keys(errors).forEach((messageKey) => {
+        this.errors[controlName] = {
+          name: messageKey,
+          length: errors[messageKey]?.requiredLength
+        };
+      });
+    }
+    return !touched || this.errors[controlName] === null ? false : true;
+  }
 
   submitResponseSet = () => {
     const responseSetPayload = {
