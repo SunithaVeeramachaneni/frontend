@@ -35,7 +35,7 @@
 }
 
 .categories-button:hover {
-  background-color: $lavendar;
+  background-color: $blue23;
 }
 
 .categories-icon {
@@ -115,7 +115,7 @@
   font-size: 85%;
   line-height: 20px;
   letter-spacing: 0.25px;
-  color: $gray-text;
+  color: $gray4;
   margin-bottom: 0px;
 }
 
@@ -126,7 +126,7 @@
   margin: 0 auto;
   border-radius: 5px;
   padding: 10px;
-  border: 1px dashed #666;
+  border: 1px dashed $gray53;
   margin-bottom: 20px;
 
   font-size: 120%;
@@ -152,7 +152,7 @@
 }
 
 .mat-menu-item:hover {
-  background-color: $lavendar;
+  background-color: $blue23;
 }
 
 button:focus {
@@ -168,12 +168,12 @@ button:focus {
   border-radius: 7px;
 }
 .card:hover {
-  background-color: $lavendar;
+  background-color: $blue23;
   opacity: 1;
 }
 
 .highlight {
-  background-color: $lavendar;
+  background-color: $blue23;
   opacity: 1;
 }
 
@@ -188,7 +188,7 @@ button:focus {
   margin: 0 20px;
   border-radius: 5px;
   padding: 10px;
-  border: 1px dashed #666;
+  border: 1px dashed $gray53;
   font-weight: 600;
 }
 

@@ -39,7 +39,7 @@
   border-radius: 15px;
   &:hover {
     cursor: pointer;
-    background: colors.$hover-bg;
+    background: colors.$gray35;
   }
 }
 
@@ -132,7 +132,7 @@
   }
   .attachmentItem {
     font-size: 90%;
-    background: colors.$attachment-meeting-bg;
+    background: colors.$green6;
     border-radius: 5px;
     width: 99% !important;
     .attachmentTitle {
@@ -209,11 +209,11 @@
   cursor: pointer;
   &:hover {
     cursor: pointer;
-    background: colors.$hover-bg;
+    background: colors.$gray35;
   }
 }
 .selectedUser {
-  background: colors.$active-bg;
+  background: colors.$blue22;
 }
 
 .centerText {

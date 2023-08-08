@@ -2,7 +2,7 @@
 @import 'modal';
 @import 'custom';
 @import 'ghost-loading';
-@import 'colors';
+@import './colors.scss';
 
 // Quill
 @import '~quill/dist/quill.core.css';
@@ -41,12 +41,12 @@ li.breadcrumb-item.active span {
 }
 
 .mat-select-panel .mat-option.mat-selected:not(.mat-option-multiple) {
-  background: $lavendar;
+  background: $blue23;
 }
 
 .mat-primary .mat-option.mat-selected:not(.mat-option-disabled) {
   color: rgba(0, 0, 0, 0.87);
-  background: $lavendar;
+  background: $blue23;
 }
 
 .mat-chip-list-wrapper {
@@ -352,7 +352,7 @@ textarea.mat-input-element {
 }
 
 .copy-ins .modal-body .mat-tab-label:hover {
-  background-color: $lavendar !important;
+  background-color: $blue23 !important;
 }
 
 .copy-ins .modal-body .mat-tab-label-active:hover {
@@ -432,7 +432,7 @@ button.mat-menu-item {
   }
 
   .mat-form-field-appearance-outline .mat-form-field-outline {
-    background-color: $border-color-gray;
+    background-color: $gray41-gray;
     border-radius: 4px;
   }
 
@@ -534,12 +534,12 @@ button.mat-menu-item {
 
 .mat-checkbox-checked.mat-accent .mat-checkbox-background,
 .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background {
-  background-color: #637bfe !important;
+  background-color: $blue-secondary !important;
 }
 
 .mat-checkbox-checked.mat-accent.mat-checkbox-disabled .mat-checkbox-background,
 .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background {
-  background-color: #979797 !important;
+  background-color: $gray16 !important;
 }
 
 .actions-column {
@@ -617,7 +617,7 @@ button.mat-menu-item {
 }
 
 .full-screen-modal .mat-dialog-container {
-  background-color: #fafafa;
+  background-color: $gray16;
   width: 100%;
   height: 100%;
   overflow: hidden;

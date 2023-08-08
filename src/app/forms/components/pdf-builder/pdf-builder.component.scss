@@ -6,7 +6,7 @@
     height: 50px;
     gap: 10px;
     background: $white;
-    border-bottom: 1px solid $border-color;
+    border-bottom: 1px solid $gray41;
   }
   .dialogContainer {
     display: flex;
@@ -99,7 +99,7 @@
   font-weight: 700;
   font-size: 120%;
   letter-spacing: 0.15px;
-  color: $text-color;
+  color: $gray-bg;
   margin-left: 10px;
   position: relative;
   top: -2px;
@@ -185,7 +185,7 @@ ul {
 }
 
 .publish-btn:disabled {
-  background-color: $disabled-color;
+  background-color: $gray34;
 }
 
 .publish-btn-icon {
@@ -230,7 +230,7 @@ ul {
 }
 .pdfPageContainer {
   margin: 10px 0px;
-  box-shadow: 0px 0px 16.253px $box-shadow;
+  box-shadow: 0px 0px 16.253px $black9;
 }
 
 ::-webkit-scrollbar {
@@ -261,7 +261,7 @@ ul {
 .discribe {
   font-weight: 400;
   font-size: 8pt;
-  color: $gray-text;
+  color: $gray4;
 }
 
 .details {
@@ -272,7 +272,7 @@ ul {
 .project-info {
   display: flex;
   justify-content: space-between;
-  box-shadow: 0px 0.5px 0px 0px $box-shadow1;
+  box-shadow: 0px 0.5px 0px 0px $gray46;
   padding-left: 5px;
 }
 
@@ -342,7 +342,7 @@ ul {
   margin: 5px 5px;
 }
 .issuesHead {
-  background: $issue-bg;
+  background: $red5;
   color: $white;
   display: flex;
   justify-content: space-between;
@@ -371,7 +371,7 @@ ul {
   margin-bottom: 15px;
 }
 .issuesRow {
-  border: 1px solid $issue-border;
+  border: 1px solid $black10;
   min-height: 800px;
 }
 .roundId {
@@ -432,15 +432,15 @@ ul {
 }
 
 .issuesContainer {
-  border: 1px solid $issue-border;
+  border: 1px solid $black10;
 }
 .issueCell {
-  border: 1px solid $issue-border;
+  border: 1px solid $black10;
 }
 .issueHead {
-  background: $issue-background;
+  background: $red7;
   padding: 10px;
-  color: $issue-bg-text;
+  color: $red6;
 }
 
 .issueBody {
@@ -458,7 +458,7 @@ ul {
 }
 
 .tasksHead {
-  background: $task-bg;
+  background: $blue29;
   padding: 10px;
   color: $white;
   display: flex;
@@ -468,7 +468,7 @@ ul {
 }
 
 .actionsHead {
-  background: $action-bg;
+  background: $purple1;
   padding: 10px;
   color: $white;
   display: flex;
@@ -477,10 +477,10 @@ ul {
   padding: 10px;
 }
 .actionCell {
-  border: 1px solid $issue-border;
+  border: 1px solid $black10;
 }
 .actionHead {
-  background: $actions-color;
+  background: $gray49;
   padding: 10px;
   margin: 10px 10px 0px 10px;
 }
@@ -502,7 +502,7 @@ ul {
   padding: 10px;
   height: 55.08px;
   background: $blue9;
-  border-bottom: 1.01206px solid $border-color;
+  border-bottom: 1.01206px solid $gray41;
   margin: 0px 10px;
 }
 .nodeLeft {
@@ -551,7 +551,7 @@ ul {
   padding: 6px 10px;
   height: 26px;
   background: $white4;
-  border-bottom: 1.01206px solid $border-color;
+  border-bottom: 1.01206px solid $gray41;
   justify-content: space-between;
   margin: 10px;
 }
@@ -618,7 +618,7 @@ ul {
   letter-spacing: 0.107276px;
   color: $gray11;
   padding: 5.72139px 0 5.72139px 11.4428px;
-  border-bottom: 0.715174px solid $border-color;
+  border-bottom: 0.715174px solid $gray41;
 }
 .sectionQuestionsContainer {
   padding: 10px;
@@ -666,7 +666,7 @@ ul {
 
   td,
   th {
-    border: 1px solid $table-bg;
+    border: 1px solid $gray50;
     text-align: left;
     padding: 8px;
   }
@@ -678,28 +678,28 @@ ul {
 
 #issue-color {
   color: $white;
-  background-color: $issue-raised;
+  background-color: $red5;
 }
 
 .resolved-color {
   color: $white;
-  background-color: $resolved;
+  background-color: $green7;
 }
 
 .bg-yellow {
-  background-color: $yellow-bg;
+  background-color: $yellow7;
   padding: 6px 8px;
   border-radius: 4px;
 }
 
 #action-color {
   color: $white;
-  background-color: $action-raised;
+  background-color: $purple1;
 }
 
 .task-color {
   color: $white;
-  background-color: $task-bg;
+  background-color: $blue29;
 }
 
 .issueColumns {
@@ -731,11 +731,11 @@ ul {
 
 .status-color {
   color: $black;
-  background-color: $border-color;
+  background-color: $gray41;
   padding: 4px 11px 4px 11px;
   border-radius: 20px;
 }
 
 .priority-color {
-  color: $issue-bg;
+  color: $red5;
 }

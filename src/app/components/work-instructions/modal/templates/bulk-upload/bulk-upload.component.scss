@@ -49,7 +49,7 @@ ul.bulk-upload-instructions-list li {
   font-size: 100%;
   line-height: 24px;
   letter-spacing: 0.3px;
-  color: $gray-text;
+  color: $gray4;
   background-color: transparent;
   border: none;
   margin-right: 10px;
@@ -84,7 +84,7 @@ ul.bulk-upload-instructions-list li {
   justify-content: flex-end;
   padding: 15px 0px 0px 0px;
   height: 35px;
-  border-top: 1px solid #c8ced3;
+  border-top: 1px solid $gray31;
   border-bottom-right-radius: 0.3rem;
   border-bottom-left-radius: 0.3rem;
   width: 450px;
@@ -93,7 +93,7 @@ ul.bulk-upload-instructions-list li {
 .delete-forever-icon {
   position: relative;
   top: 6px;
-  color: $gray-text;
+  color: $gray4;
   cursor: pointer;
 }
 .illustration_bulkupload {

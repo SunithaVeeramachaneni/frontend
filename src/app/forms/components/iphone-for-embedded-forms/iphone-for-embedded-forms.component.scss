@@ -179,7 +179,7 @@
   overflow-y: auto;
   overflow-x: hidden;
   height: 360px;
-  border-bottom: 1px solid $border-color;
+  border-bottom: 1px solid $gray41;
 }
 
 @media only screen and (max-width: 5120px) {
@@ -249,7 +249,7 @@
 }
 
 .iphone-header {
-  background: $iphone-header;
+  background: $blue30;
   border-top-right-radius: 23px;
   border-top-left-radius: 23px;
   height: 100px;
@@ -354,8 +354,8 @@
 }
 
 .btns {
-  background-color: $iphone-footer;
-  border: $iphone-footer;
+  background-color: $blue31;
+  border: $blue31;
   color: $white;
   padding: 5px;
   height: 30px;

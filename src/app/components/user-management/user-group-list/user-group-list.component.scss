@@ -6,7 +6,7 @@
 }
 
 .usergroup-header {
-  border-bottom: 1px solid $border-color;
+  border-bottom: 1px solid $gray41;
   height: 50px;
   display: flex;
   justify-content: space-between;
@@ -52,7 +52,7 @@
 }
 
 .add-btn:hover {
-  background-color: $add-hover-bg;
+  background-color: $gray48;
 }
 
 .add-btn-icon {
@@ -110,7 +110,7 @@
 }
 
 .usergroup-left-panel {
-  border-right: 1px solid $border-color;
+  border-right: 1px solid $gray41;
 }
 
 .heading {
@@ -133,7 +133,7 @@
 
 .copy-role-btn {
   color: $blue-main;
-  border: 1px solid $disabled-color;
+  border: 1px solid $gray34;
   float: right;
   margin: 8px 10px 0 0;
   height: 29px;
@@ -187,17 +187,17 @@
 
 .usergroup-list {
   cursor: pointer;
-  border-bottom: 1px solid $border-bottom;
+  border-bottom: 1px solid $gray51;
 }
 
 .usergroup-list:first-child {
-  border-top: 1px solid $border-bottom;
+  border-top: 1px solid $gray51;
 }
 
 .selected-usergroup-list {
   background: rgba(61, 90, 254, 0.08);
   .usergroup-name {
-    color: $selected-usergroup;
+    color: $purple;
   }
 }
 

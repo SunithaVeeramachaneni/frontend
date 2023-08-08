@@ -131,7 +131,7 @@
   margin: 0 20px;
   border-radius: 5px;
   padding: 10px;
-  border: 1px dashed #666;
+  border: 1px dashed $gray53;
   font-weight: 600;
 }
 
@@ -188,7 +188,7 @@
   font-size: 95%;
   line-height: 10px;
   letter-spacing: 0.25px;
-  color: $gray-text;
+  color: $gray4;
   text-overflow: ellipsis;
   outline: none;
 }
@@ -199,7 +199,7 @@
   font-size: 95%;
   text-align: right;
   letter-spacing: 0.25px;
-  color: $gray-text;
+  color: $gray4;
   float: right;
 }
 
@@ -253,7 +253,7 @@
 }
 
 .recents-favorites-list .chip {
-  background: #cccccc;
+  background: $gray44;
   padding: 7px;
   border-radius: 4px;
   font-size: 80%;

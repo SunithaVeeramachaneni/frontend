@@ -6,7 +6,7 @@
     .page-header {
       background-color: $white2;
       padding: 8px;
-      border-bottom: 1px solid $disabled-color;
+      border-bottom: 1px solid $gray34;
       .page-name {
         display: flex;
         justify-content: center;
@@ -23,7 +23,7 @@
       }
       hr {
         height: 3px;
-        background-color: $disabled-color;
+        background-color: $gray34;
         border: none;
         margin-bottom: 12px;
       }

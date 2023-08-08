@@ -27,7 +27,7 @@
   position: relative;
   left: -15px;
   top: -10px;
-  color: $disabled-color;
+  color: $gray34;
 }
 
 .mat-icon-star {
@@ -64,14 +64,14 @@ thead th {
   border-top: none;
   text-align: left;
   font-weight: 500;
-  color: #000;
+  color: $black;
   font-size: 110%;
 }
 
 tbody th {
   text-align: left;
   font-weight: 500;
-  color: #000;
+  color: $black;
   font-size: 110%;
 }
 
@@ -94,7 +94,7 @@ tbody tr td:nth-child(5) {
 .table th,
 .table td {
   vertical-align: middle;
-  border-bottom: 1px solid #c8ced3;
+  border-bottom: 1px solid $gray31;
 
   padding: 10px;
 }

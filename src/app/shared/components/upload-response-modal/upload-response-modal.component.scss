@@ -53,7 +53,7 @@
   }
 
   ::ng-deep .mat-progress-bar-buffer {
-    background-color: $in-progress-light;
+    background-color: $gray43;
   }
 
   .review-text {
@@ -83,21 +83,21 @@
     }
 
     .success-box {
-      background-color: $submitted-bg-light;
+      background-color: $gray43;
     }
 
     .failure-box {
-      background-color: $light-orange;
+      background-color: $red4;
     }
 
     .only-success-message {
       width: 100%;
-      background-color: $submitted-bg-light;
+      background-color: $gray43;
     }
 
     .only-failure-message {
       width: 100%;
-      background-color: $light-orange;
+      background-color: $red4;
     }
   }
 }

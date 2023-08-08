@@ -3,7 +3,7 @@
 .widgets {
   width: 300px;
   background: $white;
-  border: 1px solid $border-color;
+  border: 1px solid $gray41;
   border-radius: 5px;
   padding: 15px 0;
   text-align: center;
@@ -11,7 +11,7 @@
 
   .widgets-title {
     letter-spacing: 0.25px;
-    color: $text-color;
+    color: $gray-bg;
     font-size: 120%;
     margin-left: 12px;
     position: relative;

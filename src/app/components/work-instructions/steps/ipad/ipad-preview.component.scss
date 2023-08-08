@@ -80,7 +80,7 @@
 }
 
 .ipad-view-default-content p {
-  color: $gray-text;
+  color: $gray4;
   font-size: 120%;
 
   padding: 0 10px;
@@ -501,13 +501,13 @@
 }
 
 .icon-background {
-  background: $border-color-gray;
+  background: $gray41-gray;
   color: $blue11;
   width: 35px;
   height: 35px;
   padding-top: 5px;
   border-radius: 50%;
-  background: $border-color-gray;
+  background: $gray41-gray;
   color: $blue11;
   width: 30px;
   height: 30px;
@@ -526,7 +526,7 @@
 .prev-button-ipad {
   padding-right: 12px;
   border: none;
-  background-color: $border-color-gray;
+  background-color: $gray41-gray;
   color: $blue11;
   border-radius: 5px;
   white-space: nowrap;
@@ -539,8 +539,8 @@
 .allsteps-button {
   padding: 0px 18px 0px 10px;
   border: none;
-  background-color: $border-color-gray;
-  color: #3678af;
+  background-color: $gray41-gray;
+  color: $blue11;
   border-radius: 5px;
   white-space: nowrap;
   height: 30px;
@@ -549,7 +549,7 @@
 .next-button-ipad {
   padding-left: 12px;
   border: none;
-  background-color: #3678af;
+  background-color: $blue11;
   color: white;
   border-radius: 5px;
   white-space: nowrap;
@@ -729,13 +729,13 @@
 }
 
 .btn-outline-blue:disabled {
-  color: #b2b2b2 !important;
-  border: 1px solid #b2b2b2 !important;
+  color: $gray20 !important;
+  border: 1px solid $gray20 !important;
 }
 
 .start-with-voice-btn {
-  color: #4a85b6;
-  background: $border-color-gray;
+  color: $blue19;
+  background: $gray41-gray;
   display: inline-flex;
   border: none;
   padding: 4px 10px 2px 23px;
@@ -745,7 +745,7 @@
 }
 
 .start-btn {
-  background-color: #3678af;
+  background-color: $blue11;
   color: $white;
   border: none;
   padding: 3px 0px 0px 0px;
@@ -766,7 +766,7 @@
   font-size: 130%;
 }
 .header-tab {
-  background-color: $border-color-gray;
+  background-color: $gray41-gray;
   border-radius: 5px;
   border-left: 5px solid white;
   border-right: 5px solid white;
@@ -805,7 +805,7 @@
 .header-tab-data {
   font-size: 80%;
   text-align: left;
-  color: #484a4d;
+  color: $gray27;
   pointer-events: none;
   padding: 0 10px;
 }
@@ -817,13 +817,13 @@
 
 .header-tab-hr {
   margin: 6px 0px 0px 0px;
-  border: 0.5px solid #d5d5d5;
+  border: 0.5px solid $gray33;
   height: 0px;
 }
 
 .header-tab-hr-m0 {
   margin-top: 5px;
-  border: 0.5px solid #d5d5d5;
+  border: 0.5px solid $gray33;
   height: 0px;
 }
 
@@ -831,7 +831,7 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background-color: $border-color-gray;
+  background-color: $gray41-gray;
   border: none;
   font-size: 80%;
   position: relative;
@@ -881,5 +881,5 @@
 
 .hr-line {
   margin-left: 30px;
-  border: 1px solid #cccccc;
+  border: 1px solid $gray44;
 }

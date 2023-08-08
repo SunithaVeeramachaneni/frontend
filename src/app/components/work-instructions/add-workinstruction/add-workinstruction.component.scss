@@ -17,12 +17,12 @@
 
 input[type='text']:focus {
   outline: none;
-  caret-color: #007aff;
+  caret-color: $blue16;
 }
 
 .mat-raised-button,
 .mat-stroked-button {
-  color: $gray-text;
+  color: $gray4;
 }
 
 .disabled {
@@ -68,7 +68,7 @@ input[type='text']:focus {
 }
 
 .wi-status-container ul.wi-status li:first-child {
-  border-right: 1px solid $border-color-gray;
+  border-right: 1px solid $gray41-gray;
   height: 30px;
   padding: 0 5px;
   margin-right: 10px;
@@ -77,8 +77,8 @@ input[type='text']:focus {
 }
 
 .paginate-steps-container {
-  border-top: 1px solid $border-color-gray;
-  border-bottom: 1px solid $border-color-gray;
+  border-top: 1px solid $gray41-gray;
+  border-bottom: 1px solid $gray41-gray;
   /*background: $white;*/
   height: 60px;
   padding: 0;
@@ -87,7 +87,7 @@ input[type='text']:focus {
 
 .paginate-steps {
   background: $white;
-  border-bottom: 1px solid $border-color-gray;
+  border-bottom: 1px solid $gray41-gray;
 }
 
 .mat-tab-body {
@@ -106,7 +106,7 @@ input[type='text']:focus {
   line-height: 19px;
   display: flex;
   align-items: center;
-  color: $gray-text;
+  color: $gray4;
   padding: 10px;
   background-color: white;
   white-space: nowrap;
@@ -117,7 +117,7 @@ input[type='text']:focus {
 }
 
 .wi-title-info {
-  color: #dc3545;
+  color: $red3;
   font-size: 90%;
   font-weight: 600;
   white-space: nowrap;
@@ -157,14 +157,14 @@ input[type='text']:focus {
 }
 
 .dis-publish {
-  background: $border-color-gray;
+  background: $gray41-gray;
   font-style: normal;
   font-weight: 500;
   font-size: 100%;
   line-height: 20px;
   align-items: center;
   letter-spacing: 0.25px;
-  color: $gray-text;
+  color: $gray4;
   position: relative;
   left: 3px;
   /* top: 2px; */

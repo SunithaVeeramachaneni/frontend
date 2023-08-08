@@ -26,7 +26,7 @@
 }
 
 .tenant-header {
-  border-bottom: 1px solid $border-bottom;
+  border-bottom: 1px solid $gray51;
   padding: 12px 12px 20px 12px;
 }
 
@@ -80,7 +80,7 @@
 
 .prevbtn {
   display: flex;
-  border-bottom: 1px solid #cccccc;
+  border-bottom: 1px solid $gray44;
 }
 
 .prevnextbtns {
@@ -90,7 +90,7 @@
 
 .nextbtn {
   display: flex;
-  border-bottom: 1px solid #cccccc;
+  border-bottom: 1px solid $gray44;
 }
 
 .add-url-icon {
@@ -211,9 +211,9 @@
     }
 
     .user {
-      border-top: 1px solid $border-color;
-      border-left: 1px solid $border-color;
-      border-bottom: 1px solid $border-color;
+      border-top: 1px solid $gray41;
+      border-left: 1px solid $gray41;
+      border-bottom: 1px solid $gray41;
       border-top-left-radius: 5px;
       border-bottom-left-radius: 5px;
       float: right;
@@ -228,7 +228,7 @@
     }
 
     .without-company-logo {
-      border: 1px solid $border-color;
+      border: 1px solid $gray41;
       border-top-right-radius: 5px;
       border-bottom-right-radius: 5px;
       float: right;
@@ -236,9 +236,9 @@
     }
 
     .with-company-logo {
-      border-top: 1px solid $border-color;
-      border-right: 1px solid $border-color;
-      border-bottom: 1px solid $border-color;
+      border-top: 1px solid $gray41;
+      border-right: 1px solid $gray41;
+      border-bottom: 1px solid $gray41;
       border-top-right-radius: 5px;
       border-bottom-right-radius: 5px;
       float: right;

@@ -25,7 +25,7 @@
   z-index: 999;
   height: 100vh;
   background-color: $white;
-  border-left: 1px solid $border-color;
+  border-left: 1px solid $gray41;
   box-shadow: -15px 0px 17px -7px rgba(0, 0, 0, 0.46);
 
   ::ng-deep .mat-card {
@@ -34,7 +34,7 @@
 
   .mcq-heading {
     font-size: 1.2rem;
-    border-bottom: 1px solid $border-color;
+    border-bottom: 1px solid $gray41;
     padding: 15px;
     font-weight: 600;
     padding-left: 0;
@@ -51,7 +51,7 @@
   }
 
   .response-list {
-    border-bottom: 1px solid $border-color;
+    border-bottom: 1px solid $gray41;
     height: 45px;
   }
 
@@ -94,7 +94,7 @@
     padding: 0;
     min-width: 40px;
     margin-top: 3px;
-    color: $delete-response-icon-grey;
+    color: $blue24;
 
     .delete-btn-icon {
       height: 17px;

@@ -42,7 +42,7 @@
   line-height: 24px;
   letter-spacing: 0.3px;
   text-transform: uppercase;
-  color: $gray-text;
+  color: $gray4;
   float: right;
   --background-hover: none;
 }
@@ -55,7 +55,7 @@
 
 .save-btn:disabled {
   margin-right: 20px;
-  background-color: $border-color-gray;
+  background-color: $gray41-gray;
   color: $gray5;
 }
 

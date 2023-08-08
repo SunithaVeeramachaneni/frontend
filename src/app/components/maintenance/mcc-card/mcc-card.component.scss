@@ -22,7 +22,7 @@
   font-size: 85%;
   line-height: 19px;
   align-items: center;
-  color: $gray-text;
+  color: $gray4;
   padding: 2px 0;
   margin-left: 5px;
   width: 100%;
@@ -88,7 +88,7 @@
   align-items: center;
   text-align: center;
   color: $white;
-  background-color: #f39f9b;
+  background-color: $red2;
 }
 
 .very-high-priority {
@@ -101,7 +101,7 @@
   align-items: center;
   text-align: center;
   color: $white;
-  background-color: #ff3b30;
+  background-color: $red5;
 }
 
 .medium-priority {
@@ -114,7 +114,7 @@
   align-items: center;
   text-align: center;
   color: $white;
-  background-color: #ff9800;
+  background-color: $orange;
 }
 
 .low-priority {
@@ -127,12 +127,11 @@
   align-items: center;
   text-align: center;
   color: $white;
-  background-color: #4caf50;
+  background-color: $green3;
 }
 
 .kit-ready {
-  background-color: #34c759;
-
+  background-color: $green4;
   padding: 4px 7px 4px 7px;
   border-radius: 5px;
   font-style: normal;
@@ -146,8 +145,7 @@
 }
 
 .waiting-on-parts {
-  background-color: #ff9500;
-
+  background-color: $orange1;
   padding: 4px 7px 4px 7px;
   border-radius: 5px;
   font-style: normal;
@@ -161,8 +159,7 @@
 }
 
 .parts-available {
-  background-color: #5ac8fa;
-
+  background-color: $blue15;
   padding: 4px 7px 4px 7px;
   border-radius: 5px;
   font-style: normal;
@@ -181,7 +178,7 @@
   font-style: normal;
   font-weight: 500;
   font-size: 95%;
-  color: $gray-text;
+  color: $gray4;
   letter-spacing: 0;
   background-color: white;
   border: none;
@@ -197,11 +194,11 @@
   height: 5px;
   margin: 0;
   border: 0;
-  box-shadow: 0 10px 8px -12px #8c8c8c inset;
+  box-shadow: 0 10px 8px -12px $gray30 inset;
 }
 
 .operations-div {
-  border-left: 2px solid $border-color-gray;
+  border-left: 2px solid $gray41-gray;
   margin-left: 15px;
 }
 
@@ -240,7 +237,7 @@
   font-weight: 500;
   font-size: 100%;
   line-height: 16px;
-  color: $gray-text;
+  color: $gray4;
   width: 100%;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -250,11 +247,11 @@
 }
 
 ::ng-deep .maintenance-card .mat-progress-bar-fill::after {
-  background-color: $gray-text;
+  background-color: $gray4;
 }
 
 ::ng-deep .maintenance-card .mat-progress-bar-buffer {
-  background: #f5f5f5;
+  background: $white1;
 }
 
 .progress-bar-class {

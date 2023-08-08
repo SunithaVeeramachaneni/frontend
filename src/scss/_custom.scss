@@ -366,7 +366,7 @@
 }
 
 .text-red {
-  color: #ff3b30;
+  color: $red5;
 }
 
 .bg-white {
@@ -374,11 +374,11 @@
 }
 
 .bg-lightgray {
-  background-color: $border-color-gray;
+  background-color: $gray41-gray;
 }
 
 .bg-red {
-  background-color: #ff3b30;
+  background-color: $red5;
 }
 
 .b-r-8 {
@@ -493,10 +493,10 @@ a {
 }
 
 .custom-modal-card .button {
-  background-color: white;
-  border-color: #dbdbdb;
+  background-color: $white;
+  border-color: $gray28;
   border-width: 1px;
-  color: #363636;
+  color: $black1;
   cursor: pointer;
   -webkit-justify-content: center;
   justify-content: center;
@@ -509,8 +509,8 @@ a {
 }
 
 .custom-modal-card .yes-btn {
-  background-color: #ff3b30;
-  border: 1px solid #ff3b30;
+  background-color: $red5;
+  border: 1px solid $red5;
   color: $white;
   border-radius: 5px;
   cursor: pointer;
@@ -556,7 +556,7 @@ a {
 }
 
 .gray-bg {
-  background: #e4e4e4;
+  background: $gray29;
 }
 .p-t-b-10 {
   padding-top: 0;
@@ -588,7 +588,7 @@ a {
 }
 
 .is-fav-icon {
-  color: #f9d247;
+  color: $yellow1;
 }
 
 .no-records {
@@ -628,7 +628,7 @@ a {
   height: calc(100vh - 130px);
   overflow-y: scroll;
   overflow-x: hidden;
-  border-bottom: 1px solid #cccccc;
+  border-bottom: 1px solid $gray44;
 }
 
 .mce-content-body {
@@ -662,12 +662,12 @@ button:focus {
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: #ddd;
+  background: $gray50;
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #888;
+  background: $gray7;
 }
 
 body {
@@ -679,34 +679,34 @@ body {
 }
 
 .bg-sky-blue {
-  background-color: #2196f3;
+  background-color: $blue21;
 }
 .bg-orange {
-  background-color: #ff3b30;
+  background-color: $red5;
 }
 .bg-green {
-  background-color: #34c759;
+  background-color: $green4;
 }
 .bg-blue {
-  background-color: $action-raised;
+  background-color: $purple1;
 }
 .sky-blue {
-  color: #2196f3;
+  color: $blue21;
 }
 
 .orange {
-  color: #ff3b30;
+  color: $red5;
 }
 
 .green {
-  color: #34c759;
+  color: $green4;
 }
 .blue {
-  color: $action-raised;
+  color: $purple1;
 }
 
 .mat-raised-button[disabled]:not([class*='mat-elevation-z']) {
-  color: #666;
+  color: $gray53;
 }
 
 .cdk-overlay-backdrop.cdk-overlay-backdrop-showing {
@@ -770,7 +770,7 @@ body {
   color: $white;
   border-width: 1px;
   border-style: solid;
-  border-color: #dddddd #d6d6d6 #cfcfcf;
+  border-color: $gray50 $gray17 $gray18;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.11);
   transform: translateY(-100%);
   -webkit-transform: translateY(-100%);
@@ -778,7 +778,7 @@ body {
 
 .alert-success,
 .alert-danger {
-  background: #2c2c2c;
+  background: $black3;
   color: $white;
   margin-bottom: -5px;
 }
@@ -903,5 +903,5 @@ body {
 
 .mat-checkbox-checked.mat-accent .mat-checkbox-background,
 .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background {
-  background-color: #637bfe !important;
+  background-color: $blue-secondary !important;
 }

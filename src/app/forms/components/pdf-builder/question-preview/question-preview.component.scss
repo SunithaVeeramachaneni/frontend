@@ -44,7 +44,7 @@
 }
 .responseType-VI {
   color: $green;
-  border: 0.715174px solid $border-color-vi;
+  border: 0.715174px solid $gray44;
   padding: 2px 10px;
   border-radius: 5px;
 }
@@ -56,8 +56,8 @@
   align-items: center;
   padding: 5.72139px 11.4428px;
   height: 25.44px;
-  background: $photos-bg;
-  border-bottom: 0.715174px solid $border-color;
+  background: $yellow3;
+  border-bottom: 0.715174px solid $gray41;
 }
 .photosContainer {
   width: 100%;
@@ -75,7 +75,7 @@
 .image {
   width: 33%;
   margin: 5px;
-  border: 1px solid $image-border;
+  border: 1px solid $black8;
   border-radius: 2px;
 }
 .thead {
@@ -93,7 +93,7 @@
   line-height: 11px;
   text-align: center;
   letter-spacing: -0.200914px;
-  color: $table-head-bg;
+  color: $gray45;
 }
 .mockTable,
 .mockTableRow,

@@ -134,7 +134,7 @@
   border-radius: 15px;
   padding: 1px 6px;
   font-size: 80%;
-  background: #3f51b5;
+  background: $blue10;
   color: $white;
   position: relative;
   top: -1px;
@@ -151,7 +151,7 @@
 }
 
 .delete-menu-item {
-  color: #f6685e;
+  color: $red1;
 }
 
 .widgets-count {

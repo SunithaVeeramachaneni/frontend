@@ -21,7 +21,7 @@
 
 @keyframes node-higlight-animation {
   from {
-    background-color: $node-highlight;
+    background-color: $yellow6;
   }
   to {
     background-color: $white;
@@ -41,7 +41,7 @@
   }
 
   .hierarchy-tail {
-    background: #feffdf;
+    background: $yellow6;
   }
 
   .hierarchy-not-tail {
@@ -71,7 +71,7 @@
   width: 18px;
   height: 18px;
   font-size: 18px;
-  background: $note-bg;
+  background: $gray42;
   border-radius: 4px;
   color: $light-gray;
 }
@@ -85,7 +85,7 @@
 }
 
 .borders {
-  border-bottom: 1px solid $border-color;
+  border-bottom: 1px solid $gray41;
   border-top: none;
 }
 

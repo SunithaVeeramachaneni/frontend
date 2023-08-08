@@ -25,7 +25,7 @@
       .sub-heading {
         font-weight: 400;
         font-size: 110%;
-        color: $text-color;
+        color: $gray-bg;
         margin: 10px 5px;
       }
 
@@ -50,11 +50,11 @@
       }
 
       ::ng-deep .mat-radio-button.mat-radio-disabled .mat-radio-outer-circle {
-        border-color: $disabled-color !important;
+        border-color: $gray34 !important;
       }
 
       ::ng-deep .mat-radio-button.mat-radio-disabled .mat-radio-inner-circle {
-        background-color: $disabled-color !important;
+        background-color: $gray34 !important;
       }
 
       .radio-btn-text {
@@ -68,7 +68,7 @@
       .radio-sub-text {
         font-weight: 400;
         font-size: 90%;
-        color: $text-color;
+        color: $gray-bg;
         opacity: 0.8;
         margin: 3px 0px 5px 35px;
       }
@@ -117,14 +117,14 @@
         float: right;
         margin-right: 15px;
         margin-top: 38px;
-        color: $radio-button-checked;
+        color: $blue-main;
         height: 29px;
         font-weight: normal;
         line-height: normal;
         border: 1px solid $blue-main;
       }
       .horizontal-line {
-        border: 1px solid $border-color;
+        border: 1px solid $gray41;
         margin: 20px 0;
       }
     }
@@ -148,7 +148,7 @@
 
 .searchable-input {
   width: 92%;
-  border: 1px solid $border-color;
+  border: 1px solid $gray41;
   padding: 5px;
   border-radius: 4px;
   margin: 10px 10px 10px 12px;
@@ -160,8 +160,8 @@
 }
 
 .next-btn {
-  background-color: $radio-button-checked;
-  border-color: $radio-button-checked;
+  background-color: $blue-main;
+  border-color: $blue-main;
 }
 
 .mat-form-field-appearance-outline .mat-form-field-wrapper {
@@ -242,7 +242,7 @@
 }
 
 .remove-btn {
-  color: $disabled-color;
+  color: $gray34;
   float: right;
   cursor: pointer;
   margin-top: 5px;
@@ -277,7 +277,7 @@
 }
 
 .buttons {
-  border-bottom: 1px solid $border-color;
+  border-bottom: 1px solid $gray41;
   min-height: 33px;
 }
 
@@ -291,7 +291,7 @@
 
 .skip-btn {
   float: right;
-  color: $radio-button-checked;
+  color: $blue-main;
   height: 30px;
   font-weight: normal;
   line-height: normal;

@@ -1,9 +1,9 @@
 @import './../../../../scss/colors.scss';
 
 .min-toolbar {
-  background-color: white;
+  background-color: $white;
   height: 65px;
-  border-bottom: 1px solid $border-color;
+  border-bottom: 1px solid $gray41;
   margin-left: 65px;
   transition: 0.4s;
 }
@@ -13,7 +13,7 @@
 }
 
 .menu-icon {
-  color: $menu-icon-color;
+  color: $blue26;
   margin-bottom: 4px;
 }
 
@@ -23,9 +23,9 @@
 
 .connectToSlackButton {
   align-items: center;
-  color: #000;
-  background-color: #e8f3f7;
-  border: 1px solid #ddd;
+  color: $black;
+  background-color: $white5;
+  border: 1px solid $gray50;
   border-radius: 4px;
   display: inline-flex;
   font-family: Lato, sans-serif;
@@ -202,9 +202,9 @@
 
 .header-cols {
   .user-with-logo {
-    border-top: 1px solid $border-color;
-    border-left: 1px solid $border-color;
-    border-bottom: 1px solid $border-color;
+    border-top: 1px solid $gray41;
+    border-left: 1px solid $gray41;
+    border-bottom: 1px solid $gray41;
     border-top-left-radius: 5px;
     border-bottom-left-radius: 5px;
     padding: 0 7px;
@@ -225,9 +225,9 @@
   }
 
   .with-company-logo {
-    border-top: 1px solid $border-color;
-    border-right: 1px solid $border-color;
-    border-bottom: 1px solid $border-color;
+    border-top: 1px solid $gray41;
+    border-right: 1px solid $gray41;
+    border-bottom: 1px solid $gray41;
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
     height: 49px;
@@ -321,7 +321,7 @@
     font-size: 100%;
     margin: 0 0 7px 0;
     text-align: center;
-    color: #8f8f8f;
+    color: $gray19;
     word-wrap: break-word;
   }
 
@@ -331,7 +331,7 @@
     font-size: 90%;
     margin: 0 14px;
     text-align: center;
-    color: #8f8f8f;
+    color: $gray19;
     word-wrap: break-word;
   }
 

@@ -2,13 +2,13 @@
 
 .mat-drawer-content {
   overflow: hidden;
-  background-color: #f9faff;
+  background-color: $light-blue-bg;
   margin: 0 !important;
 }
 
 .mat-drawer {
   position: fixed;
-  border-right: 1px solid $border-color;
+  border-right: 1px solid $gray41;
   height: auto;
   box-shadow: none;
   overflow: hidden;
@@ -35,7 +35,7 @@ li {
   font-style: normal;
   font-weight: 500;
   font-size: 110%;
-  color: $gray-text;
+  color: $gray4;
   cursor: pointer;
 }
 
@@ -55,14 +55,14 @@ li {
   font-style: normal;
   font-weight: 500;
   font-size: 100%;
-  color: #8b96cc;
+  color: $blue12;
   cursor: pointer;
   height: 42px !important;
 }
 
 .submenu.subSelected {
   color: $blue-head;
-  background: #f0f3ff;
+  background: $white4;
   border-radius: 8px;
   width: 95%;
 }
@@ -71,7 +71,7 @@ li {
   width: 20px;
   height: 20px;
   margin-left: 10px;
-  background: #f0f0f0;
+  background: $gray38;
   border-radius: 8px;
   padding: 7px;
 }
@@ -116,7 +116,7 @@ li.selected .sidebar-icons {
 }
 
 .menu-name {
-  color: #727caf;
+  color: $blue26;
   font-size: 100%;
 }
 
@@ -227,7 +227,7 @@ mat-sidenav {
   }
 }
 .version {
-  color: $menu-icon-color;
+  color: $blue26;
   width: 229px;
   height: 14px;
   text-align: center;

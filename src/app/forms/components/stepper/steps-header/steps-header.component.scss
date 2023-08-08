@@ -3,7 +3,7 @@
 .form-toolbar {
   height: 50px;
   background-color: $white;
-  border-bottom: 1px solid $border-color;
+  border-bottom: 1px solid $gray41;
 
   .back-btn {
     border: none;
@@ -90,7 +90,7 @@
   width: auto;
   margin: 0;
   border-bottom: none;
-  border-top: 2px solid $disable-stpper-bg;
+  border-top: 2px solid $gray52;
   border-left: none;
   border-right: none;
 }
@@ -103,7 +103,7 @@
     top: 4px;
   }
   .index span {
-    background-color: $disable-stpper-bg;
+    background-color: $gray52;
     color: $light-gray;
   }
 }

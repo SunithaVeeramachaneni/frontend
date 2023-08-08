@@ -5,9 +5,9 @@
 }
 .cdk-drag-preview {
   box-sizing: border-box;
-  box-shadow: 0 3px 3px -2px $drag-preview-shadow,
-    0 8px 10px 1px $drag-preview-shadow1, 0 3px 14px 2px $drag-preview-shadow2;
-  background: $hover-bg;
+  box-shadow: 0 3px 3px -2px $black4, 0 8px 10px 1px $black5,
+    0 3px 14px 2px $black6;
+  background: $gray35;
   opacity: 0.3;
 }
 .drop-inside {
@@ -52,7 +52,7 @@
 
 .node {
   &:hover {
-    background: $hover-bg;
+    background: $gray35;
     color: $black;
   }
 }
@@ -61,8 +61,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-top: 1px solid $border-color;
-  border-bottom: 1px solid $border-color;
+  border-top: 1px solid $gray41;
+  border-bottom: 1px solid $gray41;
   padding: 10px;
   min-width: max-content;
   .left {
@@ -129,7 +129,7 @@
 }
 
 .active:hover {
-  background-color: $hierarchy-active;
+  background-color: $blue28;
   color: $white;
 }
 
@@ -147,7 +147,7 @@
 }
 .showHierarchy {
   background-color: $white;
-  box-shadow: $show-hierarchy-shadow 0px 5px 15px;
+  box-shadow: $black7 0px 5px 15px;
   border-radius: 5px;
 }
 .nodeCount {
@@ -181,5 +181,5 @@
 .show-popup {
   position: fixed;
   background: $white;
-  border: 1px solid $border-color;
+  border: 1px solid $gray41;
 }

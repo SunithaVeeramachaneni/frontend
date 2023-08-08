@@ -17,7 +17,7 @@
   .form-toolbar {
     height: 65px;
     background-color: $white;
-    border-bottom: 1px solid $border-color;
+    border-bottom: 1px solid $gray41;
 
     .heading {
       margin: 0 auto;
@@ -101,7 +101,7 @@
         }
 
         .issue-created {
-          background: $chat-yellow-bg;
+          background: $yellow5;
           border-radius: 6px;
           padding: 10px;
           width: 40%;
@@ -143,7 +143,7 @@
         }
 
         .media-created {
-          border: 5px solid $border-color;
+          border: 5px solid $gray41;
           border-radius: 4px;
           width: 300px;
           height: 280px;
@@ -256,7 +256,7 @@
       }
 
       .line {
-        border-bottom: 1px solid $border-color;
+        border-bottom: 1px solid $gray41;
         border-top: none;
         margin-right: 12px;
       }
@@ -288,7 +288,7 @@
 
 .searchable-input {
   width: 85%;
-  border: 1px solid $border-color;
+  border: 1px solid $gray41;
   padding: 5px;
   border-radius: 4px;
   margin: 10px 10px 5px 12px;
@@ -303,7 +303,7 @@
 }
 
 .date-card {
-  background-color: $border-color;
+  background-color: $gray41;
   width: 80px;
   height: 18px;
   padding: 4px 0px 0px 0;

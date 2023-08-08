@@ -27,7 +27,7 @@
   position: relative;
   left: -15px;
   top: -10px;
-  color: $disabled-color;
+  color: $gray34;
 }
 .mat-icon-star {
   position: relative;
@@ -93,7 +93,7 @@ tbody tr td:nth-child(5) {
 .table th,
 .table td {
   vertical-align: middle;
-  border-bottom: 1px solid #c8ced3;
+  border-bottom: 1px solid $gray31;
 
   padding: 10px;
 }

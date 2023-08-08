@@ -26,7 +26,7 @@
       .sub-heading {
         font-weight: 400;
         font-size: 110%;
-        color: $text-color;
+        color: $gray-bg;
         margin: 10px 5px;
       }
 
@@ -45,7 +45,7 @@
       .radio-sub-text {
         font-weight: 400;
         font-size: 90%;
-        color: $text-color;
+        color: $gray-bg;
         opacity: 0.8;
         margin: 0px 28px;
       }
@@ -90,7 +90,7 @@
   }
 
   .horizontal-line {
-    border: 1px solid $border-color;
+    border: 1px solid $gray41;
     margin: 20px 0;
   }
 
@@ -118,7 +118,7 @@
       display: flex;
       justify-content: space-between;
       padding: 15px;
-      border-bottom: 1px solid $border-color;
+      border-bottom: 1px solid $gray41;
 
       .cancel {
         float: right;
@@ -195,7 +195,7 @@
 
 .searchable-input {
   width: 92%;
-  border: 1px solid $border-color;
+  border: 1px solid $gray41;
   padding: 5px;
   border-radius: 4px;
   margin: 10px 10px 10px 12px;
@@ -208,7 +208,7 @@
 
 .searchable-input {
   width: 92%;
-  border: 1px solid $border-color;
+  border: 1px solid $gray41;
   padding: 5px;
   border-radius: 4px;
   margin: 10px 10px 10px 12px;
@@ -289,7 +289,7 @@
 }
 
 .remove-btn {
-  color: $disabled-color;
+  color: $gray34;
   float: right;
   cursor: pointer;
   margin-top: 5px;
@@ -308,12 +308,12 @@
 }
 
 .buttons {
-  border-bottom: 1px solid $border-color;
+  border-bottom: 1px solid $gray41;
   min-height: 34px;
 
   .next-btn {
-    background-color: $radio-button-checked;
-    border-color: $radio-button-checked;
+    background-color: $blue-main;
+    border-color: $blue-main;
     float: right;
     margin-right: 22px;
     font-weight: normal;
@@ -323,7 +323,7 @@
 
   .skip-btn {
     float: right;
-    color: $radio-button-checked;
+    color: $blue-main;
     height: 34px;
     font-weight: normal;
     line-height: normal;
@@ -331,7 +331,7 @@
   }
 
   ::ng-deep .mat-raised-button[disabled] {
-    color: $disabled-text-color;
+    color: $gray53;
     background-color: $gray2-bg;
   }
 }

@@ -132,9 +132,9 @@
   float: left;
 }
 .icon-background {
-  color: #3678af;
+  color: $blue11;
   border-radius: 50%;
-  background: $border-color-gray;
+  background: $gray41-gray;
   width: 30px;
   height: 30px;
   padding: 7px 0 0px 0px;
@@ -145,15 +145,15 @@
 .prev-allsteps-button {
   padding: 0px 5px 5px 10px;
   border: none;
-  background-color: $border-color-gray;
-  color: #3678af;
+  background-color: $gray41-gray;
+  color: $blue11;
   border-radius: 5px;
 }
 
 .next-button {
   padding: 0px 5px 5px 10px;
   border: none;
-  background-color: #3678af;
+  background-color: $blue11;
   color: white;
   border-radius: 5px;
 }

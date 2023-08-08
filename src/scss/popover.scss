@@ -104,7 +104,7 @@
   width: 1rem;
   margin-left: -0.5rem;
   content: '';
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid $gray38;
 }
 
 .bs-popover-start > .popover-arrow,
@@ -130,7 +130,7 @@
   padding: 0.5rem 1rem;
   margin-bottom: 0;
   font-size: 120%;
-  background-color: #f0f0f0;
+  background-color: $gray38;
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
   border-top-left-radius: calc(0.3rem - 1px);
   border-top-right-radius: calc(0.3rem - 1px);
@@ -141,5 +141,5 @@
 
 .popover-body {
   padding: 1rem 1rem;
-  color: #212529;
+  color: $black2;
 }

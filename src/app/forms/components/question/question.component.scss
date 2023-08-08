@@ -5,7 +5,7 @@
     position: relative;
     left: -95px;
     top: 40px;
-    border: 1px solid $border-color;
+    border: 1px solid $gray41;
     border-radius: 7px;
     margin-top: -100px;
     display: block;
@@ -13,14 +13,14 @@
   }
 
   .question-line {
-    border: 1px solid $border-color;
+    border: 1px solid $gray41;
     margin: 0px 0px 0px -29px;
     position: relative;
   }
 
   .ask-question-line {
     border: 0px;
-    border-top: 1px solid $border-color;
+    border-top: 1px solid $gray41;
     margin: 0px;
     position: relative;
   }
@@ -98,7 +98,7 @@
 
   .divider {
     font-size: 150%;
-    color: $border-color;
+    color: $gray41;
     position: relative;
     top: 7px;
     margin-right: 20px;
@@ -235,7 +235,7 @@
     padding: 10px;
     cursor: pointer;
     &:hover {
-      background: $hover-bg2;
+      background: $gray36;
     }
     display: flex;
     align-items: center;

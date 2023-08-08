@@ -42,7 +42,7 @@
 
 .list-elements {
   padding: 12px;
-  border-bottom: 1px solid #cccccc;
+  border-bottom: 1px solid $gray44;
   list-style-type: none;
 }
 
@@ -63,7 +63,7 @@
 }
 
 .kits-required {
-  border-top: 10px solid #af52de;
+  border-top: 10px solid $voilet;
   width: 100%;
   margin: 0;
   border-radius: 8px;
@@ -72,7 +72,7 @@
 }
 
 .assign-for-picking {
-  border-top: 10px solid $action-raised;
+  border-top: 10px solid $purple1;
   width: 100%;
   margin: 0;
   border-radius: 8px;
@@ -81,7 +81,7 @@
 }
 
 .kitting-in-progress {
-  border-top: 10px solid #ffcc00;
+  border-top: 10px solid $yellow4;
   width: 100%;
   margin: 0;
   border-radius: 8px;
@@ -90,7 +90,7 @@
 }
 
 .kits-complete {
-  border-top: 10px solid #007aff;
+  border-top: 10px solid $blue16;
   width: 100%;
   margin: 0;
   border-radius: 8px;
@@ -99,7 +99,7 @@
 }
 
 .kits-issued {
-  border-top: 10px solid #34c759;
+  border-top: 10px solid $green4;
   width: 100%;
   margin: 0;
   border-radius: 8px;
@@ -108,7 +108,7 @@
 }
 
 .li-cols {
-  border-top: 1px solid #cccccc;
+  border-top: 1px solid $gray44;
   padding: 10px 15px 10px 15px;
 }
 

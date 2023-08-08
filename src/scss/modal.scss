@@ -1,3 +1,5 @@
+@import './colors.scss';
+
 .delete,
 .modal-close {
   -webkit-touch-callout: none;
@@ -170,13 +172,13 @@
 }
 
 .modal-card-head {
-  border-bottom: 1px solid #dbdbdb;
+  border-bottom: 1px solid $gray28;
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
 }
 
 .modal-card-title {
-  color: #363636;
+  color: $black1;
   flex-grow: 1;
   flex-shrink: 0;
   font-size: 200%;
@@ -186,7 +188,7 @@
 .modal-card-foot {
   border-bottom-left-radius: 6px;
   border-bottom-right-radius: 6px;
-  border-top: 1px solid #dbdbdb;
+  border-top: 1px solid $gray28;
 }
 
 .modal-card-foot .button:not(:last-child) {

@@ -35,7 +35,7 @@
 }
 
 .content-right-div {
-  border-left: 1px solid $disabled-color;
+  border-left: 1px solid $gray34;
   width: 50%;
 }
 
@@ -62,11 +62,11 @@
 }
 
 .list-group-item:hover {
-  background-color: #e5f2ff;
+  background-color: $gray24;
 }
 
 .list-group-item.active {
-  background-color: #e5f2ff;
+  background-color: $gray24;
 }
 
 li {
@@ -74,7 +74,7 @@ li {
 }
 
 .footer {
-  border-top: 1px solid $disabled-color;
+  border-top: 1px solid $gray34;
 }
 
 .cancel-button {
@@ -89,6 +89,6 @@ li {
   margin: 0 20px;
   border-radius: 5px;
   padding: 10px;
-  border: 1px dashed #666;
+  border: 1px dashed $gray53;
   font-weight: 600;
 }

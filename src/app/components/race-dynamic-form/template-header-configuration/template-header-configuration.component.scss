@@ -28,7 +28,7 @@
       }
 
       .horizontal-line {
-        border: 1px solid $border-color;
+        border: 1px solid $gray41;
         margin: 20px 0;
       }
 
@@ -43,7 +43,7 @@
       .sub-heading {
         font-weight: 400;
         font-size: 110%;
-        color: $text-color;
+        color: $gray-bg;
         margin: 10px 5px;
       }
 
@@ -68,11 +68,11 @@
       }
 
       ::ng-deep .mat-radio-button.mat-radio-disabled .mat-radio-outer-circle {
-        border-color: $disabled-color !important;
+        border-color: $gray34 !important;
       }
 
       ::ng-deep .mat-radio-button.mat-radio-disabled .mat-radio-inner-circle {
-        background-color: $disabled-color !important;
+        background-color: $gray34 !important;
       }
 
       .radio-btn-text {
@@ -86,7 +86,7 @@
       .radio-sub-text {
         font-weight: 400;
         font-size: 90%;
-        color: $text-color;
+        color: $gray-bg;
         opacity: 0.8;
         margin: 3px 0px 5px 35px;
       }
@@ -170,7 +170,7 @@
 }
 
 .remove-btn {
-  color: $disabled-color;
+  color: $gray34;
   float: right;
   cursor: pointer;
   margin-top: 5px;
@@ -203,12 +203,12 @@
 }
 
 .buttons {
-  border-bottom: 1px solid $border-color;
+  border-bottom: 1px solid $gray41;
   min-height: 34px;
 
   .next-btn {
-    background-color: $radio-button-checked;
-    border-color: $radio-button-checked;
+    background-color: $blue-main;
+    border-color: $blue-main;
     float: right;
     margin-right: 22px;
     font-weight: normal;
@@ -218,7 +218,7 @@
 
   .skip-btn {
     float: right;
-    color: $radio-button-checked;
+    color: $blue-main;
     height: 34px;
     font-weight: normal;
     line-height: normal;
@@ -226,7 +226,7 @@
   }
 
   ::ng-deep .mat-raised-button[disabled] {
-    color: $disabled-text-color;
+    color: $gray53;
     background-color: $gray2-bg;
   }
 }

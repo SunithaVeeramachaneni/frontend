@@ -41,16 +41,16 @@
 }
 
 .unassigned-workorder-list {
-  border-top: 10px solid $action-raised;
+  border-top: 10px solid $purple1;
   width: 100%;
   margin: 0;
   border-radius: 8px;
-  background-color: white;
+  background-color: $white;
   padding: 0;
 }
 
 .assigned-workorder-list {
-  border-top: 10px solid #5ac8fa;
+  border-top: 10px solid $blue15;
   width: 100%;
   margin: 0;
   border-radius: 8px;
@@ -59,7 +59,7 @@
 }
 
 .in-progress-workorder-list {
-  border-top: 10px solid#FFCC00;
+  border-top: 10px solid $yellow4;
   width: 100%;
   margin: 0;
   border-radius: 8px;
@@ -68,7 +68,7 @@
 }
 
 .completed-workorder-list {
-  border-top: 10px solid #007015;
+  border-top: 10px solid $green5;
   width: 100%;
   margin: 0;
   border-radius: 8px;
@@ -78,12 +78,12 @@
 
 .list-elements {
   padding: 12px;
-  border-bottom: 1px solid #cccccc;
+  border-bottom: 1px solid $gray44;
   list-style-type: none;
 }
 
 .li-cols {
-  border-top: 1px solid #cccccc;
+  border-top: 1px solid $gray44;
   padding-top: 10px;
 }
 

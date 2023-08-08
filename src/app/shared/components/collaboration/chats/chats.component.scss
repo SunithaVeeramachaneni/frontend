@@ -1,18 +1,18 @@
-@use './../../../../../scss/colors.scss' as colors;
+@import '../../../../../scss/colors.scss';
 
 .chatsBody {
   display: flex;
 }
 .active {
   cursor: pointer;
-  background: colors.$active-bg;
+  background: $blue22;
 }
 .disablesendbtn {
-  color: colors.$disabled-color;
+  color: $gray34;
 }
 
 .activeSendBtn {
-  color: colors.$blue;
+  color: $blue;
 }
 
 .disabled {
@@ -33,12 +33,12 @@
     }
     .timeAgo {
       font-weight: 400;
-      color: colors.$light-gray;
+      color: $light-gray;
       font-size: xx-small;
     }
   }
   .convDesc {
-    color: colors.$light-gray;
+    color: $light-gray;
     display: flex !important;
     align-items: center;
     justify-content: space-between;
@@ -46,7 +46,7 @@
   }
   &:hover {
     cursor: pointer;
-    background: colors.$hover-bg;
+    background: $gray35;
   }
 }
 .centerText {
@@ -54,7 +54,7 @@
   justify-content: center;
   align-content: space-around;
   align-items: center;
-  color: colors.$gray1;
+  color: $gray1;
   font-weight: 400;
 }
 .conversationContent {
@@ -62,8 +62,8 @@
   width: 100%;
   height: 82vh;
   flex-direction: column;
-  background: colors.$white !important;
-  border-left: 5px solid colors.$white2;
+  background: $white !important;
+  border-left: 5px solid $white2;
   margin-top: 10px;
   .conversationHead {
     display: flex;
@@ -104,7 +104,7 @@
         text-overflow: ellipsis;
         display: flex;
         font-weight: 400;
-        color: colors.$light-gray;
+        color: $light-gray;
       }
     }
   }
@@ -149,7 +149,7 @@
   }
   .attachmentItem {
     font-size: 90%;
-    background: colors.$attachment-bg;
+    background: $gray37;
     border-radius: 5px;
     width: 99% !important;
     .attachmentItemRow {
@@ -158,7 +158,7 @@
       align-items: center;
       width: 250px;
       justify-content: space-between;
-      background: colors.$white;
+      background: $white;
       padding: 5px;
       border-radius: 5px;
       .iconAndTitle {
@@ -166,7 +166,7 @@
         align-items: center;
       }
       .downloadBtn {
-        color: colors.$blue-main;
+        color: $blue-main;
         cursor: pointer;
       }
     }
@@ -178,7 +178,7 @@
       white-space: nowrap;
       text-overflow: ellipsis;
       font-weight: 400;
-      color: colors.$black;
+      color: $black;
     }
     .attachmentSubTitle {
       font-size: 70%;
@@ -190,12 +190,12 @@
         display: flex;
         align-items: center;
         padding: 0px 5px;
-        background: colors.$blue2;
+        background: $blue2;
         border-radius: 5px;
-        color: colors.$white;
+        color: $white;
 
         &:hover {
-          background: colors.$blue3-hover;
+          background: $blue3-hover;
         }
         .downloadLabel {
           margin-left: 5px;
@@ -220,17 +220,17 @@
         margin-left: 5px;
         border-radius: 5px;
         width: 100%;
-        background: colors.$gray;
-        color: colors.$black;
+        background: $gray;
+        color: $black;
       }
       .messageInput {
         padding: 10px;
-        background: colors.$gray;
+        background: $gray;
         border-radius: 5px;
       }
       .audioRecord {
-        color: colors.$white;
-        // background: colors.$blue2;
+        color: $white;
+        // background: $blue2;
         border-radius: 8px;
         font-size: 70%;
         height: auto;
@@ -241,7 +241,7 @@
 }
 .conversationsList {
   width: 40%;
-  background: colors.$white;
+  background: $white;
   border-radius: 15px;
   max-width: 400px;
   min-width: 250px;
@@ -252,11 +252,11 @@
     .searchInput {
       border-radius: 5px;
       padding: 10px;
-      background: colors.$white1;
+      background: $white1;
       margin-left: 15px;
     }
     .searchMore {
-      color: colors.$blue;
+      color: $blue;
     }
   }
   .userList {
@@ -304,9 +304,9 @@
 
 .timeAgoLabel {
   margin-left: 5px;
-  color: colors.$gray;
+  color: $gray;
   font-size: 70%;
-  background: colors.$timeago-bg;
+  background: $gray38;
   padding: 5px;
   border-radius: 10px;
 }
@@ -315,29 +315,29 @@
   width: 100px;
   margin: 0 auto;
   height: 100px;
-  background-color: colors.$white1;
+  background-color: $white1;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 40px;
   &.top {
-    box-shadow: 0px -15px 10px -15px colors.$gray-shadow;
+    box-shadow: 0px -15px 10px -15px $gray-shadow;
   }
   &.bottom {
-    box-shadow: 0px 15px 10px -15px colors.$gray-shadow;
+    box-shadow: 0px 15px 10px -15px $gray-shadow;
   }
   &.left {
-    box-shadow: -15px 0px 10px -15px colors.$gray-shadow;
+    box-shadow: -15px 0px 10px -15px $gray-shadow;
   }
   &.right {
-    box-shadow: 15px 0px 10px -15px colors.$gray-shadow;
+    box-shadow: 15px 0px 10px -15px $gray-shadow;
   }
 }
 
 .attachmentItemMeeting {
   font-size: 90%;
   display: flex;
-  background: colors.$attachment-meeting-bg;
+  background: $green6;
   border-radius: 5px;
   width: 300px;
   padding: 15px 12px;
@@ -357,12 +357,12 @@
       display: flex;
       align-items: center;
       padding: 0px 5px;
-      background: colors.$blue2;
+      background: $blue2;
       border-radius: 5px;
-      color: colors.$white;
+      color: $white;
 
       &:hover {
-        background: colors.$blue3-hover;
+        background: $blue3-hover;
       }
       .downloadLabel {
         margin-left: 5px;
@@ -373,11 +373,11 @@
 }
 .group-icon {
   font-size: 180%;
-  border: 0.5px solid colors.$icon-border;
+  border: 0.5px solid $gray39;
 }
 .group-icon-head {
   font-size: 300%;
-  border: 0.5px solid colors.$icon-border;
+  border: 0.5px solid $gray39;
 }
 .m-0 {
   margin: 0px;
@@ -396,11 +396,11 @@
   align-items: flex-end;
   .timestamp {
     font-size: 70%;
-    color: colors.$gray1;
+    color: $gray1;
   }
   .message {
-    background: colors.$blue-main;
-    color: colors.$white;
+    background: $blue-main;
+    color: $white;
     padding: 5px 10px;
     border-radius: 5px;
     font-style: normal;
@@ -422,10 +422,10 @@
   margin-bottom: 10px;
   .timestamp {
     font-size: 70%;
-    color: colors.$gray1;
+    color: $gray1;
   }
   .message {
-    background: colors.$white1;
+    background: $white1;
     padding: 5px 10px;
     border-radius: 5px;
     font-style: normal;
@@ -455,7 +455,7 @@ p {
   width: 300px;
 }
 .attachmentIconBtn {
-  background: colors.$gray;
+  background: $gray;
   padding: 10px 10px;
   border-radius: 5px;
   margin: 0px 5px;
@@ -464,10 +464,10 @@ p {
 
 .attachmentIcon {
   transform: rotate(45deg);
-  color: colors.$blue-main;
+  color: $blue-main;
 }
 .attachmentAddIcon {
-  color: colors.$blue-main;
+  color: $blue-main;
 }
 
 .hidden-input {
@@ -476,7 +476,7 @@ p {
 
 .groupMessageFrom {
   font-size: 70%;
-  color: colors.$light-gray;
+  color: $light-gray;
 }
 
 .shom-more-members:after {
@@ -488,13 +488,13 @@ p {
   margin: 0 auto;
   width: 0;
   height: 0;
-  border-bottom: 15px solid colors.$white;
+  border-bottom: 15px solid $white;
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
 }
 
 .shom-more-members {
-  background-color: colors.$white;
+  background-color: $white;
   border-radius: 8px;
   box-shadow: 6px 4px 84px rgba(0, 0, 0, 0.15);
   padding: 16px 0px;
@@ -527,7 +527,7 @@ p {
     max-width: 200px;
     overflow: hidden;
     text-overflow: ellipsis;
-    color: colors.$gray1;
+    color: $gray1;
     font-weight: 400;
     font-size: 75%;
   }
@@ -550,14 +550,14 @@ p {
 }
 
 .showMoreBtn {
-  color: colors.$blue;
+  color: $blue;
   cursor: pointer;
   margin-left: 3px;
 }
 
 .attachmentPreviewBG {
-  background: colors.$gray-bg !important;
-  color: colors.$white;
+  background: $gray-bg !important;
+  color: $white;
   margin: 0px;
   height: auto;
 }
@@ -588,11 +588,11 @@ p {
       overflow: hidden;
       border-radius: 5px;
       cursor: pointer;
-      color: colors.$gray-bg;
+      color: $gray-bg;
       padding: 5px 5px;
       position: relative;
       // &:hover {
-      //   background: colors.$blue3-hover;
+      //   background: $blue3-hover;
       // }
       .font-5rem {
         font-size: 5rem;
@@ -602,7 +602,7 @@ p {
         position: absolute;
         right: 0px;
         top: 0px;
-        color: colors.$blue-main;
+        color: $blue-main;
         z-index: 999999;
       }
       .attachmentDetail {
@@ -611,31 +611,31 @@ p {
         flex-direction: column;
         white-space: nowrap;
         .attachmentTitle {
-          // color: colors.$white;
+          // color: $white;
           font-size: 80%;
         }
         .attachmentSize {
-          // color: colors.$white1;
+          // color: $white1;
           font-size: 75%;
         }
       }
     }
     .selectedAttachment {
-      border: 2px solid colors.$blue-secondary;
+      border: 2px solid $blue-secondary;
     }
   }
 }
 
 .searchMore {
-  color: colors.$blue;
+  color: $blue;
 }
 .alignCenter {
   align-items: center;
 }
 
 .unreadCount {
-  background: colors.$red-main;
-  color: colors.$white;
+  background: $red-main;
+  color: $white;
   border-radius: 45px;
   width: 20px;
   display: flex;
@@ -651,16 +651,16 @@ p {
     height: 12px;
     border-radius: 50%;
     // background-color: grey;
-    border: 2px solid colors.$white;
+    border: 2px solid $white;
     bottom: 2px;
     right: 0;
     position: absolute;
   }
   .online {
-    background-color: colors.$green;
+    background-color: $green;
   }
   .offline {
-    background-color: colors.$gray;
+    background-color: $gray;
   }
 }
 
@@ -668,7 +668,7 @@ p {
   width: 100%;
   text-align: center;
   padding: 5px;
-  color: colors.$blue-secondary;
+  color: $blue-secondary;
   display: flex;
   align-items: center;
   justify-content: center;

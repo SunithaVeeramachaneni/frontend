@@ -90,7 +90,7 @@
 
 .select-date-range-btn {
   background: none;
-  border: 1px solid $border-color-gray;
+  border: 1px solid $gray41-gray;
   border-radius: 7px;
   height: 42px;
   width: 100%;
@@ -99,7 +99,7 @@
 .save-btn {
   float: right;
   background-color: $blue-main;
-  color: white;
+  color: $white;
   border: none;
   border-radius: 7px;
 }
@@ -109,7 +109,7 @@
 }
 
 .delete-icon {
-  color: #808080;
+  color: $grey;
   cursor: pointer;
   margin-top: -5px;
   margin-left: 5px;

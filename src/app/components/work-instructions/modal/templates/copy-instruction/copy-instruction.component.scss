@@ -48,12 +48,12 @@
   margin: 15px auto;
   border-radius: 5px;
   padding: 10px;
-  border: 1px dashed #666;
+  border: 1px dashed $gray53;
 }
 
 .form-input {
   background: $white;
-  border: 1px solid #cccccc;
+  border: 1px solid $gray44;
   box-sizing: border-box;
   border-radius: 8px;
   width: 100%;
@@ -62,7 +62,7 @@
 
 .files-list {
   width: 95%;
-  color: #1c8adb;
+  color: $blue18;
 }
 
 .files-list .delete-file {
@@ -93,7 +93,7 @@
   justify-content: center;
   letter-spacing: 0.4px;
   text-transform: uppercase;
-  color: $gray-text;
+  color: $gray4;
 }
 
 .tabs-heading {
@@ -109,7 +109,7 @@
 .ngx-pagination .current {
   padding: 0.1875rem 0.625rem;
   background: rgba(0, 0, 0, 0.08);
-  color: #fefefe;
+  color: $gray21;
   cursor: default;
   border-radius: 50%;
 }
@@ -128,7 +128,7 @@
   font-size: 100%;
   line-height: 20px;
   letter-spacing: 0.25px;
-  color: $gray-text;
+  color: $gray4;
   margin-top: 7px;
 }
 
@@ -158,7 +158,7 @@
   padding: 0.75rem;
   padding-left: 0px;
   vertical-align: top;
-  border-top: 1px solid #dee2e6;
+  border-top: 1px solid $gray32;
 }
 .heading-icon {
   position: relative;
@@ -234,7 +234,7 @@
 }
 
 .chip {
-  background: #cccccc;
+  background: $gray44;
   padding: 5px;
   border-radius: 4px;
   font-size: 80%;
@@ -302,7 +302,7 @@
   align-items: flex-start;
   justify-content: center;
   padding: 1rem 1rem 0rem 1rem;
-  border-top: 1px solid #c8ced3;
+  border-top: 1px solid $gray31;
   border-bottom-right-radius: 0.3rem;
   border-bottom-left-radius: 0.3rem;
 }
@@ -354,7 +354,7 @@
   width: 550px;
 }
 
-:host /deep/ .modal-body .mat-tab-label {
+::ng-deep .modal-body .mat-tab-label {
   width: 50%;
   height: 48px;
   padding: 0 24px;

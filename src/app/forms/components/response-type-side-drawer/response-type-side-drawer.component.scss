@@ -9,7 +9,7 @@
   z-index: 999;
   height: 100vh;
   background-color: $white;
-  border-left: 1px solid $border-color;
+  border-left: 1px solid $gray41;
   box-shadow: -15px 0px 17px -7px rgb(0 0 0 / 46%);
   padding: 0px 20px;
 
@@ -20,7 +20,7 @@
 
   .mcq-heading {
     font-size: 1.2rem;
-    border-bottom: 1px solid $border-color;
+    border-bottom: 1px solid $gray41;
     padding: 15px;
     font-weight: 600;
     padding-left: 0;
@@ -62,7 +62,7 @@
   }
 
   .response-list {
-    border-bottom: 1px solid $border-color;
+    border-bottom: 1px solid $gray41;
     height: 45px;
   }
 
@@ -85,7 +85,7 @@
   .slider-inputs {
     width: 100px;
     height: 35px;
-    border: 1px solid $border-color;
+    border: 1px solid $gray41;
     border-radius: 4px;
   }
 
@@ -242,36 +242,36 @@
       }
     }
     .warning {
-      background: $warning-bg;
+      background: $yellow2;
     }
     .alert {
-      background: $alert-bg;
+      background: $red-main;
       color: $white;
     }
     .note {
-      background: $note-bg;
+      background: $gray42;
       // color: $white;
     }
   }
 
   ::ng-deep {
     .mat-radio-outer-circle {
-      border-color: $radio-button-unchecked !important;
+      border-color: $gray47 !important;
     }
     .mat-radio-inner-circle {
       background-color: $white !important;
     }
     .mat-radio-checked .mat-radio-outer-circle {
-      background-color: $radio-button-checked !important;
-      border-color: $radio-button-checked !important;
+      background-color: $blue-main !important;
+      border-color: $blue-main !important;
     }
     .mat-radio-button.mat-accent .mat-radio-ripple .mat-ripple-element {
-      background-color: $radio-button-checked;
+      background-color: $blue-main;
     }
     &.mat-radio-button.mat-radio-disabled.mat-radio-checked
       .mat-radio-outer-circle {
-      background-color: $radio-button-unchecked !important;
-      border-color: $radio-button-unchecked !important;
+      background-color: $gray47 !important;
+      border-color: $gray47 !important;
     }
   }
 }

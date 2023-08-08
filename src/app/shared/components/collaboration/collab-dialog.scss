@@ -1,4 +1,4 @@
-@use './../../../../scss/colors.scss' as colors;
+@import '../../../../scss/colors.scss';
 
 .rotate90 {
   transform: rotate(90deg);
@@ -41,35 +41,34 @@
 }
 
 .dialogTitle {
-  background: colors.$white;
+  background: $white;
   margin: 0px;
   cursor: move;
   .dialogHeader {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: colors.$blue-head;
+    background: $blue-head;
     padding: 4px 15px;
     .headerTitle {
-      color: colors.$white;
+      color: $white;
     }
     .buttonGroup {
-      box-shadow: 0 0px 0px -1px colors.$button-grp-border,
-        0 1px 0px 0 colors.$button-grp-border,
-        0 0px 0px 0 colors.$button-grp-border;
+      box-shadow: 0 0px 0px -1px $gray40, 0 1px 0px 0 $gray40,
+        0 0px 0px 0 $gray40;
     }
     .closeBtn {
-      color: colors.$white;
+      color: $white;
     }
   }
 }
 .dialogContent {
   margin: 0px;
   padding: 0px 0px;
-  background-color: colors.$white;
+  background-color: $white;
   min-height: 88vh !important;
   .buttonGroup {
-    background: colors.$white2;
+    background: $white2;
     border-radius: 5px;
     margin-left: 15px;
     margin-top: 10px;
@@ -90,7 +89,7 @@
 ::ng-deep .mat-button-toggle-standalone.mat-button-toggle-appearance-standard,
 .mat-button-toggle-group-appearance-standard {
   border-radius: 5px;
-  background: colors.$white2;
+  background: $white2;
   height: 35px;
   width: fit-content;
   margin: 10px 0px;
@@ -102,7 +101,7 @@
   background-color: transparent !important;
 }
 .btnGroupBtn {
-  color: colors.$dark-gray;
+  color: $dark-gray;
   font-weight: 400;
 }
 
@@ -115,11 +114,11 @@
 }
 
 .groupBtnDivider {
-  background: colors.$gray1;
+  background: $gray1;
   width: 1px;
   height: 20px;
 }
 .activeTab {
   font-weight: 500;
-  color: colors.$black;
+  color: $black;
 }

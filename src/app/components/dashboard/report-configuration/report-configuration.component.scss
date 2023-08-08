@@ -65,7 +65,7 @@
 
 .column1 {
   width: 22%;
-  border-right: 1px solid $disabled-color;
+  border-right: 1px solid $gray34;
   padding-right: 10px;
 }
 
@@ -128,7 +128,7 @@
   margin: 0px 3px;
   padding: 0px 10px 0px 10px;
   height: 40px;
-  border: 3px solid #637bfe;
+  border: 3px solid $blue-secondary;
 }
 
 .export-btn-loader {
@@ -178,8 +178,8 @@
   .mat-button-toggle-disabled
   .mat-button-toggle-button {
   cursor: default;
-  background: $border-color;
-  color: $disabled-color;
+  background: $gray41;
+  color: $gray34;
 }
 
 .no-of-records {
@@ -254,7 +254,7 @@
 
 ::ng-deep .report-configuration .mat-checkbox-frame {
   border-width: 2px;
-  border-color: #6e6f75;
+  border-color: $gray23;
 }
 
 ::ng-deep
@@ -302,11 +302,11 @@
 }
 
 .done-btn {
-  background-color: $radio-button-checked;
+  background-color: $blue-main;
 }
 
 .cancel-btn {
-  color: $radio-button-checked;
+  color: $blue-main;
 }
 
 .m-t-14 {

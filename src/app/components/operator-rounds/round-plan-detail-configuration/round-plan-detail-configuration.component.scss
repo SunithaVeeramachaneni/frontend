@@ -13,7 +13,7 @@
   .form-header {
     justify-content: space-between;
     position: relative;
-    border-bottom: 1px solid $border-color;
+    border-bottom: 1px solid $gray41;
     padding: 10px 0px;
   }
 
@@ -88,7 +88,7 @@
 
   .changes-text {
     margin-top: 23px;
-    color: $gray-text;
+    color: $gray4;
     font-size: 100%;
   }
 
@@ -108,8 +108,8 @@
   }
 
   .import-btn:disabled {
-    border-color: $border-color;
-    background-color: $border-color;
+    border-color: $gray41;
+    background-color: $gray41;
     color: $light-gray;
   }
 
@@ -145,7 +145,7 @@
   }
 
   .publish-btn:disabled {
-    background-color: $disabled-color;
+    background-color: $gray34;
   }
 
   .publish-btn-icon {
@@ -196,7 +196,7 @@
 
   .question-drag-handler {
     height: 40px;
-    border-bottom: 1px solid $border-color;
+    border-bottom: 1px solid $gray41;
 
     .question-six-dots {
       padding-left: 15px;
@@ -245,7 +245,7 @@
   .selectedNodeTitle {
     font-weight: 500;
     font-size: 125%;
-    color: $text-color;
+    color: $gray-bg;
   }
 }
 
@@ -371,7 +371,7 @@
   align-items: center;
   justify-content: center;
   font-style: italic;
-  color: $gray-text;
+  color: $gray4;
   height: 50px;
 }
 
@@ -383,7 +383,7 @@
   top: 0px;
   .questions-btn {
     background-color: $white;
-    border: 1px solid $border-color;
+    border: 1px solid $gray41;
     border-radius: 7px;
     width: 55px;
     padding: 5px 0px;
@@ -401,12 +401,12 @@
   width: 35%;
   background: $white;
   height: -webkit-fill-available;
-  border-right: 1px solid $border-color;
+  border-right: 1px solid $gray41;
   .header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    color: $text-color;
+    color: $gray-bg;
     letter-spacing: 0.15px;
     font-weight: 700;
     padding: 10px 15px;
@@ -432,8 +432,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-top: 1px solid $border-color;
-  border-bottom: 1px solid $border-color;
+  border-top: 1px solid $gray41;
+  border-bottom: 1px solid $gray41;
   padding: 10px;
   .left {
     display: flex;
@@ -481,8 +481,8 @@
   border-radius: 4px;
   margin: 13px 12px 0px 0px;
   border: 1px solid;
-  background-color: $radio-button-checked;
-  border-color: $radio-button-checked;
+  background-color: $blue-main;
+  border-color: $blue-main;
   color: $white;
   display: flex;
   align-items: center;

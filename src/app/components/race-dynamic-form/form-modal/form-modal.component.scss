@@ -3,7 +3,7 @@
 .form-toolbar {
   height: 65px;
   background-color: $white;
-  border-bottom: 1px solid $border-color;
+  border-bottom: 1px solid $gray41;
 
   .back-btn {
     border: none;
@@ -13,7 +13,7 @@
       font-weight: 700;
       font-size: 120%;
       letter-spacing: 0.15px;
-      color: $text-color;
+      color: $gray-bg;
       margin-left: 10px;
       position: relative;
       top: -2px;

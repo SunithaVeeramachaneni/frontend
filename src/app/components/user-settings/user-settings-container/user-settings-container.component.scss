@@ -10,14 +10,14 @@
 }
 
 .user-settings-menu {
-  color: #727caf;
+  color: $blue26;
 }
 
 .is-active {
-  background: #eff2ff;
+  background: $gray37;
   color: $blue-head;
 }
 
 .user-settings-border {
-  border-right: 1px solid $disabled-color;
+  border-right: 1px solid $gray34;
 }

@@ -12,7 +12,7 @@
   .form-header {
     justify-content: space-between;
     position: relative;
-    border-bottom: 1px solid $border-color;
+    border-bottom: 1px solid $gray41;
     padding: 10px 0px;
   }
 
@@ -75,7 +75,7 @@
 
   .changes-text {
     margin-top: 23px;
-    color: $gray-text;
+    color: $gray4;
     font-size: 100%;
   }
 
@@ -95,8 +95,8 @@
   }
 
   .import-btn:disabled {
-    border-color: $border-color;
-    background-color: $border-color;
+    border-color: $gray41;
+    background-color: $gray41;
     color: $light-gray;
   }
 
@@ -125,7 +125,7 @@
   }
 
   .publish-btn:disabled {
-    background-color: $disabled-color;
+    background-color: $gray34;
   }
 
   .publish-btn-icon {
@@ -233,7 +233,7 @@
   .selectedNodeTitle {
     font-weight: 500;
     font-size: 20px;
-    color: $text-color;
+    color: $gray-bg;
   }
 }
 
@@ -360,7 +360,7 @@
   align-items: center;
   justify-content: center;
   font-style: italic;
-  color: $gray-text;
+  color: $gray4;
   height: 50px;
 }
 
@@ -372,7 +372,7 @@
   top: 0px;
   .questions-btn {
     background-color: $white;
-    border: 1px solid $border-color;
+    border: 1px solid $gray41;
     border-radius: 7px;
     width: 55px;
     padding: 5px 0px;
@@ -390,12 +390,12 @@
   width: 30%;
   background: $white;
   height: -webkit-fill-available;
-  border-right: 1px solid $border-color;
+  border-right: 1px solid $gray41;
   .header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    color: $text-color;
+    color: $gray-bg;
     letter-spacing: 0.15px;
     font-weight: 700;
     padding: 10px 15px;
@@ -421,8 +421,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-top: 1px solid $border-color;
-  border-bottom: 1px solid $border-color;
+  border-top: 1px solid $gray41;
+  border-bottom: 1px solid $gray41;
   padding: 10px;
   .left {
     display: flex;
@@ -455,7 +455,7 @@
 
 .add-page-btn {
   background: $white;
-  border: 1px solid $border-color;
+  border: 1px solid $gray41;
   border-radius: 5px;
   font-weight: 400;
   font-size: 90%;
@@ -471,7 +471,7 @@
 
 .add-section-btn {
   position: relative;
-  border: 1px solid $border-color;
+  border: 1px solid $gray41;
   border-radius: 5px;
   top: -80px;
   left: 80px;
@@ -494,7 +494,7 @@
 
 .add-section-without-floating-btns {
   position: relative;
-  border: 1px solid $border-color;
+  border: 1px solid $gray41;
   border-radius: 5px;
   left: 20px;
   background: $white;
@@ -511,7 +511,7 @@
   position: relative;
   top: 16px;
   margin-left: 16px;
-  border: 1px solid $border-color;
+  border: 1px solid $gray41;
   border-radius: 7px;
   display: block;
   width: 55px;

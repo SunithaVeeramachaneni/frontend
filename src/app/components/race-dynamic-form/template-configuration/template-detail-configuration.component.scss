@@ -75,7 +75,7 @@
 
   .changes-text {
     margin-top: 23px;
-    color: $gray-text;
+    color: $gray4;
     font-size: 100%;
   }
 
@@ -96,7 +96,7 @@
   }
 
   .publish-btn:disabled {
-    background-color: $disabled-color;
+    background-color: $gray34;
   }
 
   .publish {
@@ -272,7 +272,7 @@
   align-items: center;
   justify-content: center;
   font-style: italic;
-  color: $gray-text;
+  color: $gray4;
   height: 50px;
 }
 
@@ -284,7 +284,7 @@
   top: 0px;
   .questions-btn {
     background-color: $white;
-    border: 1px solid $border-color;
+    border: 1px solid $gray41;
     border-radius: 7px;
     width: 55px;
     padding: 5px 0px;
@@ -323,7 +323,7 @@
 
 .add-section-without-floating-btns {
   position: relative;
-  border: 1px solid $border-color;
+  border: 1px solid $gray41;
   border-radius: 5px;
   left: 20px;
   background: $white;
@@ -337,7 +337,7 @@
 }
 
 .remove-btn {
-  color: $disabled-color;
+  color: $gray34;
   float: right;
   cursor: pointer;
   margin-top: 5px;

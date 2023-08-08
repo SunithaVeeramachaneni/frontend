@@ -36,7 +36,7 @@
   font-weight: 500;
   font-size: 90%;
   text-transform: uppercase;
-  color: $gray-text;
+  color: $gray4;
   position: relative;
   right: 0px;
   text-align: right !important;
@@ -52,7 +52,7 @@
 .uploadfilecontainer1 {
   height: 36px;
   width: 100%;
-  border: 1px dashed #cccccc;
+  border: 1px dashed $gray44;
   border-radius: 8px;
   background-color: white;
 }
@@ -62,7 +62,7 @@
   font-weight: normal;
   font-size: 120%;
   line-height: 19px;
-  color: $gray-text;
+  color: $gray4;
   padding-top: 8px;
   padding-left: 160px;
 }
@@ -73,7 +73,7 @@
 
 .files-list {
   width: 100%;
-  color: #1c8adb;
+  color: $blue18;
 }
 
 .files-list .delete-file {
@@ -132,7 +132,7 @@
   padding: 5px 15px 5px 10px;
   height: calc(100vh - 130px);
   overflow-y: scroll;
-  border-bottom: 1px solid #cccccc;
+  border-bottom: 1px solid $gray44;
 }
 
 .details-tab {

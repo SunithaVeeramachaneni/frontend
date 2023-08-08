@@ -1,3 +1,5 @@
+@import '../../../../scss/colors.scss';
+
 .custom-pagination {
   display: flex;
   margin: auto;
@@ -17,7 +19,7 @@
 }
 
 .custom-pagination > div:hover {
-  background: #e6e6e6;
+  background: $gray22;
   text-decoration: underline;
 }
 
@@ -26,8 +28,8 @@
 }
 
 .custom-pagination > div.current {
-  background: #124ED0;
-  color: #fefefe;
+  background: $blue13;
+  color: $gray21;
   cursor: default;
   pointer-events: none;
   border-radius: 50%;
@@ -38,7 +40,7 @@
 .disabled {
   pointer-events: none;
   cursor: default;
-  color: #b2b2b2;
+  color: $gray20;
 }
 
 .pagination-mat-icon {

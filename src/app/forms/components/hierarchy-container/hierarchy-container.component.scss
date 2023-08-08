@@ -4,7 +4,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color: $text-color;
+  color: $gray-bg;
   letter-spacing: 0.15px;
   font-weight: 700;
   padding: 10px 15px;
@@ -20,7 +20,7 @@
     margin-left: 3px;
   }
   .addBtn:hover {
-    background-color: $add-hover-bg;
+    background-color: $gray48;
   }
 }
 .search {
@@ -79,7 +79,7 @@
   padding: 0px;
   height: 30px;
   border-radius: 15px;
-  border: 0.781564px solid $border-color;
+  border: 0.781564px solid $gray41;
 }
 .toggle-btn {
   width: 55px;
