@@ -191,7 +191,11 @@ export class ResponseSetService {
             ? formatDistance(new Date(p.createdAt), new Date(), {
                 addSuffix: true
               })
-            : ''
+            : '',
+          updatedAt:
+            p?.updatedAt && this.isValidDate(new Date(p?.updatedAt))
+              ? p?.updatedAt
+              : ''
         })) || [];
     const count = resp?.items.length || 0;
     const next = resp?.next;
@@ -201,5 +205,9 @@ export class ResponseSetService {
       rows,
       next
     };
+  }
+
+  private isValidDate(date): boolean {
+    return date instanceof Date && !isNaN(date as unknown as number);
   }
 }
