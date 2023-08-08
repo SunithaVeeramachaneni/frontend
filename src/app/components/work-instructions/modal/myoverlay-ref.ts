@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import { Subject } from 'rxjs';
 
 import { OverlayRef } from '@angular/cdk/overlay';

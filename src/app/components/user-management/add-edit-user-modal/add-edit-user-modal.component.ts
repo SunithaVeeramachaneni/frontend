@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/dot-notation */
 /* eslint-disable no-underscore-dangle */
 import {
   Component,
@@ -32,8 +33,7 @@ import {
   distinctUntilChanged,
   first,
   map,
-  switchMap,
-  tap
+  switchMap
 } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { defaultProfile, superAdminText } from 'src/app/app.constants';
@@ -41,7 +41,6 @@ import { userRolePermissions } from 'src/app/app.constants';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { UsersService } from '../services/users.service';
 import { NgxImageCompressService } from 'ngx-image-compress';
-import { PlantService } from '../../master-configurations/plants/services/plant.service';
 @Component({
   selector: 'app-add-edit-user-modal',
   templateUrl: './add-edit-user-modal.component.html',
@@ -125,8 +124,7 @@ export class AddEditUserModalComponent implements OnInit {
     private usersService: UsersService,
     private http: HttpClient,
     private imageCompress: NgxImageCompressService,
-    @Inject(MAT_DIALOG_DATA) public data: any,
-    private plantService: PlantService
+    @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
 
   matSelectValidator(): ValidatorFn {

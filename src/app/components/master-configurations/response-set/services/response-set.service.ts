@@ -1,5 +1,6 @@
+/* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 
 import { formatDistance } from 'date-fns';
@@ -15,7 +16,6 @@ import {
   CreateResponseSet,
   UpdateResponseSet,
   DeleteResponseSet,
-  UserDetails,
   ErrorInfo
 } from '../../../../interfaces';
 

@@ -10,11 +10,11 @@ export class ReadOnlyComponent implements OnInit {
   @Input() set question(data) {
     this.questionInfo = data;
   }
-  @Input() translateValue:string;
-
   get question() {
     return this.questionInfo;
   }
+  @Input() translateValue: string;
+
   default;
   private questionInfo;
 

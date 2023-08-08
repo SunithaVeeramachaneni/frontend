@@ -6,7 +6,6 @@ import {
   OnInit,
   Output
 } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
 import {
   catchError,
@@ -19,7 +18,6 @@ import { Buffer } from 'buffer';
 import { ErrorInfo } from 'src/app/interfaces/error-info';
 import { LoginService } from 'src/app/components/login/services/login.service';
 import { defaultLimit } from 'src/app/app.constants';
-import { AuthHeaderService } from 'src/app/shared/services/authHeader.service';
 import { PeopleService } from '../../../people/people.service';
 import { ImageUtils } from 'src/app/shared/utils/imageUtils';
 
@@ -73,8 +71,7 @@ export class AddPeopleToCallComponent implements OnInit {
   constructor(
     private peopleService: PeopleService,
     private imageUtils: ImageUtils,
-    private loginService: LoginService,
-    private authHeaderService: AuthHeaderService
+    private loginService: LoginService
   ) {
     this.searchKeyUpdate
       .pipe(debounceTime(400), distinctUntilChanged())

@@ -7,7 +7,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
   styleUrls: ['./save-template-container.component.scss']
 })
 export class SaveTemplateContainerComponent implements OnInit {
-  displayConfirm: boolean = false;
+  displayConfirm = false;
   templateName: string;
   templateId: string;
 

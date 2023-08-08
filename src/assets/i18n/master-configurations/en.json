@@ -40,7 +40,7 @@
   "deleteTitle": "Delete",
   "deleteSubTitle": "Are you sure to delete",
   "selectmsg": "Please select value",
-  "unit_type": "Unit Type",
+  "unittype": "Unit Type",
   "createUnit": "Create Unit",
   "done": "Done",
   "addMore": "Add More",

@@ -1,22 +1,12 @@
+/* eslint-disable radix */
 /* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
 import { Observable, Subject, timer } from 'rxjs';
-import {
-  catchError,
-  map,
-  retry,
-  share,
-  switchMap,
-  takeUntil,
-  tap
-} from 'rxjs/operators';
+import { map, retry, share, switchMap, takeUntil } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { ErrorInfo } from '../../interfaces/error-info';
-import { WorkOrder, WorkOrders } from '../../interfaces/scc-work-order';
-import {
-  WarehouseTechnician,
-  WarehouseTechnicians
-} from '../../interfaces/warehouse_technicians';
+import { WorkOrders } from '../../interfaces/scc-work-order';
+import { WarehouseTechnician } from '../../interfaces/warehouse_technicians';
 import { AppService } from '../../shared/services/app.services';
 
 @Injectable({ providedIn: 'root' })
@@ -30,8 +20,6 @@ export class SparepartsService {
     '5': []
   };
 
-  constructor(private _appService: AppService) {}
-
   private statusMap = {
     '1': 'Kits Required',
     '2': 'Assigned for Picking',
@@ -41,6 +29,8 @@ export class SparepartsService {
   };
 
   private stopPolling = new Subject();
+
+  constructor(private _appService: AppService) {}
 
   stopSeamlessUpdate() {
     this.stopPolling.next();

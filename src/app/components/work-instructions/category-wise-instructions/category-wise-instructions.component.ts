@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { ActivatedRoute } from '@angular/router';
 import {
   Component,

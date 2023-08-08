@@ -20,6 +20,7 @@
     >
       <button
         mat-raised-button
+        type="submit"
         translate="saveBtn"
         class="save-btn"
         *ngIf="editTenant"
@@ -27,6 +28,7 @@
       ></button>
     </ng-container>
     <button
+      type="button"
       mat-raised-button
       translate="cancelBtn"
       class="cancel-btn"
@@ -35,6 +37,7 @@
     ></button>
     <ng-container *appCheckUserHasPermission="[permissions.updateTenant]">
       <button
+        type="button"
         mat-raised-button
         translate="editBtn"
         class="edit-btn"
@@ -75,6 +78,7 @@
         <mat-tab label="{{ 'collaboration' | translate }}"></mat-tab>
         <mat-tab label="{{ 'configurations' | translate }}"></mat-tab>
         <mat-tab label="{{ 'assets' | translate }}"></mat-tab>
+        <mat-tab label="{{ 'apiKeys' | translate }}"></mat-tab>
       </mat-tab-group>
     </div>
     <div class="nextbtn p-0">
@@ -97,8 +101,11 @@
     </div>
   </div>
   <div class="dis-flex scroll-content">
-    <div class="width-30"></div>
-    <div class="custom-form-field-white-color width-40">
+    <div class="width-30" [hidden]="selectedID.value === 7"></div>
+    <div
+      class="custom-form-field-white-color width-40"
+      [hidden]="selectedID.value === 7"
+    >
       <div [hidden]="selectedID.value !== 0">
         <p class="m-0">
           <mat-form-field appearance="outline" class="width-100">
@@ -2139,6 +2146,17 @@
       </div>
     </div>
 
-    <div class="width-30"></div>
+    <div class="width-30" [hidden]="selectedID.value === 7"></div>
+
+    <div
+      [hidden]="selectedID.value !== 7"
+      class="custom-form-field-white-color width-100"
+    >
+      <app-api-key-generation
+        [apiKeysInfo]="apiKeysInfoObject"
+        [disabeleApiKeyGeneration]="!editTenant"
+        (apiKeyEvent)="apiKeyEventHandler($event)"
+      ></app-api-key-generation>
+    </div>
   </div>
 </form>

@@ -264,6 +264,16 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
     return (this.unitMeasurementForm?.get('units') as any)?.controls;
   }
 
+  get isFormValid(): boolean {
+    const isAddNewUnit = this.unitType === 'addNew';
+    const unitType = isAddNewUnit ? this.newUnitType : this.unitType;
+    return (
+      !unitType ||
+      this.unitMeasurementForm?.invalid ||
+      (!isAddNewUnit && this.unitMeasurementForm.pristine)
+    );
+  }
+
   private resetFormState() {
     this.unitMeasurementForm.reset();
     this.units = null;

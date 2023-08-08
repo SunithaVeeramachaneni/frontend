@@ -24,10 +24,6 @@ export class LocationService {
   fetchLocations$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
 
-  // this fetch limit is limited by DynamoDB's 1 MB query size limit.
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  private MAX_FETCH_LIMIT = '1000000';
-
   constructor(private _appService: AppService) {}
 
   fetchAllLocations$ = (plantsID = null) => {

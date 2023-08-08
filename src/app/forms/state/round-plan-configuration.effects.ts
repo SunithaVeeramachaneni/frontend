@@ -2,26 +2,22 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 import { Injectable } from '@angular/core';
 
-import { map, catchError, concatMap, mergeMap, tap } from 'rxjs/operators';
-import { forkJoin, of } from 'rxjs';
+import { map, catchError, concatMap, mergeMap } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import {
   RoundPlanConfigurationActions,
   RoundPlanConfigurationApiActions
 } from './actions';
-import { LoginService } from 'src/app/components/login/services/login.service';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
-import { Router } from '@angular/router';
 
 @Injectable()
 export class RoundPlanConfigurationEffects {
   constructor(
     private actions$: Actions,
-    private operatorRoundsService: OperatorRoundsService,
-    private loginService: LoginService,
-    private router: Router
+    private operatorRoundsService: OperatorRoundsService
   ) {}
 
   createRoundPlan$ = createEffect(() =>

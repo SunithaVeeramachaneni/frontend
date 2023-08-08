@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/dot-notation */
 import {
   Component,
   Input,
@@ -20,7 +21,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { TableColumn } from 'src/app/interfaces';
 import { DateSegmentService } from '../date-segment/date-segment.service';
 import { debounce } from 'ts-debounce';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { WhiteSpaceValidator } from '../../validators/white-space-validator';
 @Component({

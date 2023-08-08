@@ -1,16 +1,10 @@
 /* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
-import { format, formatDistance } from 'date-fns';
-import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { BehaviorSubject, of, ReplaySubject } from 'rxjs';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
-import { superAdminIcon } from 'src/app/app.constants';
-import { ToastService } from 'src/app/shared/toast';
 
 import {
-  UserGroup,
-  UserGroupDetails,
   ErrorInfo,
   TableEvent,
   LoadEvent,

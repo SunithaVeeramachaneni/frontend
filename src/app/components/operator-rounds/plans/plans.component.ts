@@ -23,7 +23,6 @@ import {
   distinctUntilChanged,
   filter,
   map,
-  catchError,
   startWith,
   switchMap,
   takeUntil,
@@ -75,7 +74,6 @@ import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
 import { ShiftService } from '../../master-configurations/shifts/services/shift.service';
 import { ScheduleConfigurationService } from 'src/app/forms/services/schedule.service';
 import { MatDialog } from '@angular/material/dialog';
-import { graphQLDefaultMaxLimit } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-plans',
@@ -542,6 +540,9 @@ export class PlansComponent implements OnInit, OnDestroy {
             );
           }
           this.initial.data = this.formattingPlans(this.initial.data);
+          if (this.filter.assignedTo) {
+            this.initial.data = this.assingedToFilter(this.initial.data);
+          }
           this.skip = this.initial.data.length;
           return this.initial;
         }
@@ -649,6 +650,11 @@ export class PlansComponent implements OnInit, OnDestroy {
       }
       return plan;
     });
+  }
+  assingedToFilter(roundPlan) {
+    return roundPlan.filter((plan) =>
+      this.filter.assignedTo.includes(plan.assigneeToEmail)
+    );
   }
 
   getRoundPlanList() {

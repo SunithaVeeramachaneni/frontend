@@ -17,8 +17,6 @@ import { FormModule } from 'src/app/forms/form.module';
 import { FormContainerComponent } from './form-container/form-container.component';
 import { FormListComponent } from './form-list/form-list.component';
 import { FormDetailComponent } from './form-detail/form-detail.component';
-import { ResponseSetComponent } from './response-set/response-set.component';
-import { PublicLibraryComponent } from './public-library/public-library.component';
 import { FormHeaderConfigurationComponent } from './form-header-configuration/form-header-configuration.component';
 import { FormDetailConfigurationComponent } from './form-detail-configuration/form-detail-configuration.component';
 
@@ -102,8 +100,6 @@ export const customTranslateLoader = (http: HttpClient) =>
     FormContainerComponent,
     FormListComponent,
     FormDetailComponent,
-    ResponseSetComponent,
-    PublicLibraryComponent,
     FormHeaderConfigurationComponent,
     FormDetailConfigurationComponent,
     SelectQuestionsDialogComponent,
@@ -208,8 +204,6 @@ export const customTranslateLoader = (http: HttpClient) =>
     FormContainerComponent,
     FormListComponent,
     FormDetailComponent,
-    ResponseSetComponent,
-    PublicLibraryComponent,
     FormHeaderConfigurationComponent,
     FormDetailConfigurationComponent,
     SelectQuestionsDialogComponent,

@@ -3,15 +3,11 @@ import {
   ChangeDetectorRef,
   Component,
   OnInit,
-  ViewChild,
-  ElementRef,
   ChangeDetectionStrategy,
   OnDestroy
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { AddEditUserGroupModalComponent } from '../add-edit-user-group-modal/add-edit-user-group-modal.component';
-import { Plant } from 'src/app/interfaces/plant';
-import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { UserGroupService } from '../services/user-group.service';
 import { Observable, of, BehaviorSubject, combineLatest, Subject } from 'rxjs';
 import {
@@ -26,7 +22,7 @@ import {
 } from 'rxjs/operators';
 import { defaultLimit, routingUrls } from 'src/app/app.constants';
 import { FormControl } from '@angular/forms';
-import { ErrorInfo, TableEvent } from 'src/app/interfaces';
+import { TableEvent } from 'src/app/interfaces';
 import { ToastService } from 'src/app/shared/toast';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { CommonService } from 'src/app/shared/services/common.service';
@@ -89,7 +85,6 @@ export class UserGroupListComponent
 
   constructor(
     public dialog: MatDialog,
-    private plantService: PlantService,
     private userGroupService: UserGroupService,
     private cdrf: ChangeDetectorRef,
     private toast: ToastService,
