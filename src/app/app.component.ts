@@ -371,41 +371,44 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     // this.removeUserPresence();
   };
 
-  // updateUserPresence = () => {
-  //   if (this.isUserOnline || !this.isUserAuthenticated) return;
-  //   this.usersService.setUserPresence$().subscribe((resp) => {
-  //     this.userIdle.startWatching();
-  //     this.isUserOnline = true;
-  //     const userInfo = this.loginService.getLoggedInUserInfo();
-  //     if (Object.keys(userInfo).length) {
-  //       userInfo.online = true;
-  //       this.loginService.setLoggedInUserInfo(userInfo);
-  //     }
-  //   });
-  // };
+  /*
+  updateUserPresence = () => {
+    if (this.isUserOnline || !this.isUserAuthenticated) return;
+    this.usersService.setUserPresence$().subscribe((resp) => {
+      this.userIdle.startWatching();
+      this.isUserOnline = true;
+      const userInfo = this.loginService.getLoggedInUserInfo();
+      if (Object.keys(userInfo).length) {
+        userInfo.online = true;
+        this.loginService.setLoggedInUserInfo(userInfo);
+      }
+    });
+  };
 
-  // removeUserPresence = () => {
-  //   this.usersService.removeUserPresence$().subscribe((resp) => {
-  //     this.isUserOnline = false;
-  //     const userInfo = this.loginService.getLoggedInUserInfo();
-  //     if (Object.keys(userInfo).length) {
-  //       userInfo.online = false;
-  //       this.loginService.setLoggedInUserInfo(userInfo);
-  //     }
-  //     this.userIdle.stopWatching();
-  //   });
-  // };
+  removeUserPresence = () => {
+    this.usersService.removeUserPresence$().subscribe((resp) => {
+      this.isUserOnline = false;
+      const userInfo = this.loginService.getLoggedInUserInfo();
+      if (Object.keys(userInfo).length) {
+        userInfo.online = false;
+        this.loginService.setLoggedInUserInfo(userInfo);
+      }
+      this.userIdle.stopWatching();
+    });
+  };
+  */
 
   ngOnInit() {
-    // //Start watching for user inactivity.
-    // this.userIdle.startWatching();
-    // // Start watching when user idle is starting.
-    // this.userIdle.onTimerStart().subscribe((count) => {
-    //   if (count === 1) {
-    //     this.removeUserPresence();
-    //   }
-    // });
-
+    /*
+    //Start watching for user inactivity.
+    this.userIdle.startWatching();
+    // Start watching when user idle is starting.
+    this.userIdle.onTimerStart().subscribe((count) => {
+      if (count === 1) {
+        this.removeUserPresence();
+      }
+    });
+    */
     const ref = this;
     this.loginService.isUserAuthenticated$
       .pipe(
@@ -580,28 +583,29 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
         // console.log(event);
       };
     }
-
-    // // USER PRESENCE SSE
-    // this.eventSourceUpdateUserPresence = this.sseService.getEventSourceWithGet(
-    //   environment.userRoleManagementApiUrl,
-    //   'users/sse/users_presence',
-    //   null
-    // );
-    // this.eventSourceUpdateUserPresence.stream();
-    // this.eventSourceUpdateUserPresence.onmessage = (event) => {
-    //   if (event) {
-    //     const eventData = JSON.parse(event.data);
-    //     if (!eventData.isHeartbeat) {
-    //       this.peopleService.updateUserPresence({
-    //         action: 'update_user_presence',
-    //         data: eventData
-    //       });
-    //     }
-    //   }
-    // };
-    // this.eventSourceUpdateUserPresence.onerror = (event) => {
-    //   // console.log(event);
-    // };
+    /*
+    // USER PRESENCE SSE
+    this.eventSourceUpdateUserPresence = this.sseService.getEventSourceWithGet(
+      environment.userRoleManagementApiUrl,
+      'users/sse/users_presence',
+      null
+    );
+    this.eventSourceUpdateUserPresence.stream();
+    this.eventSourceUpdateUserPresence.onmessage = (event) => {
+      if (event) {
+        const eventData = JSON.parse(event.data);
+        if (!eventData.isHeartbeat) {
+          this.peopleService.updateUserPresence({
+            action: 'update_user_presence',
+            data: eventData
+          });
+        }
+      }
+    };
+    this.eventSourceUpdateUserPresence.onerror = (event) => {
+      // console.log(event);
+    };
+     */
   }
 
   ngAfterViewChecked(): void {
@@ -637,16 +641,18 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     });
   }
   ngOnDestroy() {
-    // TODO: NEED TO FIGURE OUT A WAY TO CLOSE THE EVENTSOURCES GRACEFULLY....
-    // if (this.eventSourceCollaboration) {
-    //   this.eventSourceCollaboration.close();
-    // }
-    // if (this.eventSourceJitsi) {
-    //   this.eventSourceJitsi.close();
-    // }
-    // if (this.eventSourceUpdateUserPresence) {
-    //   this.eventSourceUpdateUserPresence.close();
-    // }
+    /*
+    TODO: NEED TO FIGURE OUT A WAY TO CLOSE THE EVENTSOURCES GRACEFULLY....
+    if (this.eventSourceCollaboration) {
+      this.eventSourceCollaboration.close();
+    }
+    if (this.eventSourceJitsi) {
+      this.eventSourceJitsi.close();
+    }
+    if (this.eventSourceUpdateUserPresence) {
+      this.eventSourceUpdateUserPresence.close();
+    }
+    */
   }
 
   checkUserHasSubMenusPermissions(
