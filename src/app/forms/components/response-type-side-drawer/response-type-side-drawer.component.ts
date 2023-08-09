@@ -256,7 +256,6 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
   };
 
   applySliderOptions(values) {
-    console.log('validate: ', values);
     if (values.min < 0) {
       this.toast.show({
         text: 'Slider from value cannot be less than zero',
