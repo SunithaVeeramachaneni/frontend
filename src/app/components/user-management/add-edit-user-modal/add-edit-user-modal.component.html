@@ -110,7 +110,11 @@
       <mat-label id="addEditUserEmail">{{
         'emailLabel' | translate
       }}</mat-label>
-      <input matInput formControlName="email" />
+      <input
+        matInput
+        formControlName="email"
+        [disabled]="dialogText === 'editUser'"
+      />
       <div matSuffix>
         <mat-spinner
           *ngIf="verificationInProgress"
