@@ -19,6 +19,7 @@ import { environment } from 'src/environments/environment';
 import { UsersService } from 'src/app/components/user-management/services/users.service';
 import { isEmpty, omitBy } from 'lodash-es';
 import { Column } from '@innovapptive.com/dynamictable/lib/interfaces';
+import { DateUtilService } from 'src/app/shared/utils/dateUtils';
 
 const placeHolder = '_ _';
 const dataPlaceHolder = '--';
@@ -87,7 +88,8 @@ export class ObservationsService {
   ];
   constructor(
     private readonly appService: AppService,
-    private readonly userService: UsersService
+    private readonly userService: UsersService,
+    private readonly dateUtilService: DateUtilService
   ) {}
 
   getObservations$(
@@ -564,7 +566,8 @@ export class ObservationsService {
           condition: true
         },
         dueDate:
-          item?.DUEDATE && this.isValidDate(new Date(item?.DUEDATE))
+          item?.DUEDATE &&
+          this.dateUtilService.isValidDate(new Date(item?.DUEDATE))
             ? format(new Date(item?.DUEDATE), 'dd MMM yyyy hh:mm a')
             : '',
         title: item.TITLE,
@@ -598,9 +601,5 @@ export class ObservationsService {
       count: resp?.count,
       filters: resp?.filters
     };
-  }
-
-  private isValidDate(date): boolean {
-    return date instanceof Date && !isNaN(date as unknown as number);
   }
 }
