@@ -21,7 +21,7 @@
 
 @keyframes node-higlight-animation {
   from {
-    background-color: $yellow6;
+    background-color: rgba($chart-yellow, $opacity15);
   }
   to {
     background-color: $white;
@@ -41,7 +41,7 @@
   }
 
   .hierarchy-tail {
-    background: $yellow6;
+    background: rgba($chart-yellow, $opacity15);
   }
 
   .hierarchy-not-tail {

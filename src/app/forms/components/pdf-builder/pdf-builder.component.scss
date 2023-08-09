@@ -439,7 +439,7 @@ ul {
 }
 
 .issueHead {
-  background: $red-background;
+  background: rgba($red-main, $opacity10);
   color: $red-dark;
   padding: 10px;
 }
@@ -688,7 +688,7 @@ ul {
 }
 
 .bg-yellow {
-  background-color: $yellow7;
+  background-color: $yellow3;
   padding: 6px 8px;
   border-radius: 4px;
 }
