@@ -39,7 +39,7 @@ export class AiFormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
   totalCompletedCount = 0;
   isTemplateCreated: boolean;
   currentRouteUrl$: Observable<string>;
-  firstEvent: boolean = true;
+  firstEvent = true;
   sectionIndexes$: Observable<any>;
   questionCount = 0;
   readonly routingUrls = routingUrls;
@@ -160,7 +160,7 @@ export class AiFormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
   }
   updateProgress$(data: any) {
     return this.rdfService.createFormsFromPrompt$(
-      { forms: data.forms },
+      { forms: data.forms, language: data.language },
       data.plantId,
       data.requestCounter
     );

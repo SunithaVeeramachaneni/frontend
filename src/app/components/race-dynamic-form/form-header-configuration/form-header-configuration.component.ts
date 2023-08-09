@@ -116,7 +116,8 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   isDisabled = false;
   isOpen = new FormControl(false);
   isCreateAI: boolean;
-  isAiFormLoading: boolean = false;
+  language = '';
+  isAiFormLoading = false;
   promptFormData: FormGroup;
   generatedPromptForm: FormGroup;
   sections = [];
@@ -382,7 +383,8 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
         );
         if (Object.keys(data)?.length) {
           this.generatedForms.clear();
-          const { forms } = data;
+          const { forms, language } = data;
+          this.language = language;
           this.forms = forms;
           this.forms.forEach((form) => {
             this.addToGeneratedForm(form);
@@ -665,6 +667,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
         .select(getRequestCounter)
         .subscribe((count) => (this.requestCounter = count));
       const forms = {
+        language: this.language,
         forms: formsArray,
         plantId: this.promptFormData.value.plantId.id,
         plant: this.promptFormData.value.plantId.name,
@@ -676,7 +679,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     }
   }
 
-  getSectionsArrayFromHTML(inputString: String) {
+  getSectionsArrayFromHTML(inputString: string) {
     const regex = /<li>(.*?)<\/li>/g;
     const matches = inputString.match(regex);
 
