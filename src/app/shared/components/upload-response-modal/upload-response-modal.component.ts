@@ -86,7 +86,7 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
           this.title = 'All done!';
           this.message = `Adding all ${result?.totalCount} ${type}`;
           this.isSuccess = true;
-          if (['forms', 'locations'].includes(type) && !result?.isCompleted) {
+          if (type !== 'response-set' && !result?.isCompleted) {
             this.title = 'In-Progress';
             this.message = `Adding ${
               result?.successCount + result?.failedCount
