@@ -87,7 +87,7 @@
     }
 
     .failure-box {
-      background-color: $red4;
+      background-color: $red-background;
     }
 
     .only-success-message {
@@ -97,7 +97,7 @@
 
     .only-failure-message {
       width: 100%;
-      background-color: $red4;
+      background-color: $red-background;
     }
   }
 }

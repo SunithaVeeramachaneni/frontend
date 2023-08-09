@@ -6,7 +6,7 @@
 }
 
 .header-recents {
-  background: white;
+  background: $white;
   height: 50px;
   padding: 0px 10px;
   justify-content: flex-end;
@@ -45,12 +45,12 @@
 }
 
 .arrow-inactive {
-  color: white;
+  color: $white;
 }
 
 table {
   width: 100%;
-  background: white;
+  background: $white;
   margin-top: 14px;
 }
 

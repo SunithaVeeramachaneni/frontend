@@ -69,7 +69,7 @@
   max-height: 300px;
   border: 1px solid gray;
   border-radius: 8px;
-  background-color: white;
+  background-color: $white;
   padding: 20px;
   position: absolute;
   left: 360px;
@@ -132,7 +132,7 @@
 .filter-modal-cancel {
   color: $light-gray;
   float: right;
-  background-color: white;
+  background-color: $white;
   border: none;
   cursor: pointer;
 }

@@ -33,7 +33,7 @@
 .modal-close::before,
 .delete::after,
 .modal-close::after {
-  background-color: white;
+  background-color: $white;
   content: '';
   display: block;
   left: 50%;
@@ -197,7 +197,7 @@
 
 .modal-card-body {
   -webkit-overflow-scrolling: touch;
-  background-color: white;
+  background-color: $white;
   flex-grow: 1;
   flex-shrink: 1;
   overflow: auto;

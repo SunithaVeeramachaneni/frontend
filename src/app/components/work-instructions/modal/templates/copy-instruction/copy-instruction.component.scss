@@ -1,7 +1,7 @@
 @import '../../../../../../scss/colors.scss';
 
 .copy-ins {
-  background-color: white;
+  background-color: $white;
   width: 460px;
   padding: 10px;
   border-radius: 8px;
@@ -321,7 +321,7 @@
   left: -10px;
   border: 1px solid lightgrey;
   border-radius: 4px;
-  background-color: white;
+  background-color: $white;
   font: inherit;
   padding: 0.5em 1.7em 0.5em 1em;
   margin-top: 12px;

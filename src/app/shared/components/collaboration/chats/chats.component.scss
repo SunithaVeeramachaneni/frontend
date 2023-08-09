@@ -596,7 +596,7 @@ p {
       // }
       .font-5rem {
         font-size: 5rem;
-        color: white;
+        color: $white;
       }
       .removeAttachmentIcon {
         position: absolute;
@@ -607,7 +607,7 @@ p {
       }
       .attachmentDetail {
         display: flex;
-        // color: white;
+        // color: $white;
         flex-direction: column;
         white-space: nowrap;
         .attachmentTitle {

@@ -39,7 +39,7 @@
   flex-direction: column;
   justify-content: center;
   padding: 0.5em;
-  color: white;
+  color: $white;
   font-weight: bold;
   font-size: 100%;
   user-select: none;
@@ -75,7 +75,7 @@
 }
 
 .main-carosuel {
-  background: white;
+  background: $white;
   margin-top: -25px;
   margin-left: 25px;
   margin-right: 20px;
@@ -154,7 +154,7 @@
   padding: 0px 5px 5px 10px;
   border: none;
   background-color: $blue11;
-  color: white;
+  color: $white;
   border-radius: 5px;
 }
 

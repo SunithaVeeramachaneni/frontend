@@ -133,7 +133,7 @@
 }
 
 .permissions-cancel {
-  background: white;
+  background: $white;
   border: none;
   float: right;
 }
@@ -156,10 +156,10 @@
 }
 
 .email-verified {
-  color: green;
+  color: $green;
 }
 .email-not-verified {
-  color: red;
+  color: $red-main;
 }
 
 .info-icon {

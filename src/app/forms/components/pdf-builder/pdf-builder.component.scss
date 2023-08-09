@@ -342,7 +342,7 @@ ul {
   margin: 5px 5px;
 }
 .issuesHead {
-  background: $red5;
+  background: $red-main;
   color: $white;
   display: flex;
   justify-content: space-between;
@@ -437,10 +437,11 @@ ul {
 .issueCell {
   border: 1px solid $black10;
 }
+
 .issueHead {
-  background: $red7;
+  background: $red-background;
+  color: $red-dark;
   padding: 10px;
-  color: $red6;
 }
 
 .issueBody {
@@ -666,7 +667,7 @@ ul {
 
   td,
   th {
-    border: 1px solid $gray50;
+    border: 1px solid $gray;
     text-align: left;
     padding: 8px;
   }
@@ -678,7 +679,7 @@ ul {
 
 #issue-color {
   color: $white;
-  background-color: $red5;
+  background-color: $red-main;
 }
 
 .resolved-color {
@@ -737,5 +738,5 @@ ul {
 }
 
 .priority-color {
-  color: $red5;
+  color: $red-main;
 }

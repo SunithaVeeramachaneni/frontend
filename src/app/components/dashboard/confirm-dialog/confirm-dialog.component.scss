@@ -41,7 +41,7 @@
 
 .widgets-modal {
   margin: 10px 0px 15px 0px;
-  background: white;
+  background: $white;
   border: 1px solid gray;
   border-radius: 4px;
   position: relative;
@@ -70,7 +70,7 @@
 }
 
 .widgets-cancel {
-  background: white;
+  background: $white;
   border: none;
   float: right;
 }

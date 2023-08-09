@@ -21,7 +21,6 @@
     .back-btn {
       border: none;
       background-color: transparent;
-
     }
 
     .clear-icon {
@@ -61,7 +60,7 @@
 
         .form-name {
           padding: 0 15px;
-          color: black;
+          color: $black;
           font-size: 110%;
           margin: 7px 0 0 0;
           font-weight: 500;
@@ -103,7 +102,6 @@
       align-items: center;
       height: 100%;
     }
-
   }
 }
 

@@ -197,7 +197,7 @@
   flex-direction: column;
   justify-content: center;
   padding: 0.5em;
-  color: white;
+  color: $white;
   font-weight: bold;
   font-size: 100%;
   user-select: none;
@@ -233,7 +233,7 @@
 }
 
 .main-carosuel-ipad {
-  background: white;
+  background: $white;
   margin-top: -25px;
   margin-left: 25px;
   margin-right: 25px;
@@ -242,7 +242,7 @@
 }
 @media only screen and (max-width: 1200px) {
   .main-carosuel-ipad {
-    background: white;
+    background: $white;
     margin-top: -30px;
     margin-left: 20px;
     margin-right: 20px;
@@ -252,7 +252,7 @@
 }
 @media only screen and (max-width: 1100px) {
   .main-carosuel-ipad {
-    background: white;
+    background: $white;
     margin-top: -30px;
     margin-left: 20px;
     margin-right: 20px;
@@ -262,7 +262,7 @@
 }
 @media only screen and (max-width: 990px) {
   .main-carosuel-ipad {
-    background: white;
+    background: $white;
     margin-top: -30px;
     margin-left: 20px;
     margin-right: 20px;
@@ -272,7 +272,7 @@
 }
 @media only screen and (max-width: 765px) {
   .main-carosuel-ipad {
-    background: white;
+    background: $white;
     margin-top: -28px;
     margin-left: 10px;
     margin-right: 10px;
@@ -283,7 +283,7 @@
 }
 @media only screen and (max-width: 595px) {
   .main-carosuel-ipad {
-    background: white;
+    background: $white;
     margin-top: -31px;
     margin-left: 2px;
     margin-right: 1px;
@@ -550,7 +550,7 @@
   padding-left: 12px;
   border: none;
   background-color: $blue11;
-  color: white;
+  color: $white;
   border-radius: 5px;
   white-space: nowrap;
   float: right;
@@ -586,7 +586,7 @@
   font-size: 100%;
 }
 .editor-header {
-  color: white;
+  color: $white;
   padding: 3px;
   border-radius: 7px;
 }
@@ -795,7 +795,7 @@
   font-size: 100%;
   font-weight: 600;
   text-align: left;
-  color: black;
+  color: $black;
   float: left;
   position: relative;
   top: 3px;
@@ -870,7 +870,7 @@
   white-space: nowrap;
   overflow: hidden;
   display: block;
-  color: black;
+  color: $black;
 }
 
 .tabs-list {

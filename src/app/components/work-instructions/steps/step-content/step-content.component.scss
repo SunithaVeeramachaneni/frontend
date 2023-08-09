@@ -85,7 +85,7 @@ h2 {
 }
 
 .delete-file {
-  background: white;
+  background: $white;
   border: none;
   cursor: pointer;
   float: right;
@@ -139,7 +139,7 @@ h2 {
   width: 100%;
   border: 1px dashed $gray44;
   border-radius: 8px;
-  background-color: white;
+  background-color: $white;
   box-sizing: border-box;
   margin-bottom: 10px;
   text-align: center;

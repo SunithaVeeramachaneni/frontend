@@ -53,7 +53,7 @@
 }
 
 .content-div {
-  background-color: white;
+  background-color: $white;
   display: flex;
   // justify-content: flex-end;
   height: 100%;
@@ -279,7 +279,7 @@
 }
 
 .settings-modal {
-  background: white;
+  background: $white;
   border: 1ps solid gray;
   border: 1px solid gray;
   padding: 15px 0 15px 8px;
@@ -354,7 +354,7 @@
   margin-left: -12px;
   border-radius: 50%;
   border: 3px solid transparent;
-  border-top-color: white;
+  border-top-color: $white;
   background: transparent;
   animation: spinner 0.8s linear infinite;
 }

@@ -44,7 +44,7 @@
   margin-bottom: 15px;
   border: none;
   background-color: $blue-main;
-  color: white;
+  color: $white;
 }
 
 .mat-field {
@@ -65,7 +65,7 @@
 
 .filter-modal {
   margin: 10px 0px 15px 0px;
-  background: white;
+  background: $white;
   border: 1px solid gray;
   border-radius: 4px;
   width: 350px;
@@ -75,7 +75,7 @@
 
 .filter-report-modal {
   margin: 10px 0px 15px 0px;
-  background: white;
+  background: $white;
   border: 1px solid gray;
   border-radius: 4px;
   position: relative;
@@ -90,7 +90,7 @@
   max-height: 300px;
   border: 1px solid gray;
   border-radius: 8px;
-  background-color: white;
+  background-color: $white;
   padding: 20px;
   position: relative;
   left: 112px;

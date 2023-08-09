@@ -120,7 +120,7 @@
   flex-direction: column;
   justify-content: center;
   padding: 0.5em;
-  color: white;
+  color: $white;
   font-weight: bold;
   font-size: 100%;
   user-select: none;
@@ -155,7 +155,7 @@
   transform: rotate(225deg);
 }
 .main-carosuel-iphone {
-  background: white;
+  background: $white;
   margin-top: -30px;
   margin-left: 20px;
   margin-right: 20px;
@@ -394,7 +394,7 @@
   padding-left: 12px;
   border: none;
   background-color: $blue11;
-  color: white;
+  color: $white;
   border-radius: 5px;
   white-space: nowrap;
   float: right;
@@ -427,7 +427,7 @@
   font-size: 100%;
 }
 .editor-header {
-  color: white;
+  color: $white;
   padding: 3px;
   border-radius: 7px;
 }
@@ -602,7 +602,7 @@
   font-size: 100%;
   font-weight: 600;
   text-align: left;
-  color: black;
+  color: $black;
   float: left;
   position: relative;
   top: 3px;
@@ -684,7 +684,7 @@
   white-space: nowrap;
   overflow: hidden;
   display: block;
-  color: black;
+  color: $black;
 }
 
 .h-25 {

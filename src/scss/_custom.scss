@@ -366,7 +366,7 @@
 }
 
 .text-red {
-  color: $red5;
+  color: $red-main;
 }
 
 .bg-white {
@@ -375,10 +375,6 @@
 
 .bg-lightgray {
   background-color: $gray41-gray;
-}
-
-.bg-red {
-  background-color: $red5;
 }
 
 .b-r-8 {
@@ -509,8 +505,8 @@ a {
 }
 
 .custom-modal-card .yes-btn {
-  background-color: $red5;
-  border: 1px solid $red5;
+  background-color: $red-main;
+  border: 1px solid $red-main;
   color: $white;
   border-radius: 5px;
   cursor: pointer;
@@ -596,7 +592,7 @@ a {
   font-size: 120%;
   font-weight: 600;
 
-  background: white;
+  background: $white;
   padding: 10px;
 }
 
@@ -681,26 +677,31 @@ body {
 .bg-sky-blue {
   background-color: $blue21;
 }
-.bg-orange {
-  background-color: $red5;
+
+.bg-red {
+  background-color: $red-main;
 }
+
 .bg-green {
   background-color: $green4;
 }
+
 .bg-blue {
   background-color: $purple1;
 }
+
 .sky-blue {
   color: $blue21;
 }
 
 .orange {
-  color: $red5;
+  color: $chart-orange;
 }
 
 .green {
   color: $green4;
 }
+
 .blue {
   color: $purple1;
 }
@@ -802,7 +803,7 @@ body {
   height: 30px;
   border: 1px solid lightgrey;
   border-radius: 4px;
-  background-color: white;
+  background-color: $white;
   font: inherit;
   line-height: 15px;
   padding: 0.5em 3.5em 0.5em 1em;
@@ -846,7 +847,7 @@ body {
   overflow: hidden;
   outline: none;
   float: left;
-  color: black;
+  color: $black;
   margin-left: 10px;
   margin-top: 10px;
 }

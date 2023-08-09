@@ -88,7 +88,7 @@ label {
 }
 
 .invalid-feedback {
-  color: red;
+  color: $red-main;
 }
 
 .uploadfilecontainer1 {
@@ -96,7 +96,7 @@ label {
   width: 100%;
   border: 1px dashed $gray44;
   border-radius: 8px;
-  background-color: white;
+  background-color: $white;
   margin-bottom: 1rem;
 }
 
@@ -182,7 +182,7 @@ label {
   font-size: 100%;
   line-height: 20px;
   letter-spacing: 1.25px;
-  color: black;
+  color: $black;
   margin: 10px 25px;
 }
 
@@ -201,7 +201,7 @@ label {
 }
 
 .text-required {
-  color: red;
+  color: $red-main;
 }
 
 .pt10 {

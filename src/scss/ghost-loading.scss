@@ -5,7 +5,7 @@
   height: 90vh;
 
   .columns {
-    background: white;
+    background: $white;
     margin: 0 10px 0 0;
     border-radius: 10px;
   }
@@ -53,7 +53,7 @@
 }
 
 .ghost-loader-categories-container {
-  background-color: white;
+  background-color: $white;
   margin-right: 14px;
 
   .categories-div {
@@ -68,7 +68,7 @@
 
 .drafts-fav-recents-publish {
   margin-top: 14px;
-  background-color: white;
+  background-color: $white;
   padding: 15px;
 }
 
