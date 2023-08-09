@@ -861,11 +861,11 @@ export class RoundsComponent implements OnInit, OnDestroy {
         'SCHEDULE_ROUND_PLAN'
       )
     ) {
-      if (this.columns[12]?.controlType)
-        this.columns[12].controlType = 'string';
-      if (this.columns[3]?.controlType) this.columns[3].controlType = 'string';
-      if (this.columns[5]?.controlType) this.columns[5].controlType = 'string';
-      if (this.columns[6]?.controlType) this.columns[6].controlType = 'string';
+      [12, 3, 5, 6].forEach((index) => {
+        if (this.columns[index]?.controlType) {
+          this.columns[index].controlType = 'string';
+        }
+      });
     }
 
     this.configOptions.rowLevelActions.menuActions = menuActions;
