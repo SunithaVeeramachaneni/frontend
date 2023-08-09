@@ -473,7 +473,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
 
   checkAskQuestionFeatures() {
     const fieldType = this.questionForm.get('fieldType').value;
-    console.log(this.isAskQuestion, fieldType);
     if (this.isAskQuestion) {
       switch (fieldType) {
         case 'SF':
