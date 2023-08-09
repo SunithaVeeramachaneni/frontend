@@ -22,11 +22,11 @@
         class="center mb-5"
       ></svg-icon>
       <mat-progress-bar
-        *ngIf="!isSuccess && !isFailure && type !== 'forms'"
+        *ngIf="!isSuccess && !isFailure && type === 'response-set'"
         mode="indeterminate"
       ></mat-progress-bar>
       <mat-progress-bar
-        *ngIf="!isSuccess && !isFailure && type === 'forms'"
+        *ngIf="!isSuccess && !isFailure && type !== 'response-set'"
         mode="determinate"
         [value]="((successCount + failedCount) / totalCount) * 100"
       ></mat-progress-bar>
