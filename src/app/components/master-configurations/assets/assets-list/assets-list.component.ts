@@ -587,8 +587,10 @@ export class AssetsListComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe((res) => {
       if (res.data) {
         this.getAllAssets();
-        this.addEditCopyDeleteAssets = true;
         this.nextToken = '';
+        this.addEditCopyDeleteAssets = true;
+        this.isLoading$.next(true);
+        this.assetsCountUpdate$.next(res.successCount);
         this.assetService.fetchAssets$.next({ data: 'load' });
         this.toast.show({
           text: 'Asset uploaded successfully!',

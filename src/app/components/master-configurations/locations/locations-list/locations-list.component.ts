@@ -635,8 +635,10 @@ export class LocationsListComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe((res) => {
       if (res.data) {
         this.getAllLocations();
-        this.addEditCopyDeleteLocations = true;
         this.nextToken = '';
+        this.addEditCopyDeleteLocations = true;
+        this.isLoading$.next(true);
+        this.locationsCountUpdate$.next(res.successCount);
         this.locationService.fetchLocations$.next({ data: 'load' });
         this.toast.show({
           text: 'Locations uploaded successfully!',
