@@ -11,6 +11,11 @@ import { State } from 'src/app/state/app.state';
   styleUrls: ['./scheduler-modal.component.css']
 })
 export class SchedulerModalComponent implements OnInit {
+  payload: any;
+  payloadEmitter($event: Event) {
+    this.payload = $event;
+    console.log('this.payload', this.payload);
+  }
   steps: Step[] = [
     { title: 'Header', content: '' },
     { title: 'Tasks', content: '' },

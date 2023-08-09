@@ -358,5 +358,9 @@
   "totalPages": "Total Pages",
   "reportGeneratedOn": "Report Generated On",
   "addNotes": "Add Notes",
-  "skippedReason": "Skipped Reason"
+  "skippedReason": "Skipped Reason",
+  "headerFrequency": "Header Frequency",
+  "assigneDetail": "Assignee Details",
+  "start": "Start",
+  "end": "End"
 }

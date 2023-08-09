@@ -1,1 +1,203 @@
-<p>task-level-scheduler works!</p>
+<div
+  class="create-form-main"
+  [formGroup]="formConfiguration"
+  *ngIf="{ formMetadata: formMetadata$ | async } as props"
+>
+  <div class="dis-flex form-header">
+    <div class="dis-flex width-45">
+      <svg-icon
+        id="roundPlanDetailIcon"
+        icon="icon-round-plans-icon"
+        class="plans-icon"
+      ></svg-icon>
+      <input
+        id="roundPlanDetailText"
+        hidden
+        type="file"
+        #formImageuploader
+        accept="image/x-png,image/jpeg"
+        (change)="uploadFormImageFile($event)"
+      />
+      <div class="width-90">
+        <a
+          matTooltip="{{ formConfiguration.get('name').value }}"
+          class="dis-inline"
+        >
+          <a class="width-90">
+            <input
+              id="roundPlanDetailNameText"
+              #name
+              type="text"
+              [size]="name.value !== '' ? getSize(name.value) : 20"
+              class="form_title_input"
+              formControlName="name"
+              autofocus="true"
+              autocomplete="off"
+              (keyup.enter)="formConfiguration.get('name').disable()"
+              (blur)="formConfiguration.get('name').disable()"
+            />
+
+            <mat-error
+              id="roundPlanDetailNameError"
+              *ngIf="processValidationErrors('name')"
+              class="error-fields"
+            >
+              {{
+                errors.name.name
+                  | translate
+                    : {
+                        name: 'name' | translate,
+                        length: errors.name.length
+                      }
+              }}
+            </mat-error>
+          </a>
+          <button
+            id="roundPlanDetailEditNameBtn"
+            (click)="editFormName()"
+            class="edit-icon"
+            *ngIf="formConfiguration.get('name').disabled === true"
+          >
+            <svg-icon
+              id="roundPlanDetailEditNameIcon"
+              icon="icon-edit-icon"
+              class="edit-icon-img"
+            ></svg-icon>
+          </button>
+        </a>
+        <br />
+        <div class="dis-flex center">
+          <a
+            matTooltip="{{ formConfiguration.get('description').value }}"
+            class="width-62"
+          >
+            <input
+              id="roundPlanDetailDescriptionText"
+              type="text"
+              class="form_description_input"
+              placeholder="{{ 'addFormDesc' | translate }}"
+              formControlName="description"
+              autofocus="true"
+              autocomplete="off"
+            />
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="header-level">
+      <div class="row1">
+        <span class="txt">{{ 'headerFrequency' | translate }} : </span>
+        <span *ngIf="payload">
+          {{ this.headerDetails.get('HeaderFrequency').value }}
+        </span>
+      </div>
+      <div class="row2">
+        <div>
+          <span class="txt">{{ 'shift' | translate }}: </span>
+          <span *ngIf="payload">
+            {{ this.headerDetails.get('shiftDetails').value }}
+          </span>
+        </div>
+        <div>
+          <span class="txt">{{ 'slot' | translate }}: </span>
+          <span *ngIf="payload">
+            {{ this.headerDetails.get('slotDetials').value }}
+          </span>
+        </div>
+        <div>
+          <span class="txt">{{ 'start' | translate }} : </span>
+          <span *ngIf="payload">
+            {{ this.headerDetails.get('HeadersStartDate').value }}
+          </span>
+          <span class="txt">{{ 'end' | translate }} : </span>
+          <span *ngIf="payload">
+            {{ this.headerDetails.get('HeadersEndDate').value }}
+          </span>
+        </div>
+        <div>
+          <span class="txt">{{ 'assigneDetails' | translate }} : </span>
+          <span *ngIf="payload">
+            {{ this.headerDetails.get('AssigneDetails').value }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="dis-flex width-45 justify-content-end">
+      <div class="save-status">
+        {{ statusSubject | async }}
+      </div>
+      <button id="SchedulingBtn" mat-stroked-button class="schedule-btn">
+        <span>
+          <span translate="schedule"></span>
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <div class="dis-flex form">
+    <span class="custom-form-field-gray-color search" *ngIf="hierarchy.length">
+      <mat-form-field appearance="outline" class="searchField">
+        <mat-icon id="hierarchyContainerSearchIcon" matPrefix class="searchIcon"
+          >search</mat-icon
+        >
+        <input
+          id="hierarchyContainerSearchText"
+          matInput
+          type="text"
+          [placeholder]="'search' | translate"
+          autocomplete="off"
+          [matAutocomplete]="auto"
+          [formControl]="searchHierarchyKey"
+        />
+        <mat-autocomplete
+          autoActiveFirstOption
+          #auto="matAutocomplete"
+          (optionSelected)="searchResultSelected($event)"
+        >
+          <mat-optgroup [label]="getSearchMatchesLabel()">
+            <mat-option
+              *ngFor="let option of filteredOptions$ | async"
+              [value]="option"
+              class="searchResultOption"
+            >
+              <div class="nodeContent">
+                <img [src]="option.image" />
+                <div class="description">
+                  <span id="hierarchyContainerName" class="title">{{
+                    option.name
+                  }}</span>
+                  <span id="hierarchyContainerType" class="subTitle">
+                    {{
+                      'nodeSubTitle'
+                        | translate
+                          : {
+                              nodeType: option.type | titlecase,
+                              nodeId: option.nodeId
+                            }
+                    }}
+                  </span>
+                </div>
+              </div>
+            </mat-option>
+          </mat-optgroup>
+        </mat-autocomplete>
+
+        <svg-icon
+          id="hierarchyContainerCloseIcon"
+          icon="icon-close"
+          matSuffix
+          *ngIf="searchHierarchyKey.value.length"
+          class="closeIcon"
+          (click)="clearSearchResults()"
+        ></svg-icon>
+      </mat-form-field>
+    </span>
+    <div class="assetHierarchyContainer">
+      <app-hierarchy-container
+        [plantId]="formMetadata?.plantId"
+        [nodeWiseQuestionsCount]="props.nodeWiseQuestionsCount"
+      ></app-hierarchy-container>
+    </div>
+  </div>
+</div>

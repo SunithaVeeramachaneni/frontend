@@ -170,6 +170,7 @@ export class RoundPlanDetailConfigurationComponent
     this.formMetadata$ = this.store.select(getFormMetadata).pipe(
       tap((formMetadata) => {
         if (Object.keys(formMetadata).length) {
+          console.log('metaData:', formMetadata);
           const { name, description, id, formLogo, formStatus } = formMetadata;
           this.formMetadata = formMetadata;
 

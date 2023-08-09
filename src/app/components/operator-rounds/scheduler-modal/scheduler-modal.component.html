@@ -12,12 +12,18 @@
     <div [hidden]="currentStep !== 0">
       <app-schedule-configuration
         (gotoNextStep)="gotoNextStep()"
+        (payloadEmitter)="payloadEmitter($event)"
       ></app-schedule-configuration>
     </div>
 
     <!-- STEP 2 -->
     <div [hidden]="currentStep !== 1">
-      <!-- <app-task-level-scheduler></app-task-level-scheduler> -->
+      <app-task-level-scheduler
+        (gotoNextStep)="gotoNextStep()"
+        (gotoPreviousStep)="gotoPreviousStep()"
+        [payload]="payload"
+        [roundPlanData]="data"
+      ></app-task-level-scheduler>
     </div>
 
     <!-- STEP 3 -->

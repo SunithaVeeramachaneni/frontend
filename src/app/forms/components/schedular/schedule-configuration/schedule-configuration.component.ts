@@ -58,7 +58,7 @@ import {
   shiftDefaultPayload
 } from './schedule-configuration.constants';
 import { ShiftService } from 'src/app/components/master-configurations/shifts/services/shift.service';
-import { Subject, Subscription } from 'rxjs';
+import { BehaviorSubject, Subject, Subscription } from 'rxjs';
 import { PlantService } from 'src/app/components/master-configurations/plants/services/plant.service';
 import {
   getDayTz,
@@ -112,6 +112,8 @@ export class ScheduleConfigurationComponent
   @ViewChild('menuTrigger', { static: false }) menuTrigger: MatMenuTrigger;
   @ViewChild(MatCalendar) calendar: MatCalendar<Date>;
   @Output() gotoNextStep = new EventEmitter<void>();
+  @Output() payloadEmitter = new EventEmitter<any>();
+  payloadSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
   assigneeDetails: AssigneeDetails;
   moduleName: 'OPERATOR_ROUNDS' | 'RDF';
   plantMapSubscription: Subscription;
@@ -144,6 +146,7 @@ export class ScheduleConfigurationComponent
   placeHolder = '_ _';
   selectedShifts = [];
   isTaskLevel: any;
+  payload: any = {};
   private onDestroy$ = new Subject();
   private shiftDetails: {
     [key: string]: { startTime: string; endTime: string }[];
@@ -238,6 +241,7 @@ export class ScheduleConfigurationComponent
   }
 
   ngOnInit(): void {
+    console.log('data in scheudleconfiguration:', this.data);
     if (this.data) {
       const {
         formDetail,
@@ -691,9 +695,63 @@ export class ScheduleConfigurationComponent
     this.shiftSlots.push(this.addShiftDetails(true));
   }
 
+  prepareScheduleConfigurationDetail() {
+    const schedularConfigFormValue = this.schedulerConfigForm.getRawValue();
+    const { id, startDate, endDate, scheduleEndOn } = schedularConfigFormValue;
+    let time = format(new Date(), hourFormat);
+    const { startDatePicker, endDatePicker, scheduleEndOnPicker, ...rest } =
+      schedularConfigFormValue;
+    const scheduleByDates =
+      schedularConfigFormValue.scheduleType === 'byDate'
+        ? this.prepareScheduleByDates()
+        : [];
+
+    let startDateByPlantTimezone = new Date(
+      `${startDate} ${time}`
+    ).toISOString();
+    let endDateByPlantTimezone = new Date(`${endDate} ${time}`).toISOString();
+    let scheduleEndOnByPlantTimezone = new Date(
+      `${scheduleEndOn} ${time}`
+    ).toISOString();
+
+    if (
+      this.plantTimezoneMap[this.selectedDetails?.plantId]?.timeZoneIdentifier
+    ) {
+      time = localToTimezoneDate(
+        new Date(),
+        this.plantTimezoneMap[this.selectedDetails?.plantId],
+        hourFormat
+      );
+
+      startDateByPlantTimezone = zonedTimeToUtc(
+        format(new Date(startDate), dateFormat5) + ` ${time}`,
+        this.plantTimezoneMap[this.selectedDetails?.plantId]?.timeZoneIdentifier
+      ).toISOString();
+
+      endDateByPlantTimezone = zonedTimeToUtc(
+        format(new Date(endDate), dateFormat5) + ` ${time}`,
+        this.plantTimezoneMap[this.selectedDetails?.plantId]?.timeZoneIdentifier
+      ).toISOString();
+
+      scheduleEndOnByPlantTimezone = zonedTimeToUtc(
+        format(new Date(scheduleEndOn), dateFormat5) + ` ${time}`,
+        this.plantTimezoneMap[this.selectedDetails?.plantId]?.timeZoneIdentifier
+      ).toISOString();
+    }
+    this.payload = {
+      ...rest,
+      startDate: startDateByPlantTimezone,
+      endDate: endDateByPlantTimezone,
+      scheduleEndOn: scheduleEndOnByPlantTimezone,
+      scheduleByDates,
+      shiftDetails: this.prepareShiftDetailsPayload(this.shiftDetails)
+    };
+  }
+
   scheduleConfiguration() {
     if (this.schedulerConfigForm.valid && this.schedulerConfigForm.dirty) {
       this.disableSchedule = true;
+
       const schedularConfigFormValue = this.schedulerConfigForm.getRawValue();
       const { id, startDate, endDate, scheduleEndOn } =
         schedularConfigFormValue;
@@ -1372,7 +1430,14 @@ export class ScheduleConfigurationComponent
     return '';
   }
   headerLevelScheduling() {
+    this.prepareScheduleConfigurationDetail();
     this.gotoNextStep.emit();
+    this.payloadEmitter.emit(this.payload);
+    this.payloadSubject.next(this.payload);
+  }
+
+  getPayload() {
+    return this.payloadSubject.asObservable();
   }
 
   ngOnDestroy(): void {
