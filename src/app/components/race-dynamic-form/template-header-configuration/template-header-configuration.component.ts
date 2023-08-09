@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import {
-  ChangeDetectorRef,
   Component,
-  ElementRef,
   OnInit,
   ViewChild,
   Input,
@@ -12,18 +10,20 @@ import {
 } from '@angular/core';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatDialogRef } from '@angular/material/dialog';
+import { MatAutocomplete } from '@angular/material/autocomplete';
+import { BehaviorSubject, Observable, of, Subscription, Subject } from 'rxjs';
 import {
-  MatAutocomplete,
-  MatAutocompleteSelectedEvent
-} from '@angular/material/autocomplete';
-import { MatChipInputEvent } from '@angular/material/chips';
-import { BehaviorSubject, Observable, of, merge, Subscription } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  pairwise,
+  startWith,
+  takeUntil,
+  tap
+} from 'rxjs/operators';
 import {
   AbstractControl,
-  FormArray,
   FormBuilder,
-  FormControl,
   FormGroup,
   Validators
 } from '@angular/forms';
@@ -37,14 +37,12 @@ import {
 } from 'src/app/app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
-import { AppService } from 'src/app/shared/services/app.services';
-import { ToastService } from 'src/app/shared/toast';
-import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
 import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
 import { Store } from '@ngrx/store';
 import { State, getFormMetadata } from 'src/app/forms/state';
 import { TemplateModalComponent } from '../template-modal/template-modal.component';
-
+import { isEqual } from 'lodash-es';
+import { FormUpdateProgressService } from 'src/app/forms/services/form-update-progress.service';
 @Component({
   selector: 'app-template-header-configuration',
   templateUrl: './template-header-configuration.component.html',
@@ -72,6 +70,8 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
   labelSelected: any;
   deletedLabel = '';
   formMetadataSubscription: Subscription;
+  hasFormChanges = false;
+  private destroy$ = new Subject();
 
   constructor(
     private fb: FormBuilder,
@@ -80,7 +80,7 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
     private readonly loginService: LoginService,
     private rdfService: RaceDynamicFormService,
     private store: Store<State>,
-    private cdrf: ChangeDetectorRef
+    private formProgressService: FormUpdateProgressService
   ) {}
 
   ngOnInit(): void {
@@ -113,6 +113,20 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
       });
 
     this.patchTemplateDetails();
+
+    this.headerDataForm.valueChanges
+      .pipe(
+        startWith({}),
+        debounceTime(100),
+        distinctUntilChanged(),
+        takeUntil(this.destroy$),
+        pairwise(),
+        tap(([previous, current]) => {
+          if (isEqual(previous, current)) this.hasFormChanges = false;
+          else this.hasFormChanges = true;
+        })
+      )
+      .subscribe();
   }
 
   validateTemplateName(control: AbstractControl) {
@@ -138,12 +152,15 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
 
   patchTemplateDetails() {
     if (Object.keys(this.templateData?.formMetadata).length !== 0) {
-      this.headerDataForm.patchValue({
-        name: this.templateData.formMetadata.name,
-        description: this.templateData.formMetadata.description,
-        formType: this.templateData.formMetadata.formType,
-        formStatus: this.templateData.formMetadata.formStatus
-      });
+      this.headerDataForm.patchValue(
+        {
+          name: this.templateData.formMetadata.name,
+          description: this.templateData.formMetadata.description,
+          formType: this.templateData.formMetadata.formType,
+          formStatus: this.templateData.formMetadata.formStatus
+        },
+        { emitEvent: false }
+      );
       this.headerDataForm.markAsDirty();
     }
   }
@@ -169,6 +186,7 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
                 counter: 4
               })
               .subscribe(() => {
+                this.formProgressService.isTemplateCreated$.next(true);
                 this.router
                   .navigate(['/forms/templates/edit', template.id], {
                     state: { allTemplates: this.alltemplatesData }
@@ -177,14 +195,19 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
               });
           });
       } else if (this.templateData.templateExists === true) {
+        this.formProgressService.isTemplateCreated$.next(false);
         this.store.dispatch(
           BuilderConfigurationActions.updateFormMetadata({
             formMetadata: {
               ...this.headerDataForm.value,
               id: this.templateData.formMetadata.id
             },
-            formStatus: formConfigurationStatus.draft,
-            formDetailPublishStatus: formConfigurationStatus.draft,
+            formStatus: this.hasFormChanges
+              ? formConfigurationStatus.draft
+              : this.headerDataForm.value.formStatus,
+            formDetailPublishStatus: this.hasFormChanges
+              ? formConfigurationStatus.draft
+              : this.headerDataForm.value.formStatus,
             formSaveStatus: formConfigurationStatus.saving
           })
         );
@@ -253,5 +276,7 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.formMetadataSubscription.unsubscribe();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

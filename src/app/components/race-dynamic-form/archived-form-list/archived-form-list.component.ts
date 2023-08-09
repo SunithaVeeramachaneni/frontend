@@ -42,8 +42,7 @@ import {
 import {
   formConfigurationStatus,
   graphQLDefaultLimit,
-  routingUrls,
-  permissions as perms
+  routingUrls
 } from 'src/app/app.constants';
 
 import { RaceDynamicFormService } from '../services/rdf.service';
@@ -171,7 +170,6 @@ export class ArchivedFormListComponent implements OnInit, OnDestroy {
   plantsIdNameMap = {};
   triggerCountUpdate = false;
   readonly routingUrls = routingUrls;
-  currentRouteUrl$: Observable<string>;
   userInfo$: Observable<UserInfo>;
   private onDestroy$ = new Subject();
 
@@ -179,19 +177,12 @@ export class ArchivedFormListComponent implements OnInit, OnDestroy {
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private readonly toast: ToastService,
     private readonly loginService: LoginService,
-    public dialog: MatDialog,
-    private commonService: CommonService,
-    private headerService: HeaderService
+    public dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
     this.columns = this.raceDynamicFormService.updateConfigOptionsFromColumns(
       this.partialColumns
-    );
-    this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
-      tap(() => {
-        this.headerService.setHeaderTitle(routingUrls.archivedForms.title);
-      })
     );
     this.fetchForms$.next({ data: 'load' });
     this.fetchForms$.next({} as TableEvent);
@@ -336,10 +327,10 @@ export class ArchivedFormListComponent implements OnInit, OnDestroy {
           data.map((item) => {
             this.raceDynamicFormService
               .getEmbeddedFormId$(item.id)
-              .subscribe((data) => {
+              .subscribe((data1) => {
                 let embeddedFormId;
-                if (data) {
-                  embeddedFormId = data?.embeddedFormId;
+                if (data1) {
+                  embeddedFormId = data1?.embeddedFormId;
                 } else {
                   embeddedFormId = '';
                 }

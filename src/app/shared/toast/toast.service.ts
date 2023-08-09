@@ -1,5 +1,5 @@
 import { Injectable, Injector, Inject } from '@angular/core';
-import { Overlay, OverlayRef } from '@angular/cdk/overlay';
+import { Overlay } from '@angular/cdk/overlay';
 import { ComponentPortal, PortalInjector } from '@angular/cdk/portal';
 
 import { ToastComponent } from './toast.component';

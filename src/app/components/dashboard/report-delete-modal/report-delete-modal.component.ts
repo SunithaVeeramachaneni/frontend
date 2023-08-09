@@ -4,11 +4,7 @@ import {
   ChangeDetectionStrategy,
   Inject
 } from '@angular/core';
-import { FormControl } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { combineLatest, Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
-import { ReportCategory, Widget } from 'src/app/interfaces';
 
 export interface DeleteReportData {
   reportName: string;

@@ -17,8 +17,6 @@ import { FormModule } from 'src/app/forms/form.module';
 import { FormContainerComponent } from './form-container/form-container.component';
 import { FormListComponent } from './form-list/form-list.component';
 import { FormDetailComponent } from './form-detail/form-detail.component';
-import { ResponseSetComponent } from './response-set/response-set.component';
-import { PublicLibraryComponent } from './public-library/public-library.component';
 import { FormHeaderConfigurationComponent } from './form-header-configuration/form-header-configuration.component';
 import { FormDetailConfigurationComponent } from './form-detail-configuration/form-detail-configuration.component';
 
@@ -91,7 +89,6 @@ import { ImportFormListComponent } from 'src/app/components/race-dynamic-form/im
 import { TemplateAffectedFormsModalComponent } from './template-configuration/template-affected-forms-modal/template-affected-forms-modal.component';
 import { AffectedFormTemplateSliderComponent } from 'src/app/components/race-dynamic-form/affected-form-template-slider/affected-form-template-slider.component';
 import { QuillMaterialComponent } from 'src/app/shared/components/quill-material/quill-material.component';
-import { ArchiveTemplateModalComponent } from './archive-template-modal/archive-template-modal.component';
 import { TemplateModalComponent } from './template-modal/template-modal.component';
 import { ConfirmModalPopupComponent } from './confirm-modal-popup/confirm-modal-popup/confirm-modal-popup.component';
 
@@ -103,8 +100,6 @@ export const customTranslateLoader = (http: HttpClient) =>
     FormContainerComponent,
     FormListComponent,
     FormDetailComponent,
-    ResponseSetComponent,
-    PublicLibraryComponent,
     FormHeaderConfigurationComponent,
     FormDetailConfigurationComponent,
     SelectQuestionsDialogComponent,
@@ -114,7 +109,6 @@ export const customTranslateLoader = (http: HttpClient) =>
     DeleteTemplateModalComponent,
     AssignInspectionComponent,
     ArchivedDeleteModalComponent,
-    ArchiveTemplateModalComponent,
     ImportQuestionsModalComponent,
     SchedulerComponent,
     FormsComponent,
@@ -210,8 +204,6 @@ export const customTranslateLoader = (http: HttpClient) =>
     FormContainerComponent,
     FormListComponent,
     FormDetailComponent,
-    ResponseSetComponent,
-    PublicLibraryComponent,
     FormHeaderConfigurationComponent,
     FormDetailConfigurationComponent,
     SelectQuestionsDialogComponent,

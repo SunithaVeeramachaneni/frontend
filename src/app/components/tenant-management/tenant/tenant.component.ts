@@ -23,7 +23,7 @@ import { SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Observable } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map, tap } from 'rxjs/operators';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { Buffer } from 'buffer';
 import { permissions, products } from 'src/app/app.constants';
@@ -32,11 +32,19 @@ import { ImageUtils } from 'src/app/shared/utils/imageUtils';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { TenantService } from '../services/tenant.service';
 import { HeaderService } from 'src/app/shared/services/header.service';
-import { Tenant, ValidationError } from 'src/app/interfaces';
+import {
+  ApiKeyEvent,
+  ApiKeyInfo,
+  ApiKeysInfoObject,
+  Tenant,
+  ValidationError
+} from 'src/app/interfaces';
 import { cloneDeep } from 'lodash-es';
+import { format } from 'date-fns';
 
 const regUrl =
   '^(http://www.|https://www.|http://|https://|www.)[a-z0-9]+([-.]{1}[a-z0-9]+)*.([a-z]{2,5}|[0-9]{1,3})(:[0-9]{1,5})?(/.*)?$';
+const expiredOnFormat = 'yyyy-MM-dd';
 
 @Component({
   selector: 'app-tenant',
@@ -55,7 +63,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
   firstButton = true;
   lastButton = false;
   selectedID = new FormControl(0);
-  noOfTabs = 7;
+  noOfTabs = 8;
   tenantForm: FormGroup;
   slackConfiguration: FormGroup;
   msTeamsConfiguration: FormGroup;
@@ -83,6 +91,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
   editTenant = true;
   editQueryParam = true;
   tenantLogo: string | SafeResourceUrl;
+  apiKeysInfoObject: ApiKeysInfoObject = { apiKeysInfo: [] };
   readonly permissions = permissions;
 
   get sapUrls(): FormArray {
@@ -338,7 +347,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
       tenantLogoName: [''],
       slackTeamID: [''],
       amplifyConfig: ['', [Validators.required, this.jsonValidator()]],
-      configurations: ['', [Validators.required, this.jsonValidator()]]
+      configurations: ['', [Validators.required, this.jsonValidator()]],
+      apiKeysInfo: this.fb.array([])
     });
 
     this.slackConfiguration = this.fb.group({
@@ -499,6 +509,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
 
     this.route.data.subscribe(({ tenant }) => {
       this.tenantData = tenant;
+      this.apiKeysInfoObject = { apiKeysInfo: tenant.apiKeysInfo };
       this.setTenantFormData();
     });
 
@@ -521,6 +532,63 @@ export class TenantComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.maskFields();
+  }
+
+  setApiKeysInfo(apiKeysInfo: ApiKeyInfo[]) {
+    return apiKeysInfo.map((apiKeyInfo) => this.initApiKeysInfo(apiKeyInfo));
+  }
+
+  initApiKeysInfo(apiKeyInfo: ApiKeyInfo) {
+    const {
+      description = '',
+      expiresOn = format(new Date(), expiredOnFormat),
+      apiKey = ''
+    } = apiKeyInfo;
+    return this.fb.group({
+      description,
+      expiresOn,
+      apiKey
+    });
+  }
+
+  get apiKeysInfo(): FormArray {
+    return this.tenantForm.get('apiKeysInfo') as FormArray;
+  }
+
+  apiKeyEventHandler(apiKeyEvent: ApiKeyEvent) {
+    const { type, apiKeyInfo } = apiKeyEvent;
+    if (type === 'create') {
+      this.tenantService
+        .generateApiKey$()
+        .pipe(
+          tap((resp) => {
+            if (Object.keys(resp).length) {
+              this.apiKeysInfo.push(
+                this.initApiKeysInfo({ ...apiKeyInfo, ...resp })
+              );
+              this.apiKeysInfoObject = {
+                apiKeysInfo: [
+                  ...this.apiKeysInfoObject.apiKeysInfo,
+                  { ...apiKeyInfo, ...resp }
+                ]
+              };
+              this.tenantForm.markAsDirty();
+              this.cdrf.detectChanges();
+            }
+          })
+        )
+        .subscribe();
+    } else {
+      const index = this.apiKeysInfo.value.findIndex(
+        (info: ApiKeyInfo) => info.apiKey === apiKeyInfo.apiKey
+      );
+      this.apiKeysInfo.removeAt(index);
+      this.apiKeysInfoObject = {
+        apiKeysInfo: this.apiKeysInfo.value
+      };
+      this.tenantForm.markAsDirty();
+      this.cdrf.detectChanges();
+    }
   }
 
   maskFields() {
@@ -575,6 +643,10 @@ export class TenantComponent implements OnInit, AfterViewInit {
       (this.tenantForm.get('protectedResources.node') as FormGroup).setControl(
         'urls',
         this.fb.array(this.setUrls(nodeUrls))
+      );
+      this.tenantForm.setControl(
+        'apiKeysInfo',
+        this.fb.array(this.setApiKeysInfo(tenant.apiKeysInfo))
       );
       this.tenantForm.get('tenantId').disable();
       this.tenantForm.get('tenantName').disable();

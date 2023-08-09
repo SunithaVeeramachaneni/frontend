@@ -31,14 +31,12 @@ import {
   formConfigurationStatus,
   permissions as perms
 } from 'src/app/app.constants';
-import { Store } from '@ngrx/store';
-import { State } from 'src/app/forms/state';
 import { generateCopyNumber, generateCopyRegex } from '../utils/utils';
 import { omit } from 'lodash-es';
-import { ArchiveTemplateModalComponent } from '../archive-template-modal/archive-template-modal.component';
 import { LoginService } from '../../login/services/login.service';
 import { ToastService } from 'src/app/shared/toast';
 import { TemplateModalComponent } from '../template-modal/template-modal.component';
+import { ConfirmModalPopupComponent } from '../confirm-modal-popup/confirm-modal-popup/confirm-modal-popup.component';
 
 @Component({
   selector: 'app-template-list',
@@ -124,7 +122,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
       groupable: true
     },
     {
-      id: 'formsUsageCount',
+      id: 'displayFormsUsageCount',
       displayName: 'Used in Forms',
       type: 'number',
       controlType: 'string',
@@ -213,8 +211,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
     private translateService: TranslateService,
     private router: Router,
     private dialog: MatDialog,
-    private cdrf: ChangeDetectorRef,
-    private readonly store: Store<State>
+    private cdrf: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -234,7 +231,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
           this.allTemplates = res.rows.map((item) => ({
             ...item,
             author: this.usersService.getUserFullName(item.author),
-            formsUsageCount:
+            displayFormsUsageCount:
               item.formsUsageCount === 0 ? '_ _' : item.formsUsageCount,
             lastPublishedBy: this.usersService.getUserFullName(
               item.lastPublishedBy
@@ -289,7 +286,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
       case 'author':
         this.showFormDetail(row);
         break;
-      case 'formsUsageCount':
+      case 'displayFormsUsageCount':
         this.showAffectedSlider(row);
         break;
       default:
@@ -536,11 +533,35 @@ export class TemplateListComponent implements OnInit, OnDestroy {
   }
 
   onArchiveTemplate(template) {
-    const archiveTemplateRef = this.dialog.open(ArchiveTemplateModalComponent, {
-      data: template
-    });
-    archiveTemplateRef.afterClosed().subscribe((res) => {
-      if (res === 'archive') {
+    let dialogRef;
+    if (template.formsUsageCount === 0) {
+      dialogRef = this.dialog.open(ConfirmModalPopupComponent, {
+        maxWidth: 'max-content',
+        maxHeight: 'max-content',
+        data: {
+          popupTexts: {
+            primaryBtnText: 'yes',
+            secondaryBtnText: 'no',
+            title: 'archiveTemplateModalHeading1',
+            subtitle: 'archiveTemplateModalSubHeading1'
+          }
+        }
+      });
+    } else {
+      dialogRef = this.dialog.open(ConfirmModalPopupComponent, {
+        maxWidth: 'max-content',
+        maxHeight: 'max-content',
+        data: {
+          popupTexts: {
+            primaryBtnText: 'okay',
+            title: 'archiveTemplateModalHeading2',
+            subtitle: 'archiveTemplateModalSubHeading2'
+          }
+        }
+      });
+    }
+    dialogRef.afterClosed().subscribe((res) => {
+      if (res === 'primary' && template.formsUsageCount === 0) {
         this.raceDynamicFormService
           .archiveDeleteTemplate$(template.id, {
             isArchived: true,

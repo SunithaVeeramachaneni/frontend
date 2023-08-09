@@ -1,3 +1,6 @@
+/* eslint-disable radix */
+/* eslint-disable @typescript-eslint/naming-convention */
+/* eslint-disable no-underscore-dangle */
 import { Injectable, NgZone } from '@angular/core';
 import {
   BehaviorSubject,
@@ -7,36 +10,18 @@ import {
   of,
   Subject
 } from 'rxjs';
-import {
-  catchError,
-  map,
-  mergeMap,
-  reduce,
-  share,
-  shareReplay,
-  takeUntil,
-  tap
-} from 'rxjs/operators';
+import { map, share } from 'rxjs/operators';
 import { ErrorInfo } from '../../interfaces/error-info';
 import { WorkOrder, WorkOrders } from '../../interfaces/work-order';
 import { AppService } from '../../shared/services/app.services';
 import { environment } from '../../../environments/environment';
 
-import { WarehouseTechnician } from '../../interfaces/warehouse_technicians';
 import { WorkCenter } from '../../interfaces/work-center';
 import { Plant } from 'src/app/interfaces/plant';
 import { SseService } from 'src/app/shared/services/sse.service';
 
 @Injectable({ providedIn: 'root' })
 export class MaintenanceService {
-  private destroy$ = new Subject();
-  constructor(
-    private zone: NgZone,
-    private _appService: AppService,
-    private sseService: SseService
-  ) {}
-
-  private technicians$: Observable<any>;
   public workOrderBSubject: BehaviorSubject<any>;
   public allPlants$: Observable<any>;
   public workCenters$: Observable<WorkCenter[]>;
@@ -44,6 +29,14 @@ export class MaintenanceService {
   public plants: Plant[];
   public workCenters: WorkCenter[];
   public allPlantInfoRawObservable$: Observable<any> = null;
+  private technicians$: Observable<any>;
+  private destroy$ = new Subject();
+
+  constructor(
+    private zone: NgZone,
+    private _appService: AppService,
+    private sseService: SseService
+  ) {}
 
   assignAllPlantRawObservable = () => {
     const rawObservable$ = this._appService
@@ -70,7 +63,6 @@ export class MaintenanceService {
           inProgress: [],
           completed: []
         };
-        let workOrder: WorkOrder;
         let technicians;
         const workOrderList = JSON.parse(event.data);
         this.technicians$.subscribe((resp) => (technicians = resp));
@@ -177,7 +169,6 @@ export class MaintenanceService {
           inProgress: [],
           completed: []
         };
-        let workOrder: WorkOrder;
         let assignedTechnician = [{}];
         let i = 0;
         workOrderList.forEach((workOrder) => {

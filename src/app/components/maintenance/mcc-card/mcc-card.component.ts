@@ -21,8 +21,8 @@ import { LoginService } from '../../login/services/login.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MCCCardComponent implements OnInit {
-  @Input('workOrder') workOrder;
-  @Output('assign') assign = new EventEmitter();
+  @Input() workOrder;
+  @Output() assign = new EventEmitter();
   isDropdownOpen = false;
   userInfo$: Observable<UserInfo>;
   permissions: Permission[];

@@ -360,65 +360,36 @@ export class UnitMeasurementListComponent implements OnInit, OnDestroy {
               type: 'success'
             });
             form.action = null;
-          } else if (form.action === 'edit') {
-            const currentData = [...(initial?.data || [])];
-            const idx = initial?.data?.findIndex(
-              (d) => d?.id === form?.form?.id
-            );
-            if (idx !== -1) {
-              if (
-                initial?.data[idx]?.unitList?.id === form?.form?.unitList?.id
-              ) {
-                currentData[idx] = {
-                  ...form.form,
-                  noOfUnits: initial.data[idx]?.noOfUnits || 0,
-                  isDefaultText: initial.data[idx]?.isDefaultText || '',
-                  unitType: initial.data[idx]?.unitType || ''
-                };
-                initial.data = currentData;
-              }
-            }
-            this.toast.show({
-              text: 'UOM edited successfully!',
-              type: 'success'
-            });
-            form.action = null;
-          } else if (form.action === 'status') {
+          } else if (form.action === 'edit' || form.action === 'status') {
             const idx = initial?.data?.findIndex(
               (d) => d?.id === form?.form?.id
             );
             const obj = {
               ...initial?.data[idx],
-              isActive: form.form.isActive,
-              _version: form.form._version
+              ...form?.form
             };
             if (idx !== -1) {
               initial.data[idx] = obj;
             }
-            this.toast.show({
-              text: 'UOM status changed successfully!',
-              type: 'success'
-            });
             form.action = null;
           } else if (form.action === 'setAsDefault') {
-            initial.data = initial?.data?.map((d) => {
-              const obj = { ...d };
-              if (obj?.unitlistID === form?.form?.unitlistID) {
-                if (obj?.id === form?.form?.id) {
-                  obj.isDefault = form.form.isDefault;
-                  obj._version = form.form._version;
-                  obj.isDefaultText = 'Default';
-                } else {
-                  obj.isDefault = false;
-                  obj.isDefaultText = '';
+            const uomArray = form?.form as unknown as any[];
+            if (uomArray?.length > 0) {
+              uomArray?.forEach((u) => {
+                const idx = initial?.data?.findIndex((d) => d?.id === u?.id);
+                if (idx !== -1) {
+                  const foundObj = initial?.data[idx];
+                  if (foundObj) {
+                    initial.data[idx] = {
+                      ...foundObj,
+                      ...u,
+                      isDefaultText: u?.isDefault ? 'Default' : '',
+                      isDefault: u?.isDefault
+                    };
+                  }
                 }
-              }
-              return obj;
-            });
-            this.toast.show({
-              text: 'UOM set as default successfully!',
-              type: 'success'
-            });
+              });
+            }
             form.action = null;
           } else if (form.action === 'add') {
             this.toast.show({
@@ -577,6 +548,7 @@ export class UnitMeasurementListComponent implements OnInit, OnDestroy {
   }
 
   applyFilters(data = []): void {
+    this.isLoading$.next(true);
     if (this.searchUom.value) {
       this.searchUom.patchValue('');
     }
@@ -587,6 +559,7 @@ export class UnitMeasurementListComponent implements OnInit, OnDestroy {
   }
 
   clearFilters(): void {
+    this.isLoading$.next(true);
     this.isPopoverOpen = false;
     this.filter = {
       status: '',
@@ -658,8 +631,10 @@ export class UnitMeasurementListComponent implements OnInit, OnDestroy {
       })
       .subscribe((response) => {
         if (Object.keys(response)?.length) {
-          this.nextToken = '';
-          this.fetchUOM$.next({ data: 'load' });
+          this.addEditCopyForm$.next({
+            form: response,
+            action: 'setAsDefault'
+          });
           this.toast.show({
             text: 'UOM set as default successfully!',
             type: 'success'
@@ -685,8 +660,10 @@ export class UnitMeasurementListComponent implements OnInit, OnDestroy {
             })
             .subscribe((response) => {
               if (Object.keys(response)?.length) {
-                this.nextToken = '';
-                this.fetchUOM$.next({ data: 'load' });
+                this.addEditCopyForm$.next({
+                  form: response,
+                  action: 'edit'
+                });
                 this.toast.show({
                   text: 'UOM edited successfully!',
                   type: 'success'
@@ -706,8 +683,10 @@ export class UnitMeasurementListComponent implements OnInit, OnDestroy {
       })
       .subscribe((response) => {
         if (Object.keys(response)?.length) {
-          this.nextToken = '';
-          this.fetchUOM$.next({ data: 'load' });
+          this.addEditCopyForm$.next({
+            form: response,
+            action: 'status'
+          });
           this.toast.show({
             text: 'UOM status changed successfully!',
             type: 'success'

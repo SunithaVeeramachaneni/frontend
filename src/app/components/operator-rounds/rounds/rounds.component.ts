@@ -918,8 +918,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   }
 
   downloadPDF(selectedForm) {
-    const roundPlanId = selectedForm.id;
-    const roundId = selectedForm.roundId;
+    const { id: roundId, roundPlanId } = selectedForm;
 
     const info: ErrorInfo = {
       displayToast: false,

@@ -22,7 +22,6 @@ import { MatTableDataSource } from '@angular/material/table';
 import { CellClickActionEvent, Permission, UserInfo } from 'src/app/interfaces';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { UsersService } from '../../user-management/services/users.service';
-import { HeaderService } from 'src/app/shared/services/header.service';
 import { TranslateService } from '@ngx-translate/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DeleteTemplateModalComponent } from '../delete-template-modal/delete-template-modal.component';
@@ -175,8 +174,6 @@ export class ArchivedTemplateListComponent implements OnInit, OnDestroy {
     private readonly toast: ToastService,
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private usersService: UsersService,
-    private headerService: HeaderService,
-    private translateService: TranslateService,
     private loginService: LoginService,
     private cdrf: ChangeDetectorRef,
     private dialog: MatDialog
@@ -187,9 +184,6 @@ export class ArchivedTemplateListComponent implements OnInit, OnDestroy {
       this.partialColumns
     );
     this.searchTemplates = new FormControl('');
-    this.headerService.setHeaderTitle(
-      this.translateService.instant('templates')
-    );
 
     this.usersService.getUsersInfo$().subscribe(() => {
       this.fetchArchivedTemplatesSubscription = this.raceDynamicFormService

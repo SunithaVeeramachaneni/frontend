@@ -793,8 +793,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
   }
 
   downloadPDF(selectedForm) {
-    const formId = selectedForm.id;
-    const inspectionId = selectedForm.inspectionId;
+    const { id: inspectionId, formId } = selectedForm;
 
     const info: ErrorInfo = {
       displayToast: false,

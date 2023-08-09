@@ -12,8 +12,8 @@ import {
   selector: '[appAmIvisible]'
 })
 export class AmIvisibleDirective implements AfterViewInit {
-  @Output('elementVisible') elementVisible = new EventEmitter<boolean>();
-  @Input('isTargetElement') isTargetElement: boolean;
+  @Output() elementVisible = new EventEmitter<boolean>();
+  @Input() isTargetElement: boolean;
   intersectionOptions = {
     root: null, //implies the root is the document viewport
     rootMargin: '0px',

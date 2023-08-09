@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { RaceDynamicFormService } from '../../services/rdf.service';
 import {
@@ -26,6 +26,7 @@ import {
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { MatTableDataSource } from '@angular/material/table';
 import {
+  formConfigurationStatus,
   graphQLDefaultLimit,
   graphQLDefaultMaxLimit
 } from 'src/app/app.constants';
@@ -45,10 +46,11 @@ import { FormUpdateProgressService } from 'src/app/forms/services/form-update-pr
   templateUrl: './template-affected-forms-modal.component.html',
   styleUrls: ['./template-affected-forms-modal.component.scss']
 })
-export class TemplateAffectedFormsModalComponent implements OnInit {
+export class TemplateAffectedFormsModalComponent implements OnInit, OnDestroy {
   ghostLoading = new Array(8).fill(0).map((v, i) => i);
   nextToken = '';
   fetchType = 'load';
+  archived = 'Archived';
   searchForm: FormControl;
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   formsListCount$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
@@ -121,7 +123,7 @@ export class TemplateAffectedFormsModalComponent implements OnInit {
       hasPostTextImage: false
     },
     {
-      id: 'formStatus',
+      id: 'displayFormStatus',
       displayName: 'Status',
       type: 'string',
       controlType: 'string',
@@ -181,6 +183,10 @@ export class TemplateAffectedFormsModalComponent implements OnInit {
       published: {
         'background-color': '#2C9E53',
         color: '#FFFFFF'
+      },
+      archived: {
+        'background-color': '#9E9E9E',
+        color: '#FFFFFF'
       }
     }
   };
@@ -194,7 +200,6 @@ export class TemplateAffectedFormsModalComponent implements OnInit {
     private formProgressService: FormUpdateProgressService,
     private plantService: PlantService,
     public dialogRef: MatDialogRef<TemplateAffectedFormsModalComponent>,
-
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
 
@@ -272,6 +277,8 @@ export class TemplateAffectedFormsModalComponent implements OnInit {
           rows.map((item) => {
             item.plant = '';
             if (item?.plantId) item.plant = this.plantsObject[item.plantId];
+            if (item.isArchived) item.displayFormStatus = this.archived;
+            else item.displayFormStatus = item.formStatus;
             item.preTextImage = {
               image: item?.formLogo,
               style: {
@@ -371,6 +378,11 @@ export class TemplateAffectedFormsModalComponent implements OnInit {
         })
       )
       .subscribe((data) => {
+        this.store.dispatch(
+          BuilderConfigurationActions.updateFormPublishStatus({
+            formDetailPublishStatus: formConfigurationStatus.ready
+          })
+        );
         this.store.dispatch(
           BuilderConfigurationActions.updateIsFormDetailPublished({
             isFormDetailPublished: true

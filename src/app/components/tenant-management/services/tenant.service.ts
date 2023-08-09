@@ -36,6 +36,16 @@ export class TenantService {
     return this.tenantsInfo;
   }
 
+  generateApiKey$ = (
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<{ apiKey: string }> =>
+    this.appService._postData(
+      environment.userRoleManagementApiUrl,
+      'catalogs/api-key',
+      null,
+      info
+    );
+
   createTenant$ = (
     tenant: Tenant,
     info: ErrorInfo = {} as ErrorInfo
