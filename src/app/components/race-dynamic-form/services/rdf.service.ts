@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable @typescript-eslint/dot-notation */
 /* eslint-disable @typescript-eslint/member-ordering */
 /* eslint-disable @typescript-eslint/naming-convention */
@@ -1468,8 +1469,8 @@ export class RaceDynamicFormService {
   }
 
   createSectionsFromPrompt$ = (
-    prompt: String,
-    requestCounter: Number,
+    prompt: string,
+    requestCounter: number,
     info: ErrorInfo = {} as ErrorInfo
   ) =>
     this.appService._postData(
@@ -1480,8 +1481,8 @@ export class RaceDynamicFormService {
     );
 
   regenerateSectionsFromTitle$ = (
-    prompt: String,
-    requestCounter: Number,
+    prompt: string,
+    requestCounter: number,
     info: ErrorInfo = {} as ErrorInfo
   ) =>
     this.appService._postData(
@@ -1492,11 +1493,11 @@ export class RaceDynamicFormService {
     );
 
   regenerateQuestionsForSections$ = (
-    formTitle: String,
-    sectionName: String,
-    sectionId: String,
-    counter: Number,
-    requestCounter: Number,
+    formTitle: string,
+    sectionName: string,
+    sectionId: string,
+    counter: number,
+    requestCounter: number,
     info: ErrorInfo = {} as ErrorInfo
   ) =>
     this.appService._postData(
@@ -1509,7 +1510,7 @@ export class RaceDynamicFormService {
   createFormsFromPrompt$ = (
     forms: any,
     plantId: string,
-    requestCounter: Number,
+    requestCounter: number,
     info: ErrorInfo = {} as ErrorInfo
   ) => {
     const formData = new FormData();
