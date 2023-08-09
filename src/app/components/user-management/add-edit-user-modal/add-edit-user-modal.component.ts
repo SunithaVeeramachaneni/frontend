@@ -78,7 +78,7 @@ export class AddEditUserModalComponent implements OnInit {
       [this.checkIfUserExistsInIDP(), this.checkIfUserExistsInDB()]
     ),
     roles: new FormControl([], [this.matSelectValidator()]),
-    usergroup: new FormControl([], [this.matSelectValidator()]),
+    usergroup: new FormControl([]),
     profileImage: new FormControl(''),
     profileImageFileName: new FormControl(''),
     validFrom: new FormControl('', [Validators.required]),
