@@ -271,7 +271,12 @@ export class ShiftChartComponent implements OnInit, OnChanges {
         return;
       }
       if (val === this.slots[this.slots.length - 2]) {
-        obj.endTime = this.service.addTime(val, 0, 59);
+        let lastValue: any = this.slots[this.slots.length - 1]
+          .split(':')[1]
+          .split(' ')[0];
+        lastValue = lastValue === '00' ? 60 : lastValue;
+
+        obj.endTime = this.service.addTime(val, 0, +lastValue - 1);
       }
       // If we select last slot then it will work
       if (
@@ -347,7 +352,8 @@ export class ShiftChartComponent implements OnInit, OnChanges {
         this.dataArrays,
         obj,
         this.slots[0],
-        this.slots[this.slots.length - 1]
+        this.slots[this.slots.length - 1],
+        this.slots
       );
 
       this.dataArrays.push(obj);
@@ -509,7 +515,7 @@ export class ShiftChartComponent implements OnInit, OnChanges {
       index: timeDiff,
       startTime: payload.startTime,
       endTime: payload.endTime,
-      isBook: true
+      isBook: payload?.isBook === false ? false : true
     };
     this.dataArrays.push(obj);
     this.slotsArray.push(this.createItemFormGroup());
