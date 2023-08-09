@@ -81,7 +81,6 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
           break;
       }
       this.observable?.subscribe((result) => {
-        console.log(result);
         if (Object.keys(result).length > 0) {
           this.title = 'All done!';
           this.message = `Adding all ${result?.totalCount} ${type}`;
