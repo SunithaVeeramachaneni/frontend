@@ -334,31 +334,31 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     private peopleService: PeopleService,
     private imageUtils: ImageUtils,
     private dialog: MatDialog,
-    private userIdle: UserIdleService,
+    // private userIdle: UserIdleService,
     private sseService: SseService
   ) {}
 
   @HostListener('document:mousemove', ['$event'])
   @debounce()
   onMouseMove(e) {
-    this.updateUserPresence();
+    // this.updateUserPresence();
   }
 
   @HostListener('click', ['$event.target'])
   @debounce()
   onClick(e) {
-    this.updateUserPresence();
+    // this.updateUserPresence();
   }
 
   @HostListener('window:keyup', ['$event'])
   @debounce()
   keyEvent(event: KeyboardEvent) {
-    this.updateUserPresence();
+    // this.updateUserPresence();
   }
 
   @HostListener('window:unload', ['$event'])
   unloadHandler(event) {
-    this.removeUserPresence();
+    // this.removeUserPresence();
   }
 
   @HostListener('window:beforeunload', ['$event'])
@@ -368,43 +368,43 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   onSignOut = () => {
-    this.removeUserPresence();
+    // this.removeUserPresence();
   };
 
-  updateUserPresence = () => {
-    if (this.isUserOnline || !this.isUserAuthenticated) return;
-    this.usersService.setUserPresence$().subscribe((resp) => {
-      this.userIdle.startWatching();
-      this.isUserOnline = true;
-      const userInfo = this.loginService.getLoggedInUserInfo();
-      if (Object.keys(userInfo).length) {
-        userInfo.online = true;
-        this.loginService.setLoggedInUserInfo(userInfo);
-      }
-    });
-  };
+  // updateUserPresence = () => {
+  //   if (this.isUserOnline || !this.isUserAuthenticated) return;
+  //   this.usersService.setUserPresence$().subscribe((resp) => {
+  //     this.userIdle.startWatching();
+  //     this.isUserOnline = true;
+  //     const userInfo = this.loginService.getLoggedInUserInfo();
+  //     if (Object.keys(userInfo).length) {
+  //       userInfo.online = true;
+  //       this.loginService.setLoggedInUserInfo(userInfo);
+  //     }
+  //   });
+  // };
 
-  removeUserPresence = () => {
-    this.usersService.removeUserPresence$().subscribe((resp) => {
-      this.isUserOnline = false;
-      const userInfo = this.loginService.getLoggedInUserInfo();
-      if (Object.keys(userInfo).length) {
-        userInfo.online = false;
-        this.loginService.setLoggedInUserInfo(userInfo);
-      }
-      this.userIdle.stopWatching();
-    });
-  };
+  // removeUserPresence = () => {
+  //   this.usersService.removeUserPresence$().subscribe((resp) => {
+  //     this.isUserOnline = false;
+  //     const userInfo = this.loginService.getLoggedInUserInfo();
+  //     if (Object.keys(userInfo).length) {
+  //       userInfo.online = false;
+  //       this.loginService.setLoggedInUserInfo(userInfo);
+  //     }
+  //     this.userIdle.stopWatching();
+  //   });
+  // };
 
   ngOnInit() {
-    //Start watching for user inactivity.
-    this.userIdle.startWatching();
-    // Start watching when user idle is starting.
-    this.userIdle.onTimerStart().subscribe((count) => {
-      if (count === 1) {
-        this.removeUserPresence();
-      }
-    });
+    // //Start watching for user inactivity.
+    // this.userIdle.startWatching();
+    // // Start watching when user idle is starting.
+    // this.userIdle.onTimerStart().subscribe((count) => {
+    //   if (count === 1) {
+    //     this.removeUserPresence();
+    //   }
+    // });
 
     const ref = this;
     this.loginService.isUserAuthenticated$
@@ -581,27 +581,27 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       };
     }
 
-    // USER PRESENCE SSE
-    this.eventSourceUpdateUserPresence = this.sseService.getEventSourceWithGet(
-      environment.userRoleManagementApiUrl,
-      'users/sse/users_presence',
-      null
-    );
-    this.eventSourceUpdateUserPresence.stream();
-    this.eventSourceUpdateUserPresence.onmessage = (event) => {
-      if (event) {
-        const eventData = JSON.parse(event.data);
-        if (!eventData.isHeartbeat) {
-          this.peopleService.updateUserPresence({
-            action: 'update_user_presence',
-            data: eventData
-          });
-        }
-      }
-    };
-    this.eventSourceUpdateUserPresence.onerror = (event) => {
-      // console.log(event);
-    };
+    // // USER PRESENCE SSE
+    // this.eventSourceUpdateUserPresence = this.sseService.getEventSourceWithGet(
+    //   environment.userRoleManagementApiUrl,
+    //   'users/sse/users_presence',
+    //   null
+    // );
+    // this.eventSourceUpdateUserPresence.stream();
+    // this.eventSourceUpdateUserPresence.onmessage = (event) => {
+    //   if (event) {
+    //     const eventData = JSON.parse(event.data);
+    //     if (!eventData.isHeartbeat) {
+    //       this.peopleService.updateUserPresence({
+    //         action: 'update_user_presence',
+    //         data: eventData
+    //       });
+    //     }
+    //   }
+    // };
+    // this.eventSourceUpdateUserPresence.onerror = (event) => {
+    //   // console.log(event);
+    // };
   }
 
   ngAfterViewChecked(): void {
