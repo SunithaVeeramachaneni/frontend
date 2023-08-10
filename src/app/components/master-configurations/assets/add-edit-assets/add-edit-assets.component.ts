@@ -199,7 +199,7 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
     if (!plantsID) {
       // set plant value if plant field was not selected first
       const parent = this.parentInformation.find((d) => d.id === parentId);
-      if (parent.plantsID) {
+      if (parent?.plantsID) {
         this.assetForm.get('plantsID').setValue(parent.plantsID);
       }
     }
@@ -275,47 +275,39 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
 
     if (parentType === 'location') {
       if (plantsID) {
-        const filteredData = this.allParentsData.filter(
+        return this.allParentsData.filter(
           (parent) =>
             (parent.name &&
               parent.name.toLowerCase().indexOf(searchValue) !== -1) ||
             (parent.locationId &&
               parent.locationId.toLowerCase().indexOf(searchValue) !== -1)
         );
-        this.allParentsData$.next(filteredData);
-        return filteredData;
       } else {
-        const filteredData = this.parentInformation.filter(
+        return this.parentInformation.filter(
           (parent) =>
             (parent.name &&
               parent.name.toLowerCase().indexOf(searchValue) !== -1) ||
             (parent.locationId &&
               parent.locationId.toLowerCase().indexOf(searchValue) !== -1)
         );
-        this.allParentsData$.next(filteredData);
-        return filteredData;
       }
     } else {
       if (plantsID) {
-        const filteredData = this.allParentsData.filter(
+        return this.allParentsData.filter(
           (parent) =>
             (parent.name &&
               parent.name.toLowerCase().indexOf(searchValue) !== -1) ||
             (parent.assetsId &&
               parent.assetsId.toLowerCase().indexOf(searchValue) !== -1)
         );
-        this.allParentsData$.next(filteredData);
-        return filteredData;
       } else {
-        const filteredData = this.parentInformation.filter(
+        return this.parentInformation.filter(
           (parent) =>
             (parent.name &&
               parent.name.toLowerCase().indexOf(searchValue) !== -1) ||
             (parent.assetsId &&
               parent.assetsId.toLowerCase().indexOf(searchValue) !== -1)
         );
-        this.allParentsData$.next(filteredData);
-        return filteredData;
       }
     }
   }
