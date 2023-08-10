@@ -20,6 +20,7 @@ import { ValidationError } from 'src/app/interfaces';
 import { AssetsService } from '../services/assets.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { takeUntil } from 'rxjs/operators';
+import { FormValidationUtil } from 'src/app/shared/utils/formValidationUtil';
 
 @Component({
   selector: 'app-add-edit-assets',
@@ -110,7 +111,11 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
   private _allLocations;
   private onDestroy$ = new Subject();
 
-  constructor(private fb: FormBuilder, private assetService: AssetsService) {}
+  constructor(
+    private fb: FormBuilder,
+    private assetService: AssetsService,
+    private formValidationUtil: FormValidationUtil
+  ) {}
 
   ngOnInit(): void {
     this.assetForm = this.fb.group({
@@ -319,18 +324,11 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
   }
 
   processValidationErrors(controlName: string): boolean {
-    const touched = this.assetForm.get(controlName).touched;
-    const errors = this.assetForm.get(controlName).errors;
-    this.errors[controlName] = null;
-    if (touched && errors) {
-      Object.keys(errors).forEach((messageKey) => {
-        this.errors[controlName] = {
-          name: messageKey,
-          length: errors[messageKey]?.requiredLength
-        };
-      });
-    }
-    return !touched || this.errors[controlName] === null ? false : true;
+    return this.formValidationUtil.processValidationErrors(
+      controlName,
+      this.assetForm,
+      this.errors
+    );
   }
 
   ngOnDestroy(): void {

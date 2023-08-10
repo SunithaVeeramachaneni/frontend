@@ -36,6 +36,7 @@ import { ToastService } from 'src/app/shared/toast';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { Subject, Subscription, timer } from 'rxjs';
 import { ValidationError } from 'src/app/interfaces';
+import { FormValidationUtil } from 'src/app/shared/utils/formValidationUtil';
 
 @Component({
   selector: 'app-global-response-type-side-drawer',
@@ -73,7 +74,8 @@ export class GlobalResponseTypeSideDrawerComponent
     private fb: FormBuilder,
     private responseSetService: ResponseSetService,
     private cdrf: ChangeDetectorRef,
-    private toast: ToastService
+    private toast: ToastService,
+    private formValidationUtil: FormValidationUtil
   ) {}
 
   ngOnInit(): void {
@@ -200,38 +202,21 @@ export class GlobalResponseTypeSideDrawerComponent
     }
   };
 
-  processValidationErrors(controlName: string): any {
-    const touched = this.responseForm.get(controlName).touched;
-    const errors = this.responseForm.get(controlName).errors;
-    this.errors[controlName] = null;
-    if (touched && errors) {
-      Object.keys(errors).forEach((messageKey) => {
-        this.errors[controlName] = {
-          name: messageKey,
-          length: errors[messageKey]?.requiredLength
-        };
-      });
-    }
-    return !touched || this.errors[controlName] === null ? false : true;
+  processValidationErrors(controlName: string): boolean {
+    return this.formValidationUtil.processValidationErrors(
+      controlName,
+      this.responseForm,
+      this.errors
+    );
   }
 
-  processValidationErrorsFormArrays(controlName: string, index): any {
-    const formControlName = this.responseForm.get(controlName);
-    const formArray = this.responseForm.get(controlName) as FormArray;
-    const formControl: any = formArray?.at(index);
-    const touched = formControl?.controls.title.touched;
-
-    const errors = formControl?.controls.title.errors;
-    this.errors[controlName] = null;
-    if (touched && errors) {
-      Object.keys(errors).forEach((messageKey) => {
-        this.errors[controlName] = {
-          name: messageKey,
-          length: errors[messageKey]?.requiredLength
-        };
-      });
-    }
-    return !touched || this.errors[controlName] === null ? false : true;
+  processValidationErrorsFormArrays(controlName: string, index) {
+    return this.formValidationUtil.processValidationErrorsFormArrays(
+      controlName,
+      index,
+      this.responseForm,
+      this.errors
+    );
   }
 
   submitResponseSet = () => {
