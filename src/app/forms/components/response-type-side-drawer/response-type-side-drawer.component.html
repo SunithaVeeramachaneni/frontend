@@ -25,6 +25,8 @@
           ><br />
           <input
             id="min"
+            min="0"
+            max="{{ sliderOptions.max }}"
             type="number"
             class="slider-inputs"
             [(ngModel)]="sliderOptions.min"
@@ -41,6 +43,7 @@
           ><br />
           <input
             id="max"
+            min="{{ sliderOptions.min }}"
             type="number"
             class="slider-inputs"
             [(ngModel)]="sliderOptions.max"
