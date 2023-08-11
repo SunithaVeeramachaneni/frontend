@@ -17,6 +17,7 @@ import { Observable } from 'rxjs';
 import { ValidationError } from 'src/app/interfaces';
 import { LocationService } from '../services/location.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
+import { FormValidationUtil } from 'src/app/shared/utils/formValidationUtil';
 
 @Component({
   selector: 'app-add-edit-location',
@@ -87,7 +88,8 @@ export class AddEditLocationComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private locationService: LocationService
+    private locationService: LocationService,
+    private formValidationUtil: FormValidationUtil
   ) {}
 
   ngOnInit(): void {
@@ -104,7 +106,7 @@ export class AddEditLocationComponent implements OnInit {
         WhiteSpaceValidator.trimWhiteSpace
       ]),
       model: '',
-      description: '',
+      description: new FormControl('', [WhiteSpaceValidator.trimWhiteSpace]),
       parentId: '',
       plantsID: new FormControl('', [Validators.required])
     });
@@ -235,17 +237,10 @@ export class AddEditLocationComponent implements OnInit {
   }
 
   processValidationErrors(controlName: string): boolean {
-    const touched = this.locationForm.get(controlName).touched;
-    const errors = this.locationForm.get(controlName).errors;
-    this.errors[controlName] = null;
-    if (touched && errors) {
-      Object.keys(errors).forEach((messageKey) => {
-        this.errors[controlName] = {
-          name: messageKey,
-          length: errors[messageKey]?.requiredLength
-        };
-      });
-    }
-    return !touched || this.errors[controlName] === null ? false : true;
+    return this.formValidationUtil.processValidationErrors(
+      controlName,
+      this.locationForm,
+      this.errors
+    );
   }
 }
