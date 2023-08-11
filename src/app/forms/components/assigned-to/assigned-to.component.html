@@ -1,11 +1,14 @@
 <div id="assign-to">
   <mat-card>
     <mat-card-title class="m-0 light-gray dis-flex title">
-      <div id="assignedToHeading" class="heading" translate>selectAssignee</div>
+      <div id="assignedToHeading" class="heading" translate>
+        selectUserGroup
+      </div>
       <div class="cancel-side-drawer">
         <mat-icon id="assignedToCloseIcon" class="dialog-close">close</mat-icon>
       </div>
     </mat-card-title>
+
     <mat-card-content (click)="$event.stopPropagation()">
       <span class="custom-form-field-gray-color">
         <mat-form-field appearance="outline" class="search width-100">
@@ -22,7 +25,7 @@
           />
         </mat-form-field>
       </span>
-      <ng-container *ngFor="let user of filteredUsers$ | async">
+      <ng-container *ngFor="let usergroup of filteredUserGroups$ | async">
         <div
           mat-menu-item
           class="user-menu-item"
@@ -30,24 +33,27 @@
             'jsutify-content': isMultiple,
             'disable-events': isMultiple
           }"
-          (click)="selectAssignee(user)"
+          (click)="selectAssignee(usergroup)"
         >
           <img
             id="assignedToProfileImg"
-            [src]="user.profileImage"
+            [src]="usergroup.profileImage"
             alt="Profile Image"
             class="profile-image"
           />
           <div class="user-info">
             <span id="assignedToName" class="name"
-              >{{ user.firstName }} {{ user.lastName }}</span
+              >{{ usergroup.firstName }} {{ usergroup.lastName }}</span
             >
-            <span id="assignedToEmail" class="email">{{ user.email }}</span>
+            <span id="assignedToGroup">{{ usergroup.displayUsergroup }}</span>
+            <span id="assignedToEmail" class="email">{{
+              usergroup.email
+            }}</span>
           </div>
           <mat-checkbox
-            [checked]="isAssigneeSelected(user.email)"
+            [checked]="isAssigneeSelected(usergroup.email)"
             *ngIf="isMultiple"
-            (change)="selectAssignee(user, $event)"
+            (change)="selectAssignee(usergroup, $event)"
             (click)="$event.stopPropagation()"
             [ngClass]="{ 'enable-events': isMultiple }"
           ></mat-checkbox>

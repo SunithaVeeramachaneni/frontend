@@ -107,6 +107,16 @@
       [matMenuTriggerFor]="assigneeMenu"
       #assigneeMenuTrigger="matMenuTrigger"
     ></button>
+
+    <mat-radio-group class="radio-group" formControlName="type">
+      <mat-radio-button
+        color="primary"
+        *ngFor="let assignType of assignTypes; let i = index"
+        [value]="assignType"
+      >
+        {{ assignType | translate }}</mat-radio-button
+      >
+    </mat-radio-group>
     <mat-menu #assigneeMenu="matMenu" backdropClass="assign-menu-list">
       <app-assigned-to
         [assigneeDetails]="assigneeDetails"

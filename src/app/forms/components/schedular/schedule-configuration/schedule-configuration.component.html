@@ -447,7 +447,6 @@
                   color="primary"
                   *ngFor="let assignType of assignTypes; let i = index"
                   [value]="assignType"
-                  [disabled]="i !== 0"
                 >
                   {{ assignType | translate }}</mat-radio-button
                 >
@@ -552,13 +551,18 @@
               }}
             </mat-error>
           </div>
+          <!-- <ng-container
+            *ngFor="let assignee of assigneeDetailsList; let i = index"
+          > -->
           <mat-menu #menu="matMenu" backdropClass="assign-menu">
             <app-assigned-to
               [assigneeDetails]="assigneeDetails"
               [dropdownPosition]="dropdownPosition"
+              [type]="assignmentType"
               (selectedAssignee)="selectedAssigneeHandler($event)"
             ></app-assigned-to>
           </mat-menu>
+          <!-- </ng-container> -->
         </ng-container>
       </form>
     </mat-card-content>

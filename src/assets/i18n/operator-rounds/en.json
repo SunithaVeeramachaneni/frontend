@@ -259,7 +259,7 @@
   "roundsGeneration": "Rounds Generation",
   "advanceRoundsCount": "Rounds Count",
   "assignedToHeader": "Assigned To",
-  "selectAssignee": "Select Assignee",
+  "selectUserGroup": "Select UserGroup",
   "min": "{name} must be at least {count}",
   "max": "{name} must be at the max of {count}",
   "noSearchResultsFound": "No search results found.",

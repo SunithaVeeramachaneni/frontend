@@ -73,6 +73,7 @@ import {
   hourFormat
 } from 'src/app/app.constants';
 import { ScheduleConfigurationService } from 'src/app/forms/services/schedule.service';
+import { filter } from 'lodash-es';
 
 export interface ScheduleConfigEvent {
   slideInOut: 'out' | 'in';
@@ -133,6 +134,8 @@ export class ScheduleConfigurationComponent
     max: 30
   };
   dropdownPosition: any;
+  assignmentType: any;
+  plantId: any;
   selectedDetails: any = {};
   shiftsSelected = new FormControl('');
   shiftsInformation: IShift[] = [];
@@ -140,8 +143,10 @@ export class ScheduleConfigurationComponent
   timeSlots = TIME_SLOTS;
   shiftSlotsFormArray = new FormArray([]);
   plantTimezoneMap: any = {};
+  assigneeDetailsList: AssigneeDetails[] = [];
   placeHolder = '_ _';
   selectedShifts = [];
+  assignUserGroups: any = [];
   private onDestroy$ = new Subject();
   private shiftDetails: {
     [key: string]: { startTime: string; endTime: string }[];
@@ -315,7 +320,7 @@ export class ScheduleConfigurationComponent
       endDatePicker: new Date(addDays(new Date(), 30)),
       scheduledTill: null,
       assignmentDetails: this.fb.group({
-        type: ['User'],
+        type: { assignType: [...this.assignTypes] },
         value: '',
         displayValue: ''
       }),
@@ -338,6 +343,7 @@ export class ScheduleConfigurationComponent
       shiftSlots: this.fb.array([this.addShiftDetails(true)]),
       shiftsSelected: []
     });
+
     this.schedulerConfigForm
       .get('scheduleEndType')
       .valueChanges.pipe(takeUntil(this.onDestroy$))
@@ -648,6 +654,46 @@ export class ScheduleConfigurationComponent
     this.currentDate = new Date();
     this.setMonthlyDaysOfWeek();
     this.schedulerConfigForm.markAsDirty();
+    console.log(this.schedulerConfigForm.value, 'formgroup');
+
+    const typeControl = this.schedulerConfigForm.get('assignmentDetails.type');
+    console.log('typecontrol', typeControl.value);
+    console.log('typecontrol', typeControl.value.assignType[1]);
+
+    // const userAsSelectedAssignee = user as SelectedAssignee;
+    // const { email: value, firstName, lastName } = userAsSelectedAssignee;
+
+    // if (typeControl.value === 'user') {
+    //   this.assignmentType = 'user';
+    //   this.schedulerConfigForm
+    //     .get('assignmentDetails')
+    //     .patchValue({ value, displayValue: `${firstName} ${lastName}` });
+    // } else
+
+    if (typeControl.value.assignType[1] === 'userGroup') {
+      this.assignmentType = 'userGroup';
+      console.log('assifn', this.assignmentType);
+
+      console.log('this selected', this.selectedDetails.plantId);
+
+      this.rpscService.listAllUserGroups$().subscribe((data) => {
+        console.log('data', data);
+        const filteredUserGroups = data.items.filter(
+          (userGroup) => this.selectedDetails.plantId === userGroup.plantId
+        );
+        console.log('filtereduser', filteredUserGroups);
+        this.rpscService.userGroups.next(filteredUserGroups);
+
+        console.log(filteredUserGroups, 'filter');
+      });
+    }
+    console.log('assifnment', this.assignmentType);
+    // else {
+    //   this.schedulerConfigForm.get('assignmentDetails').patchValue({
+    //     value,
+    //     displayValue: `${this.selectedDetails.plantId}`
+    //   });
+    // }
   }
 
   setMonthlyDaysOfWeek() {
@@ -1047,7 +1093,7 @@ export class ScheduleConfigurationComponent
       endDatePicker: new Date(addDays(new Date(), 30)),
       scheduledTill: null,
       assignmentDetails: {
-        type: this.assignTypes[0],
+        type: this.assignTypes,
         value: '',
         displayValue: ''
       },
@@ -1220,10 +1266,44 @@ export class ScheduleConfigurationComponent
   }
 
   selectedAssigneeHandler({ user }: SelectedAssignee) {
+    // const { email: value, firstName, lastName } = user;
+    // console.log('user', user);
+    // this.schedulerConfigForm
+    //   .get('assignmentDetails')
+    //   .patchValue({ value, displayValue: `${firstName} ${lastName}` });
+
+    // this.schedulerConfigForm.markAsDirty();
+    // this.menuTrigger.closeMenu();
+    this.plantId = this.selectedDetails?.plantId;
+    console.log('plantid', this.plantId);
+    console.log(this.selectedDetails.plantId);
     const { email: value, firstName, lastName } = user;
-    this.schedulerConfigForm
-      .get('assignmentDetails')
-      .patchValue({ value, displayValue: `${firstName} ${lastName}` });
+    console.log('user', user);
+
+    // if (typeControl.value === 'user') {
+    //   this.assignmentType = 'user';
+    //   this.schedulerConfigForm
+    //     .get('assignmentDetails')
+    //     .patchValue({ value, displayValue: `${firstName} ${lastName}` });
+    // } else if (typeControl.value === 'userGroup') {
+    //   this.assignmentType = 'usergroup';
+    //   this.rpscService.listAllUserGroups$().subscribe((data) => {
+    //     this.assignUserGroups = data;
+
+    //     console.log('assignUserGroups', this.assignUserGroups.items[1].name);
+    //     this.schedulerConfigForm.get('assignmentDetails').patchValue({
+    //       value,
+    //       displayValue: ` ${this.assignUserGroups.items[1].name}`
+    //     });
+    //   });
+    // }
+    // else {
+    //   this.schedulerConfigForm.get('assignmentDetails').patchValue({
+    //     value,
+    //     displayValue: `${this.selectedDetails.plantId}`
+    //   });
+    // }
+
     this.schedulerConfigForm.markAsDirty();
     this.menuTrigger.closeMenu();
   }

@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import {
   ErrorInfo,
@@ -14,7 +14,15 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class RoundPlanScheduleConfigurationService {
+  userGroups = new BehaviorSubject<any>({});
   constructor(private appService: AppService) {}
+
+  listAllUserGroups$ = (info = {} as ErrorInfo) =>
+    this.appService._getResp(
+      environment.userRoleManagementApiUrl,
+      `user-groups/all`,
+      info
+    );
 
   createRoundPlanScheduleConfiguration$ = (
     roundPlansScheduleConfiguration: RoundPlanScheduleConfiguration,
