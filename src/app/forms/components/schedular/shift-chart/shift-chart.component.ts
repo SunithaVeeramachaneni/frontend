@@ -271,7 +271,12 @@ export class ShiftChartComponent implements OnInit, OnChanges {
         return;
       }
       if (val === this.slots[this.slots.length - 2]) {
-        obj.endTime = this.service.addTime(val, 0, 59);
+        let lastValue: any = this.slots[this.slots.length - 1]
+          .split(':')[1]
+          .split(' ')[0];
+        lastValue = lastValue === '00' ? 60 : lastValue;
+
+        obj.endTime = this.service.addTime(val, 0, +lastValue - 1);
       }
       // If we select last slot then it will work
       if (
@@ -325,29 +330,12 @@ export class ShiftChartComponent implements OnInit, OnChanges {
         obj.startTime = this.service.subtractTime(obj?.startTime, timeDiff1, 0);
         obj.endTime = this.service.subtractTime(obj?.endTime, timeDiff1, 0);
       }
-      let highestEndTime = '';
-      this.dataArrays.forEach((item) => {
-        highestEndTime = this.service.addTime(item.endTime, 0, 1);
-      });
-      if (highestEndTime !== '') {
-        const endTimeDiff = this.service.getTimeDifference(
-          highestEndTime,
-          obj?.startTime
-        );
-        if (endTimeDiff > 0) {
-          obj.startTime = this.service.subtractTime(
-            obj?.startTime,
-            endTimeDiff,
-            0
-          );
-          obj.endTime = this.service.subtractTime(obj.endTime, endTimeDiff, 0);
-        }
-      }
       this.service.adjustStartEndTime(
         this.dataArrays,
         obj,
         this.slots[0],
-        this.slots[this.slots.length - 1]
+        this.slots[this.slots.length - 1],
+        this.slots
       );
 
       this.dataArrays.push(obj);
@@ -509,7 +497,7 @@ export class ShiftChartComponent implements OnInit, OnChanges {
       index: timeDiff,
       startTime: payload.startTime,
       endTime: payload.endTime,
-      isBook: true
+      isBook: payload?.isBook === false ? false : true
     };
     this.dataArrays.push(obj);
     this.slotsArray.push(this.createItemFormGroup());

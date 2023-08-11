@@ -334,31 +334,31 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     private peopleService: PeopleService,
     private imageUtils: ImageUtils,
     private dialog: MatDialog,
-    private userIdle: UserIdleService,
+    // private userIdle: UserIdleService,
     private sseService: SseService
   ) {}
 
   @HostListener('document:mousemove', ['$event'])
   @debounce()
   onMouseMove(e) {
-    this.updateUserPresence();
+    // this.updateUserPresence();
   }
 
   @HostListener('click', ['$event.target'])
   @debounce()
   onClick(e) {
-    this.updateUserPresence();
+    // this.updateUserPresence();
   }
 
   @HostListener('window:keyup', ['$event'])
   @debounce()
   keyEvent(event: KeyboardEvent) {
-    this.updateUserPresence();
+    // this.updateUserPresence();
   }
 
   @HostListener('window:unload', ['$event'])
   unloadHandler(event) {
-    this.removeUserPresence();
+    // this.removeUserPresence();
   }
 
   @HostListener('window:beforeunload', ['$event'])
@@ -368,9 +368,10 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   onSignOut = () => {
-    this.removeUserPresence();
+    // this.removeUserPresence();
   };
 
+  /*
   updateUserPresence = () => {
     if (this.isUserOnline || !this.isUserAuthenticated) return;
     this.usersService.setUserPresence$().subscribe((resp) => {
@@ -395,8 +396,10 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.userIdle.stopWatching();
     });
   };
+  */
 
   ngOnInit() {
+    /*
     //Start watching for user inactivity.
     this.userIdle.startWatching();
     // Start watching when user idle is starting.
@@ -405,7 +408,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.removeUserPresence();
       }
     });
-
+    */
     const ref = this;
     this.loginService.isUserAuthenticated$
       .pipe(
@@ -580,7 +583,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
         // console.log(event);
       };
     }
-
+    /*
     // USER PRESENCE SSE
     this.eventSourceUpdateUserPresence = this.sseService.getEventSourceWithGet(
       environment.userRoleManagementApiUrl,
@@ -602,6 +605,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.eventSourceUpdateUserPresence.onerror = (event) => {
       // console.log(event);
     };
+     */
   }
 
   ngAfterViewChecked(): void {
@@ -637,16 +641,18 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     });
   }
   ngOnDestroy() {
-    // TODO: NEED TO FIGURE OUT A WAY TO CLOSE THE EVENTSOURCES GRACEFULLY....
-    // if (this.eventSourceCollaboration) {
-    //   this.eventSourceCollaboration.close();
-    // }
-    // if (this.eventSourceJitsi) {
-    //   this.eventSourceJitsi.close();
-    // }
-    // if (this.eventSourceUpdateUserPresence) {
-    //   this.eventSourceUpdateUserPresence.close();
-    // }
+    /*
+    TODO: NEED TO FIGURE OUT A WAY TO CLOSE THE EVENTSOURCES GRACEFULLY....
+    if (this.eventSourceCollaboration) {
+      this.eventSourceCollaboration.close();
+    }
+    if (this.eventSourceJitsi) {
+      this.eventSourceJitsi.close();
+    }
+    if (this.eventSourceUpdateUserPresence) {
+      this.eventSourceUpdateUserPresence.close();
+    }
+    */
   }
 
   checkUserHasSubMenusPermissions(

@@ -106,7 +106,8 @@ export class AssetHierarchyUtil {
   convertHierarchyToFlatList(hierarchy: any[], sequenceNum: number) {
     let flatHierarchy = [];
     hierarchy.forEach((node) => {
-      node.sequence = sequenceNum++;
+      if (!node.sequence) node.sequence = sequenceNum++;
+
       const tempNode = JSON.parse(JSON.stringify(node));
       tempNode.children = [];
       flatHierarchy.push(tempNode);
@@ -117,6 +118,11 @@ export class AssetHierarchyUtil {
         );
         flatHierarchy = [...flatHierarchy, ...childFlatHierarchy];
       }
+    });
+    flatHierarchy.sort((a, b) => {
+      if (a.sequence < b.sequence) return -1;
+      if (a.sequence > b.sequence) return 1;
+      return 0;
     });
     return flatHierarchy;
   }
