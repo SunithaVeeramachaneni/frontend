@@ -19,6 +19,7 @@ import { environment } from 'src/environments/environment';
 import { UsersService } from 'src/app/components/user-management/services/users.service';
 import { isEmpty, omitBy } from 'lodash-es';
 import { Column } from '@innovapptive.com/dynamictable/lib/interfaces';
+import { DateUtilService } from 'src/app/shared/utils/dateUtils';
 
 const placeHolder = '_ _';
 const dataPlaceHolder = '--';
@@ -87,7 +88,8 @@ export class ObservationsService {
   ];
   constructor(
     private readonly appService: AppService,
-    private readonly userService: UsersService
+    private readonly userService: UsersService,
+    private readonly dateUtilService: DateUtilService
   ) {}
 
   getObservations$(
@@ -537,9 +539,12 @@ export class ObservationsService {
   }
 
   private formateGetObservationResponse(resp, type) {
-    resp.filters.assignedTo = resp.filters.assignedTo.map((email) => {
-      return this.userService.getUserFullName(email);
-    });
+    if (resp?.filters?.assignedTo?.length > 0) {
+      resp.filters.assignedTo = resp.filters.assignedTo
+        .map((email) => this.userService.getUserFullName(email))
+        .filter(Boolean);
+    }
+
     const items = resp?.items?.sort(
       (a, b) =>
         new Date(b?.createdAt).getTime() - new Date(a?.createdAt).getTime()
@@ -564,7 +569,8 @@ export class ObservationsService {
           condition: true
         },
         dueDate:
-          item?.DUEDATE && this.isValidDate(new Date(item?.DUEDATE))
+          item?.DUEDATE &&
+          this.dateUtilService.isValidDate(new Date(item?.DUEDATE))
             ? format(new Date(item?.DUEDATE), 'dd MMM yyyy hh:mm a')
             : '',
         title: item.TITLE,
@@ -595,12 +601,8 @@ export class ObservationsService {
     return {
       rows,
       next: resp?.next,
-      count: resp?.count,
+      count: resp?.count || 0,
       filters: resp?.filters
     };
-  }
-
-  private isValidDate(date): boolean {
-    return date instanceof Date && !isNaN(date as unknown as number);
   }
 }

@@ -72,11 +72,17 @@ export class HierarchyLocationsListComponent implements OnInit, OnDestroy {
         takeUntil(this.onDestroy$),
         map((searchInput: string) => {
           this.searchFilterItems = this.allItems.filter(
-            (item: HierarchyEntity) =>
-              item.name
-                .toLowerCase()
-                .trim()
-                .includes(searchInput.toLowerCase().trim())
+            (item: HierarchyEntity) => {
+              searchInput = searchInput?.toLowerCase().trim() || '';
+              return (
+                item.name.toLowerCase().trim().includes(searchInput) ||
+                item?.nodeDescription
+                  ?.toLowerCase()
+                  .trim()
+                  .includes(searchInput) ||
+                item.nodeId.toLowerCase().trim().includes(searchInput)
+              );
+            }
           );
           this.cdrf.markForCheck();
         })

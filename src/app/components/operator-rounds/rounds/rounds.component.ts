@@ -861,11 +861,11 @@ export class RoundsComponent implements OnInit, OnDestroy {
         'SCHEDULE_ROUND_PLAN'
       )
     ) {
-      this.columns[12].controlType = 'string';
-      this.columns[10].controlType = 'string';
-      this.columns[3].controlType = 'string';
-      this.columns[5].controlType = 'string';
-      this.columns[6].controlType = 'string';
+      [12, 3, 5, 6].forEach((index) => {
+        if (this.columns[index]?.controlType) {
+          this.columns[index].controlType = 'string';
+        }
+      });
     }
 
     this.configOptions.rowLevelActions.menuActions = menuActions;
@@ -918,8 +918,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   }
 
   downloadPDF(selectedForm) {
-    const roundPlanId = selectedForm.id;
-    const roundId = selectedForm.roundId;
+    const { id: roundId, roundPlanId } = selectedForm;
 
     const info: ErrorInfo = {
       displayToast: false,

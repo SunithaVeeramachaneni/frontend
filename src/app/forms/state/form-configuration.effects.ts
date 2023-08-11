@@ -6,8 +6,7 @@ import {
   catchError,
   concatMap,
   mergeMap,
-  switchMap,
-  tap
+  switchMap
 } from 'rxjs/operators';
 import { forkJoin, of } from 'rxjs';
 
@@ -19,14 +18,13 @@ import {
 import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
 import { LoginService } from 'src/app/components/login/services/login.service';
 import { formConfigurationStatus } from 'src/app/app.constants';
-import { Router } from '@angular/router';
+
 @Injectable()
 export class FormConfigurationEffects {
   constructor(
     private actions$: Actions,
     private raceDynamicFormService: RaceDynamicFormService,
-    private loginService: LoginService,
-    private router: Router
+    private loginService: LoginService
   ) {}
 
   createForm$ = createEffect(() =>
