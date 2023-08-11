@@ -69,7 +69,7 @@ export class ArchivedFormListComponent implements OnInit, OnDestroy {
   partialColumns: Partial<Column>[] = [
     {
       id: 'name',
-      displayName: 'Recents',
+      displayName: 'My Forms',
       type: 'string',
       controlType: 'string',
       visible: true,

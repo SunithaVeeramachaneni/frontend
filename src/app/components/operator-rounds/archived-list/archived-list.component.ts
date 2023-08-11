@@ -55,7 +55,7 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
   columns: Column[] = [
     {
       id: 'name',
-      displayName: 'Recents',
+      displayName: 'Round Plans',
       type: 'string',
       controlType: 'string',
       order: 1,
