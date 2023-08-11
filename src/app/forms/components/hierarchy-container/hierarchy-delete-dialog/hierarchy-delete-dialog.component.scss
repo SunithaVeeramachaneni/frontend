@@ -2,11 +2,15 @@
 
 .dialogHead {
   padding: 10px 20px;
-  display: flex;
+  display: inline-block;
   align-items: center;
   justify-content: flex-start;
   margin: 0px;
-  margin-top: 15px;
+  margin-top: 7px;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 90%;
+  text-overflow: ellipsis;
 }
 .dialogContent {
   margin: 0px;

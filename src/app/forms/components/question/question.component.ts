@@ -493,7 +493,10 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
 
   selectFieldTypeEventHandler(fieldType) {
-    if (fieldType.type === this.questionForm.get('fieldType').value) {
+    if (
+      fieldType.type === this.questionForm.get('fieldType').value &&
+      fieldType.type !== 'IMG'
+    ) {
       return;
     }
 
