@@ -1,4 +1,9 @@
-<h1 mat-dialog-title class="dialogHead" id="hierarchyDeleteName">
+<h1
+  mat-dialog-title
+  class="dialogHead"
+  id="hierarchyDeleteName"
+  [matTooltip]="data.node.name"
+>
   {{ 'deleteNode' | translate : { nodeName: data.node.name } }}
 </h1>
 <div mat-dialog-content class="dialogContent">
