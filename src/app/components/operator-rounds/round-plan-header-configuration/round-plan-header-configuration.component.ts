@@ -241,12 +241,10 @@ export class RoundPlanHeaderConfigurationComponent
     this.plantService.fetchAllPlants$().subscribe((plants) => {
       this.allPlantsData = plants.items || [];
       this.plantInformation = this.allPlantsData;
-      this.headerDataForm.patchValue(
-        {
-          plantId: this.roundData?.formMetadata?.plantId
-        },
-        { emitEvent: false }
-      );
+      const plantId = this.roundData?.formMetadata?.plantId;
+      if (plantId !== undefined) {
+        this.headerDataForm.patchValue({ plantId }, { emitEvent: false });
+      }
     });
 
     if (Object.keys(this.roundData?.formMetadata).length !== 0) {
