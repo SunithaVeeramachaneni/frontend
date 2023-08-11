@@ -1,3 +1,4 @@
+import { ChangeDetectorRef } from '@angular/core';
 /* eslint-disable no-underscore-dangle */
 import {
   Component,
@@ -8,7 +9,9 @@ import {
   ChangeDetectionStrategy,
   ElementRef,
   ViewChild,
-  OnDestroy
+  OnDestroy,
+  SimpleChanges,
+  OnChanges
 } from '@angular/core';
 import {
   FormBuilder,
@@ -113,12 +116,35 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
 
   activeShifts$: Observable<any>;
   private plantsEditData;
+  private subscription: Subscription;
+
   constructor(
     private fb: FormBuilder,
     private plantService: PlantService,
     private shiftService: ShiftService,
-    private dialog: MatDialog
-  ) {}
+    private dialog: MatDialog,
+    private changeDetectorRef: ChangeDetectorRef
+  ) {
+    this.subscription = this.plantService.data$.subscribe((data) => {
+      // Handle data received from the service
+      this.plantsEditData = data;
+
+      const plantdata = {
+        id: this.plantsEditData?.id,
+        image: this.plantsEditData?.image,
+        name: this.plantsEditData?.name,
+        plantId: this.plantsEditData?.plantId,
+        country: this.plantsEditData?.country,
+        state: this.plantsEditData?.state,
+        zipCode: this.plantsEditData?.zipCode,
+        label: this.plantEditData?.label,
+        field: this.plantEditData?.field,
+        timeZone: this.plantEditData?.timeZone,
+        shifts: this.selectedShiftIDs
+      };
+      this.plantForm?.patchValue(plantdata);
+    });
+  }
 
   ngOnInit(): void {
     this.plantMapSubscription = this.plantService.plantMasterData$.subscribe(
@@ -305,6 +331,7 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
   }
   cancel() {
     this.plantForm.reset();
+    console.log('cancel');
     this.slideInOut.emit('out');
     this.plantForm.get('state').disable();
     this.plantForm.get('timeZone').disable();
@@ -425,5 +452,6 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
   };
   ngOnDestroy() {
     this.plantMapSubscription.unsubscribe();
+    this.subscription.unsubscribe();
   }
 }

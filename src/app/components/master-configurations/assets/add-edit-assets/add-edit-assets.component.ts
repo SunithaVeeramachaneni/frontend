@@ -15,7 +15,7 @@ import {
   FormGroup,
   Validators
 } from '@angular/forms';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
 import { ValidationError } from 'src/app/interfaces';
 import { AssetsService } from '../services/assets.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
@@ -109,8 +109,28 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
   private _allAssets;
   private _allLocations;
   private onDestroy$ = new Subject();
+  private subscription: Subscription;
 
-  constructor(private fb: FormBuilder, private assetService: AssetsService) {}
+  constructor(private fb: FormBuilder, private assetService: AssetsService) {
+    this.subscription = this.assetService.data$.subscribe((data) => {
+      // Handle data received from the service
+      this.assetEditData = data;
+
+      const assetData = {
+        id: this.assetEditData?.id,
+        image: this.assetEditData?.image,
+        name: this.assetEditData?.name,
+        assetsId: this.assetEditData?.assetsId,
+        model: this.assetEditData?.model,
+        description: this.assetEditData?.description,
+        parentType: this.assetEditData.parentType?.toLowerCase(),
+        parentId: this.assetEditData?.parentId,
+        plantsID: this.assetEditData?.plantsID
+      };
+      this.parentType = this.assetEditData.parentType?.toLowerCase();
+      this.assetForm?.patchValue(assetData);
+    });
+  }
 
   ngOnInit(): void {
     this.assetForm = this.fb.group({

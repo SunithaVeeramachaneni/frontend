@@ -6,6 +6,7 @@ import {
   OnInit,
   Output
 } from '@angular/core';
+import { LocationService } from '../services/location.service';
 
 @Component({
   selector: 'app-location-detail-view',
@@ -16,12 +17,13 @@ import {
 export class LocationDetailViewComponent implements OnInit {
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Input() selectedLocation;
-  constructor() {}
+  constructor(private locationService: LocationService) {}
 
   ngOnInit(): void {}
 
   edit() {
     this.slideInOut.emit({ status: 'out', data: this.selectedLocation });
+    this.locationService.sendLocationData(this.selectedLocation);
   }
 
   cancel() {

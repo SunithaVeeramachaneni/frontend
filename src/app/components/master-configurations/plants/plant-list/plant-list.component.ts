@@ -1,3 +1,4 @@
+import { ChangeDetectorRef } from '@angular/core';
 /* eslint-disable no-underscore-dangle */
 import {
   ChangeDetectionStrategy,
@@ -277,7 +278,8 @@ export class PlantListComponent implements OnInit, OnDestroy {
   constructor(
     private loginService: LoginService,
     private readonly toast: ToastService,
-    private plantService: PlantService
+    private plantService: PlantService,
+    private changeDetectorRef: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -499,6 +501,7 @@ export class PlantListComponent implements OnInit, OnDestroy {
       case 'edit':
         this.plantEditData = { ...data };
         this.plantAddOrEditOpenState = 'in';
+        this.changeDetectorRef.detectChanges();
         break;
       case 'delete':
         this.deletePlant(data);
@@ -551,6 +554,7 @@ export class PlantListComponent implements OnInit, OnDestroy {
 
   onClosePlantAddOrEditOpenState(event) {
     this.plantAddOrEditOpenState = event;
+    this.changeDetectorRef.detectChanges();
   }
 
   onClosePlantDetailedView(event) {
@@ -559,6 +563,7 @@ export class PlantListComponent implements OnInit, OnDestroy {
       this.plantEditData = event.data;
       this.plantAddOrEditOpenState = 'in';
     }
+    this.changeDetectorRef.detectChanges();
   }
   resetFile(event: Event) {
     const file = event.target as HTMLInputElement;

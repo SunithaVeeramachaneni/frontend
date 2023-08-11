@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 /* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, Observable, of, ReplaySubject, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import {
   ErrorInfo,
@@ -28,6 +28,8 @@ export class AssetsService {
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
 
   assetsCreatedUpdated$ = this.assetsCreatedUpdatedSubject.asObservable();
+  dataSubject = new Subject<any>();
+  data$ = this.dataSubject.asObservable();
 
   constructor(private _appService: AppService) {}
 
@@ -94,6 +96,10 @@ export class AssetsService {
         next: null
       });
     }
+  }
+
+  sendDataAsset(data: any) {
+    this.dataSubject.next(data);
   }
 
   createAssets$(

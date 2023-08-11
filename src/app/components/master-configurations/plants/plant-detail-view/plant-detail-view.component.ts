@@ -1,11 +1,13 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   EventEmitter,
   Input,
   OnInit,
   Output
 } from '@angular/core';
+import { PlantService } from '../services/plant.service';
 
 @Component({
   selector: 'app-plant-detail-view',
@@ -17,12 +19,18 @@ export class PlantDetailViewComponent implements OnInit {
   @Input() selectedPlant;
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   placeHolder = '--';
-  constructor() {}
+  constructor(
+    private changeDetectorRef: ChangeDetectorRef,
+    private plantService: PlantService
+  ) {}
 
   ngOnInit(): void {}
 
   edit() {
     this.slideInOut.emit({ status: 'out', data: this.selectedPlant });
+    this.plantService.sendData(this.selectedPlant);
+
+    this.changeDetectorRef.detectChanges();
   }
 
   cancel() {

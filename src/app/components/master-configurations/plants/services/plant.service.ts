@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, of, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, of, ReplaySubject, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { LoadEvent, SearchEvent, TableEvent } from './../../../../interfaces';
 import { AppService } from 'src/app/shared/services/app.services';
@@ -19,6 +19,9 @@ import { formatDistance } from 'date-fns';
 export class PlantService {
   fetchPlants$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
+
+  dataSubject = new Subject<any>();
+  data$ = this.dataSubject.asObservable();
 
   plantTimeZoneMapping$ = new BehaviorSubject<any>({});
   plantMasterData$ = new BehaviorSubject<any>({});
@@ -64,6 +67,10 @@ export class PlantService {
         });
     }
   };
+
+  sendData(data: any) {
+    this.dataSubject.next(data);
+  }
 
   getPlantsList$(queryParams: {
     next?: string;

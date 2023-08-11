@@ -13,7 +13,7 @@ import {
   FormGroup,
   Validators
 } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { ValidationError } from 'src/app/interfaces';
 import { LocationService } from '../services/location.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
@@ -84,11 +84,28 @@ export class AddEditLocationComponent implements OnInit {
   allPlantsData;
   private locEditData;
   private _locations;
+  private subscription: Subscription;
 
   constructor(
     private fb: FormBuilder,
     private locationService: LocationService
-  ) {}
+  ) {
+    this.subscription = this.locationService.data$.subscribe((data) => {
+      // Handle data received from the service
+      this.locEditData = data;
+      const locdata = {
+        id: this.locEditData?.id,
+        image: this.locEditData?.image,
+        name: this.locEditData?.name,
+        locationId: this.locEditData?.locationId,
+        model: this.locEditData?.model,
+        description: this.locEditData?.description,
+        parentId: this.locEditData?.parentId,
+        plantsID: this.locEditData?.plantsID
+      };
+      this.locationForm?.patchValue(locdata);
+    });
+  }
 
   ngOnInit(): void {
     this.locationForm = this.fb.group({

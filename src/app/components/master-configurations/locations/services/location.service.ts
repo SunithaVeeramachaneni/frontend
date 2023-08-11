@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
-import { Observable, of, ReplaySubject } from 'rxjs';
+import { Observable, of, ReplaySubject, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import {
   ErrorInfo,
@@ -24,6 +24,9 @@ export class LocationService {
   fetchLocations$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
 
+  dataSubject = new Subject<any>();
+  data$ = this.dataSubject.asObservable();
+
   constructor(private _appService: AppService) {}
 
   fetchAllLocations$ = (plantsID = null) => {
@@ -43,6 +46,9 @@ export class LocationService {
     );
   };
 
+  sendLocationData(data: any) {
+    this.dataSubject.next(data);
+  }
   getLocationsList$(
     queryParams: {
       next?: string;
