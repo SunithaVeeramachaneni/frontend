@@ -539,9 +539,12 @@ export class ObservationsService {
   }
 
   private formateGetObservationResponse(resp, type) {
-    resp.filters.assignedTo = resp.filters.assignedTo.map((email) =>
-      this.userService.getUserFullName(email)
-    );
+    if (resp?.filters?.assignedTo?.length > 0) {
+      resp.filters.assignedTo = resp.filters.assignedTo
+        .map((email) => this.userService.getUserFullName(email))
+        .filter(Boolean);
+    }
+
     const items = resp?.items?.sort(
       (a, b) =>
         new Date(b?.createdAt).getTime() - new Date(a?.createdAt).getTime()
@@ -598,7 +601,7 @@ export class ObservationsService {
     return {
       rows,
       next: resp?.next,
-      count: resp?.count,
+      count: resp?.count || 0,
       filters: resp?.filters
     };
   }
