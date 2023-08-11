@@ -13,6 +13,7 @@ import {
 } from 'src/app/forms/state';
 import { SectionQuestions } from 'src/app/interfaces';
 import { AddPageOrSelectExistingPageModalComponent } from '../add-page-or-select-existing-page-modal/add-page-or-select-existing-page-modal.component';
+import { ToastService } from 'src/app/shared/toast/toast.service';
 
 @Component({
   selector: 'app-import-questions-slider',
@@ -40,7 +41,8 @@ export class ImportQuestionsSliderComponent implements OnInit {
   constructor(
     private modal: MatDialog,
     private formConfigurationService: FormConfigurationService,
-    private store: Store<State>
+    private store: Store<State>,
+    private readonly toast: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -132,6 +134,10 @@ export class ImportQuestionsSliderComponent implements OnInit {
         );
       }
       this.cancelSliderEvent.emit(false);
+      this.toast.show({
+        text: 'Questions Imported successfully!',
+        type: 'success'
+      });
     });
   }
   toggleIsOpen(page) {
