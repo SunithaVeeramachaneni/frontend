@@ -589,9 +589,14 @@ export class QuestionComponent implements OnInit, OnDestroy {
     this.formService
       .uploadToS3$(`${this.moduleName}/${this.formMetadata?.id}`, files[0])
       .subscribe(async (data) => {
+        const { base64Response: base64 } =
+          await this.base64Service.getBase64ImageFromSourceUrl(
+            data.message.objectURL
+          );
         const value = {
           name: file.name,
           size: file.size,
+          base64: base64.split(',')[1],
           objectKey: data.message.objectKey,
           objectURL: data.message.objectURL
         };
