@@ -241,6 +241,10 @@ export class RoundPlanHeaderConfigurationComponent
     this.plantService.fetchAllPlants$().subscribe((plants) => {
       this.allPlantsData = plants.items || [];
       this.plantInformation = this.allPlantsData;
+      const plantId = this.roundData?.formMetadata?.plantId;
+      if (plantId !== undefined) {
+        this.headerDataForm.patchValue({ plantId }, { emitEvent: false });
+      }
     });
 
     if (Object.keys(this.roundData?.formMetadata).length !== 0) {
@@ -248,7 +252,6 @@ export class RoundPlanHeaderConfigurationComponent
         {
           name: this.roundData.formMetadata.name,
           description: this.roundData.formMetadata.description,
-          plantId: this.roundData.formMetadata.plantId,
           formStatus: this.roundData.formMetadata.formStatus,
           instructions: this.roundData.formMetadata.instructions
         },

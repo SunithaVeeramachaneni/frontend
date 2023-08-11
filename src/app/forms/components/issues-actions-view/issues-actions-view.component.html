@@ -577,7 +577,6 @@
               (selectionChange)="
                 updateIssueOrAction({ field: 'priority', value: $event.value })
               "
-              [disabled]="data?.type === 'issue'"
             >
               <ng-container *ngIf="data?.type === 'issue'; else actions">
                 <mat-option

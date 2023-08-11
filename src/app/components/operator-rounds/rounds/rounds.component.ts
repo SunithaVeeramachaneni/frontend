@@ -445,7 +445,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
           'assigned',
           'open',
           'in-progress',
-          'partly-open'
+          'partly-open',
+          'skipped'
         ],
         displayType: 'text'
       },

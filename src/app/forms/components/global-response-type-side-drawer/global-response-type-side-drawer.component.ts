@@ -35,6 +35,8 @@ import { ToastService } from 'src/app/shared/toast';
 
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { Subject, Subscription, timer } from 'rxjs';
+import { ValidationError } from 'src/app/interfaces';
+import { FormValidationUtil } from 'src/app/shared/utils/formValidationUtil';
 
 @Component({
   selector: 'app-global-response-type-side-drawer',
@@ -53,6 +55,7 @@ export class GlobalResponseTypeSideDrawerComponent
   isCreate = false;
   public isViewMode: boolean;
   public responseForm: FormGroup;
+  errors: ValidationError = {};
   public isResponseFormUpdated = false;
   public globalResponse: any;
   private globalResponseSubscription: Subscription;
@@ -71,7 +74,8 @@ export class GlobalResponseTypeSideDrawerComponent
     private fb: FormBuilder,
     private responseSetService: ResponseSetService,
     private cdrf: ChangeDetectorRef,
-    private toast: ToastService
+    private toast: ToastService,
+    private formValidationUtil: FormValidationUtil
   ) {}
 
   ngOnInit(): void {
@@ -81,7 +85,7 @@ export class GlobalResponseTypeSideDrawerComponent
         Validators.minLength(3),
         WhiteSpaceValidator.trimWhiteSpace
       ]),
-      description: new FormControl(''),
+      description: new FormControl('', [WhiteSpaceValidator.trimWhiteSpace]),
       responses: this.fb.array([])
     });
     this.responseForm.valueChanges
@@ -121,7 +125,10 @@ export class GlobalResponseTypeSideDrawerComponent
         items.forEach((item) => {
           this.responses.push(
             this.fb.group({
-              title: [item.title, [Validators.required]],
+              title: [
+                item.title,
+                [Validators.required, WhiteSpaceValidator.trimWhiteSpace]
+              ],
               color: ''
             })
           );
@@ -141,7 +148,7 @@ export class GlobalResponseTypeSideDrawerComponent
   addResponse(index: number) {
     this.responses.push(
       this.fb.group({
-        title: ['', [Validators.required]],
+        title: ['', [Validators.required, WhiteSpaceValidator.trimWhiteSpace]],
         color: ''
       })
     );
@@ -194,6 +201,23 @@ export class GlobalResponseTypeSideDrawerComponent
       return this.globalResponse?.description || 'Untitled Description';
     }
   };
+
+  processValidationErrors(controlName: string): boolean {
+    return this.formValidationUtil.processValidationErrors(
+      controlName,
+      this.responseForm,
+      this.errors
+    );
+  }
+
+  processValidationErrorsFormArrays(controlName: string, index) {
+    return this.formValidationUtil.processValidationErrorsFormArrays(
+      controlName,
+      index,
+      this.responseForm,
+      this.errors
+    );
+  }
 
   submitResponseSet = () => {
     const responseSetPayload = {
