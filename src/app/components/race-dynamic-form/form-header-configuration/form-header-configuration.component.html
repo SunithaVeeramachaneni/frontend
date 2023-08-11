@@ -206,7 +206,14 @@
           </mat-form-field>
         </div>
 
-        <div class="notes-attachment" formGroupName="instructions">
+        <div
+          class="notes-attachment"
+          formGroupName="instructions"
+          *ngIf="
+            headerDataForm.get('formType').value ===
+            formConfigurationStatus.standalone
+          "
+        >
           <p
             id="notesAndAttachementsHeading"
             class="form-name-description m-b-0 m-t-20"
@@ -238,7 +245,13 @@
           </mat-form-field>
         </div>
 
-        <div class="add-attachments">
+        <div
+          class="add-attachments"
+          *ngIf="
+            headerDataForm.get('formType').value ===
+            formConfigurationStatus.standalone
+          "
+        >
           <br />
           <input
             id="addAttachments"
