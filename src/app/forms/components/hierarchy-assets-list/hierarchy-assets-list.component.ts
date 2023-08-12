@@ -137,8 +137,17 @@ export class HierarchyAssetsListComponent implements OnInit {
   };
 
   submitSelectedElementsInHierarchy = () => {
+    const selectedFlatHierarchy =
+      this.assetHierarchyUtil.convertHierarchyToFlatList(
+        this.selectedHierarchyList,
+        0
+      );
+    const hierarchyListWithId = this.assetHierarchyUtil.addIdToExistingChild(
+      this.hierarchyList,
+      selectedFlatHierarchy
+    );
     const cleanedHierarchyList =
-      this.assetHierarchyUtil.cleanSelectedHierarchyList(this.hierarchyList);
+      this.assetHierarchyUtil.cleanSelectedHierarchyList(hierarchyListWithId);
     this.dialogRef.close(cleanedHierarchyList);
   };
 }

@@ -137,7 +137,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
         this.question?.isOpen !== question.isOpen &&
         !isEqual(this.question, question)
       ) {
-        this._question = question;
+        this._question = Object.assign({}, question);
         this.updateQuestion();
       }
     }
