@@ -79,7 +79,7 @@
             }"
           >
             <ng-container *ngIf="history.type === 'Object'">
-              <div class="issue-created">
+              <div class="issue-created" *ngIf="history">
                 <ng-container *ngIf="i === 0">
                   <span
                     id="issuesActionsViewIssueCreated"
@@ -128,7 +128,11 @@
                     </span>
                     <br />
                   </ng-container>
-                  <ng-container *ngIf="history.message.ASSIGNEE"
+                  <ng-container
+                    *ngIf="
+                      history?.message?.ASSIGNEE &&
+                      (history?.message?.ASSIGNEE | userNameByEmail)?.length > 0
+                    "
                     ><span id="issuesActionsViewAssignee" class="data">
                       <span
                         id="issuesActionsViewAssigneAction"
@@ -244,7 +248,12 @@
                     </span>
                     <br />
                   </ng-container>
-                  <ng-container *ngIf="history.message.ASSIGNEE">
+                  <ng-container
+                    *ngIf="
+                      history.message.ASSIGNEE &&
+                      (history?.message?.ASSIGNEE | userNameByEmail)?.length > 0
+                    "
+                  >
                     <span id="issuesActionsViewUserName" class="data">
                       <span
                         id="issuesActionsViewAddedTo"
