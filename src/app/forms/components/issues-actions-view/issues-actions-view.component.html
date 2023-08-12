@@ -128,11 +128,7 @@
                     </span>
                     <br />
                   </ng-container>
-                  <ng-container
-                    *ngIf="
-                      history?.message?.ASSIGNEE &&
-                      (history?.message?.ASSIGNEE | userNameByEmail)?.length > 0
-                    "
+                  <ng-container *ngIf="history?.message?.ASSIGNEE"
                     ><span id="issuesActionsViewAssignee" class="data">
                       <span
                         id="issuesActionsViewAssigneAction"
@@ -248,12 +244,7 @@
                     </span>
                     <br />
                   </ng-container>
-                  <ng-container
-                    *ngIf="
-                      history.message.ASSIGNEE &&
-                      (history?.message?.ASSIGNEE | userNameByEmail)?.length > 0
-                    "
-                  >
+                  <ng-container *ngIf="history.message.ASSIGNEE">
                     <span id="issuesActionsViewUserName" class="data">
                       <span
                         id="issuesActionsViewAddedTo"
