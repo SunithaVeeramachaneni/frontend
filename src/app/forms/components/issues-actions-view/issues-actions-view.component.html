@@ -79,7 +79,7 @@
             }"
           >
             <ng-container *ngIf="history.type === 'Object'">
-              <div class="issue-created">
+              <div class="issue-created" *ngIf="history">
                 <ng-container *ngIf="i === 0">
                   <span
                     id="issuesActionsViewIssueCreated"
@@ -128,7 +128,7 @@
                     </span>
                     <br />
                   </ng-container>
-                  <ng-container *ngIf="history.message.ASSIGNEE"
+                  <ng-container *ngIf="history?.message?.ASSIGNEE"
                     ><span id="issuesActionsViewAssignee" class="data">
                       <span
                         id="issuesActionsViewAssigneAction"
@@ -568,7 +568,6 @@
               (selectionChange)="
                 updateIssueOrAction({ field: 'priority', value: $event.value })
               "
-              [disabled]="data?.type === 'issue'"
             >
               <ng-container *ngIf="data?.type === 'issue'; else actions">
                 <mat-option

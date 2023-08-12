@@ -137,7 +137,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
         this.question?.isOpen !== question.isOpen &&
         !isEqual(this.question, question)
       ) {
-        this._question = question;
+        this._question = Object.assign({}, question);
         this.updateQuestion();
       }
     }
@@ -162,6 +162,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   fieldTypes: any = [this.fieldType];
   formMetadata: FormMetadata;
   moduleName: string;
+  showAskQuestionFeatures = true;
 
   get rangeDisplayText() {
     return this._rangeDisplayText;
@@ -322,6 +323,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
           if (!isEqual(prev, curr)) {
             const { value: prevValue } = prev;
             const { value: currValue } = curr;
+            this.checkAskQuestionFeatures();
             if (
               current.fieldType === 'INST' &&
               prevValue !== undefined &&
@@ -395,6 +397,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     this.questionForm.patchValue(this.question, {
       emitEvent: false
     });
+    this.checkAskQuestionFeatures();
     this.rangeDisplayText = '';
   }
 
@@ -459,8 +462,32 @@ export class QuestionComponent implements OnInit, OnDestroy {
     });
   }
 
+  checkAskQuestionFeatures() {
+    const fieldType = this.questionForm.get('fieldType').value;
+    if (this.isAskQuestion) {
+      switch (fieldType) {
+        case 'SF':
+        case 'CB':
+        case 'SGF':
+        case 'ATT':
+        case 'GAL':
+        case 'DFR':
+        case 'VI':
+          this.showAskQuestionFeatures = false;
+          break;
+        default:
+          this.showAskQuestionFeatures = true;
+      }
+    } else {
+      this.showAskQuestionFeatures = true;
+    }
+  }
+
   selectFieldTypeEventHandler(fieldType) {
-    if (fieldType.type === this.questionForm.get('fieldType').value) {
+    if (
+      fieldType.type === this.questionForm.get('fieldType').value &&
+      fieldType.type !== 'IMG'
+    ) {
       return;
     }
 

@@ -313,7 +313,7 @@ export class AddLogicComponent implements OnInit, OnDestroy {
           required: false,
           enableHistory: false,
           multi: false,
-          value: '',
+          value: 'TF',
           isPublished: false,
           isPublishedTillSave: false,
           isOpen: false,

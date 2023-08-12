@@ -28,6 +28,7 @@ import { SectionQuestions } from 'src/app/interfaces';
 import { AddPageOrSelectExistingPageModalComponent } from '../add-page-or-select-existing-page-modal/add-page-or-select-existing-page-modal.component';
 import { FormControl } from '@angular/forms';
 import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
+import { ToastService } from 'src/app/shared/toast/toast.service';
 
 @Component({
   selector: 'app-import-template-questions-slider',
@@ -69,7 +70,8 @@ export class ImportTemplateQuestionsSliderComponent
     private modal: MatDialog,
     private formConfigurationService: FormConfigurationService,
     private raceDynamicFormService: RaceDynamicFormService,
-    private store: Store<State>
+    private store: Store<State>,
+    private readonly toast: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -365,6 +367,10 @@ export class ImportTemplateQuestionsSliderComponent
           });
         });
       this.cancelSliderEvent.emit(false);
+      this.toast.show({
+        text: 'Questions Imported successfully!',
+        type: 'success'
+      });
     });
   }
 

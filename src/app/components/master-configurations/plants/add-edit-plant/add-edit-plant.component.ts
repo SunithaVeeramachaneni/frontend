@@ -24,6 +24,7 @@ import { Observable, Subscription, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { ShiftOverlapModalComponent } from '../shift-overlap-modal/shift-overlap-modal.component';
 import { MatDialog } from '@angular/material/dialog';
+import { FormValidationUtil } from 'src/app/shared/utils/formValidationUtil';
 
 @Component({
   selector: 'app-add-edit-plant',
@@ -117,7 +118,8 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private plantService: PlantService,
     private shiftService: ShiftService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private formValidationUtil: FormValidationUtil
   ) {}
 
   ngOnInit(): void {
@@ -162,8 +164,8 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
       ]),
       timeZone: new FormControl('', [Validators.required]),
       shifts: new FormControl('', []),
-      label: '',
-      field: ''
+      label: new FormControl('', [WhiteSpaceValidator.trimWhiteSpace]),
+      field: new FormControl('', [WhiteSpaceValidator.trimWhiteSpace])
     });
     this.plantForm.get('state').disable();
     this.plantForm.get('timeZone').disable();
@@ -351,18 +353,11 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
   }
 
   processValidationErrors(controlName: string): boolean {
-    const touched = this.plantForm.get(controlName).touched;
-    const errors = this.plantForm.get(controlName).errors;
-    this.errors[controlName] = null;
-    if (touched && errors) {
-      Object.keys(errors).forEach((messageKey) => {
-        this.errors[controlName] = {
-          name: messageKey,
-          length: errors[messageKey]?.requiredLength
-        };
-      });
-    }
-    return !touched || this.errors[controlName] === null ? false : true;
+    return this.formValidationUtil.processValidationErrors(
+      controlName,
+      this.plantForm,
+      this.errors
+    );
   }
 
   compareTimeZones(o1: any, o2: any): boolean {
