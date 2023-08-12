@@ -253,14 +253,18 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     this.plantService.fetchAllPlants$().subscribe((plants) => {
       this.allPlantsData = plants.items || [];
       this.plantInformation = this.allPlantsData;
+      const plantId = this.data?.formData?.plantId;
+      if (plantId !== undefined) {
+        this.headerDataForm.patchValue({ plantId }, { emitEvent: false });
+      }
     });
+
     if (this.data?.formData) {
       this.headerDataForm.patchValue(
         {
           name: this.data.formData.name,
           description: this.data.formData.description,
           formType: this.data.formData.formType,
-          plantId: this.data.formData.plantId,
           formStatus: this.data.formData.formStatus,
           instructions: this.data.formData.instructions
         },
@@ -282,15 +286,17 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     this.tags = values;
   }
 
-  updateAdditionalDetailsArray(values: any[]): void {
-    const formGroups = values.map((value) =>
-      this.fb.group({
-        label: [value.FIELDLABEL],
-        value: [value.DEFAULTVALUE]
-      })
-    );
-    const formArray = this.fb.array(formGroups);
-    this.headerDataForm.setControl('additionalDetails', formArray);
+  updateAdditionalDetailsArray(values) {
+    if (Array.isArray(values)) {
+      const formGroups = values?.map((value) =>
+        this.fb.group({
+          label: [value.FIELDLABEL],
+          value: [value.DEFAULTVALUE]
+        })
+      );
+      const formArray = this.fb.array(formGroups);
+      this.headerDataForm.setControl('additionalDetails', formArray);
+    }
   }
 
   resetPlantSearchFilter = () => {

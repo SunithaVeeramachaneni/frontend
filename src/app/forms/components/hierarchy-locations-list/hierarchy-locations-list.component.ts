@@ -92,14 +92,22 @@ export class HierarchyLocationsListComponent implements OnInit, OnDestroy {
 
   handleNodeToggle = (event: any) => {
     const { uid, isSelected } = event;
-    if (isSelected) this.selectedItems = [...this.selectedItems, event];
-    else
+    if (isSelected) {
+      if (this.selectedItems?.every((item) => item.uid !== event.uid)) {
+        this.selectedItems = [...this.selectedItems, event];
+      }
+    } else {
       this.selectedItems = this.selectedItems.filter(
         (item) => item.uid !== uid
       );
+    }
 
-    if (event.id)
+    if (
+      event.id &&
+      this.initialSelectedItems.every((item) => item.uid !== event.uid)
+    ) {
       this.initialSelectedItems = [...this.initialSelectedItems, event];
+    }
 
     this.isMasterChecked = this.selectedItems.length === this.allItems.length;
 

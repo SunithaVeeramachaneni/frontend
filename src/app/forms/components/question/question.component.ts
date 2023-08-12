@@ -137,7 +137,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
         this.question?.isOpen !== question.isOpen &&
         !isEqual(this.question, question)
       ) {
-        this._question = question;
+        this._question = Object.assign({}, question);
         this.updateQuestion();
       }
     }
@@ -493,7 +493,10 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
 
   selectFieldTypeEventHandler(fieldType) {
-    if (fieldType.type === this.questionForm.get('fieldType').value) {
+    if (
+      fieldType.type === this.questionForm.get('fieldType').value &&
+      fieldType.type !== 'IMG'
+    ) {
       return;
     }
 
