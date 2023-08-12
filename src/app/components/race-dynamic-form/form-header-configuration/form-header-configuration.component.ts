@@ -310,8 +310,12 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     if (this.plantFilterInput) {
       this.plantInformation = this.allPlantsData.filter(
         (plant) =>
-          plant.name.toLowerCase().indexOf(this.plantFilterInput) !== -1 ||
-          plant.plantId.toLowerCase().indexOf(this.plantFilterInput) !== -1
+          plant.name
+            .toLowerCase()
+            .indexOf(this.plantFilterInput.toLowerCase()) !== -1 ||
+          plant.plantId
+            .toLowerCase()
+            .indexOf(this.plantFilterInput.toLowerCase()) !== -1
       );
     } else {
       this.plantInformation = this.allPlantsData;

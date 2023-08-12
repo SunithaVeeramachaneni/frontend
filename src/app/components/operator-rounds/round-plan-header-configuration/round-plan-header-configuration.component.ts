@@ -489,12 +489,15 @@ export class RoundPlanHeaderConfigurationComponent
 
   onKeyPlant(event) {
     this.plantFilterInput = event.target.value.trim() || '';
-
     if (this.plantFilterInput) {
       this.plantInformation = this.allPlantsData.filter(
         (plant) =>
-          plant.name.toLowerCase().indexOf(this.plantFilterInput) !== -1 ||
-          plant.plantId.toLowerCase().indexOf(this.plantFilterInput) !== -1
+          plant.name
+            .toLowerCase()
+            .indexOf(this.plantFilterInput.toLowerCase()) !== -1 ||
+          plant.plantId
+            .toLowerCase()
+            .indexOf(this.plantFilterInput.toLowerCase()) !== -1
       );
     } else {
       this.plantInformation = this.allPlantsData;
