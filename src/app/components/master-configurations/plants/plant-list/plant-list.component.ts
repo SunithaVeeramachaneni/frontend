@@ -497,7 +497,7 @@ export class PlantListComponent implements OnInit, OnDestroy {
   rowLevelActionHandler = ({ data, action }): void => {
     switch (action) {
       case 'edit':
-        this.plantEditData = { ...data };
+        this.plantEditData = { plantData: data };
         this.plantAddOrEditOpenState = 'in';
         break;
       case 'delete':
