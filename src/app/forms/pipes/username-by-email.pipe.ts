@@ -8,14 +8,29 @@ export class UserNameByEmailPipe implements PipeTransform {
   constructor(private observations: ObservationsService) {}
 
   transform(email: string): string {
-    let plainEmail = '';
-    if (email?.endsWith(',')) {
-      plainEmail = email?.slice(0, -1);
+    if (email?.includes(',')) {
+      return this.processEmails(email);
     }
-    if (this.isEmail(plainEmail)) {
-      return this.observations.formatUserFullNameDisplay(plainEmail) ?? '';
+    if (this.isEmail(email)) {
+      return this.observations.formatUserFullNameDisplay(email) ?? '';
     }
-    return plainEmail ?? '';
+    return email ?? '';
+  }
+
+  private processEmails(plainEmails): string {
+    if (!plainEmails) {
+      return '';
+    }
+    const formattedEmails = plainEmails
+      .split(',')
+      .map((email) =>
+        this.isEmail(email)
+          ? this.observations.formatUserFullNameDisplay(email) ?? ''
+          : email
+      )
+      .filter(Boolean)
+      .toString();
+    return formattedEmails;
   }
 
   private isEmail(email): boolean {
