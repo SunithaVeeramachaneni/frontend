@@ -262,6 +262,7 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
     } else {
       this.allParentsData = this.parentInformation;
       this.allParentsData = this.searchParent(value);
+      this.allParentsData$.next(this.allParentsData);
     }
   }
 
