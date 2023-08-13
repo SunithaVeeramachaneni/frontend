@@ -556,7 +556,7 @@ export class PlantListComponent implements OnInit, OnDestroy {
   onClosePlantDetailedView(event) {
     this.openPlantDetailedView = event.status;
     if (event.data !== '') {
-      this.plantEditData = event.data;
+      this.plantEditData = { plantData: event.data };
       this.plantAddOrEditOpenState = 'in';
     }
   }
