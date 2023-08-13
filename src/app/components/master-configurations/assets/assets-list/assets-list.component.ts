@@ -502,7 +502,7 @@ export class AssetsListComponent implements OnInit, OnDestroy {
   rowLevelActionHandler = ({ data, action }): void => {
     switch (action) {
       case 'edit':
-        this.assetsEditData = { ...data };
+        this.assetsEditData = { assetData: data };
         this.assetsAddOrEditOpenState = 'in';
         break;
       case 'delete':
@@ -569,7 +569,7 @@ export class AssetsListComponent implements OnInit, OnDestroy {
   onCloseAssetsDetailedView(event) {
     this.openAssetsDetailedView = event.status;
     if (event.data !== '') {
-      this.assetsEditData = event.data;
+      this.assetsEditData = { assetData: event.data };
       this.assetsAddOrEditOpenState = 'in';
     }
   }
