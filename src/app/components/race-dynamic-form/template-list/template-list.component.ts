@@ -12,6 +12,9 @@ import {
   takeUntil,
   tap
 } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
+import { State } from 'src/app/forms/state';
+import { updateCreateOrEditForm } from 'src/app/forms/state/builder/builder.actions';
 import { FormControl } from '@angular/forms';
 import {
   Column,
@@ -211,7 +214,8 @@ export class TemplateListComponent implements OnInit, OnDestroy {
     private translateService: TranslateService,
     private router: Router,
     private dialog: MatDialog,
-    private cdrf: ChangeDetectorRef
+    private cdrf: ChangeDetectorRef,
+    private store: Store<State>
   ) {}
 
   ngOnInit(): void {
@@ -583,6 +587,11 @@ export class TemplateListComponent implements OnInit, OnDestroy {
   }
 
   openCreateTemplateModal() {
+    this.store.dispatch(
+      updateCreateOrEditForm({
+        createOrEditForm: true
+      })
+    );
     this.dialog.open(TemplateModalComponent, {
       maxWidth: '100vw',
       maxHeight: '100vh',

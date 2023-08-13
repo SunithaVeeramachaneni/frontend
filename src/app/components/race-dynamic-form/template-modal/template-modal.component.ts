@@ -114,7 +114,7 @@ export class TemplateModalComponent implements OnInit, OnDestroy {
   markReadyEventHandler(): void {
     this.commonService.setCurrentRouteUrl('/forms/templates');
     this.router.navigate(['/forms/templates']);
-    this.dialogRef.close();
+    if (Object.keys(this.dialogRef).length) this.dialogRef.close();
   }
 
   ngOnDestroy() {

@@ -7,6 +7,7 @@ import {
   ChangeDetectionStrategy
 } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
 import {
   progressStatus,
@@ -47,49 +48,52 @@ export class FormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
     this.isExpanded();
     this.templateCreated();
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$;
-    this.formUpdateDeletePayload$().subscribe((payload) => {
-      this.cdr.detectChanges();
-      if (payload?.formIds.length > 0) {
-        this.resetCounters();
-        payload.affectedForms.map((form) => {
-          form.progressStatus = progressStatus.inprogress;
-          if (this.checkIfFormIdExists(form.id) === -1) {
-            this.formMetadata.unshift(form);
-          } else {
+    this.formUpdateDeletePayload$()
+      .pipe(debounceTime(500), distinctUntilChanged())
+      .subscribe((payload) => {
+        this.cdr.detectChanges();
+        if (payload?.formIds.length > 0) {
+          this.resetCounters();
+          payload.affectedForms.map((form) => {
+            form.progressStatus = progressStatus.inprogress;
+            if (this.checkIfFormIdExists(form.id) === -1) {
+              this.formMetadata.unshift(form);
+            } else {
+              const idx = this.formMetadata.findIndex(
+                (data) => data.id === form.id
+              );
+              this.formMetadata[idx].progressStatus = progressStatus.inprogress;
+            }
+          });
+          this.calculateProgress();
+          this.formProgressService.formUpdateDeletePayloadBuffer$.next(null);
+          this.formProgressService.formUpdateDeletePayload$.next(null);
+          delete payload.affectedForms;
+          this.updateProgress$(payload).subscribe((event) => {
             const idx = this.formMetadata.findIndex(
-              (data) => data.id === form.id
+              (form) => form.id === event.id
             );
-            this.formMetadata[idx].progressStatus = progressStatus.inprogress;
-          }
-        });
-        this.calculateProgress();
-        this.formProgressService.formUpdateDeletePayload$.next(null);
-        delete payload.affectedForms;
-        this.updateProgress$(payload).subscribe((event) => {
-          const idx = this.formMetadata.findIndex(
-            (form) => form.id === event.id
-          );
-          this.formMetadata[idx].progressStatus = event.progressStatus;
-          if (event.progressStatus === progressStatus.failed) {
-            this.showErrorToast(this.formMetadata[idx].name, event.error);
-          } else {
-            this.calculateProgress();
-            this.showToast();
-          }
-          this.cdr.detectChanges();
-        });
-      } else if (payload?.templateId && !this.isTemplateCreated) {
-        this.toastService.show({
-          type: 'success',
-          text: `Template is updated successfully.`
-        });
-      } else if (payload?.templateId) {
-        this.toastService.show({
-          type: 'success',
-          text: `Template is created successfully.`
-        });
-      }
-    });
+            this.formMetadata[idx].progressStatus = event.progressStatus;
+            if (event.progressStatus === progressStatus.failed) {
+              this.showErrorToast(this.formMetadata[idx].name, event.error);
+            } else {
+              this.calculateProgress();
+              this.showToast();
+            }
+            this.cdr.detectChanges();
+          });
+        } else if (payload?.templateId && !this.isTemplateCreated) {
+          this.toastService.show({
+            type: 'success',
+            text: `Template is updated successfully.`
+          });
+        } else if (payload?.templateId) {
+          this.toastService.show({
+            type: 'success',
+            text: `Template is created successfully.`
+          });
+        }
+      });
   }
 
   calculateProgress() {
@@ -193,6 +197,7 @@ export class FormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
     this.formMetadata = [];
     this.totalProgressCount = 0;
     this.formUpdateDeletePayload$().unsubscribe();
+    this.formProgressService.formUpdateDeletePayloadBuffer$.unsubscribe();
     this.formProgressService.formProgressIsOpen$.unsubscribe();
     this.formProgressService.formProgressisExpanded$.unsubscribe();
     this.onDestroy$.next();
