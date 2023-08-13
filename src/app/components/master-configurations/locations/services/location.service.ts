@@ -82,7 +82,6 @@ export class LocationService {
         .pipe(map((res) => this.formatGraphQLocationResponse(res)));
     } else {
       return of({
-        count: 0,
         rows: [],
         next: null
       });

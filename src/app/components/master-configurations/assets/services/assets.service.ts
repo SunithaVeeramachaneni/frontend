@@ -89,7 +89,6 @@ export class AssetsService {
         .pipe(map((res) => this.formatGraphQAssetsResponse(res)));
     } else {
       return of({
-        count: 0,
         rows: [],
         next: null
       });
