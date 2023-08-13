@@ -441,9 +441,7 @@ export class IssuesListComponent implements OnInit, OnDestroy {
       mergeMap(({ rows, next, count, filters }) => {
         this.observationsService.issuesNextToken = next;
         this.isLoading$.next(false);
-        if (count) {
-          this.issuesCount$ = of(count);
-        }
+        this.issuesCount$ = of(count ?? 0);
         this.observationsService.issues$.next({ rows, next, count, filters });
         this.filterJson = this.observationsService.prepareFilterData(
           filters,
