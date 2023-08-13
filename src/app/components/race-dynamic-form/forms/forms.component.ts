@@ -142,7 +142,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       visible: true
     },
     {
-      id: 'schedule',
+      id: 'scheduleType',
       displayName: 'Schedule',
       type: 'string',
       controlType: 'button',
@@ -537,7 +537,7 @@ export class FormsComponent implements OnInit, OnDestroy {
 
     const activeShifts = this.prepareActiveShifts(row);
     switch (columnId) {
-      case 'schedule':
+      case 'scheduleType':
         if (!row.schedule) {
           this.openScheduleConfigHandler({ ...row, shifts: activeShifts });
         } else {
@@ -596,7 +596,7 @@ export class FormsComponent implements OnInit, OnDestroy {
         condition: {
           operand: this.placeHolder,
           operation: 'isFalsy',
-          fieldName: 'schedule'
+          fieldName: 'scheduleType'
         }
       });
       menuActions.push({
@@ -605,7 +605,7 @@ export class FormsComponent implements OnInit, OnDestroy {
         condition: {
           operand: this.placeHolder,
           operation: 'isTruthy',
-          fieldName: 'schedule'
+          fieldName: 'scheduleType'
         }
       });
     } else {
