@@ -420,8 +420,8 @@ export class AssetsListComponent implements OnInit, OnDestroy {
   }
 
   getAssets() {
-    return this.assetService
-      .getAssetsList$(
+    return (
+      this.assetService.getAssetsList$(
         {
           next: this.nextToken,
           limit: this.limit,
@@ -429,21 +429,21 @@ export class AssetsListComponent implements OnInit, OnDestroy {
           fetchType: this.fetchType
         },
         this.filter
-      )
-      .pipe(
-        map(({ count, rows, next }) => {
-          this.nextToken = next;
-          if (count !== undefined) {
-            this.reloadAssetCount(count);
-          }
-          this.isLoading$.next(false);
-          return rows;
-        }),
-        catchError(() => {
-          this.isLoading$.next(false);
-          return of([]);
-        })
-      );
+      ) as Observable<any>
+    ).pipe(
+      map(({ count, rows, next }) => {
+        this.nextToken = next;
+        if (count !== undefined) {
+          this.reloadAssetCount(count);
+        }
+        this.isLoading$.next(false);
+        return rows;
+      }),
+      catchError(() => {
+        this.isLoading$.next(false);
+        return of([]);
+      })
+    );
   }
 
   addOrUpdateAssets(assetData) {
