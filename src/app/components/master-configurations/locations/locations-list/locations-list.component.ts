@@ -450,7 +450,7 @@ export class LocationsListComponent implements OnInit, OnDestroy {
     ).pipe(
       map(({ count, rows, next }) => {
         this.nextToken = next;
-        if (count !== undefined) {
+        if (count !== undefined && count !== null) {
           this.reloadLocationCount(count);
         }
         this.isLoading$.next(false);
