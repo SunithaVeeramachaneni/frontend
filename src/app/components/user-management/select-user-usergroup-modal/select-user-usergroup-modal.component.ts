@@ -432,7 +432,7 @@ export class SelectUserUsergroupModalComponent implements OnInit {
         failureResponse: {}
       })
       .subscribe((data) => {
-        if (Object.keys(data).length !== 0) {
+        if (Object.keys(data).length > 0) {
           this.userGroupService.addUpdateDeleteCopyUserGroup = true;
           this.userGroupService.userGroupActions$.next({
             action: 'add',
