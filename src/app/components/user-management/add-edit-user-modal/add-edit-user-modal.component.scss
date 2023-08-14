@@ -54,6 +54,10 @@
   bottom: 5px;
 }
 
+#addEditUserEmail {
+  text-transform: lowercase;
+}
+
 .custom-mat-form-field-white-color {
   ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
     border-radius: 8px;
