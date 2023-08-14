@@ -571,6 +571,9 @@ export class IssuesListComponent implements OnInit, OnDestroy {
   applyFilters(data: any): void {
     this.isLoading$.next(true);
     this.isPopoverOpen = false;
+    if (this.searchIssue.value) {
+      this.searchIssue.patchValue('');
+    }
     for (const item of data) {
       if (item.type === 'date' && item.value) {
         this.filter[item.column] = item.value.toISOString();
