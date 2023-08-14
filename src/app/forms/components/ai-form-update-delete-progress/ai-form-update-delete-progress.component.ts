@@ -85,8 +85,8 @@ export class AiFormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
         this.updateProgress$(payload).subscribe((event) => {
           if (this.firstEvent) {
             this.firstEvent = false;
-            this.formProgressService.aiFormProgressIsOpen$.next(true);
             this.putFormInStore(event, payload.plant);
+            this.formProgressService.aiFormProgressIsOpen$.next(true);
           } else {
             this.updateForm(event);
           }
@@ -233,6 +233,8 @@ export class AiFormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
       })
     );
     this.questionCount = counter;
+
+    this.cdr.markForCheck();
 
     // ADD PAGE
     const page: Page = {
