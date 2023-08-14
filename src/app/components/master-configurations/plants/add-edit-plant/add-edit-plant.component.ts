@@ -40,12 +40,7 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Output() createdPlantData: EventEmitter<any> = new EventEmitter();
   @Input() set plantEditData(plant) {
-    if (plant?.plantData) {
-      this.plantsEditData = plant.plantData;
-    } else {
-      this.plantsEditData = null;
-    }
-
+    this.plantsEditData = plant?.plantData || null;
     this.selectedShiftsDetails = [];
     if (this.plantsEditData === null) {
       this.plantStatus = 'add';
