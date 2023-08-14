@@ -690,7 +690,8 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
       maxHeight: '100vh',
       height: '100%',
       width: '100%',
-      panelClass: 'full-screen-modal'
+      panelClass: 'full-screen-modal',
+      disableClose: true
     });
     dialogRef.afterClosed().subscribe((result) => {
       const data = result === undefined ? {} : result;

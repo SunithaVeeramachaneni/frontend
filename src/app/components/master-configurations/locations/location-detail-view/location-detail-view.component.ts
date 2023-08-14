@@ -6,6 +6,7 @@ import {
   OnInit,
   Output
 } from '@angular/core';
+import { locationImg } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-location-detail-view',
@@ -26,5 +27,9 @@ export class LocationDetailViewComponent implements OnInit {
 
   cancel() {
     this.slideInOut.emit({ status: 'out', data: '' });
+  }
+
+  selectedLocationImageurl(location: any) {
+    return location.image || locationImg;
   }
 }

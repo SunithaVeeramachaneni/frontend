@@ -562,6 +562,9 @@ export class ActionsListComponent implements OnInit, OnDestroy {
   clearFilters(): void {
     this.isLoading$.next(true);
     this.isPopoverOpen = false;
+    if (this.searchAction.value) {
+      this.searchAction.patchValue('');
+    }
     this.filter = {
       title: '',
       location: '',
