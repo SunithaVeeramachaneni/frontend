@@ -50,7 +50,7 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
   private assetEditData = null;
   parentType: any = 'location';
   @Input() set assetsEditData(asset) {
-    this.assetEditData = asset.assetData || null;
+    this.assetEditData = asset?.assetData || null;
     if (this.assetEditData === null) {
       this.assetStatus = 'add';
       this.assetTitle = 'Create Asset';
