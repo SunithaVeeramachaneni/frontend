@@ -38,8 +38,8 @@ export class AddEditLocationComponent implements OnInit {
     return this._locations;
   }
 
-  @Input() set locationEditData(data) {
-    this.locEditData = data;
+  @Input() set locationEditData(location) {
+    this.locEditData = location.locationData;
     if (!this.locEditData) {
       this.locationStatus = 'add';
       this.locationTitle = 'Create Location';

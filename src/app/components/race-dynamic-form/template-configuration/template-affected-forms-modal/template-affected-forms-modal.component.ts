@@ -388,9 +388,8 @@ export class TemplateAffectedFormsModalComponent implements OnInit, OnDestroy {
             isFormDetailPublished: true
           })
         );
-        this.formProgressService.formUpdateDeletePayload$.next(data);
-        this.dialogRef.close({ published: true });
-        this.router.navigate(['/forms/templates']);
+        this.formProgressService.formUpdateDeletePayloadBuffer$.next(data);
+        this.dialogRef.close();
       });
   }
 

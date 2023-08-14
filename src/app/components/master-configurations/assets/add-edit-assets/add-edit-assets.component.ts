@@ -49,8 +49,8 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
   allLocations$: Observable<any>;
   private assetEditData = null;
   parentType: any = 'location';
-  @Input() set assetsEditData(data) {
-    this.assetEditData = data || null;
+  @Input() set assetsEditData(asset) {
+    this.assetEditData = asset.assetData || null;
     if (this.assetEditData === null) {
       this.assetStatus = 'add';
       this.assetTitle = 'Create Asset';
@@ -186,7 +186,8 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
     if (plantsID) {
       this.allParentsData = this.parentInformation.filter(
         (parent) =>
-          parent?.plantsID === plantsID && parent?.parentType === parentType
+          parent?.plantsID === plantsID &&
+          (parentType === 'asset' ? parent?.parentType === parentType : true)
       );
       this.allParentsData$.next(this.allParentsData);
     }
@@ -261,6 +262,7 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
     } else {
       this.allParentsData = this.parentInformation;
       this.allParentsData = this.searchParent(value);
+      this.allParentsData$.next(this.allParentsData);
     }
   }
 
