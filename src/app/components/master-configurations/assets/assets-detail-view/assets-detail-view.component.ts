@@ -6,6 +6,7 @@ import {
   OnInit,
   Output
 } from '@angular/core';
+import { assetImg } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-assets-detail-view',
@@ -29,6 +30,6 @@ export class AssetsDetailViewComponent implements OnInit {
   }
 
   selectedAssetImageurl(asset: any) {
-    return asset.image || 'assets/master-configurations/asset-icon.svg';
+    return asset.image || assetImg;
   }
 }

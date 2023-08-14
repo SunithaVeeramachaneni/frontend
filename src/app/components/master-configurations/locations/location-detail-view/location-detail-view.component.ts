@@ -6,6 +6,7 @@ import {
   OnInit,
   Output
 } from '@angular/core';
+import { locationImg } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-location-detail-view',
@@ -29,6 +30,6 @@ export class LocationDetailViewComponent implements OnInit {
   }
 
   selectedLocationImageurl(location: any) {
-    return location.image || 'assets/master-configurations/locationIcon.svg';
+    return location.image || locationImg;
   }
 }
