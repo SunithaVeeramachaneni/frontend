@@ -535,7 +535,7 @@ export class LocationsListComponent implements OnInit, OnDestroy {
   rowLevelActionHandler = ({ data, action }): void => {
     switch (action) {
       case 'edit':
-        this.locationEditData = { ...data };
+        this.locationEditData = { locationData: data };
         this.locationAddOrEditOpenState = 'in';
         break;
       case 'delete':
@@ -551,9 +551,10 @@ export class LocationsListComponent implements OnInit, OnDestroy {
     const { columnId, row } = event;
     switch (columnId) {
       case 'name':
+      case 'plant':
       case 'description':
       case 'model':
-      case 'parentId':
+      case 'parent':
         this.showLocationDetail(row);
         break;
       default:
@@ -592,7 +593,7 @@ export class LocationsListComponent implements OnInit, OnDestroy {
   onCloseLocationDetailedView(event) {
     this.openLocationDetailedView = event.status;
     if (event.data !== '') {
-      this.locationEditData = event.data;
+      this.locationEditData = { locationData: event.data };
       this.locationAddOrEditOpenState = 'in';
     }
   }

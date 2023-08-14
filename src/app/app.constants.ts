@@ -569,7 +569,7 @@ export const statusColors = {
 export const progressStatus = {
   inprogress: 'in-progress',
   success: 'success',
-  error: 'error'
+  failed: 'failed'
 };
 export const responseCount = 1000;
 

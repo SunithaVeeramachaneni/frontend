@@ -125,7 +125,7 @@ export class BuilderComponent implements OnInit, OnDestroy {
       .pipe(
         tap((pages) => {
           this.subFormPages = pages;
-          if (pages && pages.length === 0) {
+          if ((pages && pages.length === 0) || pages === undefined) {
             this.isEmptyPlan = true;
           } else {
             this.isEmptyPlan = false;

@@ -461,7 +461,13 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
       })
     );
 
-    const form = { formMetadata: this.formMetadata, pages: this.pages };
+    const form = {
+      formMetadata: {
+        ...this.formMetadata,
+        embedddedFormId: this.formMetadata.embeddedFormId
+      },
+      pages: this.pages
+    };
 
     if (this.isEmbeddedForm) {
       this.rdfService.publishEmbeddedForms$(form).subscribe((response) => {

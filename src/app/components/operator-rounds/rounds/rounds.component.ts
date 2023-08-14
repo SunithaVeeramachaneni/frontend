@@ -445,7 +445,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
           'assigned',
           'open',
           'in-progress',
-          'partly-open'
+          'partly-open',
+          'skipped'
         ],
         displayType: 'text'
       },
@@ -1083,7 +1084,10 @@ export class RoundsComponent implements OnInit, OnDestroy {
         this.openRoundHandler(data);
         break;
       case 'showPlans':
-        this.selectTab.emit({ index: 0, queryParams: { id: data.id } });
+        this.selectTab.emit({
+          index: 0,
+          queryParams: { id: data.roundPlanId }
+        });
         break;
       default:
       // do nothing

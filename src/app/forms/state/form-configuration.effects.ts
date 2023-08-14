@@ -320,6 +320,11 @@ export class FormConfigurationEffects {
                 formSaveStatus: formConfigurationStatus.saved
               })
             ),
+            map(() =>
+              BuilderConfigurationActions.updateCreateOrEditForm({
+                createOrEditForm: false
+              })
+            ),
             catchError((error) => {
               this.raceDynamicFormService.handleError(error);
               return of(

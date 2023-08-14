@@ -78,6 +78,7 @@ export class FormEditViewComponent implements OnInit, OnDestroy {
       height: '100%',
       width: '100%',
       panelClass: 'full-screen-modal',
+      disableClose: true,
       data: {
         formData: this.formMetadata,
         type: 'edit'
