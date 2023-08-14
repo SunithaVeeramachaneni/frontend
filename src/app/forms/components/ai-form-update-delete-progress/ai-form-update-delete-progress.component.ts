@@ -292,8 +292,12 @@ export class AiFormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
   }
 
   updateForm(event) {
-    const { section: sectionObject, isCompletedForm } = event;
-    if (isCompletedForm !== true) {
+    const {
+      section: sectionObject,
+      isCompletedForm,
+      isAllFormsCompleted
+    } = event;
+    if (isCompletedForm !== true && isAllFormsCompleted !== true) {
       const {
         id,
         name,
