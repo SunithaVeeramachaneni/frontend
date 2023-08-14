@@ -27,4 +27,8 @@ export class LocationDetailViewComponent implements OnInit {
   cancel() {
     this.slideInOut.emit({ status: 'out', data: '' });
   }
+
+  selectedLocationImageurl(location: any) {
+    return location.image || 'assets/master-configurations/locationIcon.svg';
+  }
 }
