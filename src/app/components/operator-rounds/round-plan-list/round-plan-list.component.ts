@@ -340,6 +340,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
       case 'name':
       case 'description':
       case 'author':
+      case 'plant':
       case 'formStatus':
       case 'lastPublishedBy':
       case 'publishedDate':
