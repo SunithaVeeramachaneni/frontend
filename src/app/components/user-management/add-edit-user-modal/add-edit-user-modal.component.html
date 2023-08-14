@@ -107,10 +107,10 @@
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="width-100 m-b-10 m-t-10">
-      <mat-label id="addEditUserEmail">{{
+      <mat-label id="addEditUserEmailLabel">{{
         'emailLabel' | translate
       }}</mat-label>
-      <input matInput formControlName="email" />
+      <input matInput formControlName="email" id="addEditUserEmail" />
       <div matSuffix>
         <mat-spinner
           *ngIf="verificationInProgress"

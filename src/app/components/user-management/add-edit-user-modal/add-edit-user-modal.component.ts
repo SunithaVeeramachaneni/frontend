@@ -88,7 +88,6 @@ export class AddEditUserModalComponent implements OnInit {
   emailValidated = false;
   isValidIDPUser = false;
   verificationInProgress = false;
-  previousEmail = '';
 
   rolesInput: any;
   usergroupInput: any;
@@ -142,7 +141,7 @@ export class AddEditUserModalComponent implements OnInit {
           this.emailValidated = false;
           this.isValidIDPUser = false;
           this.verificationInProgress = true;
-          return this.usersService.verifyUserEmail$(value);
+          return this.usersService.verifyUserEmail$(value.toLowerCase());
         }),
         map((response: any) => {
           this.verificationInProgress = false;
@@ -165,12 +164,13 @@ export class AddEditUserModalComponent implements OnInit {
         debounceTime(500),
         distinctUntilChanged(),
         switchMap((value) =>
-          this.usersService.getUsersCount$({ email: value })
+          this.usersService.getUsersCount$({ email: value.toLowerCase() })
         ),
         map((response) => {
           const { count } = response;
           this.cdrf.markForCheck();
-          return count > 0 && control.value !== this.data.user?.email
+          return count > 0 &&
+            control.value !== this.data.user?.email?.toLowerCase()
             ? { exists: true }
             : null;
         }),
@@ -206,12 +206,12 @@ export class AddEditUserModalComponent implements OnInit {
       this.userForm.patchValue({
         profileImage: base64
       });
-      this.previousEmail = userDetails.email;
       const idArray = userDetails?.userGroups?.split(',');
       userDetails.usergroup = this.usergroupInput?.filter((g) =>
         idArray?.includes(g?.id)
       );
       this.userForm.patchValue(userDetails);
+      this.userForm.get('email').disable();
     }
 
     this.minDate = this.userForm.controls['validFrom'].value || new Date();
@@ -342,8 +342,6 @@ export class AddEditUserModalComponent implements OnInit {
       },
       action: this.dialogText === 'addUser' ? 'add' : 'edit'
     };
-    if (this.dialogText === 'editUser')
-      payload.user.previousEmail = this.previousEmail;
     this.dialogRef.close(payload);
   }
 
