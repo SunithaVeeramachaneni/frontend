@@ -157,7 +157,7 @@ export class SelectUserUsergroupModalComponent implements OnInit {
   type: string;
   fetchType: string;
   initialUsers = [];
-  disableBtn = true;
+  disableBtn: any;
   preselectedUsers = [];
 
   constructor(
@@ -176,9 +176,11 @@ export class SelectUserUsergroupModalComponent implements OnInit {
       this.fetchUserGroupUsers$ = this.userGroupService.getAllUsersUserGroup(
         this.data?.userGroupId
       );
+      this.disableBtn = true;
     } else {
       this.type = 'create';
       this.fetchUserGroupUsers$ = of([]);
+      this.disableBtn = false;
     }
     this.searchUser = new FormControl('');
     this.searchUser.valueChanges
@@ -355,9 +357,10 @@ export class SelectUserUsergroupModalComponent implements OnInit {
           this.selectedUsers = [];
         }
         this.selectedUsersCount$ = of(this.selectedUsers?.length);
-        this.disableBtn =
-          this.areArraysEqual(this.initialUsers, this.selectedUsers) ||
-          this.selectedUsers?.length === 0;
+        this.disableBtn = this.areArraysEqual(
+          this.initialUsers,
+          this.selectedUsers
+        );
 
         break;
 
@@ -375,10 +378,10 @@ export class SelectUserUsergroupModalComponent implements OnInit {
           this.selectedUserCountUpdate$.next(1);
         }
         this.selectedUsersCount$ = of(this.selectedUsers?.length);
-        this.disableBtn =
-          this.areArraysEqual(this.initialUsers, this.selectedUsers) ||
-          this.selectedUsers?.length === 0;
-
+        this.disableBtn = this.areArraysEqual(
+          this.initialUsers,
+          this.selectedUsers
+        );
         break;
       default:
       // do nothing
@@ -429,11 +432,13 @@ export class SelectUserUsergroupModalComponent implements OnInit {
         failureResponse: {}
       })
       .subscribe((data) => {
-        this.userGroupService.addUpdateDeleteCopyUserGroup = true;
-        this.userGroupService.userGroupActions$.next({
-          action: 'add',
-          group: { ...data, usersCount: data?.users?.length }
-        });
+        if (Object.keys(data).length !== 0) {
+          this.userGroupService.addUpdateDeleteCopyUserGroup = true;
+          this.userGroupService.userGroupActions$.next({
+            action: 'add',
+            group: { ...data, usersCount: data?.users?.length }
+          });
+        }
       });
     this.dialogRef.close({
       isBack: false
