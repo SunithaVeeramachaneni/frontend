@@ -626,6 +626,7 @@ export class FormListComponent implements OnInit, OnDestroy {
       height: '100%',
       width: '100%',
       panelClass: 'full-screen-modal',
+      disableClose: true,
       data: {
         formData: data,
         type: 'add'

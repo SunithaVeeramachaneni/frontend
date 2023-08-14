@@ -138,7 +138,8 @@ export class RoundPlanEditViewComponent implements OnInit, OnDestroy {
       height: '100%',
       width: '100%',
       panelClass: 'full-screen-modal',
-      data: this.formMetadata
+      data: this.formMetadata,
+      disableClose: true
     });
   }
 
