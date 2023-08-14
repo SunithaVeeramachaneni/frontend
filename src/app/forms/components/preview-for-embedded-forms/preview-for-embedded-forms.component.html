@@ -291,19 +291,37 @@
 
         <div *ngIf="question.fieldType === 'DD'" class="m-b-10">
           <div *ngIf="question.value?.value?.length > 0">
-            <div *ngIf="question.value.value.length > 0">
-              <mat-chip-list class="dropdown" [multiple]="question.multi">
-                <mat-chip
-                  class="response-type-style"
+            <div *ngIf="question.value.value.length > 4">
+              <mat-select
+                placeholder="Select"
+                class="dropdown"
+                [multiple]="question.multi"
+              >
+                <mat-option
                   *ngFor="let ques of question.value.value"
                   [value]="ques.title"
                   [ngStyle]="{
                     color: ques.color
                   }"
+                  id="previewEmbeddedDDTitle"
                 >
                   {{ ques.title }}
-                </mat-chip>
-              </mat-chip-list>
+                </mat-option>
+              </mat-select>
+            </div>
+            <div *ngIf="4 >= question.value.value.length">
+              <mat-button-toggle-group class="vi-input">
+                <mat-button-toggle
+                  class="vi-values"
+                  [value]="ques.title"
+                  [ngStyle]="{
+                    color: ques.color
+                  }"
+                  *ngFor="let ques of question.value.value"
+                >
+                  {{ ques.title }}
+                </mat-button-toggle>
+              </mat-button-toggle-group>
             </div>
           </div>
         </div>

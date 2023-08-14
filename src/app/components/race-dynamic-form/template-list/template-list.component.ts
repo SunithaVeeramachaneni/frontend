@@ -313,7 +313,8 @@ export class TemplateListComponent implements OnInit, OnDestroy {
               height: '100%',
               width: '100%',
               panelClass: 'full-screen-modal',
-              data: this.allTemplates
+              data: this.allTemplates,
+              disableClose: true
             });
           });
         break;
@@ -598,6 +599,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
       height: '100%',
       width: '100%',
       panelClass: 'full-screen-modal',
+      disableClose: true,
       data: this.allTemplates
     });
   }

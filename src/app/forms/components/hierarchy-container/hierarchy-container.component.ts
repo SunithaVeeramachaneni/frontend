@@ -181,7 +181,8 @@ export class HierarchyContainerComponent implements OnInit {
     this.filteredList = flatHierarchy.filter(
       (option) =>
         option.name.toLowerCase().includes(filterValue) ||
-        option.nodeDescription?.toLowerCase().includes(filterValue)
+        option.nodeDescription?.toLowerCase().includes(filterValue) ||
+        option.nodeId?.toLowerCase().includes(filterValue)
     );
     if (this.hierarchyMode !== 'asset_hierarchy') {
       this.filteredList = this.filteredList.filter(

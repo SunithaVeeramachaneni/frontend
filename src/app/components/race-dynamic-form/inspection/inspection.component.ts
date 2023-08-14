@@ -884,7 +884,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
         this.openInspectionHandler(data);
         break;
       case 'showForms':
-        this.selectTab.emit({ index: 0, queryParams: { id: data.id } });
+        this.selectTab.emit({ index: 0, queryParams: { id: data.formId } });
         break;
       default:
       // do nothing

@@ -304,6 +304,9 @@ export class UnitMeasurementListComponent implements OnInit, OnDestroy {
     const { columnId, row } = event;
     switch (columnId) {
       case 'unitType':
+      case 'noOfUnits':
+      case 'description':
+      case 'symbol':
         this.showUnitDetail(row);
         break;
       case 'isActive':

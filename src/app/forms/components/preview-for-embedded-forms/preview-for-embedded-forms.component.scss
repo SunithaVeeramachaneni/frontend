@@ -17,12 +17,6 @@
     }
   }
 
-  .response-type-style {
-    font: menu;
-    position: relative;
-    left: 5px;
-  }
-
   .section-arrow {
     float: right;
     position: relative;
@@ -107,9 +101,10 @@
   }
 
   .vi-input {
-    height: 25px;
+    height: 30px;
     align-items: center;
     width: 215px;
+    overflow-x: auto;
   }
 
   .vi-values {
