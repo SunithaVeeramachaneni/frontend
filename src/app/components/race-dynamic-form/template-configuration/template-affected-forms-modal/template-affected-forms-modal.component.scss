@@ -9,6 +9,22 @@
   ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
     padding: 5px 0 10px 0;
   }
+  ::ng-deep .table-column {
+    width: 20%;
+  }
+
+  ::ng-deep .mat-column-name {
+    min-width: 320px !important;
+  }
+
+  ::ng-deep .mat-column-plant {
+    min-width: 110px !important;
+  }
+
+  ::ng-deep .mat-column-formStatus {
+    min-width: 40px !important;
+  }
+
   .no-affected-forms {
     display: flex;
     flex-direction: column;
