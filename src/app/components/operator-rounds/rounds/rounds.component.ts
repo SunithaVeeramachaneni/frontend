@@ -397,7 +397,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
-      id: 'status',
+      id: 'statusDisplay',
       displayName: 'Status',
       type: 'string',
       controlType: 'string',
@@ -667,7 +667,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
             assignedTo: this.userService.getUserFullName(
               roundDetail.assignedTo
             ),
-            status: roundDetail.status.replace('-', ' '),
+            statusDisplay: roundDetail.status.replace('-', ' '),
             assignedToEmail: roundDetail.assignedTo
           }));
         } else {
@@ -685,7 +685,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
               assignedTo: this.userService.getUserFullName(
                 roundDetail.assignedTo
               ),
-              status: roundDetail.status.replace('-', ' '),
+              statusDisplay: roundDetail.status.replace('-', ' '),
               assignedToEmail: roundDetail.assignedTo
             }))
           );
