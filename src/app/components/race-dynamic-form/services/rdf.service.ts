@@ -60,7 +60,8 @@ export class RaceDynamicFormService {
   private getServerSentEvent(
     apiUrl: string,
     urlString: string,
-    data: FormData
+    data: FormData,
+    requestId: string
   ): Observable<any> {
     return new Observable((observer) => {
       const eventSource = this.sseService.getEventSourceWithPost(
@@ -73,13 +74,13 @@ export class RaceDynamicFormService {
       // on answer from message listener
       eventSource.onmessage = (event) => {
         this.zone.run(() => {
-          observer.next(JSON.parse(event.data));
+          observer.next({ requestId, ...JSON.parse(event.data) });
         });
       };
       eventSource.onerror = (event) => {
         this.zone.run(() => {
           if (event.data) {
-            observer.error(JSON.parse(event.data));
+            observer.error({ requestId, error: event.data });
           }
         });
       };
@@ -1063,7 +1064,8 @@ export class RaceDynamicFormService {
   };
   updateAdhocFormOnTemplateChange$ = (
     templateId: string,
-    formIds: [string]
+    formIds: [string],
+    requestId: string
   ): Observable<any> => {
     const formData = new FormData();
     formData.append('templateId', templateId);
@@ -1071,12 +1073,14 @@ export class RaceDynamicFormService {
     return this.getServerSentEvent(
       environment.rdfApiUrl,
       'templates/updateAdhocForms',
-      formData
+      formData,
+      requestId
     );
   };
   updateEmbeddedFormOnTemplateChange$ = (
     templateId: string,
-    formIds: [string]
+    formIds: [string],
+    requestId: string
   ): Observable<any> => {
     const formData = new FormData();
     formData.append('templateId', templateId);
@@ -1084,7 +1088,8 @@ export class RaceDynamicFormService {
     return this.getServerSentEvent(
       environment.rdfApiUrl,
       'abap/templates/updateEmbeddedForms',
-      formData
+      formData,
+      requestId
     );
   };
 

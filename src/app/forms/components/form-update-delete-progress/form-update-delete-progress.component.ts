@@ -17,6 +17,7 @@ import {
 import { ToastService } from 'src/app/shared/toast';
 import { FormUpdateProgressService } from '../../services/form-update-progress.service';
 import { CommonService } from 'src/app/shared/services/common.service';
+const { v4: uuid } = require('uuid');
 
 @Component({
   selector: 'app-form-update-delete-progress',
@@ -54,7 +55,9 @@ export class FormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
         if (payload?.formIds.length > 0) {
           this.resetCounters();
+          const requestId = uuid();
           payload.affectedForms.map((form) => {
+            form.requestId = requestId; // RequestId is used to identify the request which got failed in case of multiple requests
             form.progressStatus = progressStatus.inprogress;
             if (this.checkIfFormIdExists(form.id) === -1) {
               this.formMetadata.unshift(form);
@@ -63,25 +66,31 @@ export class FormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
                 (data) => data.id === form.id
               );
               this.formMetadata[idx].progressStatus = progressStatus.inprogress;
+              this.formMetadata[idx].requestId = requestId;
             }
           });
           this.calculateProgress();
           this.formProgressService.formUpdateDeletePayloadBuffer$.next(null);
           this.formProgressService.formUpdateDeletePayload$.next(null);
           delete payload.affectedForms;
-          this.updateProgress$(payload).subscribe((event) => {
-            const idx = this.formMetadata.findIndex(
-              (form) => form.id === event.id
-            );
-            this.formMetadata[idx].progressStatus = event.progressStatus;
-            if (event.progressStatus === progressStatus.failed) {
-              this.showErrorToast(this.formMetadata[idx].name, event.error);
-            } else {
-              this.calculateProgress();
-              this.showToast();
+          this.updateProgress$(payload, requestId).subscribe(
+            (event) => {
+              const idx = this.formMetadata.findIndex(
+                (form) => form.id === event.id
+              );
+              this.formMetadata[idx].progressStatus = event.progressStatus;
+              if (event.progressStatus === progressStatus.failed) {
+                this.showErrorToast(this.formMetadata[idx].name, event.error);
+              } else {
+                this.calculateProgress();
+                this.showToast();
+              }
+              this.cdr.detectChanges();
+            },
+            (err) => {
+              this.onError(requestId, err?.error);
             }
-            this.cdr.detectChanges();
-          });
+          );
         } else if (payload?.templateId && !this.isTemplateCreated) {
           this.toastService.show({
             type: 'success',
@@ -112,6 +121,8 @@ export class FormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
   showErrorToast(formName, msg) {
     if (!msg) {
       msg = `Unable to publish form - ${formName}`;
+    } else if (msg && !formName) {
+      msg = `Unable to publish forms - ${msg}`;
     } else {
       msg = `Unable to publish form - ${formName} - ${msg}`;
     }
@@ -147,16 +158,27 @@ export class FormUpdateDeleteProgressComponent implements OnInit, OnDestroy {
   formUpdateDeletePayload$() {
     return this.formProgressService.formUpdateDeletePayload$;
   }
-  updateProgress$(data: any) {
+  onError(requestId: string, error: any) {
+    this.formMetadata.map((form) => {
+      if (form.requestId === requestId) {
+        form.progressStatus = progressStatus.failed;
+      }
+    });
+    this.cdr.detectChanges();
+    this.showErrorToast('', error);
+  }
+  updateProgress$(data: any, requestId: string) {
     if (data.templateType === formConfigurationStatus.standalone) {
       return this.rdfService.updateAdhocFormOnTemplateChange$(
         data.templateId,
-        data.formIds
+        data.formIds,
+        requestId
       );
     } else if (data.templateType === formConfigurationStatus.embedded) {
       return this.rdfService.updateEmbeddedFormOnTemplateChange$(
         data.templateId,
-        data.formIds
+        data.formIds,
+        requestId
       );
     }
   }

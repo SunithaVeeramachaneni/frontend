@@ -235,7 +235,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
       visible: true
     },
     {
-      id: 'status',
+      id: 'statusDisplay',
       displayName: 'Status',
       type: 'string',
       controlType: 'string',
@@ -494,7 +494,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
             assignedTo: inspectionDetail?.assignedTo
               ? this.userService.getUserFullName(inspectionDetail.assignedTo)
               : '',
-            status: inspectionDetail.status.replace('-', ' '),
+            statusDisplay: inspectionDetail.status.replace('-', ' '),
             assignedToEmail: inspectionDetail.assignedTo || ''
           }));
         } else {
@@ -512,7 +512,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
               assignedTo: this.userService.getUserFullName(
                 inspectionDetail.assignedTo
               ),
-              status: inspectionDetail.status.replace('-', ' '),
+              statusDisplay: inspectionDetail.status.replace('-', ' '),
               assignedToEmail: inspectionDetail.assignedTo || ''
             }))
           );
