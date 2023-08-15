@@ -569,9 +569,12 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   createNotification() {
     this.isCreateNotification = true;
     if (this.data.category !== this.placeholder) {
-      const { allData, ...rest } = this.data;
+      const { id, issueData, createdBy, category } = this.data;
       this.observations
-        .createNotification(rest, this.moduleName)
+        .createNotification(
+          { id, issueData, createdBy, category },
+          this.moduleName
+        )
         .subscribe((value) => {
           if (Object.keys(value).length) {
             const { notificationInfo } = value;
