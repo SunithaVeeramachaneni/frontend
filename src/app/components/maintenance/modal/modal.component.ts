@@ -1,12 +1,4 @@
 import { Component, Inject, Input, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
-import { flatMap, toArray } from 'rxjs/operators';
-import {
-  WarehouseTechnician,
-  WarehouseTechnicians
-} from '../../../interfaces/warehouse_technicians';
-import { WorkCenter } from '../../../interfaces/work-center';
-
 import { DomSanitizer } from '@angular/platform-browser';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { PlantTechnician } from 'src/app/interfaces/plant_technician';
@@ -17,31 +9,24 @@ import { PlantTechnician } from 'src/app/interfaces/plant_technician';
   styleUrls: ['./modal.component.scss']
 })
 export class ModalComponent implements OnInit {
+  public saveDisabled = true;
+  public workCenter: string;
+  public plant: string;
+  public workCenterList: any[];
+  public assignee = '';
+  public assigneeList: any;
+  public displayedAssigneeList: PlantTechnician[];
+  public base64Code;
   private workOrderID;
   private defaultWorkCenter;
   private priorityNumber;
   private priorityText;
-  public saveDisabled = true;
 
-  public workCenter: string;
-  public plant: string;
-  public workCenterList: any[];
-
-  public assignee: string = '';
-  public assigneeList: any;
-  public displayedAssigneeList: PlantTechnician[];
-
-  public base64Code;
   constructor(
     public dialogRef: MatDialogRef<ModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data,
     private sanitizer: DomSanitizer
   ) {}
-
-  // constructor(
-  //   // private modalCtrl: ModalController, private navParams: NavParams,
-  //   private sanitizer:DomSanitizer,) {
-  //  }
 
   ngOnInit() {
     this.assigneeList = this.data.techniciansList;
@@ -57,9 +42,9 @@ export class ModalComponent implements OnInit {
   }
 
   onCenterChange = ($event) => {
-    let newValue = $event.value;
+    const newValue = $event.value;
     this.displayedAssigneeList = this.assigneeList[newValue.workCenterKey];
-    let base64Image =
+    const base64Image =
       'data:image/jpeg;base64,' + this.displayedAssigneeList[0].image;
     this.base64Code =
       this.sanitizer.bypassSecurityTrustResourceUrl(base64Image);
@@ -70,7 +55,7 @@ export class ModalComponent implements OnInit {
   };
 
   getImageSrc = (source: string) => {
-    let base64Image = 'data:image/jpeg;base64,' + source;
+    const base64Image = 'data:image/jpeg;base64,' + source;
     return this.sanitizer.bypassSecurityTrustResourceUrl(base64Image);
   };
 
@@ -79,7 +64,7 @@ export class ModalComponent implements OnInit {
   }
 
   onSave() {
-    let resp = {
+    const resp = {
       assignee: this.assignee,
       workCenter: this.workCenter,
       workOrderID: this.workOrderID,

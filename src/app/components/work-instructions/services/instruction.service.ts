@@ -1,3 +1,6 @@
+/* eslint-disable arrow-body-style */
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable @typescript-eslint/naming-convention */
 import { concatMap, map, mergeMap, switchMap, toArray } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { AppService } from '../../../shared/services/app.services';
@@ -19,7 +22,6 @@ import {
   User,
   Step,
   StepOptional,
-  Mail,
   DeleteFileResponse,
   UploadS3FileResponse,
   Files,

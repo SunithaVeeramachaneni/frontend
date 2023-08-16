@@ -37,6 +37,9 @@ export const getModuleName = createSelector(
   (state) => state.moduleName
 );
 
+export const getFormConfigurationCounter = () =>
+  createSelector(selectFormConfigurationState, (state) => state.counter);
+
 export const getPagesCount = (subFormId) =>
   createSelector(selectFormConfigurationState, (state) => {
     let key = 'pages';
@@ -44,61 +47,6 @@ export const getPagesCount = (subFormId) =>
       key = `${key}_${subFormId}`;
     }
     return state[key]?.length;
-  });
-
-export const getTasksCountByNodeId = (subFormId) =>
-  createSelector(selectFormConfigurationState, (state) => {
-    let key = 'pages';
-    if (subFormId) {
-      key = `${key}_${subFormId}`;
-    }
-    const subForm = state[key] || [];
-    let count = 0;
-    // eslint-disable-next-line @typescript-eslint/dot-notation
-    subForm.forEach((f) => {
-      count += f.questions.length;
-    });
-    return count;
-  });
-
-export const getTasksCountByNodeIds = (subFormIds) =>
-  createSelector(selectFormConfigurationState, (state) => {
-    let count = 0;
-    subFormIds.forEach((subFormId) => {
-      let key = 'pages';
-      if (subFormId) {
-        key = `${key}_${subFormId}`;
-      }
-      const subForm = state[key] || [];
-      // eslint-disable-next-line @typescript-eslint/dot-notation
-      subForm.forEach((f) => {
-        count += f.questions.length;
-      });
-    });
-    return count;
-  });
-
-export const getTotalTasksCount = (nodeIds) =>
-  createSelector(selectFormConfigurationState, (state) => {
-    let count = 0;
-    const pageIds = nodeIds.map((id) => `pages_${id}`);
-    const subFormKeys = Object.keys(state).filter(
-      (sf) => pageIds.indexOf(sf) > -1
-    );
-    const allSubForms = [];
-    subFormKeys.forEach((key) => {
-      allSubForms.push(state[key]);
-    });
-    allSubForms.forEach((f) => {
-      if (f) {
-        f.forEach((page) => {
-          if (page.questions && page.questions.length) {
-            count += page.questions.length;
-          }
-        });
-      }
-    });
-    return count;
   });
 
 export const getSubFormPages = (subFormId) =>
@@ -135,7 +83,6 @@ export const getPage = (pageIndex: number, subFormId: string) =>
     if (subFormId) {
       key = `${key}_${subFormId}`;
     }
-
     return state[key]?.find((page, index) => index === pageIndex);
   });
 
@@ -167,52 +114,25 @@ export const getSection = (
       ?.sections.find((section, index) => index === sectionIndex);
   });
 
-export const getSectionsCount = (pageIndex: number, subFormId: string) =>
+export const getImportedSectionsByTemplateId = (subFormId: string) =>
   createSelector(selectFormConfigurationState, (state) => {
     let key = 'pages';
     if (subFormId) {
       key = `${key}_${subFormId}`;
     }
-    return state[key]?.find((page, index) => index === pageIndex)?.sections
-      .length;
-  });
-
-export const getTaskCountBySection = (
-  pageIndex: number,
-  sectionId: string,
-  subFormId: string
-) =>
-  createSelector(selectFormConfigurationState, (state) => {
-    let key = 'pages';
-    if (subFormId) {
-      key = `${key}_${subFormId}`;
-    }
-    const page = state[key]?.find((p, index) => index === pageIndex);
-
-    const questionsInSection = {};
-    const questionIdByLogic = {};
-    let count = 0;
-    if (page) {
-      for (const logic of page.logics)
-        questionIdByLogic[logic.id] = logic.questionId;
-      for (const question of page.questions) {
-        if (question.sectionId === sectionId) {
-          count++;
-          questionsInSection[question.id] = 1;
+    const importedSectionsByTemplateId = {};
+    for (const page of state[key] || []) {
+      for (const section of page.sections) {
+        if (section.isImported) {
+          if (!importedSectionsByTemplateId[section.templateId])
+            importedSectionsByTemplateId[section.templateId] = {};
+          importedSectionsByTemplateId[section.templateId][
+            section.externalSectionId
+          ] = 1;
         }
       }
-      for (const question of page.questions) {
-        if (
-          question.sectionId !== sectionId &&
-          question.sectionId.startsWith('AQ_') &&
-          questionsInSection[
-            questionIdByLogic[question.sectionId.substr(3)]
-          ] === 1
-        )
-          count++;
-      }
     }
-    return count;
+    return importedSectionsByTemplateId;
   });
 
 export const getTaskCountByPage = (pageIndex: number, subFormId: string) =>
@@ -261,7 +181,10 @@ export const getQuestionIds = (subFormId: string) =>
       acc[index] = {};
       curr.questions.forEach((question) => {
         if (acc[index][question.sectionId]) {
-          acc[index][question.sectionId].push(question.id);
+          acc[index][question.sectionId] = [
+            ...acc[index][question.sectionId],
+            question.id
+          ];
         } else {
           acc[index][question.sectionId] = [question.id];
         }
@@ -269,21 +192,6 @@ export const getQuestionIds = (subFormId: string) =>
       return acc;
     }, {});
   });
-
-export const getQuestion = (
-  pageIndex: number,
-  sectionId: string,
-  questionIndex: number
-) =>
-  createSelector(selectFormConfigurationState, (state) =>
-    state.pages
-      ?.find((page, index) => index === pageIndex)
-      ?.questions.find(
-        (question) =>
-          question.sectionId === sectionId &&
-          question.position === questionIndex + 1
-      )
-  );
 
 export const getQuestionByID = (
   pageIndex: number,
@@ -313,6 +221,26 @@ export const getQuestionByQuestionID = (
       ?.find((page, index) => index === pageIndex)
       ?.questions.find((question) => question.id === questionId)
   );
+
+export const getPageWiseQuestionLogics = (subFormId: string) =>
+  createSelector(selectFormConfigurationState, (state) => {
+    let key = 'pages';
+    if (subFormId) {
+      key = `${key}_${subFormId}`;
+    }
+    return state[key]?.reduce((acc, curr, index) => {
+      acc[index] = curr.questions.reduce((questionLogicsAcc, currQuestion) => {
+        const logics = curr.logics.filter(
+          (logic) => logic.questionId === currQuestion.id
+        );
+        questionLogicsAcc[currQuestion.id] = {
+          logics
+        };
+        return questionLogicsAcc;
+      }, {});
+      return acc;
+    }, {});
+  });
 
 export const getQuestionLogics = (
   pageIndex: number,
@@ -350,19 +278,23 @@ export const getPageWiseSectionQuestions = (subFormId: string) =>
     if (subFormId) {
       key = `${key}_${subFormId}`;
     }
-
     return state[key]?.reduce((acc, curr, index) => {
-      acc[index] = curr.sections.reduce((sectionAcc, sectionCurr) => {
-        sectionAcc[sectionCurr.id] = curr.questions.filter(
-          (question) => question.sectionId === sectionCurr.id
+      acc[index] = curr.sections.reduce((sectionsAcc, currSection) => {
+        const questions = curr.questions.filter(
+          (question) => question.sectionId === currSection.id
         );
-        return sectionAcc;
+        sectionsAcc[currSection.id] = {
+          section: currSection,
+          questions
+        };
+        const { sections, questions: ques, logics, ...page } = curr;
+        return { ...sectionsAcc, page, pageQuestionsCount: ques.length };
       }, {});
       return acc;
     }, {});
   });
 
-export const getPageWiseLogicSectionAskQuestions = (subFormId: string) =>
+export const getPageWiseLogicsAskQuestions = (subFormId: string) =>
   createSelector(selectFormConfigurationState, (state) => {
     let key = 'pages';
     if (subFormId) {
@@ -379,13 +311,31 @@ export const getPageWiseLogicSectionAskQuestions = (subFormId: string) =>
     }, {});
   });
 
+export const getPageWiseLogicSectionAskEvidenceQuestions = (
+  subFormId: string
+) =>
+  createSelector(selectFormConfigurationState, (state) => {
+    let key = 'pages';
+    if (subFormId) {
+      key = `${key}_${subFormId}`;
+    }
+    return state[key]?.reduce((acc, curr, index) => {
+      acc[index] = curr.logics.reduce((logicAcc, logicCurr) => {
+        logicAcc[logicCurr.id] = curr.questions.filter(
+          (question) => question.sectionId === `EVIDENCE_${logicCurr.id}`
+        );
+        return logicAcc;
+      }, {});
+      return acc;
+    }, {});
+  });
+
 export const getPageWiseSections = (subFormId: string) =>
   createSelector(selectFormConfigurationState, (state) => {
     let key = 'pages';
     if (subFormId) {
       key = `${key}_${subFormId}`;
     }
-
     return state[key]?.reduce((acc, curr, index) => {
       acc[index] = curr.sections;
       return acc;
@@ -428,14 +378,10 @@ export const getQuestionIndexes = (subFormId: string) =>
     }
     return state[key]?.reduce((acc, curr, index) => {
       acc[index] = {};
-      curr.sections.forEach((section, sectionIndex) => {
-        acc[index][sectionIndex] = new Array(
-          curr.questions.filter(
-            (question) => question.sectionId === section.id
-          ).length
-        )
-          .fill(0)
-          .map((v, i) => i);
+      curr.sections.forEach((section) => {
+        acc[index][section.id] = curr.questions.filter(
+          (question) => question.sectionId === section.id
+        );
       });
       return acc;
     }, {});

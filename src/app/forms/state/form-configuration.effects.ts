@@ -6,8 +6,7 @@ import {
   catchError,
   concatMap,
   mergeMap,
-  switchMap,
-  tap
+  switchMap
 } from 'rxjs/operators';
 import { forkJoin, of } from 'rxjs';
 
@@ -19,14 +18,13 @@ import {
 import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
 import { LoginService } from 'src/app/components/login/services/login.service';
 import { formConfigurationStatus } from 'src/app/app.constants';
-import { Router } from '@angular/router';
+
 @Injectable()
 export class FormConfigurationEffects {
   constructor(
     private actions$: Actions,
     private raceDynamicFormService: RaceDynamicFormService,
-    private loginService: LoginService,
-    private router: Router
+    private loginService: LoginService
   ) {}
 
   createForm$ = createEffect(() =>
@@ -36,7 +34,11 @@ export class FormConfigurationEffects {
         this.raceDynamicFormService.createForm$(action.formMetadata).pipe(
           map((response) =>
             FormConfigurationApiActions.createFormSuccess({
-              formMetadata: { id: response.id, ...action.formMetadata },
+              formMetadata: {
+                id: response.id,
+                ...action.formMetadata,
+                embeddedFormId: response.embeddedFormId
+              },
               formSaveStatus: formConfigurationStatus.saved
             })
           ),
@@ -89,6 +91,9 @@ export class FormConfigurationEffects {
               forkJoin([
                 this.raceDynamicFormService.publishAuthoredFormDetail$({
                   formlistID: authoredFormDetail.formListId,
+                  isEmbeddedForm:
+                    formDetail.formMetadata.formType ===
+                    formConfigurationStatus.embedded,
                   updateAuthoredForm: {
                     formStatus: formConfigurationStatus.published,
                     formDetailPublishStatus: formConfigurationStatus.published,
@@ -164,6 +169,9 @@ export class FormConfigurationEffects {
               forkJoin([
                 this.raceDynamicFormService.publishAuthoredFormDetail$({
                   formlistID: authoredFormDetail.formListId,
+                  isEmbeddedForm:
+                    formDetail.formMetadata.formType ===
+                    formConfigurationStatus.embedded,
                   updateAuthoredForm: {
                     formStatus: formConfigurationStatus.published,
                     formDetailPublishStatus: formConfigurationStatus.published,
@@ -310,6 +318,11 @@ export class FormConfigurationEffects {
               FormConfigurationApiActions.updateFormSuccess({
                 formMetadata: action.formMetadata,
                 formSaveStatus: formConfigurationStatus.saved
+              })
+            ),
+            map(() =>
+              BuilderConfigurationActions.updateCreateOrEditForm({
+                createOrEditForm: false
               })
             ),
             catchError((error) => {

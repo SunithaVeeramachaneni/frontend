@@ -10,13 +10,16 @@
       [formStatus]="formConfigurationStatus.published"
       formDetailType="submitted"
       (formDetailAction)="roundsDetailActionHandler($event)"
+      [shiftObj]="shiftObj"
     ></app-form-detail>
   </div>
   <span class="custom-form-field-gray-color search">
     <span class="no-of-rounds">
       <ng-container *ngIf="(isLoading$ | async) === false; else loadingRounds">
-        <span class="rounds-count"> {{ roundsCount }} &nbsp; </span>
-        <span class="rounds-text">{{
+        <span id="roundsCount" class="rounds-count">
+          {{ roundsCount }} &nbsp;
+        </span>
+        <span id="roundsCountText" class="rounds-text">{{
           'roundsPlural'
             | translate
               : {
@@ -34,8 +37,9 @@
       </ng-template>
     </span>
     <mat-form-field appearance="outline">
-      <mat-icon matPrefix class="searchIcon">search</mat-icon>
+      <mat-icon id="SearchIcon" matPrefix class="searchIcon">search</mat-icon>
       <input
+        id="roundsSearchText"
         matInput
         type="text"
         [placeholder]="'search' | translate"
@@ -44,6 +48,7 @@
       />
 
       <svg-icon
+        id="roundsFilterIcon"
         icon="icon-filterIcon"
         matSuffix
         cdkOverlayOrigin
@@ -110,17 +115,42 @@
       ></app-assigned-to>
     </mat-menu>
   </ng-container>
-  <button
-    class="hide-mat-menu"
-    mat-button
-    [matMenuTriggerFor]="dueDateMenu"
-    #dueDateMenuTrigger="matMenuTrigger"
-  ></button>
-  <mat-menu #dueDateMenu="matMenu">
+
+  <div *ngIf="openMenuStateStartDate">
     <app-date-picker
-      [selectedDate]="selectedDate"
+      [selectedDate]="selectedStartDate"
+      (dateChange)="startDateChangeHandler($event)"
+      (closed)="startDateClosedHandler()"
+      *ngIf="openMenuStateStartDate"
+    ></app-date-picker>
+  </div>
+
+  <div *ngIf="openMenuStateDueDate">
+    <app-date-picker
+      [selectedDate]="selectedDueDate"
       (dateChange)="dateChangeHandler($event)"
       (closed)="dueDateClosedHandler()"
+      *ngIf="openMenuStateDueDate"
     ></app-date-picker>
-  </mat-menu>
+  </div>
+
+  <ng-container>
+    <button
+      id="roundsMenuBtn"
+      class="hide-mat-menu"
+      mat-button
+      [matMenuTriggerFor]="shiftMenu"
+      #shiftMenuTrigger="matMenuTrigger"
+    ></button>
+    <mat-menu #shiftMenu="matMenu">
+      <app-shift-menu-item
+        [plantShiftObj]="plantToShift"
+        [plantId]="plantSelected"
+        [dropdownPosition]="shiftPosition"
+        (shiftChange)="shiftChangeHandler($event)"
+        *ngIf="plantSelected"
+      >
+      </app-shift-menu-item>
+    </mat-menu>
+  </ng-container>
 </ng-container>

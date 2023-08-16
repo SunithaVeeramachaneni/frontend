@@ -1,0 +1,232 @@
+@import '../../../../scss/colors.scss';
+
+.form-header-modal {
+  margin-top: 30px;
+
+  .form-content {
+    height: calc(100vh - 75px);
+
+    .form-details {
+      background-color: $white;
+      width: 600px;
+      border-radius: 5px;
+      margin: 15px auto;
+      padding: 49px;
+      box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.5);
+      overflow-y: auto;
+      max-height: calc(100vh - 220px);
+
+      .heading {
+        font-size: 130%;
+        font-weight: 500;
+        color: $black;
+        margin: 5px;
+      }
+
+      .margin {
+        margin: 10px 5px;
+      }
+
+      .horizontal-line {
+        border: 1px solid $border-color;
+        margin: 20px 0;
+      }
+
+      .form-name-description {
+        font-weight: 500;
+        font-size: 110%;
+        color: $black;
+        margin: 5px;
+        margin-top: 25px;
+      }
+
+      .sub-heading {
+        font-weight: 400;
+        font-size: 110%;
+        color: $text-color;
+        margin: 10px 5px;
+      }
+
+      .radio-btns {
+        position: relative;
+        top: 15px;
+        left: 7px;
+      }
+
+      ::ng-deep
+        .mat-radio-button.mat-accent.mat-radio-checked
+        .mat-radio-outer-circle {
+        border-color: $blue-main;
+      }
+
+      ::ng-deep .mat-radio-button.mat-accent .mat-radio-inner-circle {
+        background-color: $blue-main;
+      }
+
+      ::ng-deep .mat-ripple-element {
+        display: none !important;
+      }
+
+      ::ng-deep .mat-radio-button.mat-radio-disabled .mat-radio-outer-circle {
+        border-color: $disabled-color !important;
+      }
+
+      ::ng-deep .mat-radio-button.mat-radio-disabled .mat-radio-inner-circle {
+        background-color: $disabled-color !important;
+      }
+
+      .radio-btn-text {
+        font-weight: 500;
+        font-size: 110%;
+        color: $black;
+        position: relative;
+        left: 10px;
+      }
+
+      .radio-sub-text {
+        font-weight: 400;
+        font-size: 90%;
+        color: $text-color;
+        opacity: 0.8;
+        margin: 3px 0px 5px 35px;
+      }
+
+      .form-name {
+        ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
+          padding: 6px 0px 13px 0 !important;
+        }
+      }
+
+      .error-fields {
+        white-space: nowrap;
+        margin-top: 15px;
+        margin-left: -10px;
+      }
+
+      .tags {
+        ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
+          padding: 17px 0 0 0 !important;
+        }
+      }
+
+      .tags-mat-chips {
+        margin: 5px 5px !important;
+      }
+    }
+  }
+  .close-icon {
+    width: 20px;
+    height: 30px;
+  }
+}
+
+.add-button {
+  color: $blue-main;
+  border: none;
+  background: none;
+  float: right;
+  position: relative;
+  bottom: 14px;
+  right: 5px;
+}
+.additional-details {
+  background-color: $blue7;
+  border-radius: 8px;
+  margin-top: 33px;
+  height: 40px;
+}
+
+.additional-details-text {
+  font-weight: bold;
+  font-size: 120%;
+  position: relative;
+  top: 13px;
+  left: 10px;
+  margin: 0px;
+  padding-bottom: 10px;
+}
+
+.label-value-text {
+  display: flex;
+  margin: 15px 0 5px 10px;
+}
+
+.label,
+.value {
+  font-size: 120%;
+  font-weight: 500;
+}
+
+.cancel-icon {
+  position: relative;
+  top: 15px;
+  left: 35px;
+}
+
+.mat-dialog-container {
+  height: 10px;
+  width: 10px;
+  float: left;
+}
+
+.remove-btn {
+  color: $disabled-color;
+  float: right;
+  cursor: pointer;
+  margin-top: 5px;
+}
+
+::ng-deep .mat-option-text {
+  font-size: 100%;
+}
+.mat-error {
+  margin-top: 16px;
+  margin-left: 20px;
+}
+
+.formtype-flex {
+  display: flex;
+
+  input[type='radio'] {
+    width: 6%;
+    height: 17px;
+    position: relative;
+    top: 18px;
+  }
+
+  .formtype-style {
+    border: 2px solid $gray;
+    border-radius: 12px;
+    padding: 5px;
+    margin: 5px;
+  }
+}
+
+.buttons {
+  border-bottom: 1px solid $border-color;
+  min-height: 34px;
+
+  .next-btn {
+    background-color: $radio-button-checked;
+    border-color: $radio-button-checked;
+    float: right;
+    margin-right: 22px;
+    font-weight: normal;
+    line-height: normal;
+    height: 34px;
+  }
+
+  .skip-btn {
+    float: right;
+    color: $radio-button-checked;
+    height: 34px;
+    font-weight: normal;
+    line-height: normal;
+    border: 1px solid $blue-main;
+  }
+
+  ::ng-deep .mat-raised-button[disabled] {
+    color: $disabled-text-color;
+    background-color: $gray2-bg;
+  }
+}

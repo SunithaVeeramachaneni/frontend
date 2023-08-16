@@ -9,29 +9,17 @@
       (formDetailAction)="formDetailActionHandler()"
       (scheduleRoundPlan)="openScheduleConfigHandler($event)"
       [formStatus]="formConfigurationStatus.published"
-      [scheduleConfiguration]="formScheduleConfigurations[roundPlanDetail?.id]"
+      [scheduleConfiguration]="formScheduleConfigurations[formDetail?.id]"
+      [shiftObj]="shiftIdNameMap"
     ></app-form-detail>
   </div>
-  <ng-container *ngIf="users$ | async">
-    <app-schedule-configuration
-      [@slideInOut]="scheduleConfigState"
-      [formDetail]="scheduleFormDetail"
-      [hidden]="hideScheduleConfig"
-      [moduleName]="'RDF'"
-      [assigneeDetails]="assigneeDetails"
-      (scheduleConfigEvent)="scheduleConfigEventHandler($event)"
-      (scheduleConfig)="scheduleConfigHandler($event)"
-      (viewForms)="viewFormsHandler($event)"
-    ></app-schedule-configuration>
-  </ng-container>
-
   <span class="custom-form-field-gray-color form-categories">
     <mat-button-toggle-group
       name="forms"
       aria-label="Forms"
       [formControl]="formCategory"
     >
-      <mat-button-toggle value="all"
+      <mat-button-toggle value="all" id="formsCount"
         >{{
           'all'
             | translate
@@ -40,7 +28,7 @@
                 }
         }}
       </mat-button-toggle>
-      <mat-button-toggle value="scheduled"
+      <mat-button-toggle value="scheduled" id="formsCountScheduled"
         >{{
           'scheduled'
             | translate
@@ -49,7 +37,7 @@
                 }
         }}
       </mat-button-toggle>
-      <mat-button-toggle value="unscheduled">{{
+      <mat-button-toggle value="unscheduled" id="formCountUnscheduled">{{
         'unscheduled'
           | translate
             : {
@@ -58,8 +46,11 @@
       }}</mat-button-toggle>
     </mat-button-toggle-group>
     <mat-form-field appearance="outline" class="search">
-      <mat-icon matPrefix class="searchIcon">search</mat-icon>
+      <mat-icon id="formsSearchIcon" matPrefix class="searchIcon"
+        >search</mat-icon
+      >
       <input
+        id="formsSearchText"
         matInput
         type="text"
         [placeholder]="'search' | translate"
@@ -68,6 +59,7 @@
       />
 
       <svg-icon
+        id="formsFilterIcon"
         icon="icon-filterIcon"
         cdkOverlayOrigin
         #trigger="cdkOverlayOrigin"
@@ -96,7 +88,10 @@
   </ng-template>
 </div>
 <ng-container *ngIf="userInfo$ | async">
-  <div *ngIf="(filteredForms$ | async) && (isLoading$ | async) === false" class="forms-list">
+  <div
+    *ngIf="(filteredForms$ | async) && (isLoading$ | async) === false"
+    class="forms-list"
+  >
     <cwp-dynamictable
       [ngClass]="{
         'remove-zindex': zIndexDelay === 400 || zIndexScheduleDelay === 400

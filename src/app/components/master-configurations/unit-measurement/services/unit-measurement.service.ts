@@ -5,7 +5,7 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { groupBy } from 'lodash-es';
 
-import { ErrorInfo, UnitOfMeasurementList } from 'src/app/interfaces';
+import { ErrorInfo } from 'src/app/interfaces';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
 import { ToastService } from 'src/app/shared/toast';
@@ -37,7 +37,8 @@ export class UnitMeasurementService {
       searchKey: string;
       fetchType: string;
     },
-    filter?: { [x: string]: string }
+    filter?: { [x: string]: string },
+    info: ErrorInfo = {} as ErrorInfo
   ) {
     if (
       ['load', 'search'].includes(queryParams?.fetchType) ||
@@ -52,10 +53,18 @@ export class UnitMeasurementService {
       params.set('status', filter?.status ?? '');
       params.set('symbol', filter?.symbol ?? '');
       params.set('unitType', filter?.unitType ?? '');
+      const {
+        displayToast,
+        failureResponse = { items: [], next: null, filters: {} }
+      } = info;
       return this._appService
         ._getResp(
           environment.masterConfigApiUrl,
-          'unit-of-measurement?' + params.toString()
+          'unit-of-measurement?' + params.toString(),
+          {
+            displayToast,
+            failureResponse
+          }
         )
         .pipe(map((data) => this.formatUnitOfMeasurementResponse(data)));
     } else {
@@ -199,7 +208,7 @@ export class UnitMeasurementService {
       value: string;
     }[]
   > {
-    return this._appService._getLocal('', 'assets/json/uom-filter.json', info);
+    return this._appService._getLocal('', '/assets/json/uom-filter.json', info);
   }
 
   handleError(error: any) {
@@ -212,19 +221,43 @@ export class UnitMeasurementService {
     });
   }
 
+  private formatUOMByOrder(rows) {
+    let order = 0;
+    const formattedRows = [];
+    const groupedRows = groupBy(rows, 'unitList.name');
+    Object.values(groupedRows).forEach((value) => {
+      if (value?.length > 0) {
+        const sortedRows = value
+          .sort(
+            (a, b) =>
+              new Date(a?.createdAt).getTime() -
+              new Date(b?.createdAt).getTime()
+          )
+          .map((row) => ({
+            ...row,
+            order: order++
+          }));
+        formattedRows.push(...sortedRows);
+      }
+    });
+    return formattedRows.sort((a, b) => a.order - b.order);
+  }
+
   private formatUnitOfMeasurementResponse(resp) {
-    const groupedData: any = groupBy(resp?.items, 'unitList.name');
-    const rows = resp?.items
-      ?.sort(
-        (a, b) =>
-          new Date(b?.createdAt).getTime() - new Date(a?.createdAt).getTime()
-      )
-      ?.map((item: any) => ({
-        ...item,
-        noOfUnits: groupedData[item?.unitList?.name]?.length ?? 0,
-        unitType: item?.unitList?.name,
-        isDefaultText: item?.isDefault ? 'Default' : ''
-      }));
+    const groupedData = groupBy(resp?.items, 'unitList.name');
+    const rows = this.formatUOMByOrder(
+      resp?.items
+        ?.sort(
+          (a, b) =>
+            new Date(b?.createdAt).getTime() - new Date(a?.createdAt).getTime()
+        )
+        ?.map((item: any) => ({
+          ...item,
+          noOfUnits: groupedData[item?.unitList?.name]?.length ?? 0,
+          unitType: item?.unitList?.name,
+          isDefaultText: item?.isDefault ? 'Default' : ''
+        }))
+    );
     const count = rows?.length || 0;
     const next = resp?.next;
     const filters = resp?.filters;

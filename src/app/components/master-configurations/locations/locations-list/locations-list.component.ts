@@ -19,11 +19,12 @@ import {
   distinctUntilChanged,
   filter,
   map,
-  mergeMap,
   switchMap,
   takeUntil,
   tap
 } from 'rxjs/operators';
+import { uniqBy } from 'lodash-es';
+
 import {
   defaultLimit,
   permissions as perms,
@@ -31,7 +32,6 @@ import {
 } from 'src/app/app.constants';
 import {
   CellClickActionEvent,
-  Count,
   FormTableUpdate,
   Permission,
   TableEvent,
@@ -42,7 +42,7 @@ import { LocationService } from '../services/location.service';
 import { downloadFile } from 'src/app/shared/utils/fileUtils';
 import { LoginService } from 'src/app/components/login/services/login.service';
 import { slideInOut } from 'src/app/animations';
-import { UploadResponseModalComponent } from '../../upload-response-modal/upload-response-modal.component';
+import { UploadResponseModalComponent } from '../../../../shared/components/upload-response-modal/upload-response-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 import { HeaderService } from 'src/app/shared/services/header.service';
@@ -58,7 +58,7 @@ import { PlantService } from '../../plants/services/plant.service';
 })
 export class LocationsListComponent implements OnInit, OnDestroy {
   readonly perms = perms;
-  allParentsLocations: any[] = [];
+  allParentsLocations: any = { data: [] };
   columns: Column[] = [
     {
       id: 'name',
@@ -252,7 +252,6 @@ export class LocationsListComponent implements OnInit, OnDestroy {
 
   isPopoverOpen = false;
   filterJson = [];
-  status = ['Open', 'In-progress', 'Submitted'];
   filter = {
     plant: ''
   };
@@ -289,7 +288,6 @@ export class LocationsListComponent implements OnInit, OnDestroy {
           this.plantsIdNameMap[`${plantId} - ${name}`] = id;
           return `${plantId} - ${name}`;
         });
-
         this.filterJson = [
           {
             column: 'plant',
@@ -310,12 +308,10 @@ export class LocationsListComponent implements OnInit, OnDestroy {
         takeUntil(this.onDestroy$),
         tap((value: string) => {
           this.locationService.fetchLocations$.next({ data: 'search' });
-          this.reloadLocationCount(value.toLocaleLowerCase());
         })
       )
       .subscribe(() => this.isLoading$.next(true));
     this.getDisplayedLocations();
-    this.reloadLocationCount(null);
     this.configOptions.allColumns = this.columns;
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
@@ -365,9 +361,10 @@ export class LocationsListComponent implements OnInit, OnDestroy {
           { items: allPlants = [] }
         ]) => {
           this.allPlants = allPlants.filter((plant) => !plant._deleted);
-          this.allParentsLocations = allLocations.filter(
-            (location) => !location._deleted
-          );
+          this.allParentsLocations.data = uniqBy(
+            [...(this.allParentsLocations?.data || []), ...allLocations],
+            'id'
+          ).filter((location) => !location._deleted);
           this.dataFetchingComplete = true;
           if (this.skip === 0) {
             this.configOptions = {
@@ -386,13 +383,20 @@ export class LocationsListComponent implements OnInit, OnDestroy {
                 });
                 break;
               case 'add':
-                initial.data = [newForm, ...initial.data];
+                initial.data = [...newForm, ...initial.data];
+                this.allParentsLocations = {
+                  data: [...newForm, ...this.allParentsLocations.data]
+                };
                 break;
               case 'edit':
-                const formIdx = initial.data.findIndex(
+                let formIdx = initial.data.findIndex(
                   (item) => item.id === form.id
                 );
-                initial.data[formIdx] = newForm;
+                initial.data[formIdx] = newForm[0];
+                formIdx = this.allParentsLocations.data.findIndex(
+                  (item) => item.id === form.id
+                );
+                this.allParentsLocations.data[formIdx] = newForm[0];
                 break;
               default:
               //Do nothing
@@ -433,8 +437,8 @@ export class LocationsListComponent implements OnInit, OnDestroy {
   }
 
   getLocations() {
-    return this.locationService
-      .getLocationsList$(
+    return (
+      this.locationService.getLocationsList$(
         {
           next: this.nextToken,
           limit: this.limit,
@@ -442,22 +446,27 @@ export class LocationsListComponent implements OnInit, OnDestroy {
           fetchType: this.fetchType
         },
         this.filter
-      )
-      .pipe(
-        mergeMap(({ count, rows, next }) => {
-          this.nextToken = next;
-          this.isLoading$.next(false);
-          return of(rows);
-        }),
-        catchError(() => {
-          this.isLoading$.next(false);
-          return of([]);
-        })
-      );
+      ) as Observable<any>
+    ).pipe(
+      map(({ count, rows, next }) => {
+        this.nextToken = next;
+        if (count !== undefined && count !== null) {
+          this.reloadLocationCount(count);
+        }
+        this.isLoading$.next(false);
+        return rows;
+      }),
+      catchError(() => {
+        this.isLoading$.next(false);
+        return of([]);
+      })
+    );
   }
 
   addOrUpdateLocation(locationData) {
+    this.isLoading$.next(true);
     if (locationData?.status === 'add') {
+      this.addEditCopyDeleteLocations = true;
       if (this.searchLocation.value) {
         this.locationService.fetchLocations$.next({ data: 'search' });
       } else {
@@ -470,7 +479,6 @@ export class LocationsListComponent implements OnInit, OnDestroy {
         text: 'Location created successfully!',
         type: 'success'
       });
-      this.addEditCopyDeleteLocations = true;
       this.locationsCountUpdate$.next(1);
     } else if (locationData?.status === 'edit') {
       this.addEditCopyDeleteLocations = true;
@@ -481,12 +489,16 @@ export class LocationsListComponent implements OnInit, OnDestroy {
           action: 'edit',
           form: locationData.data
         });
+        this.allParentsLocations.data = this.allParentsLocations.data.map(
+          (loc) => (loc.id === locationData.data.id ? locationData.data : loc)
+        );
         this.toast.show({
           text: 'Location updated successfully!',
           type: 'success'
         });
       }
     }
+    this.nextToken = '';
     this.locationService.fetchLocations$.next({ data: 'load' });
   }
 
@@ -523,7 +535,7 @@ export class LocationsListComponent implements OnInit, OnDestroy {
   rowLevelActionHandler = ({ data, action }): void => {
     switch (action) {
       case 'edit':
-        this.locationEditData = { ...data };
+        this.locationEditData = { locationData: data };
         this.locationAddOrEditOpenState = 'in';
         break;
       case 'delete':
@@ -539,9 +551,10 @@ export class LocationsListComponent implements OnInit, OnDestroy {
     const { columnId, row } = event;
     switch (columnId) {
       case 'name':
+      case 'plant':
       case 'description':
       case 'model':
-      case 'parentId':
+      case 'parent':
         this.showLocationDetail(row);
         break;
       default:
@@ -580,7 +593,7 @@ export class LocationsListComponent implements OnInit, OnDestroy {
   onCloseLocationDetailedView(event) {
     this.openLocationDetailedView = event.status;
     if (event.data !== '') {
-      this.locationEditData = event.data;
+      this.locationEditData = { locationData: event.data };
       this.locationAddOrEditOpenState = 'in';
     }
   }
@@ -603,9 +616,9 @@ export class LocationsListComponent implements OnInit, OnDestroy {
         this.parentInformation = allLocations.items.filter(
           (location) => !location._deleted
         );
-        this.allParentsLocations = this.parentInformation;
+        this.allParentsLocations.data = this.parentInformation;
       } else {
-        this.allParentsLocations = [];
+        this.allParentsLocations.data = [];
       }
     });
   }
@@ -623,10 +636,11 @@ export class LocationsListComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe((res) => {
       if (res.data) {
         this.getAllLocations();
-        this.addEditCopyDeleteLocations = true;
         this.nextToken = '';
+        this.addEditCopyDeleteLocations = true;
+        this.isLoading$.next(true);
+        this.locationsCountUpdate$.next(res.successCount);
         this.locationService.fetchLocations$.next({ data: 'load' });
-        this.reloadLocationCount(this.searchLocation.value.toLocaleLowerCase());
         this.toast.show({
           text: 'Locations uploaded successfully!',
           type: 'success'
@@ -650,7 +664,7 @@ export class LocationsListComponent implements OnInit, OnDestroy {
         });
       }
       if (data.parentId) {
-        const parent = this.allParentsLocations.find(
+        const parent = this.allParentsLocations.data.find(
           (d) => d.id === data.parentId
         );
 
@@ -668,9 +682,8 @@ export class LocationsListComponent implements OnInit, OnDestroy {
     return tableData;
   };
 
-  reloadLocationCount(searchTerm: string) {
-    this.locationsListCount$ =
-      this.locationService.getLocationCount$(searchTerm);
+  reloadLocationCount(rawCount: number) {
+    this.locationsListCount$ = of(rawCount);
     this.locationsCount$ = combineLatest([
       this.locationsListCount$,
       this.locationsCountUpdate$

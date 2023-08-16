@@ -7,20 +7,21 @@
       <div class="main-container">
         <div class="locations-header">
           <div>
-            <h2 class="heading" translate="locations"></h2>
+            <h2
+              id="locationListHeading"
+              class="heading"
+              translate="locations"
+            ></h2>
           </div>
           <div>
             <span
               class="no-of-location"
-              *ngIf="
-                locationsCount$ | async as totalCount;
-                else loadingLocations
-              "
+              *ngIf="locationsCount$ | async as totalCount"
             >
-              <span class="location-count">
+              <span id="locationListTotalCount" class="location-count">
                 {{ totalCount }}
               </span>
-              <span class="location-text">{{
+              <span id="locationListCountText" class="location-text">{{
                 'locations'
                   | translate
                     : {
@@ -28,18 +29,17 @@
                       }
               }}</span>
             </span>
-            <ng-template #loadingLocations>
-              <ngx-shimmer-loading
-                class="loading-locations"
-                [width]="'100%'"
-                [height]="'30px'"
-              >
-              </ngx-shimmer-loading>
-            </ng-template>
+
             <span class="custom-form-field-gray-color search">
               <mat-form-field appearance="outline">
-                <mat-icon matPrefix class="searchIcon">search</mat-icon>
+                <mat-icon
+                  id="locationListSearchIcon"
+                  matPrefix
+                  class="searchIcon"
+                  >search</mat-icon
+                >
                 <input
+                  id="locationListSearchText"
                   matInput
                   type="text"
                   [placeholder]="'search' | translate"
@@ -47,6 +47,7 @@
                   [formControl]="searchLocation"
                 />
                 <svg-icon
+                  id="locationListFilterIcon"
                   matSuffix
                   cdkOverlayOrigin
                   class="common-filter-icon"
@@ -77,6 +78,7 @@
             </ng-template>
 
             <button
+              id="locationListCreateBtn"
               mat-raised-button
               [matMenuTriggerFor]="createMenu"
               translate="createNew"
@@ -88,21 +90,31 @@
             ></button>
             <mat-menu #createMenu="matMenu">
               <button
+                id="locationListMenuBtn"
                 mat-menu-item
                 (click)="uploader.click()"
                 class="menu-buttons"
                 *appCheckUserHasPermission="[perms.importLocations]"
               >
-                <svg-icon icon="icon-excel1" class="menu-icons"></svg-icon>
-                <span translate="uploadExcel"></span>
+                <svg-icon
+                  id="locationListExcelIcon"
+                  icon="icon-excel1"
+                  class="menu-icons"
+                ></svg-icon>
+                <span
+                  id="locationListUploadExcel"
+                  translate="uploadExcel"
+                ></span>
               </button>
               <button
+                id="locationListAddMenuBtn"
                 mat-menu-item
                 (click)="addManually()"
                 class="menu-buttons"
                 *appCheckUserHasPermission="[perms.createLocation]"
               >
                 <svg-icon
+                  id="locationListAddIcon"
                   icon="icon-add-manually"
                   class="add-manually-icon"
                 ></svg-icon>
@@ -111,24 +123,36 @@
             </mat-menu>
 
             <button
+              id="locationListMoreMenuBtn"
               mat-raised-button
               [matMenuTriggerFor]="moreMenu"
               class="more-btn"
               *appCheckUserHasPermission="[perms.importLocations]"
             >
-              <mat-icon class="menu-icon">more_horiz</mat-icon>
+              <mat-icon id="locationListMoreMenuIcon" class="menu-icon"
+                >more_horiz</mat-icon
+              >
             </button>
             <mat-menu #moreMenu="matMenu">
               <button
+                id="locationListExportExcel"
                 (click)="exportAsXLSX()"
                 mat-menu-item
                 class="menu-buttons"
               >
-                <svg-icon icon="icon-excel1" class="menu-icons"></svg-icon>
-                <span translate="downloadTemplate"></span>
+                <svg-icon
+                  id="locationListIconExcel"
+                  icon="icon-excel1"
+                  class="menu-icons"
+                ></svg-icon>
+                <span
+                  id="locationListDownloadTemplate"
+                  translate="downloadTemplate"
+                ></span>
               </button>
             </mat-menu>
             <input
+              id="locationListUploadFile"
               id="upload"
               hidden
               type="file"

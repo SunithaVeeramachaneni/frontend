@@ -2,5 +2,6 @@
   <div *ngIf="currentRouteUrl === routingUrls.formsTemplates.url">
     <app-template-list></app-template-list>
   </div>
+  <button #triggerModalOnRefresh (click)="openDialog()"></button>
   <router-outlet></router-outlet>
 </div>

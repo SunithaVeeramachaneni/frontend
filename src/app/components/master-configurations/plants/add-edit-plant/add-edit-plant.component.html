@@ -1,16 +1,26 @@
 <div id="add-edit-slider">
   <mat-card [formGroup]="plantForm">
     <div class="top-bar">
-      <svg-icon icon="icon-close" class="cancel" (click)="cancel()"></svg-icon>
-      <h1 class="heading">{{ plantTitle }}</h1>
+      <svg-icon
+        id="addEditPlantCancelBtn"
+        icon="icon-close"
+        class="cancel"
+        (click)="cancel()"
+      ></svg-icon>
+      <h1 id="addEditPlantTitle" class="heading">{{ plantTitle }}</h1>
     </div>
     <div class="container-div">
       <p class="image-container">
         <span *ngIf="!plantImage?.length">
-          <svg-icon icon="icon-default-plant" class="image-contain"></svg-icon>
+          <svg-icon
+            id="addEditPlantIcon"
+            icon="icon-default-plant"
+            class="image-contain"
+          ></svg-icon>
         </span>
 
         <img
+          id="addEditPlantImg"
           [src]="plantImage"
           alt="Image"
           class="image-contain"
@@ -19,13 +29,17 @@
       </p>
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100 m-b-10">
-          <mat-label translate="nameMandatory"></mat-label>
+          <mat-label
+            id="addEditPlantName"
+            translate="nameMandatory"
+          ></mat-label>
           <input
             matInput
             [placeholder]="'nameMandatory' | translate"
             formControlName="name"
           />
           <mat-error
+            id="addEditPlantNameError"
             *ngIf="processValidationErrors('name')"
             class="m-t-5 error-fields"
           >
@@ -41,13 +55,17 @@
       </p>
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100 m-b-10">
-          <mat-label translate="plantIdMandatory"></mat-label>
+          <mat-label
+            id="addEditPlantId"
+            translate="plantIdMandatory"
+          ></mat-label>
           <input
             matInput
             [placeholder]="'plantIdMandatory' | translate"
             formControlName="plantId"
           />
           <mat-error
+            id="addEditPlantIdError"
             *ngIf="processValidationErrors('plantId')"
             class="m-t-5 error-fields"
           >
@@ -63,13 +81,36 @@
       </p>
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100 m-b-10">
-          <mat-label translate="countryMandatory"></mat-label>
-          <input
-            matInput
-            [placeholder]="'countryMandatory' | translate"
+          <mat-label
+            id="addEditPlantCountry"
+            translate="countryMandatory"
+          ></mat-label>
+          <mat-select
+            id="addEditPlantSelectCountry"
             formControlName="country"
-          />
+            [placeholder]="'countryMandatory' | translate"
+            (closed)="onCountryClosed()"
+          >
+            <input
+              #countryInputSearch
+              [(ngModel)]="this.countrySearch"
+              [ngModelOptions]="{ standalone: true }"
+              class="searchable-input"
+              [placeholder]="'search' | translate"
+              (keyup)="onKeyCountry($event)"
+              (keydown)="$event.stopPropagation()"
+            />
+            <div class="scrollable-area">
+              <mat-option
+                id="addEditPlantCountryOption"
+                *ngFor="let country of this.countryData"
+                [value]="country.countryCode"
+                >{{ country.countryName }}
+              </mat-option>
+            </div>
+          </mat-select>
           <mat-error
+            id="addEditPlantCountryError"
             *ngIf="processValidationErrors('country')"
             class="m-t-5 error-fields"
           >
@@ -85,13 +126,17 @@
       </p>
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100 m-b-10">
-          <mat-label translate="zipCodeMandatory"></mat-label>
+          <mat-label
+            id="addEditPlantZipCode"
+            translate="zipCodeMandatory"
+          ></mat-label>
           <input
             matInput
             [placeholder]="'zipCodeMandatory' | translate"
             formControlName="zipCode"
           />
           <mat-error
+            id="addEditPlantZipCodeError"
             *ngIf="processValidationErrors('zipCode')"
             class="m-t-5 error-fields"
           >
@@ -108,13 +153,36 @@
       </p>
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100 m-b-10">
-          <mat-label translate="stateMandatory"></mat-label>
-          <input
-            matInput
-            [placeholder]="'stateMandatory' | translate"
+          <mat-label id="addEditPlantState">{{
+            noState
+              ? ('stateNotMandatory' | translate)
+              : ('stateMandatory' | translate)
+          }}</mat-label>
+          <mat-select
+            id="addEditPlantSelectState"
             formControlName="state"
-          />
+            [placeholder]="'stateMandatory' | translate"
+            (closed)="onStateClosed()"
+          >
+            <input
+              id="addEditPlantSearchState"
+              #stateInputSearch
+              class="searchable-input"
+              [placeholder]="'search' | translate"
+              (keyup)="onKeyState($event)"
+              (keydown)="$event.stopPropagation()"
+            />
+            <div class="scrollable-area">
+              <mat-option
+                id="addEditPlantStateOption"
+                *ngFor="let state of states"
+                [value]="state"
+                >{{ state }}</mat-option
+              >
+            </div>
+          </mat-select>
           <mat-error
+            id="addEditPlantStateError"
             *ngIf="processValidationErrors('state')"
             class="m-t-5 error-fields"
           >
@@ -128,31 +196,141 @@
           </mat-error>
         </mat-form-field>
       </p>
+      <p class="m-0">
+        <mat-form-field appearance="outline" class="width-100 m-b-10">
+          <mat-label
+            id="addEditPlantTimeZone"
+            translate="timeZoneMandatory"
+          ></mat-label>
+          <mat-select
+            id="addEditPlantSelectTimeZone"
+            formControlName="timeZone"
+            [placeholder]="'timeZoneMandatory' | translate"
+            [compareWith]="compareTimeZones"
+          >
+            <div class="scrollable-area">
+              <mat-option
+                id="addEditPlantTimeZoneOption"
+                *ngFor="let timeZone of timeZones"
+                [value]="timeZone"
+                ><span id="addEditPlantTimeZoneDescription">
+                  {{ timeZone.description }}</span
+                ></mat-option
+              >
+            </div>
+          </mat-select>
+          <mat-error
+            id="addEditPlantTimeZoneError"
+            *ngIf="processValidationErrors('timeZone')"
+            class="m-t-5 error-fields"
+          >
+            {{
+              errors.timeZone.name
+                | translate
+                  : {
+                      name: 'timeZone' | translate
+                    }
+            }}
+          </mat-error>
+        </mat-form-field>
+      </p>
+      <p class="m-0" *ngIf="activeShifts$ | async as activeShifts">
+        <mat-form-field appearance="outline" class="width-100 m-b-10">
+          <mat-label id="addEditPlantShifts" translate="shifts"></mat-label>
+          <mat-select
+            id="addEditPlantSelectShifts"
+            placeholder="Shifts"
+            formControlName="shifts"
+            multiple
+            [(ngModel)]="selectedShiftIDs"
+            (selectionChange)="shiftSelectionChanged($event)"
+          >
+            <mat-select-trigger id="addEditPlantShiftsDetails">
+              {{
+                selectedShiftsDetails.length
+                  ? selectedShiftsDetails[0]?.name
+                  : ''
+              }}
+              <span
+                id="addEditPlantShiftsLength"
+                *ngIf="selectedShiftsDetails.length > 1"
+              >
+                (+{{ selectedShiftsDetails.length - 1 }}
+                {{ selectedShiftsDetails.length === 2 ? 'other' : 'others' }})
+              </span>
+            </mat-select-trigger>
+            <mat-option
+              id="addEditPlantActiveShifts"
+              *ngFor="let shift of activeShifts; let i = index"
+              [value]="shift.id"
+            >
+              <span class="shiftOption">
+                <span id="addEditPlantShiftName"> {{ shift.name }}</span>
+                <span id="addEditPlantShiftTime" class="shiftTimeLabel"
+                  >{{ shift.startTime }} - {{ shift.endTime }}</span
+                >
+              </span>
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </p>
       <p class="additional-details">
-        <mat-label translate="additionalDetails"></mat-label>
+        <mat-label
+          id="addEditPlantAddtionalDetails"
+          translate="additionalDetails"
+        ></mat-label>
       </p>
       <span class="m-2">
         <mat-form-field appearance="outline" class="width-100" class="m-5">
-          <mat-label translate="label"></mat-label>
+          <mat-label id="addEditPlantLabel" translate="label"></mat-label>
           <input
+            id="addEditPlantLabelText"
             matInput
             [placeholder]="'label' | translate"
             formControlName="label"
           />
+          <mat-error
+            id="addEditPlantLabelError"
+            *ngIf="processValidationErrors('label')"
+            class="m-t-5 error-fields"
+          >
+            {{
+              errors.label.name
+                | translate
+                  : {
+                      name: 'label' | translate
+                    }
+            }}
+          </mat-error>
         </mat-form-field>
         <mat-form-field appearance="outline" class="width-100" class="m-5">
-          <mat-label translate="field"></mat-label>
+          <mat-label id="addEditPlantField" translate="field"></mat-label>
           <input
+            id="addEditPlantFieldText"
             matInput
             [placeholder]="'field' | translate"
             formControlName="field"
           />
+          <mat-error
+            id="addEditPlantFieldError"
+            *ngIf="processValidationErrors('field')"
+            class="m-t-5 error-fields"
+          >
+            {{
+              errors.field.name
+                | translate
+                  : {
+                      name: 'field' | translate
+                    }
+            }}
+          </mat-error>
         </mat-form-field>
       </span>
     </div>
   </mat-card>
   <div class="actions-footer">
     <button
+      id="addEditPlantCancelBtn"
       mat-stroked-button
       class="cancel-btn"
       type="button"
@@ -160,6 +338,7 @@
       translate="cancelBtn"
     ></button>
     <button
+      id="addEditPlantCreateBtn"
       mat-raised-button
       class="create-btn"
       type="submit"

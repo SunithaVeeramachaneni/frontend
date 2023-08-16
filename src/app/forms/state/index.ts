@@ -1,10 +1,10 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import * as AppState from '../../state/app.state';
-import { FormConfigurationState } from './form-configuration.reducer';
 import { HierarchyState } from './hierarchy.reducer';
 import { UOM } from './unit-of-measurement.reducer';
 import { QuickResponse } from './quick-responses.reducer';
 import { GlobalResponse } from './global-responses.reducer';
+import { FormConfigurationState } from './builder/builder.reducer';
 
 export interface FormModuleState {
   formConfiguration: FormConfigurationState;
@@ -217,7 +217,8 @@ export const getFormDetails = createSelector(
     formListDynamoDBVersion: state.formListDynamoDBVersion,
     formDetailDynamoDBVersion: state.formDetailDynamoDBVersion,
     authoredFormDetailDynamoDBVersion: state.authoredFormDetailDynamoDBVersion,
-    formDetailPublishStatus: state.formDetailPublishStatus
+    formDetailPublishStatus: state.formDetailPublishStatus,
+    skipAuthoredDetail: state.skipAuthoredDetail
   })
 );
 

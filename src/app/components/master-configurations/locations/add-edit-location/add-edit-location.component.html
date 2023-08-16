@@ -1,16 +1,26 @@
 <div id="add-edit-slider">
   <mat-card [formGroup]="locationForm">
     <div class="top-bar">
-      <svg-icon (click)="cancel()" icon="icon-close" class="cancel"></svg-icon>
-      <h1 class="heading">{{ locationTitle }}</h1>
+      <svg-icon
+        id="addEditLocCancelIcon"
+        (click)="cancel()"
+        icon="icon-close"
+        class="cancel"
+      ></svg-icon>
+      <h1 id="addEditLocTitle" class="heading">{{ locationTitle }}</h1>
     </div>
     <div class="container-div">
       <p class="image-container">
         <span *ngIf="!locationImage?.length">
-          <svg-icon icon="icon-locationIcon" class="image-contain"></svg-icon>
+          <svg-icon
+            id="addEditLocIcon"
+            icon="icon-locationIcon"
+            class="image-contain"
+          ></svg-icon>
         </span>
 
         <img
+          id="addEditLocImg"
           [src]="locationImage"
           alt="Image"
           class="image-contain"
@@ -19,7 +29,7 @@
       </p>
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100 m-b-10">
-          <mat-label translate="nameMandatory"></mat-label>
+          <mat-label id="addEditLocName" translate="nameMandatory"></mat-label>
           <input
             matInput
             [placeholder]="'nameMandatory' | translate"
@@ -27,6 +37,7 @@
           />
 
           <mat-error
+            id="addEditLocNameError"
             *ngIf="processValidationErrors('name')"
             class="m-t-5 error-fields"
           >
@@ -42,13 +53,17 @@
       </p>
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100 m-b-10">
-          <mat-label translate="locationIdMandatory"></mat-label>
+          <mat-label
+            id="addEditLocId"
+            translate="locationIdMandatory"
+          ></mat-label>
           <input
             matInput
             [placeholder]="'locationIdMandatory' | translate"
             formControlName="locationId"
           />
           <mat-error
+            id="addEditLocIdError"
             *ngIf="processValidationErrors('locationId')"
             class="m-t-5 error-fields"
           >
@@ -64,7 +79,7 @@
       </p>
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100 m-b-10">
-          <mat-label translate="model"></mat-label>
+          <mat-label id="addEditLocModel" translate="model"></mat-label>
           <input
             matInput
             [placeholder]="'model' | translate"
@@ -74,34 +89,58 @@
       </p>
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100 m-b-10">
-          <mat-label translate="description"></mat-label>
+          <mat-label
+            id="addEditLocDescription"
+            translate="description"
+          ></mat-label>
           <textarea
+            id="addEditLocPlaceHolder"
             matInput
             [placeholder]="'description' | translate"
             formControlName="description"
           >
           </textarea>
+          <mat-error
+            id="addEditDescriptionError"
+            *ngIf="processValidationErrors('description')"
+            class="m-t-5 error-fields"
+          >
+            {{
+              errors.description.name
+                | translate
+                  : {
+                      name: 'description' | translate
+                    }
+            }}
+          </mat-error>
         </mat-form-field>
       </p>
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100">
-          <mat-label translate="plantMandatory"></mat-label>
+          <mat-label
+            id="addEditLocPlant"
+            translate="plantMandatory"
+          ></mat-label>
           <mat-select
             formControlName="plantsID"
             (valueChange)="onSelectPlant($event)"
           >
             <input
               class="searchable-input"
-              [placeholder]="'search' | translate"
+              [placeholder]="'searchId' | translate"
               (keyup)="onKeyPlant($event)"
             />
             <div class="scrollable-area">
-              <mat-option [value]="plant.id" *ngFor="let plant of allPlantsData"
+              <mat-option
+                id="addEditLocPlantOptions"
+                [value]="plant.id"
+                *ngFor="let plant of allPlantsData"
                 >{{ plant.plantId }} - {{ plant.name }}</mat-option
               >
             </div>
           </mat-select>
           <mat-error
+            id="addEditLocPlantError"
             *ngIf="processValidationErrors('plantsID')"
             class="m-t-5 error-fields"
           >
@@ -117,20 +156,21 @@
       </p>
       <p class="m-0 select-field">
         <mat-form-field appearance="outline" class="width-100">
-          <mat-label translate="parent"></mat-label>
+          <mat-label id="addEditLocParent" translate="parent"></mat-label>
           <mat-select
             formControlName="parentId"
             (valueChange)="onSelectLocation($event)"
           >
             <input
+              id="addEditLocSearchId"
               class="searchable-input"
-              [placeholder]="'search' | translate"
+              [placeholder]="'searchId' | translate"
               (keyup)="onKey($event)"
               (keydown)="$event.stopPropagation()"
             />
             <div class="scrollable-area">
               <ng-container *ngFor="let parent of allParentsData">
-                <mat-option [value]="parent.id"
+                <mat-option id="addEditLocParentName" [value]="parent.id"
                   >{{ parent.locationId }} - {{ parent.name }}</mat-option
                 >
               </ng-container>
@@ -142,6 +182,7 @@
   </mat-card>
   <div class="actions-footer">
     <button
+      id="addEditLocCancelBtn"
       mat-stroked-button
       class="cancel-btn"
       type="button"
@@ -149,6 +190,7 @@
       translate="cancelBtn"
     ></button>
     <button
+      id="addEditLocCreateBtn"
       mat-raised-button
       class="create-btn"
       type="submit"

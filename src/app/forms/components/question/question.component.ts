@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable @typescript-eslint/member-ordering */
 /* eslint-disable no-underscore-dangle */
 import {
@@ -5,8 +6,6 @@ import {
   ElementRef,
   Input,
   OnInit,
-  QueryList,
-  ViewChildren,
   Output,
   EventEmitter,
   ChangeDetectionStrategy,
@@ -22,7 +21,7 @@ import {
   takeUntil,
   tap
 } from 'rxjs/operators';
-import { Observable, Subject, timer } from 'rxjs';
+import { Observable, Subject, asapScheduler, timer } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 
 import { ImageUtils } from 'src/app/shared/utils/imageUtils';
@@ -36,10 +35,7 @@ import {
   UnitOfMeasurement
 } from 'src/app/interfaces';
 import {
-  getQuestionByID,
-  getSectionQuestionsCount,
   State,
-  getQuestionLogics,
   getFormMetadata,
   getModuleName
 } from 'src/app/forms/state/builder/builder-state.selectors';
@@ -55,6 +51,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { getUnitOfMeasurementList } from '../../state';
 import { SlideshowComponent } from 'src/app/shared/components/slideshow/slideshow.component';
 import { MatDialog } from '@angular/material/dialog';
+import { Base64HelperService } from 'src/app/components/work-instructions/services/base64-helper.service';
+import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
 @Component({
   selector: 'app-question',
   templateUrl: './question.component.html',
@@ -63,13 +61,14 @@ import { MatDialog } from '@angular/material/dialog';
 })
 export class QuestionComponent implements OnInit, OnDestroy {
   @ViewChild('unitMenuTrigger') unitMenuTrigger: MatMenuTrigger;
-
   @ViewChild('name', { static: false }) name: ElementRef;
   @Output() questionEvent: EventEmitter<QuestionEvent> =
     new EventEmitter<QuestionEvent>();
-  @ViewChildren('insertImages') private insertImages: QueryList<ElementRef>;
+  @ViewChild('insertImage') private insertImage: ElementRef;
 
   @Input() selectedNodeId: any;
+  @Input() isTemplate: boolean;
+  @Input() isImported: boolean;
 
   @Input() set questionId(id: string) {
     this._id = id;
@@ -120,15 +119,63 @@ export class QuestionComponent implements OnInit, OnDestroy {
     return this._subFormId;
   }
 
+  @Input() set isQuestionPublished(value: boolean) {
+    this._isQuestionPublished = value;
+  }
+
+  get isQuestionPublished() {
+    return this._isQuestionPublished;
+  }
+
   @Input() isPreviewActive;
+  @Input() isEmbeddedForm;
 
   @Input() isAskQuestionFocusId: any;
+  @Input() set question(question: Question) {
+    if (question) {
+      if (
+        this.question?.isOpen !== question.isOpen &&
+        !isEqual(this.question, question)
+      ) {
+        this._question = Object.assign({}, question);
+        this.updateQuestion();
+      }
+    }
+  }
+
+  get question() {
+    return this._question;
+  }
+  @Input() set logics(logics: any) {
+    if (logics?.length) {
+      if (!isEqual(this.logics, logics)) {
+        this._logics = logics;
+      }
+    }
+  }
+  get logics() {
+    return this._logics;
+  }
   @Output() isAskedQuestionFocusId = new EventEmitter<any>();
 
   fieldType = { type: 'TF', description: 'Text Answer' };
   fieldTypes: any = [this.fieldType];
   formMetadata: FormMetadata;
   moduleName: string;
+  showAskQuestionFeatures = true;
+
+  get rangeDisplayText() {
+    return this._rangeDisplayText;
+  }
+
+  set rangeDisplayText(d) {
+    const rangeMeta = this.questionForm.get('rangeMetadata').value;
+    if (rangeMeta && rangeMeta.min && rangeMeta.max) {
+      this._rangeDisplayText = `${rangeMeta.min} - ${rangeMeta.max}`;
+    }
+  }
+
+  private _rangeDisplayText = 'None';
 
   addLogicNotAppliedFields = [
     'LTV',
@@ -145,7 +192,9 @@ export class QuestionComponent implements OnInit, OnDestroy {
     'ARD',
     'DT',
     'HL',
-    'INST'
+    'INST',
+    'DF',
+    'TIF'
   ];
 
   unitOfMeasurementsAvailable: any[] = [];
@@ -170,8 +219,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
     rangeMetadata: {} as NumberRangeMetadata
   });
   question$: Observable<Question>;
-  question: Question;
-  sectionQuestionsCount$: Observable<number>;
   ignoreUpdateIsOpen: boolean;
   addQuestionClicked: boolean;
   isHyperLinkOpen = false;
@@ -182,6 +229,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   formMetadata$: Observable<FormMetadata>;
   moduleName$: Observable<string>;
   uom$: Observable<UnitOfMeasurement[]>;
+  embeddedFormId = '';
 
   private _pageIndex: number;
   private _id: string;
@@ -190,7 +238,10 @@ export class QuestionComponent implements OnInit, OnDestroy {
   private _isAskQuestion: boolean;
   private _questionName: string;
   private _subFormId: string;
+  private _question: Question;
   private onDestroy$ = new Subject();
+  private _isQuestionPublished: boolean;
+  private _logics: any = [];
 
   constructor(
     private dialog: MatDialog,
@@ -200,7 +251,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     private formService: FormService,
     private responseSetService: ResponseSetService,
     private toast: ToastService,
-    private translate: TranslateService
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -208,6 +259,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
       tap((event) => {
         this.formId = event.id;
         this.formMetadata = event;
+        this.embeddedFormId = event?.embeddedFormId;
       })
     );
     this.moduleName$ = this.store
@@ -233,10 +285,14 @@ export class QuestionComponent implements OnInit, OnDestroy {
         fieldType.type !== 'DD' &&
         fieldType.type !== 'DDM' &&
         fieldType.type !== 'VI' &&
-        fieldType.type !== 'IMG' &&
         fieldType.type !== 'USR' &&
         fieldType.type !== 'ARD' &&
-        fieldType.type !== 'TAF'
+        fieldType.type !== 'TAF' &&
+        (this.isEmbeddedForm
+          ? fieldType.type !== 'DT'
+          : fieldType.type !== 'DF' &&
+            fieldType.type !== 'TIF' &&
+            fieldType.type !== 'IMG')
     );
 
     // isAskQuestion true set question id and section id
@@ -244,6 +300,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
       this.questionForm.get('id').setValue(this.questionId);
       this.questionForm.get('sectionId').setValue(this.sectionId);
       this.questionForm.get('name').setValue(this.questionName);
+      this.questionForm.get('isPublished').setValue(this.isQuestionPublished);
       this.selectedNodeId = this.subFormId;
     }
 
@@ -264,6 +321,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
           if (!isEqual(prev, curr)) {
             const { value: prevValue } = prev;
             const { value: currValue } = curr;
+            this.checkAskQuestionFeatures();
             if (
               current.fieldType === 'INST' &&
               prevValue !== undefined &&
@@ -276,6 +334,9 @@ export class QuestionComponent implements OnInit, OnDestroy {
                 prevValue?.type === 'globalResponse'
               )
                 this.handleGlobalResponseRefCount(prevValue, currValue);
+
+              if (!isEqual(prev.rangeMetadata, curr.rangeMetadata))
+                this.rangeDisplayText = '';
 
               this.questionEvent.emit({
                 pageIndex: this.pageIndex,
@@ -290,64 +351,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
       )
       .subscribe();
 
-    this.question$ = this.store
-      .select(
-        getQuestionByID(
-          this.pageIndex,
-          this.sectionId,
-          this.questionId,
-          this.selectedNodeId
-        )
-      )
-      .pipe(
-        tap((question) => {
-          if (question) {
-            if (
-              question.isOpen &&
-              !isEqual(question.isOpen, this.question?.isOpen)
-            ) {
-              if (question.fieldType !== 'INST') {
-                timer(0).subscribe(() => this.name.nativeElement.focus());
-              }
-            } else if (!question.isOpen) {
-              if (this.isAskQuestion) {
-                if (question.fieldType !== 'INST') {
-                  timer(0).subscribe(() => {
-                    if (
-                      this.name.nativeElement.id ===
-                        this.isAskQuestionFocusId ||
-                      this.isAskQuestionFocusId === ''
-                    ) {
-                      this.name.nativeElement.focus();
-                      this.isAskQuestionFocusId = this.name.nativeElement.id;
-                      this.isAskedQuestionFocusId.emit(
-                        this.name.nativeElement.id
-                      );
-                    }
-                  });
-                }
-              } else {
-                if (question.fieldType !== 'INST') {
-                  timer(0).subscribe(() => this.name.nativeElement.blur());
-                }
-              }
-            }
-            this.question = question;
-            this.questionForm.patchValue(question, {
-              emitEvent: false
-            });
-          }
-        })
-      );
-
-    this.sectionQuestionsCount$ = this.store.select(
-      getSectionQuestionsCount(
-        this.pageIndex,
-        this.sectionId,
-        this.selectedNodeId
-      )
-    );
-
     this.instructionTagColours[this.translate.instant('cautionTag')] =
       '#FFCC00';
     this.instructionTagColours[this.translate.instant('informationTag')] =
@@ -359,6 +362,41 @@ export class QuestionComponent implements OnInit, OnDestroy {
       '#000000';
     this.instructionTagTextColour[this.translate.instant('dangerTag')] =
       '#FFFFFF';
+  }
+
+  updateQuestion() {
+    if (this.question.isOpen) {
+      if (this.question.fieldType !== 'INST') {
+        timer(0, asapScheduler).subscribe(() =>
+          this.name.nativeElement.focus()
+        );
+      }
+    } else if (!this.question.isOpen) {
+      if (this.isAskQuestion) {
+        if (this.question.fieldType !== 'INST') {
+          timer(0).subscribe(() => {
+            if (
+              this.name.nativeElement.id === this.isAskQuestionFocusId ||
+              this.isAskQuestionFocusId === ''
+            ) {
+              this.name.nativeElement.focus();
+              this.isAskQuestionFocusId = this.name.nativeElement.id;
+              this.isAskedQuestionFocusId.emit(this.name.nativeElement.id);
+            }
+          });
+        }
+      } else {
+        if (this.question.fieldType !== 'INST') {
+          timer(0).subscribe(() => this.name.nativeElement.blur());
+        }
+      }
+    }
+    // this.question = question;
+    this.questionForm.patchValue(this.question, {
+      emitEvent: false
+    });
+    this.checkAskQuestionFeatures();
+    this.rangeDisplayText = '';
   }
 
   getRangeMetadata() {
@@ -422,8 +460,32 @@ export class QuestionComponent implements OnInit, OnDestroy {
     });
   }
 
+  checkAskQuestionFeatures() {
+    const fieldType = this.questionForm.get('fieldType').value;
+    if (this.isAskQuestion) {
+      switch (fieldType) {
+        case 'SF':
+        case 'CB':
+        case 'SGF':
+        case 'ATT':
+        case 'GAL':
+        case 'DFR':
+        case 'VI':
+          this.showAskQuestionFeatures = false;
+          break;
+        default:
+          this.showAskQuestionFeatures = true;
+      }
+    } else {
+      this.showAskQuestionFeatures = true;
+    }
+  }
+
   selectFieldTypeEventHandler(fieldType) {
-    if (fieldType.type === this.questionForm.get('fieldType').value) {
+    if (
+      fieldType.type === this.questionForm.get('fieldType').value &&
+      fieldType.type !== 'IMG'
+    ) {
       return;
     }
 
@@ -464,7 +526,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
         this.questionForm.get('value').setValue(sliderValue);
         break;
       case 'IMG':
-        this.insertImages.toArray()[this.questionIndex]?.nativeElement.click();
+        this.insertImage.nativeElement.click();
         break;
       case 'INST':
         const instructionsValue = {
@@ -498,39 +560,44 @@ export class QuestionComponent implements OnInit, OnDestroy {
   };
 
   sliderOpen() {
-    this.formService.setsliderOpenState(true);
+    this.formService.setsliderOpenState({
+      isOpen: true,
+      questionId: this.questionForm.get('id').value,
+      value: {
+        value: 0,
+        min: 0,
+        max: 100,
+        increment: 1
+      }
+    });
   }
   rangeSelectorOpen(question) {
     this.formService.setRangeSelectorOpenState({
       isOpen: true,
+      questionId: question.id,
       rangeMetadata: question.rangeMetadata
     });
   }
 
-  getRangeDisplayText() {
-    let resp = 'None';
-    const rangeMeta = this.questionForm.get('rangeMetadata').value;
-    if (rangeMeta && rangeMeta.min && rangeMeta.max) {
-      resp = `${rangeMeta.min} - ${rangeMeta.max}`;
-    }
-    return resp;
-  }
-
   insertImageHandler(event) {
-    let base64: string;
     const { files } = event.target as HTMLInputElement;
-    const reader = new FileReader();
-    reader.readAsDataURL(files[0]);
-    reader.onloadend = () => {
-      base64 = reader.result as string;
-      const image = base64.split(',')[1];
-      const value = {
-        name: files[0].name,
-        size: (files[0].size / 1024).toFixed(2),
-        base64: image
-      };
-      this.questionForm.get('value').setValue(value);
+    const file = {
+      name: files[0].name,
+      size: (files[0].size / 1024).toFixed(2),
+      type: files[0].type
     };
+
+    this.formService
+      .uploadToS3$(`${this.moduleName}/${this.formMetadata?.id}`, files[0])
+      .subscribe(async (data) => {
+        const value = {
+          name: file.name,
+          size: file.size,
+          objectKey: data.message.objectKey,
+          objectURL: data.message.objectURL
+        };
+        this.questionForm.get('value').setValue(value);
+      });
   }
 
   getImageSrc(base64) {
@@ -550,10 +617,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     });
 
   updateIsOpen(isOpen: boolean) {
-    const isAskQuestion =
-      this.questionForm.get('sectionId').value === `AQ_${this.sectionId}`;
-
-    if (isAskQuestion) {
+    if (this.isAskQuestion) {
       return;
     }
     if (this.questionForm.get('isOpen').value !== isOpen) {
@@ -588,12 +652,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
     this.questionForm.get('value').setValue(event);
   }
 
-  getQuestionLogics(pageIndex: number, questionId: string) {
-    return this.store.select(
-      getQuestionLogics(pageIndex, questionId, this.selectedNodeId)
-    );
-  }
-
   addLogicToQuestion(pageIndex: number, questionId: string) {
     this.store.dispatch(
       AddLogicActions.addLogicToQuestion({
@@ -625,10 +683,15 @@ export class QuestionComponent implements OnInit, OnDestroy {
       operand2: '',
       action: '',
       mandateAttachment: false,
+      askEvidence: '',
       raiseIssue: false,
       logicTitle: '',
       expression: '',
+      raiseNotification: false,
+      triggerInfo: '',
+      triggerWhen: '',
       questions: [],
+      evidenceQuestions: [],
       mandateQuestions: [],
       hideQuestions: []
     };
@@ -668,8 +731,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
         );
         break;
       case 'ask_question_create':
-        const newQuestion = {
-          id: `AQ_${uuidv4()}`,
+        let newQuestion = {
+          id: this.isEmbeddedForm ? `AQ_${Date.now()}` : `AQ_${uuidv4()}`,
           sectionId: `AQ_${event.logic.id}`,
           name: '',
           fieldType: 'TF',
@@ -678,6 +741,33 @@ export class QuestionComponent implements OnInit, OnDestroy {
           enableHistory: false,
           multi: false,
           value: 'TF',
+          isPublished: false,
+          isPublishedTillSave: false,
+          isOpen: false,
+          isResponseTypeModalOpen: false
+        };
+        this.store.dispatch(
+          AddLogicActions.askQuestionsCreate({
+            questionId: event.questionId,
+            pageIndex: event.pageIndex,
+            logicIndex: event.logicIndex,
+            logicId: event.logic.id,
+            question: newQuestion,
+            subFormId: this.selectedNodeId
+          })
+        );
+        break;
+      case 'ask_evidence_create':
+        newQuestion = {
+          id: event.askEvidence,
+          sectionId: `EVIDENCE_${event.logic.id}`,
+          name: `Attach Evidence for ${event.questionName}`,
+          fieldType: 'ATT',
+          position: 0,
+          required: true,
+          enableHistory: false,
+          multi: false,
+          value: 'ATT',
           isPublished: false,
           isPublishedTillSave: false,
           isOpen: false,

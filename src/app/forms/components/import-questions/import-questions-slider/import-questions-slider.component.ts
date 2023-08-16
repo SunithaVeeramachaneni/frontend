@@ -13,6 +13,7 @@ import {
 } from 'src/app/forms/state';
 import { SectionQuestions } from 'src/app/interfaces';
 import { AddPageOrSelectExistingPageModalComponent } from '../add-page-or-select-existing-page-modal/add-page-or-select-existing-page-modal.component';
+import { ToastService } from 'src/app/shared/toast/toast.service';
 
 @Component({
   selector: 'app-import-questions-slider',
@@ -23,10 +24,12 @@ export class ImportQuestionsSliderComponent implements OnInit {
   @Input() selectedFormName;
   @Input() selectedFormData;
   @Input() currentFormData;
+  @Input() isEmbeddedForm;
   @Input() isFooter;
   @Input() title;
 
   @Output() cancelSliderEvent: EventEmitter<boolean> = new EventEmitter();
+  @Output() backEvent: EventEmitter<boolean> = new EventEmitter();
   importSectionQuestions: SectionQuestions[] = [];
   sectionIndexes$: Observable<any>;
   sectionIndexes: any;
@@ -38,7 +41,8 @@ export class ImportQuestionsSliderComponent implements OnInit {
   constructor(
     private modal: MatDialog,
     private formConfigurationService: FormConfigurationService,
-    private store: Store<State>
+    private store: Store<State>,
+    private readonly toast: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -79,9 +83,17 @@ export class ImportQuestionsSliderComponent implements OnInit {
     importFormData = importFormData.filter((page) => page.sections.length);
     importFormData.forEach((page) =>
       page.sections.forEach((section) => {
-        const questions = section.questions.filter(
-          (question) => question.sectionId === section.id
-        );
+        delete section.counter;
+        delete section.isImported;
+        delete section.templateId;
+        delete section.externalSectionId;
+        const questions = [];
+        section.questions.forEach((question) => {
+          if (question.sectionId === section.id) {
+            delete question.id;
+            questions.push(question);
+          }
+        });
         this.importSectionQuestions = [
           ...this.importSectionQuestions,
           { section, questions }
@@ -122,6 +134,10 @@ export class ImportQuestionsSliderComponent implements OnInit {
         );
       }
       this.cancelSliderEvent.emit(false);
+      this.toast.show({
+        text: 'Questions Imported successfully!',
+        type: 'success'
+      });
     });
   }
   toggleIsOpen(page) {
@@ -130,6 +146,10 @@ export class ImportQuestionsSliderComponent implements OnInit {
 
   cancel() {
     this.cancelSliderEvent.emit(false);
+  }
+
+  back() {
+    this.backEvent.emit(false);
   }
 
   updateAllChecked(checked, question, section, page) {

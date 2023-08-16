@@ -41,8 +41,8 @@ import { OperatorRoundsRoutingModule } from './operator-rounds-routing.module';
 import { OperatorRoundsContainerComponent } from '../operator-rounds/operator-rounds-container/operator-rounds-container.component';
 import { RaceDynamicFormModule } from '../race-dynamic-form/race-dynamic-form.module';
 import { RoundPlanListComponent } from './round-plan-list/round-plan-list.component';
-import { RoundPlanConfigurationComponent } from './round-plan-configuration/round-plan-configuration.component';
-import { RoundPlanConfigurationModalComponent } from './round-plan-configuration-modal/round-plan-configuration-modal.component';
+import { RoundPlanDetailConfigurationComponent } from './round-plan-detail-configuration/round-plan-detail-configuration.component';
+import { RoundPlanHeaderConfigurationComponent } from './round-plan-header-configuration/round-plan-header-configuration.component';
 import { RoundPlanConfigurationEffects } from 'src/app/forms/state/round-plan-configuration.effects';
 import { formConfigurationReducer } from 'src/app/forms/state/builder/builder.reducer';
 import { ImportTaskModalComponent } from './import-task-modal/import-task-modal.component';
@@ -54,11 +54,9 @@ import { PlansComponent } from './plans/plans.component';
 import { RoundsComponent } from './rounds/rounds.component';
 import { ArchivedListComponent } from './archived-list/archived-list.component';
 import { ArchivedDeleteModalComponent } from './archived-delete-modal/archived-delete-modal.component';
-import { RoundPlanScheduleConfigurationComponent } from './round-plan-schedule-configuration/round-plan-schedule-configuration.component';
 import { MatRadioModule } from '@angular/material/radio';
 
 import { AssetsModalComponent } from './assets-modal/assets-modal.component';
-import { RoundPlanScheduleSuccessModalComponent } from './round-plan-schedule-success-modal/round-plan-schedule-success-modal.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { HierarchyDeleteConfirmationDialogComponent } from 'src/app/forms/components/hierarchy-container/hierarchy-delete-dialog/hierarchy-delete-dialog.component';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -72,7 +70,9 @@ import { QuickResponseEffects } from 'src/app/forms/state/quick-responses.effect
 import { globalResponseReducer } from 'src/app/forms/state/global-responses.reducer';
 import { GlobalResponseEffects } from 'src/app/forms/state/global-response.effects';
 import { RoundObservationsComponent } from './round-observations/round-observations.component';
-
+import { RoundPlanEditViewComponent } from './round-plan-modal/round-plan-edit-view.component';
+import { NgxMatDatetimePickerModule } from '@angular-material-components/datetime-picker';
+import { RoundPlanModalComponent } from './round-plan-modal/round-plan-modal.component';
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/operator-rounds/', '.json');
 
@@ -80,8 +80,8 @@ export const customTranslateLoader = (http: HttpClient) =>
   declarations: [
     OperatorRoundsContainerComponent,
     RoundPlanListComponent,
-    RoundPlanConfigurationComponent,
-    RoundPlanConfigurationModalComponent,
+    RoundPlanDetailConfigurationComponent,
+    RoundPlanHeaderConfigurationComponent,
     ImportTaskModalComponent,
     HierarchyContainerComponent,
     HierarchyDeleteConfirmationDialogComponent,
@@ -93,10 +93,10 @@ export const customTranslateLoader = (http: HttpClient) =>
     ArchivedListComponent,
     ArchivedDeleteModalComponent,
     AssetsModalComponent,
-    RoundPlanScheduleSuccessModalComponent,
-    RoundPlanScheduleConfigurationComponent,
     AssetsModalComponent,
-    RoundObservationsComponent
+    RoundObservationsComponent,
+    RoundPlanModalComponent,
+    RoundPlanEditViewComponent
   ],
   imports: [
     FormsModule,
@@ -127,6 +127,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatRadioModule,
     MatButtonToggleModule,
     NgxShimmerLoadingModule,
+    NgxMatDatetimePickerModule,
     TranslateModule.forChild({
       loader: {
         provide: TranslateLoader,

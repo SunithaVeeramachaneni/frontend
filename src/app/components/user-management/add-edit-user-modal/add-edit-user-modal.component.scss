@@ -22,7 +22,7 @@
 }
 
 .title {
-  font-size: 120%;
+  font-size: 150%;
   font-weight: 500;
 }
 
@@ -52,6 +52,10 @@
   position: relative;
   right: 12px;
   bottom: 5px;
+}
+
+#addEditUserEmail {
+  text-transform: lowercase;
 }
 
 .custom-mat-form-field-white-color {
@@ -116,6 +120,10 @@
   float: right;
 }
 
+.usergroup-select {
+  padding-right: 0;
+}
+
 .permissions-modal {
   background-color: #ffffff;
   width: 330px;
@@ -154,4 +162,11 @@
 }
 .email-not-verified {
   color: red;
+}
+
+.info-icon {
+  margin-top: 10px;
+  float: right;
+  color: #9e9e9e;
+  font-size: 140%;
 }

@@ -8,6 +8,9 @@ import {
   Output,
   ViewChild
 } from '@angular/core';
+import { FormGroup, FormBuilder } from '@angular/forms';
+import { MatDatetimePickerInputEvent } from '@angular-material-components/datetime-picker/public-api';
+import { Subscription, interval } from 'rxjs';
 
 interface SelectedDate {
   date: Date;
@@ -20,31 +23,44 @@ interface SelectedDate {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DatePickerComponent implements OnInit {
-  @ViewChild('picker') picker;
+  @ViewChild('picker') picker: any;
   @Input()
   set selectedDate(selectedDate: SelectedDate) {
     if (selectedDate) {
       this._selectedDate = selectedDate;
-      this.picker.open();
+      this.dateGroup.get('date').patchValue(this.selectedDate.date);
+      this.picker?.open();
     }
   }
   get selectedDate() {
     return this._selectedDate;
   }
+  @Input() minDate: Date;
   @Output() dateChange: EventEmitter<Date> = new EventEmitter<Date>();
   @Output() closed: EventEmitter<boolean> = new EventEmitter<boolean>();
   currentDate = new Date();
   _selectedDate: SelectedDate;
+  mindate: any;
+  dateGroup: FormGroup = this.fb.group({
+    date: ''
+  });
+  subscription: Subscription;
+  constructor(private fb: FormBuilder) {}
 
-  constructor() {}
+  ngOnInit(): void {
+    this.minDate = new Date();
+    const interval$ = interval(60000);
+    this.subscription = interval$.subscribe(() => {
+      this.minDate = new Date();
+    });
+  }
 
-  ngOnInit(): void {}
-
-  onDateChange(event: any) {
-    this.dateChange.emit(event.target.value);
+  onDateChange(event: MatDatetimePickerInputEvent<Date>) {
+    this.dateChange.emit(event.value);
   }
 
   closedEvent() {
     this.closed.emit(true);
+    this.subscription.unsubscribe();
   }
 }

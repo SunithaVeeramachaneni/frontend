@@ -6,10 +6,10 @@ import { forkJoin, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DEFAULT_PDF_BUILDER_CONFIG } from 'src/app/app.constants';
 import { State } from 'src/app/forms/state';
-import { FormConfigurationActions } from 'src/app/forms/state/actions';
-import { FormConfigurationState } from 'src/app/forms/state/form-configuration.reducer';
+import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
 import { RaceDynamicFormService } from '../../race-dynamic-form/services/rdf.service';
 import { RoundPlanResolverService } from '../../operator-rounds/services/round-plan-resolver.service';
+import { FormConfigurationState } from 'src/app/forms/state/builder/builder.reducer';
 
 @Injectable({ providedIn: 'root' })
 export class FormResolverService implements Resolve<FormConfigurationState> {
@@ -25,15 +25,19 @@ export class FormResolverService implements Resolve<FormConfigurationState> {
       this.roundPlanResolverServive.getResponseTypeDetails();
       return of({} as FormConfigurationState);
     }
+    this.store.dispatch(BuilderConfigurationActions.resetFormConfiguration());
     return forkJoin({
-      form: this.raceDynamicFormService.getFormById$(id),
+      form: this.raceDynamicFormService.getFormById$(id, {
+        includeAttachments: true
+      }),
+      embeddedFormDetail: this.raceDynamicFormService.getEmbeddedFormId$(id),
       authoredFormDetail:
         this.raceDynamicFormService.getAuthoredFormDetailByFormId$(id),
       formDetail: this.raceDynamicFormService.getFormDetailByFormId$(id)
     }).pipe(
-      map(({ form, authoredFormDetail, formDetail }) => {
+      map(({ form, embeddedFormDetail, authoredFormDetail, formDetail }) => {
         this.store.dispatch(
-          FormConfigurationActions.updateCreateOrEditForm({
+          BuilderConfigurationActions.updateCreateOrEditForm({
             createOrEditForm: true
           })
         );
@@ -50,11 +54,18 @@ export class FormResolverService implements Resolve<FormConfigurationState> {
           tags,
           plantId,
           plant,
+          additionalDetails,
+          instructions,
+          lastModifiedBy,
           _version: formListDynamoDBVersion
         } = form;
         let pdfTemplateConfiguration = JSON.parse(
           form?.pdfTemplateConfiguration
         );
+        let embeddedFormId;
+        if (embeddedFormDetail) {
+          embeddedFormId = embeddedFormDetail.embeddedFormId;
+        }
         if (!pdfTemplateConfiguration) {
           pdfTemplateConfiguration = DEFAULT_PDF_BUILDER_CONFIG;
         }
@@ -68,6 +79,30 @@ export class FormResolverService implements Resolve<FormConfigurationState> {
         } = authoredFormDetail;
         const { id: formDetailId, _version: formDetailDynamoDBVersion } =
           formDetail[0] ?? {};
+        if (instructions) {
+          const { notes, attachments, pdfDocs } = JSON.parse(instructions);
+          const attachmentPromises =
+            attachments?.map((attachmentId) =>
+              this.raceDynamicFormService
+                .getAttachmentsById$(attachmentId)
+                .toPromise()
+                .then()
+            ) || [];
+          const pdfPromises =
+            pdfDocs?.map((pdfId) =>
+              this.raceDynamicFormService
+                .getAttachmentsById$(pdfId)
+                .toPromise()
+                .then()
+            ) || [];
+          Promise.all(attachmentPromises).then((result) => {
+            this.raceDynamicFormService.attachmentsMapping$.next(result);
+          });
+          Promise.all(pdfPromises).then((result) => {
+            this.raceDynamicFormService.pdfMapping$.next(result);
+          });
+        }
+
         const formMetadata = {
           id,
           name,
@@ -79,7 +114,10 @@ export class FormResolverService implements Resolve<FormConfigurationState> {
           formType,
           tags,
           plantId,
-          plant: plant.name
+          additionalDetails: JSON.parse(additionalDetails),
+          instructions: JSON.parse(instructions),
+          plant: plant.name,
+          embeddedFormId: embeddedFormId ? embeddedFormId : ''
         };
         this.roundPlanResolverServive.getResponseTypeDetails(id);
 

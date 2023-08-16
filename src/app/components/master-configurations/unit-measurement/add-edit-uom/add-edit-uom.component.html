@@ -2,7 +2,12 @@
   <mat-card>
     <div class="add-edit-header">
       <h1 *ngIf="!unitEditData" class="heading" translate="createUnit"></h1>
-      <svg-icon icon="icon-close" class="cancel" (click)="cancel()"></svg-icon>
+      <svg-icon
+        id="addEditUOMCancelIcon"
+        icon="icon-close"
+        class="cancel"
+        (click)="cancel()"
+      ></svg-icon>
     </div>
     <div class="p-10 add-edit-content">
       <p
@@ -14,8 +19,9 @@
           class="unit-measurement m-b-10"
           *ngIf="unitType !== 'addNew'"
         >
-          <mat-label translate="unitOfMeasurement"></mat-label>
+          <mat-label id="addEditUOM" translate="unitOfMeasurement"></mat-label>
           <mat-select
+            id="addEditUOMSelect"
             [(ngModel)]="unitType"
             name="unitType"
             (selectionChange)="onMeasurementChange($event)"
@@ -23,11 +29,12 @@
           >
             <mat-option value="addNew">
               <span class="add-new-btn">
-                <mat-icon class="add-icon">add</mat-icon>
-                <label translate="addNew"></label>
+                <mat-icon id="addEditUOM" class="add-icon">add</mat-icon>
+                <label id="addEditUOMLabel" translate="addNew"></label>
               </span>
             </mat-option>
             <mat-option
+              id="addEditUOMOptions"
               *ngFor="let unit of measurementList"
               [value]="unit?.name"
             >
@@ -35,6 +42,7 @@
             </mat-option>
           </mat-select>
           <mat-error
+            id="addEditUOMError"
             class="m-l-5 m-t-2 text-red error-fields"
             *ngIf="!unitType && isSubmittedForm"
           >
@@ -47,9 +55,15 @@
         *ngIf="unitType === 'addNew'"
       >
         <mat-form-field appearance="outline" class="newUnitType m-b-10">
-          <mat-label translate="unit_type"></mat-label>
-          <input matInput [(ngModel)]="newUnitType" required />
+          <mat-label id="addEditUOMType" translate="unittype"></mat-label>
+          <input
+            id="addEditUOMUnitType"
+            matInput
+            [(ngModel)]="newUnitType"
+            required
+          />
           <mat-error
+            id="addEditUOMTypeError"
             class="m-l-5 m-t-2 text-red error-fields"
             *ngIf="unitType === 'addNew' && newUnitType === ''"
           >
@@ -78,21 +92,39 @@
               required
             />
             <mat-error
+              id="addEditUOMUnitTypeError"
               class="m-l-5 m-t-2 text-red error-fields"
               *ngIf="!isEditMeasurement && unitType === ''"
             >
               {{ 'unitTypeError' | translate }}
             </mat-error>
           </a>
-          <p *ngIf="isEditMeasurement" class="unit-type-name">
+          <p id="EditUOM" *ngIf="isEditMeasurement" class="unit-type-name">
             {{ unitType }}
-            <button class="edit-icon" (click)="editMeasurement()">
-              <svg-icon icon="icon-edit-icon" class="edit-icon-img"></svg-icon>
+            <button
+              id="EditUOMBtn"
+              class="edit-icon"
+              (click)="editMeasurement()"
+            >
+              <svg-icon
+                id="EditUOMIcon"
+                icon="icon-edit-icon"
+                class="edit-icon-img"
+              ></svg-icon>
             </button>
           </p>
         </div>
-        <span class="delete-icon" *ngIf="false" (click)="deleteUnitAndUOM()">
-          <svg-icon icon="icon-delete-icon" class="list-icons"></svg-icon>
+        <span
+          id="EditUOMDelete"
+          class="delete-icon"
+          *ngIf="false"
+          (click)="deleteUnitAndUOM()"
+        >
+          <svg-icon
+            id="EditUOMDeleteIcon"
+            icon="icon-delete-icon"
+            class="list-icons"
+          ></svg-icon>
         </span>
       </div>
 
@@ -104,8 +136,12 @@
           class="dis-flex m-t-10 describe"
           *ngIf="unitMeasurementForm?.get('units').value.length"
         >
-          <p class="description-heading" translate="description"></p>
-          <p class="symbol-heading" translate="symbol"></p>
+          <p
+            id="EditUOMDescription"
+            class="description-heading"
+            translate="description"
+          ></p>
+          <p id="EditUOMSymbol" class="symbol-heading" translate="symbol"></p>
         </div>
         <div
           class="input-container"
@@ -118,11 +154,13 @@
               class="m-l-5 description m-b-10"
             >
               <input
+                id="EditUOMDescriptionText"
                 matInput
                 formControlName="description"
                 [placeholder]="'description' | translate"
               />
               <mat-error
+                id="EditUOMDescriptionError"
                 *ngIf="processValidationErrors(i, 'description')"
                 class="m-t-5 error-fields"
               >
@@ -138,11 +176,13 @@
             </mat-form-field>
             <mat-form-field appearance="outline" class="m-l-5 symbol m-b-10">
               <input
+                id="EditUOMSymbolText"
                 matInput
                 formControlName="symbol"
                 [placeholder]="'symbol' | translate"
               />
               <mat-error
+                id="EditUOMSymbolError"
                 *ngIf="processValidationErrors(i, 'symbol')"
                 class="m-t-5 error-fields"
               >
@@ -161,17 +201,31 @@
       </div>
 
       <span *ngIf="unitType" (click)="addNewUmo()" class="add-more-btn">
-        <svg-icon icon="icon-add-new" class="add-more-icon"></svg-icon>
-        <label translate="addMore" class="add-more-text"></label>
+        <svg-icon
+          id="addMoreIcon"
+          icon="icon-add-new"
+          class="add-more-icon"
+        ></svg-icon>
+        <label
+          id="addMoreText"
+          translate="addMore"
+          class="add-more-text"
+        ></label>
       </span>
     </div>
     <div class="footer-buttons">
-      <button mat-stroked-button class="cancel-btn" (click)="cancel()">
+      <button
+        id="addEditUOMCancelBtn"
+        mat-stroked-button
+        class="cancel-btn"
+        (click)="cancel()"
+      >
         {{ 'cancel' | translate }}
       </button>
       <button
+        id="addEditUOMSaveBtn"
         mat-raised-button
-        [disabled]="!unitType || unitMeasurementForm?.invalid"
+        [disabled]="isFormValid"
         (click)="onSave()"
         class="save-btn"
       >

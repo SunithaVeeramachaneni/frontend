@@ -5,20 +5,30 @@
     pagesCount: pagesCount$ | async
   }"
 >
-  <span class="current-time">
+  <span id="iphoneTime" class="current-time">
     {{ currentTime }}
   </span>
   <div class="iphone-header">
-    <svg-icon icon="icon-Back_Page" class="previous-arrow"></svg-icon>
-    <p class="form-heading" matTooltip="{{ formMetadata.name }}">
+    <svg-icon
+      icon="icon-Back_Page"
+      id="iphoneBackArrow"
+      class="previous-arrow"
+    ></svg-icon>
+    <p
+      id="iphoneName"
+      class="form-heading"
+      matTooltip="{{ formMetadata.name }}"
+    >
       {{ formMetadata.name }}
     </p>
     <svg-icon
+      id="iphoneScanAssetIcon"
       *ngIf="moduleType === 'operator-rounds'"
       icon="icon-Scan_Asset"
       class="scan-asset"
     ></svg-icon>
     <svg-icon
+      id="iphoneMoreIcon"
       *ngIf="moduleType === 'forms'"
       class="iphone-more"
       icon="icon-More"
@@ -30,12 +40,18 @@
   >
     <div class="asset-navigation">
       <svg-icon icon="icon-Arrow_Backward" class="backward-arrow"></svg-icon>
-      <div class="asset-name">{{ assetLocationName }}</div>
+      <div id="iphoneAssetLocationName" class="asset-name">
+        {{ assetLocationName }}
+      </div>
 
-      <svg-icon icon="icon-Arrow_Forward" class="backward-arrow"></svg-icon>
+      <svg-icon
+        id="iphoneForwardArrow"
+        icon="icon-Arrow_Forward"
+        class="backward-arrow"
+      ></svg-icon>
     </div>
 
-    <svg-icon class="more" icon="icon-More"></svg-icon>
+    <svg-icon id="iphoneMore" class="more" icon="icon-More"></svg-icon>
   </div>
   <div
     class="iphone-preview"
@@ -59,24 +75,27 @@
     *ngIf="totalPages"
   >
     <button
+      id="iphonePreviousPageBtn"
       class="previous-page"
       (click)="prevPage()"
       [style.visibility]="currentPage !== 1 ? 'visible' : 'hidden'"
     >
       <svg-icon
+        id="iphonePreviousPageIcon"
         class="back-page-svg"
         icon="icon-Back_Page"
         class="back-page-svg"
       ></svg-icon>
       <div class="text-previous">
-        <span translate="page"></span> {{ currentPage - 1 }}
+        <span id="iphonePageNum" translate="page"></span> {{ currentPage - 1 }}
       </div>
     </button>
-    <button class="btn-save" translate="save"></button>
-    <span class="page-count" *ngIf="totalPages > 1"
+    <button id="iphoneSaveBtn" class="btn-save" translate="save"></button>
+    <span id="iphoneCurrentPage" class="page-count" *ngIf="totalPages > 1"
       >{{ currentPage }}/{{ totalPages }}</span
     >
     <button
+      id="iphoneNextPageBtn"
       class="next-page"
       (click)="nextPage()"
       [style.visibility]="
@@ -84,9 +103,11 @@
       "
     >
       <div class="text-next">
-        <span translate="page"></span> {{ currentPage + 1 }}
+        <span id="iphoneCurrentPageCount" translate="page"></span>
+        {{ currentPage + 1 }}
       </div>
       <svg-icon
+        id="iphonePreviousPage"
         class="front-page-svg"
         icon="icon-Back_Page"
         class="front-page-svg"
@@ -99,18 +120,21 @@
     [ngClass]="isOpenBottomSheet ? '' : 'hide-bottom-sheet'"
   >
     <div
+      id="iphoneChooseOption"
       class="bottom-list-item choose-option"
       matLine
       translate="chooseOption"
     ></div>
     <hr />
     <div
+      id="iphoneCreateIssue"
       class="bottom-list-item"
       matListItemTitle
       translate="createIssue"
     ></div>
     <hr />
     <button
+      id="iphoneHistoryText"
       class="bottom-list-item bottom-btn"
       matListItemTitle
       (click)="openHistoryBottomSheet()"
@@ -119,12 +143,14 @@
     ></button>
     <hr />
     <div
+      id="iphoneSkipTask"
       class="bottom-list-item skip-task"
       matListItemTitle
       translate="skipTask"
     ></div>
     <hr />
     <button
+      id="iphoneCloseBtn"
       matListItemTitle
       class="bottom-list-item bottom-btn"
       (click)="closeBottomSheet()"
@@ -138,8 +164,14 @@
   >
     <div class="header">
       <div></div>
-      <div class="title" matLine translate="historyTxt"></div>
+      <div
+        id="iphoneHistoryText"
+        class="title"
+        matLine
+        translate="historyTxt"
+      ></div>
       <button
+        id="iphoneDoneBtn"
         (click)="closeHistoryBottomSheet()"
         class="done-btn"
         translate="done"
@@ -148,6 +180,7 @@
     <hr />
     <div class="main">
       <div
+        id="iphoneLastFiveReading"
         class="main-heading"
         matLine
         translate="lastFiveReadingsHeader"
@@ -159,6 +192,7 @@
       ></div>
       <div class="history-chart-container">
         <img
+          id="iphoneHistoryChart"
           class="history-chart"
           src="assets/Images/History_Preview_Graph.png"
           alt="preview-history-graph"
@@ -166,9 +200,21 @@
       </div>
       <table class="history-table">
         <tr>
-          <th class="table-heading" translate="dateLabel"></th>
-          <th class="table-heading" translate="readingLabel"></th>
-          <th class="table-heading" translate="operator"></th>
+          <th
+            id="iphoneDateLabel"
+            class="table-heading"
+            translate="dateLabel"
+          ></th>
+          <th
+            id="iphoneReadingLabel"
+            class="table-heading"
+            translate="readingLabel"
+          ></th>
+          <th
+            id="iphoneOperator"
+            class="table-heading"
+            translate="operator"
+          ></th>
         </tr>
         <tr>
           <td>--</td>

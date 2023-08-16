@@ -1,0 +1,91 @@
+@import '../../../../../scss/colors.scss';
+
+.locations-list-view {
+  background-color: $white;
+  height: calc(100vh - 85px);
+
+  ::ng-deep .table-column {
+    width: 60%;
+  }
+
+  .heading {
+    font-weight: 700;
+    font-size: 130%;
+    color: $blue-head;
+    margin: 0;
+    padding-left: 20px;
+  }
+
+  .main-container {
+    width: 100%;
+    margin-top: 1%;
+  }
+
+  .locations-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 55px;
+  }
+
+  .filter-icon {
+    width: 15px;
+    height: 15px;
+  }
+
+  .search {
+    margin-top: 5px;
+  }
+
+  .create-new-btn {
+    background: $blue-main;
+    color: $white;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 100%;
+    letter-spacing: 0.15px;
+    border: 1px solid $blue-main;
+    border-radius: 4px;
+    height: 29px;
+    line-height: 20px;
+    padding: 0px 14px;
+    float: right;
+    margin: 6px 10px 5px 10px;
+    cursor: pointer;
+    font-weight: normal;
+  }
+
+  .more-btn {
+    background: $blue-main;
+    color: $white;
+    margin-left: 10px;
+    min-width: 50px;
+    margin-right: 15px;
+  }
+
+  .ghost-loading {
+    padding: 0 20px;
+  }
+}
+
+.menu-icons {
+  width: 20px;
+  height: 20px;
+  position: relative;
+  top: 5px;
+  margin-right: 12px;
+}
+
+.add-manually-icon {
+  width: 15px;
+  height: 15px;
+  position: relative;
+  top: 3px;
+  margin-right: 12px;
+}
+
+.menu-buttons {
+  height: 40px;
+  align-items: center;
+  line-height: 20px;
+}

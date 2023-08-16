@@ -1,32 +1,44 @@
 <div class="date-segment">
   <mat-button-toggle-group [value]="selectDate" (change)="dateChanged($event)">
-    <mat-button-toggle value="today" class="toogle-btn-text">
+    <mat-button-toggle
+      id="dateSegmentDueToday"
+      value="today"
+      class="toogle-btn-text"
+    >
       {{ 'dueToday' | translate }}
     </mat-button-toggle>
-    <mat-button-toggle value="week" class="toogle-btn-text">{{
-      'dueThisWeek' | translate
-    }}</mat-button-toggle>
-    <mat-button-toggle value="month" class="toogle-btn-text">{{
-      'dueThisMonth' | translate
-    }}</mat-button-toggle>
     <mat-button-toggle
+      id="dateSegmentDueThisWeek"
+      value="week"
+      class="toogle-btn-text"
+      >{{ 'dueThisWeek' | translate }}</mat-button-toggle
+    >
+    <mat-button-toggle
+      id="dateSegmentDueThisMonth"
+      value="month"
+      class="toogle-btn-text"
+      >{{ 'dueThisMonth' | translate }}</mat-button-toggle
+    >
+    <mat-button-toggle
+      id="dateSegmentCustomText"
       value="custom"
       (click)="rangePicker.open()"
       class="toogle-btn-text"
       >{{ customText | translate }}</mat-button-toggle
     >
   </mat-button-toggle-group>
-  <mat-form-field appearance="fill" style="visibility: hidden; width: 0">
+  <mat-form-field appearance="fill" class="date-range-form-field">
     <mat-date-range-input [rangePicker]="rangePicker">
       <input type="button" matStartDate [(ngModel)]="startDate" />
       <input type="button" matEndDate [(ngModel)]="endDate" />
     </mat-date-range-input>
     <mat-date-range-picker #rangePicker>
       <mat-date-range-picker-actions>
-        <button mat-button matDateRangePickerCancel>
+        <button id="dateSegmentCancelBtn" mat-button matDateRangePickerCancel>
           {{ 'cancel' | translate }}
         </button>
         <button
+          id="dateSegmentApplyBtn"
           mat-raised-button
           color="primary"
           matDateRangePickerApply

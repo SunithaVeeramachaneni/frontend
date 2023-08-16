@@ -13,23 +13,19 @@ import {
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { isEqual } from 'lodash-es';
-import { Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
-  map,
   pairwise,
   takeUntil,
   tap
 } from 'rxjs/operators';
-import {
-  getSection,
-  getSectionsCount,
-  getTaskCountBySection,
-  State
-} from 'src/app/forms/state/builder/builder-state.selectors';
+import { State } from 'src/app/forms/state/builder/builder-state.selectors';
 import { SectionEvent, Section } from 'src/app/interfaces';
 import { BuilderConfigurationActions } from '../../state/actions';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmModalPopupComponent } from 'src/app/components/race-dynamic-form/confirm-modal-popup/confirm-modal-popup/confirm-modal-popup.component';
 
 @Component({
   selector: 'app-section',
@@ -39,6 +35,8 @@ import { BuilderConfigurationActions } from '../../state/actions';
 })
 export class SectionComponent implements OnInit, OnDestroy {
   @ViewChild('sectionName') sectionName: ElementRef;
+
+  @Input() isTemplate: boolean;
   @Input() set pageIndex(pageIndex: number) {
     this._pageIndex = pageIndex;
   }
@@ -58,6 +56,33 @@ export class SectionComponent implements OnInit, OnDestroy {
     return this._sectionId;
   }
 
+  @Input() set sectionQuestionsCount(count: number) {
+    this._sectionQuestionsCount = count;
+  }
+  get sectionQuestionsCount() {
+    return this._sectionQuestionsCount;
+  }
+
+  @Input() set section(section: Section) {
+    if (section) {
+      if (!isEqual(this.section, section)) {
+        this._section = section;
+        if (section && !section.isImported) {
+          section.isImported = false;
+          section.templateId = '';
+          section.templateName = '';
+          section.externalSectionId = '';
+        }
+        this.sectionForm.patchValue(section, {
+          emitEvent: false
+        });
+      }
+    }
+  }
+  get section() {
+    return this._section;
+  }
+
   @Input() selectedNodeId: any;
 
   @Output() sectionEvent: EventEmitter<SectionEvent> =
@@ -69,17 +94,24 @@ export class SectionComponent implements OnInit, OnDestroy {
       disabled: true
     },
     position: '',
-    isOpen: true
+    isOpen: true,
+    isImported: false,
+    templateId: '',
+    templateName: '',
+    externalSectionId: ''
   });
-  section$: Observable<Section>;
-  sectionsCount$: Observable<number>;
-  sectionTasksCount$: Observable<number>;
   private _pageIndex: number;
   private _sectionIndex: number;
   private _sectionId: string;
+  private _section: Section;
+  private _sectionQuestionsCount: number;
   private onDestroy$ = new Subject();
 
-  constructor(private fb: FormBuilder, private store: Store<State>) {}
+  constructor(
+    private fb: FormBuilder,
+    private dialog: MatDialog,
+    private store: Store<State>
+  ) {}
 
   ngOnInit() {
     this.sectionForm.valueChanges
@@ -102,31 +134,6 @@ export class SectionComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
-
-    this.section$ = this.store
-      .select(
-        getSection(this.pageIndex, this.sectionIndex, this.selectedNodeId)
-      )
-      .pipe(
-        tap((section) => {
-          this.sectionForm.patchValue(section, {
-            emitEvent: false
-          });
-        })
-      );
-
-    this.sectionsCount$ = this.store.select(
-      getSectionsCount(this.pageIndex, this.selectedNodeId)
-    );
-    this.sectionTasksCount$ = this.store.select(
-      getTaskCountBySection(this.pageIndex, this.sectionId, this.selectedNodeId)
-    );
-  }
-
-  getTasksCountBySectionId(pageIndex, sectionId) {
-    return this.store
-      .select(getTaskCountBySection(pageIndex, sectionId, this.selectedNodeId))
-      .pipe(map((d) => d));
   }
 
   addSection() {
@@ -156,12 +163,55 @@ export class SectionComponent implements OnInit, OnDestroy {
     this.sectionName.nativeElement.focus();
   }
 
-  deleteSection() {
+  copySection() {
     this.sectionEvent.emit({
       pageIndex: this.pageIndex,
       sectionIndex: this.sectionIndex,
       section: this.sectionForm.getRawValue(),
-      type: 'delete'
+      type: 'copy'
+    });
+  }
+
+  deleteSection() {
+    if (!this.isTemplate) {
+      this.sectionEvent.emit({
+        pageIndex: this.pageIndex,
+        sectionIndex: this.sectionIndex,
+        section: this.sectionForm.getRawValue(),
+        type: 'delete'
+      });
+      return;
+    }
+    const dialogRef = this.dialog.open(ConfirmModalPopupComponent, {
+      maxWidth: 'max-content',
+      maxHeight: 'max-content',
+      data: {
+        popupTexts: {
+          primaryBtnText: 'yes',
+          secondaryBtnText: 'cancel',
+          title: 'confirmDelete?',
+          subtitle: 'deleteTemplateSectionSubtitle'
+        }
+      }
+    });
+    dialogRef.afterClosed().subscribe((data) => {
+      if (data === 'primary') {
+        this.sectionEvent.emit({
+          pageIndex: this.pageIndex,
+          sectionIndex: this.sectionIndex,
+          section: this.sectionForm.getRawValue(),
+          type: 'delete'
+        });
+      }
+    });
+  }
+
+  unlinkSection() {
+    this.sectionEvent.emit({
+      pageIndex: this.pageIndex,
+      sectionIndex: this.sectionIndex,
+      section: this.sectionForm.getRawValue(),
+      type: 'unlink'
     });
   }
 

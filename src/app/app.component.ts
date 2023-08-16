@@ -17,7 +17,6 @@ import { Permission, Tenant, UserInfo } from './interfaces';
 import { LoginService } from './components/login/services/login.service';
 import { environment } from 'src/environments/environment';
 import { ChatService } from './shared/components/collaboration/chats/chat.service';
-import { AuthHeaderService } from './shared/services/authHeader.service';
 import { TenantService } from './components/tenant-management/services/tenant.service';
 import { ImageUtils } from './shared/utils/imageUtils';
 import { Buffer } from 'buffer';
@@ -28,6 +27,7 @@ import { UserIdleService } from 'angular-user-idle';
 import { debounce } from './shared/utils/debounceMethod';
 import { PeopleService } from './shared/components/collaboration/people/people.service';
 import { SseService } from './shared/services/sse.service';
+declare const APP_VERSION: string;
 
 const {
   dashboard,
@@ -45,7 +45,7 @@ const {
   userManagement,
   activeUsers,
   rolesPermissions,
-  inActiveTenants,
+  userGroups,
   inActiveUsers,
   tenantManagement,
   raceDynamicForms,
@@ -61,6 +61,7 @@ const {
   assets,
   unitOfMeasurement,
   plants,
+  shifts,
   globalResponse,
   roundPlanArchivedForms,
   roundPlanObservations,
@@ -119,6 +120,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
           title: rolesPermissions.title,
           url: rolesPermissions.url,
           permission: rolesPermissions.permission
+        },
+        {
+          title: userGroups.title,
+          url: userGroups.url,
+          permission: userGroups.permission
         },
         {
           title: inActiveUsers.title,
@@ -265,6 +271,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
           permission: plants.permission
         },
         {
+          title: shifts.title,
+          url: shifts.url,
+          permission: plants.permission
+        },
+        {
           title: locations.title,
           url: locations.url,
           permission: locations.permission
@@ -309,6 +320,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   isUserOnline = false;
 
+  readonly appVersion = APP_VERSION;
+
   constructor(
     private commonService: CommonService,
     private router: Router,
@@ -316,37 +329,36 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     private translateService: TranslateService,
     private usersService: UsersService,
     private loginService: LoginService,
-    private authHeaderService: AuthHeaderService,
     private chatService: ChatService,
     private tenantService: TenantService,
     private peopleService: PeopleService,
     private imageUtils: ImageUtils,
     private dialog: MatDialog,
-    private userIdle: UserIdleService,
+    // private userIdle: UserIdleService,
     private sseService: SseService
   ) {}
 
   @HostListener('document:mousemove', ['$event'])
   @debounce()
   onMouseMove(e) {
-    this.updateUserPresence();
+    // this.updateUserPresence();
   }
 
   @HostListener('click', ['$event.target'])
   @debounce()
   onClick(e) {
-    this.updateUserPresence();
+    // this.updateUserPresence();
   }
 
   @HostListener('window:keyup', ['$event'])
   @debounce()
   keyEvent(event: KeyboardEvent) {
-    this.updateUserPresence();
+    // this.updateUserPresence();
   }
 
   @HostListener('window:unload', ['$event'])
   unloadHandler(event) {
-    this.removeUserPresence();
+    // this.removeUserPresence();
   }
 
   @HostListener('window:beforeunload', ['$event'])
@@ -356,9 +368,10 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   onSignOut = () => {
-    this.removeUserPresence();
+    // this.removeUserPresence();
   };
 
+  /*
   updateUserPresence = () => {
     if (this.isUserOnline || !this.isUserAuthenticated) return;
     this.usersService.setUserPresence$().subscribe((resp) => {
@@ -383,8 +396,10 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.userIdle.stopWatching();
     });
   };
+  */
 
   ngOnInit() {
+    /*
     //Start watching for user inactivity.
     this.userIdle.startWatching();
     // Start watching when user idle is starting.
@@ -393,7 +408,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.removeUserPresence();
       }
     });
-
+    */
     const ref = this;
     this.loginService.isUserAuthenticated$
       .pipe(
@@ -490,9 +505,9 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     // COLLABORATION CHAT SSE
     const stopCollabSSE = true;
     if (!stopCollabSSE && userID) {
-      const collaborationSSEUrl = `${environment.userRoleManagementApiUrl}${collaborationType}/sse/${userID}`;
       this.eventSourceCollaboration = this.sseService.getEventSourceWithGet(
-        collaborationSSEUrl,
+        environment.userRoleManagementApiUrl,
+        `${collaborationType}/sse/${userID}`,
         null
       );
       this.eventSourceCollaboration.stream();
@@ -532,9 +547,9 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     // JITSI AV CALLING SSE
     const stopJitsiSSE = true;
     if (!stopJitsiSSE) {
-      const jitsiSseUrl = `${environment.userRoleManagementApiUrl}jitsi/sse/${userInfo.email}`;
       this.eventSourceJitsi = this.sseService.getEventSourceWithGet(
-        jitsiSseUrl,
+        environment.userRoleManagementApiUrl,
+        `jitsi/sse/${userInfo.email}`,
         null
       );
       this.eventSourceJitsi.stream();
@@ -568,11 +583,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
         // console.log(event);
       };
     }
-
+    /*
     // USER PRESENCE SSE
-    const updateUserPresenceSSEURL = `${environment.userRoleManagementApiUrl}users/sse/users_presence`;
     this.eventSourceUpdateUserPresence = this.sseService.getEventSourceWithGet(
-      updateUserPresenceSSEURL,
+      environment.userRoleManagementApiUrl,
+      'users/sse/users_presence',
       null
     );
     this.eventSourceUpdateUserPresence.stream();
@@ -590,6 +605,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.eventSourceUpdateUserPresence.onerror = (event) => {
       // console.log(event);
     };
+     */
   }
 
   ngAfterViewChecked(): void {
@@ -625,16 +641,18 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     });
   }
   ngOnDestroy() {
-    // TODO: NEED TO FIGURE OUT A WAY TO CLOSE THE EVENTSOURCES GRACEFULLY....
-    // if (this.eventSourceCollaboration) {
-    //   this.eventSourceCollaboration.close();
-    // }
-    // if (this.eventSourceJitsi) {
-    //   this.eventSourceJitsi.close();
-    // }
-    // if (this.eventSourceUpdateUserPresence) {
-    //   this.eventSourceUpdateUserPresence.close();
-    // }
+    /*
+    TODO: NEED TO FIGURE OUT A WAY TO CLOSE THE EVENTSOURCES GRACEFULLY....
+    if (this.eventSourceCollaboration) {
+      this.eventSourceCollaboration.close();
+    }
+    if (this.eventSourceJitsi) {
+      this.eventSourceJitsi.close();
+    }
+    if (this.eventSourceUpdateUserPresence) {
+      this.eventSourceUpdateUserPresence.close();
+    }
+    */
   }
 
   checkUserHasSubMenusPermissions(

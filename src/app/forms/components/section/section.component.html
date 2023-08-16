@@ -1,50 +1,130 @@
-<div class="section dis-flex" [formGroup]="sectionForm" *ngIf="{
-    section: section$ | async,
-    sectionsCount: sectionsCount$ | async,
-    sectionTasksCount: sectionTasksCount$ | async
-  } as props">
+<div class="section dis-flex" [formGroup]="sectionForm">
   <div class="width-95 section-margin">
     <div>
       <input type="hidden" formControlName="position" />
       <div class="section-header">
-        <mat-icon (click)="toggleIsOpenState()" *ngIf="sectionForm.get('isOpen').value === true" class="section-arrow">
+        <mat-icon
+          id="sectionExpandMore"
+          (click)="toggleIsOpenState()"
+          *ngIf="sectionForm.get('isOpen').value === true"
+          class="section-arrow"
+        >
           expand_more
         </mat-icon>
-        <mat-icon (click)="toggleIsOpenState()" *ngIf="sectionForm.get('isOpen').value === false" class="section-arrow">
+        <mat-icon
+          id="sectionArrow"
+          (click)="toggleIsOpenState()"
+          *ngIf="sectionForm.get('isOpen').value === false"
+          class="section-arrow"
+        >
           chevron_right
         </mat-icon>
+        <div
+          *ngIf="sectionForm.get('isImported').value === true"
+          class="tooltip"
+        >
+          <svg-icon
+            id="sectionUnlinkIcon"
+            icon="icon-Unlink"
+            class="icon-unlink"
+          >
+          </svg-icon>
+          <span
+            *ngIf="!sectionForm.get('templateName').value?.length"
+            class="tooltip-text"
+            translate="template"
+          ></span>
+          <span
+            id="sectionTemplateName"
+            class="tooltip-text"
+            *ngIf="sectionForm.get('templateName').value?.length"
+            >From {{ sectionForm.get('templateName').value }}</span
+          >
+        </div>
 
         <a class="width-60">
-          <input #sectionName type="text" autofocus formControlName="name"
-            [size]="getSize(sectionForm.get('name').value)" class="form_section_name_input"
-            placeholder="Untitled Section" autocomplete="off" (keyup.enter)="sectionForm.get('name').disable()"
-            (blur)="sectionForm.get('name').disable()" />
-          <button mat-icon-button (click)="editSection()" class="edit-icon"
-            *ngIf="sectionForm.get('name').disabled === true">
-            <svg-icon icon="icon-edit-icon-white" class="edit-icon-img"></svg-icon>
+          <input
+            id="sectionText"
+            #sectionName
+            type="text"
+            autofocus
+            formControlName="name"
+            [size]="getSize(sectionForm.get('name').value)"
+            class="form_section_name_input"
+            placeholder="Untitled Section"
+            autocomplete="off"
+            (keyup.enter)="sectionForm.get('name').disable()"
+            (blur)="sectionForm.get('name').disable()"
+          />
+          <button
+            id="sectionEditBtn"
+            mat-icon-button
+            (click)="editSection()"
+            class="edit-icon"
+            *ngIf="
+              sectionForm.get('name').disabled === true &&
+              sectionForm.get('isImported').value !== true
+            "
+          >
+            <svg-icon
+              id="sectionEditIcon"
+              icon="icon-edit-icon-white"
+              class="edit-icon-img"
+            ></svg-icon>
           </button>
         </a>
         <div class="sectionHeadRight">
-          <span class="sectionTaskCount">
-            {{getTasksCountBySectionId(pageIndex, sectionId) | async}}
+          <span id="sectionQuestionCount" class="sectionTaskCount">
+            {{ sectionQuestionsCount }}
           </span>
 
-          <button [matMenuTriggerFor]="sectionMenu" class="more-icon" aria-label="More Options">
-            <mat-icon>more_horiz</mat-icon>
+          <button
+            id="sectionMoreOption"
+            [matMenuTriggerFor]="sectionMenu"
+            class="more-icon"
+            aria-label="More Options"
+          >
+            <mat-icon id="sectionMoreIcon">more_horiz</mat-icon>
           </button>
           <mat-menu #sectionMenu="matMenu">
-            <button mat-menu-item (click)="deleteSection()" class="text-red">
-              <span translate="deleteSection"></span>
+            <button
+              *ngIf="sectionForm.get('isImported').value"
+              mat-menu-item
+              (click)="unlinkSection()"
+            >
+              <span translate="unlinkSection"></span>
+            </button>
+            <button mat-menu-item (click)="copySection()">
+              <span translate="copySection"></span>
+            </button>
+            <button
+              id="sectionDeleteBtn"
+              mat-menu-item
+              (click)="deleteSection()"
+              class="text-red"
+            >
+              <span id="sectionDelete" translate="deleteSection"></span>
             </button>
           </mat-menu>
         </div>
       </div>
-      <div *ngIf="sectionForm.get('isOpen').value === true" class="questions-content">
+      <div
+        *ngIf="sectionForm.get('isOpen').value === true"
+        [ngClass]="
+          sectionForm.get('isImported').value === true
+            ? 'disable-questions questions-content'
+            : 'questions-content'
+        "
+      >
         <ng-content></ng-content>
       </div>
 
-      <button class="add-section-btn" (click)="addSection()">
-        <svg-icon icon="icon-add-section" class="add-section-btn-icon"></svg-icon>
+      <button id="sectionAddBtn" class="add-section-btn" (click)="addSection()">
+        <svg-icon
+          id="sectionAddIcon"
+          icon="icon-add-section"
+          class="add-section-btn-icon"
+        ></svg-icon>
         {{ 'addSection' | translate }}
       </button>
     </div>

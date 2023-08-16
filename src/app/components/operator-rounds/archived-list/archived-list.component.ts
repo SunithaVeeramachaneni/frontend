@@ -55,7 +55,7 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
   columns: Column[] = [
     {
       id: 'name',
-      displayName: 'Recents',
+      displayName: 'Round Plans',
       type: 'string',
       controlType: 'string',
       order: 1,
@@ -179,9 +179,13 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
   limit = graphQLDefaultLimit;
   searchForm: FormControl;
   archivedFormsListCount$: Observable<number>;
+  archivedFormsListCountRaw$: BehaviorSubject<number> =
+    new BehaviorSubject<number>(0);
+  archivedFormsListCountUpdate$: BehaviorSubject<number> =
+    new BehaviorSubject<number>(0);
   nextToken = '';
   public menuState = 'out';
-  ghostLoading = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+  ghostLoading = Array.from(Array(13).keys());
   submissionDetail: any;
   fetchType = 'load';
   restoreDeleteForm$: BehaviorSubject<FormTableUpdate> =
@@ -206,6 +210,7 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
   plantsIdNameMap = {};
   plants = [];
   currentRouteUrl$: Observable<string>;
+  triggerCountUpdate = false;
   readonly routingUrls = routingUrls;
   private destroy$ = new Subject();
 
@@ -236,13 +241,23 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
         tap(() => this.fetchForms$.next({ data: 'search' }))
       )
       .subscribe(() => this.isLoading$.next(true));
-    this.archivedFormsListCount$ =
-      this.operatorRoundsService.getFormsListCount$('All', true);
     this.getDisplayedForms();
     this.configOptions.allColumns = this.columns;
     this.prepareMenuActions();
     this.getFilter();
     this.getAllArchivedRoundPlans();
+    this.archivedFormsListCount$ = combineLatest([
+      this.archivedFormsListCountRaw$,
+      this.archivedFormsListCountUpdate$
+    ]).pipe(
+      map(([count, update]) => {
+        if (this.triggerCountUpdate) {
+          count += update;
+          this.triggerCountUpdate = false;
+        }
+        return count;
+      })
+    );
   }
 
   getDisplayedForms(): void {
@@ -324,7 +339,10 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
         this.filter
       )
       .pipe(
-        mergeMap(({ rows, next }) => {
+        mergeMap(({ rows, next, count }) => {
+          if (count !== undefined) {
+            this.archivedFormsListCountRaw$.next(count);
+          }
           this.nextToken = next;
           this.isLoading$.next(false);
           return of(rows);
@@ -466,8 +484,8 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
           action: 'restore',
           form
         });
-        this.archivedFormsListCount$ =
-          this.operatorRoundsService.getFormsListCount$('All', true);
+        this.triggerCountUpdate = true;
+        this.archivedFormsListCountUpdate$.next(-1);
       });
   }
 
@@ -494,8 +512,8 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
               action: 'delete',
               form
             });
-            this.archivedFormsListCount$ =
-              this.operatorRoundsService.getFormsListCount$('All', true);
+            this.triggerCountUpdate = true;
+            this.archivedFormsListCountUpdate$.next(-1);
           });
       }
     });

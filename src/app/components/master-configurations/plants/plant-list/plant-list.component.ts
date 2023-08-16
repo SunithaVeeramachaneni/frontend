@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import {
   ChangeDetectionStrategy,
   Component,
@@ -20,7 +21,8 @@ import {
   mergeMap,
   switchMap,
   takeUntil,
-  tap
+  tap,
+  skipWhile
 } from 'rxjs/operators';
 import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import {
@@ -32,11 +34,11 @@ import {
   UserInfo
 } from 'src/app/interfaces';
 import { ToastService } from 'src/app/shared/toast';
-import { downloadFile } from 'src/app/shared/utils/fileUtils';
 import { LoginService } from 'src/app/components/login/services/login.service';
 import { PlantService } from '../services/plant.service';
 import { slideInOut } from 'src/app/animations';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
+import { PlantTableUpdate } from 'src/app/interfaces/master-data-management/plants';
 @Component({
   selector: 'app-plant-list',
   templateUrl: './plant-list.component.html',
@@ -104,7 +106,7 @@ export class PlantListComponent implements OnInit, OnDestroy {
       hasConditionalStyles: true
     },
     {
-      id: 'country',
+      id: 'countryDisplay',
       displayName: 'Country',
       type: 'string',
       controlType: 'string',
@@ -126,11 +128,33 @@ export class PlantListComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
+      id: 'timeZoneDisplay',
+      displayName: 'Time Zone',
+      type: 'string',
+      controlType: 'string',
+      order: 4,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: true,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
       id: 'state',
       displayName: 'State',
       type: 'string',
       controlType: 'string',
-      order: 4,
+      order: 5,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -152,12 +176,35 @@ export class PlantListComponent implements OnInit, OnDestroy {
       displayName: 'Zip Code',
       type: 'number',
       controlType: 'string',
-      order: 4,
+      order: 6,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
       searchable: false,
       sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: true,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
+      id: 'shiftNames',
+      displayName: 'Shift',
+      type: 'string',
+      controlType: 'string',
+      isMultiValued: true,
+      order: 4,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: false,
       hideable: false,
       visible: true,
       movable: false,
@@ -203,6 +250,7 @@ export class PlantListComponent implements OnInit, OnDestroy {
   openPlantDetailedView = 'out';
   plantAddOrEditOpenState = 'out';
   plantEditData;
+  plantMasterData = {};
 
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
@@ -212,8 +260,8 @@ export class PlantListComponent implements OnInit, OnDestroy {
   plantsCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
 
   addEditCopyDeletePlants = false;
-  addEditCopyDeletePlants$: BehaviorSubject<FormTableUpdate> =
-    new BehaviorSubject<FormTableUpdate>({
+  addEditCopyDeletePlants$: BehaviorSubject<PlantTableUpdate> =
+    new BehaviorSubject<PlantTableUpdate>({
       action: null,
       form: {} as any
     });
@@ -234,6 +282,7 @@ export class PlantListComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.plantService.fetchPlants$.next({ data: 'load' });
+    this.plantService.getPlantMasterData();
     this.plantService.fetchPlants$.next({} as TableEvent);
     this.searchPlant = new FormControl('');
 
@@ -266,6 +315,13 @@ export class PlantListComponent implements OnInit, OnDestroy {
     );
   }
 
+  formatTimeZoneMapping(data, plantMasterData) {
+    if (data.country && plantMasterData[data.country])
+      data.countryDisplay = plantMasterData[data.country].countryName;
+    if (data.timeZone) data.timeZoneDisplay = data.timeZone.utcOffset;
+    return data;
+  }
+
   getDisplayedPlants(): void {
     const plantsOnLoadSearch$ = this.plantService.fetchPlants$.pipe(
       filter(({ data }) => data === 'load' || data === 'search'),
@@ -296,14 +352,20 @@ export class PlantListComponent implements OnInit, OnDestroy {
     this.plants$ = combineLatest([
       plantsOnLoadSearch$,
       this.addEditCopyDeletePlants$,
-      onScrollPlants$
+      onScrollPlants$,
+      this.plantService.plantMasterData$.pipe(
+        skipWhile((val) => !Object.keys(val).length)
+      )
     ]).pipe(
-      map(([rows, { form, action }, scrollData]) => {
+      map(([rows, { form, action }, scrollData, plantMasterData]) => {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
             tableHeight: 'calc(100vh - 140px)'
           };
+          initial.data = rows.map((row) =>
+            this.formatTimeZoneMapping(row, plantMasterData)
+          );
           initial.data = rows;
         } else if (this.addEditCopyDeletePlants) {
           switch (action) {
@@ -315,10 +377,11 @@ export class PlantListComponent implements OnInit, OnDestroy {
               });
               break;
             case 'add':
-              // case 'copy':
+              form = this.formatTimeZoneMapping(form, plantMasterData);
               initial.data = [form, ...initial.data];
               break;
             case 'edit':
+              form = this.formatTimeZoneMapping(form, plantMasterData);
               initial.data = [
                 form,
                 ...initial.data.filter((item) => item.id !== form.id)
@@ -329,6 +392,9 @@ export class PlantListComponent implements OnInit, OnDestroy {
           }
           this.addEditCopyDeletePlants = false;
         } else {
+          scrollData = scrollData.map((row) =>
+            this.formatTimeZoneMapping(row, plantMasterData)
+          );
           initial.data = initial.data.concat(scrollData);
         }
 
@@ -363,6 +429,11 @@ export class PlantListComponent implements OnInit, OnDestroy {
   }
 
   addOrUpdatePlant(plantData) {
+    if (plantData.data.id && plantData.data.timeZone) {
+      const timeZoneMapping = this.plantService.plantTimeZoneMapping$.value;
+      timeZoneMapping[plantData.data.id] = plantData.data.timeZone;
+      this.plantService.plantTimeZoneMapping$.next(timeZoneMapping);
+    }
     if (plantData.status === 'add') {
       this.addEditCopyDeletePlants = true;
       if (this.searchPlant.value) {
@@ -426,7 +497,7 @@ export class PlantListComponent implements OnInit, OnDestroy {
   rowLevelActionHandler = ({ data, action }): void => {
     switch (action) {
       case 'edit':
-        this.plantEditData = { ...data };
+        this.plantEditData = { plantData: data };
         this.plantAddOrEditOpenState = 'in';
         break;
       case 'delete':
@@ -443,7 +514,9 @@ export class PlantListComponent implements OnInit, OnDestroy {
     switch (columnId) {
       case 'name':
       case 'plantId':
-      case 'country':
+      case 'countryDisplay':
+      case 'timeZoneDisplay':
+      case 'shiftNames':
       case 'zipCode':
       case 'state':
         this.showPlantDetail(row);
@@ -455,6 +528,7 @@ export class PlantListComponent implements OnInit, OnDestroy {
   deletePlant(plant: any): void {
     const deleteData = {
       id: plant.id,
+      // eslint-disable-next-line no-underscore-dangle
       _version: plant._version
     };
     this.plantService.deletePlant$(deleteData).subscribe((data: any) => {
@@ -482,7 +556,7 @@ export class PlantListComponent implements OnInit, OnDestroy {
   onClosePlantDetailedView(event) {
     this.openPlantDetailedView = event.status;
     if (event.data !== '') {
-      this.plantEditData = event.data;
+      this.plantEditData = { plantData: event.data };
       this.plantAddOrEditOpenState = 'in';
     }
   }

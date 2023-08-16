@@ -16,6 +16,19 @@
     font-size: 80%;
     border-bottom: 1px solid $gray9;
     margin: 0;
+
+    .back-btn {
+      border: none;
+      background-color: transparent;
+      margin-right: 8px;
+
+      .back-arrow {
+        height: 15px;
+        width: 15px;
+        position: relative;
+        top: 1px;
+      }
+    }
   }
 
   .form-name {
@@ -38,10 +51,10 @@
 
   .section-div {
     background: rgba(61, 90, 254, 0.15);
-    border-radius: 8px 8px 0px 0px;
+    border-radius: 8px 8px;
     height: 30px;
-    padding: 15px 0 0 12px;
-    margin: 5px 0;
+    padding: 10px 0 10px 10px;
+    margin: 10px 0;
   }
 
   .questions {
@@ -60,12 +73,20 @@
 
     .use-button {
       width: 48%;
+      background-color: $blue-main;
+      color: $white;
     }
 
     .cancel-button {
       width: 48%;
       margin-right: 10px;
+      color: $blue-main;
     }
+  }
+
+  .page-arrow {
+    position: relative;
+    top: 8px;
   }
 
   ::ng-deep .mat-checkbox-layout {

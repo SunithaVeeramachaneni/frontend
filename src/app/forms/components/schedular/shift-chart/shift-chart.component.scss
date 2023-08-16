@@ -1,0 +1,91 @@
+@import '../../../../../scss/colors.scss';
+
+#shift-container {
+  ::ng-deep .center {
+    text-align: center;
+  }
+
+  ::ng-deep .form-padding {
+    padding-bottom: 30px;
+  }
+  ::ng-deep .table-wrapper {
+    overflow-x: auto;
+    white-space: nowrap;
+    width: 100%;
+  }
+  .table-wrapper tr td {
+    border: 1px solid $gray14;
+    color: $white;
+    cursor: pointer;
+  }
+  .table-wrapper table {
+    border-collapse: collapse;
+  }
+
+  .main-content {
+    display: flex;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .table-wrapper tr:first-child td {
+    border: 0;
+    color: $light-gray;
+  }
+
+  .table-wrapper tr td:hover {
+    background-color: $gray;
+    color: $black;
+  }
+
+  .main-content .left {
+    color: $black;
+  }
+  .left-margin {
+    margin: 0 12px;
+  }
+
+  .dashboard-titles {
+    font-style: normal;
+    font-weight: normal;
+    font-size: 100%;
+    line-height: 19px;
+    color: $gray-bg;
+    margin-left: 10px;
+  }
+
+  .more-icon {
+    position: relative;
+    left: 10px;
+    background: none;
+    border: none;
+    z-index: 10;
+    .more-icon-no-color {
+      color: $light-gray;
+    }
+    ::ng-deep svg {
+      width: 17px !important;
+      height: 17px !important;
+      margin: 15px !important;
+    }
+  }
+  .slot {
+    height: 50px;
+    width: 100px;
+    text-align: center;
+    color: $light-gray;
+    font-weight: 500;
+  }
+  .pr-20 {
+    padding-right: 20px;
+  }
+  .pl-15 {
+    padding-left: 15px;
+  }
+  ::ng-deep .slotBackground {
+    background-color: $gray15 !important;
+  }
+  .cursor {
+    cursor: pointer;
+  }
+}

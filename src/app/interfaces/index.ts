@@ -6,6 +6,7 @@ export * from './mail';
 export * from './step';
 export * from './upload-file';
 export * from './user';
+export * from './userGroup';
 export * from './import-file-event';
 export * from './file-info';
 export * from './files';

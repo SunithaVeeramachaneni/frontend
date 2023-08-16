@@ -15,7 +15,14 @@ import {
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { format } from 'date-fns';
-import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
+import {
+  BehaviorSubject,
+  combineLatest,
+  Observable,
+  of,
+  Subject,
+  Subscription
+} from 'rxjs';
 import {
   catchError,
   debounceTime,
@@ -31,6 +38,7 @@ import { slideInOut } from 'src/app/animations';
 
 import {
   graphQLDefaultLimit,
+  dateTimeFormat2,
   permissions as perms
 } from 'src/app/app.constants';
 import {
@@ -47,6 +55,8 @@ import { LoginService } from 'src/app/components/login/services/login.service';
 import { IssuesActionsViewComponent } from '../issues-actions-view/issues-actions-view.component';
 import { ObservationsService } from '../../services/observations.service';
 import { UsersService } from 'src/app/components/user-management/services/users.service';
+import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
+import { PlantService } from 'src/app/components/master-configurations/plants/services/plant.service';
 
 @Component({
   selector: 'app-actions-list',
@@ -59,28 +69,24 @@ export class ActionsListComponent implements OnInit, OnDestroy {
   @Input() moduleName;
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
-      tap((users) => (this.assigneeDetails = { users }))
+      tap((users) => {
+        this.userFullNameByEmail = this.userService.getUsersInfo();
+        this.assigneeDetails = { users };
+      })
     );
   }
   get users$(): Observable<UserDetails[]> {
     return this._users$;
   }
   assigneeDetails: AssigneeDetails;
-  columns: Column[] = [
+  plantTimezoneMap = {};
+  partialColumns: Partial<Column>[] = [
     {
       id: 'title',
       displayName: 'Title',
       type: 'string',
       controlType: 'string',
-      order: 1,
-      searchable: false,
-      sortable: false,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
       titleStyle: {
         'font-weight': '500',
         'font-size': '100%',
@@ -89,81 +95,47 @@ export class ActionsListComponent implements OnInit, OnDestroy {
         'overflow-wrap': 'anywhere'
       },
       hasSubtitle: true,
-      showMenuOptions: false,
       subtitleColumn: 'description',
       subtitleStyle: {
         'font-size': '80%',
         color: 'darkgray',
         'overflow-wrap': 'anywhere'
       },
-      hasPreTextImage: true,
-      hasPostTextImage: false
+      hasPreTextImage: true
     },
     {
       id: 'locationAsset',
       displayName: 'Location/Asset',
       type: 'string',
       controlType: 'string',
-      order: 2,
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
       titleStyle: {
         'font-size': '100%'
       },
       hasSubtitle: true,
-      showMenuOptions: false,
       subtitleColumn: 'locationAssetDescription',
       subtitleStyle: {
         'font-size': '80%',
         color: 'darkgray'
-      },
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      }
     },
     {
       id: 'plant',
       displayName: 'Plant',
       type: 'string',
       controlType: 'string',
-      order: 3,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      groupable: true
     },
     {
       id: 'priority',
       displayName: 'Priority',
       type: 'number',
       controlType: 'string',
-      order: 4,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
       groupable: true,
       titleStyle: {
         textTransform: 'capitalize',
@@ -178,9 +150,6 @@ export class ActionsListComponent implements OnInit, OnDestroy {
         color: '#ff4033',
         borderRadius: '12px'
       },
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false,
       hasConditionalStyles: true
     },
     {
@@ -188,17 +157,8 @@ export class ActionsListComponent implements OnInit, OnDestroy {
       displayName: 'Status',
       type: 'string',
       controlType: 'string',
-      order: 5,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
       groupable: true,
       titleStyle: {
         textTransform: 'capitalize',
@@ -216,80 +176,40 @@ export class ActionsListComponent implements OnInit, OnDestroy {
         color: '#92400E',
         borderRadius: '12px'
       },
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false,
       hasConditionalStyles: true
     },
     {
-      id: 'dueDate',
+      id: 'dueDateDisplay',
       displayName: 'Due Date',
       type: 'string',
       controlType: 'string',
-      order: 6,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      groupable: true
     },
     {
       id: 'assignedToDisplay',
       displayName: 'Assigned To',
       type: 'string',
       controlType: 'string',
-      order: 7,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
       groupable: true,
       titleStyle: {
         'overflow-wrap': 'anywhere'
-      },
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      }
     },
     {
       id: 'createdBy',
       displayName: 'Raised By',
       type: 'string',
       controlType: 'string',
-      order: 8,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      groupable: true
     }
   ];
+  columns: Column[] = [];
   configOptions: ConfigOptions = {
     tableID: 'actionsTable',
     rowsExpandable: false,
@@ -349,6 +269,7 @@ export class ActionsListComponent implements OnInit, OnDestroy {
   }>;
   skip = 0;
   limit = graphQLDefaultLimit;
+  plantMapSubscription: Subscription;
   searchAction: FormControl;
   actionsCount$: Observable<number>;
   menuState = 'out';
@@ -359,6 +280,7 @@ export class ActionsListComponent implements OnInit, OnDestroy {
   initial: any;
   isModalOpened = false;
   isPopoverOpen = false;
+  userFullNameByEmail: any;
   filterJson = [];
   filter = {
     title: '',
@@ -377,11 +299,19 @@ export class ActionsListComponent implements OnInit, OnDestroy {
     private readonly observationsService: ObservationsService,
     private readonly loginService: LoginService,
     private readonly userService: UsersService,
+    private plantService: PlantService,
     private dialog: MatDialog,
     private cdrf: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
+    this.columns = this.observationsService.updateConfigOptionsFromColumns(
+      this.partialColumns
+    );
+    this.plantMapSubscription =
+      this.plantService.plantTimeZoneMapping$.subscribe(
+        (data) => (this.plantTimezoneMap = data)
+      );
     this.observationsService.fetchActions$.next({ data: 'load' });
     this.observationsService.fetchActions$.next({} as TableEvent);
     this.searchAction = new FormControl('');
@@ -462,6 +392,7 @@ export class ActionsListComponent implements OnInit, OnDestroy {
       const { assignedTo, createdBy } = action;
       return {
         ...action,
+        dueDateDisplay: this.formatDate(action.dueDate, action),
         assignedToDisplay:
           assignedTo !== null
             ? this.observationsService.formatUsersDisplay(assignedTo)
@@ -469,6 +400,18 @@ export class ActionsListComponent implements OnInit, OnDestroy {
         createdBy: this.userService.getUserFullName(createdBy)
       };
     });
+  }
+
+  formatDate(date, action) {
+    if (date === '') return '';
+    if (this.plantTimezoneMap[action?.plantId]?.timeZoneIdentifier) {
+      return localToTimezoneDate(
+        date,
+        this.plantTimezoneMap[action.plantId],
+        dateTimeFormat2
+      );
+    }
+    return format(new Date(date), dateTimeFormat2);
   }
 
   getActionsList() {
@@ -484,7 +427,7 @@ export class ActionsListComponent implements OnInit, OnDestroy {
       mergeMap(({ rows, next, count, filters }) => {
         this.observationsService.actionsNextToken = next;
         this.isLoading$.next(false);
-        this.actionsCount$ = of(count);
+        this.actionsCount$ = of(count ?? 0);
         this.observationsService.actions$.next({ rows, next, count, filters });
         this.filterJson = this.observationsService.prepareFilterData(
           filters,
@@ -588,14 +531,26 @@ export class ActionsListComponent implements OnInit, OnDestroy {
     }
   };
 
+  getFullNameToEmailArray(data: any) {
+    const emailArray = [];
+    data?.forEach((name: any) => {
+      emailArray.push(
+        Object.keys(this.userFullNameByEmail).find(
+          (email) => this.userFullNameByEmail[email].fullName === name
+        )
+      );
+    });
+    return emailArray;
+  }
+
   applyFilters(data: any): void {
     this.isLoading$.next(true);
     this.isPopoverOpen = false;
     for (const item of data) {
-      if (item.type !== 'date' && item.value) {
-        this.filter[item.column] = item.value ?? '';
-      } else if (item.type === 'date' && item.value) {
+      if (item.type === 'date' && item.value) {
         this.filter[item.column] = item.value.toISOString();
+      } else if (item.column === 'assignedTo' && item.value) {
+        this.filter[item.column] = this.getFullNameToEmailArray(item.value);
       } else {
         this.filter[item.column] = item.value ?? '';
       }
@@ -607,6 +562,9 @@ export class ActionsListComponent implements OnInit, OnDestroy {
   clearFilters(): void {
     this.isLoading$.next(true);
     this.isPopoverOpen = false;
+    if (this.searchAction.value) {
+      this.searchAction.patchValue('');
+    }
     this.filter = {
       title: '',
       location: '',
@@ -621,6 +579,7 @@ export class ActionsListComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.plantMapSubscription.unsubscribe();
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }

@@ -19,7 +19,6 @@ import {
   distinctUntilChanged,
   filter,
   map,
-  mergeMap,
   switchMap,
   takeUntil,
   tap
@@ -31,7 +30,6 @@ import {
 } from 'src/app/app.constants';
 import {
   CellClickActionEvent,
-  Count,
   FormTableUpdate,
   Permission,
   TableEvent,
@@ -44,7 +42,7 @@ import { LoginService } from 'src/app/components/login/services/login.service';
 import { LocationService } from '../../locations/services/location.service';
 import { slideInOut } from 'src/app/animations';
 import { MatDialog } from '@angular/material/dialog';
-import { UploadResponseModalComponent } from '../../upload-response-modal/upload-response-modal.component';
+import { UploadResponseModalComponent } from '../../../../shared/components/upload-response-modal/upload-response-modal.component';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { PlantService } from '../../plants/services/plant.service';
@@ -244,8 +242,9 @@ export class AssetsListComponent implements OnInit, OnDestroy {
   nextToken = '';
   userInfo$: Observable<UserInfo>;
   allPlants: any[];
-  allParentsAssets: any[] = [];
-  allParentsLocations: any[] = [];
+
+  allParentsAssets: any = { data: [] };
+  allParentsLocations: any = { data: [] };
 
   isPopoverOpen = false;
   filterJson = [];
@@ -304,13 +303,11 @@ export class AssetsListComponent implements OnInit, OnDestroy {
         distinctUntilChanged(),
         takeUntil(this.onDestroy$),
         tap((value: string) => {
-          this.reloadAssetCount(value.toLocaleLowerCase());
           this.assetService.fetchAssets$.next({ data: 'search' });
         })
       )
       .subscribe(() => this.isLoading$.next(true));
 
-    this.reloadAssetCount(null);
     this.getDisplayedAssets();
 
     this.configOptions.allColumns = this.columns;
@@ -364,10 +361,12 @@ export class AssetsListComponent implements OnInit, OnDestroy {
           { items: allAssets = [] }
         ]) => {
           this.allPlants = allPlants.filter((plant) => !plant._deleted);
-          this.allParentsLocations = allLocations.filter(
+          this.allParentsLocations.data = allLocations.filter(
             (location) => !location._deleted
           );
-          this.allParentsAssets = allAssets.filter((asset) => !asset._deleted);
+          this.allParentsAssets.data = allAssets.filter(
+            (asset) => !asset._deleted
+          );
           this.dataLoadingComplete = true;
 
           if (this.skip === 0) {
@@ -387,13 +386,20 @@ export class AssetsListComponent implements OnInit, OnDestroy {
                 });
                 break;
               case 'add':
-                initial.data = [newForm, ...initial.data];
+                initial.data = [...newForm, ...initial.data];
+                this.allParentsAssets = {
+                  data: [...newForm, ...this.allParentsAssets.data]
+                };
                 break;
               case 'edit':
-                const formIdx = initial.data.findIndex(
+                let formIdx = initial.data.findIndex(
                   (item) => item.id === form.id
                 );
-                initial.data[formIdx] = newForm;
+                initial.data[formIdx] = newForm[0];
+                formIdx = this.allParentsAssets.data.findIndex(
+                  (item) => item.id === form.id
+                );
+                this.allParentsAssets.data[formIdx] = newForm[0];
                 break;
               default:
               //Do nothing
@@ -414,8 +420,8 @@ export class AssetsListComponent implements OnInit, OnDestroy {
   }
 
   getAssets() {
-    return this.assetService
-      .getAssetsList$(
+    return (
+      this.assetService.getAssetsList$(
         {
           next: this.nextToken,
           limit: this.limit,
@@ -423,22 +429,26 @@ export class AssetsListComponent implements OnInit, OnDestroy {
           fetchType: this.fetchType
         },
         this.filter
-      )
-      .pipe(
-        mergeMap(({ count, rows, next }) => {
-          this.nextToken = next;
-          this.isLoading$.next(false);
-          return of(rows);
-        }),
-        catchError(() => {
-          this.isLoading$.next(false);
-          return of([]);
-        })
-      );
+      ) as Observable<any>
+    ).pipe(
+      map(({ count, rows, next }) => {
+        this.nextToken = next;
+        if (count !== undefined) {
+          this.reloadAssetCount(count);
+        }
+        this.isLoading$.next(false);
+        return rows;
+      }),
+      catchError(() => {
+        this.isLoading$.next(false);
+        return of([]);
+      })
+    );
   }
 
   addOrUpdateAssets(assetData) {
     if (assetData.status === 'add') {
+      this.addEditCopyDeleteAssets = true;
       if (this.searchAssets.value) {
         this.assetService.fetchAssets$.next({ data: 'search' });
       } else {
@@ -451,7 +461,6 @@ export class AssetsListComponent implements OnInit, OnDestroy {
         text: 'Asset created successfully!',
         type: 'success'
       });
-      this.addEditCopyDeleteAssets = true;
       this.assetsCountUpdate$.next(1);
     } else if (assetData.status === 'edit') {
       this.addEditCopyDeleteAssets = true;
@@ -493,7 +502,7 @@ export class AssetsListComponent implements OnInit, OnDestroy {
   rowLevelActionHandler = ({ data, action }): void => {
     switch (action) {
       case 'edit':
-        this.assetsEditData = { ...data };
+        this.assetsEditData = { assetData: data };
         this.assetsAddOrEditOpenState = 'in';
         break;
       case 'delete':
@@ -509,9 +518,10 @@ export class AssetsListComponent implements OnInit, OnDestroy {
     const { columnId, row } = event;
     switch (columnId) {
       case 'name':
+      case 'plant':
       case 'description':
       case 'model':
-      case 'parentId':
+      case 'parent':
         this.showAssetDetail(row);
         break;
       default:
@@ -560,7 +570,7 @@ export class AssetsListComponent implements OnInit, OnDestroy {
   onCloseAssetsDetailedView(event) {
     this.openAssetsDetailedView = event.status;
     if (event.data !== '') {
-      this.assetsEditData = event.data;
+      this.assetsEditData = { assetData: event.data };
       this.assetsAddOrEditOpenState = 'in';
     }
   }
@@ -578,9 +588,10 @@ export class AssetsListComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe((res) => {
       if (res.data) {
         this.getAllAssets();
-        this.addEditCopyDeleteAssets = true;
         this.nextToken = '';
-        this.reloadAssetCount(this.searchAssets.value.toLocaleLowerCase());
+        this.addEditCopyDeleteAssets = true;
+        this.isLoading$.next(true);
+        this.assetsCountUpdate$.next(res.successCount);
         this.assetService.fetchAssets$.next({ data: 'load' });
         this.toast.show({
           text: 'Asset uploaded successfully!',
@@ -599,11 +610,11 @@ export class AssetsListComponent implements OnInit, OnDestroy {
     this.assetService.fetchAllAssets$().subscribe((allAssets) => {
       const objectKeys = Object.keys(allAssets);
       if (objectKeys.length > 0) {
-        this.allParentsAssets = allAssets.items.filter(
+        this.allParentsAssets.data = allAssets.items.filter(
           (asset) => !asset._deleted
         );
       } else {
-        this.allParentsAssets = [];
+        this.allParentsAssets.data = [];
       }
     });
   }
@@ -641,7 +652,9 @@ export class AssetsListComponent implements OnInit, OnDestroy {
       if (data.parentType) {
         const isParentLocation = data.parentType.toLowerCase() === 'location';
         const parent = (
-          isParentLocation ? this.allParentsLocations : this.allParentsAssets
+          isParentLocation
+            ? this.allParentsLocations.data
+            : this.allParentsAssets.data
         ).find((item) => item.id === data.parentId);
 
         if (parent) {
@@ -658,8 +671,8 @@ export class AssetsListComponent implements OnInit, OnDestroy {
     return tableData;
   };
 
-  reloadAssetCount(searchTerm: string) {
-    this.assetsListCount$ = this.assetService.getAssetCount$(searchTerm);
+  reloadAssetCount(rawCount: number) {
+    this.assetsListCount$ = of(rawCount);
     this.assetsCount$ = combineLatest([
       this.assetsListCount$,
       this.assetsCountUpdate$

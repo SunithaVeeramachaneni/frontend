@@ -1,13 +1,13 @@
 <div class="container">
-  <p class="top">{{ roomName }}</p>
-  <p class="top-next">{{ conferenceType }} call</p>
+  <p id="acceptCallRoomName" class="top">{{ roomName }}</p>
+  <p id="acceptCallConfrenceCall" class="top-next">{{ conferenceType }} call</p>
 
-  <svg-icon icon="icon-user" class="user-img"></svg-icon>
+  <svg-icon id="acceptCallUserImg" icon="icon-user" class="user-img"></svg-icon>
   <p class="accept-reject">
-    <a (click)="acceptIncomingCall()">
+    <a id="acceptCallAcceptCall" (click)="acceptIncomingCall()">
       <svg-icon icon="icon-accept" class="accept-reject-image"></svg-icon>
     </a>
-    <a (click)="rejectIncomingCall()">
+    <a id="acceptCallRejectCall" (click)="rejectIncomingCall()">
       <svg-icon icon="icon-reject" class="accept-reject-image"></svg-icon>
     </a>
   </p>

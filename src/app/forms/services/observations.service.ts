@@ -18,6 +18,8 @@ import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
 import { UsersService } from 'src/app/components/user-management/services/users.service';
 import { isEmpty, omitBy } from 'lodash-es';
+import { Column } from '@innovapptive.com/dynamictable/lib/interfaces';
+import { DateUtilService } from 'src/app/shared/utils/dateUtils';
 
 const placeHolder = '_ _';
 const dataPlaceHolder = '--';
@@ -86,7 +88,8 @@ export class ObservationsService {
   ];
   constructor(
     private readonly appService: AppService,
-    private readonly userService: UsersService
+    private readonly userService: UsersService,
+    private readonly dateUtilService: DateUtilService
   ) {}
 
   getObservations$(
@@ -442,13 +445,14 @@ export class ObservationsService {
     const data = [];
     Object.entries(result).map(([key, value]) => {
       const leanKey = this.removeSpecialCharacter(key.toLowerCase());
+      const formattedKey = leanKey === 'low' ? 'Low' : key;
       color.push(
         action === 'priority'
           ? this.priorityColors[leanKey]
           : this.statusColors[leanKey]
       );
       data.push({
-        name: leanKey === 'inprogress' ? 'In Progress' : key,
+        name: formattedKey === 'inprogress' ? 'In Progress' : formattedKey,
         value
       });
     });
@@ -469,7 +473,7 @@ export class ObservationsService {
   > {
     return this.appService._getLocal(
       '',
-      'assets/json/observations-filter.json',
+      '/assets/json/observations-filter.json',
       info
     );
   }
@@ -502,7 +506,45 @@ export class ObservationsService {
     return filterJson;
   }
 
+  updateConfigOptionsFromColumns(columns: Partial<Column>[]) {
+    const allColumns: Column[] = columns.map((column, index) => {
+      const defaultColumn: Column = {
+        id: '',
+        displayName: '',
+        type: '',
+        controlType: '',
+        order: 0,
+        showMenuOptions: false,
+        subtitleColumn: '',
+        searchable: false,
+        sortable: false,
+        hideable: false,
+        visible: false,
+        movable: false,
+        stickable: false,
+        sticky: false,
+        groupable: false,
+        titleStyle: {},
+        subtitleStyle: {},
+        hasPreTextImage: false,
+        hasPostTextImage: false
+      };
+      return {
+        ...defaultColumn,
+        ...column,
+        order: index + 1
+      };
+    });
+    return allColumns;
+  }
+
   private formateGetObservationResponse(resp, type) {
+    if (resp?.filters?.assignedTo?.length > 0) {
+      resp.filters.assignedTo = resp.filters.assignedTo
+        .map((email) => this.userService.getUserFullName(email))
+        .filter(Boolean);
+    }
+
     const items = resp?.items?.sort(
       (a, b) =>
         new Date(b?.createdAt).getTime() - new Date(a?.createdAt).getTime()
@@ -527,7 +569,8 @@ export class ObservationsService {
           condition: true
         },
         dueDate:
-          item?.DUEDATE && this.isValidDate(new Date(item?.DUEDATE))
+          item?.DUEDATE &&
+          this.dateUtilService.isValidDate(new Date(item?.DUEDATE))
             ? format(new Date(item?.DUEDATE), 'dd MMM yyyy hh:mm a')
             : '',
         title: item.TITLE,
@@ -558,12 +601,8 @@ export class ObservationsService {
     return {
       rows,
       next: resp?.next,
-      count: resp?.count,
+      count: resp?.count || 0,
       filters: resp?.filters
     };
-  }
-
-  private isValidDate(date): boolean {
-    return date instanceof Date && !isNaN(date as unknown as number);
   }
 }

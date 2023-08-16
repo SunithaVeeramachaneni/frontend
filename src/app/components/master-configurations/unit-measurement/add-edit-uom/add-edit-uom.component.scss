@@ -212,3 +212,11 @@
   position: relative;
   top: -3px;
 }
+
+::ng-deep .mat-select-panel {
+  margin-top: 36px;
+}
+
+::ng-deep .mat-select-arrow-wrapper {
+  transform: translateY(-36px);
+}

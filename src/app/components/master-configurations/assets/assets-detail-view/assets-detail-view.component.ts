@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output
+} from '@angular/core';
+import { assetImg } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-assets-detail-view',
@@ -19,5 +27,9 @@ export class AssetsDetailViewComponent implements OnInit {
 
   cancel() {
     this.slideInOut.emit({ status: 'out', data: '' });
+  }
+
+  selectedAssetImageurl(asset: any) {
+    return asset.image || assetImg;
   }
 }

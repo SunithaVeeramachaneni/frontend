@@ -1,10 +1,10 @@
 <div *ngIf="userInfo$ | async" class="actions-list">
   <span class="custom-form-field-gray-color">
     <span class="no-of-actions" *ngIf="actionsCount$ | async as totalCount">
-      <span class="actions-count">
+      <span id="actionsListCount" class="actions-count">
         {{ totalCount | count }}
       </span>
-      <span class="actions-text">{{
+      <span id="actionsListCountText" class="actions-text">{{
         'actions'
           | translate
             : {
@@ -13,8 +13,11 @@
       }}</span>
     </span>
     <mat-form-field appearance="outline" class="actions-search">
-      <mat-icon matPrefix class="searchIcon">search</mat-icon>
+      <mat-icon id="actionsListSearchIcon" matPrefix class="searchIcon"
+        >search</mat-icon
+      >
       <input
+        id="actionsListSearchText"
         matInput
         type="text"
         [placeholder]="'search' | translate"
@@ -23,6 +26,7 @@
       />
 
       <svg-icon
+        id="actionsListFilterIcon"
         icon="icon-filterIcon"
         matSuffix
         cdkOverlayOrigin

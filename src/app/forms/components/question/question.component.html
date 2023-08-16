@@ -2,15 +2,13 @@
   class="questions"
   [formGroup]="questionForm"
   *ngIf="{
-    question: question$ | async,
-    sectionQuestionsCount: sectionQuestionsCount$ | async,
     formMetadata: formMetadata$ | async,
     moduleName: moduleName$ | async,
     uom: uom$ | async
   } as props"
 >
   <div>
-    <div (click)="!isAskQuestion && updateIsOpen(true)">
+    <div (click)="updateIsOpen(true)">
       <div class="dis-flex questions-div">
         <div
           class="width-70"
@@ -23,6 +21,7 @@
           }"
         >
           <input
+            id="questionText"
             #name
             autocomplete="off"
             type="text"
@@ -37,7 +36,7 @@
           <mat-form-field
             *ngIf="questionForm.get('fieldType').value === 'INST'"
             appearance="outline"
-            class="width-100"
+            class="width-100 instruction-question"
             placeholder="Type Question"
           >
             <quill-material
@@ -57,21 +56,39 @@
             class="floating-btns"
             *ngIf="!isAskQuestion && questionForm.get('isOpen').value"
           >
-            <button class="questions-btn" (click)="addQuestion(true, true)">
+            <button
+              id="questionBtn"
+              class="questions-btn"
+              (click)="addQuestion(true, true)"
+            >
               <svg-icon
+                id="questionAddIcon"
                 icon="icon-add-question"
                 class="question-icon"
               ></svg-icon>
-              <p class="questions-delete-btn-text" translate="question"></p>
+              <p
+                id="question"
+                class="questions-delete-btn-text"
+                translate="question"
+              ></p>
             </button>
             <br />
 
-            <button class="delete-btn" (click)="deleteQuestion($event)">
+            <button
+              id="questionDeleteBtn"
+              class="delete-btn"
+              (click)="deleteQuestion($event)"
+            >
               <svg-icon
+                id="questionDeleteIcon"
                 icon="icon-delete-question"
                 class="question-icon"
               ></svg-icon>
-              <p class="questions-delete-btn-text" translate="delete"></p>
+              <p
+                id="questionDelete"
+                class="questions-delete-btn-text"
+                translate="delete"
+              ></p>
             </button>
           </div>
         </div>
@@ -80,6 +97,7 @@
         <div class="width-30">
           <app-response-type-button
             [questionForm]="questionForm"
+            [isImported]="this.isImported"
             [fieldTypes]="fieldTypes"
             (responseTypeOpenEvent)="responseTypeOpenEventHandler($event)"
           >
@@ -92,43 +110,41 @@
               (responseTypeCloseEvent)="responseTypeCloseEventHandler($event)"
               (setQuestionValue)="setQuestionValue($event)"
               [fieldTypes]="fieldTypes"
-              [question]="question"
+              [question]="questionForm.value"
               [isPreviewActive]="isPreviewActive"
             ></app-response-type>
           </ng-container>
         </div>
         <div *ngIf="isAskQuestion">
           <svg-icon
+            id="deleteQuestionBtn"
             icon="icon-delete-icon"
             class="delete-icon"
             (click)="deleteQuestion($event)"
           ></svg-icon>
         </div>
       </div>
-      <hr class="question-line" *ngIf="!isAskQuestion" />
-
-      <div *ngIf="questionForm.get('fieldType').value === 'IMG'">
-        <input
-          #insertImages
-          [hidden]="true"
-          type="file"
-          accept="image/jpeg,image/jpg,image/png"
-          (change)="insertImageHandler($event)"
-        />
-      </div>
+      <hr [ngClass]="!isAskQuestion ? 'question-line' : 'ask-question-line'" />
 
       <div
         class="dis-flex justify-content"
-        *ngIf="!isAskQuestion && questionForm.get('isOpen').value"
+        *ngIf="
+          (!isAskQuestion && questionForm.get('isOpen').value) ||
+          (isAskQuestion &&
+            showAskQuestionFeatures &&
+            questionForm.get('id').value === isAskQuestionFocusId)
+        "
       >
         <div class="input-fields">
           <div *ngIf="questionForm.get('fieldType').value !== 'IMG'">
             <div class="questionActionsRow">
               <button
+                id="questionAddLogicBtn"
                 mat-button
                 color="primary"
                 class="addLogicBtn"
                 *ngIf="
+                  !isAskQuestion &&
                   addLogicNotAppliedFields.indexOf(
                     questionForm.get('fieldType').value
                   ) < 0
@@ -137,11 +153,19 @@
                   addLogicToQuestion(pageIndex, questionForm.get('id').value)
                 "
               >
-                <mat-icon class="icon">link</mat-icon>
-                <span translate="addLogicBtn"></span>
+                <mat-icon id="questionLink" class="icon">link</mat-icon>
+                <span
+                  id="questionAddLogicBtnText"
+                  translate="addLogicBtn"
+                ></span>
               </button>
 
-              <div *ngIf="questionForm.get('fieldType').value === 'INST'">
+              <div
+                *ngIf="
+                  questionForm.get('fieldType').value === 'INST' &&
+                  !isEmbeddedForm
+                "
+              >
                 <div class="dis-flex">
                   <span
                     *ngFor="
@@ -168,8 +192,8 @@
                     </app-instruction-pdf>
                   </span>
                 </div>
-                <br />
                 <input
+                  id="questionFile"
                   type="file"
                   class="file-upload"
                   accept="image/jpeg,image/jpg,image/png,application/pdf"
@@ -179,14 +203,22 @@
                 />
 
                 <button
+                  id="questionIsAskQuestionBtn"
                   mat-button
                   color="primary"
-                  class="addLogicBtn"
+                  [ngClass]="
+                    isAskQuestion ? 'ask-question-inst-btn' : 'addLogicBtn'
+                  "
                   *ngIf="questionForm.get('fieldType').value === 'INST'"
                   (click)="instructionsFileUpload.click()"
                 >
-                  <mat-icon class="icon">link</mat-icon>
-                  <span translate="addImagesAndPDFBtn"></span>
+                  <mat-icon id="questionAskQuestionLink" class="icon"
+                    >link</mat-icon
+                  >
+                  <span
+                    id="questionAddImgPDFBtn"
+                    translate="addImagesAndPDFBtn"
+                  ></span>
                 </button>
 
                 <app-tag-select
@@ -197,6 +229,7 @@
 
               <span
                 *ngIf="
+                  !isAskQuestion &&
                   questionForm.get('fieldType').value !== 'LF' &&
                   questionForm.get('fieldType').value !== 'HL' &&
                   questionForm.get('fieldType').value !== 'INST'
@@ -212,7 +245,10 @@
               </span>
 
               <span
-                *ngIf="questionForm.get('fieldType').value === 'NF'"
+                *ngIf="
+                  questionForm.get('fieldType').value === 'NF' &&
+                  !isEmbeddedForm
+                "
                 class="action"
               >
                 <span translate="unitTxt"></span>
@@ -251,7 +287,10 @@
               </span>
 
               <span
-                *ngIf="questionForm.get('fieldType').value === 'NF'"
+                *ngIf="
+                  questionForm.get('fieldType').value === 'NF' &&
+                  !isEmbeddedForm
+                "
                 class="action"
               >
                 <span translate="rangeTxt"></span>
@@ -259,15 +298,16 @@
                   class="rangeBtn"
                   (click)="rangeSelectorOpen(questionForm.value)"
                 >
-                  <span class="rangeValues">{{ getRangeDisplayText() }}</span>
+                  <span class="rangeValues">{{ rangeDisplayText }}</span>
                 </span>
               </span>
 
               <span
                 class="action"
                 *ngIf="
-                  questionForm.get('fieldType').value === 'NF' ||
-                  questionForm.get('fieldType').value === 'RT'
+                  (questionForm.get('fieldType').value === 'NF' ||
+                    questionForm.get('fieldType').value === 'RT') &&
+                  !isEmbeddedForm
                 "
               >
                 <mat-checkbox
@@ -279,11 +319,58 @@
               </span>
 
               <span
-                *ngIf="questionForm.get('fieldType').value === 'LF'"
+                *ngIf="questionForm.get('fieldType').value === 'DF'"
+                class="m-l-10"
+              >
+                <input
+                  type="checkbox"
+                  id="date"
+                  class="required-input"
+                  name="date"
+                  formControlName="value"
+                />&nbsp;
+                <label for="date" translate="defaultCurrentDate"></label>
+              </span>
+
+              <span
+                *ngIf="questionForm.get('fieldType').value === 'TIF'"
+                class="m-l-10"
+              >
+                <input
+                  type="checkbox"
+                  id="time"
+                  class="required-input"
+                  name="time"
+                  formControlName="value"
+                />&nbsp;
+                <label for="time" translate="defaultCurrentTime"></label>
+              </span>
+
+              <span
+                *ngIf="
+                  questionForm.get('fieldType').value === 'LF' ||
+                  (isEmbeddedForm &&
+                    questionForm.get('fieldType').value === 'HL')
+                "
                 class="action"
+                [ngClass]="{
+                  'width-100':
+                    isEmbeddedForm &&
+                    questionForm.get('fieldType').value === 'HL'
+                }"
               >
                 <app-read-only
                   [question]="questionForm"
+                  [ngClass]="{
+                    'hyperlink-long':
+                      isEmbeddedForm &&
+                      questionForm.get('fieldType').value === 'HL'
+                  }"
+                  [translateValue]="
+                    questionForm.get('fieldType').value === 'LF'
+                      ? 'defaultValue'
+                      : 'link'
+                  "
                   (defaultValue)="questionForm.get('value').setValue($event)"
                 ></app-read-only>
               </span>
@@ -311,13 +398,19 @@
               </span>
 
               <span
-                *ngIf="questionForm.get('fieldType').value === 'HL'"
+                *ngIf="
+                  questionForm.get('fieldType').value === 'HL' &&
+                  !isEmbeddedForm
+                "
                 class="action"
               >
                 <button
+                  id="questionAddLogicBtn"
                   mat-button
                   color="primary"
-                  class="addLogicBtn"
+                  [ngClass]="
+                    isAskQuestion ? 'ask-question-hl-btn' : 'addLogicBtn'
+                  "
                   (click)="toggleHyperLink()"
                   [matTooltip]="
                     questionForm.get('value').value &&
@@ -327,7 +420,7 @@
                   "
                 >
                   <mat-icon class="icon">link</mat-icon>
-                  <span>{{
+                  <span id="questionAddLinkBtn">{{
                     questionForm.get('value').value.title
                       ? questionForm.get('value').value.title
                       : ('addLinkBtn' | translate)
@@ -341,14 +434,14 @@
                 class="action"
               >
                 <label translate="range"></label>&nbsp;
-                <span class="range-values">
+                <span id="questionRange" class="range-values">
                   {{ questionForm.get('value').value.min }} -
                   {{ questionForm.get('value').value.max }}
                 </span>
               </span>
               <app-response-type-side-drawer
                 (rangeSelectionHandler)="rangeSelectionHandler($event)"
-                [question]="question"
+                [question]="questionForm.value"
                 [formId]="formId"
                 (setSliderValues)="questionForm.get('value').setValue($event)"
               ></app-response-type-side-drawer>
@@ -386,35 +479,31 @@
                 ></app-drop-down>
               </span>
             </div>
-            <div
-              class="addLogicRow"
-              *ngIf="
-                getQuestionLogics(pageIndex, questionForm.get('id').value)
-                  | async as questionLogics
-              "
-            >
+            <div class="addLogicRow" *ngIf="logics.length">
               <app-add-logic
-                *ngIf="questionLogics.length"
                 [questionId]="questionForm.get('id').value"
                 [quickResponseValues]="questionForm.get('value').value"
                 [fieldType]="questionForm.get('fieldType').value"
                 [pageIndex]="pageIndex"
                 [sectionId]="sectionId"
+                [isTemplate]="isTemplate"
                 (logicEvent)="logicEventHandler($event)"
                 [selectedNodeId]="selectedNodeId"
+                [isEmbeddedForm]="isEmbeddedForm"
+                [questionName]="questionForm.get('name').value"
               ></app-add-logic>
             </div>
           </div>
-          <div *ngIf="questionForm.get('fieldType').value === 'IMG'">
+          <div [hidden]="questionForm.get('fieldType').value !== 'IMG'">
             <app-image [question]="questionForm"></app-image>
+            <input
+              #insertImage
+              [hidden]="true"
+              type="file"
+              accept="image/jpeg,image/jpg,image/png"
+              (change)="insertImageHandler($event)"
+            />
           </div>
-          <input
-            #insertImages
-            [hidden]="true"
-            type="file"
-            accept="image/jpeg,image/jpg,image/png"
-            (change)="insertImageHandler($event)"
-          />
         </div>
       </div>
     </div>
@@ -422,7 +511,7 @@
 
   <div *ngIf="isHyperLinkOpen">
     <app-hyperlink-side-drawer
-      [questionToBeHyperlinked]="question"
+      [questionToBeHyperlinked]="questionForm.value"
       (hyperlinkHandler)="handlerHyperlink($event)"
     ></app-hyperlink-side-drawer>
   </div>

@@ -25,6 +25,7 @@ export interface AssetsResponse {
     createdAt: string;
   } | null>;
   next?: string;
+  count?: number;
 }
 
 export interface FilterInput {

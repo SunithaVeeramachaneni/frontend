@@ -9,14 +9,12 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { FormWidgetComponent } from './components/form-widget/form-widget.component';
 import { PageComponent } from './components/page/page.component';
 import { SectionComponent } from './components/section/section.component';
 import { QuestionComponent } from './components/question/question.component';
 import { ResponseTypeComponent } from './components/response-type/response-type.component';
 import { PreviewComponent } from './components/preview/preview.component';
 import { AddLogicComponent } from './components/add-logic/add-logic.component';
-import { AddFilterComponent } from './components/add-filter/add-filter.component';
 import { IphoneComponent } from './components/iphone/iphone.component';
 
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -47,6 +45,7 @@ import { ImageComponent } from './components/field-types/image/image.component';
 import { GlobalResponseTypeSideDrawerComponent } from './components/global-response-type-side-drawer/global-response-type-side-drawer.component';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { ImportQuestionsSliderComponent } from './components/import-questions/import-questions-slider/import-questions-slider.component';
+import { ImportTemplateQuestionsSliderComponent } from './components/import-questions/import-template-questions-slider/import-template-questions-slider.component';
 import { AddPageOrSelectExistingPageModalComponent } from './components/import-questions/add-page-or-select-existing-page-modal/add-page-or-select-existing-page-modal.component';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatDividerModule } from '@angular/material/divider';
@@ -60,7 +59,7 @@ import { ShowHierarchyPopupComponent } from './components/show-hierarchy-popup/s
 import { QuillMaterialComponent } from './components/field-types/instructions/quill-material/quill-material.component';
 import { TagSelectComponent } from './components/field-types/instructions/tag-select/tag-select.component';
 import { InstructionImageComponent } from './components/field-types/instructions/instruction-image/instruction-image.component';
-import { InstructionPdfComponent } from './components/field-types/instructions/instruction-pdf/instruction-pdf.component';
+import { InstructionPdfComponent } from './components/instruction-pdf/instruction-pdf.component';
 import { InstructionPdfPreviewComponent } from './components/field-types/instructions/instruction-pdf-preview/instruction-pdf-preview.component';
 import { PDFBuilderComponent } from './components/pdf-builder/pdf-builder.component';
 import { CdkScrollableModule } from '@angular/cdk/scrolling';
@@ -107,11 +106,22 @@ import {
   NgxMatNativeDateModule,
   NgxMatTimepickerModule
 } from '@angular-material-components/datetime-picker';
+import { ShiftChartComponent } from './components/schedular/shift-chart/shift-chart.component';
+
+import { RaiseNotificationDailogComponent } from './components/add-logic/raise-notification-dialog/raise-notification-dialog.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { IphoneForEmbeddedFormsComponent } from './components/iphone-for-embedded-forms/iphone-for-embedded-forms.component';
+import { PreviewForEmbeddedFormsComponent } from './components/preview-for-embedded-forms/preview-for-embedded-forms.component';
 import { UserNameByEmailPipe } from './pipes';
+import { ShiftMenuItemComponent } from './components/shift-menu-item/shift-menu-item.component';
+import { ShiftDateChangeWarningModalComponent } from './components/shift-date-change-warning-modal/shift-date-change-warning-modal.component';
+import { DynamicStepperComponent } from './components/stepper/dynamic-stepper/dynamic-stepper.component';
+import { StepsHeaderComponent } from './components/stepper/steps-header/steps-header.component';
+import { MatStepperModule } from '@angular/material/stepper';
+import { UploadImagePreviewComponent } from './components/upload-image-preview/upload-image-preview.component';
+import { FormUpdateDeleteProgressComponent } from './components/form-update-delete-progress/form-update-delete-progress.component';
 @NgModule({
   declarations: [
-    FormWidgetComponent,
     PageComponent,
     SectionComponent,
     QuestionComponent,
@@ -135,7 +145,6 @@ import { UserNameByEmailPipe } from './pipes';
     PreviewQuestionComponent,
     PreviewComponent,
     AddLogicComponent,
-    AddFilterComponent,
     ResponseTypeSideDrawerComponent,
     TableComponent,
     ResponseTypeButtonComponent,
@@ -148,6 +157,7 @@ import { UserNameByEmailPipe } from './pipes';
     ImageComponent,
     GlobalResponseTypeSideDrawerComponent,
     ImportQuestionsSliderComponent,
+    ImportTemplateQuestionsSliderComponent,
     AddPageOrSelectExistingPageModalComponent,
     HyperlinkSideDrawerComponent,
     BuilderComponent,
@@ -173,8 +183,18 @@ import { UserNameByEmailPipe } from './pipes';
     IssuesActionsViewComponent,
     AssignedToComponent,
     ObservationsComponent,
+    UploadImagePreviewComponent,
+    RaiseNotificationDailogComponent,
     DatePickerComponent,
-    UserNameByEmailPipe
+    ShiftChartComponent,
+    IphoneForEmbeddedFormsComponent,
+    PreviewForEmbeddedFormsComponent,
+    UserNameByEmailPipe,
+    ShiftMenuItemComponent,
+    ShiftDateChangeWarningModalComponent,
+    DynamicStepperComponent,
+    FormUpdateDeleteProgressComponent,
+    StepsHeaderComponent
   ],
   imports: [
     SharedModule,
@@ -208,6 +228,7 @@ import { UserNameByEmailPipe } from './pipes';
     MatSelectModule,
     MatTooltipModule,
     MatRadioModule,
+    MatDialogModule,
     NgxShimmerLoadingModule,
     TranslateModule.forChild({}),
     MatDatepickerModule,
@@ -218,10 +239,10 @@ import { UserNameByEmailPipe } from './pipes';
       echarts
     }),
     MatToolbarModule,
+    MatStepperModule,
     OverlayModule
   ],
   exports: [
-    FormWidgetComponent,
     PageComponent,
     SectionComponent,
     QuestionComponent,
@@ -234,8 +255,8 @@ import { UserNameByEmailPipe } from './pipes';
     HierarchyLocationsListComponent,
     HierarchyAssetsListComponent,
     ShowHierarchyPopupComponent,
-    AddFilterComponent,
     ImportQuestionsSliderComponent,
+    ImportTemplateQuestionsSliderComponent,
     GlobalResponseTypeSideDrawerComponent,
     BuilderComponent,
     PDFBuilderComponent,
@@ -251,8 +272,18 @@ import { UserNameByEmailPipe } from './pipes';
     IssuesActionsViewComponent,
     AssignedToComponent,
     ObservationsComponent,
+    UploadImagePreviewComponent,
     DatePickerComponent,
-    UserNameByEmailPipe
+    ShiftChartComponent,
+    IphoneForEmbeddedFormsComponent,
+    PreviewForEmbeddedFormsComponent,
+    UserNameByEmailPipe,
+    ShiftMenuItemComponent,
+    DynamicStepperComponent,
+    StepsHeaderComponent,
+    InstructionPdfComponent,
+    ShiftMenuItemComponent,
+    FormUpdateDeleteProgressComponent
   ]
 })
 export class FormModule {}

@@ -1,6 +1,12 @@
 <div class="bg-white instruction-image-container">
-  <img class="insert-instruction-image" [src]="image.objectURL" alt="image" />
+  <img
+    id="instructionImg"
+    class="insert-instruction-image"
+    [src]="image.objectURL"
+    alt="image"
+  />
   <svg-icon
+    id="instructionImgCloseIcon"
     icon="icon-red-cancel"
     class="close"
     (click)="triggerDelete()"

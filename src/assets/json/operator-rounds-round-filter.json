@@ -21,6 +21,15 @@
     "value": ""
   },
   {
+    "label": "Start Date",
+    "items": [],
+    "column": "scheduledAt",
+    "type": "daterange",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "value": ""
+  },
+  {
     "label": "Due Date",
     "items": [],
     "column": "dueDate",
@@ -33,6 +42,13 @@
     "label": "Plant",
     "items": [],
     "column": "plant",
+    "type": "select",
+    "value": ""
+  },
+  {
+    "label": "Shift",
+    "items": [],
+    "column": "shiftId",
     "type": "select",
     "value": ""
   }

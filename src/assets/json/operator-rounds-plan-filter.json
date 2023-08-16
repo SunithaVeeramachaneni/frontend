@@ -28,5 +28,12 @@
     "column": "plant",
     "type": "select",
     "value": ""
+  },
+  {
+    "label": "Shift",
+    "items": [],
+    "column": "shiftId",
+    "type": "select",
+    "value": ""
   }
 ]

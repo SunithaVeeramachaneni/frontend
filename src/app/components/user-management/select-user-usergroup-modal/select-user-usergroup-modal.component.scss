@@ -1,0 +1,127 @@
+@import '../../../../scss/colors.scss';
+.selectUser {
+  width: 1040px;
+  height: 535px;
+}
+.footer {
+  height: 20px;
+  padding: 15px;
+  border-top: 1px solid $border-color;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-right-elements {
+  display: flex;
+}
+.back-arrow {
+  height: 15px;
+  width: 15px;
+  position: relative;
+  top: 1px;
+}
+.modal-header {
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  align-items: center;
+  margin: 7px;
+  justify-content: space-between;
+}
+
+.back-btn {
+  border: none;
+  background-color: transparent;
+  position: relative;
+  margin: 11px 12px;
+  top: 1px;
+  color: $light-gray;
+}
+
+.back-arrow {
+  height: 15px;
+  width: 15px;
+  float: left;
+  cursor: pointer;
+}
+
+.search-form-field {
+  margin-right: 10px;
+}
+
+.no-of-active-users {
+  float: right;
+  margin: 15px;
+  position: relative;
+  top: -2px;
+}
+
+.active-users-count {
+  font-weight: 500;
+  font-size: 110%;
+  color: $gray-bg;
+}
+
+.active-users-text {
+  font-weight: 500;
+  font-size: 110%;
+  color: $gray1;
+  margin-left: 5px;
+}
+
+.title {
+  font-size: 147%;
+  font-weight: 500;
+  position: relative;
+  right: 5px;
+  top: 1px;
+}
+
+.create-btn {
+  text-transform: capitalize;
+  float: right;
+  background: $blue-main;
+  color: $white;
+  height: 35px;
+  width: 150px;
+  font-weight: normal;
+  line-height: normal;
+  margin: 10px;
+}
+
+.cancel-btn {
+  text-transform: capitalize;
+  float: right;
+  border: 1px solid $blue-primary;
+  color: $blue-main;
+  height: 35px;
+  width: 150px;
+  font-weight: normal;
+  line-height: normal;
+  margin: 10px;
+}
+.user-content {
+  height: 70vh;
+}
+.header-left-elements {
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  top: 3px;
+}
+.footer-btns {
+  display: flex;
+  flex-direction: row;
+}
+.table {
+  height: 100%;
+  width: 100%;
+  overflow: auto;
+}
+.table-container {
+  height: 80%;
+  width: 100%;
+  overflow: auto;
+}

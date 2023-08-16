@@ -1,6 +1,6 @@
 <div class="save-template-container">
-  <span class="dialog-close-btn" (click)="close()">
-    <mat-icon class="dialog-close">close</mat-icon>
+  <span id="saveTemplateClose" class="dialog-close-btn" (click)="close()">
+    <mat-icon id="saveTemplateCloseIcon" class="dialog-close">close</mat-icon>
   </span>
   <app-save-template-naming-modal
     *ngIf="!displayConfirm"
