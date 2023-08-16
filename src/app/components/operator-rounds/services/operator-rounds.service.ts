@@ -19,18 +19,15 @@ import {
   RoundDetailResponse,
   RoundDetail,
   RoundPlanQueryParam,
-  UserDetails,
   UsersInfoByEmail,
   Count
 } from '../../../interfaces';
-import { formConfigurationStatus } from 'src/app/app.constants';
+import { formConfigurationStatus, dateFormat2 } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
-import { oppositeOperatorMap } from 'src/app/shared/utils/fieldOperatorMappings';
 import { isJson } from '../../race-dynamic-form/utils/utils';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
-import { isEmpty, omitBy } from 'lodash-es';
+import { cloneDeep, isEmpty, omitBy } from 'lodash-es';
 
-const limit = 10000;
 @Injectable({
   providedIn: 'root'
 })
@@ -40,7 +37,8 @@ export class OperatorRoundsService {
 
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
-
+  attachmentsMapping$ = new BehaviorSubject<any>({});
+  pdfMapping$ = new BehaviorSubject<any>({});
   selectedNode$ = this.selectedNodeSubject.asObservable();
   hierarchyMode$ = this.hierarchyModeSubject.asObservable();
   usersInfoByEmail: UsersInfoByEmail;
@@ -56,12 +54,78 @@ export class OperatorRoundsService {
   setHierarchyMode(mode: string) {
     this.hierarchyModeSubject.next(mode);
   }
-
   createTags$ = (
     tags: any,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> =>
     this.appService._postData(environment.rdfApiUrl, 'datasets', tags, info);
+
+  createAdditionalDetails$ = (
+    details: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._postData(
+      environment.operatorRoundsApiUrl,
+      `additional-details`,
+      details,
+      info
+    );
+  updateValues$ = (
+    details: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._updateData(
+      environment.operatorRoundsApiUrl,
+      'additional-details',
+      details,
+      info
+    );
+
+  deleteAdditionalDetailsValue$ = (
+    details: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._updateData(
+      environment.operatorRoundsApiUrl,
+      `additional-details`,
+      details,
+      info
+    );
+
+  getAdditionalDetails$ = (
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any[]> =>
+    this.appService._getResp(
+      environment.operatorRoundsApiUrl,
+      `additional-details`,
+      info
+    );
+
+  removeLabel$ = (
+    labelId: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._removeData(
+      environment.operatorRoundsApiUrl,
+      `delete-additional-details/${labelId}`,
+      info
+    );
+
+  uploadAttachments$(file, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
+    return this.appService._postData(
+      environment.operatorRoundsApiUrl,
+      `upload-attachments`,
+      file,
+      info
+    );
+  }
+  getAttachmentsById$(id, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
+    return this.appService._getResp(
+      environment.operatorRoundsApiUrl,
+      `upload-attachments/${id}`,
+      info
+    );
+  }
 
   createDataSet$ = (
     dataset: any,
@@ -250,26 +314,6 @@ export class OperatorRoundsService {
       .pipe(map((res) => this.formatSubmittedListResponse(res)));
   }
 
-  getFormsListCount$(
-    formStatus: 'Published' | 'Draft' | 'All',
-    isArchived: boolean = false
-  ): Observable<number> {
-    const params: URLSearchParams = new URLSearchParams();
-    params.set('formStatus', formStatus);
-    params.set('limit', String(limit));
-    params.set('isArchived', String(isArchived));
-    return this.appService
-      ._getResp(
-        environment.operatorRoundsApiUrl,
-        'round-plans/count?' + params.toString()
-      )
-      .pipe(map(({ count }) => count || 0));
-  }
-
-  getRoundsListCount$(): Observable<number> {
-    return of(0);
-  }
-
   getSubmissionFormsListCount$(): Observable<number> {
     return this.appService
       ._getResp(
@@ -295,7 +339,9 @@ export class OperatorRoundsService {
         plantId: formListQuery.plantId,
         isArchived: false,
         isDeleted: false,
-        pdfTemplateConfiguration: formListQuery.pdfTemplateConfiguration
+        pdfTemplateConfiguration: formListQuery.pdfTemplateConfiguration,
+        instructions: formListQuery.instructions,
+        additionalDetails: formListQuery.additionalDetails
       }
     );
   }
@@ -332,7 +378,7 @@ export class OperatorRoundsService {
       formStatus
     } = formDetails;
     const flatHierarchy = this.assetHierarchyUtil.convertHierarchyToFlatList(
-      JSON.parse(JSON.stringify(hierarchy)),
+      cloneDeep(hierarchy),
       0
     );
     return this.appService._postData(
@@ -357,7 +403,7 @@ export class OperatorRoundsService {
       roundPlanDetails.form.formStatus;
     const { hierarchy } = roundPlanDetails.authoredFormDetail;
     const flatHierarchy = this.assetHierarchyUtil.convertHierarchyToFlatList(
-      JSON.parse(JSON.stringify(hierarchy)),
+      cloneDeep(hierarchy),
       0
     );
     return this.appService.patchData(
@@ -385,7 +431,7 @@ export class OperatorRoundsService {
       formStatus
     } = formDetails;
     const flatHierarchy = this.assetHierarchyUtil.convertHierarchyToFlatList(
-      JSON.parse(JSON.stringify(hierarchy)),
+      cloneDeep(hierarchy),
       0
     );
     return this.appService.patchData(
@@ -465,12 +511,11 @@ export class OperatorRoundsService {
               })
             : ''
         })) || [];
-    const count = resp?.items.length || 0;
-    const next = resp?.next;
+
     return {
-      count,
+      count: resp?.count,
       rows,
-      next
+      next: resp?.next
     };
   }
 
@@ -582,6 +627,7 @@ export class OperatorRoundsService {
       )
       .map((p) => ({
         ...p,
+        id: p.roundId,
         preTextImage: {
           image: 'assets/img/svg/rounds-icon.svg',
           style: {
@@ -592,7 +638,7 @@ export class OperatorRoundsService {
           condition: true
         },
         dueDateDisplay: p.dueDate
-          ? format(new Date(p.dueDate), 'dd MMM yyyy')
+          ? format(new Date(p.dueDate), dateFormat2)
           : '',
         locationAssetsCompleted: `${p.locationAndAssetsCompleted}/${p.locationAndAssets}`,
         tasksCompleted: `${p.locationAndAssetTasksCompleted}/${
@@ -608,7 +654,7 @@ export class OperatorRoundsService {
               )
             : 0
         }%`,
-        roundId: p.roundId
+        isViewPdf: p.isViewPdf
       }));
     return rows;
   }
@@ -688,28 +734,28 @@ export class OperatorRoundsService {
   getFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
     return this.appService._getLocal(
       '',
-      'assets/json/operator-rounds-filter.json',
+      '/assets/json/operator-rounds-filter.json',
       info
     );
   }
   getPlanFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
     return this.appService._getLocal(
       '',
-      'assets/json/operator-rounds-plan-filter.json',
+      '/assets/json/operator-rounds-plan-filter.json',
       info
     );
   }
   getRoundFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
     return this.appService._getLocal(
       '',
-      'assets/json/operator-rounds-round-filter.json',
+      '/assets/json/operator-rounds-round-filter.json',
       info
     );
   }
   getArchivedFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
     return this.appService._getLocal(
       '',
-      'assets/json/operator-rounds-archived-filter.json',
+      '/assets/json/operator-rounds-archived-filter.json',
       info
     );
   }
@@ -717,7 +763,7 @@ export class OperatorRoundsService {
   updateRound$ = (
     roundId: string,
     round: RoundDetail,
-    type: 'due-date' | 'assigned-to',
+    type: 'due-date' | 'assigned-to' | 'shift' | 'start-date',
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<RoundDetail> =>
     this.appService
@@ -733,15 +779,13 @@ export class OperatorRoundsService {
     roundPlanId: string,
     roundId: string,
     info: ErrorInfo = {} as ErrorInfo
-  ): Observable<Blob> => {
-    const apiURL = `${environment.operatorRoundsApiUrl}rounds/${roundPlanId}/${roundId}`;
-    return this.appService.downloadFile(
-      apiURL,
-      '',
+  ): Observable<Blob> =>
+    this.appService.downloadFile(
+      environment.operatorRoundsApiUrl,
+      `rounds/download-pdf/${roundPlanId}/${roundId}`,
       info,
       true,
       {},
       'arraybuffer'
     );
-  };
 }

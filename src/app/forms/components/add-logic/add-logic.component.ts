@@ -26,12 +26,15 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { fieldTypeOperatorMapping } from 'src/app/shared/utils/fieldOperatorMappings';
 import {
-  getPageWiseLogicSectionAskQuestions,
+  getPageWiseLogicSectionAskEvidenceQuestions,
+  getPageWiseLogicsAskQuestions,
   getQuestionLogics,
   State
 } from '../../state/builder/builder-state.selectors';
 import { AddLogicActions } from '../../state/actions';
 import { SelectQuestionsDialogComponent } from './select-questions-dialog/select-questions-dialog.component';
+import { RaiseNotificationDailogComponent } from './raise-notification-dialog/raise-notification-dialog.component';
+import { NumberRangeMetadata } from 'src/app/interfaces';
 
 @Component({
   selector: 'app-add-logic',
@@ -42,6 +45,8 @@ import { SelectQuestionsDialogComponent } from './select-questions-dialog/select
 })
 export class AddLogicComponent implements OnInit, OnDestroy {
   @Input() selectedNodeId: any;
+  @Input() isEmbeddedForm: boolean;
+  @Input() isTemplate: boolean;
   @Output() logicEvent: EventEmitter<any> = new EventEmitter<any>();
 
   @Input() set questionId(id: string) {
@@ -49,6 +54,14 @@ export class AddLogicComponent implements OnInit, OnDestroy {
   }
   get questionId() {
     return this._questionId;
+  }
+
+  @Input() set questionName(name: string) {
+    this._questionName = name;
+  }
+
+  get questionName() {
+    return this._questionName;
   }
 
   @Input() set quickResponseValues(values: any) {
@@ -87,20 +100,23 @@ export class AddLogicComponent implements OnInit, OnDestroy {
   fieldOperators: any[] = [];
   dropDownTypes = ['DD', 'VI', 'DDM', 'CB'];
   raiseIssueApplicableFields = ['NF', 'VI', 'RT'];
-  checkBoxResponses = ['true', 'false'];
+  checkBoxResponses = ['true'];
   dropdownValues = [
     { title: 'option1', code: 'option1' },
     { title: 'option2', code: 'option2' }
   ];
   selectedTabIndex: number;
-  pageWiseLogicSectionAskQuestions: any;
   questionLogics$: Observable<any>;
-  pageWiseLogicSectionAskQuestions$: Observable<any>;
+  pageWiseLogicsAskQuestions: any;
+  pageWiseLogicSectionAskEvidenceQuestions: any;
+  pageWiseLogicsAskQuestions$: Observable<any>;
+  pageWiseLogicSectionAskEvidenceQuestions$: Observable<any>;
 
   isAskQuestionFocusId = '';
 
   private _pageIndex: number;
   private _questionId: string;
+  private _questionName: string;
   private _quickResponseValues: any;
   private _sectionId: string;
   private _fieldType: string;
@@ -115,14 +131,22 @@ export class AddLogicComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     let logicsFormArray = [];
-    this.pageWiseLogicSectionAskQuestions$ = this.store
-      .select(getPageWiseLogicSectionAskQuestions(this.selectedNodeId))
+    this.pageWiseLogicsAskQuestions$ = this.store
+      .select(getPageWiseLogicsAskQuestions(this.selectedNodeId))
       .pipe(
-        tap((pageWiseLogicSectionAskQuestions) => {
-          this.pageWiseLogicSectionAskQuestions =
-            pageWiseLogicSectionAskQuestions;
+        tap((pageWiseLogicsAskQuestions) => {
+          this.pageWiseLogicsAskQuestions = pageWiseLogicsAskQuestions;
         })
       );
+    this.store
+      .select(getPageWiseLogicSectionAskEvidenceQuestions(this.selectedNodeId))
+      .pipe(
+        tap((pageWiseLogicSectionAskEvidenceQuestions) => {
+          this.pageWiseLogicSectionAskEvidenceQuestions =
+            pageWiseLogicSectionAskEvidenceQuestions;
+        })
+      )
+      .subscribe();
     this.questionLogics$ = this.store
       .select(
         getQuestionLogics(this.pageIndex, this.questionId, this.selectedNodeId)
@@ -134,7 +158,11 @@ export class AddLogicComponent implements OnInit, OnDestroy {
             const mandateQuestions = logic.mandateQuestions;
             const hideQuestions = logic.hideQuestions;
             const askQuestions =
-              this.pageWiseLogicSectionAskQuestions[this.pageIndex][logic.id];
+              this.pageWiseLogicsAskQuestions[this.pageIndex][logic.id];
+            const evidenceQuestions =
+              this.pageWiseLogicSectionAskEvidenceQuestions[this.pageIndex][
+                logic.id
+              ];
 
             let mandateQuestionsFormArray = [];
             if (mandateQuestions && mandateQuestions.length) {
@@ -160,10 +188,33 @@ export class AddLogicComponent implements OnInit, OnDestroy {
                   fieldType: aq.fieldType || 'TF',
                   position: aq.position || '',
                   required: aq.required || false,
+                  enableHistory: aq.enableHistory || false,
                   multi: aq.multi || false,
                   value: aq.value || '',
                   isPublished: aq.isPublished || false,
-                  isPublishedTillSave: aq.isPublishedTillSave || false
+                  isPublishedTillSave: aq.isPublishedTillSave || false,
+                  isOpen: aq.isOpen || false,
+                  isResponseTypeModalOpen: aq.isResponseTypeModalOpen || false,
+                  unitOfMeasurement: aq.unitOfMeasurement || 'None',
+                  rangeMetaData: aq.rangeMetaData || ({} as NumberRangeMetadata)
+                })
+              );
+            }
+
+            let askEvidenceQuestionsFormArray = [];
+            if (evidenceQuestions && evidenceQuestions.length) {
+              askEvidenceQuestionsFormArray = evidenceQuestions.map((eq) =>
+                this.fb.group({
+                  id: eq.id || '',
+                  sectionId: eq.sectionId || '',
+                  name: eq.name || '',
+                  fieldType: eq.fieldType || 'ATT',
+                  position: eq.position || '',
+                  required: eq.required || false,
+                  multi: eq.multi || false,
+                  value: eq.value || '',
+                  isPublished: eq.isPublished || false,
+                  isPublishedTillSave: eq.isPublishedTillSave || false
                 })
               );
             }
@@ -177,10 +228,15 @@ export class AddLogicComponent implements OnInit, OnDestroy {
               operand2: logic.operand2 || '',
               action: logic.action || '',
               mandateAttachment: logic.mandateAttachment || false,
+              askEvidence: logic.askEvidence || '',
               raiseIssue: logic.raiseIssue || false,
               logicTitle: logic.logicTitle || '',
               expression: logic.expression || '',
+              raiseNotification: logic?.raiseNotification || false,
+              triggerInfo: logic?.triggerInfo || '',
+              triggerWhen: logic?.triggerWhen || '',
               questions: this.fb.array(askQuestionsFormArray),
+              evidenceQuestions: this.fb.array(askEvidenceQuestionsFormArray),
               mandateQuestions: this.fb.array(mandateQuestionsFormArray),
               hideQuestions: this.fb.array(hideQuestionsFormArray)
             });
@@ -249,7 +305,7 @@ export class AddLogicComponent implements OnInit, OnDestroy {
     switch (type) {
       case 'add':
         const newQuestion = {
-          id: `AQ_${uuidv4()}`,
+          id: this.isEmbeddedForm ? `AQ_${Date.now()}` : `AQ_${uuidv4()}`,
           sectionId: `AQ_${logic.id}`,
           name: '',
           fieldType: 'TF',
@@ -257,7 +313,7 @@ export class AddLogicComponent implements OnInit, OnDestroy {
           required: false,
           enableHistory: false,
           multi: false,
-          value: '',
+          value: 'TF',
           isPublished: false,
           isPublishedTillSave: false,
           isOpen: false,
@@ -349,8 +405,11 @@ export class AddLogicComponent implements OnInit, OnDestroy {
         viewMode,
         pageIndex: this.pageIndex,
         questionId: this.questionId,
-        subFormId: this.selectedNodeId
-      }
+        subFormId: this.selectedNodeId,
+        sectionId: this.sectionId,
+        isTemplate: this.isTemplate
+      },
+      panelClass: 'select-questions-dialog'
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (!result) return;
@@ -382,13 +441,25 @@ export class AddLogicComponent implements OnInit, OnDestroy {
   }
   mandateAttachment(action, index, logic) {
     logic.mandateAttachment = true;
-    this.logicEvent.emit({
+    const emitObject: any = {
       questionId: this.questionId,
       pageIndex: this.pageIndex,
       logicIndex: index,
       type: 'update',
       logic
-    });
+    };
+    if (this.isEmbeddedForm) {
+      logic.action = action;
+      logic.askEvidence = `${this.questionId}_${index}_EVIDENCE`;
+      const newEmitObject = {
+        ...emitObject,
+        askEvidence: logic.askEvidence,
+        type: 'ask_evidence_create',
+        questionName: this.questionName
+      };
+      this.logicEvent.emit(newEmitObject);
+    }
+    this.logicEvent.emit(emitObject);
   }
   raiseIssue(action, index, logic) {
     logic.raiseIssue = true;
@@ -398,6 +469,35 @@ export class AddLogicComponent implements OnInit, OnDestroy {
       logicIndex: index,
       type: 'update',
       logic
+    });
+  }
+
+  openRaiseNotificationDialog(action, index, logic) {
+    const dialogRef = this.dialog.open(RaiseNotificationDailogComponent, {
+      restoreFocus: false,
+      disableClose: true,
+      hasBackdrop: false,
+      width: '60%',
+      data: { logic: logic.value, questionName: this.questionName }
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (!result) return;
+      const {
+        notification: { triggerInfo, triggerWhen }
+      } = result;
+      logic.value.action = action;
+      this.cdrf.detectChanges();
+      logic.value.raiseNotification = true;
+      logic.value.triggerInfo = triggerInfo;
+      logic.value.triggerWhen = triggerWhen;
+
+      this.logicEvent.emit({
+        questionId: this.questionId,
+        pageIndex: this.pageIndex,
+        logicIndex: index,
+        type: 'update',
+        logic: logic.value
+      });
     });
   }
 

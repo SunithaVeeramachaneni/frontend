@@ -37,16 +37,13 @@ import {
 } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { Router } from '@angular/router';
-import { Store } from '@ngrx/store';
-import { State } from 'src/app/forms/state';
-import { FormConfigurationActions } from 'src/app/forms/state/actions';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { slideInOut } from 'src/app/animations';
-import { RoundPlanConfigurationModalComponent } from '../round-plan-configuration-modal/round-plan-configuration-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { PlantsResponse } from 'src/app/interfaces/master-data-management/plants';
 import { LoginService } from '../../login/services/login.service';
+import { RoundPlanModalComponent } from '../round-plan-modal/round-plan-modal.component';
 
 @Component({
   selector: 'app-round-plan-list',
@@ -248,12 +245,12 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
     conditionalStyles: {
       draft: {
-        'background-color': '#FEF3C7',
-        color: '#92400E'
+        'background-color': '#FFCC00',
+        color: '#000000'
       },
       published: {
-        'background-color': '#D1FAE5',
-        color: '#065f46'
+        'background-color': '#2C9E53',
+        color: '#FFFFFF'
       }
     }
   };
@@ -268,6 +265,10 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
   limit = graphQLDefaultLimit;
   searchForm: FormControl;
   formsListCount$: Observable<number>;
+  formsListCountRaw$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
+  formsListCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(
+    0
+  );
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
   nextToken = '';
   selectedForm: RoundPlan = null;
@@ -284,6 +285,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
   createdBy = [];
   plantsObject: { [key: string]: PlantsResponse } = {};
   userInfo$: Observable<UserInfo>;
+  triggerCountUpdate = false;
   readonly perms = perms;
   private destroy$ = new Subject();
 
@@ -291,7 +293,6 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
     private readonly toast: ToastService,
     private readonly operatorRoundsService: OperatorRoundsService,
     private router: Router,
-    private readonly store: Store<State>,
     private dialog: MatDialog,
     private plantService: PlantService,
     private loginService: LoginService
@@ -313,12 +314,23 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
       )
       .subscribe(() => this.isLoading$.next(true));
     this.getFilter();
-    this.formsListCount$ = this.operatorRoundsService.getFormsListCount$('All');
     this.getDisplayedForms();
     this.getAllOperatorRounds();
     this.configOptions.allColumns = this.columns;
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
+    );
+    this.formsListCount$ = combineLatest([
+      this.formsListCountRaw$,
+      this.formsListCountUpdate$
+    ]).pipe(
+      map(([count, update]) => {
+        if (this.triggerCountUpdate) {
+          count += update;
+          this.triggerCountUpdate = false;
+        }
+        return count;
+      })
     );
   }
 
@@ -328,6 +340,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
       case 'name':
       case 'description':
       case 'author':
+      case 'plant':
       case 'formStatus':
       case 'lastPublishedBy':
       case 'publishedDate':
@@ -420,6 +433,8 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
               plant: this.plantsObject[obj.plantId]
             });
             form.action = 'add';
+            this.triggerCountUpdate = true;
+            this.formsListCountUpdate$.next(1);
             this.toast.show({
               text: 'Round Plan copied successfully!',
               type: 'success'
@@ -457,10 +472,13 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
         this.filter
       )
       .pipe(
-        mergeMap(({ rows, next }) => {
+        mergeMap(({ count, rows, next }) => {
           // if next token turns null from not null, that means all records have been fetched with the given limit.
           if (next === null && this.nextToken !== null) {
             this.infiniteScrollEnabled = false;
+          }
+          if (count !== undefined) {
+            this.formsListCountRaw$.next(count);
           }
           this.nextToken = next;
           this.isLoading$.next(false);
@@ -517,8 +535,8 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
           action: 'delete',
           form
         });
-        this.formsListCount$ =
-          this.operatorRoundsService.getFormsListCount$('All');
+        this.triggerCountUpdate = true;
+        this.formsListCountUpdate$.next(-1);
       });
   }
 
@@ -579,10 +597,8 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
   onCloseViewDetail() {
     this.selectedForm = null;
     this.menuState = 'out';
-    this.store.dispatch(FormConfigurationActions.resetPages());
   }
   roundPlanDetailActionHandler(event) {
-    this.store.dispatch(FormConfigurationActions.resetPages());
     this.router.navigate([`/operator-rounds/edit/${this.selectedForm.id}`]);
   }
 
@@ -594,7 +610,9 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
         if (objectKeys.length > 0) {
           const uniqueLastPublishedBy = formsList.rows
             .map((item) => item.lastPublishedBy)
-            .filter((value, index, self) => self.indexOf(value) === index);
+            .filter(
+              (value, index, self) => self.indexOf(value) === index && value
+            );
           this.lastPublishedBy = [...uniqueLastPublishedBy];
 
           const uniqueLastModifiedBy = formsList.rows
@@ -604,6 +622,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
               }
               return '';
             })
+            .filter((value) => value)
             .filter((value, index, self) => self.indexOf(value) === index);
           this.lastModifiedBy = [...uniqueLastModifiedBy];
           const uniqueAuthoredBy = formsList.rows
@@ -666,12 +685,21 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
   }
 
   openRoundPlanCreationModal() {
-    this.dialog.open(RoundPlanConfigurationModalComponent, {
+    const dialogRef = this.dialog.open(RoundPlanModalComponent, {
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',
       width: '100%',
-      panelClass: 'full-screen-modal'
+      panelClass: 'full-screen-modal',
+      disableClose: true
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      const data = result === undefined ? {} : result;
+      if (Object.keys(data).length !== 0) {
+        this.isLoading$.next(true);
+        this.operatorRoundsService.fetchForms$.next({ data: 'search' });
+        this.formsListCountUpdate$.next(1);
+      }
     });
   }
 
@@ -695,7 +723,6 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
   }
 
   private showFormDetail(row: RoundPlan): void {
-    this.store.dispatch(FormConfigurationActions.resetPages());
     this.selectedForm = row;
     this.menuState = 'in';
   }

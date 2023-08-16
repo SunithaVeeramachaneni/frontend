@@ -1,11 +1,9 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  HostBinding,
-  OnInit
-} from '@angular/core';
+/* eslint-disable @typescript-eslint/member-ordering */
+import { ChangeDetectionStrategy, Component, HostBinding } from '@angular/core';
 import { DateAdapter } from '@angular/material/core';
 import { MatDateRangePicker } from '@angular/material/datepicker';
+import { addMonths, subDays } from 'date-fns';
+
 const customPresets = [
   'Today',
   'Last 7 days',
@@ -66,7 +64,8 @@ export class CustomRangePanelComponent<D> {
       }
       case 'Last 3 months': {
         const thisDayLastMonth = this.dateAdapter.addCalendarMonths(today, -3);
-        return this.calculateMonth(thisDayLastMonth, 3);
+        const dates = this.calculateMonth(thisDayLastMonth, 3);
+        return dates;
       }
       default:
         return rangeName;
@@ -77,10 +76,16 @@ export class CustomRangePanelComponent<D> {
     const year = this.dateAdapter.getYear(forDay);
     const month = this.dateAdapter.getMonth(forDay);
     const start = this.dateAdapter.createDate(year, month, 1);
-    const daysInMonth = this.dateAdapter.getNumDaysInMonth(forDay) * day;
-    const days = day === 3 ? daysInMonth - 2 : daysInMonth - 1;
-    const end = this.dateAdapter.addCalendarDays(start, days);
-    return [start, end];
+    if (day === 3) {
+      let endDate: Date | D = addMonths(start as unknown as number, 3);
+      endDate = subDays(endDate, 1) as unknown as D;
+      return [start, endDate];
+    } else {
+      const daysInMonth = this.dateAdapter.getNumDaysInMonth(forDay) * day;
+      const days = daysInMonth - 1;
+      const endDate = this.dateAdapter.addCalendarDays(start, days);
+      return [start, endDate];
+    }
   }
 
   private calculateWeek(forDay: D): [start: D, end: D] {

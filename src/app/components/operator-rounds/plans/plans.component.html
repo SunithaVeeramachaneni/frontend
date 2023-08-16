@@ -12,25 +12,16 @@
       [scheduleConfiguration]="
         roundPlanScheduleConfigurations[roundPlanDetail?.id]
       "
+      [shiftObj]="activeShiftIdMap"
     ></app-form-detail>
   </div>
-  <ng-container *ngIf="users$ | async">
-    <app-round-plan-schedule-configuration
-      [@slideInOut]="scheduleConfigState"
-      [roundPlanDetail]="scheduleRoundPlanDetail"
-      [hidden]="hideScheduleConfig"
-      [assigneeDetails]="assigneeDetails"
-      (scheduleConfigEvent)="scheduleConfigEventHandler($event)"
-      (scheduleConfig)="scheduleConfigHandler($event)"
-    ></app-round-plan-schedule-configuration>
-  </ng-container>
   <span class="custom-form-field-gray-color plan-categories">
     <mat-button-toggle-group
       name="plans"
       aria-label="Plans"
       [formControl]="planCategory"
     >
-      <mat-button-toggle value="all"
+      <mat-button-toggle id="plansCount" value="all"
         >{{
           'all'
             | translate
@@ -41,7 +32,7 @@
                 }
         }}
       </mat-button-toggle>
-      <mat-button-toggle value="scheduled"
+      <mat-button-toggle value="scheduled" id="plansSchedule"
         >{{
           'scheduled'
             | translate
@@ -50,7 +41,7 @@
                 }
         }}
       </mat-button-toggle>
-      <mat-button-toggle value="unscheduled">{{
+      <mat-button-toggle value="unscheduled" id="plansUnscheduled">{{
         'unscheduled'
           | translate
             : {
@@ -59,8 +50,11 @@
       }}</mat-button-toggle>
     </mat-button-toggle-group>
     <mat-form-field appearance="outline" class="search">
-      <mat-icon matPrefix class="searchIcon">search</mat-icon>
+      <mat-icon id="plansSearchIcon" matPrefix class="searchIcon"
+        >search</mat-icon
+      >
       <input
+        id="plansSearchText"
         matInput
         type="text"
         [placeholder]="'search' | translate"
@@ -68,6 +62,7 @@
         [formControl]="searchForm"
       />
       <svg-icon
+        id="plansFilterIcon"
         icon="icon-filterIcon"
         class="common-filter-icon"
         matSuffix

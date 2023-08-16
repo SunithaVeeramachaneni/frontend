@@ -1,0 +1,54 @@
+<div class="shift-change-modal">
+  <p id="shiftDateChangeAlert" class="title">
+    {{ 'alert' | translate }}
+  </p>
+  <p
+    id="shiftDateChangeWarning"
+    class="warning-body"
+    *ngIf="data.type === 'warning'"
+  >
+    {{ 'warning' | translate }}
+  </p>
+  <p
+    id="shiftDateChangeInvalidSlotTime"
+    class="'warning-body"
+    *ngIf="data.type === 'date'"
+  >
+    {{ 'invalidSlotTime' | translate }}
+  </p>
+  <button
+    id="shiftDateChangeYesBtn"
+    mat-raised-button
+    color="warn"
+    class="yes-no-btn"
+    (click)="onClick(true)"
+    *ngIf="data.type === 'warning'"
+  >
+    {{ 'yes' | translate }}
+  </button>
+  <button
+    id="shiftDateChangeCancelBtn"
+    mat-button
+    color="primary"
+    class="yes-no-btn"
+    autofocus="false"
+    mat-dialog-close
+    (click)="onClick(false)"
+    *ngIf="data.type === 'warning'"
+  >
+    {{ 'cancel' | translate }}
+  </button>
+
+  <button
+    id="shiftDateChangeOkBtn"
+    mat-button
+    color="primary"
+    class="yes-no-btn"
+    autofocus="false"
+    mat-dialog-close
+    (click)="onSubmit()"
+    *ngIf="data.type === 'date'"
+  >
+    {{ 'okay' | translate }}
+  </button>
+</div>

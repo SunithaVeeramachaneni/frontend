@@ -29,7 +29,6 @@ import {
   CellClickActionEvent,
   Permission,
   TableEvent,
-  UserDetails,
   UserInfo
 } from 'src/app/interfaces';
 
@@ -43,7 +42,7 @@ import { LoginService } from 'src/app/components/login/services/login.service';
 import { ResponseSetService } from '../services/response-set.service';
 import { ToastService } from 'src/app/shared/toast';
 import { MatDialog } from '@angular/material/dialog';
-import { UploadResponseModalComponent } from '../../upload-response-modal/upload-response-modal.component';
+import { UploadResponseModalComponent } from '../../../../shared/components/upload-response-modal/upload-response-modal.component';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { CommonService } from 'src/app/shared/services/common.service';
 
@@ -300,12 +299,11 @@ export class ResponsesListComponent implements OnInit, OnDestroy {
             ...this.configOptions,
             tableHeight: 'calc(100vh - 140px)'
           };
-
           initial.data = rows.map((item) => ({
             ...item,
             responseCount: JSON.parse(item?.values)?.length,
             createdBy: item?.createdBy || '',
-            creator: this.usersService.getUserFullName(item?.createdBy)
+            creator: this.usersService.getUserFullName(item?.createdBy) ?? ''
           }));
         } else {
           if (this.addEditDeleteResponseSet) {
@@ -316,7 +314,8 @@ export class ResponsesListComponent implements OnInit, OnDestroy {
                   {
                     ...form,
                     responseCount: JSON.parse(form.values).length,
-                    creator: this.usersService.getUserFullName(form.createdBy)
+                    creator:
+                      this.usersService.getUserFullName(form?.createdBy) ?? ''
                   },
                   ...initial.data
                 ];
@@ -453,7 +452,7 @@ export class ResponsesListComponent implements OnInit, OnDestroy {
     switch (columnId) {
       case 'name':
       case 'responseCount':
-      case 'createdBy':
+      case 'creator':
       case 'updatedAt':
         this.showRepsonseSetDetail(row);
         break;

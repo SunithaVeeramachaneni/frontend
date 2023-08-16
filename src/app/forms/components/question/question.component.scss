@@ -18,6 +18,13 @@
     position: relative;
   }
 
+  .ask-question-line {
+    border: 0px;
+    border-top: 1px solid $border-color;
+    margin: 0px;
+    position: relative;
+  }
+
   .questions-btn {
     background-color: $white;
     border: none;
@@ -74,10 +81,15 @@
   }
 
   .question-input {
+    background: none;
     padding: 7px 7px 14px 7px;
     border: none;
     margin-left: 5px;
     width: 90%;
+  }
+
+  .instruction-question {
+    padding: 0px 0px 10px 3px;
   }
 
   input:focus {
@@ -111,6 +123,29 @@
         margin-left: -23px;
         color: $blue-main;
         font-weight: 400;
+        padding-left: 0px;
+        .icon {
+          transform: rotate(120deg);
+          font-size: 12pt;
+          margin-top: -5px;
+        }
+      }
+      .ask-question-inst-btn {
+        margin-left: 8px;
+        color: $blue-main;
+        font-weight: 400;
+        padding-left: 0px;
+        .icon {
+          transform: rotate(120deg);
+          font-size: 12pt;
+          margin-top: -5px;
+        }
+      }
+      .ask-question-hl-btn {
+        margin-left: -13px;
+        color: $blue-main;
+        font-weight: 400;
+        padding-left: 0px;
         .icon {
           transform: rotate(120deg);
           font-size: 12pt;
@@ -124,6 +159,12 @@
         align-items: center;
         background: none;
         border: none;
+      }
+
+      .hyperlink-long {
+        width: 100%;
+        display: flex;
+        align-items: center;
       }
     }
     .addLogicRow {

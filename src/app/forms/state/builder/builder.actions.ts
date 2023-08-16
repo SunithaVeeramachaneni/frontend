@@ -1,6 +1,6 @@
 import { createAction, props } from '@ngrx/store';
 import { FormMetadata, Page, Question, Section } from 'src/app/interfaces';
-import { FormConfigurationState } from '../form-configuration.reducer';
+import { FormConfigurationState } from './builder.reducer';
 
 export const createForm = createAction(
   '[Form Configuration Modal Component] createFrom',
@@ -102,11 +102,6 @@ export const updateCreateOrEditForm = createAction(
   props<{ createOrEditForm: boolean }>()
 );
 
-export const updateCounter = createAction(
-  '[Builder Configuration] updateCounter',
-  props<{ counter: number }>()
-);
-
 export const initPage = createAction(
   '[Builder Configuration] initPage',
   props<{
@@ -136,6 +131,7 @@ export const addPage = createAction(
     formStatus: string;
     formDetailPublishStatus: string;
     formSaveStatus: string;
+    counter: number;
   }>()
 );
 
@@ -180,6 +176,19 @@ export const addSections = createAction(
     formDetailPublishStatus: string;
     formSaveStatus: string;
     subFormId?: string;
+    counter: number;
+  }>()
+);
+
+export const addLogics = createAction(
+  '[Builder Configuration] addLogics',
+  props<{
+    subFormId?: string;
+    logics: any[];
+    pageIndex: number;
+    formStatus: string;
+    formDetailPublishStatus: string;
+    formSaveStatus: string;
   }>()
 );
 
@@ -242,6 +251,7 @@ export const addQuestions = createAction(
     formDetailPublishStatus: string;
     formSaveStatus: string;
     subFormId?: string;
+    counter: number;
   }>()
 );
 
@@ -332,11 +342,6 @@ export const resetFormConfiguration = createAction(
 export const initPages = createAction(
   '[Form Configuration Component] initPages',
   props<{ pages: any[]; subFormId: string }>()
-);
-
-export const resetPages = createAction(
-  '[Form Configuration Component] resetPages',
-  props<{ subFormId: string }>()
 );
 
 export const createTemplate = createAction(

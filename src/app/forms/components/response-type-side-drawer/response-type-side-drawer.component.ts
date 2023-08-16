@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import {
   Component,
   OnInit,
@@ -20,8 +21,10 @@ import {
 } from 'rxjs/operators';
 import {
   NumberRangeMetadata,
+  Question,
   RangeSelectorState,
-  ResponseTypeOpenState
+  ResponseTypeOpenState,
+  SliderSelectorState
 } from 'src/app/interfaces';
 import { FormService } from '../../services/form.service';
 import { ToastService } from 'src/app/shared/toast';
@@ -40,8 +43,15 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
   @Output() responseTypeHandler: EventEmitter<any> = new EventEmitter<any>();
   @Output() rangeSelectionHandler: EventEmitter<any> = new EventEmitter<any>();
 
-  @Input() question;
-  sliderOpenState$: Observable<boolean>;
+  @Input() set question(question: Question) {
+    if (question) {
+      this._question = question;
+    }
+  }
+  get question(): Question {
+    return this._question;
+  }
+  sliderOpenState$: Observable<SliderSelectorState>;
   multipleChoiceOpenState$: Observable<ResponseTypeOpenState>;
   rangeSelectorOpenState$: Observable<RangeSelectorState>;
 
@@ -53,7 +63,16 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
 
   public isFormNotUpdated = true;
   multipleChoiceOpenState = false;
-  rangeSelectorOpenState = false;
+  rangeSelectorOpenState: RangeSelectorState = {
+    isOpen: false,
+    questionId: '',
+    rangeMetadata: {} as NumberRangeMetadata
+  };
+  sliderOpenState: SliderSelectorState = {
+    isOpen: false,
+    questionId: '',
+    value: 'TF'
+  };
 
   sliderOptions = {
     value: 0,
@@ -66,6 +85,7 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
   upperLimitActions = ['None', 'Warning', 'Alert', 'Note'];
   isCreate = true;
   private onDestroy$ = new Subject();
+  private _question: Question;
 
   constructor(
     private formService: FormService,
@@ -117,10 +137,18 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
     });
 
     this.rangeSelectorOpenState$.subscribe((state) => {
-      this.rangeSelectorOpenState = state.isOpen;
+      this.rangeSelectorOpenState = state;
       this.cdrf.detectChanges();
       if (state.isOpen) {
         this.rangeMetadataForm.patchValue(state.rangeMetadata);
+      }
+    });
+
+    this.sliderOpenState$.subscribe((state) => {
+      this.sliderOpenState = state;
+      this.cdrf.detectChanges();
+      if (this.question && typeof this.question.value !== 'string') {
+        this.sliderOptions = this.question.value;
       }
     });
 
@@ -228,17 +256,47 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
   };
 
   applySliderOptions(values) {
+    if (values.min < 0) {
+      this.toast.show({
+        text: 'Slider from value cannot be less than zero',
+        type: 'warning'
+      });
+      return;
+    } else if (values.min > values.max) {
+      this.toast.show({
+        text: 'The upper limit cannot be lower than the lower limit',
+        type: 'warning'
+      });
+      return;
+    } else if (values.increment < 1) {
+      this.toast.show({
+        text: 'Increment value cannot be less than one',
+        type: 'warning'
+      });
+      return;
+    }
+    if (values.value < values.min) values.value = values.min;
+    else if (values.value > values.max) values.value = values.max;
     this.setSliderValues.emit(values);
-    this.formService.setsliderOpenState(false);
+    this.formService.setsliderOpenState({
+      isOpen: false,
+      questionId: '',
+      value: 'TF'
+    });
   }
 
   cancelSlider = () => {
-    this.formService.setsliderOpenState(false);
+    this.formService.setsliderOpenState({
+      isOpen: false,
+      questionId: '',
+      value: 'TF'
+    });
   };
 
   cancelRangeSelection = () => {
     this.formService.setRangeSelectorOpenState({
       isOpen: false,
+      questionId: '',
       rangeMetadata: {} as NumberRangeMetadata
     });
   };
@@ -257,6 +315,7 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
     });
     this.formService.setRangeSelectorOpenState({
       isOpen: false,
+      questionId: '',
       rangeMetadata: {} as NumberRangeMetadata
     });
   };

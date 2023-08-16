@@ -34,17 +34,19 @@
           mat-list-icon
           *ngIf="selectedConference && selectedConference.isGroupCall"
         >
-          <mat-icon class="icon group-icon-head">groups</mat-icon>
+          <mat-icon id="videoCallGroups" class="icon group-icon-head"
+            >groups</mat-icon
+          >
         </div>
         <div
           class="userTitle"
           *ngIf="selectedConference && !selectedConference.isGroupCall"
         >
-          <span class="userName"
+          <span id="videoCallUserName" class="userName"
             >{{ selectedConference.userInfo.firstName }}
             {{ selectedConference.userInfo.lastName }}
           </span>
-          <div mat-line class="userDescription">
+          <div id="videoCallUserDescription" mat-line class="userDescription">
             {{ selectedConference.userInfo?.title }}
           </div>
         </div>
@@ -52,13 +54,14 @@
           class="userTitle groupTitle"
           *ngIf="selectedConference && selectedConference.isGroupCall"
         >
-          <span class="userName"
+          <span id="videoCallSubject" class="userName"
             >{{ selectedConference.metadata.subject }}
           </span>
           <div mat-line class="userDescription groupDescription">
             <span
+              id="videoCallFirstName"
               *ngFor="
-                let member of selectedConference.members | slice: 0:2;
+                let member of selectedConference.members | slice : 0 : 2;
                 let i = index
               "
             >
@@ -70,6 +73,7 @@
               "
             >
               <div
+                id="videoCallMembers"
                 (click)="isOpen = !isOpen"
                 cdkOverlayOrigin
                 #trigger="cdkOverlayOrigin"
@@ -93,19 +97,25 @@
                     <li
                       *ngFor="
                         let member of selectedConference.members
-                          | slice: 2:selectedConference?.members.length;
+                          | slice : 2 : selectedConference?.members.length;
                         let i = index
                       "
                       class="member"
                     >
                       <div class="icon-button" mat-list-icon>
-                        <img class="icon" [src]="member.profileImage" />
+                        <img
+                          id="videoCallProfileImg"
+                          class="icon"
+                          [src]="member.profileImage"
+                        />
                       </div>
                       <div mat-line>
-                        <div class="memberName">
+                        <div id="videoCallMemberName" class="memberName">
                           {{ member.firstName }} {{ member.lastName }}
                         </div>
-                        <div class="memberTitle">{{ member.title }}</div>
+                        <div id="videoCallTitle" class="memberTitle">
+                          {{ member.title }}
+                        </div>
                       </div>
                       <mat-divider class="horiz-divider"></mat-divider>
                     </li>
@@ -118,6 +128,7 @@
       </div>
       <div class="rightSideActions">
         <button
+          id="videoCallAddPeopleBtn"
           mat-stroked-button
           class="addPeopleBtn"
           (click)="openSideNav()"
@@ -125,10 +136,13 @@
         >
           <div class="btnIconAndTitle">
             <mat-icon>person_add</mat-icon>
-            <span class="addPeopleTxt" translate>addPeople</span>
+            <span id="videoCallAddPeople" class="addPeopleTxt" translate
+              >addPeople</span
+            >
           </div>
         </button>
         <button
+          id="videoCallCloseBtn"
           mat-icon-button
           disableRipple
           class="closeBtn"
@@ -138,6 +152,7 @@
           <mat-icon>remove</mat-icon>
         </button>
         <button
+          id="videoCallShowLessBtn"
           mat-icon-button
           disableRipple
           class="closeBtn rotate90"
@@ -147,6 +162,7 @@
           <mat-icon>unfold_less</mat-icon>
         </button>
         <button
+          id="videoCallShowMoreBtn"
           mat-icon-button
           disableRipple
           class="closeBtn rotate90"
@@ -162,9 +178,17 @@
       class="addPeopleHead"
       [ngClass]="{ 'w-40-pct': isSideNavOpen }"
     >
-      <div class="headerTitle" translate *ngIf="isSideNavOpen">addPeople</div>
+      <div
+        id="videoCallAddPeopleTitle"
+        class="headerTitle"
+        translate
+        *ngIf="isSideNavOpen"
+      >
+        addPeople
+      </div>
       <div class="conferenceTitle" *ngIf="isSideNavOpen">
         <button
+          id="videoCallCLoseSideNavBtn"
           mat-icon-button
           disableRipple
           class="closeBtn"

@@ -9,6 +9,7 @@
       [hidden]="hideInspectionDetail"
       [formStatus]="formConfigurationStatus.published"
       formDetailType="submitted"
+      [shiftObj]="shiftObj"
       (formDetailAction)="formsDetailActionHandler($event)"
     ></app-form-detail>
   </div>
@@ -17,8 +18,10 @@
       <ng-container
         *ngIf="(isLoading$ | async) === false; else loadingInspections"
       >
-        <span class="inspections-count"> {{ inspectionsCount }} &nbsp; </span>
-        <span class="inspections-text">{{
+        <span id="inspectionCount" class="inspections-count">
+          {{ inspectionsCount }} &nbsp;
+        </span>
+        <span id="inspectionCountText" class="inspections-text">{{
           'inspectionPlural'
             | translate
               : {
@@ -36,8 +39,11 @@
       </ng-template>
     </span>
     <mat-form-field appearance="outline">
-      <mat-icon matPrefix class="searchIcon">search</mat-icon>
+      <mat-icon id="inspectionSearchIcon" matPrefix class="searchIcon"
+        >search</mat-icon
+      >
       <input
+        id="inspectionSearchText"
         matInput
         type="text"
         [placeholder]="'search' | translate"
@@ -46,6 +52,7 @@
       />
 
       <svg-icon
+        id="inspectionFilterIcon"
         icon="icon-filterIcon"
         cdkOverlayOrigin
         #trigger="cdkOverlayOrigin"
@@ -99,6 +106,7 @@
   </div>
   <ng-container *ngIf="users$ | async">
     <button
+      id="inspectionAssigneeBtn"
       class="hide-mat-menu"
       mat-button
       [matMenuTriggerFor]="assigneeMenu"
@@ -112,17 +120,45 @@
       ></app-assign-inspection>
     </mat-menu>
   </ng-container>
-  <button
-    class="hide-mat-menu"
-    mat-button
-    [matMenuTriggerFor]="dueDateMenu"
-    #dueDateMenuTrigger="matMenuTrigger"
-  ></button>
-  <mat-menu #dueDateMenu="matMenu">
+
+  <div *ngIf="openMenuStateStartDate">
     <app-date-picker
-      [selectedDate]="selectedDate"
+      [selectedDate]="selectedStartDate"
+      (dateChange)="startDateChangeHandler($event)"
+      (closed)="startDateClosedHandler()"
+      *ngIf="openMenuStateStartDate"
+    ></app-date-picker>
+  </div>
+
+  <div *ngIf="openMenuStateDueDate">
+    <app-date-picker
+      [selectedDate]="selectedDueDate"
       (dateChange)="dateChangeHandler($event)"
       (closed)="dueDateClosedHandler()"
+      *ngIf="openMenuStateDueDate"
     ></app-date-picker>
-  </mat-menu>
+  </div>
+
+  <ng-container>
+    <button
+      id="inspectionShiftMenu"
+      class="hide-mat-menu"
+      mat-button
+      [matMenuTriggerFor]="shiftMenu"
+      #shiftMenuTrigger="matMenuTrigger"
+    ></button>
+    <div>
+      <mat-menu #shiftMenu="matMenu">
+        <div *ngIf="plantSelected">
+          <app-shift-menu-item
+            [plantShiftObj]="plantToShift"
+            [plantId]="plantSelected"
+            [dropdownPosition]="shiftPosition"
+            (shiftChange)="shiftChangeHandler($event)"
+          >
+          </app-shift-menu-item>
+        </div>
+      </mat-menu>
+    </div>
+  </ng-container>
 </ng-container>

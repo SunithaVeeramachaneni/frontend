@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import { map } from 'rxjs/operators';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription, of } from 'rxjs';
 import {
   Component,
   EventEmitter,
@@ -16,7 +16,7 @@ import { Store } from '@ngrx/store';
 
 import { State } from 'src/app/forms/state';
 import { RaceDynamicFormService } from '../services/rdf.service';
-import { FormConfigurationActions } from 'src/app/forms/state/actions';
+import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
 import {
   RoundPlan,
@@ -24,8 +24,15 @@ import {
   RoundPlanDetail,
   RoundDetail
 } from 'src/app/interfaces';
-import { formConfigurationStatus } from 'src/app/app.constants';
-import { scheduleConfigs } from '../../operator-rounds/round-plan-schedule-configuration/round-plan-schedule-configuration.constants';
+import { scheduleConfigs } from 'src/app/forms/components/schedular/schedule-configuration/schedule-configuration.constants';
+import {
+  formConfigurationStatus,
+  dateFormat2,
+  dateTimeFormat2,
+  dateTimeFormat4
+} from 'src/app/app.constants';
+import { PlantService } from '../../master-configurations/plants/services/plant.service';
+import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
 
 interface FrequencyDetail {
   info: string;
@@ -45,25 +52,27 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   @Output() formDetailAction: EventEmitter<any> = new EventEmitter();
   @Output() scheduleRoundPlan: EventEmitter<RoundPlanDetail> =
     new EventEmitter();
+  @Output() showAffectedForms: EventEmitter<any> = new EventEmitter();
   @Input() selectedForm: any | RoundPlan | RoundPlanDetail | RoundDetail = null;
   @Input() moduleName = 'RDF';
   @Input() showPDFDownload = false;
   @Input() formStatus = formConfigurationStatus.draft;
   @Input() formDetailType = 'Authored';
+  @Input() shiftObj: any;
+  @Input() isTemplate: boolean;
   @Input() set scheduleConfiguration(
     scheduleConfiguration: any | RoundPlanScheduleConfiguration
   ) {
-    if (scheduleConfiguration) {
-      this._scheduleConfiguration = scheduleConfiguration;
-    }
+    this._scheduleConfiguration = scheduleConfiguration;
   }
 
   get scheduleConfiguration() {
     return this._scheduleConfiguration;
   }
-
+  plantMapSubscription: Subscription;
   currentPage = 1;
   selectedFormDetail$: Observable<any> = null;
+  operatorRoundsModule = 'OPERATOR_ROUNDS';
   defaultFormName = null;
   pagesCount = 0;
   questionsCount = 0;
@@ -72,6 +81,11 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   placeHolder = '_ _';
   frequencyDetail = {} as FrequencyDetail;
   pdfButtonDisabled = false;
+  plantTimezoneMap: any;
+  slotArr = [];
+  templatesUsed = [];
+  readonly dateTimeFormat = dateTimeFormat2;
+  readonly dateFormat = dateFormat2;
   readonly formConfigurationStatus = formConfigurationStatus;
   readonly scheduleConfigs = scheduleConfigs;
   private _scheduleConfiguration: RoundPlanScheduleConfiguration;
@@ -79,23 +93,39 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private readonly operatorRoundsService: OperatorRoundsService,
-    private readonly store: Store<State>
+    private readonly store: Store<State>,
+    private readonly plantService: PlantService
   ) {}
 
   ngOnChanges(_: SimpleChanges) {
-    if (this.selectedForm) {
-      this.toggleLoader(true);
+    if (this.scheduleConfiguration && this.scheduleConfiguration.shiftDetails) {
+      this.slotArr = Object.entries(this._scheduleConfiguration.shiftDetails);
+    } else {
+      this.slotArr = [];
+    }
 
+    if (this.selectedForm) {
+      if (this.selectedForm?.status === 'skipped') {
+        this.selectedForm.isViewPdf = false;
+      }
+      this.toggleLoader(true);
+      if (!this.selectedForm.formId)
+        this.selectedForm.formId = this.selectedForm.id;
       let formDetail$: any =
         this.raceDynamicFormService.getAuthoredFormDetailByFormId$(
-          this.selectedForm.id,
+          this.selectedForm.formId,
           this.formStatus
         );
       if (this.moduleName === 'OPERATOR_ROUNDS') {
+        if (!this.selectedForm.roundPlanId)
+          this.selectedForm.roundPlanId = this.selectedForm.id;
         formDetail$ = this.operatorRoundsService.getAuthoredFormDetailByFormId$(
-          this.selectedForm.id,
+          this.selectedForm.roundPlanId,
           this.formStatus
         );
+      }
+      if (this.isTemplate) {
+        formDetail$ = of(this.selectedForm.authoredFormTemplateDetails[0]);
       }
       this.selectedFormDetail$ = formDetail$.pipe(
         map((formDetail: any) => {
@@ -112,14 +142,19 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
               if (pIdx === 0) {
                 this.defaultFormName = `${page.name} ${page.position}`;
                 this.store.dispatch(
-                  FormConfigurationActions.initPages({
-                    pages: [page]
+                  BuilderConfigurationActions.initPages({
+                    pages: [page],
+                    subFormId: null
                   })
                 );
               }
               this.questionsCount += page?.questions?.length || 0;
               this.pagesCount += 1;
             });
+            this.templatesUsed = [];
+            if (formDetail?.templatesUsed?.length) {
+              this.templatesUsed = formDetail.templatesUsed;
+            }
           }
           return data;
         })
@@ -134,24 +169,40 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
       );
 
       this.setFrequencyInfo();
-      this.pdfButtonDisabled = false;
-      if (this.selectedForm?.status) {
-        if (
-          this.selectedForm?.status.toLowerCase() === 'open' ||
-          this.selectedForm?.status.toLowerCase() === 'to-do'
-        ) {
-          this.pdfButtonDisabled = true;
-        }
+      this.pdfButtonDisabled = true;
+      if (this.selectedForm?.isViewPdf === true) {
+        this.pdfButtonDisabled = false;
       }
     }
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.plantService.getPlantTimeZoneMapping();
+    this.plantMapSubscription =
+      this.plantService.plantTimeZoneMapping$.subscribe((data) => {
+        this.plantTimezoneMap = data;
+      });
+  }
+
+  convertTo12HourFormat(time24: string): string {
+    const [hours, minutes] = time24.split(':');
+
+    let hours12 = parseInt(hours, 10);
+    const suffix = hours12 >= 12 ? 'PM' : 'AM';
+
+    if (hours12 === 0) {
+      hours12 = 12;
+    } else if (hours12 > 12) {
+      hours12 -= 12;
+    }
+
+    const time12 = `${hours12}:${minutes} ${suffix}`;
+    return time12;
+  }
 
   cancelForm() {
     this.slideInOut.emit('in');
     this.selectedFormDetail$ = null;
-    this.store.dispatch(FormConfigurationActions.resetPages());
   }
 
   openMenu(page): void {
@@ -161,18 +212,37 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
       );
       this.defaultFormName = `${foundPage?.name} ${foundPage?.position}`;
       this.store.dispatch(
-        FormConfigurationActions.initPages({
-          pages: [foundPage]
+        BuilderConfigurationActions.initPages({
+          pages: [foundPage],
+          subFormId: null
         })
       );
     });
   }
 
-  formateDate(date: string) {
-    if (!date) {
-      return '';
+  formatDate(date, plantId, dateFormat) {
+    if (!date) return '';
+    if (this.plantTimezoneMap[plantId]?.timeZoneIdentifier) {
+      return localToTimezoneDate(
+        date,
+        this.plantTimezoneMap[plantId],
+        dateFormat
+      );
     }
-    return format(new Date(date), 'M/d/yy, h:mm a');
+
+    return format(new Date(date), dateFormat);
+  }
+
+  formatDateTime(date, plantId) {
+    if (!date) return '';
+    if (this.plantTimezoneMap[plantId]?.timeZoneIdentifier) {
+      return localToTimezoneDate(
+        date,
+        this.plantTimezoneMap[plantId],
+        dateTimeFormat4
+      );
+    }
+    return format(new Date(date), dateTimeFormat4);
   }
 
   onNavigateToDetailPage() {
@@ -186,6 +256,7 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.plantMapSubscription.unsubscribe();
     this.selectedForm = null;
     this.toggleLoader(false);
   }
@@ -205,7 +276,6 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
       } = this.scheduleConfiguration;
       if (scheduleType === 'byFrequency') {
       }
-
       this.frequencyDetail =
         scheduleType === 'byFrequency'
           ? repeatEvery === 'week'
@@ -263,6 +333,11 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
 
   isDayOfWeekSelected(daysOfWeek, dayIndex) {
     return daysOfWeek.includes(dayIndex);
+  }
+
+  showAffectedTemplateForms() {
+    if (this.selectedForm?.formsUsageCount)
+      this.showAffectedForms.emit(this.selectedForm);
   }
 
   private toggleLoader(action: boolean): void {

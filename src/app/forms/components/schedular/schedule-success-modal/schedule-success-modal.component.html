@@ -1,27 +1,41 @@
 <div id="success-container">
   <mat-icon>
-    <svg-icon icon="icon-schedule-success" class="schedule-icon"></svg-icon>
+    <svg-icon
+      id="scheduleSuccessIcon"
+      icon="icon-schedule-success"
+      class="schedule-icon"
+    ></svg-icon>
   </mat-icon>
-  <p class="color">
+  <p id="scheduleSuccessText" class="color">
     {{ 'scheduleSuccess' | translate }}
   </p>
   <div class="message">
-    <p>
+    <p id="scheduleSuccessName">
       {{ data?.name }}
     </p>
-    <p [innerHTML]="'scheduleSuccessMessage' | translate"></p>
+    <p
+      id="scheduleSuccessMessage"
+      [innerHTML]="'scheduleSuccessMessage' | translate"
+    ></p>
   </div>
   <button
+    id="scheduleSuccessRoundBtn"
     *ngIf="!data?.isFormModule"
     mat-button
     translate="viewRounds"
     (click)="goToList()"
   ></button>
   <button
+    id="scheduleSuccessFormsBtn"
     *ngIf="data?.isFormModule"
     mat-button
     translate="viewForms"
     (click)="goToList()"
   ></button>
-  <button mat-button translate="close" (click)="close()"></button>
+  <button
+    id="scheduleSuccessCloseBtn"
+    mat-button
+    translate="close"
+    (click)="close()"
+  ></button>
 </div>

@@ -1,0 +1,91 @@
+@import '../../../../scss/colors.scss';
+
+.form-update-delete-progress {
+  position: absolute;
+  bottom: 0;
+  right: 50px;
+  background-color: $white;
+  box-shadow: 0 0 5px 5px $box-shadow;
+  border-radius: 10px 10px 0px 0px;
+  width: 400px;
+  max-height: 300px;
+  z-index: 200;
+  transition: all 0.5s ease-in-out;
+
+  .total-progress-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    border-bottom: 1px solid $border-bottom;
+    padding: 15px;
+    .total-progress-count {
+      font-size: 130%;
+      font-weight: 500;
+    }
+    .progress-container-cta {
+      display: flex;
+      .cta-icon-holder {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0px 11px;
+        cursor: pointer;
+      }
+      .cta-icon {
+        height: 15px;
+        width: 15px;
+      }
+    }
+  }
+  .form-progress-list-container {
+    height: max-content;
+    max-height: 240px;
+    overflow-y: auto;
+    transition: all 0.5s ease-in-out;
+    .single-form-progress {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      .form-metadata {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        .form-icon {
+          height: 40px;
+          width: 40px;
+        }
+        .form-name {
+          margin-left: 10px;
+          font-size: 105%;
+          font-weight: 500;
+          max-width: 290px;
+        }
+      }
+
+      .icon {
+        height: 25px;
+        width: 24px;
+      }
+    }
+    .single-form-progress ::ng-deep .mat-progress-spinner circle,
+    .mat-spinner circle {
+      stroke: $green3;
+    }
+  }
+  .shrink {
+    max-height: 0px !important;
+    overflow: hidden;
+  }
+  .expand {
+    max-height: 240px !important;
+  }
+  .rotate-icon {
+    transform: rotate(180deg);
+  }
+}
+.form-update-delete-progress.shrink {
+  max-height: 0px !important;
+  box-shadow: none;
+}

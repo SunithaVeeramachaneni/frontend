@@ -26,5 +26,12 @@
     "column": "plant",
     "type": "select",
     "value": ""
+  },
+  {
+    "label": "Form Type",
+    "items": [],
+    "column": "formType",
+    "type": "select",
+    "value": ""
   }
 ]

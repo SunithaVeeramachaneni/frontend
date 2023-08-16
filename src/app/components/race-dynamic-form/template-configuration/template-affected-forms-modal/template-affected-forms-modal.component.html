@@ -1,0 +1,87 @@
+<div class="import-questions-modal">
+  <div class="dis-flex heading-conatiner">
+    <h2 id="templateAffectedFormName" class="heading" translate>
+      formsThatWillReflectChanges
+    </h2>
+    <mat-icon
+      id="templateAffectedFormClearIcon"
+      class="clear-icon"
+      mat-dialog-close="true"
+      >clear</mat-icon
+    >
+  </div>
+  <div class="custom-form-field-gray-color search">
+    <mat-form-field class="width-100" appearance="outline">
+      <mat-icon id="templateAffectedFormSearchIcon" matPrefix class="searchIcon"
+        >search</mat-icon
+      >
+      <input
+        id="templateAffectedFormSearchText"
+        matInput
+        type="text"
+        [placeholder]="'searchForms' | translate"
+        autocomplete="off"
+        [formControl]="searchForm"
+      />
+    </mat-form-field>
+  </div>
+  <div *ngIf="isLoading$ | async">
+    <div *ngFor="let number of ghostLoading">
+      <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+      </ngx-shimmer-loading>
+    </div>
+  </div>
+
+  <div *ngIf="(forms$ | async) && (formsListCount$ | async) !== 0">
+    <div *ngIf="(isLoading$ | async) === false">
+      <cwp-dynamictable
+        [dataSource]="dataSource"
+        [configOptions]="configOptions"
+        (fetchDataCallback)="handleTableEvent($event)"
+        class="width-100"
+      ></cwp-dynamictable>
+    </div>
+  </div>
+  <div
+    *ngIf="(formsListCount$ | async) === 0 && (isLoading$ | async) === false"
+    class="no-affected-forms"
+  >
+    <svg-icon
+      id="templateAffectedFormIcon"
+      icon="icon-frame"
+      class="affected-icon"
+    ></svg-icon>
+    <span id="templateAffectedFormLink" class="affected-text" translate
+      >formsWillAppearOnceTemplateIsLinked</span
+    >
+  </div>
+  <div mat-dialog-actions class="actions">
+    <div>
+      <div
+        id="templateAffectedFormCount"
+        *ngIf="(isLoading$ | async) === false"
+        class="form-count"
+      >
+        {{ affectedFormsCount }}
+        <span id="templateAffectedForm" translate>affectedForms</span>
+      </div>
+    </div>
+    <div>
+      <button
+        id="templateAffectedFormCloseBtn"
+        mat-stroked-button
+        mat-dialog-close="true"
+        translate="cancel"
+        class="close-btn"
+      ></button>
+      <button
+        id="templateAffectedFormDoneBtn"
+        mat-raised-button
+        (click)="markTemplateAsReady()"
+        translate="done"
+        class="select-btn"
+        [disabled]="(formLoaded$ | async) !== true"
+      ></button>
+    </div>
+  </div>
+</div>

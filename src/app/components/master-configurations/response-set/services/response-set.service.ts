@@ -1,5 +1,6 @@
+/* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 
 import { formatDistance } from 'date-fns';
@@ -15,9 +16,9 @@ import {
   CreateResponseSet,
   UpdateResponseSet,
   DeleteResponseSet,
-  UserDetails,
   ErrorInfo
 } from '../../../../interfaces';
+import { DateUtilService } from 'src/app/shared/utils/dateUtils';
 
 @Injectable({
   providedIn: 'root'
@@ -34,7 +35,10 @@ export class ResponseSetService {
 
   private maxLimit = '1000000';
 
-  constructor(private _appService: AppService) {}
+  constructor(
+    private _appService: AppService,
+    private readonly dateUtilService: DateUtilService
+  ) {}
 
   uploadExcel(
     form: FormData,
@@ -191,7 +195,12 @@ export class ResponseSetService {
             ? formatDistance(new Date(p.createdAt), new Date(), {
                 addSuffix: true
               })
-            : ''
+            : '',
+          updatedAt:
+            p?.updatedAt &&
+            this.dateUtilService.isValidDate(new Date(p?.updatedAt))
+              ? p?.updatedAt
+              : ''
         })) || [];
     const count = resp?.items.length || 0;
     const next = resp?.next;

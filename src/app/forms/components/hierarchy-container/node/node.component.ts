@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import {
   Component,
   OnInit,
@@ -5,14 +6,8 @@ import {
   Input,
   Output,
   EventEmitter,
-  ChangeDetectorRef,
   ViewChild
 } from '@angular/core';
-import { Store } from '@ngrx/store';
-import {
-  getNodeWiseQuestionsCount,
-  State
-} from 'src/app/forms/state/builder/builder-state.selectors';
 import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
 import { FormService } from 'src/app/forms/services/form.service';
@@ -30,21 +25,27 @@ export class NodeComponent implements OnInit {
   @Input() hierarchyMode;
   @Input() dropTargetIds;
   @Output() nodeRemoved: EventEmitter<any> = new EventEmitter();
+  @Input() set nodeWiseQuestionsCount(nodeWiseQuestionsCount: any) {
+    if (nodeWiseQuestionsCount) {
+      this._nodeWiseQuestionsCount = nodeWiseQuestionsCount;
+    }
+  }
+  get nodeWiseQuestionsCount() {
+    return this._nodeWiseQuestionsCount;
+  }
 
   @ViewChild('hierarchyMenuTrigger') hierarchyMenuTrigger: MatMenuTrigger;
   selectedNode: any;
   selectedNode$: any;
-  nodeWiseQuestionsCount: any = {};
-  nodeWiseQuestionsCount$: any;
   positions: any;
   public nodeSelectedForShowHierarchy = {} as any;
   public togglePopover = false;
+  private _nodeWiseQuestionsCount: any = {};
 
   constructor(
     public assetHierarchyUtil: AssetHierarchyUtil,
     private operatorRoundsService: OperatorRoundsService,
-    private formService: FormService,
-    private store: Store<State>
+    private formService: FormService
   ) {}
 
   ngOnInit(): void {
@@ -53,14 +54,6 @@ export class NodeComponent implements OnInit {
         this.selectedNode = data;
       })
     );
-
-    this.nodeWiseQuestionsCount$ = this.store
-      .select(getNodeWiseQuestionsCount())
-      .pipe(
-        tap((nodeWiseQuestionsCount) => {
-          this.nodeWiseQuestionsCount = nodeWiseQuestionsCount;
-        })
-      );
   }
 
   getTasksCountByNode(node) {

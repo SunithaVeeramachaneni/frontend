@@ -1,0 +1,28 @@
+<app-dynamic-stepper
+  [steps]="steps"
+  [currentStep]="currentStep"
+  [showGoBack]="true"
+  (goBack)="goBack()"
+  (gotoStep)="onGotoStep($event)"
+  (gotoNextStep)="gotoNextStep()"
+  (gotoPreviousStep)="gotoPreviousStep()"
+>
+  <div stepsContent>
+    <!-- STEP 1 -->
+    <div [hidden]="currentStep !== 0">
+      <app-template-header-configuration
+        [alltemplatesData]="data"
+        [templateData]="templateData"
+        (gotoNextStep)="gotoNextStep()"
+      ></app-template-header-configuration>
+    </div>
+
+    <!-- STEP 2 -->
+    <div [hidden]="currentStep !== 1">
+      <app-template-detail-configuration
+        (gotoNextStep)="gotoNextStep()"
+        (markReadyEvent)="markReadyEventHandler()"
+      ></app-template-detail-configuration>
+    </div>
+  </div>
+</app-dynamic-stepper>

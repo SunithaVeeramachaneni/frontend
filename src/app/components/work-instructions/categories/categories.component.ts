@@ -1,3 +1,6 @@
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable @typescript-eslint/naming-convention */
+/* eslint-disable @typescript-eslint/member-ordering */
 import {
   AfterViewChecked,
   AfterViewInit,
@@ -304,7 +307,7 @@ export class CategoriesComponent
             toArray()
           )
           .subscribe((files) => {
-            for (let file of files) {
+            for (const file of files) {
               this.categoryService.removeDeleteFiles(file.file);
             }
           });
@@ -346,11 +349,10 @@ export class CategoriesComponent
     });
   }
 
-  getImageSrc = (source: string, path: string) => {
-    return source && source.indexOf('assets/') > -1
+  getImageSrc = (source: string, path: string) =>
+    source && source.indexOf('assets/') > -1
       ? source
       : this.base64HelperService.getBase64ImageData(source, path);
-  };
 
   getS3CoverImageStyles = (source: string) => {
     if (source && source.indexOf('assets/') > -1) {
@@ -364,9 +366,7 @@ export class CategoriesComponent
     }
   };
 
-  getS3Folder = (time: number) => {
-    return `category/${time}`;
-  };
+  getS3Folder = (time: number) => `category/${time}`;
 
   ngOnDestroy(): void {
     if (this.fetchCategoriesSubscription) {

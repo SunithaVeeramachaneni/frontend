@@ -1,12 +1,22 @@
-<input
-  matInput
-  [matDatepicker]="picker"
-  (dateChange)="onDateChange($event)"
-  [value]="selectedDate?.date"
-  hidden
-/>
-<mat-datepicker
-  touchUi="true"
-  (closed)="closedEvent()"
-  #picker
-></mat-datepicker>
+<div [formGroup]="dateGroup">
+  <mat-form-field appearance="outline" class="form-field">
+    <input
+      id="datePicker"
+      matInput
+      [ngxMatDatetimePicker]="picker"
+      [min]="minDate"
+      formControlName="date"
+      (dateChange)="onDateChange($event)"
+      hidden
+    />
+
+    <ngx-mat-datetime-picker
+      [touchUi]="true"
+      #picker
+      [enableMeridian]="true"
+      (closed)="closedEvent()"
+      class="date-picker-position"
+      (closed)="closedEvent()"
+    ></ngx-mat-datetime-picker>
+  </mat-form-field>
+</div>

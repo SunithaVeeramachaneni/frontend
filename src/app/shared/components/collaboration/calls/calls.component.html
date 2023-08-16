@@ -11,7 +11,7 @@
       autocomplete="off"
       class="searchInput"
     />
-    <button mat-icon-button class="searchMore" disabled>
+    <button id="callsMoreBtn" mat-icon-button class="searchMore" disabled>
       <mat-icon>more_vert</mat-icon>
     </button>
   </div>
@@ -27,14 +27,14 @@
       >
         <div class="icon-button" mat-list-icon>
           <div class="userPresence">
-            <img class="icon" [src]="call.profileImage" />
+            <img id="callsProfileImg" class="icon" [src]="call.profileImage" />
           </div>
         </div>
         <div mat-line>
-          <b>{{ call.firstName }} {{ call.lastName }}</b>
+          <b id="callsName">{{ call.firstName }} {{ call.lastName }}</b>
         </div>
         <div mat-line>
-          <div *ngIf="call.isInitiator" class="alignCenter">
+          <div id="callsOutGoing" *ngIf="call.isInitiator" class="alignCenter">
             <mat-icon class="callMade">call_made</mat-icon>
             Outgoing
           </div>
@@ -46,13 +46,18 @@
               }"
               >call_received</mat-icon
             >
-            <span *ngIf="!call.isInitiator && call.hasJoined">Incoming</span>
-            <span *ngIf="!call.isInitiator && !call.hasJoined">Missed</span>
+            <span id="callsIncoming" *ngIf="!call.isInitiator && call.hasJoined"
+              >Incoming</span
+            >
+            <span id="callsMissed" *ngIf="!call.isInitiator && !call.hasJoined"
+              >Missed</span
+            >
           </div>
         </div>
-        <div>{{ call.createdAt | timeAgo }}</div>
+        <div id="callsCreatedAt">{{ call.createdAt | timeAgo }}</div>
 
         <button
+          id="callsPhoneBtn"
           mat-icon-button
           color="primary"
           *ngIf="call.conferenceDetails.conferenceType === 'audio'"
@@ -60,6 +65,7 @@
           <mat-icon>phone</mat-icon>
         </button>
         <button
+          id="callsVideoCam"
           mat-icon-button
           color="primary"
           *ngIf="call.conferenceDetails.conferenceType === 'video'"

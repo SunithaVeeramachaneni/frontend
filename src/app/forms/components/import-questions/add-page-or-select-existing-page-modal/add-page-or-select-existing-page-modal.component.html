@@ -11,10 +11,11 @@
     </mat-radio-group>
     <mat-form-field
       appearance="outline"
-      class="width-100 m-t-10"
+      class="width-100 m-t-10 m-b-20"
       *ngIf="selectedPageOption === 'existing'"
     >
       <mat-select
+        id="addOrSelectPage"
         [placeholder]="'select' | translate"
         [formControl]="selectedPageControl"
         [compareWith]="compareFn"
@@ -30,6 +31,7 @@
 
   <div mat-dialog-actions class="footer-btns">
     <button
+      id="addOrSelectPageCancelBtn"
       mat-button
       color="primary"
       class="buttons cancel-button"
@@ -37,9 +39,10 @@
       translate="cancel"
     ></button>
     <button
+      id="addOrSelectPageImportBtn"
       mat-raised-button
       color="primary"
-      class="buttons"
+      class="buttons import-btn"
       (click)="import()"
       translate="import"
     ></button>

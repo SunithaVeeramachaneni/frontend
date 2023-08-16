@@ -6,6 +6,7 @@ import {
   OnInit,
   Output
 } from '@angular/core';
+import { plantImg } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-plant-detail-view',
@@ -16,6 +17,7 @@ import {
 export class PlantDetailViewComponent implements OnInit {
   @Input() selectedPlant;
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
+  placeHolder = '--';
   constructor() {}
 
   ngOnInit(): void {}
@@ -29,6 +31,6 @@ export class PlantDetailViewComponent implements OnInit {
   }
 
   selectedPlantImageurl(plant: any) {
-    return plant.image || 'assets/master-configurations/default-plant.svg';
+    return plant.image || plantImg;
   }
 }

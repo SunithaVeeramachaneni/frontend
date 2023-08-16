@@ -1,0 +1,39 @@
+@import '../../../../../scss/colors.scss';
+
+.confirm-popup-modal {
+  width: 400px;
+  height: auto;
+  overflow: hidden;
+  padding: 17px;
+  background: $white;
+  border-radius: 4px;
+
+  .title {
+    font-size: 120%;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .subtitle {
+    font-size: 110%;
+  }
+
+  .primary-btn {
+    font-size: 110%;
+    color: $white;
+    border-radius: 4px;
+    background: $red-main;
+    float: right;
+    border: none;
+    margin-left: 10px;
+  }
+
+  .secondary-btn {
+    font-size: 110%;
+    color: $blue-head;
+    background: $white;
+    border-radius: 4px;
+    float: right;
+    margin-left: 20px;
+  }
+}

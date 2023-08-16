@@ -1,0 +1,120 @@
+@import '../../../../scss/colors.scss';
+
+.modal-header {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.userGroupModal {
+  width: 360px;
+  overflow: hidden;
+  padding: 12px;
+  background: $white;
+  border-radius: 4px;
+}
+
+.input-container {
+  position: relative;
+
+  ::ng-deep .input-container .mat-form-field-infix {
+    padding: 0.5em 0;
+  }
+
+  ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
+    border-radius: 8px;
+    background: $white;
+  }
+
+  ::ng-deep .mat-form-field-flex > .mat-form-field-infix {
+    padding: 4px 0px 7px 0px;
+  }
+
+  ::ng-deep .mat-form-field-appearance-outline .mat-form-field-wrapper {
+    margin: 0;
+  }
+
+  ::ng-deep .mat-form-field-label-wrapper {
+    top: -1.5em;
+  }
+
+  ::ng-deep
+    .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float
+    .mat-form-field-label {
+    transform: translateY(-1.1em) scale(0.75);
+    width: 133.33333%;
+  }
+}
+
+.dialog-close-btn {
+  margin: 5px;
+  float: right;
+  cursor: pointer;
+}
+
+.divider {
+  border: 1px solid $border-color;
+  margin-left: -12px;
+  width: 110%;
+}
+
+.title {
+  font-size: 150%;
+  font-weight: 500;
+  margin: 5px;
+}
+
+.next-btn {
+  background: $blue-main;
+  color: $white;
+  width: 100px;
+  height: 34px;
+}
+
+.cancel-btn {
+  color: $blue-main;
+  margin-right: 10px;
+}
+
+::ng-deep .roles-select .mat-option-text {
+  display: flex;
+}
+
+.searchable-input {
+  width: 92%;
+  border: 1px solid $border-color;
+  padding: 5px;
+  border-radius: 4px;
+  margin: 10px 10px 10px 12px;
+}
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 13px;
+}
+.max-char {
+  display: flex;
+  float: right;
+  font-size: 86%;
+  position: relative;
+  top: -6px;
+  right: 4px;
+  color: $gray-text;
+}
+::ng-deep .mat-form-field-subscript-wrapper {
+  font-size: 25%;
+}
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-label {
+  top: 1.85375em;
+  margin-top: -0.19em;
+}
+
+.m-t-8 {
+  margin-top: 8px;
+}
+
+::ng-deep .mat-dialog-container {
+  overflow: hidden;
+}

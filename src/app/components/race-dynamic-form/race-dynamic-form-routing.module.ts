@@ -3,15 +3,14 @@ import { Routes, RouterModule } from '@angular/router';
 import { permissions } from 'src/app/app.constants';
 import { AuthGuard } from 'src/app/shared/guards/auth.guard';
 import { FormResolverService } from '../race-dynamic-form/services/form-resolver.service';
-import { FormConfigurationComponent } from './form-configuration/form-configuration.component';
-
 import { FormContainerComponent } from './form-container/form-container.component';
 import { ArchivedListComponent } from './archived-list/archived-list.component';
 import { SchedulerComponent } from './scheduler/scheduler.component';
-import { TemplateConfigurationComponent } from './template-configuration/template-configuration.component';
 import { TemplateResolverService } from './services/template-resolver.service';
 import { TemplateContainerComponent } from './template-container/template-container.component';
 import { InspectionObservationsComponent } from './inspection-observations/inspection-observations.component';
+import { FormEditViewComponent } from './form-modal/form-edit-view.component';
+import { TemplateModalComponent } from './template-modal/template-modal.component';
 
 const routes: Routes = [
   {
@@ -25,26 +24,24 @@ const routes: Routes = [
     children: [
       {
         path: 'create',
-        component: FormConfigurationComponent,
+        component: FormContainerComponent,
         canActivate: [AuthGuard],
         resolve: { form: FormResolverService },
         data: {
-          breadcrumb: { label: 'Untitled Form', alias: 'formName' },
           permissions: [permissions.createForm]
         }
       },
       {
         path: 'edit/:id',
-        component: FormConfigurationComponent,
+        component: FormEditViewComponent,
         canActivate: [AuthGuard],
         resolve: { form: FormResolverService },
         data: {
-          breadcrumb: { label: 'Edit Form', alias: 'formName' },
           permissions: [permissions.updateForm]
         }
       },
       {
-        path: 'archived',
+        path: 'archived/:tabIndex',
         component: ArchivedListComponent,
         canActivate: [AuthGuard],
         data: {
@@ -64,6 +61,7 @@ const routes: Routes = [
       {
         path: 'templates',
         component: TemplateContainerComponent,
+        resolve: { form: TemplateResolverService },
         canActivate: [AuthGuard],
         data: {
           breadcrumb: { label: 'Templates' },
@@ -72,11 +70,10 @@ const routes: Routes = [
         children: [
           {
             path: 'edit/:id',
-            component: TemplateConfigurationComponent,
+            component: TemplateModalComponent,
             resolve: { form: TemplateResolverService },
             canActivate: [AuthGuard],
             data: {
-              breadcrumb: { label: 'Edit Template', alias: 'templateName' },
               permissions: [permissions.updateFormTemplate]
             }
           }

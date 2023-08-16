@@ -1,16 +1,20 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   OnDestroy,
   OnInit
 } from '@angular/core';
-import { BehaviorSubject, Observable, Subject, of } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription, of } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
   takeUntil,
   tap
 } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
+import { State } from 'src/app/forms/state';
+import { updateCreateOrEditForm } from 'src/app/forms/state/builder/builder.actions';
 import { FormControl } from '@angular/forms';
 import {
   Column,
@@ -18,16 +22,24 @@ import {
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { MatTableDataSource } from '@angular/material/table';
 
-import { CellClickActionEvent } from 'src/app/interfaces';
+import { CellClickActionEvent, Permission, UserInfo } from 'src/app/interfaces';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { Router } from '@angular/router';
 import { slideInOut } from 'src/app/animations';
 import { UsersService } from '../../user-management/services/users.service';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { TranslateService } from '@ngx-translate/core';
-import { TemplateConfigurationModalComponent } from '../template-configuration-modal/template-configuration-modal.component';
 import { MatDialog } from '@angular/material/dialog';
-import { permissions } from 'src/app/app.constants';
+import {
+  formConfigurationStatus,
+  permissions as perms
+} from 'src/app/app.constants';
+import { generateCopyNumber, generateCopyRegex } from '../utils/utils';
+import { omit } from 'lodash-es';
+import { LoginService } from '../../login/services/login.service';
+import { ToastService } from 'src/app/shared/toast';
+import { TemplateModalComponent } from '../template-modal/template-modal.component';
+import { ConfirmModalPopupComponent } from '../confirm-modal-popup/confirm-modal-popup/confirm-modal-popup.component';
 
 @Component({
   selector: 'app-template-list',
@@ -37,25 +49,23 @@ import { permissions } from 'src/app/app.constants';
   animations: [slideInOut]
 })
 export class TemplateListComponent implements OnInit, OnDestroy {
+  public menuState = 'out';
+  public affectedFormDetailState = 'out';
+  public affectedSliderState = 'out';
+  selectedForm: any = null;
+  affectedFormDetail: any = null;
+  selectedTemplate: any = null;
   submissionSlider = 'out';
   isPopoverOpen = false;
   status: any[] = ['Draft', 'Ready'];
   filterJson: any[] = [];
-  columns: Column[] = [
+  partialColumns: Partial<Column>[] = [
     {
       id: 'name',
       displayName: 'Name',
       type: 'string',
       controlType: 'string',
-      order: 1,
-      searchable: false,
-      sortable: false,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
       titleStyle: {
         'font-weight': '500',
         'font-size': '100%',
@@ -63,54 +73,30 @@ export class TemplateListComponent implements OnInit, OnDestroy {
         'overflow-wrap': 'anywhere'
       },
       hasSubtitle: true,
-      showMenuOptions: false,
       subtitleColumn: 'description',
       subtitleStyle: {
         'font-size': '80%',
         color: 'darkgray',
         'overflow-wrap': 'anywhere'
       },
-      hasPreTextImage: true,
-      hasPostTextImage: false
+      hasPreTextImage: true
     },
     {
-      id: 'counter',
+      id: 'questionsCount',
       displayName: 'Questions',
       type: 'number',
       controlType: 'string',
-      order: 3,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      groupable: true
     },
     {
       id: 'formStatus',
       displayName: 'Status',
       type: 'string',
       controlType: 'string',
-      order: 2,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
       groupable: true,
       titleStyle: {
         textTransform: 'capitalize',
@@ -127,54 +113,37 @@ export class TemplateListComponent implements OnInit, OnDestroy {
         color: '#92400E',
         borderRadius: '12px'
       },
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false,
       hasConditionalStyles: true
     },
     {
-      id: 'formsUsageCount',
+      id: 'formType',
+      displayName: 'Template Type',
+      type: 'string',
+      controlType: 'string',
+      sortable: true,
+      visible: true,
+      groupable: true
+    },
+    {
+      id: 'displayFormsUsageCount',
       displayName: 'Used in Forms',
       type: 'number',
       controlType: 'string',
-      order: 3,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
       groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      titleStyle: {
+        color: '#3D5AFE'
+      }
     },
     {
       id: 'lastPublishedBy',
       displayName: 'Modified By',
       type: 'number',
       controlType: 'string',
-      order: 4,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      groupable: true
     },
     {
       id: 'author',
@@ -182,24 +151,13 @@ export class TemplateListComponent implements OnInit, OnDestroy {
       type: 'number',
       controlType: 'string',
       isMultiValued: true,
-      order: 6,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
       sortable: true,
-      hideable: false,
       visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
-      titleStyle: { color: '' },
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      titleStyle: { color: '' }
     }
   ];
+
+  columns: Column[] = [];
 
   configOptions: ConfigOptions = {
     tableID: 'formsTable',
@@ -218,12 +176,12 @@ export class TemplateListComponent implements OnInit, OnDestroy {
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
     conditionalStyles: {
       draft: {
-        'background-color': '#FEF3C7',
-        color: '#92400E'
+        'background-color': '#FFCC00',
+        color: '#000000'
       },
       ready: {
-        'background-color': '#D1FAE5',
-        color: '#065f46'
+        'background-color': '#2C9E53',
+        color: '#FFFFFF'
       }
     }
   };
@@ -233,7 +191,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
     createdBy: ''
   };
   dataSource: MatTableDataSource<any>;
-  allTemplates: [];
+  allTemplates: any = [];
   displayedTemplates: any[];
   templatesCount$: Observable<number>;
   searchTemplates: FormControl;
@@ -242,40 +200,53 @@ export class TemplateListComponent implements OnInit, OnDestroy {
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   lastPublishedBy = [];
   createdBy = [];
-  readonly permissions = permissions;
+  readonly perms = perms;
+  fetchAllTemplatesSubscription: Subscription;
+  userInfo$: Observable<UserInfo>;
   private onDestroy$ = new Subject();
 
   constructor(
+    private readonly toast: ToastService,
     private readonly raceDynamicFormService: RaceDynamicFormService,
+    private readonly loginService: LoginService,
     private usersService: UsersService,
     private headerService: HeaderService,
     private translateService: TranslateService,
     private router: Router,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private cdrf: ChangeDetectorRef,
+    private store: Store<State>
   ) {}
 
   ngOnInit(): void {
+    this.columns = this.raceDynamicFormService.updateConfigOptionsFromColumns(
+      this.partialColumns
+    );
     this.searchTemplates = new FormControl('');
     this.headerService.setHeaderTitle(
       this.translateService.instant('templates')
     );
 
     this.usersService.getUsersInfo$().subscribe(() => {
-      this.raceDynamicFormService.fetchAllTemplates$().subscribe((res: any) => {
-        this.templatesCount$ = of(res.rows.length);
-        this.allTemplates = res.rows.map((item) => ({
-          ...item,
-          author: this.usersService.getUserFullName(item.author),
-          lastPublishedBy: this.usersService.getUserFullName(
-            item.lastPublishedBy
-          )
-        }));
-        this.displayedTemplates = this.allTemplates;
-        this.dataSource = new MatTableDataSource(this.displayedTemplates);
-        this.isLoading$.next(false);
+      this.fetchAllTemplatesSubscription = this.raceDynamicFormService
+        .fetchTemplates$({ isArchived: false, isDeleted: false })
+        .subscribe((res: any) => {
+          this.templatesCount$ = of(res.rows.length);
+          this.allTemplates = res.rows.map((item) => ({
+            ...item,
+            author: this.usersService.getUserFullName(item.author),
+            displayFormsUsageCount:
+              item.formsUsageCount === 0 ? '_ _' : item.formsUsageCount,
+            lastPublishedBy: this.usersService.getUserFullName(
+              item.lastPublishedBy
+            )
+          }));
+          this.displayedTemplates = this.allTemplates;
+          this.dataSource = new MatTableDataSource(this.displayedTemplates);
+          this.isLoading$.next(false);
 
-        this.initializeFilter();
-      });
+          this.initializeFilter();
+        });
     });
 
     this.searchTemplates.valueChanges
@@ -289,41 +260,115 @@ export class TemplateListComponent implements OnInit, OnDestroy {
       )
       .subscribe(() => this.isLoading$.next(false));
 
+    this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
+      tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
+    );
+
     this.configOptions.allColumns = this.columns;
-    this.prepareMenuActions();
+  }
+
+  onCloseViewDetail() {
+    this.selectedForm = null;
+    this.menuState = 'out';
+    this.affectedFormDetail = null;
+    this.affectedFormDetailState = 'out';
+  }
+
+  onCloseAffectedSlider() {
+    this.selectedTemplate = null;
+    this.affectedSliderState = 'out';
   }
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
-    const { columnId } = event;
+    const { columnId, row } = event;
     switch (columnId) {
-      default:
+      case 'name':
+      case 'questionsCount':
+      case 'formStatus':
+      case 'formType':
+      case 'lastPublishedBy':
+      case 'author':
+        this.showFormDetail(row);
         break;
+      case 'displayFormsUsageCount':
+        this.showAffectedSlider(row);
+        break;
+      default:
     }
   };
 
   rowLevelActionHandler = ({ data, action }): void => {
     switch (action) {
       case 'edit':
-        this.router.navigate(['/forms/templates/edit', data.id], {
-          state: {
-            templateNamesList: this.allTemplates
-          }
-        });
+        this.router
+          .navigate(['/forms/templates/edit', data.id], {
+            state: {
+              templateNamesList: this.allTemplates
+            }
+          })
+          .then(() => {
+            this.dialog.open(TemplateModalComponent, {
+              maxWidth: '100vw',
+              maxHeight: '100vh',
+              height: '100%',
+              width: '100%',
+              panelClass: 'full-screen-modal',
+              data: this.allTemplates,
+              disableClose: true
+            });
+          });
         break;
-
+      case 'copy':
+        this.copyTemplate(data);
+        break;
+      case 'archive':
+        this.onArchiveTemplate(data);
+        break;
       default:
     }
   };
 
   configOptionsChangeHandler = (event): void => {};
 
-  prepareMenuActions(): void {
-    const menuActions = [
-      {
+  prepareMenuActions(permissions: Permission[]): void {
+    const menuActions = [];
+
+    if (
+      this.loginService.checkUserHasPermission(
+        permissions,
+        'UPDATE_FORM_TEMPLATE'
+      )
+    ) {
+      menuActions.push({
         title: 'Edit',
         action: 'edit'
-      }
-    ];
+      });
+    }
+
+    if (
+      this.loginService.checkUserHasPermission(
+        permissions,
+        'COPY_FORM_TEMPLATE'
+      )
+    ) {
+      menuActions.push({
+        title: 'Copy',
+        action: 'copy'
+      });
+    }
+
+    if (
+      this.loginService.checkUserHasPermission(
+        permissions,
+        'ARCHIVE_FORM_TEMPLATE'
+      )
+    ) {
+      menuActions.push({
+        title: 'Archive',
+        action: 'archive'
+      });
+    }
+
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
     this.configOptions = { ...this.configOptions };
@@ -407,19 +452,216 @@ export class TemplateListComponent implements OnInit, OnDestroy {
     this.applySearchAndFilter(this.searchTemplates.value);
   }
 
+  copyTemplate(template) {
+    if (!template.id) return;
+    this.raceDynamicFormService
+      .fetchAllTemplateListNames$()
+      .subscribe((templateNames) => {
+        const createdTemplate = this.generateCopyTemplateName(
+          template,
+          templateNames
+        );
+        if (createdTemplate?.newName) {
+          const authoredFormTemplateDetails =
+            template.authoredFormTemplateDetails[0];
+          const preTextImage = template.preTextImage;
+          this.raceDynamicFormService
+            .createTemplate$({
+              ...omit(template, [
+                'id',
+                'preTextImage',
+                'authoredFormTemplateDetails',
+                'publishedDate'
+              ]),
+              name: createdTemplate.newName,
+              formStatus: formConfigurationStatus.draft,
+              isPublic: false
+            })
+            .subscribe((newTemplate) => {
+              if (!newTemplate) return;
+              if (
+                authoredFormTemplateDetails &&
+                Object.keys(authoredFormTemplateDetails).length
+              ) {
+                authoredFormTemplateDetails.formStatus =
+                  formConfigurationStatus.draft;
+                authoredFormTemplateDetails.pages = JSON.parse(
+                  authoredFormTemplateDetails?.pages || '[]'
+                );
+                authoredFormTemplateDetails.counter =
+                  authoredFormTemplateDetails?.counter || 0;
+                this.raceDynamicFormService
+                  .createAuthoredTemplateDetail$(
+                    newTemplate.id,
+                    authoredFormTemplateDetails
+                  )
+                  .subscribe();
+              }
+              authoredFormTemplateDetails.pages = JSON.stringify(
+                authoredFormTemplateDetails.pages
+              );
+              newTemplate.authoredFormTemplateDetails = [
+                authoredFormTemplateDetails
+              ];
+              newTemplate.formsUsageCount = 0;
+              newTemplate.counter =
+                newTemplate.authoredFormTemplateDetails[
+                  newTemplate.authoredFormTemplateDetails.length - 1
+                ]?.counter;
+              newTemplate.questionsCount =
+                JSON.parse(
+                  newTemplate.authoredFormTemplateDetails[
+                    newTemplate.authoredFormTemplateDetails.length - 1
+                  ]?.pages || '{}'
+                )[0]?.questions?.length || 0;
+              newTemplate.formStatus = formConfigurationStatus.draft;
+              newTemplate.formLogo = 'assets/rdf-forms-icons/formlogo.svg';
+              newTemplate.preTextImage = preTextImage;
+              if (newTemplate.author)
+                newTemplate.author = this.usersService.getUserFullName(
+                  newTemplate.author
+                );
+              if (newTemplate.lastPublishedBy)
+                newTemplate.lastPublishedBy = this.usersService.getUserFullName(
+                  newTemplate.lastPublishedBy
+                );
+              this.allTemplates = [newTemplate, ...this.allTemplates];
+              this.dataSource = new MatTableDataSource(this.allTemplates);
+              this.cdrf.detectChanges();
+              this.toast.show({
+                text: 'Template "' + template.name + '" copied successfully!',
+                type: 'success'
+              });
+            });
+        }
+      });
+  }
+
+  onArchiveTemplate(template) {
+    let dialogRef;
+    if (template.formsUsageCount === 0) {
+      dialogRef = this.dialog.open(ConfirmModalPopupComponent, {
+        maxWidth: 'max-content',
+        maxHeight: 'max-content',
+        data: {
+          popupTexts: {
+            primaryBtnText: 'yes',
+            secondaryBtnText: 'no',
+            title: 'archiveTemplateModalHeading1',
+            subtitle: 'archiveTemplateModalSubHeading1'
+          }
+        }
+      });
+    } else {
+      dialogRef = this.dialog.open(ConfirmModalPopupComponent, {
+        maxWidth: 'max-content',
+        maxHeight: 'max-content',
+        data: {
+          popupTexts: {
+            primaryBtnText: 'okay',
+            title: 'archiveTemplateModalHeading2',
+            subtitle: 'archiveTemplateModalSubHeading2'
+          }
+        }
+      });
+    }
+    dialogRef.afterClosed().subscribe((res) => {
+      if (res === 'primary' && template.formsUsageCount === 0) {
+        this.raceDynamicFormService
+          .archiveDeleteTemplate$(template.id, {
+            isArchived: true,
+            archivedBy: this.loginService.getLoggedInEmail()
+          })
+          .subscribe(() => {
+            this.allTemplates = this.allTemplates.filter(
+              (item) => item.id !== template.id
+            );
+            this.dataSource = new MatTableDataSource(this.allTemplates);
+            this.cdrf.detectChanges();
+            this.toast.show({
+              text: 'Template "' + template.name + '" archived successfully!',
+              type: 'success'
+            });
+          });
+      }
+    });
+  }
+
   openCreateTemplateModal() {
-    this.dialog.open(TemplateConfigurationModalComponent, {
+    this.store.dispatch(
+      updateCreateOrEditForm({
+        createOrEditForm: true
+      })
+    );
+    this.dialog.open(TemplateModalComponent, {
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',
       width: '100%',
       panelClass: 'full-screen-modal',
+      disableClose: true,
       data: this.allTemplates
     });
   }
 
+  templateDetailActionHandler() {
+    this.router
+      .navigate(['/forms/templates/edit', this.selectedForm.id], {
+        state: {
+          templateNamesList: this.allTemplates
+        }
+      })
+      .then(() => {
+        this.openCreateTemplateModal();
+      });
+  }
+  affectedFormDetailActionHandler() {
+    this.router.navigate(['/forms/edit', this.affectedFormDetail.id]);
+  }
+
+  onClickAffectedFormDetail(event) {
+    this.affectedFormDetail = event;
+    this.affectedFormDetailState = 'in';
+  }
+
   ngOnDestroy(): void {
+    if (this.fetchAllTemplatesSubscription) {
+      this.fetchAllTemplatesSubscription.unsubscribe();
+    }
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  showAffectedSlider(row: any): void {
+    if (row.formsUsageCount > 0) {
+      this.selectedTemplate = row;
+      this.affectedSliderState = 'in';
+      this.onCloseViewDetail();
+    }
+  }
+
+  private showFormDetail(row: any): void {
+    this.selectedForm = row;
+    this.menuState = 'in';
+    this.onCloseAffectedSlider();
+  }
+
+  private generateCopyTemplateName(template, rows) {
+    if (rows?.length > 0) {
+      const listCopyNumbers: number[] = [];
+      const regex: RegExp = generateCopyRegex(template?.name);
+      rows?.forEach((row) => {
+        const matchObject = row?.name?.match(regex);
+        if (matchObject) {
+          listCopyNumbers.push(parseInt(matchObject[1], 10));
+        }
+      });
+      const newIndex: number = generateCopyNumber(listCopyNumbers);
+      const newName = `${template?.name} Copy(${newIndex})`;
+      return {
+        newName
+      };
+    }
+    return null;
   }
 }

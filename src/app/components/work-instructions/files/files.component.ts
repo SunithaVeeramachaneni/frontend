@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import {
   Component,
   ElementRef,
@@ -182,7 +183,8 @@ export class MediaFilesComponent implements OnInit {
     formData.append('userDetails', localStorage.getItem('loggedInUser'));
     this.importService
       .importFile(
-        `${environment.wiApiUrl}speech-to-text/download-converter`,
+        environment.wiApiUrl,
+        'speech-to-text/download-converter',
         formData
       )
       .subscribe(

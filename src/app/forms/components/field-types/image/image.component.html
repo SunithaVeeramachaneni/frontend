@@ -3,16 +3,17 @@
   *ngIf="question.get('value').value !== ''"
 >
   <img
+    id="InsertImage"
     class="insert-image"
-    [src]="getImageSrc(question.get('value').value.base64)"
+    [src]="question.get('value').value.objectURL"
     alt="image"
   />
   <div>
-    <span class="image-text">
+    <span id="ImageQuestionName" class="image-text">
       {{ question.get('value').value.name }}
     </span>
     <br />
-    <span class="image-sub-text">
+    <span id="ImageValueSize" class="image-sub-text">
       {{ (question.get('value').value.size / 1024).toFixed(2) }}
       KB
     </span>

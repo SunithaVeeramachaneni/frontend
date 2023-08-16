@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import {
   AfterViewChecked,
   ChangeDetectionStrategy,
@@ -39,7 +40,7 @@ export class WorkInstructionsComponent
 {
   public copyInstructionComponent = CopyInstructionComponent;
   public bulkUploadComponent = BulkUploadComponent;
-  public myObject: object;
+  public myObject: any;
   public categoryId;
   showMore = false;
   public assignedObjectsList;
@@ -240,7 +241,7 @@ export class WorkInstructionsComponent
     if (isAudioOrVideoFile) {
       formData.append('userDetails', localStorage.getItem('loggedInUser'));
       this.importService
-        .importFile(`${environment.wiApiUrl}speech-to-text/converter`, formData)
+        .importFile(environment.wiApiUrl, 'speech-to-text/converter', formData)
         .subscribe(
           (data) => {
             const { progress } = data;

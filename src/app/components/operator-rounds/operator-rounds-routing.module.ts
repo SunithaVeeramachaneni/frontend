@@ -5,10 +5,10 @@ import { AuthGuard } from 'src/app/shared/guards/auth.guard';
 
 import { ArchivedListComponent } from './archived-list/archived-list.component';
 import { OperatorRoundsContainerComponent } from './operator-rounds-container/operator-rounds-container.component';
-import { RoundPlanConfigurationComponent } from './round-plan-configuration/round-plan-configuration.component';
 import { RoundPlanResolverService } from './services/round-plan-resolver.service';
 import { SchedulerComponent } from './scheduler/scheduler.component';
 import { RoundObservationsComponent } from './round-observations/round-observations.component';
+import { RoundPlanEditViewComponent } from './round-plan-modal/round-plan-edit-view.component';
 
 const routes: Routes = [
   {
@@ -22,22 +22,20 @@ const routes: Routes = [
     children: [
       {
         path: 'create',
-        component: RoundPlanConfigurationComponent,
+        component: OperatorRoundsContainerComponent,
         canActivate: [AuthGuard],
         resolve: { form: RoundPlanResolverService },
         data: {
-          breadcrumb: { label: 'Untitled Plan', alias: 'formName' },
           permissions: [permissions.createORPlan],
           componentMode: 'create'
         }
       },
       {
         path: 'edit/:id',
-        component: RoundPlanConfigurationComponent,
+        component: RoundPlanEditViewComponent,
         canActivate: [AuthGuard],
         resolve: { form: RoundPlanResolverService },
         data: {
-          breadcrumb: { label: 'Edit Round Plan', alias: 'formName' },
           permissions: [permissions.updateORPlan],
           componentMode: 'edit'
         }

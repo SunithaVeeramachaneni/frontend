@@ -8,8 +8,16 @@
   }"
 >
   <div class="modal-heading">
-    <h3 class="response-heading" translate="chooseResponses"></h3>
-    <mat-icon (click)="toggleResponseTypeModal($event)" class="cancel-icon">
+    <h3
+      id="responseTypeChooseResponse"
+      class="response-heading"
+      translate="chooseResponses"
+    ></h3>
+    <mat-icon
+      id="responseTypeClearIcon"
+      (click)="toggleResponseTypeModal($event)"
+      class="cancel-icon"
+    >
       clear
     </mat-icon>
   </div>
@@ -21,7 +29,10 @@
         [selectedIndex]="getSelectedIndex(question)"
         (selectedTabChange)="onTabChange($event)"
       >
-        <mat-tab [label]="'responseHeading' | translate">
+        <mat-tab
+          id="responseTypeHeading"
+          [label]="'responseHeading' | translate"
+        >
           <div class="first-tab">
             <div class="response-container">
               <div
@@ -33,11 +44,15 @@
                 }"
               >
                 <svg-icon
+                  id="responseTypeIcon"
                   [icon]="getFieldTypeImage(fieldType.type)"
                   class="response-type-icons"
                 ></svg-icon
                 >&nbsp;
-                <span class="response-type-description">
+                <span
+                  id="responseTypeFieldDescription"
+                  class="response-type-description"
+                >
                   {{ fieldType.description }}
                 </span>
               </div>
@@ -47,12 +62,17 @@
             <app-response-type-side-drawer
               (responseTypeHandler)="quickResponseTypeHandler($event)"
               [formId]="formId"
+              [question]="question"
             ></app-response-type-side-drawer>
           </div>
         </mat-tab>
-        <mat-tab [label]="'Picklist' | translate">
+        <mat-tab id="responseTypePicklist" [label]="'Picklist' | translate">
           <div class="picklist-scroll">
-            <p class="orange-color" translate="multipleChoice"></p>
+            <p
+              id="responseTypeMultipleChoice"
+              class="orange-color"
+              translate="multipleChoice"
+            ></p>
             <div class="multiple-responses">
               <ng-container
                 *ngIf="
@@ -62,6 +82,7 @@
               >
                 <div *ngFor="let resp of quickResponsesData.data" class="h-36">
                   <button
+                    id="responseTypeQuickResBtn"
                     mat-flat-button
                     class="quick-response responseBtn"
                     (click)="
@@ -69,13 +90,14 @@
                       closeResponseType()
                     "
                     [ngClass]="{
-                      active: question.value.id === resp.id
+                      active: question.value?.id === resp.id
                     }"
                   >
                     <mat-chip-list
                       *ngFor="let val of resp.values; let i = index"
                     >
                       <mat-chip
+                        id="responseTypeValueTitle"
                         *ngIf="i < 2"
                         class="m-l-10"
                         (click)="
@@ -98,18 +120,24 @@
                         {{ val.title }}
                       </mat-chip>
                     </mat-chip-list>
-                    <span *ngIf="resp.values.length > 2" class="more">
+                    <span
+                      id="responseTypeResVal"
+                      *ngIf="resp.values.length > 2"
+                      class="more"
+                    >
                       + ({{ resp.values.length - 2 }}
                       more)
                     </span>
                   </button>
                   <button
+                    id="responseTypeResEdit"
                     *ngIf="resp?.formId"
                     mat-flat-button
                     class="editBtn"
                     (click)="handleResponses(resp)"
                   >
                     <svg-icon
+                      id="responseTypeMCQEdit"
                       icon="icon-edit-icon"
                       class="edit-icon-img mcq-edit"
                     ></svg-icon>
@@ -124,12 +152,21 @@
                   </ngx-shimmer-loading>
                 </div>
               </ng-template>
-              <button class="add-new-btn" (click)="handleResponses()">
-                <svg-icon icon="icon-add-more" class="add-more-icon"></svg-icon>
-                <span translate="addMore"></span>
+              <button
+                id="responseTypeHandleBtn"
+                class="add-new-btn"
+                (click)="handleResponses()"
+              >
+                <svg-icon
+                  id="responseTypeAddIcon"
+                  icon="icon-add-more"
+                  class="add-more-icon"
+                ></svg-icon>
+                <span id="responseTypeAddMore" translate="addMore"></span>
               </button>
             </div>
             <p
+              id="responseTypeGlobalPicklist"
               class="orange-color global-picklist"
               translate="globalPicklist"
             ></p>
@@ -140,28 +177,30 @@
               >
                 <mat-chip-list
                   *ngFor="let response of globalResponses"
-                  style="flex: 45%"
+                  class="global-response-chip-list"
                 >
                   <div
                     [ngClass]="{
-                      active: question.value.id === response.id
+                      active: question.value?.id === response.id
                     }"
                   >
                     <mat-chip
+                      id="responseTypeResName"
                       (click)="
                         handleMCQRepsonseSelection('globalResponse', response);
                         closeResponseType()
                       "
-                      style="background-color: none"
                       class="global-text"
                     >
                       {{ response?.name }}
                     </mat-chip>
                     <button
+                      id="responseTypeGlobalResBtn"
                       (click)="handleEditGlobalResponse(response)"
                       class="global-btn"
                     >
                       <svg-icon
+                        id="responseTypeResEditIcon"
                         icon="icon-edit-icon"
                         class="edit-icon-img"
                       ></svg-icon>
@@ -171,11 +210,16 @@
               </div>
 
               <button
+                id="responseTypeGlobalAddBtn"
                 class="add-new-btn add-btn-margin"
                 (click)="handleGlobalResponsesToggle()"
               >
-                <svg-icon icon="icon-add-more" class="add-more-icon"></svg-icon>
-                <span translate="addMore"></span>
+                <svg-icon
+                  id="responseTypeAddMoreIcon"
+                  icon="icon-add-more"
+                  class="add-more-icon"
+                ></svg-icon>
+                <span id="responseTypeAddMoreText" translate="addMore"></span>
               </button>
             </div>
 
@@ -183,6 +227,7 @@
               <app-response-type-side-drawer
                 (responseTypeHandler)="quickResponseTypeHandler($event)"
                 [formId]="formId"
+                [question]="question"
               ></app-response-type-side-drawer>
             </div>
           </div>

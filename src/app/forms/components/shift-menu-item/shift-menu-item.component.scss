@@ -1,0 +1,15 @@
+@import '../../../../scss/colors.scss';
+
+.custom-menu {
+  position: fixed;
+}
+.mat-menu-panel {
+  background-color: $white;
+}
+::ng-deep .mat-form-field-appearance-legacy .mat-form-field-infix {
+  padding-bottom: 20px;
+}
+
+::ng-deep .ngx-mat-timepicker-spacer {
+  padding-bottom: 8px;
+}

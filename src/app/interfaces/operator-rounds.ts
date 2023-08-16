@@ -1,6 +1,7 @@
 import { UserDetails } from './user';
 
 export interface RoundPlanScheduleConfiguration {
+  shiftDetails: { [x: string]: { startTime: string; endTime: string }[] };
   id?: string;
   roundPlanId: string;
   scheduleType: string;
@@ -73,6 +74,7 @@ export interface RoundPlan {
 }
 
 export interface RoundPlanDetail extends RoundPlan {
+  roundPlanId: string;
   schedule: string;
   scheduleDates: string;
   tasks: number;
@@ -81,6 +83,7 @@ export interface RoundPlanDetail extends RoundPlan {
   rounds: number;
   plantId?: string;
   plant?: string;
+  shifts: [];
 }
 
 export interface RoundDetail extends RoundPlan {
@@ -88,10 +91,16 @@ export interface RoundDetail extends RoundPlan {
   roundId: string;
   roundDetailId: string;
   scheduledType: string;
+  slotDetails: string;
+  scheduledAt: Date;
   dueDate: Date;
+  shiftId: string;
   locationAndAssets: number;
   locationAndAssetsCompleted: number;
+  taskSkipped: number;
+  locationOrAssetSkipped: number;
   locationAndAssetTasks: number;
+  isViewPdf?: boolean;
   createdBy: string;
   status: string;
   locationAndAssetTasksCompleted: number;
@@ -119,6 +128,7 @@ export type RoundPlanList = {
   items: Array<RoundPlan | null>;
   next?: string | null;
   startedAt?: number | null;
+  count?: number;
 };
 
 export interface RoundPlanSubmission {

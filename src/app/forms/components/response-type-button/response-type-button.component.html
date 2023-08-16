@@ -1,4 +1,5 @@
 <button
+  id="responseTypeBtn"
   (click)="openResponseTypeModal()"
   class="response-type-btn"
   [ngClass]="{
@@ -20,7 +21,7 @@
       *ngIf="questionForm.get('value').value?.type === 'globalResponse'"
       class="response-type-chips"
     >
-      <mat-chip class="chips">
+      <mat-chip id="responseTypeName" class="chips">
         {{ questionForm.get('value').value?.name }}
       </mat-chip>
     </mat-chip-list>
@@ -29,6 +30,7 @@
       class="response-type-chips"
     >
       <mat-chip
+        id="responseTypeTitle"
         class="chips"
         [ngStyle]="{
           color: questionForm.get('value').value?.value[0]?.color,
@@ -44,6 +46,7 @@
         {{ questionForm.get('value').value?.value[0].title }}
       </mat-chip>
       <mat-chip
+        id="responseTypeValue"
         *ngIf="questionForm.get('value').value?.value.length >= 2"
         class="chips"
         [ngStyle]="{
@@ -60,6 +63,7 @@
         {{ questionForm.get('value').value?.value[1].title }}
       </mat-chip>
       <span
+        id="responseTypeValueLength"
         *ngIf="questionForm.get('value').value?.value.length > 2"
         class="ellipsis-more"
         >+ ({{ questionForm.get('value').value?.value.length - 2 }}
@@ -67,6 +71,7 @@
       </span>
     </mat-chip-list>
     <div
+      id="responseType"
       *ngIf="questionForm.get('value').value?.globalDataset"
       class="globalset-res-type"
     >
@@ -76,14 +81,20 @@
 
   <ng-template #nonMCQFields>
     <svg-icon
-                  [icon]="getFieldTypeImage(questionForm.get('fieldType').value)"
-                  class="response-type-icons"
-                ></svg-icon>
-    
+      [icon]="getFieldTypeImage(questionForm.get('fieldType').value)"
+      class="response-type-icons"
+    ></svg-icon>
+
     &nbsp;
-    <span class="response-type-text">
+    <span id="responseTypeFieldType" class="response-type-text">
       {{ getFieldTypeDescription(questionForm.get('fieldType').value) }}
     </span>
   </ng-template>
-  <mat-icon class="response-type-btn-arrow"> keyboard_arrow_down </mat-icon>
+  <mat-icon
+    id="responseTypeDownArrow"
+    *ngIf="!this.isImported"
+    class="response-type-btn-arrow"
+  >
+    keyboard_arrow_down
+  </mat-icon>
 </button>

@@ -1,13 +1,13 @@
-<div class="list-view">
+<div class="list-view" *ngIf="userInfo$ | async">
   <div class="main-container">
     <div class="forms-header">
-      <h2 class="heading" translate="templates"></h2>
+      <h2 id="templateListHeading" class="heading" translate="templates"></h2>
       <span class="custom-form-field-gray-color search">
         <span class="no-of-forms" *ngIf="templatesCount$ | async as totalCount">
-          <span class="forms-count">
+          <span id="templateListCount" class="forms-count">
             {{ totalCount | count }}
           </span>
-          <span class="forms-text">{{
+          <span id="templateListCountText" class="forms-text">{{
             'templates'
               | translate
                 : {
@@ -16,8 +16,11 @@
           }}</span>
         </span>
         <mat-form-field appearance="outline">
-          <mat-icon matPrefix class="searchIcon">search</mat-icon>
+          <mat-icon id="templateListSearchIcon" matPrefix class="searchIcon"
+            >search</mat-icon
+          >
           <input
+            id="templateListSearchText"
             matInput
             type="text"
             [placeholder]="'searchTemplates' | translate"
@@ -25,6 +28,7 @@
             [formControl]="searchTemplates"
           />
           <svg-icon
+            id="templateListFilterIcon"
             icon="icon-filterIcon"
             class="filter-icon"
             cdkOverlayOrigin
@@ -34,11 +38,12 @@
           ></svg-icon>
         </mat-form-field>
         <button
+          id="templateListCreateBtn"
           mat-raised-button
           translate="createNew"
           class="create-new-btn"
           (click)="openCreateTemplateModal()"
-          *appCheckUserHasPermission="[permissions.createFormTemplate]"
+          *appCheckUserHasPermission="[perms.createFormTemplate]"
         ></button>
       </span>
     </div>
@@ -54,6 +59,35 @@
       ></cwp-dynamictable>
     </div>
   </div>
+
+  <ng-container *ngIf="menuState">
+    <app-form-detail
+      [@slideInOut]="menuState"
+      (slideInOut)="onCloseViewDetail()"
+      [selectedForm]="selectedForm"
+      (showAffectedForms)="showAffectedSlider($event)"
+      [isTemplate]="true"
+      (formDetailAction)="templateDetailActionHandler()"
+    ></app-form-detail>
+  </ng-container>
+
+  <ng-container *ngIf="affectedSliderState">
+    <app-affected-form-template-slider
+      [@slideInOut]="affectedSliderState"
+      (slideInOut)="onCloseAffectedSlider()"
+      (affectedFormDetail)="onClickAffectedFormDetail($event)"
+      [selectedForm]="selectedTemplate"
+    ></app-affected-form-template-slider>
+  </ng-container>
+
+  <ng-container *ngIf="affectedFormDetailState">
+    <app-form-detail
+      [@slideInOut]="affectedFormDetailState"
+      (slideInOut)="onCloseViewDetail()"
+      [selectedForm]="affectedFormDetail"
+      (formDetailAction)="affectedFormDetailActionHandler()"
+    ></app-form-detail>
+  </ng-container>
 
   <div *ngIf="isLoading$ | async">
     <div class="ghost-loading">

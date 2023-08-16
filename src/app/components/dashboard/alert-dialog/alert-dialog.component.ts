@@ -1,8 +1,5 @@
-import {
-  Component,
-  OnInit,
-  ChangeDetectionStrategy
-} from '@angular/core';
+/* eslint-disable @angular-eslint/component-class-suffix */
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
@@ -12,13 +9,9 @@ import { MatDialogRef } from '@angular/material/dialog';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AlertDialog implements OnInit {
+  constructor(private dialogRef: MatDialogRef<any>) {}
 
-  constructor(
-    private dialogRef: MatDialogRef<any>,
-  ) { }
-
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   confirm() {
     this.dialogRef.close();

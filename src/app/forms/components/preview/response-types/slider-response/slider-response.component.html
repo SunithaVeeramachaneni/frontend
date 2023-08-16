@@ -1,5 +1,5 @@
 <div class="slider-form">
-  <span class="slider-values">{{ question.value.min }}</span>
+  <span id="sliderValues" class="slider-values">{{ question.value.min }}</span>
   <mat-slider
     [max]="question.value.max"
     [min]="question.value.min"
@@ -15,5 +15,7 @@
   >
     <input matSliderThumb />
   </mat-slider>
-  <span class="slider-values">{{ question.value.max }}</span>
+  <span id="sliderValueMax" class="slider-values">{{
+    question.value.max
+  }}</span>
 </div>

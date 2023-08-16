@@ -61,9 +61,9 @@
   }
 }
 
-.set-filter {
-  height: 20px !important;
-  width: 20px !important;
-  top: 30px !important;
-  position: relative !important;
+@media screen and (min-width: 1600px) {
+  .set-filter {
+    top: 350px;
+    position: relative;
+  }
 }

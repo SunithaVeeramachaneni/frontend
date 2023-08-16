@@ -57,6 +57,7 @@ import { FilterSidePanelComponent } from './components/filter-side-panel/filter-
 import { SlideshowComponent } from './components/slideshow/slideshow.component';
 import { ResponseCountPipe } from './pipes/response-count.pipe';
 import { LazyLoadContainerComponent } from './components/lazy-load-container/lazy-load-container.component';
+import { UploadResponseModalComponent } from './components/upload-response-modal/upload-response-modal.component';
 import { AmIvisibleDirective } from './directives/am-ivisible.directive';
 
 @NgModule({
@@ -90,7 +91,8 @@ import { AmIvisibleDirective } from './directives/am-ivisible.directive';
     SlideshowComponent,
     ResponseCountPipe,
     LazyLoadContainerComponent,
-    AmIvisibleDirective
+    AmIvisibleDirective,
+    UploadResponseModalComponent
   ],
   imports: [
     FormsModule,
@@ -139,7 +141,8 @@ import { AmIvisibleDirective } from './directives/am-ivisible.directive';
     BackgroundComponent,
     SvgIconComponent,
     LazyLoadContainerComponent,
-    AmIvisibleDirective
+    AmIvisibleDirective,
+    UploadResponseModalComponent
   ],
   providers: [DatePipe]
 })

@@ -1,44 +1,88 @@
 <div id="view-location-slider">
   <mat-card>
     <div>
-      <svg-icon (click)="cancel()" icon="icon-close" class="cancel"></svg-icon>
+      <svg-icon
+        id="plantDetailCancelIcon"
+        (click)="cancel()"
+        icon="icon-close"
+        class="cancel"
+      ></svg-icon>
     </div>
     <div *ngIf="selectedPlant">
       <p>
         <img
+          id="plantDetailImg"
           [src]="selectedPlantImageurl(selectedPlant)"
           alt="Image"
           class="image"
         />
       </p>
-      <h1 class="heading">{{ selectedPlant.name }}</h1>
+      <h1 id="plantDetailName" class="heading">{{ selectedPlant.name }}</h1>
       <hr class="horizon-line" />
-      <p class="m-0 sub-headings" translate="plantId"></p>
-      <p class="m-0 sub-headings-value">{{ selectedPlant.plantId }}</p>
-      <hr class="horizon-line" />
-      <p class="m-0 sub-headings" translate="country"></p>
-      <p class="m-0 sub-headings-value">
-        {{ selectedPlant.country ? selectedPlant.country : '--' }}
+      <p id="plantDetailId" class="m-0 sub-headings" translate="plantId"></p>
+      <p id="plantDetailSelectId" class="m-0 sub-headings-value">
+        {{ selectedPlant.plantId }}
       </p>
       <hr class="horizon-line" />
-      <p class="m-0 sub-headings" translate="zipCode"></p>
-      <p class="m-0 sub-headings-value">
-        {{ selectedPlant.zipCode ? selectedPlant.zipCode : '--' }}
+      <p
+        id="plantDetailCountry"
+        class="m-0 sub-headings"
+        translate="country"
+      ></p>
+      <p id="plantDetailSelectCountry" class="m-0 sub-headings-value">
+        {{ selectedPlant.country ? selectedPlant.countryDisplay : placeHolder }}
       </p>
       <hr class="horizon-line" />
-      <p class="m-0 sub-headings" translate="state"></p>
-      <p class="m-0 sub-headings-value">
-        {{ selectedPlant.state ? selectedPlant.state : '--' }}
+      <p
+        id="plantDetailZipCode"
+        class="m-0 sub-headings"
+        translate="zipCode"
+      ></p>
+      <p id="plantDetailSelectZipCode" class="m-0 sub-headings-value">
+        {{ selectedPlant.zipCode ? selectedPlant.zipCode : placeHolder }}
       </p>
       <hr class="horizon-line" />
-      <p class="m-0 sub-headings" translate="additionalDetails"></p>
-      <p class="m-0 sub-headings-value">
-        {{ selectedPlant.label ? selectedPlant.label : '--' }}
+      <p id="plantDetailState" class="m-0 sub-headings" translate="state"></p>
+      <p id="plantDetailSelectState" class="m-0 sub-headings-value">
+        {{ selectedPlant.state ? selectedPlant.state : placeHolder }}
+      </p>
+      <hr class="horizon-line" />
+      <p
+        id="plantDetailTimeZone"
+        class="m-0 sub-headings"
+        translate="timeZone"
+      ></p>
+      <p id="plantDetailSelectTimeZone" class="m-0 sub-headings-value">
+        {{
+          selectedPlant.timeZone
+            ? selectedPlant.timeZone.description
+            : placeHolder
+        }}
+      </p>
+
+      <hr class="horizon-line" />
+      <p id="plantDetailShifts" class="m-0 sub-headings" translate="shifts"></p>
+      <p id="plantDetailShiftsName" class="m-0 sub-headings-value">
+        {{
+          selectedPlant.shiftNames
+            ? selectedPlant.shiftNames?.join(', ')
+            : placeHolder
+        }}
+      </p>
+      <hr class="horizon-line" />
+      <p
+        id="plantDetailAdditionalDetails"
+        class="m-0 sub-headings"
+        translate="additionalDetails"
+      ></p>
+      <p id="plantDetailLabelField" class="m-0 sub-headings-value">
+        {{ selectedPlant.label ? selectedPlant.label : placeHolder }}
         :
-        {{ selectedPlant.field ? selectedPlant.field : '--' }}
+        {{ selectedPlant.field ? selectedPlant.field : placeHolder }}
       </p>
       <hr class="horizon-line" />
       <button
+        id="plantDetailEditBtn"
         mat-raised-button
         class="edit-btn"
         (click)="edit()"
