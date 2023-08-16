@@ -100,7 +100,7 @@ export class AppService {
   ): Observable<any> {
     const url = this.prepareUrl(apiUrl, urlString);
     const { displayToast = true, failureResponse = {} } = info;
-    const httpOptions = this.getHttpOptions({
+    let httpOptions = this.getHttpOptions({
       displayToast,
       failureResponse
     });
@@ -108,6 +108,13 @@ export class AppService {
     let responseType: any = 'blob' as 'json';
     if (customResponseType && customResponseType.length) {
       responseType = customResponseType;
+    }
+    if (responseType === 'arrayBuffer') {
+      httpOptions = this.getHttpOptions({
+        displayToast,
+        failureResponse,
+        contentType: responseType
+      });
     }
     if (isGetRequest) {
       return this.http.get<any>(url, {
