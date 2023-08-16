@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/member-ordering */
+/* eslint-disable @angular-eslint/no-host-metadata-property */
+/* eslint-disable no-underscore-dangle */
 import {
   Component,
   Input,

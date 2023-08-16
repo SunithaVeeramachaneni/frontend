@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { RaceDynamicFormService } from '../../services/rdf.service';
 import {
@@ -26,6 +26,7 @@ import {
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { MatTableDataSource } from '@angular/material/table';
 import {
+  formConfigurationStatus,
   graphQLDefaultLimit,
   graphQLDefaultMaxLimit
 } from 'src/app/app.constants';
@@ -45,7 +46,7 @@ import { FormUpdateProgressService } from 'src/app/forms/services/form-update-pr
   templateUrl: './template-affected-forms-modal.component.html',
   styleUrls: ['./template-affected-forms-modal.component.scss']
 })
-export class TemplateAffectedFormsModalComponent implements OnInit {
+export class TemplateAffectedFormsModalComponent implements OnInit, OnDestroy {
   ghostLoading = new Array(8).fill(0).map((v, i) => i);
   nextToken = '';
   fetchType = 'load';
@@ -199,7 +200,6 @@ export class TemplateAffectedFormsModalComponent implements OnInit {
     private formProgressService: FormUpdateProgressService,
     private plantService: PlantService,
     public dialogRef: MatDialogRef<TemplateAffectedFormsModalComponent>,
-
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
 
@@ -379,13 +379,17 @@ export class TemplateAffectedFormsModalComponent implements OnInit {
       )
       .subscribe((data) => {
         this.store.dispatch(
+          BuilderConfigurationActions.updateFormPublishStatus({
+            formDetailPublishStatus: formConfigurationStatus.ready
+          })
+        );
+        this.store.dispatch(
           BuilderConfigurationActions.updateIsFormDetailPublished({
             isFormDetailPublished: true
           })
         );
-        this.formProgressService.formUpdateDeletePayload$.next(data);
-        this.dialogRef.close({ published: true });
-        this.router.navigate(['/forms/templates']);
+        this.formProgressService.formUpdateDeletePayloadBuffer$.next(data);
+        this.dialogRef.close();
       });
   }
 

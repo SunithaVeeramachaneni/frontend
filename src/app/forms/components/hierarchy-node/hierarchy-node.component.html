@@ -16,7 +16,6 @@
   >
     <div class="dis-flex">
       <mat-checkbox
-        id="hierarchyNodeCheckbox"
         *ngIf="viewMode === false"
         [(ngModel)]="masterData.isSelected"
         (change)="nodeCheckboxToggled($event)"
@@ -91,7 +90,6 @@
         </mat-icon>
       </a>
       <mat-checkbox
-        id="hierarchyNodeSelectAll"
         [(ngModel)]="allSelected"
         [indeterminate]="multipleSelected()"
         color="primary"

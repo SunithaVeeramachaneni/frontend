@@ -16,7 +16,7 @@ const routes: Routes = [
     component: OperatorRoundsContainerComponent,
     canActivate: [AuthGuard],
     data: {
-      breadcrumb: { label: '' },
+      breadcrumb: { label: 'Operator Rounds' },
       permissions: [permissions.viewORPlans]
     },
     children: [

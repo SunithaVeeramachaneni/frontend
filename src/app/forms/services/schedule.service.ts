@@ -78,12 +78,6 @@ export class ScheduleConfigurationService {
     const firstHour = this.getHours(firstTime);
     const secondHour = this.getHours(secondTime);
     if (
-      firstTime.toLowerCase() === startTime.toLowerCase() &&
-      secondTime.toLowerCase() === nextDayStartTime.toLowerCase()
-    ) {
-      return (timeDifference = twelveHours + (firstHour === 0 ? 1 : firstHour));
-    }
-    if (
       firstTime.toLowerCase() !== startTime.toLowerCase() &&
       secondTime.toLowerCase() === nextDayStartTime.toLowerCase()
     ) {
@@ -122,6 +116,18 @@ export class ScheduleConfigurationService {
       if (current > end) {
         break;
       }
+    }
+    const checkExtraMint = this.hasMinutes(endTime);
+    if (
+      checkExtraMint !== 0 &&
+      !(startTime === '12:00 AM' && endTime === '11:59 PM')
+    ) {
+      endTime = new Date(end).toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+      });
+      timeSlots.push(endTime);
     }
     if (startTime === this.addTime(endTime, 0, 1)) {
       return TIME_SLOTS;
@@ -274,8 +280,8 @@ export class ScheduleConfigurationService {
     }
 
     return rows?.sort((a, b) => {
-      const aIndex = timeSlots.indexOf(a?.startTime);
-      const bIndex = timeSlots.indexOf(b?.startTime);
+      const aIndex = timeSlots?.indexOf(a?.startTime);
+      const bIndex = timeSlots?.indexOf(b?.startTime);
       return aIndex - bIndex;
     });
   }
@@ -288,7 +294,13 @@ export class ScheduleConfigurationService {
     return val;
   }
 
-  adjustStartEndTime(dataArrays, obj, slotStartTime, objStartLastTime) {
+  adjustStartEndTime(
+    dataArrays,
+    obj,
+    slotStartTime,
+    objStartLastTime,
+    allSlots
+  ) {
     const totalDiff = this.getTimeDifference(slotStartTime, objStartLastTime);
     let highestEndTime = '';
     dataArrays.forEach((item) => {
@@ -298,7 +310,7 @@ export class ScheduleConfigurationService {
     if (highestEndTime !== '') {
       let endTimeDiff = this.getTimeDifference(highestEndTime, obj?.startTime);
       if (totalDiff < endTimeDiff) {
-        this.sortArray(dataArrays, obj);
+        this.sortArray(dataArrays, allSlots);
         return obj;
       }
       if (endTimeDiff > 0) {
@@ -311,6 +323,61 @@ export class ScheduleConfigurationService {
       }
     }
     return obj;
+  }
+
+  addMissingTimeIntervals(data, timeSlots) {
+    const newObjects = [];
+
+    data = data.map((item) => ({
+      startTime: this.addLeadingZero(item.startTime),
+      endTime: this.addLeadingZero(item.endTime)
+    }));
+
+    data = this.sortArray(data, timeSlots);
+
+    if (data[0].startTime !== timeSlots[0]) {
+      const newObject = {
+        startTime: timeSlots[0],
+        endTime: this.subtractTime(data[0].startTime, 0, 1),
+        isBook: false
+      };
+      newObjects.push(newObject);
+    }
+
+    for (let i = 0; i < data.length - 1; i++) {
+      const currentEndTime = this.addLeadingZero(
+        this.addTime(data[i].endTime, 0, 1)
+      );
+      const nextStartTime = this.addLeadingZero(data[i + 1].startTime);
+      if (currentEndTime !== nextStartTime) {
+        const newObject = {
+          startTime: currentEndTime,
+          endTime: nextStartTime,
+          isBook: false
+        };
+        newObjects.push(newObject);
+      }
+    }
+    data.push(...newObjects);
+    data = this.sortArray(data, timeSlots);
+    return data;
+  }
+
+  addLeadingZeroData(timeString) {
+    const [time, ampm] = timeString.split(' ');
+    const [hours, minutes] = time.split(':');
+
+    const paddedHours = hours.padStart(2, '0');
+    const paddedMinutes = minutes.padStart(2, '0');
+
+    return `${paddedHours}:${paddedMinutes} ${ampm}`;
+  }
+
+  hasMinutes(time) {
+    const timeParts = time.split(':');
+    const minutes = parseInt(timeParts[1], 10);
+
+    return minutes;
   }
 
   private getDateString(data?: Date): string {

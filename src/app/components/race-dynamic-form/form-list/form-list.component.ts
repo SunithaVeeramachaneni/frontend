@@ -288,6 +288,7 @@ export class FormListComponent implements OnInit, OnDestroy {
       case 'name':
       case 'description':
       case 'author':
+      case 'plant':
       case 'formStatus':
       case 'lastPublishedBy':
       case 'publishedDate':
@@ -626,6 +627,7 @@ export class FormListComponent implements OnInit, OnDestroy {
       height: '100%',
       width: '100%',
       panelClass: 'full-screen-modal',
+      disableClose: true,
       data: {
         formData: data,
         type: 'add'

@@ -289,6 +289,19 @@
             [placeholder]="'label' | translate"
             formControlName="label"
           />
+          <mat-error
+            id="addEditPlantLabelError"
+            *ngIf="processValidationErrors('label')"
+            class="m-t-5 error-fields"
+          >
+            {{
+              errors.label.name
+                | translate
+                  : {
+                      name: 'label' | translate
+                    }
+            }}
+          </mat-error>
         </mat-form-field>
         <mat-form-field appearance="outline" class="width-100" class="m-5">
           <mat-label id="addEditPlantField" translate="field"></mat-label>
@@ -298,6 +311,19 @@
             [placeholder]="'field' | translate"
             formControlName="field"
           />
+          <mat-error
+            id="addEditPlantFieldError"
+            *ngIf="processValidationErrors('field')"
+            class="m-t-5 error-fields"
+          >
+            {{
+              errors.field.name
+                | translate
+                  : {
+                      name: 'field' | translate
+                    }
+            }}
+          </mat-error>
         </mat-form-field>
       </span>
     </div>

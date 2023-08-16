@@ -235,7 +235,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
       visible: true
     },
     {
-      id: 'status',
+      id: 'statusDisplay',
       displayName: 'Status',
       type: 'string',
       controlType: 'string',
@@ -494,7 +494,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
             assignedTo: inspectionDetail?.assignedTo
               ? this.userService.getUserFullName(inspectionDetail.assignedTo)
               : '',
-            status: inspectionDetail.status.replace('-', ' '),
+            statusDisplay: inspectionDetail.status.replace('-', ' '),
             assignedToEmail: inspectionDetail.assignedTo || ''
           }));
         } else {
@@ -512,7 +512,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
               assignedTo: this.userService.getUserFullName(
                 inspectionDetail.assignedTo
               ),
-              status: inspectionDetail.status.replace('-', ' '),
+              statusDisplay: inspectionDetail.status.replace('-', ' '),
               assignedToEmail: inspectionDetail.assignedTo || ''
             }))
           );
@@ -793,8 +793,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
   }
 
   downloadPDF(selectedForm) {
-    const formId = selectedForm.id;
-    const inspectionId = selectedForm.inspectionId;
+    const { id: inspectionId, formId } = selectedForm;
 
     const info: ErrorInfo = {
       displayToast: false,
@@ -885,7 +884,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
         this.openInspectionHandler(data);
         break;
       case 'showForms':
-        this.selectTab.emit({ index: 0, queryParams: { id: data.id } });
+        this.selectTab.emit({ index: 0, queryParams: { id: data.formId } });
         break;
       default:
       // do nothing

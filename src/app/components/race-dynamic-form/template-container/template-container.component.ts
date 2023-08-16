@@ -42,7 +42,8 @@ export class TemplateContainerComponent implements OnInit {
       maxHeight: '100vh',
       height: '100%',
       width: '100%',
-      panelClass: 'full-screen-modal'
+      panelClass: 'full-screen-modal',
+      disableClose: true
     });
   }
 }

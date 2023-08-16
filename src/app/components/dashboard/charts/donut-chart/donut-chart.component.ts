@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import { DatePipe } from '@angular/common';
 import {
   Component,

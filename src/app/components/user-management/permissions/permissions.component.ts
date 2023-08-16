@@ -6,8 +6,8 @@ import {
   Output,
   SimpleChanges
 } from '@angular/core';
-import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
-import { tap, map } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { userRolePermissions } from 'src/app/app.constants';
 
 @Component({

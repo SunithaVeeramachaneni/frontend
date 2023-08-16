@@ -427,9 +427,7 @@ export class ActionsListComponent implements OnInit, OnDestroy {
       mergeMap(({ rows, next, count, filters }) => {
         this.observationsService.actionsNextToken = next;
         this.isLoading$.next(false);
-        if (count) {
-          this.actionsCount$ = of(count);
-        }
+        this.actionsCount$ = of(count ?? 0);
         this.observationsService.actions$.next({ rows, next, count, filters });
         this.filterJson = this.observationsService.prepareFilterData(
           filters,
@@ -564,6 +562,9 @@ export class ActionsListComponent implements OnInit, OnDestroy {
   clearFilters(): void {
     this.isLoading$.next(true);
     this.isPopoverOpen = false;
+    if (this.searchAction.value) {
+      this.searchAction.patchValue('');
+    }
     this.filter = {
       title: '',
       location: '',

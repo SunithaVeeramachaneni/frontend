@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable @typescript-eslint/member-ordering */
 /* eslint-disable no-underscore-dangle */
 import {
@@ -136,7 +137,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
         this.question?.isOpen !== question.isOpen &&
         !isEqual(this.question, question)
       ) {
-        this._question = question;
+        this._question = Object.assign({}, question);
         this.updateQuestion();
       }
     }
@@ -161,6 +162,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   fieldTypes: any = [this.fieldType];
   formMetadata: FormMetadata;
   moduleName: string;
+  showAskQuestionFeatures = true;
 
   get rangeDisplayText() {
     return this._rangeDisplayText;
@@ -250,8 +252,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
     private responseSetService: ResponseSetService,
     private toast: ToastService,
     private translate: TranslateService,
-    private base64Service: Base64HelperService,
-    private rdfService: RaceDynamicFormService
   ) {}
 
   ngOnInit(): void {
@@ -321,6 +321,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
           if (!isEqual(prev, curr)) {
             const { value: prevValue } = prev;
             const { value: currValue } = curr;
+            this.checkAskQuestionFeatures();
             if (
               current.fieldType === 'INST' &&
               prevValue !== undefined &&
@@ -394,6 +395,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     this.questionForm.patchValue(this.question, {
       emitEvent: false
     });
+    this.checkAskQuestionFeatures();
     this.rangeDisplayText = '';
   }
 
@@ -456,19 +458,34 @@ export class QuestionComponent implements OnInit, OnDestroy {
       type: 'delete',
       questionId: this.questionId
     });
+  }
 
-    if (this.isEmbeddedForm && this.embeddedFormId) {
-      this.rdfService
-        .deleteAbapFormField$({
-          FORMNAME: this.embeddedFormId,
-          UNIQUEKEY: this.questionId
-        })
-        .subscribe();
+  checkAskQuestionFeatures() {
+    const fieldType = this.questionForm.get('fieldType').value;
+    if (this.isAskQuestion) {
+      switch (fieldType) {
+        case 'SF':
+        case 'CB':
+        case 'SGF':
+        case 'ATT':
+        case 'GAL':
+        case 'DFR':
+        case 'VI':
+          this.showAskQuestionFeatures = false;
+          break;
+        default:
+          this.showAskQuestionFeatures = true;
+      }
+    } else {
+      this.showAskQuestionFeatures = true;
     }
   }
 
   selectFieldTypeEventHandler(fieldType) {
-    if (fieldType.type === this.questionForm.get('fieldType').value) {
+    if (
+      fieldType.type === this.questionForm.get('fieldType').value &&
+      fieldType.type !== 'IMG'
+    ) {
       return;
     }
 
@@ -573,14 +590,9 @@ export class QuestionComponent implements OnInit, OnDestroy {
     this.formService
       .uploadToS3$(`${this.moduleName}/${this.formMetadata?.id}`, files[0])
       .subscribe(async (data) => {
-        const { base64Response: base64 } =
-          await this.base64Service.getBase64ImageFromSourceUrl(
-            data.message.objectURL
-          );
         const value = {
           name: file.name,
           size: file.size,
-          base64: base64.split(',')[1],
           objectKey: data.message.objectKey,
           objectURL: data.message.objectURL
         };

@@ -76,7 +76,11 @@ export class ResponseTypeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.globalResponses$ = this.store.select(getGlobalResponses);
+    this.globalResponses$ = this.store
+      .select(getGlobalResponses)
+      .pipe(
+        map((responses) => responses.filter((response) => !response._deleted))
+      );
     this.formMetadata$ = this.store.select(getFormMetadata).pipe(
       tap(({ id }) => {
         this.formId = id;

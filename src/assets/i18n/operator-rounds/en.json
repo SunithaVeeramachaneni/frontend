@@ -41,6 +41,7 @@
   "addSection": "Add Section",
   "question": "Task",
   "copy": "Copy",
+  "copySection": "Copy Section",
   "delete": "Delete",
   "edit": "Edit",
   "pattern": "{message}",

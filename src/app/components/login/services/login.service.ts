@@ -43,8 +43,8 @@ export class LoginService {
     const tenantInfo = this.tenantService.getTenantInfo();
     const { protectedResources } = tenantInfo;
     const { node, sap } = protectedResources || {};
-    this.commonService.setProtectedResources(node);
     this.commonService.setProtectedResources(sap);
+    this.commonService.setProtectedResources(node);
     this.setUserAuthenticated(true);
   };
 

@@ -42,8 +42,7 @@ import {
 import {
   formConfigurationStatus,
   graphQLDefaultLimit,
-  routingUrls,
-  permissions as perms
+  routingUrls
 } from 'src/app/app.constants';
 
 import { RaceDynamicFormService } from '../services/rdf.service';
@@ -70,7 +69,7 @@ export class ArchivedFormListComponent implements OnInit, OnDestroy {
   partialColumns: Partial<Column>[] = [
     {
       id: 'name',
-      displayName: 'Recents',
+      displayName: 'My Forms',
       type: 'string',
       controlType: 'string',
       visible: true,
@@ -328,10 +327,10 @@ export class ArchivedFormListComponent implements OnInit, OnDestroy {
           data.map((item) => {
             this.raceDynamicFormService
               .getEmbeddedFormId$(item.id)
-              .subscribe((data) => {
+              .subscribe((data1) => {
                 let embeddedFormId;
-                if (data) {
-                  embeddedFormId = data?.embeddedFormId;
+                if (data1) {
+                  embeddedFormId = data1?.embeddedFormId;
                 } else {
                   embeddedFormId = '';
                 }

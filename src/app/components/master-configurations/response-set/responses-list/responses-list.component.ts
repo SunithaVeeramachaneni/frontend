@@ -29,7 +29,6 @@ import {
   CellClickActionEvent,
   Permission,
   TableEvent,
-  UserDetails,
   UserInfo
 } from 'src/app/interfaces';
 
@@ -300,12 +299,11 @@ export class ResponsesListComponent implements OnInit, OnDestroy {
             ...this.configOptions,
             tableHeight: 'calc(100vh - 140px)'
           };
-
           initial.data = rows.map((item) => ({
             ...item,
             responseCount: JSON.parse(item?.values)?.length,
             createdBy: item?.createdBy || '',
-            creator: this.usersService.getUserFullName(item?.createdBy)
+            creator: this.usersService.getUserFullName(item?.createdBy) ?? ''
           }));
         } else {
           if (this.addEditDeleteResponseSet) {
@@ -316,7 +314,8 @@ export class ResponsesListComponent implements OnInit, OnDestroy {
                   {
                     ...form,
                     responseCount: JSON.parse(form.values).length,
-                    creator: this.usersService.getUserFullName(form.createdBy)
+                    creator:
+                      this.usersService.getUserFullName(form?.createdBy) ?? ''
                   },
                   ...initial.data
                 ];

@@ -17,8 +17,7 @@ import {
   SearchEvent,
   TableEvent,
   Count,
-  InspectionDetail,
-  FormMetadata
+  InspectionDetail
 } from './../../../interfaces';
 
 import {
@@ -29,14 +28,10 @@ import {
 import { ToastService } from 'src/app/shared/toast';
 import { isJson } from '../utils/utils';
 import { oppositeOperatorMap } from 'src/app/shared/utils/fieldOperatorMappings';
-import { ResponseSetService } from '../../master-configurations/response-set/services/response-set.service';
-import { TranslateService } from '@ngx-translate/core';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 import { cloneDeep, isEmpty, omitBy } from 'lodash-es';
 import { Column } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { SseService } from 'src/app/shared/services/sse.service';
-
-const limit = 10000;
 
 const VALIDFROM = '20221002135512';
 const VALIDTO = '99991230183000';
@@ -53,12 +48,10 @@ export class RaceDynamicFormService {
   embeddedFormId;
 
   constructor(
-    private responseSetService: ResponseSetService,
     private toastService: ToastService,
     private appService: AppService,
     private sseService: SseService,
-    private zone: NgZone,
-    private translate: TranslateService
+    private zone: NgZone
   ) {}
 
   /**
@@ -67,7 +60,8 @@ export class RaceDynamicFormService {
   private getServerSentEvent(
     apiUrl: string,
     urlString: string,
-    data: FormData
+    data: FormData,
+    requestId: string
   ): Observable<any> {
     return new Observable((observer) => {
       const eventSource = this.sseService.getEventSourceWithPost(
@@ -80,13 +74,13 @@ export class RaceDynamicFormService {
       // on answer from message listener
       eventSource.onmessage = (event) => {
         this.zone.run(() => {
-          observer.next(JSON.parse(event.data));
+          observer.next({ requestId, ...JSON.parse(event.data) });
         });
       };
       eventSource.onerror = (event) => {
         this.zone.run(() => {
           if (event.data) {
-            observer.error(JSON.parse(event.data));
+            observer.error({ requestId, error: event.data });
           }
         });
       };
@@ -456,7 +450,7 @@ export class RaceDynamicFormService {
 
   getValidationExpression(questionId, question, questions, logics): any {
     let expression = '';
-    let validationMessage = '';
+    const validationMessage = '';
     let notificationExpression = '';
     let globalIndex = 0;
     let askQuestions = [];
@@ -959,358 +953,11 @@ export class RaceDynamicFormService {
       `templates/${templateId}`
     );
 
-  postPutFormFieldPayloadEmbedded(form) {
-    const {
-      formMetadata: { id, name, embeddedFormId },
-      pages
-    } = form;
-    let payloads = [];
-    pages.forEach((page) => {
-      let { questions, sections, logics } = page;
-
-      sections.forEach((section) => {
-        const { name: sectionName, position: sectionPosition } = section;
-        let questionsBySection = questions.filter(
-          (item) => item.sectionId === section.id
-        );
-
-        let index = 0;
-        let evidenceQuestionCheck = false;
-        const sectionPayloads = [];
-
-        questionsBySection
-          .map((question) => {
-            index += 1;
-            if (question?.id.includes('EVIDENCE')) {
-              evidenceQuestionCheck = true;
-            }
-
-            const {
-              id: questionId,
-              name: questionName,
-              position: questionPosition,
-              required,
-              isPublished
-            } = question;
-
-            const {
-              expression,
-              validationMessage,
-              askQuestions,
-              evidenceQuestions,
-              notificationExpression
-            } = this.getValidationExpression(
-              questionId,
-              question,
-              questions,
-              logics
-            );
-
-            const notificationInfo = this.getNotificationInfo(question, logics);
-
-            sectionPayloads.push({
-              UNIQUEKEY: questionId,
-              VALIDFROM,
-              VALIDTO,
-              VERSION,
-              SECTIONNAME: sectionName,
-              FIELDLABEL: questionName,
-              UIPOSITION: index.toString(),
-              UIFIELDTYPE:
-                question.fieldType === 'INST' ? 'LLF' : question.fieldType,
-              ACTIVE: 'X',
-              INSTRUCTION: '',
-              TEXTSTYLE: '',
-              TEXTCOLOR: '',
-              MANDATORY: required && !evidenceQuestionCheck ? 'X' : '',
-              SECTIONPOSITION: sectionPosition.toString(),
-              DEFAULTVALUE: this.getDefaultValue(question),
-              APPNAME,
-              FORMNAME: embeddedFormId,
-              FORMTITLE: name,
-              STATUS: 'PUBLISHED',
-              ELEMENTTYPE: 'MULTIFORMTAB',
-              PUBLISHED: isPublished,
-              SUBFORMNAME: notificationInfo[0] ? 'NOTIFICATION' : '',
-              UIVALIDATION: expression,
-              UIVALIDATIONMSG: validationMessage,
-              BOBJECT: notificationInfo[0] ? 'NO-Notification' : '',
-              BOSTATUS: notificationInfo[0] ? 'X' : '',
-              BOCONDITION: notificationInfo[0] ? notificationExpression : '',
-              TRIGGERON: notificationInfo[0]
-                ? notificationInfo[0].triggerWhen
-                : '',
-              TRIGGERINFO: notificationInfo[0]
-                ? notificationInfo[0].triggerInfo
-                : '',
-              ...this.getProperties(question, id)
-            });
-
-            if (askQuestions && askQuestions.length) {
-              askQuestions.forEach((aq) => {
-                index = index + 1;
-                sectionPayloads.push({
-                  UNIQUEKEY: aq.id,
-                  VALIDFROM,
-                  VALIDTO,
-                  VERSION,
-                  SECTIONNAME: sectionName,
-                  FIELDLABEL: aq.name,
-                  UIPOSITION: index.toString(),
-                  UIFIELDTYPE: aq.fieldType,
-                  ACTIVE: 'X',
-                  INSTRUCTION: '',
-                  TEXTSTYLE: '',
-                  TEXTCOLOR: '',
-                  MANDATORY: required ? 'X' : '',
-                  SECTIONPOSITION: sectionPosition.toString(),
-                  DEFAULTVALUE: this.getDefaultValue(aq),
-                  APPNAME,
-                  FORMNAME: embeddedFormId,
-                  FORMTITLE: name,
-                  STATUS: 'PUBLISHED',
-                  ELEMENTTYPE: 'MULTIFORMTAB',
-                  PUBLISHED: aq.isPublished,
-                  UIVALIDATION: '',
-                  UIVALIDATIONMSG: '',
-                  ...this.getProperties(aq)
-                });
-              });
-            }
-            if (evidenceQuestions && evidenceQuestions.length) {
-              evidenceQuestions.forEach((eq) => {
-                index = index + 1;
-                sectionPayloads.push({
-                  UNIQUEKEY: eq.id,
-                  VALIDFROM,
-                  VALIDTO,
-                  VERSION,
-                  SECTIONNAME: sectionName,
-                  FIELDLABEL: eq.name,
-                  UIPOSITION: index.toString(),
-                  UIFIELDTYPE: eq.fieldType,
-                  ACTIVE: 'X',
-                  INSTRUCTION: '',
-                  TEXTSTYLE: '',
-                  TEXTCOLOR: '',
-                  MANDATORY: required ? 'X' : '',
-                  SECTIONPOSITION: sectionPosition.toString(),
-                  DEFAULTVALUE: this.getDefaultValue(eq),
-                  APPNAME,
-                  FORMNAME: embeddedFormId,
-                  FORMTITLE: name,
-                  STATUS: 'PUBLISHED',
-                  ELEMENTTYPE: 'MULTIFORMTAB',
-                  PUBLISHED: eq.isPublished,
-                  UIVALIDATION: '',
-                  UIVALIDATIONMSG: '',
-                  ...this.getProperties(eq)
-                });
-              });
-            }
-          })
-          .filter((payload) => payload);
-        payloads = [...payloads, ...sectionPayloads];
-      });
-    });
-    return payloads;
-  }
-
-  getNotificationInfo(question, logics) {
-    let notificationInfo = [];
-
-    const questionLogics = logics.filter(
-      (logic) => logic.questionId === question.id
-    );
-
-    questionLogics.forEach((logic) => {
-      const raiseNotification = logic?.raiseNotification;
-      if (raiseNotification) {
-        const { triggerInfo, triggerWhen } = logic;
-        notificationInfo.push({ triggerInfo, triggerWhen });
-      }
-    });
-    return notificationInfo;
-  }
-
-  getDefaultValue(question) {
-    return question.fieldType === 'LF' ? question.value : '';
-  }
-
-  getProperties(question, formId = null) {
-    let properties = {};
-    const { fieldType, readOnly, value } = question;
-    switch (fieldType) {
-      case 'DF': {
-        properties = {
-          ...properties,
-          DEFAULTVALUE: value ? 'CD' : ''
-        };
-        break;
-      }
-      case 'TIF': {
-        properties = {
-          ...properties,
-          DEFAULTVALUE: value ? 'CT' : ''
-        };
-        break;
-      }
-      case 'USR': {
-        properties = {
-          ...properties,
-          UIFIELDTYPE: 'LF',
-          DEFAULTVALUE: 'CU'
-        };
-        break;
-      }
-      case 'INST': {
-        const { name } = question;
-        properties = {
-          ...properties,
-          FIELDLABEL: `<html>${name}</html>`.replace(/"/g, "'"),
-          DEFAULTVALUE: ''
-          //,INSTRUCTION: this.getDOMStringFromHTML(name)
-        };
-        break;
-      }
-      case 'RT': {
-        const {
-          value: { min, max, increment }
-        } = question;
-        properties = {
-          ...properties,
-          MINVAL: min.toString(),
-          MAXVAL: max.toString(),
-          RINTERVAL: increment.toString()
-        };
-        break;
-      }
-      case 'IMG': {
-        const {
-          value: { base64, name }
-        } = question;
-        properties = {
-          ...properties,
-          IMAGECONTENT: base64,
-          IMAGETYPE: `.${name?.split('.').slice(-1)[0].toLowerCase()}`
-        };
-        break;
-      }
-      case 'VI':
-      case 'DD': {
-        const {
-          value: { value },
-          multi
-        } = question;
-        const viVALUE = value.map((item, idx) => ({
-          [`label${idx + 1}`]: item.title,
-          key: item.title,
-          color: item.color,
-          description: item.title
-        }));
-        properties = {
-          ...properties,
-          DDVALUE: JSON.stringify(viVALUE),
-          UIFIELDTYPE: multi ? 'DDM' : fieldType
-        };
-
-        break;
-      }
-      case 'ARD': {
-        properties = {
-          ...properties,
-          SUBFORMNAME: `${formId}TABULARFORM${question.id.slice(1)}`
-        };
-        break;
-      }
-      case 'TAF': {
-        const {
-          value: { dependsOn, fileName, globalDataset }
-        } = question;
-        if (globalDataset) {
-          properties = {
-            ...properties,
-            FILENAME: fileName,
-            DDDEPENDECYFIELD: dependsOn
-          };
-        }
-        properties = {
-          ...properties,
-          SUBFORMNAME: `${formId}TABULARFORM${question.id.slice(1)}`
-        };
-        break;
-      }
-      case 'HL': {
-        properties = {
-          ...properties,
-          DEFAULTVALUE: question.value
-        };
-        break;
-      }
-      default:
-      // do nothing
-    }
-    return properties;
-  }
-
-  publishEmbeddedForms$ = (form: any, info: ErrorInfo = {} as ErrorInfo) =>
-    from(this.postPutFormFieldPayloadEmbedded(form)).pipe(
-      mergeMap((payload) => {
-        const { PUBLISHED, ...rest } = payload;
-        if (!PUBLISHED) {
-          return this.createAbapFormField$(rest, info).pipe(
-            map((resp) =>
-              Object.keys(resp).length === 0 ? resp : rest.UNIQUEKEY
-            )
-          );
-        } else {
-          return this.updateAbapFormField$(rest, info).pipe(
-            map((resp) => (resp === null ? rest.UNIQUEKEY : resp))
-          );
-        }
-      }),
-      toArray()
-    );
-
-  createAbapFormField$ = (
+  publishEmbeddedForms$ = (
     form: any,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> =>
-    this.appService._postData(
-      environment.rdfApiUrl,
-      'abap/forms/fields',
-      form,
-      info
-    );
-
-  updateAbapFormField$ = (
-    form: any,
-    info: ErrorInfo = {} as ErrorInfo
-  ): Observable<any> =>
-    this.appService._updateData(
-      environment.rdfApiUrl,
-      `abap/forms/fields`,
-      form,
-      info
-    );
-
-  deleteAbapFormField$ = (
-    queryParams: any,
-    info: ErrorInfo = {} as ErrorInfo
-  ): Observable<any> => {
-    const params: URLSearchParams = new URLSearchParams();
-    params.set('FORMNAME', queryParams.FORMNAME);
-    params.set('UNIQUEKEY', queryParams.UNIQUEKEY);
-    params.set('APPNAME', APPNAME);
-    params.set('VERSION', VERSION);
-    params.set('VALIDFROM', VALIDFROM);
-    params.set('VALIDTO', VALIDTO);
-    return this.appService._removeData(
-      environment.rdfApiUrl,
-      `abap/forms/fields?` + params.toString(),
-      info
-    );
-  };
+    this.appService._postData(environment.rdfApiUrl, 'abap/forms', form, info);
 
   getEmbeddedFormId$ = (
     formId: string,
@@ -1385,7 +1032,7 @@ export class RaceDynamicFormService {
       'template-reference/formId/' + formId
     );
   downloadSampleFormTemplate = (
-    formType: String,
+    formType: string,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> => {
     const params: URLSearchParams = new URLSearchParams();
@@ -1401,7 +1048,7 @@ export class RaceDynamicFormService {
 
   downloadFailure = (
     body: { rows: any },
-    formType: String,
+    formType: string,
     info: ErrorInfo = {} as ErrorInfo
   ) => {
     const params: URLSearchParams = new URLSearchParams();
@@ -1417,7 +1064,8 @@ export class RaceDynamicFormService {
   };
   updateAdhocFormOnTemplateChange$ = (
     templateId: string,
-    formIds: [string]
+    formIds: [string],
+    requestId: string
   ): Observable<any> => {
     const formData = new FormData();
     formData.append('templateId', templateId);
@@ -1425,20 +1073,23 @@ export class RaceDynamicFormService {
     return this.getServerSentEvent(
       environment.rdfApiUrl,
       'templates/updateAdhocForms',
-      formData
+      formData,
+      requestId
     );
   };
   updateEmbeddedFormOnTemplateChange$ = (
     templateId: string,
-    formIds: [string]
+    formIds: [string],
+    requestId: string
   ): Observable<any> => {
     const formData = new FormData();
     formData.append('templateId', templateId);
     formData.append('formIds', JSON.stringify(formIds));
     return this.getServerSentEvent(
       environment.rdfApiUrl,
-      'templates/updateEmbeddedForms',
-      formData
+      'abap/templates/updateEmbeddedForms',
+      formData,
+      requestId
     );
   };
 
