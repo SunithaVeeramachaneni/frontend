@@ -361,11 +361,11 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     const reader = new FileReader();
     const file: File = files[0];
     const size = file.size;
-    const maxSize = 400000;
+    const maxSize = 180000;
     if (size > maxSize) {
       this.toastService.show({
         type: 'warning',
-        text: 'Please select file less than 400KB'
+        text: 'Please select file less than 175KB'
       });
       return;
     }
