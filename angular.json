@@ -61,7 +61,9 @@
               "lodash/isEmpty",
               "lodash/isEqual",
               "lodash/flatten",
-              "ulid"
+              "ulid",
+              "url",
+              "pako"
             ],
             "serviceWorker": true,
             "ngswConfigPath": "ngsw-config.json"
