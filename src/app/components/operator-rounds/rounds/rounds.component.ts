@@ -59,7 +59,9 @@ import {
   dateTimeFormat4,
   permissions as perms,
   statusColors,
-  dateTimeFormat5
+  dateTimeFormat5,
+  dateFormat6,
+  timeFormat
 } from 'src/app/app.constants';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
 import { LoginService } from '../../login/services/login.service';
@@ -768,7 +770,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
         dateTimeFormat4
       );
     }
-    return format(new Date(date), dateTimeFormat4);
+    const dateString = format(new Date(date), dateFormat6);
+    const timeString = format(new Date(date), timeFormat);
+    return `${dateString} ${timeFormat}`;
   }
 
   cellClickActionHandler = (event: CellClickActionEvent) => {
