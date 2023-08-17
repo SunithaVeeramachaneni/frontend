@@ -37,8 +37,21 @@ export class HttpErrorInterceptor implements HttpInterceptor {
     });
     return next.handle(cloneRequest).pipe(
       catchError((error: HttpErrorResponse) => {
-        console.error(error);
-        const text = this.errorHandlerService.getErrorMessage(error);
+        let newError = error;
+        if (request.responseType === 'arraybuffer') {
+          const msg = JSON.parse(
+            String.fromCharCode.apply(null, new Uint8Array(error.error))
+          ).message;
+
+          if (msg?.length) {
+            newError = {
+              ...error,
+              message: msg
+            };
+          }
+        }
+        console.error(newError);
+        const text = this.errorHandlerService.getErrorMessage(newError);
         if (text.toLowerCase() === 'access denied') {
           this.commonService.displayPermissionRevoke(true);
         } else if (text.toLowerCase() === 'inactive user') {
@@ -68,7 +81,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
         if (typeof failureResponse === 'object') {
           return of(new HttpResponse({ body: failureResponse }));
         } else if (failureResponse === 'throwError') {
-          return throwError(error);
+          return throwError(newError);
         }
       })
     );
