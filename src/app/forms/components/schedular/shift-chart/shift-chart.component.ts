@@ -30,6 +30,7 @@ export class ShiftChartComponent implements OnInit, OnChanges {
   @Input() shift: AbstractControl = null;
   @Input() shiftIdx: number;
   @Output() updateShiftSlot: EventEmitter<any> = new EventEmitter<any>();
+  @Output() slotChange: EventEmitter<any> = new EventEmitter<any>();
   dataArrays: {
     index: number;
     startTime: string;
@@ -80,6 +81,8 @@ export class ShiftChartComponent implements OnInit, OnChanges {
   }
 
   public onAddSlot(val: string, idx: number): void {
+    this.slotChange.emit(true);
+
     const checkSlot = this.dataArrays.filter(
       (item) => item.startTime === this.service.addLeadingZero(val)
     );
@@ -347,6 +350,7 @@ export class ShiftChartComponent implements OnInit, OnChanges {
   }
 
   public onRemoveRow(rowIndex: number, objVal): void {
+    this.slotChange.emit(true);
     const lastElement = this.dataArrays[this.dataArrays.length - 1];
     const ds = this.dataArrays.lastIndexOf(lastElement);
     if (ds === rowIndex) {
@@ -400,7 +404,6 @@ export class ShiftChartComponent implements OnInit, OnChanges {
       const frmArray = this.addForm.get('slotsArray') as FormArray;
       frmArray.clear();
     }
-
     this.setShiftDetails();
   }
 

@@ -1372,6 +1372,11 @@ export class ScheduleConfigurationComponent
       this.shiftDetails = shiftDefaultPayload;
       this.shiftSlots.push(this.addShiftDetails(true));
     }
+    this.markSlotPristine(true);
+  }
+
+  onSlotChange(isChanged: boolean): void {
+    this.markSlotPristine(isChanged);
   }
 
   onUpdateShiftSlot(event: {
@@ -1431,5 +1436,14 @@ export class ScheduleConfigurationComponent
       }
     );
     return payload;
+  }
+
+  private markSlotPristine(value = null): void {
+    const shiftSlots = this.schedulerConfigForm.get('shiftSlots');
+    const shiftsSelected = this.schedulerConfigForm.get('shiftsSelected');
+    if (value && (shiftSlots?.pristine || shiftsSelected?.pristine)) {
+      shiftSlots.markAsDirty();
+      shiftsSelected.markAsDirty();
+    }
   }
 }
