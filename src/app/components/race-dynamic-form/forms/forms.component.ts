@@ -687,7 +687,7 @@ export class FormsComponent implements OnInit, OnDestroy {
         .getFormsCountByFormId$(this.scheduleFormDetail?.id)
         .pipe(
           tap(({ count = 0 }) => {
-            this.initial.data = this.allForms?.map((data) => {
+            this.initial.data = this.allForms.map((data) => {
               if (data.id === this.scheduleFormDetail?.id) {
                 return {
                   ...data,
@@ -739,7 +739,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       Object.keys(formsScheduleConfiguration)?.length &&
       formsScheduleConfiguration.id !== ''
     ) {
-      this.initial.data = this.allForms?.map((data) => {
+      this.initial.data = this.allForms.map((data) => {
         if (data?.id === this.scheduleFormDetail?.id) {
           return {
             ...data,

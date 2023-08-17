@@ -875,7 +875,7 @@ export class PlansComponent implements OnInit, OnDestroy {
         .getRoundsCountByRoundPlanId$(roundPlanId)
         .pipe(
           tap(({ count = 0 }) => {
-            this.initial.data = this.allroundPlans?.map((data) => {
+            this.initial.data = this.allroundPlans.map((data) => {
               if (data.id === roundPlanId) {
                 return {
                   ...data,
@@ -919,7 +919,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       Object.keys(roundPlanScheduleConfiguration).length &&
       roundPlanScheduleConfiguration.id !== ''
     ) {
-      this.initial.data = this.allroundPlans?.map((data) => {
+      this.initial.data = this.allroundPlans.map((data) => {
         if (data.id === this.scheduleRoundPlanDetail.id) {
           return {
             ...data,
