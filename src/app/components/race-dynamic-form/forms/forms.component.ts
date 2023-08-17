@@ -253,6 +253,7 @@ export class FormsComponent implements OnInit, OnDestroy {
   plantTimezoneMap = {};
   userFullNameByEmail = {};
   shiftIdNameMap = {};
+  allForms = [];
 
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
@@ -399,6 +400,7 @@ export class FormsComponent implements OnInit, OnDestroy {
     ]).pipe(
       map(([forms, formCategory]) => {
         let filteredForms = [];
+        this.allForms = forms.data;
         this.configOptions = {
           ...this.configOptions,
           tableHeight: 'calc(100vh - 150px)'
@@ -685,7 +687,7 @@ export class FormsComponent implements OnInit, OnDestroy {
         .getFormsCountByFormId$(this.scheduleFormDetail?.id)
         .pipe(
           tap(({ count = 0 }) => {
-            this.initial.data = this.dataSource?.data?.map((data) => {
+            this.initial.data = this.allForms?.map((data) => {
               if (data.id === this.scheduleFormDetail?.id) {
                 return {
                   ...data,
@@ -737,7 +739,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       Object.keys(formsScheduleConfiguration)?.length &&
       formsScheduleConfiguration.id !== ''
     ) {
-      this.initial.data = this.dataSource?.data?.map((data) => {
+      this.initial.data = this.allForms?.map((data) => {
         if (data?.id === this.scheduleFormDetail?.id) {
           return {
             ...data,
