@@ -459,7 +459,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     );
 
     if (field === 'assignee') {
-      if (checked && previouslyAssignedTo.includes(value)) {
+      if (checked && previouslyAssignedTo?.includes(value)) {
         previouslyAssignedTo = previouslyAssignedTo
           .split(',')
           .filter((email) => email !== value)
