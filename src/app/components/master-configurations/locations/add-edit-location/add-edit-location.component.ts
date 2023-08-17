@@ -5,7 +5,9 @@ import {
   Input,
   OnInit,
   Output,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  ElementRef,
+  ViewChild
 } from '@angular/core';
 import {
   FormBuilder,
@@ -26,6 +28,8 @@ import { FormValidationUtil } from 'src/app/shared/utils/formValidationUtil';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddEditLocationComponent implements OnInit {
+  @ViewChild('searchInput', { static: false })
+  searchInput: ElementRef<HTMLInputElement> = null;
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Output() createdLocationData: EventEmitter<any> = new EventEmitter();
   @Input() allPlants: any[];
@@ -156,6 +160,7 @@ export class AddEditLocationComponent implements OnInit {
             data: res
           });
           this.locationForm.reset();
+          this.resetSearchInput();
           this.slideInOut.emit('out');
         });
     } else if (this.locationStatus === 'edit') {
@@ -171,6 +176,7 @@ export class AddEditLocationComponent implements OnInit {
             data: res
           });
           this.locationForm.reset();
+          this.resetSearchInput();
           this.slideInOut.emit('out');
         });
     }
@@ -231,6 +237,7 @@ export class AddEditLocationComponent implements OnInit {
   }
 
   cancel() {
+    this.resetSearchInput();
     this.locationForm.reset();
     this.slideInOut.emit('out');
     this.allParentsData = this.parentInformation;
@@ -242,5 +249,11 @@ export class AddEditLocationComponent implements OnInit {
       this.locationForm,
       this.errors
     );
+  }
+
+  private resetSearchInput() {
+    if (this.searchInput?.nativeElement) {
+      this.searchInput.nativeElement.value = '';
+    }
   }
 }
