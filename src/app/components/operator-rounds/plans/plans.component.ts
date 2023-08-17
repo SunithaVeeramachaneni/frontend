@@ -379,6 +379,7 @@ export class PlansComponent implements OnInit, OnDestroy {
     scheduled: 0,
     unscheduled: 0
   };
+  allroundPlans = [];
   nextToken = '';
   formDetailState = 'out';
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
@@ -555,6 +556,7 @@ export class PlansComponent implements OnInit, OnDestroy {
     ]).pipe(
       map(([roundPlans, planCategory]) => {
         let filteredRoundPlans = [];
+        this.allroundPlans = roundPlans?.data;
         this.configOptions = {
           ...this.configOptions,
           tableHeight: 'calc(100vh - 150px)'
@@ -873,7 +875,7 @@ export class PlansComponent implements OnInit, OnDestroy {
         .getRoundsCountByRoundPlanId$(roundPlanId)
         .pipe(
           tap(({ count = 0 }) => {
-            this.initial.data = this.dataSource.data.map((data) => {
+            this.initial.data = this.allroundPlans?.map((data) => {
               if (data.id === roundPlanId) {
                 return {
                   ...data,
@@ -917,7 +919,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       Object.keys(roundPlanScheduleConfiguration).length &&
       roundPlanScheduleConfiguration.id !== ''
     ) {
-      this.initial.data = this.dataSource.data.map((data) => {
+      this.initial.data = this.allroundPlans?.map((data) => {
         if (data.id === this.scheduleRoundPlanDetail.id) {
           return {
             ...data,
