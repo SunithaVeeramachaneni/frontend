@@ -457,8 +457,9 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
       },
       checked
     );
+
     if (field === 'assignee') {
-      if (checked && previouslyAssignedTo?.includes(value)) {
+      if (checked && previouslyAssignedTo.includes(value)) {
         previouslyAssignedTo = previouslyAssignedTo
           .split(',')
           .filter((email) => email !== value)
@@ -466,7 +467,9 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
       }
 
       if (!checked) {
-        previouslyAssignedTo += previouslyAssignedTo ? `,${value}` : value;
+        if (!previouslyAssignedTo.includes(value)) {
+          previouslyAssignedTo += previouslyAssignedTo ? `,${value}` : value;
+        }
       }
     }
 
