@@ -457,7 +457,6 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
       },
       checked
     );
-
     if (field === 'assignee') {
       if (checked && previouslyAssignedTo?.includes(value)) {
         previouslyAssignedTo = previouslyAssignedTo
@@ -467,9 +466,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
       }
 
       if (!checked) {
-        if (!previouslyAssignedTo.includes(value)) {
-          previouslyAssignedTo += previouslyAssignedTo ? `,${value}` : value;
-        }
+        previouslyAssignedTo += previouslyAssignedTo ? `,${value}` : value;
       }
     }
 
