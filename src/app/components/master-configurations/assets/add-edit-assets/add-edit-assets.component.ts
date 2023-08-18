@@ -346,9 +346,10 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
-  private resetSearchInput() {
+  private resetSearchInput(): void {
     if (this.searchInput?.nativeElement) {
       this.searchInput.nativeElement.value = '';
     }
+    this.allPlantsData = this.plantInformation;
   }
 }

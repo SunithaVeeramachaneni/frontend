@@ -251,9 +251,10 @@ export class AddEditLocationComponent implements OnInit {
     );
   }
 
-  private resetSearchInput() {
+  private resetSearchInput(): void {
     if (this.searchInput?.nativeElement) {
       this.searchInput.nativeElement.value = '';
     }
+    this.allPlantsData = this.plantInformation;
   }
 }
