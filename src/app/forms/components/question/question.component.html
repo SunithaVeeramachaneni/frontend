@@ -266,13 +266,17 @@
                         <mat-icon>search</mat-icon>
                         <input
                           type="text"
-                          (keyup)="onKey($event)"
+                          (input)="onKey($event)"
                           placeholder="Search.."
                           class="searchInput"
                         />
                       </span>
 
-                      <span class="noneOption">None</span>
+                      <span
+                        class="noneOption"
+                        (click)="uomChanged({ symbol: 'None' })"
+                        >None</span
+                      >
                       <span
                         *ngFor="let uom of unitOfMeasurementsAvailable"
                         class="uomOption"
