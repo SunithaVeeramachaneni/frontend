@@ -46,6 +46,7 @@ import {
 import { Router } from '@angular/router';
 import { LoginService } from 'src/app/components/login/services/login.service';
 import { format } from 'date-fns';
+import { cloneDeep } from 'lodash-es';
 
 @Component({
   selector: 'app-pdf-builder',
@@ -473,7 +474,8 @@ export class PDFBuilderComponent implements OnInit, OnDestroy {
     return this.store.select(getSubFormPages(nodeId));
   }
   getSectionsWithQuestionsOfPage(page) {
-    return page.sections.map((section) => {
+    const clonePage = cloneDeep(page);
+    return clonePage.sections.map((section) => {
       section.questions = page.questions.filter(
         (q) => q.sectionId === section.id
       );
