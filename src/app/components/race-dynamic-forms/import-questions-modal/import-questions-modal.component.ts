@@ -119,9 +119,9 @@ export class ImportQuestionsModalComponent implements OnInit {
         initial.data = formsList;
         this.skip = initial.data.length;
 
-        initial?.data?.forEach((form) => {
+        initial.data?.forEach((form) => {
           let temp = 0;
-          form?.sections?.forEach((section) => {
+          form.sections?.forEach((section) => {
             temp += section.questions.length;
           });
           form.countOfQues = temp;
@@ -188,7 +188,7 @@ export class ImportQuestionsModalComponent implements OnInit {
   }
 
   selectFormElement() {
-    this.selectedForm?.sections?.forEach((sec) => {
+    this.selectedForm.sections?.forEach((sec) => {
       sec.checked = false;
       sec?.questions?.forEach((que) => {
         que.checked = false;
