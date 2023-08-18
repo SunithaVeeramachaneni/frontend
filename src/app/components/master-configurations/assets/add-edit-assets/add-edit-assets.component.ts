@@ -7,7 +7,9 @@ import {
   OnInit,
   Output,
   ChangeDetectionStrategy,
-  OnDestroy
+  OnDestroy,
+  ElementRef,
+  ViewChild
 } from '@angular/core';
 import {
   FormBuilder,
@@ -29,6 +31,8 @@ import { FormValidationUtil } from 'src/app/shared/utils/formValidationUtil';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddEditAssetsComponent implements OnInit, OnDestroy {
+  @ViewChild('descriptionTextArea', { static: false })
+  descriptionTextArea: ElementRef<HTMLTextAreaElement> = null;
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Output() createdAssetsData: EventEmitter<any> = new EventEmitter();
   @Input() allPlants: any[];
@@ -220,6 +224,7 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
           status: this.assetStatus,
           data: res
         });
+        this.resetTextAreaHeight();
         this.assetForm.reset();
         this.assetForm?.get('parentType').setValue('location');
         this.slideInOut.emit('out');
@@ -236,6 +241,7 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
             status: this.assetStatus,
             data: res
           });
+          this.resetTextAreaHeight();
           this.assetForm.reset();
           this.assetForm?.get('parentType').setValue('location');
           this.slideInOut.emit('out');
@@ -321,6 +327,7 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
   }
 
   cancel() {
+    this.resetTextAreaHeight();
     this.assetForm.reset();
     this.assetForm?.get('parentType').setValue('location');
     this.slideInOut.emit('out');
@@ -337,5 +344,11 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  private resetTextAreaHeight(): void {
+    if (this.descriptionTextArea?.nativeElement) {
+      this.descriptionTextArea.nativeElement.style.height = '';
+    }
   }
 }

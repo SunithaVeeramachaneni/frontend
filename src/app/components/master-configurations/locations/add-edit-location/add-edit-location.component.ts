@@ -5,7 +5,9 @@ import {
   Input,
   OnInit,
   Output,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  ElementRef,
+  ViewChild
 } from '@angular/core';
 import {
   FormBuilder,
@@ -26,6 +28,8 @@ import { FormValidationUtil } from 'src/app/shared/utils/formValidationUtil';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddEditLocationComponent implements OnInit {
+  @ViewChild('descriptionTextArea', { static: false })
+  descriptionTextArea: ElementRef<HTMLTextAreaElement> = null;
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Output() createdLocationData: EventEmitter<any> = new EventEmitter();
   @Input() allPlants: any[];
@@ -155,6 +159,7 @@ export class AddEditLocationComponent implements OnInit {
             status: this.locationStatus,
             data: res
           });
+          this.resetTextAreaHeight();
           this.locationForm.reset();
           this.slideInOut.emit('out');
         });
@@ -170,6 +175,7 @@ export class AddEditLocationComponent implements OnInit {
             status: this.locationStatus,
             data: res
           });
+          this.resetTextAreaHeight();
           this.locationForm.reset();
           this.slideInOut.emit('out');
         });
@@ -231,6 +237,7 @@ export class AddEditLocationComponent implements OnInit {
   }
 
   cancel() {
+    this.resetTextAreaHeight();
     this.locationForm.reset();
     this.slideInOut.emit('out');
     this.allParentsData = this.parentInformation;
@@ -242,5 +249,11 @@ export class AddEditLocationComponent implements OnInit {
       this.locationForm,
       this.errors
     );
+  }
+
+  private resetTextAreaHeight(): void {
+    if (this.descriptionTextArea?.nativeElement) {
+      this.descriptionTextArea.nativeElement.style.height = '';
+    }
   }
 }
