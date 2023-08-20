@@ -81,9 +81,7 @@
                     updateAllChecked($event.checked, question, section, page)
                   "
                 >
-                  <span id="importQuestionQuestionName">{{
-                    question.name
-                  }}</span>
+                  <span [innerHTML]="question.name"></span>
                 </mat-checkbox>
               </div>
             </div>
