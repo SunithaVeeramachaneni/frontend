@@ -202,8 +202,9 @@
               href="{{ question.value }}"
               target="_blank"
               class="hyderlink-value"
-              >{{ question.value }}</a
             >
+              {{ question.value }}
+            </a>
           </p>
 
           <p *ngIf="question.fieldType === 'SF'" class="dis-flex m-0">
