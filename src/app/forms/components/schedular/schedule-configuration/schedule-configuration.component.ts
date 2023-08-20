@@ -117,6 +117,8 @@ export class ScheduleConfigurationComponent
   weeksOfMonth = scheduleConfigs.weeksOfMonth;
   schedulerConfigForm: FormGroup;
   currentDate: Date;
+  startDatePickerMinDate: Date;
+  scheduleEndOnPickerMinDate: Date;
   scheduleByDates: ScheduleByDate[];
   disableSchedule = false;
   roundPlanScheduleConfigurations: RoundPlanScheduleConfigurationObj[];
@@ -673,6 +675,8 @@ export class ScheduleConfigurationComponent
       });
 
     this.currentDate = new Date();
+    this.startDatePickerMinDate = new Date();
+    this.scheduleEndOnPickerMinDate = new Date();
     this.setMonthlyDaysOfWeek();
     this.schedulerConfigForm.markAsDirty();
   }
@@ -923,6 +927,8 @@ export class ScheduleConfigurationComponent
               scheduledTill,
               scheduleByDates
             } = config;
+            this.startDatePickerMinDate = new Date(startDate);
+            this.scheduleEndOnPickerMinDate = new Date(scheduleEndOn);
             config = {
               ...config,
               startDate: localToTimezoneDate(

@@ -258,7 +258,7 @@
                       matInput
                       [matDatepicker]="scheduleEndOn"
                       (dateChange)="updateDate($event, 'scheduleEndOn')"
-                      [min]="currentDate"
+                      [min]="scheduleEndOnPickerMinDate"
                       formControlName="scheduleEndOnPicker"
                       hidden
                     />
@@ -303,7 +303,7 @@
               [matDatepicker]="startDate"
               formControlName="startDatePicker"
               (dateChange)="updateDate($event, 'startDate')"
-              [min]="currentDate"
+              [min]="startDatePickerMinDate"
               hidden
             />
             <mat-datepicker-toggle

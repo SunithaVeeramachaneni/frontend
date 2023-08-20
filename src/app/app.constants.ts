@@ -347,6 +347,7 @@ export const dateFormat2 = 'dd MMM yyyy';
 export const dateFormat3 = 'd MMMM yyyy';
 export const dateFormat4 = 'MMM d, yyyy';
 export const dateFormat5 = 'yyyy-MM-dd';
+export const dateFormat6 = 'MMM d, yyyy';
 export const hourFormat = 'HH:00:00';
 export const dateTimeFormat2 = 'dd MMM yyyy hh:mm a';
 export const dateTimeFormat3 = 'yyyy-MM-dd 00:00:00';
