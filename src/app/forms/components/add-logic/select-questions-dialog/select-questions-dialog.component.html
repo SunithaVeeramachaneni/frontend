@@ -54,12 +54,15 @@
                 [ngClass]="{
                   'strike-question': selectedQuestions.indexOf(question.id) > -1
                 }"
-                [innerHTML]="
-                  question.name && question.name.length
-                    ? question.name
-                    : 'Untitled question'
-                "
               >
+                <span
+                  [innerHTML]="
+                    question.name && question.name.length
+                      ? question.name
+                      : 'Untitled question'
+                  "
+                >
+                </span>
               </mat-checkbox>
             </div>
           </div>
