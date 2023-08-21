@@ -29,9 +29,6 @@ export class AssetsService {
 
   assetsCreatedUpdated$ = this.assetsCreatedUpdatedSubject.asObservable();
 
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  private MAX_FETCH_LIMIT = '1000000';
-
   constructor(private _appService: AppService) {}
 
   fetchAllAssets$ = (plantsID = null, info: ErrorInfo = {} as ErrorInfo) => {
@@ -92,7 +89,6 @@ export class AssetsService {
         .pipe(map((res) => this.formatGraphQAssetsResponse(res)));
     } else {
       return of({
-        count: 0,
         rows: [],
         next: null
       });

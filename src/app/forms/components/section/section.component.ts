@@ -13,12 +13,11 @@ import {
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { isEqual } from 'lodash-es';
-import { Subject, Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
   pairwise,
-  take,
   takeUntil,
   tap
 } from 'rxjs/operators';
@@ -191,8 +190,7 @@ export class SectionComponent implements OnInit, OnDestroy {
           primaryBtnText: 'yes',
           secondaryBtnText: 'cancel',
           title: 'confirmDelete?',
-          subtitle:
-            'deleteTemplateSectionSubtitle'
+          subtitle: 'deleteTemplateSectionSubtitle'
         }
       }
     });

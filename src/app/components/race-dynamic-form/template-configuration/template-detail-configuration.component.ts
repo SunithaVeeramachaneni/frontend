@@ -44,6 +44,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { EditTemplateNameModalComponent } from '../edit-template-name-modal/edit-template-name-modal.component';
 import { TemplateAffectedFormsModalComponent } from './template-affected-forms-modal/template-affected-forms-modal.component';
+import { FormUpdateProgressService } from 'src/app/forms/services/form-update-progress.service';
 
 @Component({
   selector: 'app-template-detail-configuration',
@@ -83,6 +84,7 @@ export class TemplateDetailConfigurationComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private dialog: MatDialog,
+    private formProgressService: FormUpdateProgressService,
     private readonly raceDynamicFormService: RaceDynamicFormService
   ) {}
 
@@ -297,7 +299,14 @@ export class TemplateDetailConfigurationComponent implements OnInit, OnDestroy {
     this.createOrEditForm$ = this.store.select(getCreateOrEditForm).pipe(
       tap((createOrEditForm) => {
         if (!createOrEditForm) {
-          this.router.navigate(['/forms/templates']);
+          this.formProgressService.formUpdateDeletePayloadBuffer$
+            .pipe(
+              takeUntil(this.onDestroy$)
+            )
+            .subscribe((data) => {
+              this.formProgressService.formUpdateDeletePayload$.next(data);
+            });
+          this.markReadyEvent.emit();
         }
       })
     );
@@ -374,12 +383,6 @@ export class TemplateDetailConfigurationComponent implements OnInit, OnDestroy {
         }
       }
     );
-    templateDialogRef.afterClosed().subscribe((res) => {
-      if (res?.published) {
-        this.router.navigate(['forms/templates']);
-        this.markReadyEvent.emit();
-      }
-    });
   }
 
   getDraftFormConfigurationStatuses() {

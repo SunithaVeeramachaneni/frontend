@@ -107,10 +107,10 @@
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="width-100 m-b-10 m-t-10">
-      <mat-label id="addEditUserEmail">{{
+      <mat-label id="addEditUserEmailLabel">{{
         'emailLabel' | translate
       }}</mat-label>
-      <input matInput formControlName="email" />
+      <input matInput formControlName="email" id="addEditUserEmail" />
       <div matSuffix>
         <mat-spinner
           *ngIf="verificationInProgress"
@@ -169,8 +169,7 @@
         <mat-option
           *ngFor="let role of rolesInput; let i = index"
           [value]="role"
-          style="padding-right: 0"
-          class="roles-select"
+          class="roles-select p-r-0"
           [disabled]="role.name === superAdminText"
         >
           <span id="addEditUserRoleName">{{ role.name }}</span>
@@ -180,13 +179,7 @@
               cdkOverlayOrigin
               (click)="getPermissions(role)"
               #trigger="cdkOverlayOrigin"
-              class="material-icons-outlined"
-              style="
-                margin-top: 10px;
-                float: right;
-                color: #9e9e9e;
-                font-size: 140%;
-              "
+              class="material-icons-outlined info-icon"
               (click)="isfilterTooltipOpen[i] = true"
             >
               info_border
@@ -337,8 +330,7 @@
         <mat-option
           *ngFor="let plant of data.plantsList"
           [value]="plant.id"
-          style="padding-right: 0"
-          class="roles-select"
+          class="roles-select p-r-0"
         >
           <span id="addEditUserGroupPlantId">{{ plant.plantId }}</span>
         </mat-option>

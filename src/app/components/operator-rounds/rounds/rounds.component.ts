@@ -59,7 +59,9 @@ import {
   dateTimeFormat4,
   permissions as perms,
   statusColors,
-  dateTimeFormat5
+  dateTimeFormat5,
+  dateFormat6,
+  timeFormat
 } from 'src/app/app.constants';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
 import { LoginService } from '../../login/services/login.service';
@@ -397,7 +399,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
-      id: 'status',
+      id: 'statusDisplay',
       displayName: 'Status',
       type: 'string',
       controlType: 'string',
@@ -445,7 +447,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
           'assigned',
           'open',
           'in-progress',
-          'partly-open'
+          'partly-open',
+          'skipped'
         ],
         displayType: 'text'
       },
@@ -666,7 +669,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
             assignedTo: this.userService.getUserFullName(
               roundDetail.assignedTo
             ),
-            status: roundDetail.status.replace('-', ' '),
+            statusDisplay: roundDetail.status.replace('-', ' '),
             assignedToEmail: roundDetail.assignedTo
           }));
         } else {
@@ -684,7 +687,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
               assignedTo: this.userService.getUserFullName(
                 roundDetail.assignedTo
               ),
-              status: roundDetail.status.replace('-', ' '),
+              statusDisplay: roundDetail.status.replace('-', ' '),
               assignedToEmail: roundDetail.assignedTo
             }))
           );
@@ -767,7 +770,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
         dateTimeFormat4
       );
     }
-    return format(new Date(date), dateTimeFormat4);
+    const dateString = format(new Date(date), dateFormat6);
+    const timeString = format(new Date(date), timeFormat);
+    return `${dateString} ${timeFormat}`;
   }
 
   cellClickActionHandler = (event: CellClickActionEvent) => {
@@ -861,11 +866,11 @@ export class RoundsComponent implements OnInit, OnDestroy {
         'SCHEDULE_ROUND_PLAN'
       )
     ) {
-      this.columns[12].controlType = 'string';
-      this.columns[10].controlType = 'string';
-      this.columns[3].controlType = 'string';
-      this.columns[5].controlType = 'string';
-      this.columns[6].controlType = 'string';
+      [12, 3, 5, 6].forEach((index) => {
+        if (this.columns[index]?.controlType) {
+          this.columns[index].controlType = 'string';
+        }
+      });
     }
 
     this.configOptions.rowLevelActions.menuActions = menuActions;
@@ -918,8 +923,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   }
 
   downloadPDF(selectedForm) {
-    const roundPlanId = selectedForm.id;
-    const roundId = selectedForm.roundId;
+    const { id: roundId, roundPlanId } = selectedForm;
 
     const info: ErrorInfo = {
       displayToast: false,
@@ -945,7 +949,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
         },
         (err) => {
           this.toastService.show({
-            text: 'Error occured while generating PDF!',
+            text: `Error occured while generating PDF, ${err.message}`,
             type: 'warning'
           });
         }
@@ -1084,7 +1088,10 @@ export class RoundsComponent implements OnInit, OnDestroy {
         this.openRoundHandler(data);
         break;
       case 'showPlans':
-        this.selectTab.emit({ index: 0, queryParams: { id: data.id } });
+        this.selectTab.emit({
+          index: 0,
+          queryParams: { id: data.roundPlanId }
+        });
         break;
       default:
       // do nothing

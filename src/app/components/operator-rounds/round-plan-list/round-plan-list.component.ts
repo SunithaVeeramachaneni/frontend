@@ -245,12 +245,12 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
     conditionalStyles: {
       draft: {
-        'background-color': '#FEF3C7',
-        color: '#92400E'
+        'background-color': '#FFCC00',
+        color: '#000000'
       },
       published: {
-        'background-color': '#D1FAE5',
-        color: '#065f46'
+        'background-color': '#2C9E53',
+        color: '#FFFFFF'
       }
     }
   };
@@ -340,6 +340,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
       case 'name':
       case 'description':
       case 'author':
+      case 'plant':
       case 'formStatus':
       case 'lastPublishedBy':
       case 'publishedDate':
@@ -689,7 +690,8 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
       maxHeight: '100vh',
       height: '100%',
       width: '100%',
-      panelClass: 'full-screen-modal'
+      panelClass: 'full-screen-modal',
+      disableClose: true
     });
     dialogRef.afterClosed().subscribe((result) => {
       const data = result === undefined ? {} : result;

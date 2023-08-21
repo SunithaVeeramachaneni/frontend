@@ -380,8 +380,19 @@ export class AssetHierarchyUtil {
     sequence,
     hierarchyPath
   });
-}
 
+  addIdToExistingChild = (hierarchyList, existingFlatHierarchy) => {
+    if (!existingFlatHierarchy.length) return hierarchyList;
+    return hierarchyList?.map(
+      ({ uid, children, ...node }: HierarchyEntity) => ({
+        ...node,
+        uid,
+        id: existingFlatHierarchy.find((item) => item.uid === uid)?.id,
+        children: this.addIdToExistingChild(children, existingFlatHierarchy)
+      })
+    );
+  };
+}
 // Wrote the below function outside class as its used in hierarchy.reducer where dependency injection cannot be used.
 
 export const copyNodeToRoutePlan = (

@@ -28,7 +28,6 @@ import { isJson } from '../../race-dynamic-form/utils/utils';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
 import { cloneDeep, isEmpty, omitBy } from 'lodash-es';
 
-const limit = 10000;
 @Injectable({
   providedIn: 'root'
 })
@@ -655,7 +654,6 @@ export class OperatorRoundsService {
               )
             : 0
         }%`,
-        roundId: p.roundId,
         isViewPdf: p.isViewPdf
       }));
     return rows;

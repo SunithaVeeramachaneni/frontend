@@ -23,6 +23,8 @@ import {
   takeUntil,
   tap
 } from 'rxjs/operators';
+import { uniqBy } from 'lodash-es';
+
 import {
   defaultLimit,
   permissions as perms,
@@ -286,7 +288,6 @@ export class LocationsListComponent implements OnInit, OnDestroy {
           this.plantsIdNameMap[`${plantId} - ${name}`] = id;
           return `${plantId} - ${name}`;
         });
-
         this.filterJson = [
           {
             column: 'plant',
@@ -360,9 +361,10 @@ export class LocationsListComponent implements OnInit, OnDestroy {
           { items: allPlants = [] }
         ]) => {
           this.allPlants = allPlants.filter((plant) => !plant._deleted);
-          this.allParentsLocations.data = allLocations.filter(
-            (location) => !location._deleted
-          );
+          this.allParentsLocations.data = uniqBy(
+            [...(this.allParentsLocations?.data || []), ...allLocations],
+            'id'
+          ).filter((location) => !location._deleted);
           this.dataFetchingComplete = true;
           if (this.skip === 0) {
             this.configOptions = {
@@ -448,7 +450,7 @@ export class LocationsListComponent implements OnInit, OnDestroy {
     ).pipe(
       map(({ count, rows, next }) => {
         this.nextToken = next;
-        if (count !== undefined) {
+        if (count !== undefined && count !== null) {
           this.reloadLocationCount(count);
         }
         this.isLoading$.next(false);
@@ -462,6 +464,7 @@ export class LocationsListComponent implements OnInit, OnDestroy {
   }
 
   addOrUpdateLocation(locationData) {
+    this.isLoading$.next(true);
     if (locationData?.status === 'add') {
       this.addEditCopyDeleteLocations = true;
       if (this.searchLocation.value) {
@@ -495,6 +498,7 @@ export class LocationsListComponent implements OnInit, OnDestroy {
         });
       }
     }
+    this.nextToken = '';
     this.locationService.fetchLocations$.next({ data: 'load' });
   }
 
@@ -531,7 +535,7 @@ export class LocationsListComponent implements OnInit, OnDestroy {
   rowLevelActionHandler = ({ data, action }): void => {
     switch (action) {
       case 'edit':
-        this.locationEditData = { ...data };
+        this.locationEditData = { locationData: data };
         this.locationAddOrEditOpenState = 'in';
         break;
       case 'delete':
@@ -547,9 +551,10 @@ export class LocationsListComponent implements OnInit, OnDestroy {
     const { columnId, row } = event;
     switch (columnId) {
       case 'name':
+      case 'plant':
       case 'description':
       case 'model':
-      case 'parentId':
+      case 'parent':
         this.showLocationDetail(row);
         break;
       default:
@@ -588,7 +593,7 @@ export class LocationsListComponent implements OnInit, OnDestroy {
   onCloseLocationDetailedView(event) {
     this.openLocationDetailedView = event.status;
     if (event.data !== '') {
-      this.locationEditData = event.data;
+      this.locationEditData = { locationData: event.data };
       this.locationAddOrEditOpenState = 'in';
     }
   }
@@ -631,8 +636,10 @@ export class LocationsListComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe((res) => {
       if (res.data) {
         this.getAllLocations();
-        this.addEditCopyDeleteLocations = true;
         this.nextToken = '';
+        this.addEditCopyDeleteLocations = true;
+        this.isLoading$.next(true);
+        this.locationsCountUpdate$.next(res.successCount);
         this.locationService.fetchLocations$.next({ data: 'load' });
         this.toast.show({
           text: 'Locations uploaded successfully!',

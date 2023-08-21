@@ -70,7 +70,6 @@ import { UsersService } from '../../user-management/services/users.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
 import { ShiftService } from '../../master-configurations/shifts/services/shift.service';
-import { CommonService } from 'src/app/shared/services/common.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ScheduleConfigurationService } from 'src/app/forms/services/schedule.service';
 
@@ -143,7 +142,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       visible: true
     },
     {
-      id: 'schedule',
+      id: 'scheduleType',
       displayName: 'Schedule',
       type: 'string',
       controlType: 'button',
@@ -269,6 +268,7 @@ export class FormsComponent implements OnInit, OnDestroy {
   private _users$: Observable<UserDetails[]>;
   private onDestroy$ = new Subject();
   private scheduleConfigEvent: Subscription;
+
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private loginService: LoginService,
@@ -385,6 +385,9 @@ export class FormsComponent implements OnInit, OnDestroy {
           );
         }
         this.initial.data = this.formattingForms(this.initial.data);
+        if (this.filter.assignedTo) {
+          this.initial.data = this.assingedToFilter(this.initial.data);
+        }
         this.skip = this.initial.data.length;
         return this.initial;
       })
@@ -409,7 +412,7 @@ export class FormsComponent implements OnInit, OnDestroy {
           filteredForms = forms.data
             .filter(
               (form: ScheduleFormDetail) =>
-                !form.schedule || form.schedule === 'Ad=Hoc'
+                !form.schedule || form.schedule === 'Ad-Hoc'
             )
             .map((item) => {
               item.schedule = '';
@@ -488,6 +491,12 @@ export class FormsComponent implements OnInit, OnDestroy {
     });
   }
 
+  assingedToFilter(forms) {
+    return forms.filter((form) =>
+      this.filter.assignedTo.includes(form.assigneeToEmail)
+    );
+  }
+
   getFormsList() {
     const obj = {
       next: this.nextToken,
@@ -528,7 +537,7 @@ export class FormsComponent implements OnInit, OnDestroy {
 
     const activeShifts = this.prepareActiveShifts(row);
     switch (columnId) {
-      case 'schedule':
+      case 'scheduleType':
         if (!row.schedule) {
           this.openScheduleConfigHandler({ ...row, shifts: activeShifts });
         } else {
@@ -587,7 +596,7 @@ export class FormsComponent implements OnInit, OnDestroy {
         condition: {
           operand: this.placeHolder,
           operation: 'isFalsy',
-          fieldName: 'schedule'
+          fieldName: 'scheduleType'
         }
       });
       menuActions.push({
@@ -596,7 +605,7 @@ export class FormsComponent implements OnInit, OnDestroy {
         condition: {
           operand: this.placeHolder,
           operation: 'isTruthy',
-          fieldName: 'schedule'
+          fieldName: 'scheduleType'
         }
       });
     } else {

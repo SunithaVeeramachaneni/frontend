@@ -5,7 +5,9 @@ import {
   Input,
   OnInit,
   Output,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  ViewChild,
+  ElementRef
 } from '@angular/core';
 import {
   FormBuilder,
@@ -17,6 +19,7 @@ import { Observable } from 'rxjs';
 import { ValidationError } from 'src/app/interfaces';
 import { LocationService } from '../services/location.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
+import { FormValidationUtil } from 'src/app/shared/utils/formValidationUtil';
 
 @Component({
   selector: 'app-add-edit-location',
@@ -25,6 +28,8 @@ import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-valid
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddEditLocationComponent implements OnInit {
+  @ViewChild('searchInput', { static: false })
+  searchInput: ElementRef<HTMLInputElement> = null;
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Output() createdLocationData: EventEmitter<any> = new EventEmitter();
   @Input() allPlants: any[];
@@ -37,8 +42,8 @@ export class AddEditLocationComponent implements OnInit {
     return this._locations;
   }
 
-  @Input() set locationEditData(data) {
-    this.locEditData = data;
+  @Input() set locationEditData(location) {
+    this.locEditData = location?.locationData;
     if (!this.locEditData) {
       this.locationStatus = 'add';
       this.locationTitle = 'Create Location';
@@ -87,7 +92,8 @@ export class AddEditLocationComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private locationService: LocationService
+    private locationService: LocationService,
+    private formValidationUtil: FormValidationUtil
   ) {}
 
   ngOnInit(): void {
@@ -104,7 +110,7 @@ export class AddEditLocationComponent implements OnInit {
         WhiteSpaceValidator.trimWhiteSpace
       ]),
       model: '',
-      description: '',
+      description: new FormControl('', [WhiteSpaceValidator.trimWhiteSpace]),
       parentId: '',
       plantsID: new FormControl('', [Validators.required])
     });
@@ -153,6 +159,7 @@ export class AddEditLocationComponent implements OnInit {
             status: this.locationStatus,
             data: res
           });
+          this.resetSearchInput();
           this.locationForm.reset();
           this.slideInOut.emit('out');
         });
@@ -168,6 +175,7 @@ export class AddEditLocationComponent implements OnInit {
             status: this.locationStatus,
             data: res
           });
+          this.resetSearchInput();
           this.locationForm.reset();
           this.slideInOut.emit('out');
         });
@@ -229,23 +237,24 @@ export class AddEditLocationComponent implements OnInit {
   }
 
   cancel() {
+    this.resetSearchInput();
     this.locationForm.reset();
     this.slideInOut.emit('out');
     this.allParentsData = this.parentInformation;
   }
 
   processValidationErrors(controlName: string): boolean {
-    const touched = this.locationForm.get(controlName).touched;
-    const errors = this.locationForm.get(controlName).errors;
-    this.errors[controlName] = null;
-    if (touched && errors) {
-      Object.keys(errors).forEach((messageKey) => {
-        this.errors[controlName] = {
-          name: messageKey,
-          length: errors[messageKey]?.requiredLength
-        };
-      });
+    return this.formValidationUtil.processValidationErrors(
+      controlName,
+      this.locationForm,
+      this.errors
+    );
+  }
+
+  private resetSearchInput(): void {
+    if (this.searchInput?.nativeElement) {
+      this.searchInput.nativeElement.value = '';
     }
-    return !touched || this.errors[controlName] === null ? false : true;
+    this.allPlantsData = this.plantInformation;
   }
 }

@@ -4,26 +4,25 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class CategoryService {
-
   private deleteFiles = [];
 
-  constructor() { }
+  constructor() {}
 
   setDeleteFiles = (file: string) => {
     if (file && !this.deleteFiles.includes(file)) {
       this.deleteFiles = [...this.deleteFiles, file];
     }
-  }
+  };
 
-  getDeleteFiles = () => {
-    return this.deleteFiles;
-  }
+  getDeleteFiles = () => this.deleteFiles;
 
   removeDeleteFiles = (file: string) => {
-    this.deleteFiles = this.deleteFiles.filter(deleteFile => deleteFile !== file);
-  }
+    this.deleteFiles = this.deleteFiles.filter(
+      (deleteFile) => deleteFile !== file
+    );
+  };
 
   resetDeleteFiles = () => {
     this.deleteFiles = [];
-  }
+  };
 }

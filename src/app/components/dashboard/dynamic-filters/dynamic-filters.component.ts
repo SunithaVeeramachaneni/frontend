@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/dot-notation */
 import {
   Component,
   Input,
@@ -14,7 +15,7 @@ import {
   FormGroup,
   Validators
 } from '@angular/forms';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { TableColumn } from 'src/app/interfaces';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';

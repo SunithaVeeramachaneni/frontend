@@ -58,6 +58,7 @@ export class AffectedFormTemplateSliderComponent
   plantsObject: { [key: string]: PlantsResponse } = {};
   nextToken = '';
   fetchType = 'load';
+  archived = 'Archived';
   skip = 0;
   limit = graphQLDefaultLimit;
   searchForm = new FormControl('');
@@ -121,7 +122,7 @@ export class AffectedFormTemplateSliderComponent
       hasPostTextImage: false
     },
     {
-      id: 'formStatus',
+      id: 'displayFormStatus',
       displayName: 'Status',
       type: 'string',
       controlType: 'string',
@@ -180,6 +181,10 @@ export class AffectedFormTemplateSliderComponent
       },
       published: {
         'background-color': '#2C9E53',
+        color: '#FFFFFF'
+      },
+      archived: {
+        'background-color': '#9E9E9E',
         color: '#FFFFFF'
       }
     }
@@ -264,6 +269,8 @@ export class AffectedFormTemplateSliderComponent
           rows.map((item) => {
             item.plant = '';
             if (item?.plantId) item.plant = this.plantsObject[item.plantId];
+            if (item.isArchived) item.displayFormStatus = this.archived;
+            else item.displayFormStatus = item.formStatus;
             item.preTextImage = {
               image: item?.formLogo,
               style: {
@@ -304,6 +311,7 @@ export class AffectedFormTemplateSliderComponent
   };
 
   cellClickActionHandler(event) {
+    if (event.row.isArchived) return;
     this.cancelForm();
     this.affectedFormDetail.emit(event.row);
   }

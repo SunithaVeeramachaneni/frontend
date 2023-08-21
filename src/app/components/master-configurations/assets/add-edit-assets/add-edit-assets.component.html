@@ -89,6 +89,19 @@
             formControlName="model"
             autocomplete="off"
           />
+          <mat-error
+            id="addEditAssetsModelError"
+            *ngIf="processValidationErrors('model')"
+            class="m-t-5 error-fields"
+          >
+            {{
+              errors.model.name
+                | translate
+                  : {
+                      name: 'model' | translate
+                    }
+            }}
+          </mat-error>
         </mat-form-field>
       </p>
       <p class="m-0">
@@ -103,6 +116,19 @@
             formControlName="description"
           >
           </textarea>
+          <mat-error
+            id="addEditAssetsDescriptionError"
+            *ngIf="processValidationErrors('description')"
+            class="m-t-5 error-fields"
+          >
+            {{
+              errors.description.name
+                | translate
+                  : {
+                      name: 'description' | translate
+                    }
+            }}
+          </mat-error>
         </mat-form-field>
       </p>
       <p class="m-0 select-field">
@@ -123,6 +149,7 @@
               class="searchable-input"
               [placeholder]="'searchId' | translate"
               (keyup)="onKeyPlant($event)"
+              #searchInput
             />
             <div class="scrollable-area">
               <mat-option

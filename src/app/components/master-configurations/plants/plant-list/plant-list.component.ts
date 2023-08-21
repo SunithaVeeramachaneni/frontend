@@ -34,7 +34,6 @@ import {
   UserInfo
 } from 'src/app/interfaces';
 import { ToastService } from 'src/app/shared/toast';
-import { downloadFile } from 'src/app/shared/utils/fileUtils';
 import { LoginService } from 'src/app/components/login/services/login.service';
 import { PlantService } from '../services/plant.service';
 import { slideInOut } from 'src/app/animations';
@@ -498,7 +497,7 @@ export class PlantListComponent implements OnInit, OnDestroy {
   rowLevelActionHandler = ({ data, action }): void => {
     switch (action) {
       case 'edit':
-        this.plantEditData = { ...data };
+        this.plantEditData = { plantData: data };
         this.plantAddOrEditOpenState = 'in';
         break;
       case 'delete':
@@ -557,7 +556,7 @@ export class PlantListComponent implements OnInit, OnDestroy {
   onClosePlantDetailedView(event) {
     this.openPlantDetailedView = event.status;
     if (event.data !== '') {
-      this.plantEditData = event.data;
+      this.plantEditData = { plantData: event.data };
       this.plantAddOrEditOpenState = 'in';
     }
   }

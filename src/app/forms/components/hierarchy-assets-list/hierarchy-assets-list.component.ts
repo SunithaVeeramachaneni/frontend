@@ -56,7 +56,9 @@ export class HierarchyAssetsListComponent implements OnInit {
     this.filteredOptions$ = this.searchMasterData.valueChanges.pipe(
       debounceTime(500),
       distinctUntilChanged(),
-      map((searchTerm: string) => this.filterList(searchTerm.trim() || ''))
+      map((searchTerm: string) =>
+        this.filterList(searchTerm.trim()?.toLowerCase() || '')
+      )
     );
   }
 
@@ -117,8 +119,9 @@ export class HierarchyAssetsListComponent implements OnInit {
 
     this.filteredList = this.selectedLocationHierarchyFlatList.filter(
       (node) =>
-        node.name.toLowerCase().includes(searchInput.toLowerCase()) ||
-        node?.nodeDescription.toLowerCase().includes(searchInput.toLowerCase())
+        node.name.toLowerCase().includes(searchInput) ||
+        node?.nodeDescription.toLowerCase().includes(searchInput) ||
+        node.nodeId.toLowerCase().includes(searchInput)
     );
     return this.filteredList.length ? this.filteredList : ['No Data'];
   };
@@ -134,8 +137,17 @@ export class HierarchyAssetsListComponent implements OnInit {
   };
 
   submitSelectedElementsInHierarchy = () => {
+    const selectedFlatHierarchy =
+      this.assetHierarchyUtil.convertHierarchyToFlatList(
+        this.selectedHierarchyList,
+        0
+      );
+    const hierarchyListWithId = this.assetHierarchyUtil.addIdToExistingChild(
+      this.hierarchyList,
+      selectedFlatHierarchy
+    );
     const cleanedHierarchyList =
-      this.assetHierarchyUtil.cleanSelectedHierarchyList(this.hierarchyList);
+      this.assetHierarchyUtil.cleanSelectedHierarchyList(hierarchyListWithId);
     this.dialogRef.close(cleanedHierarchyList);
   };
 }

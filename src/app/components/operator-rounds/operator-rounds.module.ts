@@ -71,10 +71,7 @@ import { globalResponseReducer } from 'src/app/forms/state/global-responses.redu
 import { GlobalResponseEffects } from 'src/app/forms/state/global-response.effects';
 import { RoundObservationsComponent } from './round-observations/round-observations.component';
 import { RoundPlanEditViewComponent } from './round-plan-modal/round-plan-edit-view.component';
-import {
-  NgxMatDatetimePickerModule,
-  NgxMatTimepickerModule
-} from '@angular-material-components/datetime-picker';
+import { NgxMatDatetimePickerModule } from '@angular-material-components/datetime-picker';
 import { RoundPlanModalComponent } from './round-plan-modal/round-plan-modal.component';
 import { SchedulerModalComponent } from './scheduler-modal/scheduler-modal.component';
 import { TaskLevelSchedulerComponent } from './task-level-scheduler/task-level-scheduler.component';

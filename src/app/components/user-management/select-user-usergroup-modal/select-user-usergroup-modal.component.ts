@@ -1,25 +1,13 @@
-import {
-  Inject,
-  Component,
-  OnInit,
-  Input,
-  Output,
-  EventEmitter
-} from '@angular/core';
+import { Inject, Component, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
-  Count,
   LoadEvent,
   Role,
   SearchEvent,
   TableEvent,
-  User,
-  UserDetails,
   UserTable
 } from 'src/app/interfaces';
-import { UsersService } from '../services/users.service';
 import { RolesPermissionsService } from '../services/roles-permissions.service';
-import { CommonService } from 'src/app/shared/services/common.service';
 import { MatTableDataSource } from '@angular/material/table';
 import {
   Column,
@@ -48,9 +36,6 @@ import {
   tap
 } from 'rxjs/operators';
 import { UserGroupService } from '../services/user-group.service';
-import { AddEditUserGroupModalComponent } from '../add-edit-user-group-modal/add-edit-user-group-modal.component';
-import { ToastService } from 'src/app/shared/toast';
-import { data_test } from '../../spare-parts/spare-parts-data';
 import { DomSanitizer } from '@angular/platform-browser';
 @Component({
   selector: 'app-select-user-usergroup-modal',
@@ -172,17 +157,14 @@ export class SelectUserUsergroupModalComponent implements OnInit {
   type: string;
   fetchType: string;
   initialUsers = [];
-  disableBtn = true;
+  disableBtn: any;
   preselectedUsers = [];
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<SelectUserUsergroupModalComponent>,
-    private usersService: UsersService,
     private userGroupService: UserGroupService,
     private roleService: RolesPermissionsService,
-    private commonService: CommonService,
-    private toastService: ToastService,
     private sant: DomSanitizer
   ) {}
 
@@ -194,9 +176,11 @@ export class SelectUserUsergroupModalComponent implements OnInit {
       this.fetchUserGroupUsers$ = this.userGroupService.getAllUsersUserGroup(
         this.data?.userGroupId
       );
+      this.disableBtn = true;
     } else {
       this.type = 'create';
       this.fetchUserGroupUsers$ = of([]);
+      this.disableBtn = false;
     }
     this.searchUser = new FormControl('');
     this.searchUser.valueChanges
@@ -373,9 +357,10 @@ export class SelectUserUsergroupModalComponent implements OnInit {
           this.selectedUsers = [];
         }
         this.selectedUsersCount$ = of(this.selectedUsers?.length);
-        this.disableBtn =
-          this.areArraysEqual(this.initialUsers, this.selectedUsers) ||
-          this.selectedUsers?.length === 0;
+        this.disableBtn = this.areArraysEqual(
+          this.initialUsers,
+          this.selectedUsers
+        );
 
         break;
 
@@ -393,10 +378,10 @@ export class SelectUserUsergroupModalComponent implements OnInit {
           this.selectedUserCountUpdate$.next(1);
         }
         this.selectedUsersCount$ = of(this.selectedUsers?.length);
-        this.disableBtn =
-          this.areArraysEqual(this.initialUsers, this.selectedUsers) ||
-          this.selectedUsers?.length === 0;
-
+        this.disableBtn = this.areArraysEqual(
+          this.initialUsers,
+          this.selectedUsers
+        );
         break;
       default:
       // do nothing
@@ -447,11 +432,13 @@ export class SelectUserUsergroupModalComponent implements OnInit {
         failureResponse: {}
       })
       .subscribe((data) => {
-        this.userGroupService.addUpdateDeleteCopyUserGroup = true;
-        this.userGroupService.userGroupActions$.next({
-          action: 'add',
-          group: { ...data, usersCount: data?.users?.length }
-        });
+        if (Object.keys(data).length > 0) {
+          this.userGroupService.addUpdateDeleteCopyUserGroup = true;
+          this.userGroupService.userGroupActions$.next({
+            action: 'add',
+            group: { ...data, usersCount: data?.users?.length }
+          });
+        }
       });
     this.dialogRef.close({
       isBack: false

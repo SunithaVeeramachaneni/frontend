@@ -16,7 +16,6 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { getFormMetadata } from 'src/app/forms/state';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
-import { tap } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';
 import { FormService } from 'src/app/forms/services/form.service';
 
@@ -139,7 +138,8 @@ export class RoundPlanEditViewComponent implements OnInit, OnDestroy {
       height: '100%',
       width: '100%',
       panelClass: 'full-screen-modal',
-      data: this.formMetadata
+      data: this.formMetadata,
+      disableClose: true
     });
   }
 

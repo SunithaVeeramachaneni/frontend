@@ -7,7 +7,9 @@ import {
   OnInit,
   Output,
   ChangeDetectionStrategy,
-  OnDestroy
+  OnDestroy,
+  ViewChild,
+  ElementRef
 } from '@angular/core';
 import {
   FormBuilder,
@@ -20,6 +22,7 @@ import { ValidationError } from 'src/app/interfaces';
 import { AssetsService } from '../services/assets.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { takeUntil } from 'rxjs/operators';
+import { FormValidationUtil } from 'src/app/shared/utils/formValidationUtil';
 
 @Component({
   selector: 'app-add-edit-assets',
@@ -28,6 +31,8 @@ import { takeUntil } from 'rxjs/operators';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddEditAssetsComponent implements OnInit, OnDestroy {
+  @ViewChild('searchInput', { static: false })
+  searchInput: ElementRef<HTMLInputElement> = null;
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Output() createdAssetsData: EventEmitter<any> = new EventEmitter();
   @Input() allPlants: any[];
@@ -48,8 +53,8 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
   allLocations$: Observable<any>;
   private assetEditData = null;
   parentType: any = 'location';
-  @Input() set assetsEditData(data) {
-    this.assetEditData = data || null;
+  @Input() set assetsEditData(asset) {
+    this.assetEditData = asset?.assetData || null;
     if (this.assetEditData === null) {
       this.assetStatus = 'add';
       this.assetTitle = 'Create Asset';
@@ -110,7 +115,11 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
   private _allLocations;
   private onDestroy$ = new Subject();
 
-  constructor(private fb: FormBuilder, private assetService: AssetsService) {}
+  constructor(
+    private fb: FormBuilder,
+    private assetService: AssetsService,
+    private formValidationUtil: FormValidationUtil
+  ) {}
 
   ngOnInit(): void {
     this.assetForm = this.fb.group({
@@ -125,8 +134,8 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
         WhiteSpaceValidator.whiteSpace,
         WhiteSpaceValidator.trimWhiteSpace
       ]),
-      model: '',
-      description: '',
+      model: new FormControl('', [WhiteSpaceValidator.trimWhiteSpace]),
+      description: new FormControl('', [WhiteSpaceValidator.trimWhiteSpace]),
       parentType: 'location',
       parentId: '',
       locationId: '',
@@ -180,7 +189,9 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
     // if plant is selected already
     if (plantsID) {
       this.allParentsData = this.parentInformation.filter(
-        (parent) => parent.plantsID === plantsID
+        (parent) =>
+          parent?.plantsID === plantsID &&
+          (parentType === 'asset' ? parent?.parentType === parentType : true)
       );
       this.allParentsData$.next(this.allParentsData);
     }
@@ -199,7 +210,7 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
     if (!plantsID) {
       // set plant value if plant field was not selected first
       const parent = this.parentInformation.find((d) => d.id === parentId);
-      if (parent.plantsID) {
+      if (parent?.plantsID) {
         this.assetForm.get('plantsID').setValue(parent.plantsID);
       }
     }
@@ -213,6 +224,7 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
           status: this.assetStatus,
           data: res
         });
+        this.resetSearchInput();
         this.assetForm.reset();
         this.assetForm?.get('parentType').setValue('location');
         this.slideInOut.emit('out');
@@ -229,6 +241,7 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
             status: this.assetStatus,
             data: res
           });
+          this.resetSearchInput();
           this.assetForm.reset();
           this.assetForm?.get('parentType').setValue('location');
           this.slideInOut.emit('out');
@@ -255,6 +268,7 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
     } else {
       this.allParentsData = this.parentInformation;
       this.allParentsData = this.searchParent(value);
+      this.allParentsData$.next(this.allParentsData);
     }
   }
 
@@ -275,73 +289,67 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
 
     if (parentType === 'location') {
       if (plantsID) {
-        const filteredData = this.allParentsData.filter(
+        return this.allParentsData.filter(
           (parent) =>
             (parent.name &&
               parent.name.toLowerCase().indexOf(searchValue) !== -1) ||
             (parent.locationId &&
               parent.locationId.toLowerCase().indexOf(searchValue) !== -1)
         );
-        this.allParentsData$.next(filteredData);
-        return filteredData;
       } else {
-        const filteredData = this.parentInformation.filter(
+        return this.parentInformation.filter(
           (parent) =>
             (parent.name &&
               parent.name.toLowerCase().indexOf(searchValue) !== -1) ||
             (parent.locationId &&
               parent.locationId.toLowerCase().indexOf(searchValue) !== -1)
         );
-        this.allParentsData$.next(filteredData);
-        return filteredData;
       }
     } else {
       if (plantsID) {
-        const filteredData = this.allParentsData.filter(
+        return this.allParentsData.filter(
           (parent) =>
             (parent.name &&
               parent.name.toLowerCase().indexOf(searchValue) !== -1) ||
             (parent.assetsId &&
               parent.assetsId.toLowerCase().indexOf(searchValue) !== -1)
         );
-        this.allParentsData$.next(filteredData);
-        return filteredData;
       } else {
-        const filteredData = this.parentInformation.filter(
+        return this.parentInformation.filter(
           (parent) =>
             (parent.name &&
               parent.name.toLowerCase().indexOf(searchValue) !== -1) ||
             (parent.assetsId &&
               parent.assetsId.toLowerCase().indexOf(searchValue) !== -1)
         );
-        this.allParentsData$.next(filteredData);
-        return filteredData;
       }
     }
   }
 
   cancel() {
+    this.resetSearchInput();
     this.assetForm.reset();
+    this.assetForm?.get('parentType').setValue('location');
     this.slideInOut.emit('out');
   }
 
   processValidationErrors(controlName: string): boolean {
-    const touched = this.assetForm.get(controlName).touched;
-    const errors = this.assetForm.get(controlName).errors;
-    this.errors[controlName] = null;
-    if (touched && errors) {
-      Object.keys(errors).forEach((messageKey) => {
-        this.errors[controlName] = {
-          name: messageKey,
-          length: errors[messageKey]?.requiredLength
-        };
-      });
-    }
-    return !touched || this.errors[controlName] === null ? false : true;
+    return this.formValidationUtil.processValidationErrors(
+      controlName,
+      this.assetForm,
+      this.errors
+    );
   }
 
   ngOnDestroy(): void {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  private resetSearchInput(): void {
+    if (this.searchInput?.nativeElement) {
+      this.searchInput.nativeElement.value = '';
+    }
+    this.allPlantsData = this.plantInformation;
   }
 }

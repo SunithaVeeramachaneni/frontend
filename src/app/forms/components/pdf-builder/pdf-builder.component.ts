@@ -128,6 +128,7 @@ export class PDFBuilderComponent implements OnInit, OnDestroy {
     this.authoredFormDetail$ = this.store.select(getFormDetails).pipe(
       tap((formDetails) => {
         const { formListDynamoDBVersion } = formDetails;
+        this.formStatus = formDetails.formStatus;
         this.formListVersion = formListDynamoDBVersion;
       })
     );

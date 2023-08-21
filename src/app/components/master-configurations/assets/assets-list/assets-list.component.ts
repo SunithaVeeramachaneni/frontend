@@ -420,8 +420,8 @@ export class AssetsListComponent implements OnInit, OnDestroy {
   }
 
   getAssets() {
-    return this.assetService
-      .getAssetsList$(
+    return (
+      this.assetService.getAssetsList$(
         {
           next: this.nextToken,
           limit: this.limit,
@@ -429,21 +429,21 @@ export class AssetsListComponent implements OnInit, OnDestroy {
           fetchType: this.fetchType
         },
         this.filter
-      )
-      .pipe(
-        map(({ count, rows, next }) => {
-          this.nextToken = next;
-          if (count !== undefined) {
-            this.reloadAssetCount(count);
-          }
-          this.isLoading$.next(false);
-          return rows;
-        }),
-        catchError(() => {
-          this.isLoading$.next(false);
-          return of([]);
-        })
-      );
+      ) as Observable<any>
+    ).pipe(
+      map(({ count, rows, next }) => {
+        this.nextToken = next;
+        if (count !== undefined) {
+          this.reloadAssetCount(count);
+        }
+        this.isLoading$.next(false);
+        return rows;
+      }),
+      catchError(() => {
+        this.isLoading$.next(false);
+        return of([]);
+      })
+    );
   }
 
   addOrUpdateAssets(assetData) {
@@ -502,7 +502,7 @@ export class AssetsListComponent implements OnInit, OnDestroy {
   rowLevelActionHandler = ({ data, action }): void => {
     switch (action) {
       case 'edit':
-        this.assetsEditData = { ...data };
+        this.assetsEditData = { assetData: data };
         this.assetsAddOrEditOpenState = 'in';
         break;
       case 'delete':
@@ -518,9 +518,10 @@ export class AssetsListComponent implements OnInit, OnDestroy {
     const { columnId, row } = event;
     switch (columnId) {
       case 'name':
+      case 'plant':
       case 'description':
       case 'model':
-      case 'parentId':
+      case 'parent':
         this.showAssetDetail(row);
         break;
       default:
@@ -569,7 +570,7 @@ export class AssetsListComponent implements OnInit, OnDestroy {
   onCloseAssetsDetailedView(event) {
     this.openAssetsDetailedView = event.status;
     if (event.data !== '') {
-      this.assetsEditData = event.data;
+      this.assetsEditData = { assetData: event.data };
       this.assetsAddOrEditOpenState = 'in';
     }
   }
@@ -587,8 +588,10 @@ export class AssetsListComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe((res) => {
       if (res.data) {
         this.getAllAssets();
-        this.addEditCopyDeleteAssets = true;
         this.nextToken = '';
+        this.addEditCopyDeleteAssets = true;
+        this.isLoading$.next(true);
+        this.assetsCountUpdate$.next(res.successCount);
         this.assetService.fetchAssets$.next({ data: 'load' });
         this.toast.show({
           text: 'Asset uploaded successfully!',

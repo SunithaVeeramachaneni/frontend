@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/member-ordering */
 import { ChangeDetectionStrategy, Component, HostBinding } from '@angular/core';
 import { DateAdapter } from '@angular/material/core';
 import { MatDateRangePicker } from '@angular/material/datepicker';
@@ -76,7 +77,7 @@ export class CustomRangePanelComponent<D> {
     const month = this.dateAdapter.getMonth(forDay);
     const start = this.dateAdapter.createDate(year, month, 1);
     if (day === 3) {
-      let endDate: Date | D = addMonths(start as unknown as number, month);
+      let endDate: Date | D = addMonths(start as unknown as number, 3);
       endDate = subDays(endDate, 1) as unknown as D;
       return [start, endDate];
     } else {

@@ -204,10 +204,7 @@
           <div class="scroll-device-content m-0 p-0">
             <div *ngFor="let obj of tabs; let i = index">
               <ul class="preview-steps-title">
-                <li
-                  class="text-left"
-                  style="text-align: left; display: flex; height: 25px"
-                >
+                <li class="text-left tabs-list">
                   <button *ngIf="i !== 0" class="button-increment float-left">
                     {{ i }}
                   </button>
@@ -220,10 +217,7 @@
                     </div>
                   </div>
                 </li>
-                <hr
-                  *ngIf="i !== 0"
-                  style="margin-left: 30px; border: 1px solid #cccccc"
-                />
+                <hr *ngIf="i !== 0" class="hr-line" />
               </ul>
             </div>
           </div>

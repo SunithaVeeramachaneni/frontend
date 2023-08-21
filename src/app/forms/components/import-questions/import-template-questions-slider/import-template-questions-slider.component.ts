@@ -9,8 +9,8 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { cloneDeep, isEqual } from 'lodash-es';
-import { BehaviorSubject, Observable, Subject, Subscription, of } from 'rxjs';
+import { isEqual } from 'lodash-es';
+import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -28,7 +28,7 @@ import { SectionQuestions } from 'src/app/interfaces';
 import { AddPageOrSelectExistingPageModalComponent } from '../add-page-or-select-existing-page-modal/add-page-or-select-existing-page-modal.component';
 import { FormControl } from '@angular/forms';
 import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
-import { updateForm } from 'src/app/forms/state/builder/builder.actions';
+import { ToastService } from 'src/app/shared/toast/toast.service';
 
 @Component({
   selector: 'app-import-template-questions-slider',
@@ -47,6 +47,7 @@ export class ImportTemplateQuestionsSliderComponent
   @Input() allTemplates;
 
   @Output() cancelSliderEvent: EventEmitter<boolean> = new EventEmitter();
+  @Output() backEvent: EventEmitter<boolean> = new EventEmitter();
   sectionCheckedCount = 0;
   importSectionQuestions: SectionQuestions[] = [];
   sectionIndexes$: Observable<any>;
@@ -69,7 +70,8 @@ export class ImportTemplateQuestionsSliderComponent
     private modal: MatDialog,
     private formConfigurationService: FormConfigurationService,
     private raceDynamicFormService: RaceDynamicFormService,
-    private store: Store<State>
+    private store: Store<State>,
+    private readonly toast: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -365,11 +367,19 @@ export class ImportTemplateQuestionsSliderComponent
           });
         });
       this.cancelSliderEvent.emit(false);
+      this.toast.show({
+        text: 'Questions Imported successfully!',
+        type: 'success'
+      });
     });
   }
 
   cancel() {
     this.cancelSliderEvent.emit(false);
+  }
+
+  back() {
+    this.backEvent.emit(false);
   }
 
   compareFn(option1: any, option2: any) {

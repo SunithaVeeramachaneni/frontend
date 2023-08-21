@@ -3,7 +3,12 @@
 import { Injectable } from '@angular/core';
 import { of, ReplaySubject } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { LoadEvent, SearchEvent, TableEvent } from '../../../../interfaces';
+import {
+  ErrorInfo,
+  LoadEvent,
+  SearchEvent,
+  TableEvent
+} from '../../../../interfaces';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
 import {
@@ -44,20 +49,28 @@ export class ShiftService {
       (['infiniteScroll'].includes(queryParams.fetchType) &&
         queryParams.next !== null)
     ) {
-      const params: URLSearchParams = new URLSearchParams();
-      params.set('limit', `${queryParams.limit}`);
-      params.set('next', queryParams.next);
-      params.set('searchTerm', queryParams?.searchKey.toLocaleLowerCase());
-
-      const activeFilter = {
-        isActive: {
-          eq: filter?.isActive
-        }
+      const shiftListFilter = JSON.stringify(
+        Object.fromEntries(
+          Object.entries({
+            searchTerm: {
+              contains: queryParams?.searchKey.toLocaleLowerCase()
+            },
+            ...(filter?.isActive && { isActive: { eq: filter.isActive } })
+          }).filter(([_, v]) => Object.values(v).some((x) => x !== ''))
+        )
+      );
+      const apiUrl = environment.masterConfigApiUrl;
+      const urlString = 'shifts';
+      const info: ErrorInfo = { displayToast: true, failureResponse: {} };
+      const queryParameters = {
+        limit: `${queryParams.limit}`,
+        next: queryParams.next,
+        ...(Object.keys(shiftListFilter).length > 0 && {
+          filter: shiftListFilter
+        })
       };
-      params.set('filter', JSON.stringify(activeFilter));
-
       return this._appService
-        ._getResp(environment.masterConfigApiUrl, 'shifts?' + params.toString())
+        ._getResp(apiUrl, urlString, info, queryParameters)
         .pipe(
           map((res) => {
             res.startAndEndTime = `${res.startTime} - ${res.endTime}`;

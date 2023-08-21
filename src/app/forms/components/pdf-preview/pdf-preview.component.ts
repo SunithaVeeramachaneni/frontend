@@ -34,18 +34,16 @@ export class PDFPreviewComponent implements OnInit {
 
   ngOnInit(): void {
     const selectedForm = this.data.selectedForm;
-    const roundPlanId = selectedForm.id;
-    const roundId = selectedForm.roundId;
     const moduleName = this.data.moduleName;
 
     const info: ErrorInfo = {
-      displayToast: true,
+      displayToast: false,
       failureResponse: 'throwError'
     };
 
     if (moduleName === 'RDF') {
       this.rdfService
-        .downloadAttachment$(roundPlanId, selectedForm.inspectionId, info)
+        .downloadAttachment$(selectedForm.formId, selectedForm.id, info)
         .subscribe(
           (data) => {
             const blob = new Blob([data], { type: 'application/pdf' });
@@ -65,14 +63,14 @@ export class PDFPreviewComponent implements OnInit {
             this.downloadInProgress = false;
             this.cdrf.detectChanges();
             this.toast.show({
-              text: 'Error occured while generating PDF!',
+              text: `Error occured while generating PDF, ${err.message}`,
               type: 'warning'
             });
           }
         );
     } else {
       this.operatorRoundsService
-        .downloadAttachment$(roundPlanId, roundId, info)
+        .downloadAttachment$(selectedForm.roundPlanId, selectedForm.id, info)
         .subscribe(
           (data) => {
             const blob = new Blob([data], { type: 'application/pdf' });
@@ -92,7 +90,7 @@ export class PDFPreviewComponent implements OnInit {
             this.downloadInProgress = false;
             this.cdrf.detectChanges();
             this.toast.show({
-              text: 'Error occured while generating PDF!',
+              text: `Error occured while generating PDF, ${err.message}`,
               type: 'warning'
             });
           }

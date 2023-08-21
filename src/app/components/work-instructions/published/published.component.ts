@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { Component, OnInit, ViewChild } from '@angular/core';
 import Swal from 'sweetalert2';
 import { InstructionService } from '../services/instruction.service';

@@ -361,11 +361,11 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     const reader = new FileReader();
     const file: File = files[0];
     const size = file.size;
-    const maxSize = 400000;
+    const maxSize = 180000;
     if (size > maxSize) {
       this.toastService.show({
         type: 'warning',
-        text: 'Please select file less than 400KB'
+        text: 'Please select file less than 175KB'
       });
       return;
     }
@@ -569,9 +569,12 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   createNotification() {
     this.isCreateNotification = true;
     if (this.data.category !== this.placeholder) {
-      const { allData, ...rest } = this.data;
+      const { id, issueData, createdBy, category } = this.data;
       this.observations
-        .createNotification(rest, this.moduleName)
+        .createNotification(
+          { id, issueData, createdBy, category },
+          this.moduleName
+        )
         .subscribe((value) => {
           if (Object.keys(value).length) {
             const { notificationInfo } = value;

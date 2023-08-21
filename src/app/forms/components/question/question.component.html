@@ -110,7 +110,7 @@
               (responseTypeCloseEvent)="responseTypeCloseEventHandler($event)"
               (setQuestionValue)="setQuestionValue($event)"
               [fieldTypes]="fieldTypes"
-              [question]="question"
+              [question]="questionForm.value"
               [isPreviewActive]="isPreviewActive"
             ></app-response-type>
           </ng-container>
@@ -129,9 +129,10 @@
       <div
         class="dis-flex justify-content"
         *ngIf="
+          (!isAskQuestion && questionForm.get('isOpen').value) ||
           (isAskQuestion &&
-            questionForm.get('id').value === isAskQuestionFocusId) ||
-          (!isAskQuestion && questionForm.get('isOpen').value)
+            showAskQuestionFeatures &&
+            questionForm.get('id').value === isAskQuestionFocusId)
         "
       >
         <div class="input-fields">
@@ -228,6 +229,7 @@
 
               <span
                 *ngIf="
+                  !isAskQuestion &&
                   questionForm.get('fieldType').value !== 'LF' &&
                   questionForm.get('fieldType').value !== 'HL' &&
                   questionForm.get('fieldType').value !== 'INST'
@@ -264,13 +266,17 @@
                         <mat-icon>search</mat-icon>
                         <input
                           type="text"
-                          (keyup)="onKey($event)"
+                          (input)="onKey($event)"
                           placeholder="Search.."
                           class="searchInput"
                         />
                       </span>
 
-                      <span class="noneOption">None</span>
+                      <span
+                        class="noneOption"
+                        (click)="uomChanged({ symbol: 'None' })"
+                        >None</span
+                      >
                       <span
                         *ngFor="let uom of unitOfMeasurementsAvailable"
                         class="uomOption"
@@ -439,7 +445,7 @@
               </span>
               <app-response-type-side-drawer
                 (rangeSelectionHandler)="rangeSelectionHandler($event)"
-                [question]="question"
+                [question]="questionForm.value"
                 [formId]="formId"
                 (setSliderValues)="questionForm.get('value').setValue($event)"
               ></app-response-type-side-drawer>
@@ -509,7 +515,7 @@
 
   <div *ngIf="isHyperLinkOpen">
     <app-hyperlink-side-drawer
-      [questionToBeHyperlinked]="question"
+      [questionToBeHyperlinked]="questionForm.value"
       (hyperlinkHandler)="handlerHyperlink($event)"
     ></app-hyperlink-side-drawer>
   </div>
