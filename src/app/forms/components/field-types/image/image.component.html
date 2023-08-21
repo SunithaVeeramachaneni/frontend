@@ -2,12 +2,14 @@
   class="width-50 bg-white dis-flex image-container"
   *ngIf="question.get('value').value !== ''"
 >
-  <img
-    id="InsertImage"
-    class="insert-image"
-    [src]="question.get('value').value.objectURL"
-    alt="image"
-  />
+  <div class="image-div">
+    <img
+      id="InsertImage"
+      class="insert-image"
+      [src]="question.get('value').value.objectURL"
+      alt="image"
+    />
+  </div>
   <div>
     <span id="ImageQuestionName" class="image-text">
       {{ question.get('value').value.name }}

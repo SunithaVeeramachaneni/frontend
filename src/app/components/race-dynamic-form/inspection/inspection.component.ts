@@ -819,7 +819,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
         },
         (err) => {
           this.toastService.show({
-            text: 'Error occured while generating PDF!',
+            text: `Error occured while generating PDF, ${err.message}`,
             type: 'warning'
           });
         }

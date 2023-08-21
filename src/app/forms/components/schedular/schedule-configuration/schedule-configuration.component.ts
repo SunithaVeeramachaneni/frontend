@@ -118,6 +118,7 @@ export class ScheduleConfigurationComponent
   schedulerConfigForm: FormGroup;
   currentDate: Date;
   startDatePickerMinDate: Date;
+  scheduleEndOnPickerMinDate: Date;
   scheduleByDates: ScheduleByDate[];
   disableSchedule = false;
   roundPlanScheduleConfigurations: RoundPlanScheduleConfigurationObj[];
@@ -247,6 +248,10 @@ export class ScheduleConfigurationComponent
   }
 
   ngOnInit(): void {
+    this.scheduleConfigurationService.onSlotChanged$.subscribe((value) =>
+      this.markSlotPristine(value)
+    );
+
     if (this.data) {
       const { formDetail, roundPlanDetail, moduleName, assigneeDetails } =
         this.data;
@@ -675,6 +680,7 @@ export class ScheduleConfigurationComponent
 
     this.currentDate = new Date();
     this.startDatePickerMinDate = new Date();
+    this.scheduleEndOnPickerMinDate = new Date();
     this.setMonthlyDaysOfWeek();
     this.schedulerConfigForm.markAsDirty();
   }
@@ -926,6 +932,7 @@ export class ScheduleConfigurationComponent
               scheduleByDates
             } = config;
             this.startDatePickerMinDate = new Date(startDate);
+            this.scheduleEndOnPickerMinDate = new Date(scheduleEndOn);
             config = {
               ...config,
               startDate: localToTimezoneDate(
@@ -1369,6 +1376,7 @@ export class ScheduleConfigurationComponent
       this.shiftDetails = shiftDefaultPayload;
       this.shiftSlots.push(this.addShiftDetails(true));
     }
+    this.scheduleConfigurationService.onSlotChanged$.next(true);
   }
 
   onUpdateShiftSlot(event: {
@@ -1400,6 +1408,8 @@ export class ScheduleConfigurationComponent
     this.onDestroy$.complete();
     this.shiftDetails = {};
     this.shiftApiResponse = null;
+    this.scheduleConfigurationService.onSlotChanged$.next();
+    this.scheduleConfigurationService.onSlotChanged$.complete();
   }
 
   private prepareShiftDetailsPayload(shiftDetails, type: '24' | '12' = '24') {
@@ -1428,5 +1438,14 @@ export class ScheduleConfigurationComponent
       }
     );
     return payload;
+  }
+
+  private markSlotPristine(value = null): void {
+    const shiftSlots = this.schedulerConfigForm.get('shiftSlots');
+    const shiftsSelected = this.schedulerConfigForm.get('shiftsSelected');
+    if (value && (shiftSlots?.pristine || shiftsSelected?.pristine)) {
+      shiftSlots.markAsDirty();
+      shiftsSelected.markAsDirty();
+    }
   }
 }

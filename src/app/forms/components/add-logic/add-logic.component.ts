@@ -359,7 +359,7 @@ export class AddLogicComponent implements OnInit, OnDestroy {
       }
     }
 
-    const logicSymbol = this.fieldOperators.find(
+    const logicSymbol = this.fieldOperators?.find(
       (op) => op.code === logic.operator
     );
     if (logicSymbol) {
