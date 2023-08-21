@@ -88,38 +88,6 @@ export class CommonService {
     return preparedUUID?.slice(initialIndex, limit);
   }
 
-  removeDuplicateById(rows = []) {
-    const groupedRows = groupBy(rows, 'id');
-    const uniqueRows = [];
-
-    Object.values(groupedRows).forEach((value) => {
-      if (!value || value?.length === 0) {
-        return;
-      }
-
-      if (value?.length === 1) {
-        uniqueRows.push(value[0]);
-        return;
-      }
-
-      const hasCreatedAt = value?.every((s) => !isUndefined(s?.createdAt));
-      if (hasCreatedAt) {
-        const latestRecord = value.reduce((latest, current) =>
-          new Date(latest?.createdAt) < new Date(current?.createdAt)
-            ? latest
-            : current
-        );
-        uniqueRows.push(latestRecord);
-      } else {
-        const oldRecord = value.find((s) => !s?.createdAt);
-        if (oldRecord) uniqueRows.push(oldRecord);
-        else uniqueRows.push(value[0]);
-      }
-    });
-
-    return uniqueRows;
-  }
-
   static isValidJson(str: string) {
     try {
       JSON.parse(str);

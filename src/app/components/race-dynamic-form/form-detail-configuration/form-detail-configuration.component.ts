@@ -50,7 +50,6 @@ import { FormConfigurationService } from 'src/app/forms/services/form-configurat
 import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
 import { SaveTemplateContainerComponent } from '../save-template-container/save-template-container.component';
 import { RaceDynamicFormService } from '../services/rdf.service';
-import { CommonService } from 'src/app/shared/services/common.service';
 
 @Component({
   selector: 'app-form-detail-configuration',
@@ -105,8 +104,7 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
     private cdrf: ChangeDetectorRef,
     private formConfigurationService: FormConfigurationService,
     private loginService: LoginService,
-    private rdfService: RaceDynamicFormService,
-    private readonly commonService: CommonService
+    private rdfService: RaceDynamicFormService
   ) {}
 
   ngOnInit(): void {
@@ -221,6 +219,7 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
           formMetadata,
           formStatus,
           counter,
+          pages,
           authoredFormDetailId,
           authoredFormDetailVersion,
           isFormDetailPublished,
@@ -233,15 +232,7 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
           skipAuthoredDetail
         } = formDetails;
 
-        let { pages } = formDetails;
-
-        const { formData, isDuplicateExist } =
-          this.removeDuplicateEntriesFromFormData(pages);
-        if (isDuplicateExist) {
-          pages = formData;
-        }
-
-        if (skipAuthoredDetail && !isDuplicateExist) {
+        if (skipAuthoredDetail) {
           return;
         }
         this.formListVersion = formListDynamoDBVersion;
@@ -612,44 +603,5 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
     }
     this.onDestroy$.next();
     this.onDestroy$.complete();
-  }
-
-  private removeDuplicateEntriesFromFormData(formData) {
-    if (this.commonService.isJson(formData)) {
-      formData = JSON.parse(formData);
-    } else if (!formData) {
-      formData = [];
-    }
-
-    let isDuplicateExist = false;
-
-    if (formData?.length > 0) {
-      formData = formData?.map((form) => {
-        const page = { ...form };
-        if (page?.sections?.length > 0) {
-          const uniqueSectionsCount = uniqBy(page.sections, 'id')?.length || 0;
-          if (uniqueSectionsCount !== page.sections.length) {
-            const uniqueSections = this.commonService.removeDuplicateById(
-              page.sections
-            );
-            page.sections = uniqueSections;
-            isDuplicateExist = true;
-          }
-        }
-        if (page?.questions?.length > 0) {
-          const uniqueQuestionsCount =
-            uniqBy(page.questions, 'id')?.length || 0;
-          if (uniqueQuestionsCount !== page.questions.length) {
-            const uniqueQuestions = this.commonService.removeDuplicateById(
-              page.questions
-            );
-            page.questions = uniqueQuestions;
-            isDuplicateExist = true;
-          }
-        }
-        return page;
-      });
-    }
-    return { formData, isDuplicateExist };
   }
 }
