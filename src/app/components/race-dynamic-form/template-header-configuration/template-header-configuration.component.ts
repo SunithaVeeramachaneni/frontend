@@ -155,6 +155,7 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
     this.formMetadataSubscription = this.store
       .select(getFormMetadata)
       .subscribe((res) => {
+        console.log('res', res);
         this.headerDataForm.patchValue({
           name: res.name,
           description: res.description ? res.description : ''
@@ -290,6 +291,7 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
         UIFIELDTYPE: 'LF'
       })
     );
+    console.log('updatedAdditionalDetails', updatedAdditionalDetails);
     const newTags = [];
     this.tags.forEach((selectedTag) => {
       if (this.originalTags.indexOf(selectedTag) < 0) {
@@ -340,7 +342,8 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
           BuilderConfigurationActions.updateFormMetadata({
             formMetadata: {
               ...this.headerDataForm.value,
-              id: this.templateData.formMetadata.id
+              id: this.templateData.formMetadata.id,
+              additionalDetails: updatedAdditionalDetails
             },
             formStatus: this.hasFormChanges
               ? formConfigurationStatus.draft
@@ -360,7 +363,8 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
           BuilderConfigurationActions.updateTemplate({
             formMetadata: {
               ...this.headerDataForm.value,
-              id: this.templateData.formMetadata.id
+              id: this.templateData.formMetadata.id,
+              additionalDetails: updatedAdditionalDetails
             }
           })
         );
@@ -485,7 +489,7 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
 
   storeDetails(i) {
     this.operatorRoundService
-      .createAdditionalDetails$({ ...this.changedValues, updateType: 'add' })
+      .createAdditionalDetails$({ ...this.changedValues })
       .subscribe((response) => {
         if (response?.label) {
           this.toastService.show({
