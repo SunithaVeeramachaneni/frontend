@@ -53,6 +53,7 @@ import { SlideshowComponent } from 'src/app/shared/components/slideshow/slidesho
 import { MatDialog } from '@angular/material/dialog';
 import { Base64HelperService } from 'src/app/components/work-instructions/services/base64-helper.service';
 import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
+import { CommonService } from 'src/app/shared/services/common.service';
 @Component({
   selector: 'app-question',
   templateUrl: './question.component.html',
@@ -252,6 +253,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     private responseSetService: ResponseSetService,
     private toast: ToastService,
     private translate: TranslateService,
+    private readonly commonService: CommonService
   ) {}
 
   ngOnInit(): void {
@@ -732,7 +734,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
         break;
       case 'ask_question_create':
         let newQuestion = {
-          id: this.isEmbeddedForm ? `AQ_${Date.now()}` : `AQ_${uuidv4()}`,
+          id: this.commonService.generateUUID('AQ_'),
           sectionId: `AQ_${event.logic.id}`,
           name: '',
           fieldType: 'TF',

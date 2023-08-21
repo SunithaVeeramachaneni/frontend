@@ -29,7 +29,7 @@ import {
   tap
 } from 'rxjs/operators';
 
-import { isEqual } from 'lodash-es';
+import { isEqual, uniqBy } from 'lodash-es';
 import {
   FormMetadata,
   Page,
@@ -46,7 +46,8 @@ import {
   getIsFormCreated,
   getQuestionCounter,
   State,
-  getNodeWiseQuestionsCount
+  getNodeWiseQuestionsCount,
+  getSubFormPages
 } from 'src/app/forms/state/builder/builder-state.selectors';
 
 import {
@@ -65,6 +66,7 @@ import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { FormService } from 'src/app/forms/services/form.service';
 import { getSelectedHierarchyList } from 'src/app/forms/state';
 import { HierarchyModalComponent } from 'src/app/forms/components/hierarchy-modal/hierarchy-modal.component';
+import { CommonService } from 'src/app/shared/services/common.service';
 @Component({
   selector: 'app-round-plan-detail-configuration',
   templateUrl: './round-plan-detail-configuration.component.html',
@@ -133,7 +135,8 @@ export class RoundPlanDetailConfigurationComponent
     private dialog: MatDialog,
     private cdrf: ChangeDetectorRef,
     private operatorRoundsService: OperatorRoundsService,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private readonly commonService: CommonService
   ) {}
 
   ngOnInit(): void {
@@ -293,16 +296,23 @@ export class RoundPlanDetailConfigurationComponent
           skipAuthoredDetail
         } = formDetails;
 
-        if (skipAuthoredDetail) {
-          return;
-        }
-
-        const subFormsObj = {};
+        let subFormsObj = {};
         let formKeys = Object.keys(formDetails);
         formKeys = formKeys.filter((k) => k.startsWith('pages_'));
         formKeys.forEach((key) => {
           subFormsObj[key] = formDetails[key];
         });
+
+        const { subForms: updatedSubForms, isDuplicateExist } =
+          this.removeDuplicateEntriesFromFormData(subFormsObj);
+        if (isDuplicateExist) {
+          subFormsObj = updatedSubForms;
+        }
+
+        if (skipAuthoredDetail && !isDuplicateExist) {
+          return;
+        }
+
         this.formListVersion = formListDynamoDBVersion;
         this.formStatus = formStatus;
         this.formDetailPublishStatus = formDetailPublishStatus;
@@ -641,4 +651,52 @@ export class RoundPlanDetailConfigurationComponent
   goToPDFBuilderConfiguration = () => {
     this.gotoNextStep.emit();
   };
+
+  private removeDuplicateEntriesFromFormData(subForms) {
+    if (this.commonService.isJson(subForms)) {
+      subForms = JSON.parse(subForms);
+    } else if (!subForms) {
+      subForms = {};
+    }
+
+    let isDuplicateExist = false;
+    if (!subForms) {
+      return {
+        subForms,
+        isDuplicateExist
+      };
+    }
+
+    Object.entries(subForms).forEach(([key, formData]: any) => {
+      if (formData?.length > 0) {
+        subForms[key] = formData?.map((form) => {
+          const page = { ...form };
+          if (page?.sections?.length > 0) {
+            const uniqueSectionsCount =
+              uniqBy(page.sections, 'id')?.length || 0;
+            if (uniqueSectionsCount !== page.sections.length) {
+              const uniqueSections = this.commonService.removeDuplicateById(
+                page.sections
+              );
+              page.sections = uniqueSections;
+              isDuplicateExist = true;
+            }
+          }
+          if (page?.questions?.length > 0) {
+            const uniqueQuestionsCount =
+              uniqBy(page.questions, 'id')?.length || 0;
+            if (uniqueQuestionsCount !== page.questions.length) {
+              const uniqueQuestions = this.commonService.removeDuplicateById(
+                page.questions
+              );
+              page.questions = uniqueQuestions;
+              isDuplicateExist = true;
+            }
+          }
+          return page;
+        });
+      }
+    });
+    return { subForms, isDuplicateExist };
+  }
 }
