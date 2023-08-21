@@ -1,5 +1,6 @@
 <mat-checkbox
   [(ngModel)]="defaultDateChecked"
+  [disabled]="defaultDateChecked && !defaultTimeChecked"
   (change)="toggleChecked()"
   class="date-checkbox"
   id="DefaultDateCheck"
