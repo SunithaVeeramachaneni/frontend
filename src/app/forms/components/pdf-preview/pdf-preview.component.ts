@@ -37,7 +37,7 @@ export class PDFPreviewComponent implements OnInit {
     const moduleName = this.data.moduleName;
 
     const info: ErrorInfo = {
-      displayToast: true,
+      displayToast: false,
       failureResponse: 'throwError'
     };
 
@@ -63,7 +63,7 @@ export class PDFPreviewComponent implements OnInit {
             this.downloadInProgress = false;
             this.cdrf.detectChanges();
             this.toast.show({
-              text: 'Error occured while generating PDF!',
+              text: `Error occured while generating PDF, ${err.message}`,
               type: 'warning'
             });
           }
@@ -90,7 +90,7 @@ export class PDFPreviewComponent implements OnInit {
             this.downloadInProgress = false;
             this.cdrf.detectChanges();
             this.toast.show({
-              text: 'Error occured while generating PDF!',
+              text: `Error occured while generating PDF, ${err.message}`,
               type: 'warning'
             });
           }
