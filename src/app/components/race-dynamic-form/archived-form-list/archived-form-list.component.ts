@@ -529,6 +529,9 @@ export class ArchivedFormListComponent implements OnInit, OnDestroy {
                 action: 'delete',
                 form: updatedForm
               });
+              this.raceDynamicFormService
+                .deleteTemplateReferenceByFormId$(form.id)
+                .subscribe();
             });
         }
       }
