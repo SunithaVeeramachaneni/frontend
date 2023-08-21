@@ -169,7 +169,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
             if (formData?.length > 0) {
               subForms[key] = updatePagesBasedOnApiResponse(
                 state[key],
-                subForms[key]
+                formData[key]
               );
             }
           });
