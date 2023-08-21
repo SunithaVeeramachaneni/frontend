@@ -155,7 +155,6 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
     this.formMetadataSubscription = this.store
       .select(getFormMetadata)
       .subscribe((res) => {
-        console.log('res', res);
         this.headerDataForm.patchValue({
           name: res.name,
           description: res.description ? res.description : ''
@@ -291,7 +290,6 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
         UIFIELDTYPE: 'LF'
       })
     );
-    console.log('updatedAdditionalDetails', updatedAdditionalDetails);
     const newTags = [];
     this.tags.forEach((selectedTag) => {
       if (this.originalTags.indexOf(selectedTag) < 0) {
