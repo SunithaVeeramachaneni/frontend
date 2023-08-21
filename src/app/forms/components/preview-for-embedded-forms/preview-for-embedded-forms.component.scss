@@ -206,13 +206,15 @@
   }
 
   .image-field {
-    width: 205px;
-    height: 85px;
-    margin-left: 5px;
+    width: 93%;
+    height: auto;
+    margin-left: 10px;
+    margin-top: -10px;
+    margin-bottom: 10px;
   }
 
   .range-field {
-    width: 210px;
+    width: 95%;
     margin-top: -20px;
   }
 
@@ -275,11 +277,11 @@
 
   .slider-min-value {
     float: left;
-    margin: -15px 0 0 10px;
+    margin: -17px 0 0 10px;
   }
 
   .slider-max-value {
     float: right;
-    margin: -20px 10px 0 0;
+    margin: -17px 10px 0 0;
   }
 }
