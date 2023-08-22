@@ -328,7 +328,7 @@ export class UserGroupListComponent
       }
     );
     deleteUserGroupModalRef.afterClosed().subscribe((resp) => {
-      if (!resp) return;
+      if (resp === 'no') return;
       this.userGroupService.deleteUserGroup$(data.id).subscribe(() => {
         this.userGroupService.addUpdateDeleteCopyUserGroup = true;
         this.userGroupService.userGroupActions$.next({

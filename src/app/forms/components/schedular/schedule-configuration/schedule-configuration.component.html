@@ -258,7 +258,7 @@
                       matInput
                       [matDatepicker]="scheduleEndOn"
                       (dateChange)="updateDate($event, 'scheduleEndOn')"
-                      [min]="currentDate"
+                      [min]="scheduleEndOnPickerMinDate"
                       formControlName="scheduleEndOnPicker"
                       hidden
                     />
