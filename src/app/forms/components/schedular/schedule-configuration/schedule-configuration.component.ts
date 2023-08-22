@@ -248,9 +248,9 @@ export class ScheduleConfigurationComponent
   }
 
   ngOnInit(): void {
-    this.scheduleConfigurationService.onSlotChanged$.subscribe((value) =>
-      this.markSlotPristine(value)
-    );
+    this.scheduleConfigurationService.getSlotChanged().subscribe((value) => {
+      this.markSlotPristine(value);
+    });
 
     if (this.data) {
       const { formDetail, roundPlanDetail, moduleName, assigneeDetails } =
@@ -1376,7 +1376,7 @@ export class ScheduleConfigurationComponent
       this.shiftDetails = shiftDefaultPayload;
       this.shiftSlots.push(this.addShiftDetails(true));
     }
-    this.scheduleConfigurationService.onSlotChanged$.next(true);
+    this.scheduleConfigurationService.setSlotChanged(true);
   }
 
   onUpdateShiftSlot(event: {
@@ -1408,8 +1408,7 @@ export class ScheduleConfigurationComponent
     this.onDestroy$.complete();
     this.shiftDetails = {};
     this.shiftApiResponse = null;
-    this.scheduleConfigurationService.onSlotChanged$.next();
-    this.scheduleConfigurationService.onSlotChanged$.complete();
+    this.scheduleConfigurationService.setInitialSlotChanged();
   }
 
   private prepareShiftDetailsPayload(shiftDetails, type: '24' | '12' = '24') {
@@ -1441,8 +1440,8 @@ export class ScheduleConfigurationComponent
   }
 
   private markSlotPristine(value = null): void {
-    const shiftSlots = this.schedulerConfigForm.get('shiftSlots');
-    const shiftsSelected = this.schedulerConfigForm.get('shiftsSelected');
+    const shiftSlots = this.schedulerConfigForm?.get('shiftSlots');
+    const shiftsSelected = this.schedulerConfigForm?.get('shiftsSelected');
     if (value && (shiftSlots?.pristine || shiftsSelected?.pristine)) {
       shiftSlots.markAsDirty();
       shiftsSelected.markAsDirty();
