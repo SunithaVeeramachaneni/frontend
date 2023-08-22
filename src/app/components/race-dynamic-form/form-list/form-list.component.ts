@@ -321,6 +321,7 @@ export class FormListComponent implements OnInit, OnDestroy {
               ...omit(form, ['id', 'preTextImage']),
               name: createdForm.newName,
               formStatus: formConfigurationStatus.draft,
+              additionalDetails: JSON.parse(form.additionalDetails),
               isPublic: false
             })
             .subscribe((newRecord) => {
