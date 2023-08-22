@@ -479,7 +479,7 @@ export class BuilderComponent implements OnInit, OnDestroy {
     const newQuestionIds = {};
     for (const question of page.questions || []) {
       if (question.sectionId === section.id) {
-        newQuestionIds[question.id] = this.commonService.generateUUID('Q');
+        newQuestionIds[question.id] = `Q${uuidv4()}`;
         sectionQuestions[question.id] = 1;
         question.id = newQuestionIds[question.id];
         question.skipIdGeneration = true;

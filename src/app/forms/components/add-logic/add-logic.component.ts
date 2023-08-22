@@ -307,7 +307,7 @@ export class AddLogicComponent implements OnInit, OnDestroy {
     switch (type) {
       case 'add':
         const newQuestion = {
-          id: this.commonService.generateUUID('AQ_'),
+          id: `AQ_${uuidv4()}`,
           sectionId: `AQ_${logic.id}`,
           name: '',
           fieldType: 'TF',

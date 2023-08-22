@@ -311,7 +311,7 @@ export class FormConfigurationService {
       id:
         question?.id?.startsWith('TQ') || question?.id?.startsWith('AQ')
           ? question.id
-          : this.commonService.generateUUID('Q'),
+          : `Q${uuidv4()}`,
       sectionId,
       name: question ? question.name : '',
       fieldType: question ? question.fieldType : 'TF',

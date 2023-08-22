@@ -321,8 +321,8 @@ export class RoundPlanConfigurationService {
       id: question?.skipIdGeneration
         ? question?.id
         : isTemplate
-        ? this.commonService.generateUUID('TQ')
-        : this.commonService.generateUUID('Q'),
+        ? `TQ${uuidv4()}`
+        : `Q${uuidv4()}`,
       sectionId,
       name: question ? question.name : '',
       fieldType: question ? question.fieldType : 'TF',
