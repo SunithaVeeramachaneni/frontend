@@ -240,6 +240,7 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
         this.formDetailPublishStatus = formDetailPublishStatus;
         const { id: formListId } = formMetadata;
         this.isFormDetailPublished = isFormDetailPublished;
+        this.pages = pages;
 
         if (formListId) {
           if (authoredFormDetailId && authoredFormDetailId.length) {
