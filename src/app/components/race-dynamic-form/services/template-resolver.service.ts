@@ -41,9 +41,7 @@ export class TemplateResolverService {
           isPublic,
           formStatus,
           formType,
-          authoredFormTemplateDetails,
-          additionalDetails,
-          tags
+          authoredFormTemplateDetails
         } = form.rows[0];
         const { counter, pages } = authoredFormTemplateDetails[0];
 
@@ -54,11 +52,8 @@ export class TemplateResolverService {
           formLogo,
           isPublic,
           formStatus,
-          formType,
-          additionalDetails: JSON.parse(additionalDetails),
-          tags
+          formType
         };
-
         this.roundPlanResolverServive.getResponseTypeDetails(id);
 
         return {
