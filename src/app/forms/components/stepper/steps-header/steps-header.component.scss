@@ -13,7 +13,7 @@
       height: 15px;
       width: 15px;
       position: relative;
-      top: 1px;
+      top: 2px;
     }
 
     .back-text {
@@ -77,6 +77,10 @@
     }
   }
   &.current {
+    .title {
+      color: $blue-main;
+      font-weight: 500;
+    }
     .index span {
       color: $white;
     }
