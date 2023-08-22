@@ -294,16 +294,16 @@ export class RoundPlanDetailConfigurationComponent
           skipAuthoredDetail
         } = formDetails;
 
+        if (skipAuthoredDetail) {
+          return;
+        }
+
         const subFormsObj = {};
         let formKeys = Object.keys(formDetails);
         formKeys = formKeys.filter((k) => k.startsWith('pages_'));
         formKeys.forEach((key) => {
           subFormsObj[key] = formDetails[key];
         });
-
-        if (skipAuthoredDetail) {
-          return;
-        }
 
         this.formListVersion = formListDynamoDBVersion;
         this.formStatus = formStatus;
