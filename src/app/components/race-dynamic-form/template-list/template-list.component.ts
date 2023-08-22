@@ -475,6 +475,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
               ]),
               name: createdTemplate.newName,
               formStatus: formConfigurationStatus.draft,
+              additionalDetails: JSON.parse(template.additionalDetails),
               isPublic: false
             })
             .subscribe((newTemplate) => {
