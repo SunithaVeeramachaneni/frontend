@@ -106,101 +106,12 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   on(
     FormConfigurationApiActions.updateAuthoredFromDetailSuccess,
     RoundPlanConfigurationApiActions.updateAuthoredRoundPlanDetailSuccess,
-    (state, action): FormConfigurationState => {
-      const updatePagesBasedOnApiResponse = (statePages, pages) => {
-        const updatedPages = statePages?.map((page) => {
-          const obj = { ...page };
-          const idx = pages?.findIndex(
-            (updatedPage) => updatedPage?.position === obj?.position
-          );
-          if (idx !== -1) {
-            const currentPage = pages[idx];
-            if (currentPage) {
-              const updatedQuestions = obj?.questions?.map((question: any) => {
-                const foundQuestion = currentPage?.questions.find(
-                  (q) => q?.id === question?.id
-                );
-                if (foundQuestion) {
-                  question = {
-                    ...question,
-                    createdAt: foundQuestion?.createdAt ?? '',
-                    updatedAt: foundQuestion?.updatedAt ?? '',
-                    createdBy: foundQuestion?.createdBy ?? '',
-                    updatedBy: foundQuestion?.updatedBy ?? ''
-                  };
-                }
-                return question;
-              });
-              if (updatedQuestions.length > 0) {
-                obj.questions = updatedQuestions;
-              }
-              const updatedSections = obj?.sections?.map((section: any) => {
-                const foundSection = currentPage?.sections.find(
-                  (q) => q?.id === section?.id
-                );
-                if (foundSection) {
-                  section = {
-                    ...section,
-                    createdAt: foundSection?.createdAt ?? '',
-                    updatedAt: foundSection?.updatedAt ?? '',
-                    createdBy: foundSection?.createdBy ?? '',
-                    updatedBy: foundSection?.updatedBy ?? ''
-                  };
-                }
-                return section;
-              });
-              if (updatedSections.length > 0) {
-                obj.sections = updatedSections;
-              }
-            }
-          }
-          return obj;
-        });
-        return updatedPages;
-      };
-
-      // Note: Added to update createdAt, createdBy, updatedAt and updatedBy in subForms when it comes after success response
-      // For round plans
-      if (CommonService.isValidJson(action?.authoredFormDetail?.subForms)) {
-        const subForms =
-          JSON.parse(action?.authoredFormDetail?.subForms) || null;
-        if (subForms) {
-          Object.entries(subForms).forEach(([key, formData]: any) => {
-            if (formData?.length > 0) {
-              subForms[key] = updatePagesBasedOnApiResponse(
-                state[key],
-                formData
-              );
-            }
-          });
-          if (subForms) {
-            state = {
-              ...state,
-              ...subForms
-            };
-          }
-        }
-      }
-
-      // For forms
-      if (CommonService.isValidJson(action?.authoredFormDetail?.pages)) {
-        const pages = JSON.parse(action?.authoredFormDetail?.pages) || [];
-        const updatedPages = updatePagesBasedOnApiResponse(state?.pages, pages);
-        if (updatedPages?.length > 0) {
-          state = {
-            ...state,
-            pages: updatedPages
-          };
-        }
-      }
-
-      return {
-        ...state,
-        formSaveStatus: action.formSaveStatus,
-        authoredFormDetailDynamoDBVersion: action.authoredFormDetail._version,
-        skipAuthoredDetail: true
-      };
-    }
+    (state, action): FormConfigurationState => ({
+      ...state,
+      formSaveStatus: action.formSaveStatus,
+      authoredFormDetailDynamoDBVersion: action.authoredFormDetail._version,
+      skipAuthoredDetail: true
+    })
   ),
   on(
     FormConfigurationApiActions.createFormDetailSuccess,

@@ -218,7 +218,11 @@ export class QuestionComponent implements OnInit, OnDestroy {
     isOpen: false,
     isResponseTypeModalOpen: false,
     unitOfMeasurement: 'None',
-    rangeMetadata: {} as NumberRangeMetadata
+    rangeMetadata: {} as NumberRangeMetadata,
+    createdAt: '',
+    createdBy: '',
+    updatedAt: '',
+    updatedBy: ''
   });
   question$: Observable<Question>;
   ignoreUpdateIsOpen: boolean;
