@@ -256,13 +256,14 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       const idx = pageToBeUpdated.findIndex(
         (page) => page.position === action.pageIndex + 1
       );
-      pageToBeUpdated[idx] = {
-        ...pageToBeUpdated[idx],
-        logics: [...pageToBeUpdated[idx].logics, ...(action.logics || [])]
+      const newArray = Object.assign([], pageToBeUpdated);
+      newArray[idx] = {
+        ...newArray[idx],
+        logics: [...newArray[idx].logics, ...(action.logics || [])]
       };
       return {
         ...state,
-        [key]: [...pageToBeUpdated],
+        [key]: [...newArray],
         formStatus: action.formStatus,
         formDetailPublishStatus: action.formDetailPublishStatus,
         formSaveStatus: action.formSaveStatus,
