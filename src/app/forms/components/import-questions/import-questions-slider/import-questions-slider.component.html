@@ -81,7 +81,13 @@
                     updateAllChecked($event.checked, question, section, page)
                   "
                 >
-                  <span [innerHTML]="question.name"></span>
+                  <span
+                    [innerHTML]="
+                      !question.name && question.fieldType === 'IMG'
+                        ? 'Inserted image comes here'
+                        : question.name
+                    "
+                  ></span>
                 </mat-checkbox>
               </div>
             </div>
