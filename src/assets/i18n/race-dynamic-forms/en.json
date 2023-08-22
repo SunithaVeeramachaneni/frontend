@@ -9,7 +9,7 @@
   "publishBtn": "Publish",
   "backBtn": "Back",
   "setFormDetailsHeading": "Form Details",
-  "setFormTypeHeading": "Select Form type",
+  "formType": "Form type",
   "setTemplateTypeHeading": "Select Template Type",
   "standalone": "Standalone",
   "embedded": "Embedded (SAP)",
@@ -386,5 +386,7 @@
   "successfullyUpload": "Successfully uploaded",
   "failedUpload": "Failed to uploaded",
   "closeBtn": "Close",
-  "downloadExcel": "Download Excel"
+  "downloadExcel": "Download Excel",
+  "createEmbedded": "Embedded (For mWorkorder)",
+  "createStandalone": "Standalone (For mInspections)"
 }
