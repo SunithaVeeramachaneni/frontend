@@ -46,7 +46,7 @@
         </div>
         <div class="sectionContent">
           <div *ngFor="let question of section.questions">
-            <div *ngIf="data.questionId !== question.id">
+            <div class="questions" *ngIf="data.questionId !== question.id">
               <mat-checkbox
                 class="question"
                 [checked]="selectedQuestions.indexOf(question.id) > -1"
@@ -55,12 +55,15 @@
                   'strike-question': selectedQuestions.indexOf(question.id) > -1
                 }"
               >
-                {{
-                  question.name && question.name.length
-                    ? question.name
-                    : 'Untitled question'
-                }}</mat-checkbox
-              >
+                <span
+                  [innerHTML]="
+                    question.name && question.name.length
+                      ? question.name
+                      : 'Untitled question'
+                  "
+                >
+                </span>
+              </mat-checkbox>
             </div>
           </div>
         </div>

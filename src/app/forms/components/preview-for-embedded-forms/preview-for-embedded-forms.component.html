@@ -199,7 +199,7 @@
           >
             <a
               id="previewEmbeddedHLValue"
-              href=" question.value"
+              href="{{ question.value }}"
               target="_blank"
               class="hyderlink-value"
               >{{ question.value }}</a
@@ -250,12 +250,14 @@
             [displayWith]="formatLabel"
           >
           </mat-slider>
-          <span id="previewEmbeddedRTMin" class="slider-min-value">
-            {{ question.value.min }}
-          </span>
-          <span id="previewEmbeddedRTMax" class="slider-max-value">
-            {{ question.value.max }}
-          </span>
+          <div>
+            <span id="previewEmbeddedRTMin" class="slider-min-value">
+              {{ question.value.min }}
+            </span>
+            <span id="previewEmbeddedRTMax" class="slider-max-value">
+              {{ question.value.max }}
+            </span>
+          </div>
         </div>
 
         <p

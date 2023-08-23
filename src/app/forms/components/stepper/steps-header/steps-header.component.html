@@ -8,6 +8,7 @@
           icon="icon-back-arrow"
           class="back-arrow"
         ></svg-icon>
+        <span class="back-text" translate="backToList"></span>
       </button>
     </div>
 
@@ -20,7 +21,11 @@
           let first = first
         "
       >
-        <div>
+        <div
+          [ngClass]="{
+            stepperLine: currentStep === i
+          }"
+        >
           <button
             id="stepsBreadcrumb"
             class="steps-breadcrumb"
@@ -43,7 +48,7 @@
             <div id="stepsTitle" class="title pr-8">{{ step.title }}</div>
           </button>
         </div>
-        <div class="width-10">
+        <div class="width-5">
           <hr
             id="stepsLine"
             class="stepper-line"
