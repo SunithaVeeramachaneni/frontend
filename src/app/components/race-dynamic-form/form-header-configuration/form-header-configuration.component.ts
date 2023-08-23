@@ -361,9 +361,13 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
       this.allTags.splice(index, 1);
     }
 
-    this.tags.push(event.option.viewValue);
+    this.tags = [...this.tags, event.option.viewValue];
     this.tagsInput.nativeElement.value = '';
     this.tagsCtrl.setValue(null);
+    this.headerDataForm.patchValue({
+      ...this.headerDataForm.value,
+      tags: this.tags
+    });
   }
 
   filter(value: string): string[] {
