@@ -4,7 +4,7 @@ import {
   TimeType,
   TIME_SLOTS
 } from '../components/schedular/schedule-configuration/schedule-configuration.constants';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +17,7 @@ export class ScheduleConfigurationService {
     actionType: 'scheduleConfigEvent';
     mode?: 'create' | 'update';
   }>(null);
+  onSlotChanged$ = new Subject();
   constructor() {}
 
   // The convertTo24Hour function takes a time string in the 12-hour format with AM/PM indicator and converts it to the 24-hour format.

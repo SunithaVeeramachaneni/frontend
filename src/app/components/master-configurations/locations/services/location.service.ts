@@ -60,12 +60,15 @@ export class LocationService {
       const locationsListFilter = JSON.stringify(
         Object.fromEntries(
           Object.entries({
-            searchTerm: { contains: queryParams.searchKey.toLocaleLowerCase() },
+            searchTerm: {
+              contains: encodeURIComponent(
+                queryParams.searchKey.toLocaleLowerCase().trim()
+              )
+            },
             plantsID: { eq: filterData.plant }
           }).filter(([_, v]) => Object.values(v).some((x) => x !== ''))
         )
       );
-
       return this._appService
         ._getResp(
           environment.masterConfigApiUrl,

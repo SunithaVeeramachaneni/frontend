@@ -256,21 +256,23 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
   };
 
   applySliderOptions(values) {
-    if (values.min < 0) {
-      this.toast.show({
-        text: 'Slider from value cannot be less than zero',
-        type: 'warning'
-      });
-      return;
-    } else if (values.min > values.max) {
+    if (values.min > values.max) {
       this.toast.show({
         text: 'The upper limit cannot be lower than the lower limit',
         type: 'warning'
       });
       return;
-    } else if (values.increment < 1) {
+    }
+    if (values.increment <= 0) {
       this.toast.show({
-        text: 'Increment value cannot be less than one',
+        text: 'Increment value should be greater than 0',
+        type: 'warning'
+      });
+      return;
+    }
+    if ((values.max - values.min) % values.increment !== 0) {
+      this.toast.show({
+        text: 'Increment value should divide range difference',
         type: 'warning'
       });
       return;

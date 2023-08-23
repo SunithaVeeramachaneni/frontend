@@ -513,14 +513,7 @@ export class ArchivedFormListComponent implements OnInit, OnDestroy {
                 } else {
                   return this.raceDynamicFormService
                     .deactivateAbapForm$(form)
-                    .pipe(
-                      mergeMap((response) => {
-                        if (response === null) {
-                          return this.deleteFormFromDynamo$(form);
-                        }
-                        return of({});
-                      })
-                    );
+                    .pipe(mergeMap(() => this.deleteFormFromDynamo$(form)));
                 }
               })
             )
@@ -529,6 +522,9 @@ export class ArchivedFormListComponent implements OnInit, OnDestroy {
                 action: 'delete',
                 form: updatedForm
               });
+              this.raceDynamicFormService
+                .deleteTemplateReferenceByFormId$(form.id)
+                .subscribe();
             });
         }
       }
