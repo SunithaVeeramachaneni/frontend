@@ -146,12 +146,13 @@
   top: 35px;
   left: -8px;
   z-index: 99999;
+  width: max-content;
 }
 .tooltip-text::after {
   content: '';
   position: absolute;
   bottom: 100%;
-  left: 50%;
+  left: 10%;
   margin-left: -5px;
   border-width: 5px;
   border-style: solid;
