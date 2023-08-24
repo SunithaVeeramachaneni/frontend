@@ -46,7 +46,8 @@ import {
   getIsFormCreated,
   getQuestionCounter,
   State,
-  getNodeWiseQuestionsCount
+  getNodeWiseQuestionsCount,
+  getSubFormPages
 } from 'src/app/forms/state/builder/builder-state.selectors';
 
 import {
@@ -303,6 +304,7 @@ export class RoundPlanDetailConfigurationComponent
         formKeys.forEach((key) => {
           subFormsObj[key] = formDetails[key];
         });
+
         this.formListVersion = formListDynamoDBVersion;
         this.formStatus = formStatus;
         this.formDetailPublishStatus = formDetailPublishStatus;
