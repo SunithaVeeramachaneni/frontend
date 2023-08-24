@@ -667,9 +667,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       fetchType: this.fetchType,
       roundPlanId: this.roundPlanId
     };
-    if (this.fetchType !== 'infiniteScroll') {
-      this.isLoading$.next(true);
-    }
+    this.isLoading$.next(true);
     return this.operatorRoundsService
       .getPlansList$({ ...obj, ...this.filter })
       .pipe(
