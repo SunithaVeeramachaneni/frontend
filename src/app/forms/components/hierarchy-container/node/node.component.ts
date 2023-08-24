@@ -49,6 +49,8 @@ export class NodeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    console.log('node:', this.node);
+    console.log('hierarchyMode:', this.hierarchyMode);
     this.selectedNode$ = this.operatorRoundsService.selectedNode$.pipe(
       tap((data) => {
         this.selectedNode = data;

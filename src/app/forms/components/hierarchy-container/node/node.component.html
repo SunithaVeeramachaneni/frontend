@@ -18,9 +18,15 @@
         icon="icon-six-dots"
         cdkDragHandle
         class="question-six-dots"
-        *ngIf="hierarchyMode !== 'asset_hierarchy'"
+        *ngIf="
+          hierarchyMode !== 'asset_hierarchy' && hierarchyMode !== 'scheduler'
+        "
       ></svg-icon>
       <div class="nodeContent" (click)="setSelectedNode(node)">
+        <mat-checkbox
+          class="checkbox"
+          *ngIf="hierarchyMode === 'scheduler'"
+        ></mat-checkbox>
         <svg-icon
           id="nodeIcons"
           [icon]="
@@ -69,7 +75,7 @@
         </span>
       </div>
     </div>
-    <div class="right">
+    <div class="right" *ngIf="hierarchyMode !== 'scheduler'">
       <span
         id="nodeGetCount"
         class="nodeCount"

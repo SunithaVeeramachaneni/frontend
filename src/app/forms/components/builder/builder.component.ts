@@ -66,6 +66,8 @@ export class BuilderComponent implements OnInit, OnDestroy {
   get selectedNode(): any {
     return this._selectedNode;
   }
+
+  @Input() mode;
   @Input() counter;
   @Input() isPreviewActive;
   @Input() moduleName;

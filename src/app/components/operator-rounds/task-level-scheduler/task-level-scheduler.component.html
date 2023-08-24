@@ -134,9 +134,10 @@
       </button>
     </div>
   </div>
-
-  <div class="dis-flex form">
-    <span class="custom-form-field-gray-color search" *ngIf="hierarchy.length">
+</div>
+<div class="dis-flex form">
+  <div class="asset-location-search">
+    <span class="custom-form-field-gray-color search">
       <mat-form-field appearance="outline" class="searchField">
         <mat-icon id="hierarchyContainerSearchIcon" matPrefix class="searchIcon"
           >search</mat-icon
@@ -193,11 +194,36 @@
         ></svg-icon>
       </mat-form-field>
     </span>
-    <div class="assetHierarchyContainer">
-      <app-hierarchy-container
-        [plantId]="formMetadata?.plantId"
-        [nodeWiseQuestionsCount]="props.nodeWiseQuestionsCount"
-      ></app-hierarchy-container>
+
+    <div class="hierarchy">
+      <div *ngIf="!flatHierarchy.length" class="emptySearchResult">
+        <span id="hierarchyContainerLocationFound">
+          {{
+            'noAssetsOrLocationsFound'
+              | translate : { searchKey: searchHierarchyKey.value }
+          }}
+        </span>
+      </div>
+      <app-node
+        [node]="node"
+        [hierarchyMode]="mode"
+        *ngFor="let node of flatHierarchy"
+      ></app-node>
     </div>
   </div>
+  <div
+    class="questions-responses-width"
+    *ngIf="selectedNode; else loadingSelectedNode"
+  >
+    <app-builder
+      [isEmbeddedForm]="false"
+      [selectedNode]="selectedNode"
+      [isPreviewActive]="isPreviewActive"
+      [moduleName]="'rounds'"
+    ></app-builder>
+  </div>
+  <ng-template #loadingSelectedNode>
+    {{ 'nullSelectedLocationAssetFirst' | translate }}
+    {{ 'nullSelectedLocationAssetSecond' | translate }}
+  </ng-template>
 </div>

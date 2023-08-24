@@ -98,6 +98,7 @@ export class HierarchyContainerComponent implements OnInit {
             this.assetHierarchyUtil.prepareAssetHierarchy(selectedHierarchy);
           this.instanceIdMappings = instanceIdMappings;
           this.formService.setInstanceIdMappings(this.instanceIdMappings);
+          console.log('');
           this.filteredHierarchyList = JSON.parse(
             JSON.stringify(stitchedHierarchy)
           );

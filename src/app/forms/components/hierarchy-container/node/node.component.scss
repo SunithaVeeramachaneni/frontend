@@ -51,6 +51,9 @@
   display: flex;
   justify-content: flex-start;
   width: 100%;
+  .checkbox {
+    margin: 10px;
+  }
 }
 .children {
   margin-left: 40px;

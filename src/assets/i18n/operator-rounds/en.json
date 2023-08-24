@@ -363,5 +363,7 @@
   "headerFrequency": "Header Frequency",
   "assigneDetail": "Assignee Details",
   "start": "Start",
-  "end": "End"
+  "end": "End",
+  "nullSelectedLocationAssetFirst": "1. Select any location to Asset to view Details",
+  "nullSelectedLocationAssetSecond": "2. Select Check Box to change Frequency"
 }

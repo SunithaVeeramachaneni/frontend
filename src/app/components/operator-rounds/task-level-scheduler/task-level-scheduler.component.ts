@@ -16,6 +16,15 @@ import {
 } from 'src/app/forms/state/builder/builder-state.selectors';
 
 import {
+  debounceTime,
+  distinctUntilChanged,
+  startWith,
+  map
+} from 'rxjs/operators';
+
+import { OperatorRoundsService } from '../services/operator-rounds.service';
+
+import {
   MAT_DIALOG_DATA,
   MatDialog,
   MatDialogRef
@@ -34,12 +43,20 @@ export class TaskLevelSchedulerComponent implements OnInit {
   headerDetails: FormGroup;
   formMetadata: FormMetadata;
   formMetadata$: Observable<FormMetadata>;
+  searchHierarchyKey: FormControl;
+  filteredOptions$: Observable<any[]>;
+  flatHierarchy: any;
+  authoredData: any;
+  filteredList = [];
+  selectedNode = [];
   statusList = {
     changesSaved: 'All Changes Saved',
     savingChanges: 'Saving Changes...',
     scheduling: 'Scheduling...',
     revising: 'Revising...'
   };
+  mode = 'scheduler';
+  isPreviewActive = false;
   statusSubject: BehaviorSubject<string> = new BehaviorSubject<string>(
     this.statusList.changesSaved
   );
@@ -66,9 +83,15 @@ export class TaskLevelSchedulerComponent implements OnInit {
   private _payload: any;
   @Input() roundPlanData: any;
   errors: ValidationError = {};
-  constructor(private store: Store<State>, private fb: FormBuilder) {}
+  constructor(
+    private store: Store<State>,
+    private fb: FormBuilder,
+    private operatorRoundService: OperatorRoundsService
+  ) {}
 
   ngOnInit(): void {
+    this.searchHierarchyKey = new FormControl('');
+    console.log('roundPlanData:', this.roundPlanData);
     this.status = this.statusList.changesSaved;
     this.formConfiguration = this.fb.group({
       id: [''],
@@ -110,6 +133,51 @@ export class TaskLevelSchedulerComponent implements OnInit {
       },
       { emitEvent: false }
     );
+
+    this.operatorRoundService
+      .getAuthoredFormDetailByFormId$(
+        this.roundPlanData.roundPlanDetail.id,
+        'Published'
+      )
+      .subscribe((data) => {
+        console.log('adhocdata:', data);
+        this.authoredData = data;
+        console.log(
+          'flatHierarchy:',
+          JSON.parse(this.authoredData.flatHierarchy)
+        );
+        this.flatHierarchy = JSON.parse(this.authoredData.flatHierarchy);
+      });
+
+    this.filteredOptions$ = this.searchHierarchyKey.valueChanges.pipe(
+      debounceTime(500),
+      distinctUntilChanged(),
+      startWith(''),
+      map((value) => this.filter(value.trim() || ''))
+    );
+    this.operatorRoundService.selectedNode$
+      .pipe(
+        tap((data) => {
+          this.selectedNode = data;
+        })
+      )
+      .subscribe();
+  }
+
+  filter(value: string): string[] {
+    value = value.trim() || '';
+    if (!value.length) {
+      return [];
+    }
+    const filteredValue = value.toLowerCase();
+    const flatHierarchy = JSON.parse(this.authoredData.flatHierarchy);
+    this.filteredList = flatHierarchy.filter(
+      (option) =>
+        option.name.toLowerCase().includes(filteredValue) ||
+        option.nodeDescription?.toLowerCase().includes(filteredValue) ||
+        option.nodeId.toLowerCase().includes(filteredValue)
+    );
+    return this.filteredList;
   }
 
   getSize(value: string) {
@@ -138,4 +206,13 @@ export class TaskLevelSchedulerComponent implements OnInit {
   }
 
   editFormName() {}
+
+  searchResultSelected(event) {}
+  getSearchMatchesLabel() {
+    return `${this.filteredList.length} Search matches`;
+  }
+
+  clearSearchResults() {
+    this.searchHierarchyKey.patchValue('');
+  }
 }
