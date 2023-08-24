@@ -427,7 +427,7 @@ export class FormListComponent implements OnInit, OnDestroy {
             this.triggerCountUpdate = true;
             this.formsListCountUpdate$.next(-1);
             this.toast.show({
-              text: 'Form "' + form.form.name + '" archive successfully!',
+              text: 'Form "' + form.form.name + '" archived successfully!',
               type: 'success'
             });
           } else {
