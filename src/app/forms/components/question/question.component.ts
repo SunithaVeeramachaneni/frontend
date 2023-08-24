@@ -12,7 +12,7 @@ import {
   ViewChild,
   OnDestroy
 } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -209,6 +209,10 @@ export class QuestionComponent implements OnInit, OnDestroy {
     position: '',
     required: false,
     enableHistory: false,
+    historyCount: [
+      5,
+      [Validators.required, Validators.min(0), Validators.max(20)]
+    ],
     multi: false,
     value: 'TF',
     isPublished: false,
@@ -251,7 +255,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     private formService: FormService,
     private responseSetService: ResponseSetService,
     private toast: ToastService,
-    private translate: TranslateService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {

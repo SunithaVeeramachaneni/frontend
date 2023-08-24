@@ -276,6 +276,7 @@
   "lastFiveReadingsHeader": "Last 5 readings",
   "whatIsPressureReadingHeader": "What is the pressure reading?",
   "readingLabel": "Reading",
+  "readingLabelPlural":"Readings",
   "chooseOption": "Choose Option",
   "createIssue": "Create Issue",
   "skipTask": "Skip Task",
