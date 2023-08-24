@@ -14,6 +14,7 @@ import {
   getFormMetadata,
   State
 } from 'src/app/forms/state/builder/builder-state.selectors';
+import { scheduleConfigs } from '../../../forms/components/schedular/schedule-configuration/schedule-configuration.constants';
 
 import {
   debounceTime,
@@ -31,6 +32,7 @@ import {
 } from '@angular/material/dialog';
 import { tap } from 'rxjs/operators';
 import { format } from 'date-fns';
+import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 
 @Component({
   selector: 'app-task-level-scheduler',
@@ -38,6 +40,25 @@ import { format } from 'date-fns';
   styleUrls: ['./task-level-scheduler.component.scss']
 })
 export class TaskLevelSchedulerComponent implements OnInit {
+  locations = [
+    {
+      name: 'Fuel Gas System',
+      count: 4
+    },
+    {
+      name: 'Fuel Gas System',
+      count: 4
+    },
+    {
+      name: 'Fuel Gas System',
+      count: 4
+    },
+    {
+      name: 'Fuel Gas System',
+      count: 4
+    }
+  ];
+  repeatTypes = scheduleConfigs.repeatTypes;
   status: string;
   formConfiguration: FormGroup;
   headerDetails: FormGroup;
@@ -83,6 +104,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
   private _payload: any;
   @Input() roundPlanData: any;
   errors: ValidationError = {};
+  startDatePickerMinDate: Date;
   constructor(
     private store: Store<State>,
     private fb: FormBuilder,
@@ -90,6 +112,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.startDatePickerMinDate = new Date();
     this.searchHierarchyKey = new FormControl('');
     console.log('roundPlanData:', this.roundPlanData);
     this.status = this.statusList.changesSaved;
@@ -162,6 +185,19 @@ export class TaskLevelSchedulerComponent implements OnInit {
         })
       )
       .subscribe();
+  }
+
+  updateDate(
+    event: MatDatepickerInputEvent<Date>,
+    formControlDateField: string
+  ) {
+    // this.schedulerConfigForm.patchValue({
+    //   [formControlDateField]:
+    //     formControlDateField !== 'scheduleEndOn'
+    //       ? format(event.value, dateFormat3)
+    //       : format(event.value, dateFormat4)
+    // });
+    //this.schedulerConfigForm.markAsDirty();
   }
 
   filter(value: string): string[] {

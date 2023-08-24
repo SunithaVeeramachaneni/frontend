@@ -136,7 +136,7 @@
   </div>
 </div>
 <div class="dis-flex form">
-  <div class="asset-location-search">
+  <div class="asset-location-search width-30">
     <span class="custom-form-field-gray-color search">
       <mat-form-field appearance="outline" class="searchField">
         <mat-icon id="hierarchyContainerSearchIcon" matPrefix class="searchIcon"
@@ -212,7 +212,7 @@
     </div>
   </div>
   <div
-    class="questions-responses-width"
+    class="questions-responses-width width-40"
     *ngIf="selectedNode; else loadingSelectedNode"
   >
     <app-builder
@@ -221,6 +221,158 @@
       [isPreviewActive]="isPreviewActive"
       [moduleName]="'rounds'"
     ></app-builder>
+  </div>
+  <div class="width-30 right-panel">
+    <h3 class="heading">Revise Schedule</h3>
+
+    <div>
+      <div class="selected-locations">
+        <p class="m-0">
+          <mat-icon>keyboard_arrow_down</mat-icon>
+          <span class="selected-text">Selected</span>
+        </p>
+        <div *ngFor="let location of locations" class="locations">
+          <div>{{ location.name }}</div>
+          <div>{{ location.count }} Tasks</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="subheadings">
+      <h3>Schedule by Frequency</h3>
+
+      <div class="dis-flex schedule-frequency">
+        <p id="taskScheduleConfigurationRepeatEvery" class="f-w-400">
+          {{ 'repeatEvery' | translate }}
+        </p>
+        <mat-form-field appearance="fill" class="repeat-num">
+          <input type="number" matInput min="1" />
+        </mat-form-field>
+        <mat-form-field appearance="fill" class="repeat-day">
+          <mat-select>
+            <mat-option
+              *ngFor="let repeatEvery of repeatTypes"
+              [value]="repeatEvery"
+            >
+              {{ repeatEvery }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <!-- <ng-container
+         *ngIf="schedulerConfigForm.get('repeatEvery').value === 'week'"
+      >
+        <div id="scheduleConfigurationRepeatOn" class="row-title">
+          {{ 'repeatOn' | translate }}
+        </div>
+        <mat-button-toggle-group
+          name="daysOfWeek"
+          formControlName="daysOfWeek"
+          multiple
+        >
+          <mat-button-toggle
+            id="scheduleConfigurationDayOfWeek"
+            *ngFor="let dayOfWeek of daysOfWeek; let i = index"
+            [value]="i"
+            >{{ dayOfWeek.slice(0, 1).toUpperCase() }}</mat-button-toggle
+          >
+        </mat-button-toggle-group>
+      </ng-container> -->
+      <!-- <ng-container
+        *ngIf="schedulerConfigForm.get('repeatEvery').value === 'month'"
+      >
+        <div id="scheduleConfigurationRepeatOnMonth" class="row-title">
+          {{ 'repeatOn' | translate }}
+        </div>
+        <div formArrayName="monthlyDaysOfWeek">
+          <div
+            *ngFor="let weekOfMonth of weeksOfMonth; let i = index"
+            class="weeks-of-month"
+          >
+            <div
+              id="scheduleConfigurationWeekOfMonth"
+              class="row-title"
+              class="m-r-40"
+              [ngClass]="{ 'm-r-36': i === 1 }"
+            >
+              {{ weekOfMonth }}
+            </div>
+            <div>
+              <mat-button-toggle-group
+                [formControlName]="i"
+                name="{{ i }}"
+                multiple
+              >
+                <mat-button-toggle
+                  id="scheduleConfigurationMonth"
+                  *ngFor="let dayOfWeek of daysOfWeek; let i = index"
+                  [value]="i"
+                >
+                  {{ dayOfWeek.slice(0, 1).toUpperCase() }}
+                </mat-button-toggle>
+              </mat-button-toggle-group>
+            </div>
+          </div>
+        </div>
+      </ng-container> -->
+      <div class="dis-flex custom-form-field-white-color m-t-10">
+        <span class="f-w-400 startdate">Start Date</span>
+        <mat-form-field appearance="outline" class="width-30">
+          <mat-label id="taskScheduleConfigStartDate" translate>
+            startDate
+          </mat-label>
+          <input matInput readonly />
+          <input
+            matInput
+            [matDatepicker]="startDate"
+            (dateChange)="updateDate($event, 'startDate')"
+            [min]="startDatePickerMinDate"
+            hidden
+          />
+          <mat-datepicker-toggle
+            matIconSuffix
+            [for]="startDate"
+            (click)="startDate.open()"
+          >
+            <mat-icon matDatepickerToggleIcon>arrow_drop_down</mat-icon>
+          </mat-datepicker-toggle>
+          <mat-datepicker #startDate></mat-datepicker>
+        </mat-form-field>
+      </div>
+
+      <div class="dis-flex custom-form-field-white-color m-t-10">
+        <span class="f-w-400 enddate">End Date</span>
+        <mat-form-field appearance="outline" class="width-30">
+          <mat-label id="taskScheduleConfigEndDate" translate>
+            endDate
+          </mat-label>
+          <input matInput readonly />
+          <input
+            matInput
+            [matDatepicker]="endDate"
+            (dateChange)="updateDate($event, 'endDate')"
+            [min]="startDatePickerMinDate"
+            hidden
+          />
+          <mat-datepicker-toggle
+            matIconSuffix
+            [for]="endDate"
+            (click)="endDate.open()"
+          >
+            <mat-icon matDatepickerToggleIcon>arrow_drop_down</mat-icon>
+          </mat-datepicker-toggle>
+          <mat-datepicker #endDate></mat-datepicker>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="subheadings">
+      <h3>Shifts</h3>
+    </div>
+
+    <div>
+      <h3 class="subheadings">Slots</h3>
+    </div>
   </div>
   <ng-template #loadingSelectedNode>
     {{ 'nullSelectedLocationAssetFirst' | translate }}
