@@ -28,6 +28,7 @@ import { HeaderService } from 'src/app/shared/services/header.service';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { UserGroupDeleteModalComponent } from '../user-group-delete-modal/user-group-delete-modal.component';
 import { LoginService } from '../../login/services/login.service';
+import { PlantService } from '../../master-configurations/plants/services/plant.service';
 
 @Component({
   selector: 'app-user-group-list',
@@ -62,6 +63,7 @@ export class UserGroupListComponent
   selectUserGroup = false;
   userGroupMode: string;
   addingUserGroup$ = new BehaviorSubject<boolean>(false);
+  plants: any[] = [];
 
   userGroupList: any = [];
   selectedUserGroup: any;
@@ -90,7 +92,8 @@ export class UserGroupListComponent
     private toast: ToastService,
     private headerService: HeaderService,
     private commonService: CommonService,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private plantService: PlantService
   ) {}
 
   ngOnInit(): void {
@@ -131,6 +134,7 @@ export class UserGroupListComponent
       {
         data: {
           userGroupData: null,
+          plants: this.plants,
           type: 'create'
         }
       }
@@ -146,6 +150,7 @@ export class UserGroupListComponent
       {
         data: {
           userGroupData: data,
+          plants: this.plants,
           type: 'update'
         }
       }
@@ -186,45 +191,26 @@ export class UserGroupListComponent
       userGroupList$,
       onScrollUserGroups$,
       this.userGroupService.userGroupActions$,
-      this.userGroupService.usersCount$
+      this.userGroupService.usersCount$,
+      this.plantService.fetchAllPlants$()
     ]).pipe(
-      map(([rows, scrollData, { action, group }, { groupId, count }]) => {
-        if (this.skip === 0) {
-          if (rows.length === 0) {
-            this.selectedUserGroup = null;
-          }
-          if (
-            this.userGroupService.addUpdateDeleteCopyUserGroup &&
-            action === 'add'
-          ) {
-            initial.unshift(group);
-            this.selectedUserGroup = group;
-            this.toast.show({
-              type: 'success',
-              text: 'User Group added successfully'
-            });
-            this.increment();
-          }
-          initial = rows;
-        } else if (this.userGroupService.addUpdateDeleteCopyUserGroup) {
-          switch (action) {
-            case 'copy':
-              initial.unshift(group);
-              this.increment();
-              break;
-            case 'edit':
-              const indexCpy = initial.findIndex(
-                (data) => data?.id === group?.id
-              );
-              initial[indexCpy] = group;
-              this.toast.show({
-                type: 'success',
-                text: 'User Group edited successfully'
-              });
-              this.userGroupService.addUpdateDeleteCopyUserGroup = false;
-
-              break;
-            case 'add':
+      map(
+        ([
+          rows,
+          scrollData,
+          { action, group },
+          { groupId, count },
+          { items: plants }
+        ]) => {
+          this.plants = plants;
+          if (this.skip === 0) {
+            if (rows.length === 0) {
+              this.selectedUserGroup = null;
+            }
+            if (
+              this.userGroupService.addUpdateDeleteCopyUserGroup &&
+              action === 'add'
+            ) {
               initial.unshift(group);
               this.selectedUserGroup = group;
               this.toast.show({
@@ -232,43 +218,72 @@ export class UserGroupListComponent
                 text: 'User Group added successfully'
               });
               this.increment();
-
-              break;
-            case 'delete':
-              const indexDel = initial.findIndex(
-                (data) => data.id === group.id
-              );
-              initial.splice(indexDel, 1);
-              if (initial?.length === 0) {
-                this.selectedUserGroup = null;
-              }
-              if (indexDel === 0) {
-                this.selectedUserGroup = initial[indexDel];
-              } else {
-                this.selectedUserGroup = initial[indexDel - 1];
-              }
-              this.toast.show({
-                type: 'success',
-                text: 'User Group deleted successfully'
-              });
-              this.decrement();
-
-              break;
-          }
-        } else if (this.userGroupService.usersListEdit) {
-          initial.map((data) => {
-            if (data?.id === groupId) {
-              data.usersCount = count;
             }
-          });
-          this.userGroupService.usersListEdit = false;
-        } else {
-          initial = initial.concat(scrollData);
+            initial = rows;
+          } else if (this.userGroupService.addUpdateDeleteCopyUserGroup) {
+            switch (action) {
+              case 'copy':
+                initial.unshift(group);
+                this.increment();
+                break;
+              case 'edit':
+                const indexCpy = initial.findIndex(
+                  (data) => data?.id === group?.id
+                );
+                initial[indexCpy] = group;
+                this.toast.show({
+                  type: 'success',
+                  text: 'User Group edited successfully'
+                });
+                this.userGroupService.addUpdateDeleteCopyUserGroup = false;
+
+                break;
+              case 'add':
+                initial.unshift(group);
+                this.selectedUserGroup = group;
+                this.toast.show({
+                  type: 'success',
+                  text: 'User Group added successfully'
+                });
+                this.increment();
+
+                break;
+              case 'delete':
+                const indexDel = initial.findIndex(
+                  (data) => data.id === group.id
+                );
+                initial.splice(indexDel, 1);
+                if (initial?.length === 0) {
+                  this.selectedUserGroup = null;
+                }
+                if (indexDel === 0) {
+                  this.selectedUserGroup = initial[indexDel];
+                } else {
+                  this.selectedUserGroup = initial[indexDel - 1];
+                }
+                this.toast.show({
+                  type: 'success',
+                  text: 'User Group deleted successfully'
+                });
+                this.decrement();
+
+                break;
+            }
+          } else if (this.userGroupService.usersListEdit) {
+            initial.map((data) => {
+              if (data?.id === groupId) {
+                data.usersCount = count;
+              }
+            });
+            this.userGroupService.usersListEdit = false;
+          } else {
+            initial = initial.concat(scrollData);
+          }
+          this.skip = initial.length;
+          this.cdrf.markForCheck();
+          return initial;
         }
-        this.skip = initial.length;
-        this.cdrf.markForCheck();
-        return initial;
-      })
+      )
     );
   }
 
