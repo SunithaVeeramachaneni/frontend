@@ -767,8 +767,10 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
           for (const logic of page.logics)
             questionIdByLogic[logic.id] = logic.questionId;
 
-          let sectionQuestions = page.questions.filter(
-            (question) => question.sectionId === action.sectionId
+          let sectionQuestions = cloneDeep(
+            page.questions.filter(
+              (question) => question.sectionId === action.sectionId
+            )
           );
           const questionToBeDeleted =
             sectionQuestions[action.questionIndex]?.id;
