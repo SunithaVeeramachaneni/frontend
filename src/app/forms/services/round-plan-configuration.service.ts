@@ -252,7 +252,10 @@ export class RoundPlanConfigurationService {
             questionIndex,
             sectionQuestionsList[sectionIndex]?.questions[
               questionIndex
-            ]?.sectionId?.startsWith('AQ')
+            ]?.sectionId?.startsWith('AQ') ||
+              sectionQuestionsList[sectionIndex]?.questions[
+                questionIndex
+              ]?.sectionId?.startsWith('EVIDENCE')
               ? sectionQuestionsList[sectionIndex]?.questions[questionIndex]
                   ?.sectionId
               : section.id,
