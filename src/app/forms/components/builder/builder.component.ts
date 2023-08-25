@@ -488,12 +488,17 @@ export class BuilderComponent implements OnInit, OnDestroy {
     const logicsArray = [];
     const sectionLogics = {};
     const newLogicIds = {};
+    const newAskEvidenceIds = {};
     for (const logic of page.logics || []) {
       if (sectionQuestions[logic.questionId]) {
         newLogicIds[logic.id] = uuidv4();
         sectionLogics[`AQ_${logic.id}`] = 1;
+        sectionLogics[`EVIDENCE_${logic.id}`] = 1;
         logic.id = newLogicIds[logic.id];
         logic.questionId = newQuestionIds[logic.questionId];
+        const prevAskEvidenceId = logic.askEvidence;
+        logic.askEvidence = logic.questionId + '_0_EVIDENCE';
+        newAskEvidenceIds[prevAskEvidenceId] = logic.askEvidence;
         logic.evidenceQuestions = logic.evidenceQuestions.map(
           (item) => newQuestionIds[item] || item
         );
@@ -508,17 +513,24 @@ export class BuilderComponent implements OnInit, OnDestroy {
       }
     }
     const askQuestions = [];
+    const askEvidences = [];
     for (const question of page.questions || []) {
-      if (
-        question.sectionId.startsWith('AQ_') &&
-        sectionLogics[question.sectionId]
-      ) {
-        question.id = `AQ_${uuidv4()}`;
-        question.sectionId = `AQ_${
-          newLogicIds[question.sectionId.substring(3)]
-        }`;
-        question.skipIdGeneration = true;
-        askQuestions.push(question);
+      if (sectionLogics[question.sectionId]) {
+        if (question.sectionId.startsWith('AQ_')) {
+          question.id = `AQ_${uuidv4()}`;
+          question.sectionId = `AQ_${
+            newLogicIds[question.sectionId.substring(3)]
+          }`;
+          question.skipIdGeneration = true;
+          askQuestions.push(question);
+        } else if (question.sectionId.startsWith('EVIDENCE_')) {
+          question.id = newAskEvidenceIds[question.id];
+          question.sectionId = `EVIDENCE_${
+            newLogicIds[question.sectionId.substring(9)]
+          }`;
+          question.skipIdGeneration = true;
+          askEvidences.push(question);
+        }
       }
     }
     delete section.isImported;
@@ -528,7 +540,7 @@ export class BuilderComponent implements OnInit, OnDestroy {
     delete section.id;
     sectionQuestionsList.push({
       section,
-      questions: [...questionsArray, ...askQuestions],
+      questions: [...questionsArray, ...askQuestions, ...askEvidences],
       logics: logicsArray
     });
 

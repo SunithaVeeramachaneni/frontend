@@ -154,93 +154,96 @@ export class AddLogicComponent implements OnInit, OnDestroy {
       .pipe(
         tap((logicsT) => {
           // eslint-disable-next-line arrow-body-style
-          logicsFormArray = logicsT.map((logic, index) => {
-            const mandateQuestions = logic.mandateQuestions;
-            const hideQuestions = logic.hideQuestions;
-            const askQuestions =
-              this.pageWiseLogicsAskQuestions[this.pageIndex][logic.id];
-            const evidenceQuestions =
-              this.pageWiseLogicSectionAskEvidenceQuestions[this.pageIndex][
-                logic.id
-              ];
+          logicsFormArray =
+            logicsT?.map((logic, index) => {
+              const mandateQuestions = logic.mandateQuestions;
+              const hideQuestions = logic.hideQuestions;
+              const askQuestions =
+                this.pageWiseLogicsAskQuestions[this.pageIndex][logic.id];
+              const evidenceQuestions =
+                this.pageWiseLogicSectionAskEvidenceQuestions[this.pageIndex][
+                  logic.id
+                ];
 
-            let mandateQuestionsFormArray = [];
-            if (mandateQuestions && mandateQuestions.length) {
-              mandateQuestionsFormArray = mandateQuestions.map((mq) =>
-                this.fb.control(mq)
-              );
-            }
+              let mandateQuestionsFormArray = [];
+              if (mandateQuestions && mandateQuestions.length) {
+                mandateQuestionsFormArray = mandateQuestions.map((mq) =>
+                  this.fb.control(mq)
+                );
+              }
 
-            let hideQuestionsFormArray = [];
-            if (hideQuestions && hideQuestions.length) {
-              hideQuestionsFormArray = hideQuestions.map((mq) =>
-                this.fb.control(mq)
-              );
-            }
+              let hideQuestionsFormArray = [];
+              if (hideQuestions && hideQuestions.length) {
+                hideQuestionsFormArray = hideQuestions.map((mq) =>
+                  this.fb.control(mq)
+                );
+              }
 
-            let askQuestionsFormArray = [];
-            if (askQuestions && askQuestions.length) {
-              askQuestionsFormArray = askQuestions.map((aq) =>
-                this.fb.group({
-                  id: aq.id || '',
-                  sectionId: aq.sectionId || '',
-                  name: aq.name || '',
-                  fieldType: aq.fieldType || 'TF',
-                  position: aq.position || '',
-                  required: aq.required || false,
-                  enableHistory: aq.enableHistory || false,
-                  multi: aq.multi || false,
-                  value: aq.value || '',
-                  isPublished: aq.isPublished || false,
-                  isPublishedTillSave: aq.isPublishedTillSave || false,
-                  isOpen: aq.isOpen || false,
-                  isResponseTypeModalOpen: aq.isResponseTypeModalOpen || false,
-                  unitOfMeasurement: aq.unitOfMeasurement || 'None',
-                  rangeMetaData: aq.rangeMetaData || ({} as NumberRangeMetadata)
-                })
-              );
-            }
+              let askQuestionsFormArray = [];
+              if (askQuestions && askQuestions.length) {
+                askQuestionsFormArray = askQuestions.map((aq) =>
+                  this.fb.group({
+                    id: aq.id || '',
+                    sectionId: aq.sectionId || '',
+                    name: aq.name || '',
+                    fieldType: aq.fieldType || 'TF',
+                    position: aq.position || '',
+                    required: aq.required || false,
+                    enableHistory: aq.enableHistory || false,
+                    multi: aq.multi || false,
+                    value: aq.value || '',
+                    isPublished: aq.isPublished || false,
+                    isPublishedTillSave: aq.isPublishedTillSave || false,
+                    isOpen: aq.isOpen || false,
+                    isResponseTypeModalOpen:
+                      aq.isResponseTypeModalOpen || false,
+                    unitOfMeasurement: aq.unitOfMeasurement || 'None',
+                    rangeMetaData:
+                      aq.rangeMetaData || ({} as NumberRangeMetadata)
+                  })
+                );
+              }
 
-            let askEvidenceQuestionsFormArray = [];
-            if (evidenceQuestions && evidenceQuestions.length) {
-              askEvidenceQuestionsFormArray = evidenceQuestions.map((eq) =>
-                this.fb.group({
-                  id: eq.id || '',
-                  sectionId: eq.sectionId || '',
-                  name: eq.name || '',
-                  fieldType: eq.fieldType || 'ATT',
-                  position: eq.position || '',
-                  required: eq.required || false,
-                  multi: eq.multi || false,
-                  value: eq.value || '',
-                  isPublished: eq.isPublished || false,
-                  isPublishedTillSave: eq.isPublishedTillSave || false
-                })
-              );
-            }
+              let askEvidenceQuestionsFormArray = [];
+              if (evidenceQuestions && evidenceQuestions.length) {
+                askEvidenceQuestionsFormArray = evidenceQuestions.map((eq) =>
+                  this.fb.group({
+                    id: eq.id || '',
+                    sectionId: eq.sectionId || '',
+                    name: eq.name || '',
+                    fieldType: eq.fieldType || 'ATT',
+                    position: eq.position || '',
+                    required: eq.required || false,
+                    multi: eq.multi || false,
+                    value: eq.value || '',
+                    isPublished: eq.isPublished || false,
+                    isPublishedTillSave: eq.isPublishedTillSave || false
+                  })
+                );
+              }
 
-            return this.fb.group({
-              id: logic.id || '',
-              questionId: logic.questionId || '',
-              pageIndex: logic.pageIndex || 0,
-              operator: logic.operator || '',
-              operand1: logic.operand1 || '',
-              operand2: logic.operand2 || '',
-              action: logic.action || '',
-              mandateAttachment: logic.mandateAttachment || false,
-              askEvidence: logic.askEvidence || '',
-              raiseIssue: logic.raiseIssue || false,
-              logicTitle: logic.logicTitle || '',
-              expression: logic.expression || '',
-              raiseNotification: logic?.raiseNotification || false,
-              triggerInfo: logic?.triggerInfo || '',
-              triggerWhen: logic?.triggerWhen || '',
-              questions: this.fb.array(askQuestionsFormArray),
-              evidenceQuestions: this.fb.array(askEvidenceQuestionsFormArray),
-              mandateQuestions: this.fb.array(mandateQuestionsFormArray),
-              hideQuestions: this.fb.array(hideQuestionsFormArray)
-            });
-          });
+              return this.fb.group({
+                id: logic.id || '',
+                questionId: logic.questionId || '',
+                pageIndex: logic.pageIndex || 0,
+                operator: logic.operator || '',
+                operand1: logic.operand1 || '',
+                operand2: logic.operand2 || '',
+                action: logic.action || '',
+                mandateAttachment: logic.mandateAttachment || false,
+                askEvidence: logic.askEvidence || '',
+                raiseIssue: logic.raiseIssue || false,
+                logicTitle: logic.logicTitle || '',
+                expression: logic.expression || '',
+                raiseNotification: logic?.raiseNotification || false,
+                triggerInfo: logic?.triggerInfo || '',
+                triggerWhen: logic?.triggerWhen || '',
+                questions: this.fb.array(askQuestionsFormArray),
+                evidenceQuestions: this.fb.array(askEvidenceQuestionsFormArray),
+                mandateQuestions: this.fb.array(mandateQuestionsFormArray),
+                hideQuestions: this.fb.array(hideQuestionsFormArray)
+              });
+            }) || [];
           this.logicsForm.setControl('logics', this.fb.array(logicsFormArray));
 
           merge(
@@ -348,6 +351,21 @@ export class AddLogicComponent implements OnInit, OnDestroy {
             subFormId: this.selectedNodeId
           })
         );
+        if (event.questionId.endsWith('_EVIDENCE')) {
+          logic.mandateAttachment = false;
+          logic.action = '';
+          logic.askEvidence = '';
+          logic.evidenceQuestions = logic.evidenceQuestions.filter(
+            (question) => question.id !== event.questionId
+          );
+          this.logicEvent.emit({
+            questionId: this.questionId,
+            pageIndex: this.pageIndex,
+            logicIndex,
+            type: 'update',
+            logic
+          });
+        }
         break;
     }
   }
@@ -440,26 +458,28 @@ export class AddLogicComponent implements OnInit, OnDestroy {
     });
   }
   mandateAttachment(action, index, logic) {
-    logic.mandateAttachment = true;
-    const emitObject: any = {
-      questionId: this.questionId,
-      pageIndex: this.pageIndex,
-      logicIndex: index,
-      type: 'update',
-      logic
-    };
-    if (this.isEmbeddedForm) {
-      logic.action = action;
-      logic.askEvidence = `${this.questionId}_${index}_EVIDENCE`;
-      const newEmitObject = {
-        ...emitObject,
-        askEvidence: logic.askEvidence,
-        type: 'ask_evidence_create',
-        questionName: this.questionName
+    if (!(logic.mandateAttachment || logic.evidenceQuestions.length)) {
+      logic.mandateAttachment = true;
+      const emitObject: any = {
+        questionId: this.questionId,
+        pageIndex: this.pageIndex,
+        logicIndex: index,
+        type: 'update',
+        logic
       };
-      this.logicEvent.emit(newEmitObject);
+      if (this.isEmbeddedForm) {
+        logic.action = action;
+        logic.askEvidence = `${this.questionId}_${index}_EVIDENCE`;
+        const newEmitObject = {
+          ...emitObject,
+          askEvidence: logic.askEvidence,
+          type: 'ask_evidence_create',
+          questionName: this.questionName
+        };
+        this.logicEvent.emit(newEmitObject);
+      }
+      this.logicEvent.emit(emitObject);
     }
-    this.logicEvent.emit(emitObject);
   }
   raiseIssue(action, index, logic) {
     logic.raiseIssue = true;

@@ -243,6 +243,12 @@
                   id="addLogicAskEvdienceBtn"
                   class="logicActionMenuItem"
                   mat-menu-item
+                  *ngIf="
+                    !(
+                      logic.value.mandateAttachment ||
+                      logic.value.evidenceQuestions.length
+                    )
+                  "
                   (click)="
                     mandateAttachment('mandate_attachment', i, logic.value)
                   "
