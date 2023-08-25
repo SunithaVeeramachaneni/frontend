@@ -307,7 +307,7 @@ export class FormConfigurationService {
       id:
         question?.id?.startsWith('TQ') || question?.id?.startsWith('AQ')
           ? question.id
-          : `Q${questionCounter}`,
+          : `Q${uuidv4()}`,
       sectionId,
       name: question ? question.name : '',
       fieldType: question ? question.fieldType : 'TF',

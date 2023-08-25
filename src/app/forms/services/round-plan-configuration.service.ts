@@ -318,7 +318,7 @@ export class RoundPlanConfigurationService {
         ? question.id
         : isTemplate
         ? `TQ${questionCounter}_${new Date().getTime()}`
-        : `Q${questionCounter}`,
+        : `Q${uuidv4()}`,
       sectionId,
       name: question ? question.name : '',
       fieldType: question ? question.fieldType : 'TF',
