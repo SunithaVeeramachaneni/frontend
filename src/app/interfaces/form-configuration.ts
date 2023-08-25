@@ -44,10 +44,6 @@ export interface Section {
   templateName?: string;
   externalSectionId?: string;
   counter?: number;
-  createdAt?: string;
-  updatedAt?: string;
-  createdBy?: string;
-  updatedBy?: string;
 }
 
 export interface Question {
@@ -67,10 +63,6 @@ export interface Question {
   unitOfMeasurement?: string;
   rangeMetadata?: NumberRangeMetadata;
   skipIdGeneration?: boolean;
-  createdAt?: string;
-  updatedAt?: string;
-  createdBy?: string;
-  updatedBy?: string;
 }
 
 export interface SectionQuestions {

@@ -49,7 +49,6 @@ import { RoundPlanConfigurationService } from 'src/app/forms/services/round-plan
 import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
 import { v4 as uuidv4 } from 'uuid';
 import { cloneDeep } from 'lodash-es';
-import { CommonService } from 'src/app/shared/services/common.service';
 
 @Component({
   selector: 'app-builder',
@@ -117,8 +116,7 @@ export class BuilderComponent implements OnInit, OnDestroy {
   constructor(
     private store: Store<State>,
     private roundPlanConfigurationService: RoundPlanConfigurationService,
-    private raceDynamicFormService: RaceDynamicFormService,
-    private readonly commonService: CommonService
+    private raceDynamicFormService: RaceDynamicFormService
   ) {}
 
   initSubscriptions() {
@@ -473,13 +471,14 @@ export class BuilderComponent implements OnInit, OnDestroy {
 
   copySection(pageIndex, sectionIndex, section: Section) {
     const page = cloneDeep(this.subFormPages[pageIndex]);
+    let questionCounter = this.formConfigurationCounter;
     const sectionQuestionsList: SectionQuestions[] = [];
     const questionsArray = [];
     const sectionQuestions = {};
     const newQuestionIds = {};
     for (const question of page.questions || []) {
       if (question.sectionId === section.id) {
-        newQuestionIds[question.id] = `Q${uuidv4()}`;
+        newQuestionIds[question.id] = `Q${++questionCounter}`;
         sectionQuestions[question.id] = 1;
         question.id = newQuestionIds[question.id];
         question.skipIdGeneration = true;
