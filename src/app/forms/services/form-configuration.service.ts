@@ -10,6 +10,7 @@ import {
 } from 'src/app/interfaces';
 import { State } from '../state';
 import { v4 as uuidv4 } from 'uuid';
+import { CommonService } from 'src/app/shared/services/common.service';
 
 @Injectable({
   providedIn: 'root'
@@ -32,7 +33,10 @@ export class FormConfigurationService {
     unitOfMeasurement: 'None',
     rangeMetadata: {} as NumberRangeMetadata
   };
-  constructor(private store: Store<State>) {}
+  constructor(
+    private store: Store<State>,
+    private readonly commonService: CommonService
+  ) {}
 
   addPage(
     pageIndex: number,

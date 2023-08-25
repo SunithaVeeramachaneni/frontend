@@ -35,6 +35,7 @@ import { AddLogicActions } from '../../state/actions';
 import { SelectQuestionsDialogComponent } from './select-questions-dialog/select-questions-dialog.component';
 import { RaiseNotificationDailogComponent } from './raise-notification-dialog/raise-notification-dialog.component';
 import { NumberRangeMetadata } from 'src/app/interfaces';
+import { CommonService } from 'src/app/shared/services/common.service';
 
 @Component({
   selector: 'app-add-logic',
@@ -126,7 +127,8 @@ export class AddLogicComponent implements OnInit, OnDestroy {
     private store: Store<State>,
     private fb: FormBuilder,
     public dialog: MatDialog,
-    private cdrf: ChangeDetectorRef
+    private cdrf: ChangeDetectorRef,
+    private readonly commonService: CommonService
   ) {}
 
   ngOnInit() {
@@ -305,7 +307,7 @@ export class AddLogicComponent implements OnInit, OnDestroy {
     switch (type) {
       case 'add':
         const newQuestion = {
-          id: this.isEmbeddedForm ? `AQ_${Date.now()}` : `AQ_${uuidv4()}`,
+          id: `AQ_${uuidv4()}`,
           sectionId: `AQ_${logic.id}`,
           name: '',
           fieldType: 'TF',
