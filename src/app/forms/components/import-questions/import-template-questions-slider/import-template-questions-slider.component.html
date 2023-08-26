@@ -74,9 +74,13 @@
         </p>
         <div *ngIf="section.isOpen === true">
           <div *ngFor="let question of section.questions" class="questions">
-            <span id="importTemplateQuestionsQuestionName">{{
-              question.name
-            }}</span>
+            <span
+              [innerHTML]="
+                !question.name && question.fieldType === 'IMG'
+                  ? 'Inserted image comes here'
+                  : question.name
+              "
+            ></span>
           </div>
         </div>
       </div>

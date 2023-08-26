@@ -8,8 +8,8 @@ import {
   Output,
   ChangeDetectionStrategy,
   OnDestroy,
-  ElementRef,
-  ViewChild
+  ViewChild,
+  ElementRef
 } from '@angular/core';
 import {
   FormBuilder,
@@ -33,6 +33,8 @@ import { FormValidationUtil } from 'src/app/shared/utils/formValidationUtil';
 export class AddEditAssetsComponent implements OnInit, OnDestroy {
   @ViewChild('descriptionTextArea', { static: false })
   descriptionTextArea: ElementRef<HTMLTextAreaElement> = null;
+  @ViewChild('searchInput', { static: false })
+  searchInput: ElementRef<HTMLInputElement> = null;
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Output() createdAssetsData: EventEmitter<any> = new EventEmitter();
   @Input() allPlants: any[];
@@ -225,6 +227,7 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
           data: res
         });
         this.resetTextAreaHeight();
+        this.resetSearchInput();
         this.assetForm.reset();
         this.assetForm?.get('parentType').setValue('location');
         this.slideInOut.emit('out');
@@ -242,6 +245,7 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
             data: res
           });
           this.resetTextAreaHeight();
+          this.resetSearchInput();
           this.assetForm.reset();
           this.assetForm?.get('parentType').setValue('location');
           this.slideInOut.emit('out');
@@ -328,6 +332,7 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
 
   cancel() {
     this.resetTextAreaHeight();
+    this.resetSearchInput();
     this.assetForm.reset();
     this.assetForm?.get('parentType').setValue('location');
     this.slideInOut.emit('out');
@@ -350,5 +355,12 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
     if (this.descriptionTextArea?.nativeElement) {
       this.descriptionTextArea.nativeElement.style.height = '';
     }
+  }
+
+  private resetSearchInput(): void {
+    if (this.searchInput?.nativeElement) {
+      this.searchInput.nativeElement.value = '';
+    }
+    this.allPlantsData = this.plantInformation;
   }
 }

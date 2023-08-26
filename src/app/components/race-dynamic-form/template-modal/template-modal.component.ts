@@ -90,13 +90,9 @@ export class TemplateModalComponent implements OnInit, OnDestroy {
   }
 
   goBack(): void {
-    if (this.currentStep === 0) {
-      this.commonService.setCurrentRouteUrl('/forms/templates');
-      this.router.navigate(['/forms/templates']);
-      this.dialogRef.close();
-    } else if (this.currentStep > 0) {
-      this.gotoPreviousStep();
-    }
+    this.commonService.setCurrentRouteUrl('/forms/templates');
+    this.router.navigate(['/forms/templates']);
+    this.dialogRef.close();
   }
 
   onGotoStep(step): void {
