@@ -887,6 +887,15 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
         tap((logHistory) => {
           this.logHistory = logHistory?.rows || [];
           this.filteredMediaType = [];
+          if (this.data?.PHOTO?.length > 0) {
+            this.data?.PHOTO?.forEach((element) => {
+              if (element) {
+                this.filteredMediaType.push({
+                  message: element
+                });
+              }
+            });
+          }
           if (this.logHistory.length > 0) {
             this.logHistory.forEach((history) => {
               if (
@@ -903,15 +912,6 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
               }
               if (history.type === 'Media') {
                 this.filteredMediaType.push(history);
-              }
-            });
-          }
-          if (this.data?.PHOTO?.length > 0) {
-            this.data?.PHOTO?.forEach((element) => {
-              if (element) {
-                this.filteredMediaType.push({
-                  message: element
-                });
               }
             });
           }
