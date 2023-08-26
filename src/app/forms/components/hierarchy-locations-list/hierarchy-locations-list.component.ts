@@ -135,6 +135,15 @@ export class HierarchyLocationsListComponent implements OnInit, OnDestroy {
     this.handleLocationHierarchy.emit(this.selectedItems);
   };
 
+  multipleSelected = () => {
+    if (
+      this.selectedItems.length > 0 &&
+      this.selectedItems.length !== this.allItems.length
+    )
+      return true;
+    return false;
+  };
+
   ngOnDestroy(): void {
     this.onDestroy$.next();
     this.onDestroy$.complete();

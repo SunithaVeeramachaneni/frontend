@@ -33,6 +33,7 @@
         id="hierarchyLocationListSelectAll"
         class="master-checkbox"
         [(ngModel)]="isMasterChecked"
+        [indeterminate]="multipleSelected()"
         (change)="handleMasterToggle($event)"
         color="primary"
         >{{ 'selectAll' | translate }}</mat-checkbox
