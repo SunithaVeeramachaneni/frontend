@@ -906,6 +906,15 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
               }
             });
           }
+          if (this.data?.PHOTO?.length > 0) {
+            this.data?.PHOTO?.forEach((element) => {
+              if (element) {
+                this.filteredMediaType.push({
+                  message: element
+                });
+              }
+            });
+          }
         })
       );
   }
