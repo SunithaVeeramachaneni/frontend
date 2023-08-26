@@ -1,0 +1,168 @@
+<div *ngIf="currentRouteUrl$ | async as currentRouteUrl" class="dashboard-container">
+  <ng-container *ngIf="currentRouteUrl === routingUrls.operatorRoundPlans.url">
+    <div class="dis-flex dashboard-filters">
+      <div class="toggle-btns" [formGroup]="dashboardForm">
+        <div class="date-segment">
+          <mat-button-toggle-group (change)="dateChanged($event)">
+            <mat-button-toggle value="this_week" class="toogle-btn-text" [ngClass]="{
+              'selected':dashboardForm.value.timePeriod ==='this_week'
+            }">
+              This Week
+            </mat-button-toggle>
+            <mat-button-toggle value="this_month" class="toogle-btn-text" [ngClass]="{
+              'selected':dashboardForm.value.timePeriod ==='this_month'
+            }">
+              This Month
+            </mat-button-toggle>
+            <mat-button-toggle value="last_3_months" class="toogle-btn-text" [ngClass]="{
+              'selected':dashboardForm.value.timePeriod ==='last_3_months'
+            }">
+              Last 3 Months
+            </mat-button-toggle>
+            <mat-button-toggle value="last_6_months" class="toogle-btn-text" [ngClass]="{
+              'selected':dashboardForm.value.timePeriod ==='last_6_months'
+            }">
+              Last 6 Months
+            </mat-button-toggle>
+            <mat-button-toggle id="dateSegmentCustomText" value="custom" (click)="rangePicker.open()"
+              class="toogle-btn-text">{{ customText | translate }}</mat-button-toggle>
+          </mat-button-toggle-group>
+          <mat-form-field appearance="fill" class="date-range-form-field">
+            <mat-date-range-input [rangePicker]="rangePicker">
+              <input type="button" matStartDate formControlName="startDate" />
+              <input type="button" matEndDate formControlName="endDate" />
+            </mat-date-range-input>
+            <mat-date-range-picker #rangePicker>
+              <mat-date-range-picker-actions>
+                <button id="dateSegmentCancelBtn" mat-button matDateRangePickerCancel>
+                  {{ 'cancel' | translate }}
+                </button>
+                <button id="dateSegmentApplyBtn" mat-raised-button color="primary" matDateRangePickerApply
+                  (click)="appliedDateRange(dashboardForm.value.startDate, dashboardForm.value.endDate)">
+                  {{ 'apply' | translate }}
+                </button>
+              </mat-date-range-picker-actions>
+            </mat-date-range-picker>
+          </mat-form-field>
+        </div>
+        <mat-form-field appearance="outline" class="filter-field custom-form-field-white-color">
+          <mat-label id="addEditAssetsPlant" translate="plant"></mat-label>
+          <mat-select (valueChange)="onSelectPlant($event)" formControlName="plantId">
+            <input class="searchable-input" [placeholder]="'searchTxt' | translate" (keyup)="onKeyPlant($event)"
+              #searchInput />
+            <div class="scrollable-area">
+              <mat-option value="">All</mat-option>
+              <mat-option id="addEditAssetsPlantOptions" [value]="plant.plantId" *ngFor="let plant of allPlantsData">{{
+                plant.plantId }} - {{ plant.name }}</mat-option>
+            </div>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="filter-field custom-form-field-white-color">
+          <mat-label id="addEditAssetsPlant" translate="shift"></mat-label>
+          <mat-select (valueChange)="onSelectShift($event)" formControlName="shiftId">
+            <input class="searchable-input" [placeholder]="'searchTxt' | translate" #searchInput />
+            <div class="scrollable-area">
+              <mat-option value="">All</mat-option>
+              <mat-option id="addEditAssetsPlantOptions" [value]="shift.startAndEndTime"
+                *ngFor="let shift of selectedPlantShifts">
+                {{shift.name }}
+              </mat-option>
+            </div>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="undo-redo-btns">
+        <button mat-stroked-button color="primary" class="report-button" matTooltip="Undo" matTooltipClass=""
+          (click)="undo($event)" [disabled]="!undoRedoUtil.undoSize()" aria-label="Undo">
+          <mat-icon class="icon" [ngClass]="{'active':undoRedoUtil.undoSize()}">undo</mat-icon>
+        </button>
+        <button mat-stroked-button color="primary" class="report-button" (click)="redo($event)" matTooltip="Redo"
+          matTooltipClass="" [disabled]="!undoRedoUtil.redoSize()" aria-label="Redo">
+          <mat-icon class="icon" [ngClass]="{'active':undoRedoUtil.redoSize()}">redo</mat-icon>
+        </button>
+        <button mat-stroked-button color="primary" class="report-button" aria-label="share"
+          [matMenuTriggerFor]="emailMenu">
+          <mat-icon class="icon active">forward_to_inbox</mat-icon>
+        </button>
+        <mat-menu #emailMenu="matMenu" yPosition="below" class="emailContainer">
+          <div mat-menu-item [disableRipple]="true" (click)="$event.stopPropagation()" class="emailContainer">
+            <ng-container>
+              <h4 class="email-dialog-head">Share Dashboard via Email</h4>
+              <div class="email-dialog-body">
+                <mat-form-field class="user-chip-list">
+                  <mat-chip-list #chipList>
+                    <mat-chip *ngFor="let user of users" [selectable]="selectable" [removable]="removable"
+                      (removed)="removeUser(user)">
+                      {{user}}
+                      <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                    </mat-chip>
+                    <input placeholder="Select Recipient..." class="user-input" #userInput [formControl]="userCtrl"
+                      [matAutocomplete]="auto" [matChipInputFor]="chipList"
+                      [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"
+                      (matChipInputTokenEnd)="addUser($event)" />
+                  </mat-chip-list>
+                  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+                    <mat-option *ngFor="let fruit of filteredUsers | async" [value]="fruit">
+                      {{ fruit }}
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="user-chip-list">
+                  <mat-label>Email IDs</mat-label>
+                  <input matInput placeholder="Enter comma separated email IDs">
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="user-chip-list">
+                  <mat-label>Notes</mat-label>
+                  <textarea matInput placeholder="Enter Notes.."></textarea>
+                </mat-form-field>
+              </div>
+              <div class="email-dialog-footer">
+                <button mat-stroked-button class="btn">Cancel</button>
+                <button mat-flat-button color="primary" class="btn">Send</button>
+              </div>
+            </ng-container>
+          </div>
+        </mat-menu>
+
+        <button mat-stroked-button color="primary" class="report-button" [ngClass]="{'t-minus4':downloadInProgress}"
+          aria-label="share" (click)="downloadDashboardAsImage()">
+          <mat-progress-spinner [mode]="'indeterminate'" [diameter]="25"
+            *ngIf="downloadInProgress"></mat-progress-spinner>
+          <mat-icon class="icon active" *ngIf="!downloadInProgress">picture_as_pdf</mat-icon>
+        </button>
+      </div>
+
+    </div>
+    <mat-divider></mat-divider>
+    <ng-container>
+      <div id="gridster-container" #gridsterContainer>
+        <gridster [options]="options">
+          <ng-container *ngIf="widgetsData$ | async as widgetsData">
+            <gridster-item [item]="widget.config" *ngFor="let widget of widgetsData.data">
+              <div id="{{widget.id}}">
+                <div class="dis-flex widget-header">
+                  <div class="gridster-item-content widget-title" matTooltip="{{ widget.name }}" matTooltipClass="">
+                    {{ widget.name }}
+                  </div>
+                  <!-- <button mat-menu-item (click)="editWidget(widget)" class="more-icon">
+                    <mat-icon>email</mat-icon>
+                  </button> -->
+                </div>
+                <div class="widget-body">
+                  <app-widget [widget]="widget" [height]="widgetHeights[widget.id]" [width]="widgetWidths[widget.id]"
+                    (widgetAction)="widgetActionHandler($event)" [filters]="dashboardForm.value"></app-widget>
+                </div>
+              </div>
+
+            </gridster-item>
+          </ng-container>
+        </gridster>
+      </div>
+      <ng-container *ngIf="applyingFilters$ | async" class="spinnerContainer">
+        <div class="overlay"></div>
+        <mat-progress-spinner [mode]="'indeterminate'" [diameter]="175" [strokeWidth]="10"></mat-progress-spinner>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+  <router-outlet></router-outlet>
+</div>

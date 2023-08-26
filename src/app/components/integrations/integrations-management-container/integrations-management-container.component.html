@@ -1,0 +1,6 @@
+<div class="tenant-management-body" *ngIf="currentRouteUrl$ | async as currentRouteUrl">
+  <ng-container *ngIf="currentRouteUrl === routingUrls.integrationManagement.url">
+    <app-integrations></app-integrations>
+  </ng-container>
+  <router-outlet></router-outlet>
+</div>

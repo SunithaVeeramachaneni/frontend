@@ -1,0 +1,306 @@
+<div [formGroup]="integrationConfigForm" class="integrations-container">
+  <div class="page-header">
+    <span class="page-title">Integrations Configurations</span>
+  </div>
+  <div class="w-100 connector-step">
+    <div class="connectors-container">
+      <div class="w-35 connector-left">
+        <div class="dis-flex flex-wrap connector-container">
+          <div *ngFor="let connector of connectors" class="connector-formtype-style w-100 m-l-0"
+            (click)="connectorChanged(connector.id)" [ngClass]="{
+              'inactive-connector': !connector.isActive,
+              'active-connector': connector.isActive,
+              'selected-connector':
+                integrationConfigForm.value.connector === connector.id
+            }">
+            <div class="radio-label">
+              <img [src]="connector.image" class="connector-icon" />
+              <div>
+                <span class="radio-btn-text">{{ connector.name }}</span>
+                <p class="connector-radio-sub-text">
+                  {{ connector.description }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="integrationConfigForm.value.connector.length" formGroupName="connectorMeta"
+        class="w-65 connectorMeta">
+        <p class="form-name-description connector-head" *ngIf="integrationConfigForm.value.connector">
+          Configure
+          {{ getConnectorName(integrationConfigForm.value.connector)?.name }}
+        </p>
+        <mat-tab-group>
+          <mat-tab label="Authorization">
+            <div>
+              <div>
+                <ng-container [ngSwitch]="integrationConfigForm.value.connector">
+                  <ng-container *ngSwitchCase="'rest'" [ngTemplateOutlet]="restApiTemplate"></ng-container>
+                  <ng-container *ngSwitchCase="'odbc'" [ngTemplateOutlet]="odbcTemplate"></ng-container>
+                  <ng-container *ngSwitchCase="'sap'" [ngTemplateOutlet]="sapTemplate"></ng-container>
+                  <ng-container *ngSwitchCase="'maximo'" [ngTemplateOutlet]="maximoTemplate"></ng-container>
+                  <ng-container *ngSwitchCase="'ftp'" [ngTemplateOutlet]="ftpTemplate"></ng-container>
+                  <ng-container *ngSwitchCase="'cloud-storage'"
+                    [ngTemplateOutlet]="cloudStorageTemplate"></ng-container>
+                  <ng-container *ngSwitchCase="'email'" [ngTemplateOutlet]="emailTemplate"></ng-container>
+                  <ng-container *ngSwitchCase="'webhook'" [ngTemplateOutlet]="webhookTemplate"></ng-container>
+                  <ng-container *ngSwitchCase="
+                      !integrationConfigForm.value.connector.length
+                    " [ngTemplateOutlet]="emptyTemplate"></ng-container>
+                </ng-container>
+                <ng-template #restApiTemplate>
+                  <div>
+                    <div class="apiAuthTypeField">
+                      <mat-label class="label">Authentication Type</mat-label>
+                      <mat-radio-group aria-label="Select Authentication Mechanism" formControlName="authenticationType"
+                        class="apiAuthType">
+                        <mat-radio-button value="api-key">API Key</mat-radio-button>
+                        <mat-radio-button value="token">Token Based</mat-radio-button>
+                        <mat-radio-button value="basic">Basic Auth</mat-radio-button>
+                        <mat-radio-button value="none">None (No Auth)</mat-radio-button>
+                      </mat-radio-group>
+                    </div>
+                    <div class="apiAuthTypeField">
+                      <mat-form-field appearance="outline" class="width-100">
+                        <mat-label class="label">Auth Parameters(JSON)</mat-label>
+                        <textarea matInput [placeholder]="'Authentication Parameters(JSON)'"></textarea>
+                      </mat-form-field>
+                    </div>
+                    <div></div>
+                  </div>
+                </ng-template>
+                <ng-template #odbcTemplate>
+                  <div>
+                    <div>
+                      <mat-form-field appearance="outline" class="width-100">
+                        <mat-label>DB Hostname</mat-label>
+                        <input type="text" matInput [placeholder]="'Hostname'" formControlName="hostname" />
+                      </mat-form-field>
+                    </div>
+                    <div>
+                      <mat-form-field appearance="outline" class="width-100">
+                        <mat-label>Username</mat-label>
+                        <input type="text" matInput [placeholder]="'DB Username'" formControlName="username" />
+                      </mat-form-field>
+                    </div>
+                    <div>
+                      <mat-form-field appearance="outline" class="width-100">
+                        <mat-label>Password</mat-label>
+                        <input type="text" matInput [placeholder]="'DB Password'" formControlName="password" />
+                      </mat-form-field>
+                    </div>
+                    <div>
+                      <mat-form-field appearance="outline" class="width-100">
+                        <mat-label>Database Name</mat-label>
+                        <input type="text" matInput [placeholder]="'Database Name'" formControlName="database" />
+                      </mat-form-field>
+                    </div>
+                    <div>
+                      <mat-form-field appearance="outline" class="width-100">
+                        <mat-label>Database PORT</mat-label>
+                        <input type="text" matInput [placeholder]="'Database PORT'" formControlName="port" />
+                      </mat-form-field>
+                    </div>
+                    <div>
+                      <mat-form-field appearance="outline" class="width-100">
+                        <mat-label>Database Dialect</mat-label>
+                        <input type="text" matInput [placeholder]="'Database Dialect'" formControlName="dialect" />
+                      </mat-form-field>
+                    </div>
+                  </div>
+                </ng-template>
+                <ng-template #sapTemplate>
+                  <div>
+                    <div>
+                      <mat-form-field appearance="outline" class="width-100">
+                        <mat-label>SAP Details</mat-label>
+                        <input type="text" matInput [placeholder]="'Hostname'" formControlName="hostname" />
+                      </mat-form-field>
+                    </div>
+                  </div>
+                </ng-template>
+                <ng-template #maximoTemplate>
+                  <div>
+                    <div>
+                      <mat-form-field appearance="outline" class="width-100">
+                        <mat-label>Maximo Details</mat-label>
+                        <input type="text" matInput [placeholder]="'Hostname'" formControlName="hostname" />
+                      </mat-form-field>
+                    </div>
+                  </div>
+                </ng-template>
+                <ng-template #ftpTemplate>
+                  <div>
+                    <div>
+                      <mat-form-field appearance="outline" class="width-100">
+                        <mat-label>FTP Details</mat-label>
+                        <input type="text" matInput [placeholder]="'Hostname'" formControlName="hostname" />
+                      </mat-form-field>
+                    </div>
+                  </div>
+                </ng-template>
+                <ng-template #cloudStorageTemplate>
+                  <div>
+                    <div>
+                      <mat-form-field appearance="outline" class="width-100">
+                        <mat-label>Cloud Storage Details</mat-label>
+                        <input type="text" matInput [placeholder]="'Hostname'" formControlName="hostname" />
+                      </mat-form-field>
+                    </div>
+                  </div>
+                </ng-template>
+                <ng-template #emailTemplate>
+                  <div>
+                    <div>
+                      <mat-form-field appearance="outline" class="width-100">
+                        <mat-label>SMTP Hostname</mat-label>
+                        <input type="text" matInput [placeholder]="'SMTP Hostname'" formControlName="hostname" />
+                      </mat-form-field>
+                    </div>
+                    <div>
+                      <mat-form-field appearance="outline" class="width-100">
+                        <mat-label>SMTP Port</mat-label>
+                        <input type="number" matInput [placeholder]="'SMTP Port'" formControlName="port" />
+                      </mat-form-field>
+                    </div>
+                    <div>
+                      <mat-form-field appearance="outline" class="width-100">
+                        <mat-label>SMTP Username</mat-label>
+                        <input type="text" matInput [placeholder]="'SMTP Username'" formControlName="username" />
+                      </mat-form-field>
+                    </div>
+                    <div>
+                      <mat-form-field appearance="outline" class="width-100">
+                        <mat-label>SMTP Password</mat-label>
+                        <input type="text" matInput [placeholder]="'SMTP Password'" formControlName="password" />
+                      </mat-form-field>
+                    </div>
+                  </div>
+                </ng-template>
+                <ng-template #webhookTemplate>
+                  <div>
+                    <div>
+                      <mat-form-field appearance="outline" class="width-100">
+                        <mat-label>Webhook Details</mat-label>
+                        <input type="text" matInput [placeholder]="'Hostname'" formControlName="hostname" />
+                      </mat-form-field>
+                    </div>
+                  </div>
+                </ng-template>
+                <ng-template #emptyTemplate>
+                  <div class="w-65 connectorMeta noConnector">
+                    Please select a connector from left to configure.
+                  </div>
+                </ng-template>
+
+                <div class="test-connect">
+                  <button mat-raised-button color="primary" class="next-btn test-connection-btn">
+                    Test Connection
+                  </button>
+                  <button mat-raised-button color="primary" class="next-btn test-connection-btn">
+                    Save
+                  </button>
+                </div>
+              </div>
+            </div>
+          </mat-tab>
+          <mat-tab label="Integration">
+            <div>
+              <p class="form-name-description">Select Integration Point</p>
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-select formControlName="integrationPoint" (selectionChange)="selectIntegrationPoint($event)">
+                  <mat-option value="">Select</mat-option>
+                  <mat-option *ngFor="let ip of integrationPoints" [value]="ip.id">
+                    {{ ip.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div>
+              <p class="form-name-description">Data Synchronization</p>
+              <mat-radio-group class="dis-flex" formControlName="synchronization">
+                <div class="formtype-style m-l-0">
+                  <mat-radio-button class="radio-btns" value="real-time"></mat-radio-button>
+                  <div>
+                    <span class="radio-btn-text">Real-time</span>
+                    <p class="radio-sub-text">Synchronize the data real-time</p>
+                  </div>
+                </div>
+                <div class="formtype-style m-r-0">
+                  <mat-radio-button class="radio-btns" value="scheduled"></mat-radio-button>
+                  <div>
+                    <span class="radio-btn-text">Scheduled </span><br />
+                    <p class="radio-sub-text">
+                      Synchronize the data on a scheduled interval
+                    </p>
+                  </div>
+                </div>
+              </mat-radio-group>
+            </div>
+            <div *ngIf="
+                integrationConfigForm.value.synchronization === 'scheduled'
+              ">
+              <p class="form-name-description">Job Schedule</p>
+              <mat-form-field appearance="outline" class="width-100">
+                <input type="text" matInput formControlName="cronExpression"
+                  [placeholder]="'Enter Job Schedule Expression'" />
+              </mat-form-field>
+            </div>
+          </mat-tab>
+          <mat-tab label="Data Mapping">
+            <div class="tab-content">
+              <div class="dis-flex">
+                <div class="w-100">
+                  <mat-list role="list">
+                    <mat-list-item role="listitem">
+                      <div class="attribute-list">
+                        <span class="mapping-head">
+                          CBO(Source) Data Attribute
+                        </span>
+                        <span class="mapping-head">
+                          Destination Data Attribute</span>
+                      </div>
+                    </mat-list-item>
+                    <mat-list-item *ngFor="
+                        let field of getDataEntityMapping();
+                        let i = index
+                      " role="listitem" formArrayName="dataMapping">
+                      <div [formGroupName]="i" class="attribute-list">
+                        <span class="ip-head w-100 p-l-r-10">
+                          <input type="hidden" formControlName="sourceKey" [value]="field.value.attributeId" />
+                          <span class="ip-title">{{
+                            field.value.attributeName
+                            }}</span>
+                          <span class="ip-desc">{{
+                            field.value.attributeId
+                            }}</span>
+                        </span>
+                        <mat-form-field appearance="outline" class="width-100">
+                          <input type="text" matInput formControlName="targetKey" />
+                        </mat-form-field>
+                      </div>
+                    </mat-list-item>
+                  </mat-list>
+                </div>
+                <!-- <div class="w-35 mapping-preview">
+                  <h4>Mapping Preview</h4>
+                  {{this.integrationConfigForm.get('dataMapping').value | json}}
+                </div> -->
+              </div>
+            </div>
+          </mat-tab>
+        </mat-tab-group>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- <div class="integrations-container">
+  <div class="page-header">
+    <span class="page-title">Integrations Configurations</span>
+  </div>
+  <div class="dis-flex page-content">
+    <h2>It works</h2>
+  </div>
+</div> -->

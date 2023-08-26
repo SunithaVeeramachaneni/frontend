@@ -1,0 +1,43 @@
+<div class="chart-report-dialog">
+  <div class="report-heading">
+    <div class="head-row1">
+      <span class="heading">{{data.chartData?.name}}</span>
+      <mat-icon class="close-icon" (click)="close()">close</mat-icon>
+    </div>
+    <div class="head-row2">
+      <!-- { "timePeriod": "last_6_months", "plantId": "HYD1", "shiftId": "09:15 - 18:15", "startDate": "", "endDate": "" } -->
+      <span class="filter-item"><b>Time Period: </b>
+        <span *ngIf="data.filters.timePeriod !== 'custom'">{{ data.filters.timePeriod | translate}}</span>
+        <span *ngIf="data.filters.timePeriod === 'custom'">
+          {{ data.filters.startDate}} - {{ data.filters.endDate}}
+        </span>
+      </span>
+      <span class="filter-item" *ngIf="data.filters && data.filters.plantId && data.filters.plantId.length"><b>Plant:
+        </b> {{data.filters.plantId}}</span>
+      <span class="filter-item" *ngIf="data.filters && data.filters.shiftId && data.filters.shiftId.length"><b>Shifts:
+        </b> {{data.filters.shiftId}} </span>
+    </div>
+  </div>
+  <div class="report-body">
+    <div *ngIf="reportDetails$ | async; else loadingReportDetails">
+      <cwp-dynamictable [dataSource]="dataSource" [configOptions]="configOptions"
+        (fetchDataCallback)="tableEventHandler($event)"></cwp-dynamictable>
+    </div>
+  </div>
+  <!-- <div class="report-footer">
+    <button mat-flat-button color="primary" mat-dialog-close class="close-btn">Close</button>
+  </div> -->
+</div>
+<ng-template #loadingReportDetails>
+  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+</ng-template>
