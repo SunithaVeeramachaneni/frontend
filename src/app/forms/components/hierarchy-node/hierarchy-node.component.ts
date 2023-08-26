@@ -38,7 +38,9 @@ export class HierarchyNodeComponent implements OnInit {
     if (this.selectionMode === 'selectAssets') {
       this.allSelected = isMasterCheckedData.checked;
       if (this.allSelected) {
-        this.isAllSelectedToggled({ checked: true });
+        this.isAllSelectedToggled({
+          checked: isMasterCheckedData?.masterToggle
+        });
       }
     }
   }
