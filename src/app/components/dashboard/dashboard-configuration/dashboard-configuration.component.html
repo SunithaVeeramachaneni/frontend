@@ -1,26 +1,11 @@
 <div class="dashboard">
-  <mat-form-field
-    appearance="outline"
-    *ngIf="dashboardDisplayMode !== 'ALL'"
-    class="dashboard-dropdown m-r-5"
-  >
+  <mat-form-field appearance="outline" *ngIf="dashboardDisplayMode !== 'ALL'" class="dashboard-dropdown m-r-5">
     <mat-label translate>dashboards</mat-label>
-    <mat-select
-      [compareWith]="compareFn"
-      [value]="dashboard"
-      [formControl]="dashboardControl"
-      *ngIf="dashboards$ | async as dashboards"
-      (selectionChange)="dashboardSelectionChanged($event)"
-    >
-      <ng-container
-        *ngFor="let dashboard of dashboards.concat(staticDropDownOptions)"
-      >
-        <ng-container
-          *ngIf="dashboard.id === 'CREATE_DASHBOARD'; else displayOptions"
-        >
-          <ng-container
-            *appCheckUserHasPermission="[permissions.createDashboard]"
-          >
+    <mat-select [compareWith]="compareFn" [value]="dashboard" [formControl]="dashboardControl"
+      *ngIf="dashboards$ | async as dashboards" (selectionChange)="dashboardSelectionChanged($event)">
+      <ng-container *ngFor="let dashboard of dashboards.concat(staticDropDownOptions)">
+        <ng-container *ngIf="dashboard.id === 'CREATE_DASHBOARD'; else displayOptions">
+          <ng-container *appCheckUserHasPermission="[permissions.createDashboard]">
             <mat-option [value]="dashboard">
               <a class="dropdown-dashboard-name-ellipsis">
                 {{ dashboard.name | translate }}
@@ -48,58 +33,33 @@
       <span *ngIf="dashboard.isDefault" class="default-chip">Default</span>
     </span>
 
-    <ng-container
-      *appCheckUserHasPermission="[
+    <ng-container *appCheckUserHasPermission="[
         permissions.updateDashboard,
         permissions.copyDashboard,
         permissions.deleteDashboard
-      ]"
-    >
-      <button
-        [matMenuTriggerFor]="menu"
-        class="more-icon"
-        *ngIf="dashboardDisplayMode !== 'ALL'"
-        [ngClass]="dashboardDisplayMode === 'ALL' ? 'more-icon-all' : ''"
-        aria-label="More Options"
-      >
+      ]">
+      <button [matMenuTriggerFor]="menu" class="more-icon" *ngIf="dashboardDisplayMode !== 'ALL'"
+        [ngClass]="dashboardDisplayMode === 'ALL' ? 'more-icon-all' : ''" aria-label="More Options">
         <svg-icon icon="icon-more" class="more-icon-no-color"></svg-icon>
       </button>
     </ng-container>
 
     <mat-menu #menu="matMenu" xPosition="before">
-      <button
-        mat-menu-item
-        (click)="editDashboard(dashboard)"
-        *appCheckUserHasPermission="[permissions.updateDashboard]"
-        translate
-      >
+      <button mat-menu-item (click)="editDashboard(dashboard)"
+        *appCheckUserHasPermission="[permissions.updateDashboard]" translate>
         edit
       </button>
-      <button
-        mat-menu-item
-        (click)="copyDashboard(dashboard)"
-        *appCheckUserHasPermission="[permissions.copyDashboard]"
-        translate
-      >
+      <button mat-menu-item (click)="copyDashboard(dashboard)" *appCheckUserHasPermission="[permissions.copyDashboard]"
+        translate>
         copy
       </button>
       <ng-container *appCheckUserHasPermission="[permissions.updateDashboard]">
-        <button
-          mat-menu-item
-          (click)="markDashboardDefault(dashboard)"
-          *ngIf="!dashboard.isDefault"
-          translate
-        >
+        <button mat-menu-item (click)="markDashboardDefault(dashboard)" *ngIf="!dashboard.isDefault" translate>
           markDefault
         </button>
       </ng-container>
-      <button
-        mat-menu-item
-        class="delete-menu-item"
-        (click)="deleteDashboard(dashboard)"
-        *appCheckUserHasPermission="[permissions.deleteDashboard]"
-        translate
-      >
+      <button mat-menu-item class="delete-menu-item" (click)="deleteDashboard(dashboard)"
+        *appCheckUserHasPermission="[permissions.deleteDashboard]" translate>
         delete
       </button>
     </mat-menu>
@@ -110,13 +70,8 @@
       {{ this.widgets.length }}
       <span class="widget-count-text" translate="widgetsText"></span>
     </span>
-    <button
-      class="new-widget-btn"
-      translate="newWidget"
-      [disabled]="!dashboard.id"
-      (click)="createWidget()"
-      *appCheckUserHasPermission="[permissions.createDashboard]"
-    ></button>
+    <button class="new-widget-btn" translate="newWidget" [disabled]="!dashboard.id" (click)="createWidget()"
+      *appCheckUserHasPermission="[permissions.createDashboard]"></button>
   </div>
 </div>
 <mat-divider></mat-divider>
@@ -125,62 +80,35 @@
 <div id="gridster-container" #gridsterContainer>
   <gridster [options]="options">
     <ng-container *ngIf="widgetsData$ | async as widgetsData">
-      <gridster-item
-        [item]="widget.config"
-        *ngFor="let widget of widgetsData.data"
-      >
+      <gridster-item [item]="widget.config" *ngFor="let widget of widgetsData.data">
         <div class="dis-flex widget-header">
-          <div
-            class="gridster-item-content widget-title"
-            matTooltip="{{ widget.name }}"
-            matTooltipClass=""
-          >
+          <div class="gridster-item-content widget-title" matTooltip="{{ widget.name }}" matTooltipClass="">
             {{ widget.name }}
           </div>
-          <button
-            [matMenuTriggerFor]="widgetMenu"
-            class="more-icon"
-            *appCheckUserHasPermission="[
+          <button [matMenuTriggerFor]="widgetMenu" class="more-icon" *appCheckUserHasPermission="[
               permissions.updateDashboard,
               permissions.copyDashboard,
               permissions.deleteDashboard
-            ]"
-            aria-label="More Options"
-          >
+            ]" aria-label="More Options">
             <svg-icon icon="icon-more" class="more-icon-no-color"></svg-icon>
           </button>
           <mat-menu #widgetMenu="matMenu">
-            <button
-              mat-menu-item
-              (click)="editWidget(widget)"
-              *appCheckUserHasPermission="[permissions.updateDashboard]"
-            >
+            <button mat-menu-item (click)="editWidget(widget)"
+              *appCheckUserHasPermission="[permissions.updateDashboard]">
               <span translate>editWidget</span>
             </button>
-            <button
-              mat-menu-item
-              (click)="copyWidget(widget)"
-              *appCheckUserHasPermission="[permissions.copyDashboard]"
-            >
+            <button mat-menu-item (click)="copyWidget(widget)" *appCheckUserHasPermission="[permissions.copyDashboard]">
               <span translate>copyWidget</span>
             </button>
-            <button
-              mat-menu-item
-              (click)="deleteWidget(widget)"
-              class="text-red"
-              *appCheckUserHasPermission="[permissions.deleteDashboard]"
-            >
+            <button mat-menu-item (click)="deleteWidget(widget)" class="text-red"
+              *appCheckUserHasPermission="[permissions.deleteDashboard]">
               <span translate>deleteWidget</span>
             </button>
           </mat-menu>
         </div>
         <div class="widget-body">
-          <app-widget
-            [widget]="widget"
-            [height]="widgetHeights[widget.id]"
-            [width]="widgetWidths[widget.id]"
-            (widgetAction)="widgetActionHandler($event)"
-          ></app-widget>
+          <app-widget [widget]="widget" [height]="widgetHeights[widget.id]" [width]="widgetWidths[widget.id]"
+            (widgetAction)="widgetActionHandler($event)"></app-widget>
         </div>
       </gridster-item>
     </ng-container>

@@ -211,6 +211,11 @@ export const routingUrls = {
     title: 'Tenant Management',
     permission: permissions.viewTenants
   },
+  integrationManagement: {
+    url: '/integrations',
+    title: 'Integrations Manager',
+    permission: permissions.viewTenants
+  },
   inActiveTenants: {
     url: '/tenant-management/inactive-tenants',
     title: 'Inactive Tenants',
@@ -254,7 +259,7 @@ export const routingUrls = {
     permission: permissions.viewORPlans
   },
   myRoundPlans: {
-    url: '/operator-rounds',
+    url: '/operator-rounds/round-plans',
     title: 'Round Plans',
     permission: permissions.viewORPlans
   },

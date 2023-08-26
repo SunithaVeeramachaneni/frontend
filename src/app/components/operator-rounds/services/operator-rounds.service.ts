@@ -788,4 +788,17 @@ export class OperatorRoundsService {
       {},
       'arraybuffer'
     );
+
+  generateDashboardPDF$ = (
+    images: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<Blob> =>
+    this.appService.downloadFile(
+      environment.operatorRoundsApiUrl,
+      `dashboard/download-pdf`,
+      info,
+      false,
+      images,
+      'arraybuffer'
+    );
 }

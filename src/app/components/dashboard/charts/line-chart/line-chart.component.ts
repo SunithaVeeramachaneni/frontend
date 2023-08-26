@@ -4,7 +4,9 @@ import {
   Component,
   OnInit,
   ChangeDetectionStrategy,
-  Input
+  Input,
+  EventEmitter,
+  Output
 } from '@angular/core';
 
 @Component({
@@ -14,6 +16,8 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LineChartComponent implements OnInit {
+  @Output() chartClickEvent: EventEmitter<any> = new EventEmitter<any>();
+
   @Input() set chartConfig(chartConfig) {
     this.chartConfigurations = chartConfig;
     if (chartConfig.renderChart) {
@@ -137,6 +141,10 @@ export class LineChartComponent implements OnInit {
   constructor(private datePipe: DatePipe) {}
 
   ngOnInit(): void {}
+
+  onChartClickHandler(event) {
+    this.chartClickEvent.emit(event);
+  }
 
   prepareChartDetails = () => {
     if (this.chartData && this.chartConfig) {

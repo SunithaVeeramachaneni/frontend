@@ -63,6 +63,7 @@ import { LineChartComponent } from './charts/line-chart/line-chart.component';
 import { PieChartComponent } from './charts/pie-chart/pie-chart.component';
 import { DonutChartComponent } from './charts/donut-chart/donut-chart.component';
 import { AreaChartComponent } from './charts/area-chart/area-chart.component';
+import { ChartReportDialog } from './chart-report-dialog/chart-report-dialog.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/dashboard/', '.json');
@@ -137,9 +138,10 @@ export const customTranslateLoader = (http: HttpClient) =>
     LineChartComponent,
     PieChartComponent,
     DonutChartComponent,
-    AreaChartComponent
+    AreaChartComponent,
+    ChartReportDialog
   ],
-  exports: [],
+  exports: [WidgetComponent, ChartReportDialog],
   entryComponents: []
 })
 export class DashboardModule {

@@ -4,7 +4,9 @@ import {
   Component,
   OnInit,
   Input,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  EventEmitter,
+  Output
 } from '@angular/core';
 import { DatePipe } from '@angular/common';
 
@@ -15,6 +17,8 @@ import { DatePipe } from '@angular/common';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HorizontalStackedChartComponent implements OnInit {
+  @Output() chartClickEvent: EventEmitter<any> = new EventEmitter<any>();
+
   @Input() set chartConfig(chartConfig) {
     this.chartConfigurations = chartConfig;
     if (chartConfig.renderChart) {
@@ -139,6 +143,10 @@ export class HorizontalStackedChartComponent implements OnInit {
   constructor(private datePipe: DatePipe) {}
 
   ngOnInit(): void {}
+
+  onChartClickHandler(event) {
+    this.chartClickEvent.emit(event);
+  }
 
   prepareChartDetails = () => {
     if (this.chartData && this.chartConfig) {

@@ -360,5 +360,7 @@
   "reportGeneratedOn": "Report Generated On",
   "addNotes": "Add Notes",
   "skippedReason": "Skipped Reason",
-  "backToList": "Back to List"
+  "backToList": "Back to List",
+  "searchTxt": "Search",
+  "shareViaEmail": "Share Via Email"
 }

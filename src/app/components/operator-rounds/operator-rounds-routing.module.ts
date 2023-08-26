@@ -9,17 +9,27 @@ import { RoundPlanResolverService } from './services/round-plan-resolver.service
 import { SchedulerComponent } from './scheduler/scheduler.component';
 import { RoundObservationsComponent } from './round-observations/round-observations.component';
 import { RoundPlanEditViewComponent } from './round-plan-modal/round-plan-edit-view.component';
+import { OperatorRoundsDashboardComponent } from './operator-rounds-dashboard/operator-rounds-dashboard.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: OperatorRoundsContainerComponent,
+    component: OperatorRoundsDashboardComponent,
     canActivate: [AuthGuard],
     data: {
       breadcrumb: { label: 'Operator Rounds' },
       permissions: [permissions.viewORPlans]
     },
     children: [
+      {
+        path: 'round-plans',
+        component: OperatorRoundsContainerComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: { label: 'Operator Rounds' },
+          permissions: [permissions.viewORPlans]
+        }
+      },
       {
         path: 'create',
         component: OperatorRoundsContainerComponent,

@@ -5,7 +5,9 @@ import {
   OnInit,
   Input,
   OnChanges,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  EventEmitter,
+  Output
 } from '@angular/core';
 import { EChartsOption } from 'echarts';
 
@@ -16,6 +18,7 @@ import { EChartsOption } from 'echarts';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DonutChartComponent implements OnInit, OnChanges {
+  @Output() chartClickEvent: EventEmitter<any> = new EventEmitter<any>();
   @Input() set chartConfig(chartConfig) {
     this.chartConfigurations = chartConfig;
     if (chartConfig.renderChart) {
@@ -90,6 +93,10 @@ export class DonutChartComponent implements OnInit, OnChanges {
   constructor(private datePipe: DatePipe) {}
 
   ngOnInit(): void {}
+
+  onChartClickHandler(event) {
+    this.chartClickEvent.emit(event);
+  }
 
   prepareChartDetails = () => {
     if (this.chartData && this.chartConfig) {

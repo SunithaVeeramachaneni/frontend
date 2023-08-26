@@ -33,6 +33,12 @@ export class CreateUpdateDashboardDialogComponent implements OnInit {
   isDefault: boolean | false;
   dashboardForm: FormGroup;
   errors: ValidationError = {};
+  modules = [
+    {
+      name: 'Operator Rounds',
+      id: 'operator_rounds'
+    }
+  ];
 
   constructor(
     public dialogRef: MatDialogRef<CreateUpdateDashboardDialogComponent>,
@@ -51,7 +57,8 @@ export class CreateUpdateDashboardDialogComponent implements OnInit {
         WhiteSpaceValidator.whiteSpace,
         WhiteSpaceValidator.trimWhiteSpace,
         this.checkIfDashboardTitleExists()
-      ])
+      ]),
+      moduleName: new FormControl('')
     });
     if (this.dialogData.dialogMode === 'EDIT') {
       this.f.dashboardName.setValue(this.dialogData.data.name);
@@ -88,6 +95,7 @@ export class CreateUpdateDashboardDialogComponent implements OnInit {
     event.stopPropagation();
     this.dialogRef.close({
       name: this.dashboardForm.value.dashboardName,
+      moduleName: this.dashboardForm.value.moduleName,
       isDefault: this.isDefault
     });
   }

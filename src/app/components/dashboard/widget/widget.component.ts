@@ -23,6 +23,8 @@ import {
   WidgetAction
 } from 'src/app/interfaces';
 import { ReportConfigurationService } from '../services/report-configuration.service';
+import { MatDialog } from '@angular/material/dialog';
+import { ChartReportDialog } from '../chart-report-dialog/chart-report-dialog.component';
 
 @Component({
   selector: 'app-widget',
@@ -59,6 +61,9 @@ export class WidgetComponent implements OnInit {
   get width(): number {
     return this._width;
   }
+
+  @Input() filters: any;
+
   @Output() widgetAction: EventEmitter<WidgetAction> =
     new EventEmitter<WidgetAction>();
   chartConfig: AppChartConfig;
@@ -95,14 +100,18 @@ export class WidgetComponent implements OnInit {
   public _width: number;
   private _widget: Widget;
 
-  constructor(private reportConfigService: ReportConfigurationService) {}
+  constructor(
+    private reportConfigService: ReportConfigurationService,
+    private dialog: MatDialog
+  ) {}
 
   ngOnInit(): void {
     this.chartData$ = this.reportConfigService.getGroupByCountDetails$(
       this.report,
       {
         type: this.countType,
-        field: this.countField
+        field: this.countField,
+        ...this.filters
       }
     );
 
@@ -134,6 +143,23 @@ export class WidgetComponent implements OnInit {
       })
     );
   }
+
+  onChartClickHandle = (event: any) => {
+    console.log(event);
+    const dialogRef = this.dialog.open(ChartReportDialog, {
+      disableClose: true,
+      // width: '80%',
+      // height: '80%',
+      data: {
+        chartData: event.data,
+        widgetData: this.widget,
+        filters: this.filters
+      }
+    });
+    dialogRef.afterClosed().subscribe(() => {
+      //
+    });
+  };
 
   prepareWidgetData = () => {
     const {

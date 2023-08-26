@@ -48,6 +48,7 @@ const {
   userGroups,
   inActiveUsers,
   tenantManagement,
+  integrationManagement,
   raceDynamicForms,
   myForms,
   formsTemplates,
@@ -101,6 +102,15 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       imageName: 'tenant-management',
       showSubMenu: false,
       permission: tenantManagement.permission,
+      subPages: null,
+      disable: false
+    },
+    {
+      title: integrationManagement.title,
+      url: integrationManagement.url,
+      imageName: 'integrations',
+      showSubMenu: false,
+      permission: integrationManagement.permission,
       subPages: null,
       disable: false
     },
