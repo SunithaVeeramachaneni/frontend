@@ -81,7 +81,7 @@
           <mat-icon class="icon" [ngClass]="{'active':undoRedoUtil.redoSize()}">redo</mat-icon>
         </button>
         <button mat-stroked-button color="primary" class="report-button" aria-label="share"
-          [matMenuTriggerFor]="emailMenu">
+          [matMenuTriggerFor]="emailMenu" #emailMenuTrigger="matMenuTrigger">
           <mat-icon class="icon active">forward_to_inbox</mat-icon>
         </button>
         <mat-menu #emailMenu="matMenu" yPosition="below" class="emailContainer">
@@ -89,36 +89,18 @@
             <ng-container>
               <h4 class="email-dialog-head">Share Dashboard via Email</h4>
               <div class="email-dialog-body">
-                <mat-form-field class="user-chip-list">
-                  <mat-chip-list #chipList>
-                    <mat-chip *ngFor="let user of users" [selectable]="selectable" [removable]="removable"
-                      (removed)="removeUser(user)">
-                      {{user}}
-                      <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
-                    </mat-chip>
-                    <input placeholder="Select Recipient..." class="user-input" #userInput [formControl]="userCtrl"
-                      [matAutocomplete]="auto" [matChipInputFor]="chipList"
-                      [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"
-                      (matChipInputTokenEnd)="addUser($event)" />
-                  </mat-chip-list>
-                  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
-                    <mat-option *ngFor="let fruit of filteredUsers | async" [value]="fruit">
-                      {{ fruit }}
-                    </mat-option>
-                  </mat-autocomplete>
-                </mat-form-field>
                 <mat-form-field appearance="outline" class="user-chip-list">
                   <mat-label>Email IDs</mat-label>
-                  <input matInput placeholder="Enter comma separated email IDs">
+                  <input matInput placeholder="Enter comma separated email IDs" [(ngModel)]="toEmailIDs">
                 </mat-form-field>
                 <mat-form-field appearance="outline" class="user-chip-list">
                   <mat-label>Notes</mat-label>
-                  <textarea matInput placeholder="Enter Notes.."></textarea>
+                  <textarea matInput placeholder="Enter Notes.." [rows]="5" [(ngModel)]="emailNotes"></textarea>
                 </mat-form-field>
               </div>
               <div class="email-dialog-footer">
-                <button mat-stroked-button class="btn">Cancel</button>
-                <button mat-flat-button color="primary" class="btn">Send</button>
+                <button mat-stroked-button class="btn" (click)="cancelEmail()">Cancel</button>
+                <button mat-flat-button color="primary" class="btn" (click)="sendEmail()">Send</button>
               </div>
             </ng-container>
           </div>

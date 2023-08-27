@@ -790,15 +790,30 @@ export class OperatorRoundsService {
     );
 
   generateDashboardPDF$ = (
-    images: any,
+    formData: FormData,
+    customHeaders: any,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<Blob> =>
-    this.appService.downloadFile(
+    this.appService.downloadWithPost(
       environment.operatorRoundsApiUrl,
-      `dashboard/download-pdf`,
+      `dashboard/pdf`,
       info,
-      false,
-      images,
-      'arraybuffer'
+      formData,
+      'blob',
+      customHeaders
+    );
+
+  sendDashboardAsEmail$ = (
+    formData: FormData,
+    customHeaders: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<Blob> =>
+    this.appService.downloadWithPost(
+      environment.operatorRoundsApiUrl,
+      `dashboard/email`,
+      info,
+      formData,
+      'blob',
+      customHeaders
     );
 }

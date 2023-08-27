@@ -66,4 +66,16 @@ export class WidgetService {
       info,
       queryParams
     );
+
+  getDashboardByModule$ = (
+    moduleName: string,
+    queryParams = {} as any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<Widget[]> =>
+    this.appService._getResp(
+      environment.dashboardApiUrl,
+      `dashboard/${moduleName}`,
+      info,
+      queryParams
+    );
 }

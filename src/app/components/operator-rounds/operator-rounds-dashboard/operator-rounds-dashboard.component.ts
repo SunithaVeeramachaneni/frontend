@@ -10,8 +10,6 @@ import {
   ViewChild
 } from '@angular/core';
 
-import { COMMA, ENTER } from '@angular/cdk/keycodes';
-
 import { permissions, routingUrls } from 'src/app/app.constants';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { HeaderService } from 'src/app/shared/services/header.service';
@@ -45,15 +43,13 @@ import {
 } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
 import { format, isEqual } from 'date-fns';
-import { DatePipe } from '@angular/common';
+import { DatePipe, formatDate } from '@angular/common';
 import { ErrorInfo } from 'src/app/interfaces/error-info';
 import { UndoRedoUtil } from 'src/app/shared/utils/UndoRedoUtil';
 import html2canvas from 'html2canvas';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
-import { ToastService } from 'src/app/shared/toast';
-import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { MatChipInputEvent } from '@angular/material/chips';
-import axios from 'axios';
+import { MatMenuTrigger } from '@angular/material/menu';
+import { LoginService } from '../../login/services/login.service';
 
 declare global {
   interface FormData {
@@ -74,7 +70,7 @@ interface GridInterface extends GridsterConfig {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OperatorRoundsDashboardComponent implements OnInit, OnDestroy {
-  @ViewChild('userInput') userInput: ElementRef;
+  @ViewChild('emailMenuTrigger') emailMenuTrigger: MatMenuTrigger;
   currentRouteUrl$: Observable<string>;
   readonly routingUrls = routingUrls;
   readonly permissions = permissions;
@@ -158,17 +154,9 @@ export class OperatorRoundsDashboardComponent implements OnInit, OnDestroy {
   customText = 'Custom';
   undoRedoUtil: any;
 
-  visible = true;
-  selectable = true;
-  removable = true;
-  addOnBlur = false;
-  separatorKeysCodes = [ENTER, COMMA];
-  userCtrl = new FormControl();
-  filteredUsers: Observable<any[]>;
-  users = [];
-  allUsers = ['Apple', 'Lemon', 'Lime', 'Orange', 'Strawberry'];
   downloadInProgress = false;
-
+  emailNotes: '';
+  toEmailIDs: '';
   private destroy$ = new Subject();
 
   constructor(
@@ -177,23 +165,17 @@ export class OperatorRoundsDashboardComponent implements OnInit, OnDestroy {
     private cdrf: ChangeDetectorRef,
     private headerService: HeaderService,
     private widgetService: WidgetService,
-    private operatorRoundsService: OperatorRoundsService,
-    private toastService: ToastService,
-
+    private operatorRoundService: OperatorRoundsService,
+    private loginService: LoginService,
     private plantService: PlantService,
     private fb: FormBuilder,
     private translateService: TranslateService,
     private datePipe: DatePipe
-  ) {
-    this.filteredUsers = this.userCtrl.valueChanges.pipe(
-      startWith(null),
-      map((fruit: string | null) =>
-        fruit ? this.filter(fruit) : this.allUsers.slice()
-      )
-    );
-  }
+  ) {}
 
   ngOnInit(): void {
+    this.emailNotes = '';
+    this.toEmailIDs = '';
     this.undoRedoUtil = new UndoRedoUtil();
 
     this.dashboardForm = this.fb.group({
@@ -244,36 +226,11 @@ export class OperatorRoundsDashboardComponent implements OnInit, OnDestroy {
     this.renderDashboard(this.dashboardForm.value);
   }
 
-  filter(name: string) {
-    return this.allUsers.filter(
-      (user) => user.toLowerCase().indexOf(name.toLowerCase()) === 0
-    );
-  }
-
-  selected(event: MatAutocompleteSelectedEvent): void {
-    this.users.push(event.option.viewValue);
-    this.userInput.nativeElement.value = '';
-    this.userCtrl.setValue(null);
-  }
-
-  addUser(event: MatChipInputEvent): void {
-    const input = event.input;
-    const value = event.value;
-    if ((value || '').trim()) {
-      this.users.push(value.trim());
-    }
-    if (input) {
-      input.value = '';
-    }
-    this.userCtrl.setValue(null);
-  }
-
-  removeUser(user: any): void {
-    const index = this.users.indexOf(user);
-    if (index >= 0) {
-      this.users.splice(index, 1);
-    }
-  }
+  cancelEmail = () => {
+    this.emailMenuTrigger.closeMenu();
+    this.emailNotes = '';
+    this.toEmailIDs = '';
+  };
 
   getWidgetImage = async (widgetId) => {
     const elem = document.getElementById(widgetId.toString());
@@ -291,71 +248,122 @@ export class OperatorRoundsDashboardComponent implements OnInit, OnDestroy {
   downloadDashboardAsImage = async () => {
     this.downloadInProgress = true;
     const bodyFormData = new FormData();
-    bodyFormData.append('userName', 'Fred');
+    const { timePeriod, plantId, shiftId, startDate, endDate } =
+      this.dashboardForm.value;
+    bodyFormData.append('plantId', plantId);
+    bodyFormData.append('shiftId', shiftId);
+
+    const userName = this.loginService.getLoggedInUserName();
+    bodyFormData.append('userName', userName);
+    let startDateTemp = startDate;
+    let endDateTemp = endDate;
+    const DATE_FORMAT = 'dd MMM yyyy';
+    if (timePeriod !== 'custom') {
+      const startEndDate = this.getStartAndEndDates(timePeriod);
+      startDateTemp = formatDate(
+        new Date(startEndDate.startDate),
+        DATE_FORMAT,
+        'en-us'
+      );
+      endDateTemp = formatDate(
+        new Date(startEndDate.endDate),
+        DATE_FORMAT,
+        'en-us'
+      );
+      bodyFormData.append('timePeriod', `${startDateTemp} - ${endDateTemp}`);
+    } else {
+      startDateTemp = formatDate(new Date(startDate), DATE_FORMAT, 'en-us');
+      endDateTemp = formatDate(new Date(endDate), DATE_FORMAT, 'en-us');
+      bodyFormData.append('timePeriod', `${startDate} - ${endDate}`);
+    }
 
     for (let i = 0; i < this.widgets.length; i++) {
       const imgData: any = await this.getWidgetImage(this.widgets[i].id);
       bodyFormData.append('image', imgData);
     }
-    const config = {
-      method: 'post',
-      maxBodyLength: Infinity,
-      url: 'http://localhost:8007/dashboard/download-pdf',
+    const info: ErrorInfo = {
+      displayToast: true,
+      failureResponse: 'throwError'
+    };
+    const customHeaders = {
       headers: {
         // eslint-disable-next-line @typescript-eslint/naming-convention
         'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      data: bodyFormData
+      }
     };
-    const { data } = await axios.request(config);
-    this.downloadInProgress = false;
+    this.operatorRoundService
+      .generateDashboardPDF$(bodyFormData, customHeaders, info)
+      .pipe(
+        tap((resp: any) => {
+          const url = window.URL.createObjectURL(resp);
+          const link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', 'RoundsDashboard.pdf');
+          document.body.appendChild(link);
+          link.click();
+          this.downloadInProgress = false;
+          this.cdrf.detectChanges();
+        })
+      )
+      .subscribe();
+  };
 
-    const blob = new Blob([data], { type: 'application/pdf' });
-    const aElement = document.createElement('a');
-    aElement.setAttribute('download', `Operator Rounds Dashboard.pdf`);
-    const href = URL.createObjectURL(blob);
-    aElement.href = href;
-    aElement.setAttribute('target', '_blank');
-    aElement.click();
-    URL.revokeObjectURL(href);
+  sendEmail = async () => {
+    const bodyFormData = new FormData();
+    const { timePeriod, plantId, shiftId, startDate, endDate } =
+      this.dashboardForm.value;
+    bodyFormData.append('plantId', plantId);
+    bodyFormData.append('shiftId', shiftId);
 
-    /**
+    const userName = this.loginService.getLoggedInUserName();
+    bodyFormData.append('userName', userName);
+    let startDateTemp = startDate;
+    let endDateTemp = endDate;
+    const DATE_FORMAT = 'dd MMM yyyy';
+    if (timePeriod !== 'custom') {
+      const startEndDate = this.getStartAndEndDates(timePeriod);
+      startDateTemp = formatDate(
+        new Date(startEndDate.startDate),
+        DATE_FORMAT,
+        'en-us'
+      );
+      endDateTemp = formatDate(
+        new Date(startEndDate.endDate),
+        DATE_FORMAT,
+        'en-us'
+      );
+      bodyFormData.append('timePeriod', `${startDateTemp} - ${endDateTemp}`);
+    } else {
+      startDateTemp = formatDate(new Date(startDate), DATE_FORMAT, 'en-us');
+      endDateTemp = formatDate(new Date(endDate), DATE_FORMAT, 'en-us');
+      bodyFormData.append('timePeriod', `${startDate} - ${endDate}`);
+    }
+
+    for (let i = 0; i < this.widgets.length; i++) {
+      const imgData: any = await this.getWidgetImage(this.widgets[i].id);
+      bodyFormData.append('image', imgData);
+    }
     const info: ErrorInfo = {
-      displayToast: false,
+      displayToast: true,
       failureResponse: 'throwError'
     };
-    this.operatorRoundsService.generateDashboardPDF$(images, info).subscribe(
-      (data) => {
-        console.log(data);
-        // const blob = new Blob([data], { type: 'application/pdf' });
-        // const aElement = document.createElement('a');
-        // aElement.setAttribute('download', `Operator Rounds Dashboard.pdf`);
-        // const href = URL.createObjectURL(blob);
-        // aElement.href = href;
-        // aElement.setAttribute('target', '_blank');
-        // aElement.click();
-        // URL.revokeObjectURL(href);
-      },
-      (err) => {
-        this.toastService.show({
-          text: `Error occured while generating PDF for Dashboard, ${err.message}`,
-          type: 'warning'
-        });
+    const customHeaders = {
+      headers: {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        'Content-Type': 'application/x-www-form-urlencoded'
       }
-    ); */
-    // console.log(images);
+    };
+    this.operatorRoundService
+      .sendDashboardAsEmail$(bodyFormData, customHeaders, info)
+      .pipe(tap((resp: any) => {}))
+      .subscribe();
   };
 
   undo = (event: Event) => {
     event.stopPropagation();
     const operation = this.undoRedoUtil.UNDO();
-    const {
-      currentValue,
-      eventType,
-      prevValue,
-      prevEndDateValue,
-      prevStartDateValue
-    } = operation;
+    const { eventType, prevValue, prevEndDateValue, prevStartDateValue } =
+      operation;
     if (eventType === 'TIME_PERIOD') {
       this.dashboardForm.patchValue({ timePeriod: prevValue });
     } else if (eventType === 'CUSTOM_TIME_PERIOD') {
@@ -377,7 +385,6 @@ export class OperatorRoundsDashboardComponent implements OnInit, OnDestroy {
     const {
       currentValue,
       eventType,
-      prevValue,
       currentStartDateValue,
       currentEndDateValue
     } = operation;
@@ -447,8 +454,6 @@ export class OperatorRoundsDashboardComponent implements OnInit, OnDestroy {
         endDate: this.dateRange.endDate
       });
     }
-
-    // this.dateRangeEvent.emit(this.dateRange);
   }
   onSelectPlant(plant) {
     const selectedPlant = this.allPlantsData.find((p) => p.plantId === plant);
@@ -488,12 +493,6 @@ export class OperatorRoundsDashboardComponent implements OnInit, OnDestroy {
           plant.plantId.toLowerCase().indexOf(searchValue) !== -1)
     );
   }
-  // private resetSearchInput(): void {
-  //   if (this.searchInput?.nativeElement) {
-  //     this.searchInput.nativeElement.value = '';
-  //   }
-  //   this.allPlantsData = this.plantInformation;
-  // }
 
   updateOptions = (fixedColWidth: number) => {
     this.options.fixedColWidth = fixedColWidth;
@@ -535,10 +534,17 @@ export class OperatorRoundsDashboardComponent implements OnInit, OnDestroy {
     this.widgetsDataInitial$ = new BehaviorSubject<WidgetsData>({ data: [] });
     this.widgetsDataOnLoadCreateUpdateDelete$ = of({ data: [] });
     this.widgetsDataInitial$.next({ data: [] });
+    let dashboardId = '';
+
+    this.widgetService
+      .getDashboardByModule$('operator_rounds', filters, info)
+      .subscribe((res: any) => {
+        dashboardId = res.id;
+      });
     this.widgetsDataOnLoadCreateUpdateDelete$ = combineLatest([
       this.widgetsDataInitial$,
       this.widgetService.getDahboardWidgetsWithReport$(
-        '64e8ccd58bb29277e77bc66e',
+        dashboardId,
         filters,
         info
       )
@@ -563,6 +569,37 @@ export class OperatorRoundsDashboardComponent implements OnInit, OnDestroy {
 
   widgetActionHandler = (event: WidgetAction) => {
     console.log(event);
+  };
+
+  getStartAndEndDates = (timePeriod) => {
+    const today = new Date();
+    let startDate;
+    let endDate;
+    switch (timePeriod) {
+      case 'last_6_months':
+        // eslint-disable-next-line no-case-declarations
+        const todayClone1 = new Date(today.getTime());
+        startDate = todayClone1.setMonth(todayClone1.getMonth() - 6);
+        endDate = today;
+        break;
+      case 'last_3_months':
+        // eslint-disable-next-line no-case-declarations
+        const todayClone2 = new Date(today.getTime());
+        startDate = todayClone2.setMonth(todayClone2.getMonth() - 3);
+        endDate = today;
+        break;
+      case 'this_week':
+        startDate = new Date(today.setDate(today.getDate() - today.getDay()));
+        endDate = new Date(today.setDate(today.getDate() - today.getDay() + 6));
+        break;
+      case 'this_month':
+        startDate = new Date(today.getFullYear(), today.getMonth(), 1);
+        endDate = today;
+        break;
+      default:
+        break;
+    }
+    return { startDate, endDate };
   };
 
   ngOnDestroy() {
