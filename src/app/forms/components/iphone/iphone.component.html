@@ -180,12 +180,15 @@
       </div>
       <hr />
       <div class="main">
-        <div
-          id="iphoneLastFiveReading"
-          class="main-heading"
-          matLine
-          translate="lastFiveReadingsHeader"
-        ></div>
+        <div id="iphoneLastFiveReading" class="main-heading" matLine>
+          {{
+            'lastFiveReadingsHeader'
+              | translate
+                : {
+                    count: historyCount | translate
+                  }
+          }}
+        </div>
         <div
           class="main-question"
           matLine

@@ -54,6 +54,7 @@ export interface Question {
   position: number;
   required: boolean;
   enableHistory: boolean;
+  historyCount: number;
   multi: boolean;
   value: any;
   isPublished: boolean;

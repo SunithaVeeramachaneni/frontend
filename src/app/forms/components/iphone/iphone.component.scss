@@ -203,21 +203,20 @@
   display: none;
 }
 .history-bottom-container {
-  background-color: $light-gray-transparent;
-  height: calc(100% - 37px);
-  transform: translateY(-100%);
+  background-color: #757575aa;
+  height: 515px;
   width: 89.5%;
   margin-left: 14px;
   border-radius: 24px 24px 24px 24px;
+  margin-top: -515px;
+  position: relative;
 
   .history-bottom-sheet {
-    background-color: $white;
-    height: 95%;
+    background-color: #ffffff;
+    height: 490px;
+    border-radius: 8px 8px 24px 24px;
     position: absolute;
     bottom: 0;
-    left: 0;
-    right: 0;
-    border-radius: 8px 8px 24px 24px;
 
     hr {
       margin: 0;
@@ -292,7 +291,13 @@
     width: 250px;
     background-size: 250px 470px;
   }
-
+  .history-bottom-container {
+    height: 444px;
+    margin-top: -448px;
+    .history-bottom-sheet {
+      height: 416px;
+    }
+  }
   .iphone-header {
     margin: 22px 15px 0 15px;
   }
@@ -321,6 +326,13 @@
     position: inherit;
     padding-bottom: 8rem;
   }
+  .history-bottom-container {
+    height: 520px;
+    margin-top: -517px;
+    .history-bottom-sheet {
+      height: 493px;
+    }
+  }
 }
 
 @media (min-width: 768px) and (max-width: 1200px) {
@@ -329,7 +341,13 @@
     background-size: 250px 500px;
     padding-bottom: 11rem !important;
   }
-
+  .history-bottom-container {
+    height: 472px;
+    margin-top: -473px;
+    .history-bottom-sheet {
+      height: 447px;
+    }
+  }
   .iphone-header {
     margin: 22px 15px 0 15px;
   }
