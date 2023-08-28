@@ -74,6 +74,22 @@ export class SelectQuestionsDialogComponent implements OnInit {
               }
             });
 
+            if (this.data.viewMode === 'MANDATE') {
+              const logics = page.logics.filter(
+                (logic) => logic.questionId === this.data.questionId
+              );
+              logics.forEach((logic) => {
+                const hiddenQuestions = page.questions.filter((q) => {
+                  if (q.required === false) {
+                    return (
+                      q.sectionId === section.id &&
+                      logic.hideQuestions.includes(q.id)
+                    );
+                  }
+                });
+                sectionQuestions.push(...hiddenQuestions);
+              });
+            }
             if (!section?.isImported)
               this.sections.push({
                 ...section,
