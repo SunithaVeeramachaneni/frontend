@@ -144,6 +144,7 @@ export class RoundPlanDetailConfigurationComponent
           this.selectedNodeLoadStatus = true;
           this.selectedNodeInstances =
             this.formService.getInstanceIdMappingsByUid(this.selectedNode.uid);
+          console.log('selectedNodeInstances:', this.selectedNodeInstances);
           this.cdrf.detectChanges();
           this.store.dispatch(
             BuilderConfigurationActions.initPage({

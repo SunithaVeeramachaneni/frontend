@@ -58,13 +58,6 @@
             id="scheduleConfigurationBtn"
             class="schedule-button"
             mat-raised-button
-            [disabled]="
-              schedulerConfigForm?.pristine ||
-              schedulerConfigForm?.invalid ||
-              (schedulerConfigForm?.get('scheduleType')?.value === 'byDate' &&
-                scheduleByDates?.length === 0) ||
-              disableSchedule
-            "
             type="submit"
             translate="next"
             (click)="headerLevelScheduling()"
@@ -581,3 +574,11 @@
     </mat-card-content>
   </mat-card>
 </div>
+
+<!-- [disabled]="
+              schedulerConfigForm?.pristine ||
+              schedulerConfigForm?.invalid ||
+              (schedulerConfigForm?.get('scheduleType')?.value === 'byDate' &&
+                scheduleByDates?.length === 0) ||
+              disableSchedule
+            " -->

@@ -26,6 +26,8 @@
         <mat-checkbox
           class="checkbox"
           *ngIf="hierarchyMode === 'scheduler'"
+          [indeterminate]=""
+          (change)="toggleCheckBox($event.checked)"
         ></mat-checkbox>
         <svg-icon
           id="nodeIcons"

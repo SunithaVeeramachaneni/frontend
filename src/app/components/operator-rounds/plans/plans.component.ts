@@ -76,7 +76,7 @@ import { ShiftService } from '../../master-configurations/shifts/services/shift.
 import { ScheduleConfigurationService } from 'src/app/forms/services/schedule.service';
 import { MatDialog } from '@angular/material/dialog';
 import { graphQLDefaultMaxLimit } from 'src/app/app.constants';
-import { TaskLevelSchedulerComponent } from '../task-level-scheduler/task-level-scheduler.component';
+// import { TaskLevelSchedulerComponent } from '../task-level-scheduler/task-level-scheduler.component';
 
 @Component({
   selector: 'app-plans',
@@ -726,6 +726,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   cellClickActionHandler = (event: CellClickActionEvent): void => {
     console.log('event:', event);
     const { columnId, row, option } = event;
+    console.log('row', row);
     const activeShifts = this.prepareActiveShifts(row);
     switch (columnId) {
       case 'schedule':

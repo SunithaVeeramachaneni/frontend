@@ -25,6 +25,7 @@ export class NodeComponent implements OnInit {
   @Input() hierarchyMode;
   @Input() dropTargetIds;
   @Output() nodeRemoved: EventEmitter<any> = new EventEmitter();
+  @Output() checkevent: EventEmitter<any> = new EventEmitter();
   @Input() set nodeWiseQuestionsCount(nodeWiseQuestionsCount: any) {
     if (nodeWiseQuestionsCount) {
       this._nodeWiseQuestionsCount = nodeWiseQuestionsCount;
@@ -130,4 +131,9 @@ export class NodeComponent implements OnInit {
     this.nodeSelectedForShowHierarchy = node;
     this.togglePopover = !this.togglePopover;
   };
+
+  (checked) {
+    console.log('checkedEvent:', checked);
+    this.checkevent.emit(checked);
+  }
 }
