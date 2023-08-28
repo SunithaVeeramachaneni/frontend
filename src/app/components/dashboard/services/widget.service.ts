@@ -71,10 +71,10 @@ export class WidgetService {
     moduleName: string,
     queryParams = {} as any,
     info: ErrorInfo = {} as ErrorInfo
-  ): Observable<Widget[]> =>
+  ): Observable<Widget> =>
     this.appService._getResp(
       environment.dashboardApiUrl,
-      `dashboard/${moduleName}`,
+      `dashboards/${moduleName}`,
       info,
       queryParams
     );

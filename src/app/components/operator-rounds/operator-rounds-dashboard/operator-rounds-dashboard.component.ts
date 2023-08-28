@@ -134,6 +134,7 @@ export class OperatorRoundsDashboardComponent implements OnInit, OnDestroy {
   };
   widgetHeights: any = {};
   widgetWidths: any = {};
+  dashboardId = '';
 
   widgets: Widget[];
   widgetsData$: Observable<WidgetsData>;
@@ -206,6 +207,17 @@ export class OperatorRoundsDashboardComponent implements OnInit, OnDestroy {
       this.cdrf.detectChanges();
     });
 
+    const info: ErrorInfo = {
+      displayToast: true,
+      failureResponse: 'throwError'
+    };
+    this.widgetService
+      .getDashboardByModule$('operator_rounds', { isActive: true }, info)
+      .subscribe((resp) => {
+        this.dashboardId = resp.id;
+        this.renderDashboard(this.dashboardForm.value);
+      });
+
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
       tap((currentRouteUrl) => {
         if (currentRouteUrl === routingUrls.operatorRoundPlans.url) {
@@ -223,7 +235,6 @@ export class OperatorRoundsDashboardComponent implements OnInit, OnDestroy {
         }
       })
     );
-    this.renderDashboard(this.dashboardForm.value);
   }
 
   cancelEmail = () => {
@@ -534,17 +545,11 @@ export class OperatorRoundsDashboardComponent implements OnInit, OnDestroy {
     this.widgetsDataInitial$ = new BehaviorSubject<WidgetsData>({ data: [] });
     this.widgetsDataOnLoadCreateUpdateDelete$ = of({ data: [] });
     this.widgetsDataInitial$.next({ data: [] });
-    let dashboardId = '';
 
-    this.widgetService
-      .getDashboardByModule$('operator_rounds', filters, info)
-      .subscribe((res: any) => {
-        dashboardId = res.id;
-      });
     this.widgetsDataOnLoadCreateUpdateDelete$ = combineLatest([
       this.widgetsDataInitial$,
       this.widgetService.getDahboardWidgetsWithReport$(
-        dashboardId,
+        this.dashboardId,
         filters,
         info
       )

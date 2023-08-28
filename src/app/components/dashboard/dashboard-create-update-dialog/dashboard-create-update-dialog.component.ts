@@ -53,7 +53,7 @@ export class CreateUpdateDashboardDialogComponent implements OnInit {
       dashboardName: new FormControl('', [
         Validators.required,
         Validators.minLength(3),
-        Validators.maxLength(20),
+        Validators.maxLength(50),
         WhiteSpaceValidator.whiteSpace,
         WhiteSpaceValidator.trimWhiteSpace,
         this.checkIfDashboardTitleExists()
