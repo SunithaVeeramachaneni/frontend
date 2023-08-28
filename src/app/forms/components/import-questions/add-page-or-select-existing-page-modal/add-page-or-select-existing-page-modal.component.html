@@ -4,6 +4,7 @@
       <mat-radio-button
         color="primary"
         *ngFor="let pageOption of pageOptions"
+        [disabled]="pageOption === 'existing' && data.pages.length === 0"
         [value]="pageOption"
       >
         {{ pageOption | translate }}</mat-radio-button

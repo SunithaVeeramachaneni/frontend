@@ -92,7 +92,8 @@ export class AddEditUserModalComponent implements OnInit {
   verificationInProgress = false;
   permissionsArray = [];
   rolesInput: any;
-  usergroupInput: any;
+  usergroupInput: any[];
+  userGroupList: any[];
   dialogText: 'addUser' | 'editUser';
   isfilterTooltipOpen = [];
   displayedPermissions;
@@ -100,7 +101,6 @@ export class AddEditUserModalComponent implements OnInit {
   profileImage;
   permissionsList$: Observable<any>;
   rolesList$: Observable<Role[]>;
-  usergroupList$: Observable<UserGroup[]>;
   superAdminText = superAdminText;
   selectedRolePermissions$: Observable<any[]>;
   get roles() {
@@ -186,8 +186,15 @@ export class AddEditUserModalComponent implements OnInit {
     this.permissionsList$ = this.data?.permissionsList$;
     this.rolesInput = this.data?.roles?.rows;
     this.rolesList$ = this.data?.rolesList$;
-    this.usergroupInput = this.data?.usergroup?.items;
-    this.usergroupList$ = this.data?.usergroupList$;
+    this.userGroupList = this.data?.usergroup?.items;
+    if (this.userForm.get('plantId').value === '') {
+      this.usergroupInput = this.userGroupList;
+    }
+    this.userForm.get('plantId').valueChanges.subscribe(() => {
+      this.usergroupInput = this.userGroupList.filter(
+        (group) => group.plantId === this.userForm.get('plantId').value
+      );
+    });
 
     if (Object.keys(userDetails).length === 0) {
       this.dialogText = 'addUser';

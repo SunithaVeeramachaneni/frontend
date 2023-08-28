@@ -200,7 +200,8 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
       .subscribe((res) => {
         this.headerDataForm.patchValue({
           name: res.name,
-          description: res.description ? res.description : ''
+          description: res.description ? res.description : '',
+          tags: res.tags || []
         });
       });
 
