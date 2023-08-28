@@ -15,14 +15,7 @@ import {
   combineLatest,
   of
 } from 'rxjs';
-import {
-  LoadEvent,
-  ReportConfiguration,
-  ReportDetails,
-  SearchEvent,
-  TableColumn,
-  TableEvent
-} from 'src/app/interfaces';
+import { LoadEvent, SearchEvent, TableEvent } from 'src/app/interfaces';
 import {
   Column,
   ConfigOptions
@@ -30,6 +23,7 @@ import {
 import { filter, map, switchMap } from 'rxjs/operators';
 import { ReportConfigurationService } from '../services/report-configuration.service';
 import { defaultLimit } from 'src/app/app.constants';
+import { DateUtilService } from 'src/app/shared/utils/dateUtils';
 
 @Component({
   selector: 'app-chart-report-dialog',
@@ -77,6 +71,7 @@ export class ChartReportDialog implements OnInit {
     @Inject(MAT_DIALOG_DATA)
     public data: any,
     private reportConfigService: ReportConfigurationService,
+    private dateUtilService: DateUtilService,
     private cdrf: ChangeDetectorRef
   ) {}
 
@@ -163,11 +158,72 @@ export class ChartReportDialog implements OnInit {
     );
   }
 
-  getReportData = () =>
-    this.reportConfigService.getReportData$(this.selectedReport?.report, {
-      skip: this.skip,
-      limit: this.limit
+  getReportData = () => {
+    const filtersApplied = [];
+    const { filters } = this.data;
+    if (filters.plantId && filters.plantId.length) {
+      const plantFilter = {
+        column: 'plantId',
+        type: 'string',
+        filters: [
+          {
+            operation: 'equals',
+            operand: filters.plantId
+          }
+        ]
+      };
+      filtersApplied.push(plantFilter);
+    }
+    if (filters.shiftId && filters.shiftId.length) {
+      const shiftFilter = {
+        column: 'shiftId',
+        type: 'string',
+        filters: [
+          {
+            operation: 'equals',
+            operand: filters.shiftId
+          }
+        ]
+      };
+      filtersApplied.push(shiftFilter);
+    }
+
+    const startAndEndDate = this.dateUtilService.getStartAndEndDates(
+      filters.timePeriod,
+      filters.startDate,
+      filters.endDate
+    );
+    filtersApplied.push({
+      column: 'updatedOn',
+      type: 'daterange',
+      filters: [
+        {
+          operation: 'custom',
+          operand: {
+            startDate: startAndEndDate.startDate,
+            endDate: startAndEndDate.endDate
+          }
+        }
+      ]
     });
+    if (
+      this.selectedReport.report &&
+      this.selectedReport.report.filtersApplied
+    ) {
+      this.selectedReport.report.filtersApplied = [
+        ...this.selectedReport.report.filtersApplied,
+        ...filtersApplied
+      ];
+    }
+
+    return this.reportConfigService.getReportData$(
+      this.selectedReport?.report,
+      {
+        skip: this.skip,
+        limit: this.limit
+      }
+    );
+  };
 
   tableEventHandler(event: TableEvent) {
     this.fetchReport$.next(event);

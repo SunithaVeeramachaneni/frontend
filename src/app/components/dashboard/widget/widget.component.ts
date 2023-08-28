@@ -25,6 +25,7 @@ import {
 import { ReportConfigurationService } from '../services/report-configuration.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ChartReportDialog } from '../chart-report-dialog/chart-report-dialog.component';
+import { DateUtilService } from 'src/app/shared/utils/dateUtils';
 
 @Component({
   selector: 'app-widget',
@@ -62,7 +63,12 @@ export class WidgetComponent implements OnInit {
     return this._width;
   }
 
-  @Input() filters: any;
+  @Input() set filters(_filters) {
+    this._filters = _filters;
+  }
+  get filters(): any {
+    return this._filters;
+  }
 
   @Output() widgetAction: EventEmitter<WidgetAction> =
     new EventEmitter<WidgetAction>();
@@ -99,19 +105,71 @@ export class WidgetComponent implements OnInit {
   public _height: number;
   public _width: number;
   private _widget: Widget;
+  private _filters: any;
 
   constructor(
     private reportConfigService: ReportConfigurationService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private readonly dateUtilService: DateUtilService
   ) {}
 
   ngOnInit(): void {
+    const filtersApplied = [];
+    if (this.filters.plantId && this.filters.plantId.length) {
+      const plantFilter = {
+        column: 'plantId',
+        type: 'string',
+        filters: [
+          {
+            operation: 'equals',
+            operand: this.filters.plantId
+          }
+        ]
+      };
+      filtersApplied.push(plantFilter);
+    }
+    if (this.filters.shiftId && this.filters.shiftId.length) {
+      const shiftFilter = {
+        column: 'shiftId',
+        type: 'string',
+        filters: [
+          {
+            operation: 'equals',
+            operand: this.filters.shiftId
+          }
+        ]
+      };
+      filtersApplied.push(shiftFilter);
+    }
+
+    const startAndEndDate = this.dateUtilService.getStartAndEndDates(
+      this.filters.timePeriod,
+      this.filters.startDate,
+      this.filters.endDate
+    );
+    filtersApplied.push({
+      column: 'updatedOn',
+      type: 'daterange',
+      filters: [
+        {
+          operation: 'custom',
+          operand: {
+            startDate: startAndEndDate.startDate,
+            endDate: startAndEndDate.endDate
+          }
+        }
+      ]
+    });
+
+    this.report.filtersApplied = [
+      ...this.report.filtersApplied,
+      ...filtersApplied
+    ];
     this.chartData$ = this.reportConfigService.getGroupByCountDetails$(
       this.report,
       {
         type: this.countType,
-        field: this.countField,
-        ...this.filters
+        field: this.countField
       }
     );
 
