@@ -203,16 +203,17 @@
   display: none;
 }
 .history-bottom-container {
-  background-color: #757575aa;
+  background-color: $light-gray-transparent;
   height: 515px;
   width: 89.5%;
   margin-left: 14px;
   border-radius: 24px 24px 24px 24px;
   margin-top: -515px;
   position: relative;
+  z-index: 1;
 
   .history-bottom-sheet {
-    background-color: #ffffff;
+    background-color: $white;
     height: 490px;
     border-radius: 8px 8px 24px 24px;
     position: absolute;
