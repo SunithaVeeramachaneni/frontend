@@ -10,12 +10,16 @@ import {
 } from 'src/app/interfaces';
 import { State } from '../state/builder/builder-state.selectors';
 import { v4 as uuidv4 } from 'uuid';
+import { CommonService } from 'src/app/shared/services/common.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RoundPlanConfigurationService {
-  constructor(private store: Store<State>) {}
+  constructor(
+    private store: Store<State>,
+    private readonly commonService: CommonService
+  ) {}
 
   addPage(
     pageIndex: number,
@@ -252,7 +256,10 @@ export class RoundPlanConfigurationService {
             questionIndex,
             sectionQuestionsList[sectionIndex]?.questions[
               questionIndex
-            ]?.sectionId?.startsWith('AQ')
+            ]?.sectionId?.startsWith('AQ') ||
+              sectionQuestionsList[sectionIndex]?.questions[
+                questionIndex
+              ]?.sectionId?.startsWith('EVIDENCE')
               ? sectionQuestionsList[sectionIndex]?.questions[questionIndex]
                   ?.sectionId
               : section.id,
@@ -315,10 +322,10 @@ export class RoundPlanConfigurationService {
   ) {
     return {
       id: question?.skipIdGeneration
-        ? question.id
+        ? question?.id
         : isTemplate
-        ? `TQ${questionCounter}_${new Date().getTime()}`
-        : `Q${questionCounter}`,
+        ? `TQ${uuidv4()}`
+        : `Q${uuidv4()}`,
       sectionId,
       name: question ? question.name : '',
       fieldType: question ? question.fieldType : 'TF',
