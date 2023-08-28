@@ -173,8 +173,9 @@
   width: 12px;
 }
 .form {
-  //height: calc(100vh - 160px);
-  overflow-y: hidden;
+  height: calc(100vh - 160px);
+  overflow-y: auto;
+
   .asset-location-search {
     display: flex;
     flex-direction: column;
@@ -189,85 +190,4 @@
 .right-panel {
   background-color: $white;
   border-right: 2px solid $border-color;
-  overflow-y: auto;
-  height: calc(100vh - 210px);
-
-  .heading {
-    border-bottom: 1px solid $border-color;
-    padding-bottom: 12px;
-    margin: 15px 15px 0 15px;
-    font-size: 140%;
-    font-weight: 500;
-  }
-
-  .selected-locations {
-    padding: 15px;
-    border-bottom: 1px solid $border-color;
-  }
-
-  .selected-text {
-    font-size: 110%;
-    font-weight: 500;
-    position: relative;
-    top: -8px;
-    left: 3px;
-  }
-
-  .locations {
-    padding: 10px;
-    background: $yellow-bg1;
-    border-radius: 5px;
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 7px;
-  }
-
-  .subheadings {
-    border-bottom: 1px solid $border-color;
-    padding-bottom: 12px;
-    margin: 15px 15px 0 15px;
-
-    h3 {
-      font-size: 120%;
-      font-weight: 500;
-    }
-  }
-
-  .repeat-num {
-    width: 8%;
-    font-weight: 500;
-  }
-
-  .repeat-day {
-    width: 11%;
-    font-weight: 500;
-  }
-
-  .schedule-frequency {
-    ::ng-deep .mat-form-field-appearance-fill .mat-form-field-flex {
-      padding: 0 6px !important;
-      border-radius: 4px !important;
-      text-align: center !important;
-    }
-
-    mat-form-field {
-      margin-left: 20px;
-    }
-  }
-
-  ::ng-deep mat-datepicker-toggle .mat-icon-button {
-    position: absolute;
-    top: -12px;
-    right: -14px;
-  }
-
-  .startdate {
-    margin-top: 15px;
-    margin-right: 35px;
-  }
-
-  .enddate {
-    margin-top: 15px;
-    margin-right: 40px;
-  }
 }

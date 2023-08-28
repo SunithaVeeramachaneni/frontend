@@ -365,5 +365,6 @@
   "start": "Start",
   "end": "End",
   "nullSelectedLocationAssetFirst": "1. Select any location to Asset to view Details",
-  "nullSelectedLocationAssetSecond": "2. Select Check Box to change Frequency"
+  "nullSelectedLocationAssetSecond": "2. Select Check Box to change Frequency",
+  "reviseBtn": "Revise"
 }

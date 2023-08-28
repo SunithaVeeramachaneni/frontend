@@ -14,8 +14,6 @@ import {
   getFormMetadata,
   State
 } from 'src/app/forms/state/builder/builder-state.selectors';
-import { scheduleConfigs } from '../../../forms/components/schedular/schedule-configuration/schedule-configuration.constants';
-
 import {
   debounceTime,
   distinctUntilChanged,
@@ -40,25 +38,6 @@ import { MatDatepickerInputEvent } from '@angular/material/datepicker';
   styleUrls: ['./task-level-scheduler.component.scss']
 })
 export class TaskLevelSchedulerComponent implements OnInit {
-  locations = [
-    {
-      name: 'Fuel Gas System',
-      count: 4
-    },
-    {
-      name: 'Fuel Gas System',
-      count: 4
-    },
-    {
-      name: 'Fuel Gas System',
-      count: 4
-    },
-    {
-      name: 'Fuel Gas System',
-      count: 4
-    }
-  ];
-  repeatTypes = scheduleConfigs.repeatTypes;
   status: string;
   formConfiguration: FormGroup;
   headerDetails: FormGroup;
@@ -85,6 +64,8 @@ export class TaskLevelSchedulerComponent implements OnInit {
 
   formDetailPublishStatus: string;
 
+  openCloseRightPanel = true;
+
   @Input() set payload(payload: any) {
     this._payload = payload;
     if (payload) {
@@ -104,7 +85,6 @@ export class TaskLevelSchedulerComponent implements OnInit {
   private _payload: any;
   @Input() roundPlanData: any;
   errors: ValidationError = {};
-  startDatePickerMinDate: Date;
   constructor(
     private store: Store<State>,
     private fb: FormBuilder,
@@ -112,7 +92,6 @@ export class TaskLevelSchedulerComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.startDatePickerMinDate = new Date();
     this.searchHierarchyKey = new FormControl('');
     console.log('roundPlanData:', this.roundPlanData);
     this.status = this.statusList.changesSaved;
@@ -187,19 +166,6 @@ export class TaskLevelSchedulerComponent implements OnInit {
       .subscribe();
   }
 
-  updateDate(
-    event: MatDatepickerInputEvent<Date>,
-    formControlDateField: string
-  ) {
-    // this.schedulerConfigForm.patchValue({
-    //   [formControlDateField]:
-    //     formControlDateField !== 'scheduleEndOn'
-    //       ? format(event.value, dateFormat3)
-    //       : format(event.value, dateFormat4)
-    // });
-    //this.schedulerConfigForm.markAsDirty();
-  }
-
   filter(value: string): string[] {
     value = value.trim() || '';
     if (!value.length) {
@@ -244,11 +210,16 @@ export class TaskLevelSchedulerComponent implements OnInit {
   editFormName() {}
 
   searchResultSelected(event) {}
+
   getSearchMatchesLabel() {
     return `${this.filteredList.length} Search matches`;
   }
 
   clearSearchResults() {
     this.searchHierarchyKey.patchValue('');
+  }
+
+  openCloseRightPanelEventHandler(event) {
+    this.openCloseRightPanel = event;
   }
 }
