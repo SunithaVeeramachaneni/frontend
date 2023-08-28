@@ -15,7 +15,7 @@
   }
 
   .selected-locations {
-    padding: 15px 15px 10px 15px;
+    padding: 10px 15px 10px 15px;
     border-bottom: 1px solid $border-color;
   }
 
@@ -30,16 +30,17 @@
   .scroll-locations {
     overflow-y: auto;
     height: 165px;
+    background: $yellow-bg1;
+    border-radius: 5px;
   }
 
   .locations {
     padding: 10px;
-    background: $yellow-bg1;
-    border-radius: 5px;
     display: flex;
     justify-content: space-between;
-    margin-bottom: 7px;
     transition: all 0.5s ease-in-out;
+    border-bottom: 1px solid $yellow-border;
+    margin: 0 10px;
   }
 
   .subheadings {
