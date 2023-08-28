@@ -248,6 +248,9 @@ export class ScheduleConfigurationComponent
   }
 
   ngOnInit(): void {
+    this.schedulerConfigForm?.valueChanges.subscribe((value) => {
+      this.schedulerConfigForm.markAsDirty();
+    });
     this.scheduleConfigurationService.onSlotChanged$.subscribe((value) =>
       this.markSlotPristine(value)
     );
@@ -591,7 +594,7 @@ export class ScheduleConfigurationComponent
       .subscribe((monthlyDaysOfWeek) => {
         const monthlyDaysOfWeekCount = monthlyDaysOfWeek.reduce(
           (acc: number, curr: number[]) => {
-            acc += curr.length;
+            acc += curr?.length;
             return acc;
           },
           0
@@ -706,6 +709,7 @@ export class ScheduleConfigurationComponent
 
   cancel() {
     this.initShiftStat();
+    this.schedulerConfigForm.reset();
     this.dialogRef.close({
       slideInOut: 'out',
       actionType: 'scheduleConfigEvent'
@@ -1298,7 +1302,7 @@ export class ScheduleConfigurationComponent
   }
 
   get shiftSlots(): FormArray {
-    return this.schedulerConfigForm.get('shiftSlots') as FormArray;
+    return this.schedulerConfigForm?.get('shiftSlots') as FormArray;
   }
 
   addShiftDetails(
