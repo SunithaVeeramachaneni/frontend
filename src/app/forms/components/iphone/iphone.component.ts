@@ -35,6 +35,11 @@ export class IphoneComponent implements OnInit {
   isHistoryVisible = false;
   isOpenHistoryBottomSheet = false;
   historyCount = '5';
+  historyTableHeaders = [
+    { id: 'iphoneDateLabel', translate: 'dateLabel' },
+    { id: 'iphoneReadingLabel', translate: 'readingLabel' },
+    { id: 'iphoneOperator', translate: 'operator' }
+  ];
 
   constructor(private store: Store<State>) {}
 
@@ -81,7 +86,7 @@ export class IphoneComponent implements OnInit {
   openBottomSheet(isOpenBottomSheet) {
     this.isOpenBottomSheet = isOpenBottomSheet.isOpen;
     this.isHistoryVisible = isOpenBottomSheet.isHistoryVisible;
-    this.historyCount = isOpenBottomSheet?.historyCount.toString();
+    this.historyCount = isOpenBottomSheet?.historyCount?.toString();
   }
 
   closeBottomSheet() {

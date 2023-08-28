@@ -205,20 +205,12 @@
         <table class="history-table">
           <tr>
             <th
-              id="iphoneDateLabel"
+              *ngFor="let header of historyTableHeaders"
+              [id]="header.id"
               class="table-heading"
-              translate="dateLabel"
-            ></th>
-            <th
-              id="iphoneReadingLabel"
-              class="table-heading"
-              translate="readingLabel"
-            ></th>
-            <th
-              id="iphoneOperator"
-              class="table-heading"
-              translate="operator"
-            ></th>
+            >
+              {{ header.translate | translate }}
+            </th>
           </tr>
           <tr>
             <td>Date 1</td>
