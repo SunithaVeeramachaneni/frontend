@@ -79,6 +79,7 @@ import { formatInTimeZone, zonedTimeToUtc } from 'date-fns-tz';
 import { ShiftService } from '../../master-configurations/shifts/services/shift.service';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { ShiftDateChangeWarningModalComponent } from 'src/app/forms/components/shift-date-change-warning-modal/shift-date-change-warning-modal.component';
+import { scheduleConfigs } from 'src/app/forms/components/schedular/schedule-configuration/schedule-configuration.constants';
 @Component({
   selector: 'app-rounds',
   templateUrl: './rounds.component.html',
@@ -101,6 +102,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   }
   @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
   assigneeDetails: AssigneeDetails;
+  assignTypes = scheduleConfigs.assignTypes;
   filterJson = [];
   status = [
     'Open',

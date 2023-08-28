@@ -14,14 +14,15 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class RoundPlanScheduleConfigurationService {
-  userGroups = new BehaviorSubject<any>({});
+  userGroups$ = new BehaviorSubject<any>({});
   constructor(private appService: AppService) {}
 
-  listAllUserGroups$ = (info = {} as ErrorInfo) =>
+  listAllUserGroups$ = (plantId: string, info = {} as ErrorInfo) =>
     this.appService._getResp(
       environment.userRoleManagementApiUrl,
       `user-groups/all`,
-      info
+      info,
+      { plantId }
     );
 
   createRoundPlanScheduleConfiguration$ = (

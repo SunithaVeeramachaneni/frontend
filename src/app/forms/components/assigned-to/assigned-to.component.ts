@@ -9,9 +9,8 @@ import {
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
-import { Observable, combineLatest, of, pipe } from 'rxjs';
+import { Observable } from 'rxjs';
 import {
-  catchError,
   debounceTime,
   distinctUntilChanged,
   map,
@@ -44,23 +43,31 @@ export class AssignedToComponent implements OnInit {
   @Input() dropdownPosition;
   @Input() isMultiple = false;
   @Input() assignedTo: string;
-  @Input() type: string;
+  @Input() set type(type: string) {
+    this._type = type;
+  }
 
-  searchUsers: FormControl;
-  searchUserGroups: FormControl;
+  get type(): string {
+    console.log(this._type);
+    return this._type;
+  }
+
+  search: FormControl;
+
   filteredUsers$: Observable<UserDetails[]>;
   filteredUsersCount: number;
   filteredUserGroupsCount: number;
   filteresUserGroupCount: number;
   filteredUserGroups$: Observable<UserDetails[]>;
   private _assigneeDetails: AssigneeDetails;
+  private _type: string;
   constructor(private rpscService: RoundPlanScheduleConfigurationService) {}
 
   ngOnInit(): void {
-    this.searchUsers = new FormControl('');
+    this.search = new FormControl('');
     console.log('type', this.type);
     if (this.type === 'user') {
-      this.filteredUserGroups$ = this.searchUsers.valueChanges.pipe(
+      this.filteredUserGroups$ = this.search.valueChanges.pipe(
         startWith(''),
         debounceTime(500),
         distinctUntilChanged(),
@@ -79,22 +86,19 @@ export class AssignedToComponent implements OnInit {
         tap((users) => (this.filteredUsersCount = users.length))
       );
     } else if (this.type === 'userGroup') {
-      this.filteredUserGroups$ = this.searchUsers.valueChanges.pipe(
+      this.filteredUserGroups$ = this.search.valueChanges.pipe(
         startWith(''),
         debounceTime(500),
         distinctUntilChanged(),
 
         tap((res) => console.log('Received user groups:', res)),
-        // this.rpscService.listAllUserGroups$().subscribe((data) => {
-        //   console.log(data);
-        //   });
 
         switchMap((search) => {
           search = search.toLowerCase().trim();
           console.log('Search term:', search);
-          return this.rpscService.userGroups.pipe(
+          return this.rpscService.userGroups$.pipe(
             map((userGroups) => {
-              console.log('usegroups', userGroups.items);
+              console.log('usegroups', userGroups);
               if (!Array.isArray(userGroups.items)) {
                 return [];
               }
@@ -109,7 +113,7 @@ export class AssignedToComponent implements OnInit {
           this.filteredUserGroupsCount = filteredUserGroups.length;
         })
       );
-      this.rpscService.userGroups.subscribe((data) => {
+      this.rpscService.userGroups$.subscribe((data) => {
         console.log(data);
       });
     }

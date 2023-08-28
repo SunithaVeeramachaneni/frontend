@@ -36,7 +36,7 @@ import {
   getDay,
   weeksToDays
 } from 'date-fns';
-import { takeUntil, tap } from 'rxjs/operators';
+import { takeUntil, tap, mergeMap } from 'rxjs/operators';
 import { RoundPlanScheduleConfigurationService } from 'src/app/components/operator-rounds/services/round-plan-schedule-configuration.service';
 import {
   AssigneeDetails,
@@ -332,7 +332,7 @@ export class ScheduleConfigurationComponent
       endDatePicker: new Date(addDays(new Date(), 30)),
       scheduledTill: null,
       assignmentDetails: this.fb.group({
-        type: { assignType: [...this.assignTypes] },
+        type: [this.assignTypes[2]],
         value: '',
         displayValue: ''
       }),
@@ -687,44 +687,31 @@ export class ScheduleConfigurationComponent
     this.schedulerConfigForm.markAsDirty();
     console.log(this.schedulerConfigForm.value, 'formgroup');
 
-    const typeControl = this.schedulerConfigForm.get('assignmentDetails.type');
-    console.log('typecontrol', typeControl.value);
-    console.log('typecontrol', typeControl.value.assignType[1]);
+    this.rpscService
+      .listAllUserGroups$(this.selectedDetails?.plantId)
+      .subscribe((data) => this.rpscService.userGroups$.next(data.items));
 
-    // const userAsSelectedAssignee = user as SelectedAssignee;
-    // const { email: value, firstName, lastName } = userAsSelectedAssignee;
+    const assignmentFormGroup =
+      this.schedulerConfigForm.get('assignmentDetails').value;
 
-    // if (typeControl.value === 'user') {
-    //   this.assignmentType = 'user';
-    //   this.schedulerConfigForm
-    //     .get('assignmentDetails')
-    //     .patchValue({ value, displayValue: `${firstName} ${lastName}` });
-    // } else
-
-    if (typeControl.value.assignType[1] === 'userGroup') {
-      this.assignmentType = 'userGroup';
-      console.log('assifn', this.assignmentType);
-
-      console.log('this selected', this.selectedDetails.plantId);
-
-      this.rpscService.listAllUserGroups$().subscribe((data) => {
-        console.log('data', data);
-        const filteredUserGroups = data.items.filter(
-          (userGroup) => this.selectedDetails.plantId === userGroup.plantId
+    this.schedulerConfigForm
+      .get('assignmentDetails.type')
+      .valueChanges.pipe(takeUntil(this.onDestroy$))
+      .subscribe(() => {
+        this.assignmentType = this.schedulerConfigForm.get(
+          'assignmentDetails.type'
+        ).value;
+        console.log('assignment', this.assignmentType);
+        console.log(
+          this.schedulerConfigForm.get('assignmentDetails.type').value
         );
-        console.log('filtereduser', filteredUserGroups);
-        this.rpscService.userGroups.next(filteredUserGroups);
-
-        console.log(filteredUserGroups, 'filter');
       });
-    }
-    console.log('assifnment', this.assignmentType);
-    // else {
-    //   this.schedulerConfigForm.get('assignmentDetails').patchValue({
-    //     value,
-    //     displayValue: `${this.selectedDetails.plantId}`
-    //   });
-    // }
+
+    this.assignmentType = this.schedulerConfigForm.get(
+      'assignmentDetails.type'
+    ).value;
+
+    console.log(this.assignmentType);
   }
 
   setMonthlyDaysOfWeek() {
@@ -1299,43 +1286,39 @@ export class ScheduleConfigurationComponent
   }
 
   selectedAssigneeHandler({ user }: SelectedAssignee) {
-    // const { email: value, firstName, lastName } = user;
-    // console.log('user', user);
-    // this.schedulerConfigForm
-    //   .get('assignmentDetails')
-    //   .patchValue({ value, displayValue: `${firstName} ${lastName}` });
-
-    // this.schedulerConfigForm.markAsDirty();
-    // this.menuTrigger.closeMenu();
-    this.plantId = this.selectedDetails?.plantId;
-    console.log('plantid', this.plantId);
-    console.log(this.selectedDetails.plantId);
+    console.log(user);
+    const typeControl = this.schedulerConfigForm.get('assignmentDetails.type');
     const { email: value, firstName, lastName } = user;
     console.log('user', user);
+    this.schedulerConfigForm
+      .get('assignmentDetails')
+      .patchValue({ value, displayValue: `${firstName} ${lastName}` });
 
-    // if (typeControl.value === 'user') {
-    //   this.assignmentType = 'user';
-    //   this.schedulerConfigForm
-    //     .get('assignmentDetails')
-    //     .patchValue({ value, displayValue: `${firstName} ${lastName}` });
-    // } else if (typeControl.value === 'userGroup') {
-    //   this.assignmentType = 'usergroup';
-    //   this.rpscService.listAllUserGroups$().subscribe((data) => {
-    //     this.assignUserGroups = data;
+    this.schedulerConfigForm.markAsDirty();
+    this.menuTrigger.closeMenu();
 
-    //     console.log('assignUserGroups', this.assignUserGroups.items[1].name);
-    //     this.schedulerConfigForm.get('assignmentDetails').patchValue({
-    //       value,
-    //       displayValue: ` ${this.assignUserGroups.items[1].name}`
-    //     });
-    //   });
-    // }
-    // else {
-    //   this.schedulerConfigForm.get('assignmentDetails').patchValue({
-    //     value,
-    //     displayValue: `${this.selectedDetails.plantId}`
-    //   });
-    // }
+    if (typeControl.value === 'user') {
+      this.assignmentType = 'user';
+      this.schedulerConfigForm
+        .get('assignmentDetails')
+        .patchValue({ value, displayValue: `${firstName} ${lastName}` });
+    } else if (typeControl.value === 'userGroup') {
+      this.assignmentType = 'userGroup';
+      // this.rpscService.listAllUserGroups$().subscribe((data) => {
+      //   this.assignUserGroups = data;
+
+      //   console.log('assignUserGroups', this.assignUserGroups.items[1].name);
+      //   this.schedulerConfigForm.get('assignmentDetails').patchValue({
+      //     value,
+      //     displayValue: ` ${this.assignUserGroups.items[1].name}`
+      //   });
+      // });
+    } else {
+      this.schedulerConfigForm.get('assignmentDetails').patchValue({
+        value,
+        displayValue: `${this.selectedDetails.plantId}`
+      });
+    }
 
     this.schedulerConfigForm.markAsDirty();
     this.menuTrigger.closeMenu();
