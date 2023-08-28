@@ -8,6 +8,7 @@ import {
   EventEmitter,
   Output
 } from '@angular/core';
+import { colorsByStatus } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-column-chart',
@@ -16,6 +17,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ColumnChartComponent implements OnInit {
+  @Input() hasCustomColorScheme;
   @Output() chartClickEvent: EventEmitter<any> = new EventEmitter<any>();
 
   @Input() set chartConfig(chartConfig) {
@@ -139,7 +141,13 @@ export class ColumnChartComponent implements OnInit {
 
   constructor(private datePipe: DatePipe) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if (this.hasCustomColorScheme) {
+      this.chartOptions.series.itemStyle = {
+        color: (param: any) => colorsByStatus[param.name]
+      };
+    }
+  }
 
   onChartClickHandler(event) {
     this.chartClickEvent.emit(event);

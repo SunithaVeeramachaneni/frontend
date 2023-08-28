@@ -132,7 +132,8 @@
                 </div>
                 <div class="widget-body">
                   <app-widget [widget]="widget" [height]="widgetHeights[widget.id]" [width]="widgetWidths[widget.id]"
-                    (widgetAction)="widgetActionHandler($event)" [filters]="dashboardForm.value"></app-widget>
+                    (widgetAction)="widgetActionHandler($event)" [filters]="dashboardForm.value"
+                    [hasCustomColorScheme]="true"></app-widget>
                 </div>
               </div>
 

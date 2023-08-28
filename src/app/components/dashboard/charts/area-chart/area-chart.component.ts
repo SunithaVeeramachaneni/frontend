@@ -9,6 +9,7 @@ import {
   Output
 } from '@angular/core';
 import * as echarts from 'echarts';
+import { colorsByStatus } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-area-chart',
@@ -17,6 +18,7 @@ import * as echarts from 'echarts';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AreaChartComponent implements OnInit {
+  @Input() hasCustomColorScheme;
   @Output() chartClickEvent: EventEmitter<any> = new EventEmitter<any>();
 
   @Input() set chartConfig(chartConfig) {
@@ -153,7 +155,13 @@ export class AreaChartComponent implements OnInit {
 
   constructor(private datePipe: DatePipe) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if (this.hasCustomColorScheme) {
+      this.chartOptions.series.itemStyle = {
+        color: (param: any) => colorsByStatus[param.name]
+      };
+    }
+  }
 
   onChartClickHandler(event) {
     this.chartClickEvent.emit(event);

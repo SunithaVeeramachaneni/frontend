@@ -34,6 +34,7 @@ import { DateUtilService } from 'src/app/shared/utils/dateUtils';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WidgetComponent implements OnInit {
+  @Input() hasCustomColorScheme;
   @Input() set widget(widget: Widget) {
     this._widget = widget ? widget : ({} as Widget);
     if (Object.keys(this.widget).length) {

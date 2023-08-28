@@ -9,8 +9,8 @@
           chartConfig.indexAxis === 'x' &&
           chartConfig.isStacked !== true
         ">
-        <app-bar-chart [chartConfig]="chartConfig" [chartData]="data"
-          (chartClickEvent)="onChartClickHandle($event)"></app-bar-chart>
+        <app-bar-chart [chartConfig]="chartConfig" [chartData]="data" (chartClickEvent)="onChartClickHandle($event)"
+          [hasCustomColorScheme]="hasCustomColorScheme"></app-bar-chart>
       </ng-container>
 
       <ng-container *ngIf="
@@ -18,8 +18,8 @@
           chartConfig.indexAxis === 'y' &&
           chartConfig.isStacked !== true
         ">
-        <app-column-chart [chartConfig]="chartConfig" [chartData]="data"
-          (chartClickEvent)="onChartClickHandle($event)"></app-column-chart>
+        <app-column-chart [chartConfig]="chartConfig" [chartData]="data" (chartClickEvent)="onChartClickHandle($event)"
+          [hasCustomColorScheme]="hasCustomColorScheme"></app-column-chart>
       </ng-container>
 
       <ng-container *ngIf="
@@ -28,7 +28,8 @@
           chartConfig.isStacked === true
         ">
         <app-vertical-stacked-chart [chartConfig]="chartConfig" [chartData]="data"
-          (chartClickEvent)="onChartClickHandle($event)"></app-vertical-stacked-chart>
+          (chartClickEvent)="onChartClickHandle($event)"
+          [hasCustomColorScheme]="hasCustomColorScheme"></app-vertical-stacked-chart>
       </ng-container>
 
       <ng-container *ngIf="
@@ -37,27 +38,29 @@
           chartConfig.isStacked === true
         ">
         <app-horizontal-stacked-chart [chartConfig]="chartConfig" [chartData]="data"
-          (chartClickEvent)="onChartClickHandle($event)"></app-horizontal-stacked-chart>
+          (chartClickEvent)="onChartClickHandle($event)"
+          [hasCustomColorScheme]="hasCustomColorScheme"></app-horizontal-stacked-chart>
       </ng-container>
 
       <ng-container *ngIf="chartConfig.type === 'line'">
-        <app-line-chart [chartConfig]="chartConfig" [chartData]="data"
-          (chartClickEvent)="onChartClickHandle($event)"></app-line-chart>
+        <app-line-chart [chartConfig]="chartConfig" [chartData]="data" (chartClickEvent)="onChartClickHandle($event)"
+          [hasCustomColorScheme]="hasCustomColorScheme"></app-line-chart>
       </ng-container>
 
       <ng-container *ngIf="chartConfig.type === 'area'">
-        <app-area-chart [chartConfig]="chartConfig" [chartData]="data"
-          (chartClickEvent)="onChartClickHandle($event)"></app-area-chart>
+        <app-area-chart [chartConfig]="chartConfig" [chartData]="data" (chartClickEvent)="onChartClickHandle($event)"
+          [hasCustomColorScheme]="hasCustomColorScheme"></app-area-chart>
       </ng-container>
 
       <ng-container *ngIf="chartConfig.type === 'pie'">
         <app-pie-chart [chartConfig]="chartConfig" [chartData]="data" [width]="_width" [height]="_height"
-          (chartClickEvent)="onChartClickHandle($event)"></app-pie-chart>
+          (chartClickEvent)="onChartClickHandle($event)" [hasCustomColorScheme]="hasCustomColorScheme"></app-pie-chart>
       </ng-container>
 
       <ng-container *ngIf="chartConfig.type === 'doughnut'">
         <app-donut-chart [chartConfig]="chartConfig" [chartData]="data" [width]="_width" [height]="_height"
-          (chartClickEvent)="onChartClickHandle($event)"></app-donut-chart>
+          (chartClickEvent)="onChartClickHandle($event)"
+          [hasCustomColorScheme]="hasCustomColorScheme"></app-donut-chart>
       </ng-container>
     </ng-container>
   </ng-container>

@@ -9,6 +9,7 @@ import {
   Output
 } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { colorsByStatus } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-horizontal-stacked-chart',
@@ -17,6 +18,7 @@ import { DatePipe } from '@angular/common';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HorizontalStackedChartComponent implements OnInit {
+  @Input() hasCustomColorScheme;
   @Output() chartClickEvent: EventEmitter<any> = new EventEmitter<any>();
 
   @Input() set chartConfig(chartConfig) {
@@ -142,7 +144,13 @@ export class HorizontalStackedChartComponent implements OnInit {
 
   constructor(private datePipe: DatePipe) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if (this.hasCustomColorScheme) {
+      this.chartOptions.series.itemStyle = {
+        color: (param: any) => colorsByStatus[param.name]
+      };
+    }
+  }
 
   onChartClickHandler(event) {
     this.chartClickEvent.emit(event);

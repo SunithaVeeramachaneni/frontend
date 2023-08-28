@@ -10,6 +10,7 @@ import {
   Output
 } from '@angular/core';
 import { EChartsOption } from 'echarts';
+import { colorsByStatus } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-pie-chart',
@@ -18,6 +19,7 @@ import { EChartsOption } from 'echarts';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PieChartComponent implements OnInit, OnChanges {
+  @Input() hasCustomColorScheme;
   @Output() chartClickEvent: EventEmitter<any> = new EventEmitter<any>();
 
   @Input() set chartConfig(chartConfig) {
@@ -99,7 +101,13 @@ export class PieChartComponent implements OnInit, OnChanges {
 
   constructor(private datePipe: DatePipe) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if (this.hasCustomColorScheme) {
+      this.chartOptions.series.itemStyle = {
+        color: (param: any) => colorsByStatus[param.name]
+      };
+    }
+  }
 
   onChartClickHandler(event) {
     this.chartClickEvent.emit(event);
