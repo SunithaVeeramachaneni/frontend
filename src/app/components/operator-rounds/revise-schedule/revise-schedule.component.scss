@@ -9,6 +9,11 @@
     font-weight: 500;
   }
 
+  .main-scroll {
+    overflow-y: auto;
+    height: calc(100vh - 315px);
+  }
+
   .selected-locations {
     padding: 15px 15px 10px 15px;
     border-bottom: 1px solid $border-color;
@@ -185,7 +190,7 @@
 }
 
 .slot-times {
-  background: #ddf2ff;
+  background: $blue10;
   padding: 10px;
   border-radius: 4px;
   margin-right: 10px;

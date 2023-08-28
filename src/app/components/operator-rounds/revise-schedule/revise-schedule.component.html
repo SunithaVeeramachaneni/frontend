@@ -1,7 +1,7 @@
 <div class="right" [formGroup]="resviseScheduleConfigForm">
-  <h3 class="heading">Revise Schedule</h3>
+  <h3 class="heading" translate>reviseSchedule</h3>
 
-  <div style="overflow-y: auto; height: calc(100vh - 315px)">
+  <div class="main-scroll">
     <div>
       <div class="selected-locations">
         <p class="m-0" (click)="showLocations = !showLocations">
@@ -11,12 +11,12 @@
           <mat-icon *ngIf="showLocations === false">
             keyboard_arrow_right
           </mat-icon>
-          <span class="selected-text">Selected</span>
+          <span class="selected-text" translate>selected</span>
         </p>
         <div *ngIf="showLocations" class="scroll-locations">
           <div *ngFor="let location of locations" class="locations">
             <div>{{ location.name }}</div>
-            <div>{{ location.count }} Tasks</div>
+            <div>{{ location.count }} <span translate>tasks</span></div>
           </div>
         </div>
       </div>
@@ -28,7 +28,7 @@
           resviseScheduleConfigForm.get('scheduleType').value === 'byFrequency'
         "
       >
-        <h3>Schedule by Frequency</h3>
+        <h3 translate>scheduleByFrequency</h3>
 
         <div class="dis-flex schedule-frequency">
           <p id="taskScheduleConfigurationRepeatEvery" class="f-w-400">
@@ -161,7 +161,7 @@
       <ng-container
         *ngIf="resviseScheduleConfigForm.get('scheduleType').value === 'byDate'"
       >
-        <h3>Schedule by Date</h3>
+        <h3 translate>scheduleByDate</h3>
 
         <div class="by-date">
           <mat-calendar
@@ -174,7 +174,7 @@
     </div>
 
     <div class="subheadings">
-      <h3>Shifts</h3>
+      <h3 translate>shifts</h3>
 
       <mat-form-field class="width-100" appearance="outline">
         <mat-label translate="shifts"></mat-label>
@@ -196,7 +196,7 @@
     </div>
 
     <div class="subheadings">
-      <h3>Slots</h3>
+      <h3 translate>slots</h3>
       <div *ngFor="let slot of shiftsInformation">
         <p>{{ slot?.name }}</p>
         <span class="slot-times">
