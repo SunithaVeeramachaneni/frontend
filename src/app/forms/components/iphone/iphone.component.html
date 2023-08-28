@@ -159,89 +159,86 @@
   </div>
 
   <div
-    class="history-bottom-sheet"
+    class="history-bottom-container"
     [ngClass]="isOpenHistoryBottomSheet ? '' : 'hide-history-bottom-sheet'"
   >
-    <div class="header">
-      <div></div>
-      <div
-        id="iphoneHistoryText"
-        class="title"
-        matLine
-        translate="historyTxt"
-      ></div>
-      <button
-        id="iphoneDoneBtn"
-        (click)="closeHistoryBottomSheet()"
-        class="done-btn"
-        translate="done"
-      ></button>
-    </div>
-    <hr />
-    <div class="main">
-      <div
-        id="iphoneLastFiveReading"
-        class="main-heading"
-        matLine
-        translate="lastFiveReadingsHeader"
-      ></div>
-      <div
-        class="main-question"
-        matLine
-        translate="whatIsPressureReadingHeader"
-      ></div>
-      <div class="history-chart-container">
-        <img
-          id="iphoneHistoryChart"
-          class="history-chart"
-          src="assets/Images/History_Preview_Graph.png"
-          alt="preview-history-graph"
-        />
+    <div class="history-bottom-sheet">
+      <div class="header">
+        <div></div>
+        <div
+          id="iphoneHistoryText"
+          class="title"
+          matLine
+          translate="historyTxt"
+        ></div>
+        <button
+          id="iphoneDoneBtn"
+          (click)="closeHistoryBottomSheet()"
+          class="done-btn"
+          translate="done"
+        ></button>
       </div>
-      <table class="history-table">
-        <tr>
-          <th
-            id="iphoneDateLabel"
-            class="table-heading"
-            translate="dateLabel"
-          ></th>
-          <th
-            id="iphoneReadingLabel"
-            class="table-heading"
-            translate="readingLabel"
-          ></th>
-          <th
-            id="iphoneOperator"
-            class="table-heading"
-            translate="operator"
-          ></th>
-        </tr>
-        <tr>
-          <td>--</td>
-          <td>--</td>
-          <td>--</td>
-        </tr>
-        <tr>
-          <td>--</td>
-          <td>--</td>
-          <td>--</td>
-        </tr>
-        <tr>
-          <td>--</td>
-          <td>--</td>
-          <td>--</td>
-        </tr>
-        <tr>
-          <td>--</td>
-          <td>--</td>
-          <td>--</td>
-        </tr>
-        <tr>
-          <td>--</td>
-          <td>--</td>
-          <td>--</td>
-        </tr>
-      </table>
+      <hr />
+      <div class="main">
+        <div id="iphoneLastFiveReading" class="main-heading" matLine>
+          {{
+            'lastFiveReadingsHeader'
+              | translate
+                : {
+                    count: historyCount | translate
+                  }
+          }}
+        </div>
+        <div
+          class="main-question"
+          matLine
+          translate="whatIsPressureReadingHeader"
+        ></div>
+        <div class="history-chart-container">
+          <img
+            id="iphoneHistoryChart"
+            class="history-chart"
+            src="assets/Images/History_Preview_Graph.png"
+            alt="preview-history-graph"
+          />
+        </div>
+        <table class="history-table">
+          <tr>
+            <th
+              *ngFor="let header of historyTableHeaders"
+              [id]="header.id"
+              class="table-heading"
+            >
+              {{ header.translate | translate }}
+            </th>
+          </tr>
+          <tr>
+            <td>Date 1</td>
+            <td>Reading 1</td>
+            <td>Operator 1</td>
+          </tr>
+          <tr>
+            <td>Date 2</td>
+            <td>Reading 2</td>
+            <td>Operator 2</td>
+          </tr>
+          <tr>
+            <td>Date 3</td>
+            <td>Reading 3</td>
+            <td>Operator 3</td>
+          </tr>
+          <tr>
+            <td>Date 4</td>
+            <td>Reading 4</td>
+            <td>Operator 4</td>
+          </tr>
+          <tr>
+            <td>Date 5</td>
+            <td>Reading 5</td>
+            <td>Operator 5</td>
+          </tr>
+        </table>
+      </div>
     </div>
   </div>
 </div>

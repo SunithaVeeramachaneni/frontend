@@ -12,7 +12,7 @@ import {
   ViewChild,
   OnDestroy
 } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -211,6 +211,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     position: '',
     required: false,
     enableHistory: false,
+    historyCount: [5, [Validators.required, Validators.min(0)]],
     multi: false,
     value: 'TF',
     isPublished: false,
@@ -325,6 +326,9 @@ export class QuestionComponent implements OnInit, OnDestroy {
             isResponseTypeModalOpen: currIsResponseTypeModalOpen,
             ...curr
           } = current;
+          if (current.historyCount === null || current.historyCount < 0) {
+            this.questionForm.get('historyCount').setValue(0);
+          }
           if (!isEqual(prev, curr)) {
             const { value: prevValue } = prev;
             const { value: currValue } = curr;
@@ -746,6 +750,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
           position: 0,
           required: false,
           enableHistory: false,
+          historyCount: 5,
           multi: false,
           value: 'TF',
           isPublished: false,
@@ -773,6 +778,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
           position: 0,
           required: true,
           enableHistory: false,
+          historyCount: 5,
           multi: false,
           value: 'ATT',
           isPublished: false,
