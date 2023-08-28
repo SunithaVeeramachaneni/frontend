@@ -12,6 +12,7 @@ import {
   FormConfigurationApiActions,
   RoundPlanConfigurationApiActions
 } from '../actions';
+import { cloneDeep } from 'lodash-es';
 
 export interface FormConfigurationState {
   formMetadata: FormMetadata;
@@ -256,13 +257,14 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       const idx = pageToBeUpdated.findIndex(
         (page) => page.position === action.pageIndex + 1
       );
-      pageToBeUpdated[idx] = {
-        ...pageToBeUpdated[idx],
-        logics: [...pageToBeUpdated[idx].logics, ...(action.logics || [])]
+      const newArray = cloneDeep(pageToBeUpdated);
+      newArray[idx] = {
+        ...newArray[idx],
+        logics: [...newArray[idx].logics, ...(action.logics || [])]
       };
       return {
         ...state,
-        [key]: [...pageToBeUpdated],
+        [key]: [...newArray],
         formStatus: action.formStatus,
         formDetailPublishStatus: action.formDetailPublishStatus,
         formSaveStatus: action.formSaveStatus,
@@ -765,8 +767,10 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
           for (const logic of page.logics)
             questionIdByLogic[logic.id] = logic.questionId;
 
-          let sectionQuestions = page.questions.filter(
-            (question) => question.sectionId === action.sectionId
+          let sectionQuestions = cloneDeep(
+            page.questions.filter(
+              (question) => question.sectionId === action.sectionId
+            )
           );
           const questionToBeDeleted =
             sectionQuestions[action.questionIndex]?.id;

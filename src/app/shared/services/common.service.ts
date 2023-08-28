@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 import { Injectable } from '@angular/core';
+import { groupBy, isUndefined } from 'lodash-es';
 import { BehaviorSubject } from 'rxjs';
 import { ProtectedResource, UserInfo } from 'src/app/interfaces';
+import { v4 as uuidV4 } from 'uuid';
 
 @Injectable({
   providedIn: 'root'
@@ -60,6 +62,33 @@ export class CommonService {
   }
 
   isJson(str: string) {
+    try {
+      JSON.parse(str);
+    } catch (e) {
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * @description Generate UUID unique string.
+   * @param startKeyWord {String} Start key
+   * @param limit {Number} Number of characters to generate
+   */
+  generateUUID(startKeyWord: string = null, limit: number = 20): string {
+    const initialIndex = 0;
+    const startSliceIndex = 3;
+    let uuid: string = uuidV4();
+    // Preparing startSliceIndex for uuid in range of xxxx-xxxx-xxxx-xxxx
+    const statSliceIndex: number = startKeyWord
+      ? startKeyWord.length + startSliceIndex
+      : startSliceIndex;
+    uuid = uuid?.length > limit ? uuid?.slice(statSliceIndex) : uuid;
+    const preparedUUID: string = startKeyWord ? `${startKeyWord}${uuid}` : uuid;
+    return preparedUUID?.slice(initialIndex, limit);
+  }
+
+  static isValidJson(str: string) {
     try {
       JSON.parse(str);
     } catch (e) {

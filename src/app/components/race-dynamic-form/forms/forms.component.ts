@@ -508,7 +508,9 @@ export class FormsComponent implements OnInit, OnDestroy {
       formId: this.formId,
       formType: formConfigurationStatus.standalone
     };
-    this.isLoading$.next(true);
+    if (this.fetchType !== 'infiniteScroll') {
+      this.isLoading$.next(true);
+    }
     return this.raceDynamicFormService
       .getFormsForScheduler$(obj, this.filter)
       .pipe(
