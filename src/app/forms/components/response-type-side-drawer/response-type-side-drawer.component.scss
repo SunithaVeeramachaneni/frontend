@@ -26,6 +26,24 @@
     padding-left: 0;
   }
 
+  .remove-btn {
+    color: $disabled-color;
+    float: right;
+    cursor: pointer;
+    margin-top: 5px;
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
+  .additional-details-heading {
+    font-size: 1.2rem;
+    border-bottom: 1px solid $border-color;
+    padding: 15px;
+    font-weight: 600;
+    padding-left: 0;
+  }
+
   .add-response {
     color: $blue-main;
     margin-top: 10px;
@@ -55,6 +73,12 @@
     justify-content: space-between;
     margin-top: 40px;
     margin-bottom: 20px;
+  }
+
+  .attributes-list-item {
+    display: flex;
+    justify-content: space-between;
+    width: 360px;
   }
 
   .margin-20 {
@@ -143,6 +167,82 @@
     position: relative;
     top: 142px;
   }
+
+  .tags-heading {
+    font-weight: bold;
+    font-size: 120%;
+    color: $black;
+    margin: 0px;
+    padding-bottom: 10px;
+  }
+
+  .tags {
+    ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
+      padding: 17px 0 0 0 !important;
+    }
+  }
+
+  .tags-mat-chips {
+    margin: 5px 5px !important;
+  }
+
+  .additional-details {
+    .close-icon {
+      width: 20px;
+      height: 30px;
+    }
+    .value-field {
+      margin-left: 18px;
+    }
+  }
+
+  .attributes-text {
+    font-weight: bold;
+    font-size: 120%;
+    margin: 10px 0;
+  }
+
+  .add-button {
+    color: $blue-main;
+    border: none;
+    background: none;
+    margin: 0;
+  }
+
+  .add-button:disabled {
+    color: $gray7;
+  }
+
+  .add-new-button {
+    width: 100%;
+    text-align: start;
+  }
+
+  .label-value-text {
+    display: flex;
+    margin: 15px 0 5px 10px;
+  }
+
+  .label,
+  .value {
+    font-size: 120%;
+    font-weight: 500;
+  }
+
+  .cancel-icon {
+    position: relative;
+    top: 15px;
+    left: 35px;
+    cursor: pointer;
+  }
+
+  .add-more-icon {
+    height: 15px;
+    width: 15px;
+    position: relative;
+    top: 3px;
+    right: 5px;
+  }
 }
 .rangeSelectorFooter {
   position: absolute;
@@ -155,6 +255,24 @@
   width: 94%;
   justify-content: center;
   .applyBtn {
+    width: 48%;
+  }
+  .cancelBtn {
+    width: 48%;
+    margin-right: 10px;
+  }
+}
+.additionalDetailsFooter {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  padding: 10px;
+  height: 40px;
+  align-items: center;
+  width: 94%;
+  justify-content: center;
+  .submitBtn {
     width: 48%;
   }
   .cancelBtn {
@@ -276,7 +394,7 @@
   }
 }
 .matCardContent {
-  height: 75vh;
+  height: 80vh;
   overflow-y: auto;
   overflow-x: hidden;
   padding: 5px;

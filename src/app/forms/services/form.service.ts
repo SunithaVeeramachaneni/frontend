@@ -6,7 +6,8 @@ import { HierarchyEntity } from 'src/app/interfaces';
 import {
   RangeSelectorState,
   ResponseTypeOpenState,
-  SliderSelectorState
+  SliderSelectorState,
+  AdditionalDetailsState
 } from 'src/app/interfaces/response-type';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
@@ -29,6 +30,10 @@ export class FormService {
     isOpen: false,
     rangeMetadata: {}
   });
+  private additionalDetailsOpenStateSubject = new BehaviorSubject<any>({
+    isOpen: false,
+    additionalDetails: {}
+  });
 
   private masterHierarchyData: HierarchyEntity[] = [];
   private selectedHierarchyList: HierarchyEntity[] = [];
@@ -37,6 +42,8 @@ export class FormService {
   sliderOpenState$ = this.sliderOpenStateSubject.asObservable();
   multiChoiceOpenState$ = this.multiChoiceOpenStateSubject.asObservable();
   rangeSelectorOpenState$ = this.rangeSelectorOpenStateSubject.asObservable();
+  additionalDetailsOpenState$ =
+    this.additionalDetailsOpenStateSubject.asObservable();
 
   constructor(private _appService: AppService) {}
 
@@ -50,6 +57,10 @@ export class FormService {
 
   setRangeSelectorOpenState(rangeMetadata: RangeSelectorState) {
     this.rangeSelectorOpenStateSubject.next(rangeMetadata);
+  }
+
+  setAdditionalDetailsOpenState(additionalDetails: AdditionalDetailsState) {
+    this.additionalDetailsOpenStateSubject.next(additionalDetails);
   }
 
   setMasterHierarchyList = (hierarchyData: HierarchyEntity[]) => {

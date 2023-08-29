@@ -333,7 +333,6 @@
   "roundGenerationSlots": "Round Generation Slots",
   "defaultSlotInMultipleSlotsWithoutOverlapping": "You can split default slot into multiple slots without overlapping.",
   "slot": "Slot",
-  "additionalDetails": "Additional Details",
   "value": "Value",
   "add": "Add",
   "timeZone": "Plant Timezone",
@@ -361,5 +360,9 @@
   "reportGeneratedOn": "Report Generated On",
   "addNotes": "Add Notes",
   "skippedReason": "Skipped Reason",
-  "backToList": "Back to List"
+  "backToList": "Back to List",
+  "additionalDetailsHeading": "Additional Details",
+  "additionalDetails": "Additional Details:",
+  "attributesHeading": "Attributes",
+  "addMoreUpto5": "Add More ( Select Upto 5 )"
 }

@@ -323,7 +323,10 @@ export class FormConfigurationService {
       unitOfMeasurement: question ? question.unitOfMeasurement : 'None',
       rangeMetadata: question
         ? question.rangeMetadata
-        : ({} as NumberRangeMetadata)
+        : ({} as NumberRangeMetadata),
+      additionalDetails: question?.additionalDetails
+        ? question.additionalDetails
+        : { tags: [], attributes: [] }
     };
   }
 }

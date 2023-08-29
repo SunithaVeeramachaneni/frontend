@@ -108,9 +108,24 @@ export class BuilderComponent implements OnInit, OnDestroy {
   importedSectionsByTemplateId$: Observable<any>;
   getFormConfigurationCounter$: Observable<any>;
   updateFormTemplateUsageByFormIdSubscription: Subscription;
+  get tagDetailType() {
+    return this._tagDetailType;
+  }
+  set tagDetailType(type) {
+    this._tagDetailType = type;
+  }
+
+  get attributeDetailType() {
+    return this._attributeDetailType;
+  }
+  set attributeDetailType(type) {
+    this._attributeDetailType = type;
+  }
 
   readonly formConfigurationStatus = formConfigurationStatus;
 
+  private _attributeDetailType = '';
+  private _tagDetailType = '';
   private _selectedNode: any;
 
   constructor(
@@ -186,7 +201,27 @@ export class BuilderComponent implements OnInit, OnDestroy {
       );
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.setTagType();
+  }
+
+  setTagType() {
+    if (this.moduleName === 'forms') {
+      this.attributeDetailType = 'forms';
+      if (this.isTemplate) {
+        this.tagDetailType = 'formTemplateDetailTags';
+      } else {
+        this.tagDetailType = 'formDetailTags';
+      }
+    } else if (this.moduleName === 'rounds') {
+      this.attributeDetailType = 'rounds';
+      if (this.isTemplate) {
+        this.tagDetailType = 'roundTemplateDetailTags';
+      } else {
+        this.tagDetailType = 'roundDetailTags';
+      }
+    }
+  }
 
   addPage() {
     this.isEmptyPlan = false;
