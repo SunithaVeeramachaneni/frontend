@@ -64,7 +64,6 @@ export interface Question {
   isPublished: boolean;
   isPublishedTillSave: boolean;
   isOpen: boolean;
-  isResponseTypeModalOpen: boolean;
   unitOfMeasurement?: string;
   rangeMetadata?: NumberRangeMetadata;
   skipIdGeneration?: boolean;

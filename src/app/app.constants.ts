@@ -406,7 +406,6 @@ export const DEFAULT_TEMPLATE_PAGES_STANDALONE = [
         isPublished: false,
         isPublishedTillSave: false,
         isOpen: true,
-        isResponseTypeModalOpen: false,
         unitOfMeasurement: 'None',
         rangeMetadata: {}
       },
@@ -423,7 +422,6 @@ export const DEFAULT_TEMPLATE_PAGES_STANDALONE = [
         isPublished: false,
         isPublishedTillSave: false,
         isOpen: true,
-        isResponseTypeModalOpen: false,
         unitOfMeasurement: 'None',
         rangeMetadata: {},
         date: true,
@@ -442,7 +440,6 @@ export const DEFAULT_TEMPLATE_PAGES_STANDALONE = [
         isPublished: false,
         isPublishedTillSave: false,
         isOpen: true,
-        isResponseTypeModalOpen: false,
         unitOfMeasurement: 'None',
         rangeMetadata: {}
       },
@@ -459,7 +456,6 @@ export const DEFAULT_TEMPLATE_PAGES_STANDALONE = [
         isPublished: false,
         isPublishedTillSave: false,
         isOpen: true,
-        isResponseTypeModalOpen: false,
         unitOfMeasurement: 'None',
         rangeMetadata: {}
       }
@@ -494,7 +490,6 @@ export const DEFAULT_TEMPLATE_PAGES_EMBEDDED = [
         isPublished: false,
         isPublishedTillSave: false,
         isOpen: true,
-        isResponseTypeModalOpen: false,
         unitOfMeasurement: 'None',
         rangeMetadata: {}
       },
@@ -511,7 +506,6 @@ export const DEFAULT_TEMPLATE_PAGES_EMBEDDED = [
         isPublished: false,
         isPublishedTillSave: false,
         isOpen: true,
-        isResponseTypeModalOpen: false,
         unitOfMeasurement: 'None',
         rangeMetadata: {},
         date: true,
@@ -530,7 +524,6 @@ export const DEFAULT_TEMPLATE_PAGES_EMBEDDED = [
         isPublished: false,
         isPublishedTillSave: false,
         isOpen: true,
-        isResponseTypeModalOpen: false,
         unitOfMeasurement: 'None',
         rangeMetadata: {}
       },
@@ -547,7 +540,6 @@ export const DEFAULT_TEMPLATE_PAGES_EMBEDDED = [
         isPublished: false,
         isPublishedTillSave: false,
         isOpen: true,
-        isResponseTypeModalOpen: false,
         unitOfMeasurement: 'None',
         rangeMetadata: {}
       }

@@ -49,6 +49,7 @@ export class AddLogicComponent implements OnInit, OnDestroy {
   @Input() isEmbeddedForm: boolean;
   @Input() isTemplate: boolean;
   @Output() logicEvent: EventEmitter<any> = new EventEmitter<any>();
+  @Input() isPreviewActive;
 
   @Input() set questionId(id: string) {
     this._questionId = id;
@@ -197,8 +198,6 @@ export class AddLogicComponent implements OnInit, OnDestroy {
                     isPublished: aq.isPublished || false,
                     isPublishedTillSave: aq.isPublishedTillSave || false,
                     isOpen: aq.isOpen || false,
-                    isResponseTypeModalOpen:
-                      aq.isResponseTypeModalOpen || false,
                     unitOfMeasurement: aq.unitOfMeasurement || 'None',
                     rangeMetaData:
                       aq.rangeMetaData || ({} as NumberRangeMetadata)
@@ -322,8 +321,7 @@ export class AddLogicComponent implements OnInit, OnDestroy {
           value: 'TF',
           isPublished: false,
           isPublishedTillSave: false,
-          isOpen: false,
-          isResponseTypeModalOpen: false
+          isOpen: false
         };
         this.store.dispatch(
           AddLogicActions.askQuestionsCreate({

@@ -102,18 +102,24 @@
             (responseTypeOpenEvent)="responseTypeOpenEventHandler($event)"
           >
           </app-response-type-button>
-          <ng-container
-            *ngIf="questionForm.get('isResponseTypeModalOpen').value === true"
-          >
-            <app-response-type
-              (selectFieldTypeEvent)="selectFieldTypeEventHandler($event)"
-              (responseTypeCloseEvent)="responseTypeCloseEventHandler($event)"
-              (setQuestionValue)="setQuestionValue($event)"
-              [fieldTypes]="fieldTypes"
-              [question]="questionForm.value"
-              [isPreviewActive]="isPreviewActive"
-            ></app-response-type>
-          </ng-container>
+          <button
+            mat-button
+            style="display: none"
+            [matMenuTriggerFor]="responseTypeMenu"
+            #responseTypeMenuTrigger="matMenuTrigger"
+          ></button>
+          <mat-menu #responseTypeMenu="matMenu">
+            <ng-container *ngIf="responseTypeMenuTrigger.menuOpen">
+              <app-response-type
+                (selectFieldTypeEvent)="selectFieldTypeEventHandler($event)"
+                (responseTypeCloseEvent)="responseTypeCloseEventHandler($event)"
+                (setQuestionValue)="setQuestionValue($event)"
+                [fieldTypes]="fieldTypes"
+                [question]="questionForm.value"
+                [isPreviewActive]="isPreviewActive"
+              ></app-response-type>
+            </ng-container>
+          </mat-menu>
         </div>
         <div *ngIf="isAskQuestion">
           <svg-icon
@@ -517,6 +523,7 @@
                 [selectedNodeId]="selectedNodeId"
                 [isEmbeddedForm]="isEmbeddedForm"
                 [questionName]="questionForm.get('name').value"
+                [isPreviewActive]="isPreviewActive"
               ></app-add-logic>
             </div>
           </div>

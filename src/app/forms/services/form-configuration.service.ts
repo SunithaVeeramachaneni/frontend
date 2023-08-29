@@ -30,7 +30,6 @@ export class FormConfigurationService {
     isPublished: false,
     isPublishedTillSave: false,
     isOpen: false,
-    isResponseTypeModalOpen: false,
     unitOfMeasurement: 'None',
     rangeMetadata: {} as NumberRangeMetadata
   };
@@ -73,7 +72,6 @@ export class FormConfigurationService {
         BuilderConfigurationActions.updateQuestionState({
           questionId: page.questions[addQuestions - 1].id,
           isOpen: true,
-          isResponseTypeModalOpen: false,
           subFormId: null
         })
       );
@@ -133,7 +131,6 @@ export class FormConfigurationService {
         BuilderConfigurationActions.updateQuestionState({
           questionId: questions[addQuestions - 1].id,
           isOpen: true,
-          isResponseTypeModalOpen: false,
           subFormId: null
         })
       );
@@ -173,7 +170,6 @@ export class FormConfigurationService {
       BuilderConfigurationActions.updateQuestionState({
         questionId: sectionQuestions[addQuestions - 1].id,
         isOpen: true,
-        isResponseTypeModalOpen: false,
         subFormId: null
       })
     );
@@ -328,7 +324,6 @@ export class FormConfigurationService {
       isPublished: false,
       isPublishedTillSave: false,
       isOpen: question ? false : true,
-      isResponseTypeModalOpen: false,
       unitOfMeasurement: question ? question.unitOfMeasurement : 'None',
       rangeMetadata: question
         ? question.rangeMetadata

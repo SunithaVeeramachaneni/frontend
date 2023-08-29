@@ -351,8 +351,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
             }));
             const questions = page.questions.map((question) => ({
               ...question,
-              isOpen: false,
-              isResponseTypeModalOpen: false
+              isOpen: false
             }));
             return { ...page, sections, questions, isOpen: action.isOpen };
           }
@@ -478,8 +477,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
               if (!action.isOpen && question.isOpen) {
                 return {
                   ...question,
-                  isOpen: false,
-                  isResponseTypeModalOpen: false
+                  isOpen: false
                 };
               }
               return question;
@@ -699,14 +697,12 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
           if (question.id === action.questionId) {
             return {
               ...question,
-              isOpen: action.isOpen,
-              isResponseTypeModalOpen: action.isResponseTypeModalOpen
+              isOpen: action.isOpen
             };
           } else if (question.isOpen) {
             return {
               ...question,
-              isOpen: false,
-              isResponseTypeModalOpen: false
+              isOpen: false
             };
           }
           return question;

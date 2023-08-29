@@ -23,7 +23,7 @@
   </div>
 
   <div class="list-view">
-    <div class="main-container">
+    <div class="main-container" (click)="$event.stopPropagation()">
       <mat-tab-group
         animationDuration="0ms"
         [selectedIndex]="getSelectedIndex(question)"
@@ -134,7 +134,7 @@
                     *ngIf="resp?.formId"
                     mat-flat-button
                     class="editBtn"
-                    (click)="handleResponses(resp)"
+                    (click)="handleResponses(resp); $event.stopPropagation()"
                   >
                     <svg-icon
                       id="responseTypeMCQEdit"
@@ -154,7 +154,7 @@
               </ng-template>
               <button
                 id="responseTypeHandleBtn"
-                class="add-new-btn"
+                class="add-new-btn m-t-12"
                 (click)="handleResponses()"
               >
                 <svg-icon
@@ -196,7 +196,10 @@
                     </mat-chip>
                     <button
                       id="responseTypeGlobalResBtn"
-                      (click)="handleEditGlobalResponse(response)"
+                      (click)="
+                        handleEditGlobalResponse(response);
+                        $event.stopPropagation()
+                      "
                       class="global-btn"
                     >
                       <svg-icon
@@ -252,7 +255,7 @@
   </div>
 </div>
 
-<div *ngIf="isGlobalResponseOpen">
+<div *ngIf="isGlobalResponseOpen" (click)="$event.stopPropagation()">
   <app-global-response-type-side-drawer
     [@slideInOut]="globalResponseSlideState"
     (slideInOut)="handleSlideState($event)"

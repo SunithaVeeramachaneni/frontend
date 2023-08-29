@@ -51,9 +51,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { getUnitOfMeasurementList } from '../../state';
 import { SlideshowComponent } from 'src/app/shared/components/slideshow/slideshow.component';
 import { MatDialog } from '@angular/material/dialog';
-import { Base64HelperService } from 'src/app/components/work-instructions/services/base64-helper.service';
-import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
-import { CommonService } from 'src/app/shared/services/common.service';
 
 @Component({
   selector: 'app-question',
@@ -63,6 +60,7 @@ import { CommonService } from 'src/app/shared/services/common.service';
 })
 export class QuestionComponent implements OnInit, OnDestroy {
   @ViewChild('unitMenuTrigger') unitMenuTrigger: MatMenuTrigger;
+  @ViewChild('responseTypeMenuTrigger') responseTypeMenuTrigger: MatMenuTrigger;
   @ViewChild('name', { static: false }) name: ElementRef;
   @Output() questionEvent: EventEmitter<QuestionEvent> =
     new EventEmitter<QuestionEvent>();
@@ -217,7 +215,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
     isPublished: false,
     isPublishedTillSave: false,
     isOpen: false,
-    isResponseTypeModalOpen: false,
     unitOfMeasurement: 'None',
     rangeMetadata: {} as NumberRangeMetadata,
     createdAt: '',
@@ -258,8 +255,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     private formService: FormService,
     private responseSetService: ResponseSetService,
     private toast: ToastService,
-    private translate: TranslateService,
-    private readonly commonService: CommonService
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -320,12 +316,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
         takeUntil(this.onDestroy$),
         pairwise(),
         tap(([previous, current]) => {
-          const { isOpen, isResponseTypeModalOpen, ...prev } = previous;
-          const {
-            isOpen: currIsOpen,
-            isResponseTypeModalOpen: currIsResponseTypeModalOpen,
-            ...curr
-          } = current;
+          const { isOpen, ...prev } = previous;
+          const { isOpen: currIsOpen, ...curr } = current;
           if (current.historyCount === null || current.historyCount < 0) {
             this.questionForm.get('historyCount').setValue(0);
           }
@@ -637,9 +629,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
           BuilderConfigurationActions.updateQuestionState({
             questionId: this.questionId,
             isOpen,
-            isResponseTypeModalOpen: this.questionForm.get(
-              'isResponseTypeModalOpen'
-            ).value,
             subFormId: this.selectedNodeId
           })
         );
@@ -649,16 +638,13 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
 
   responseTypeOpenEventHandler(isResponseTypeModalOpen: boolean) {
-    this.questionForm
-      .get('isResponseTypeModalOpen')
-      .setValue(isResponseTypeModalOpen, { emitEvent: false });
+    this.responseTypeMenuTrigger.openMenu();
   }
 
   responseTypeCloseEventHandler(responseTypeClosed: boolean) {
-    this.questionForm
-      .get('isResponseTypeModalOpen')
-      .setValue(!responseTypeClosed, { emitEvent: false });
+    this.responseTypeMenuTrigger.closeMenu();
   }
+
   setQuestionValue(event) {
     this.questionForm.get('value').setValue(event);
   }
@@ -755,8 +741,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
           value: 'TF',
           isPublished: false,
           isPublishedTillSave: false,
-          isOpen: false,
-          isResponseTypeModalOpen: false
+          isOpen: false
         };
         this.store.dispatch(
           AddLogicActions.askQuestionsCreate({
@@ -783,8 +768,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
           value: 'ATT',
           isPublished: false,
           isPublishedTillSave: false,
-          isOpen: false,
-          isResponseTypeModalOpen: false
+          isOpen: false
         };
         this.store.dispatch(
           AddLogicActions.askQuestionsCreate({

@@ -287,7 +287,6 @@ export const updateQuestionState = createAction(
   props<{
     questionId: string;
     isOpen: boolean;
-    isResponseTypeModalOpen: boolean;
     subFormId?: string;
   }>()
 );

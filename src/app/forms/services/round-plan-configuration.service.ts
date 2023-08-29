@@ -59,7 +59,6 @@ export class RoundPlanConfigurationService {
         BuilderConfigurationActions.updateQuestionState({
           questionId: page.questions[addQuestions - 1].id,
           isOpen: true,
-          isResponseTypeModalOpen: false,
           subFormId
         })
       );
@@ -125,7 +124,6 @@ export class RoundPlanConfigurationService {
         BuilderConfigurationActions.updateQuestionState({
           questionId: questions[addQuestions - 1].id,
           isOpen: true,
-          isResponseTypeModalOpen: false,
           subFormId
         })
       );
@@ -168,7 +166,6 @@ export class RoundPlanConfigurationService {
       BuilderConfigurationActions.updateQuestionState({
         questionId: sectionQuestions[addQuestions - 1].id,
         isOpen: true,
-        isResponseTypeModalOpen: false,
         subFormId
       })
     );
@@ -338,7 +335,6 @@ export class RoundPlanConfigurationService {
       isPublished: false,
       isPublishedTillSave: false,
       isOpen: question ? false : true,
-      isResponseTypeModalOpen: false,
       unitOfMeasurement: question ? question.unitOfMeasurement : 'None',
       rangeMetadata: question
         ? question.rangeMetadata
