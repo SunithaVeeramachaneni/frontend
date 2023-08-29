@@ -409,7 +409,6 @@ export class FormListComponent implements OnInit, OnDestroy {
         } else {
           if (form.action === 'copy') {
             const obj = { ...form.form } as any;
-            console.log(obj);
             const oldIdx = initial?.data?.findIndex(
               (d) => d?.id === obj?.oldId
             );
