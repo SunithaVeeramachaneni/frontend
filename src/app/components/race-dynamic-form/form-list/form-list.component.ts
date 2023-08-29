@@ -322,6 +322,7 @@ export class FormListComponent implements OnInit, OnDestroy {
               name: createdForm.newName,
               formStatus: formConfigurationStatus.draft,
               additionalDetails: JSON.parse(form.additionalDetails),
+              instructions: JSON.parse(form.instructions),
               isPublic: false
             })
             .subscribe((newRecord) => {
@@ -408,6 +409,7 @@ export class FormListComponent implements OnInit, OnDestroy {
         } else {
           if (form.action === 'copy') {
             const obj = { ...form.form } as any;
+            console.log(obj);
             const oldIdx = initial?.data?.findIndex(
               (d) => d?.id === obj?.oldId
             );
