@@ -136,7 +136,7 @@
   </div>
 </div>
 <div class="dis-flex form">
-  <div class="asset-location-search">
+  <div class="asset-location-search width-30">
     <span class="custom-form-field-gray-color search">
       <mat-form-field appearance="outline" class="searchField">
         <mat-icon id="hierarchyContainerSearchIcon" matPrefix class="searchIcon"
@@ -212,7 +212,10 @@
     </div>
   </div>
   <div
-    class="questions-responses-width"
+    [ngClass]="{
+      'width-40': openCloseRightPanel === true,
+      'width-70': openCloseRightPanel === false
+    }"
     *ngIf="selectedNode; else loadingSelectedNode"
   >
     <app-builder
@@ -222,6 +225,15 @@
       [moduleName]="'rounds'"
     ></app-builder>
   </div>
+  <ng-container *ngIf="openCloseRightPanel">
+    <div class="width-30 right-panel">
+      <app-revise-schedule
+        (openCloseRightPanelEvent)="openCloseRightPanelEventHandler($event)"
+      >
+      </app-revise-schedule>
+    </div>
+  </ng-container>
+
   <ng-template #loadingSelectedNode>
     {{ 'nullSelectedLocationAssetFirst' | translate }}
     {{ 'nullSelectedLocationAssetSecond' | translate }}

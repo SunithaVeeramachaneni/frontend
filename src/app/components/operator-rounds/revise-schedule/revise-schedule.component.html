@@ -1,0 +1,227 @@
+<div class="right" [formGroup]="resviseScheduleConfigForm">
+  <h3 class="heading" translate>reviseSchedule</h3>
+
+  <div class="main-scroll">
+    <div>
+      <div class="selected-locations">
+        <p class="m-0 m-b-5" (click)="showLocations = !showLocations">
+          <mat-icon *ngIf="showLocations === true">
+            keyboard_arrow_down
+          </mat-icon>
+          <mat-icon *ngIf="showLocations === false">
+            keyboard_arrow_right
+          </mat-icon>
+          <span class="selected-text" translate>selected</span>
+        </p>
+        <div *ngIf="showLocations" class="scroll-locations">
+          <div *ngFor="let location of locations" class="locations">
+            <div>{{ location.name }}</div>
+            <div>{{ location.count }} <span translate>tasks</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="subheadings">
+      <ng-container
+        *ngIf="
+          resviseScheduleConfigForm.get('scheduleType').value === 'byFrequency'
+        "
+      >
+        <h3 translate>scheduleByFrequency</h3>
+
+        <div class="dis-flex schedule-frequency">
+          <p id="taskScheduleConfigurationRepeatEvery" class="f-w-400">
+            {{ 'repeatEvery' | translate }}
+          </p>
+
+          <mat-form-field appearance="fill" class="repeat-num">
+            <input
+              type="number"
+              matInput
+              min="1"
+              formControlName="repeatDuration"
+            />
+          </mat-form-field>
+          <mat-form-field appearance="fill" class="repeat-day">
+            <mat-select formControlName="repeatEvery">
+              <mat-option
+                *ngFor="let repeatEvery of repeatTypes"
+                [value]="repeatEvery"
+              >
+                {{ repeatEvery }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <ng-container
+          *ngIf="resviseScheduleConfigForm.get('repeatEvery').value === 'week'"
+        >
+          <div id="scheduleConfigurationRepeatOn" class="row-title">
+            {{ 'repeatOn' | translate }}
+          </div>
+          <mat-button-toggle-group
+            name="daysOfWeek"
+            formControlName="daysOfWeek"
+            multiple
+          >
+            <mat-button-toggle
+              id="scheduleConfigurationDayOfWeek"
+              *ngFor="let dayOfWeek of daysOfWeek; let i = index"
+              [value]="i"
+              >{{ dayOfWeek.slice(0, 1).toUpperCase() }}</mat-button-toggle
+            >
+          </mat-button-toggle-group>
+        </ng-container>
+        <ng-container
+          *ngIf="resviseScheduleConfigForm.get('repeatEvery').value === 'month'"
+        >
+          <div id="scheduleConfigurationRepeatOnMonth" class="row-title">
+            {{ 'repeatOn' | translate }}
+          </div>
+          <div formArrayName="monthlyDaysOfWeek">
+            <div
+              *ngFor="let weekOfMonth of weeksOfMonth; let i = index"
+              class="weeks-of-month"
+            >
+              <div
+                id="scheduleConfigurationWeekOfMonth"
+                class="row-title"
+                class="m-r-40"
+                [ngClass]="{ 'm-r-36': i === 1 }"
+              >
+                {{ weekOfMonth }}
+              </div>
+              <div>
+                <mat-button-toggle-group
+                  [formControlName]="i"
+                  name="{{ i }}"
+                  multiple
+                >
+                  <mat-button-toggle
+                    id="scheduleConfigurationMonth"
+                    *ngFor="let dayOfWeek of daysOfWeek; let i = index"
+                    [value]="i"
+                  >
+                    {{ dayOfWeek.slice(0, 1).toUpperCase() }}
+                  </mat-button-toggle>
+                </mat-button-toggle-group>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+
+        <div class="dis-flex custom-form-field-white-color m-t-10">
+          <span class="f-w-400 startdate" translate>startDate</span>
+          <mat-form-field appearance="outline" class="width-40">
+            <input matInput formControlName="startDate" readonly />
+            <input
+              matInput
+              [matDatepicker]="startDate"
+              formControlName="startDatePicker"
+              (dateChange)="updateDate($event, 'startDate')"
+              [min]="startDatePickerMinDate"
+              hidden
+            />
+            <mat-datepicker-toggle
+              matIconSuffix
+              [for]="startDate"
+              (click)="startDate.open()"
+            >
+              <mat-icon matDatepickerToggleIcon>arrow_drop_down</mat-icon>
+            </mat-datepicker-toggle>
+            <mat-datepicker #startDate></mat-datepicker>
+          </mat-form-field>
+        </div>
+
+        <div class="dis-flex custom-form-field-white-color m-t-10">
+          <span class="f-w-400 enddate" translate>endDate</span>
+          <mat-form-field appearance="outline" class="width-40">
+            <input matInput formControlName="endDate" readonly />
+            <input
+              matInput
+              [matDatepicker]="endDate"
+              formControlName="endDatePicker"
+              (dateChange)="updateDate($event, 'endDate')"
+              [min]="startDatePickerMinDate"
+              hidden
+            />
+            <mat-datepicker-toggle
+              matIconSuffix
+              [for]="endDate"
+              (click)="endDate.open()"
+            >
+              <mat-icon matDatepickerToggleIcon>arrow_drop_down</mat-icon>
+            </mat-datepicker-toggle>
+            <mat-datepicker #endDate></mat-datepicker>
+          </mat-form-field>
+        </div>
+      </ng-container>
+
+      <ng-container
+        *ngIf="resviseScheduleConfigForm.get('scheduleType').value === 'byDate'"
+      >
+        <h3 translate>scheduleByDate</h3>
+
+        <div class="by-date">
+          <mat-calendar
+            #calendar
+            [minDate]="currentDate"
+            (selectedChange)="updateScheduleByDates($event)"
+          ></mat-calendar>
+        </div>
+      </ng-container>
+    </div>
+
+    <div class="subheadings">
+      <h3 translate>shifts</h3>
+
+      <mat-form-field class="width-100" appearance="outline">
+        <mat-label translate="shifts"></mat-label>
+        <mat-select multiple panelClass="task-level-shifts">
+          <mat-option
+            id="taskScheduleConfigShiftsName"
+            [value]="shifts?.id"
+            *ngFor="let shifts of shiftsInformation"
+          >
+            <div>
+              <span>{{ shifts?.name }}</span>
+              <p id="scheduleConfigShiftTime" class="shift-time">
+                {{ shifts?.startTime }} - {{ shifts?.endTime }}
+              </p>
+            </div>
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="subheadings">
+      <h3 translate>slots</h3>
+      <div *ngFor="let slot of shiftsInformation">
+        <p>{{ slot?.name }}</p>
+        <span class="slot-times">
+          <mat-checkbox [checked]="true">
+            {{ slot?.startTime }} - {{ slot?.endTime }}
+          </mat-checkbox>
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <button
+      id="taskScheduleCancelBtn"
+      mat-stroked-button
+      type="button"
+      class="cancel-btn"
+      translate="cancelBtn"
+      (click)="cancel()"
+    ></button>
+    <button
+      id="taskScheduleReviseBtn"
+      mat-raised-button
+      type="submit"
+      class="revise-btn"
+      translate="reviseBtn"
+    ></button>
+  </div>
+</div>

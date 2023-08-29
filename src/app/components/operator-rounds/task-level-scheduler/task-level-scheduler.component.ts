@@ -14,7 +14,6 @@ import {
   getFormMetadata,
   State
 } from 'src/app/forms/state/builder/builder-state.selectors';
-
 import {
   debounceTime,
   distinctUntilChanged,
@@ -31,6 +30,7 @@ import {
 } from '@angular/material/dialog';
 import { tap } from 'rxjs/operators';
 import { format } from 'date-fns';
+import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 
 @Component({
   selector: 'app-task-level-scheduler',
@@ -63,6 +63,8 @@ export class TaskLevelSchedulerComponent implements OnInit {
   readonly formConfigurationStatus = formConfigurationStatus;
 
   formDetailPublishStatus: string;
+
+  openCloseRightPanel = true;
 
   @Input() set payload(payload: any) {
     this._payload = payload;
@@ -208,11 +210,16 @@ export class TaskLevelSchedulerComponent implements OnInit {
   editFormName() {}
 
   searchResultSelected(event) {}
+
   getSearchMatchesLabel() {
     return `${this.filteredList.length} Search matches`;
   }
 
   clearSearchResults() {
     this.searchHierarchyKey.patchValue('');
+  }
+
+  openCloseRightPanelEventHandler(event) {
+    this.openCloseRightPanel = event;
   }
 }
