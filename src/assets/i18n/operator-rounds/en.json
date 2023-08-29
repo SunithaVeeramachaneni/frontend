@@ -362,5 +362,14 @@
   "skippedReason": "Skipped Reason",
   "backToList": "Back to List",
   "searchTxt": "Search",
-  "shareViaEmail": "Share Via Email"
+  "shareViaEmail": "Share Via Email",
+  "thisWeek": "This Week",
+  "thisMonth": "This Month",
+  "last3Months": "Last 3 Months",
+  "last6Months": "Last 6 Months",
+  "allTxt": "All",
+  "shareDashboard": "Share Dashboard via Email",
+  "emailIds": "Email IDs",
+  "notesTxt": "Notes",
+  "sendBtn": "Send"
 }

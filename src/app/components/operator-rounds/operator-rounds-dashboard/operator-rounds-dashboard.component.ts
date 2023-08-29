@@ -158,6 +158,7 @@ export class OperatorRoundsDashboardComponent implements OnInit, OnDestroy {
   downloadInProgress = false;
   emailNotes: '';
   toEmailIDs: '';
+  validEmailIDs = false;
   private destroy$ = new Subject();
 
   constructor(
@@ -319,12 +320,29 @@ export class OperatorRoundsDashboardComponent implements OnInit, OnDestroy {
       .subscribe();
   };
 
+  emailChanged = (event) => {
+    this.validEmailIDs = false;
+    this.toEmailIDs = event.target.value;
+    const emails = this.toEmailIDs.split(',');
+
+    this.validEmailIDs = emails
+      .filter((e) => e.length)
+      .every((email) => {
+        const re = /\S+@\S+\.\S+/;
+        return re.test(email);
+      });
+    this.cdrf.detectChanges();
+    return this.validEmailIDs;
+  };
+
   sendEmail = async () => {
     const bodyFormData = new FormData();
     const { timePeriod, plantId, shiftId, startDate, endDate } =
       this.dashboardForm.value;
     bodyFormData.append('plantId', plantId);
     bodyFormData.append('shiftId', shiftId);
+    bodyFormData.append('toEmailIDs', this.toEmailIDs);
+    bodyFormData.append('notes', this.emailNotes);
 
     const userName = this.loginService.getLoggedInUserName();
     bodyFormData.append('userName', userName);
@@ -367,7 +385,18 @@ export class OperatorRoundsDashboardComponent implements OnInit, OnDestroy {
     this.operatorRoundService
       .sendDashboardAsEmail$(bodyFormData, customHeaders, info)
       .pipe(tap((resp: any) => {}))
-      .subscribe();
+      .subscribe(
+        (res) => {
+          this.emailMenuTrigger.closeMenu();
+          this.emailNotes = '';
+          this.toEmailIDs = '';
+        },
+        (err) => {
+          this.emailMenuTrigger.closeMenu();
+          this.emailNotes = '';
+          this.toEmailIDs = '';
+        }
+      );
   };
 
   undo = (event: Event) => {

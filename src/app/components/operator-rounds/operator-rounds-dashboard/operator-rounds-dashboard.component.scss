@@ -79,27 +79,26 @@
 
 ::ng-deep #gridster-container gridster .gridster-column {
   border-left: none;
-  border-right: 10px solid white;
+  border-right: 10px solid $white;
   box-sizing: initial;
-  background-color: #ffffff;
+  background-color: $white;
 }
 
 ::ng-deep #gridster-container gridster .gridster-row {
   border-top: none;
-  border-bottom: 10px solid white;
+  border-bottom: 10px solid $white;
   box-sizing: initial;
 }
 
 ::ng-deep #gridster-container gridster {
-  border-bottom: 5px solid white;
-  background-color: #ffffff;
+  border-bottom: 5px solid $white;
+  background-color: $white;
 }
 
 ::ng-deep gridster-item {
   box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.09);
 }
 .toggle-btns {
-  // margin: 7px 0 0 7px;
   display: flex;
   align-items: center;
 }
@@ -107,16 +106,10 @@
 .toggle-btns {
   ::ng-deep .mat-button-toggle-group {
     height: 32px;
-    // align-items: center;
-    // border: none;
-    // // margin-top: 6px;
   }
-  // ::ng-deep .mat-button-toggle {
-  //   width: 80px;
-  // }
 }
 .dashboard-container {
-  background: white;
+  background: $white;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075), 0 2px 2px rgba(0, 0, 0, 0.075),
     0 4px 4px rgba(0, 0, 0, 0.075), 0 8px 8px rgba(0, 0, 0, 0.075),
     0 16px 16px rgba(0, 0, 0, 0.075);
@@ -125,14 +118,13 @@
   height: 87vh;
 }
 .dashboard-filters {
-  background: white;
+  background: $white;
   padding: 10px;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 .searchable-input {
-  // width: 92%;
   border: 1px solid $border-color;
   padding: 5px;
   border-radius: 4px;
@@ -145,13 +137,11 @@
 .outline-input-field {
   margin-left: 5px;
 }
-// .m-t-5 {
-//   margin-top: 5px;
-// }
+
 ::ng-deep .date-segment .mat-button-toggle-group {
   height: 34px;
   align-items: center;
-  border: 1px solid #f2f2f2;
+  border: 1px solid $white2;
 }
 
 ::ng-deep
@@ -212,7 +202,7 @@ mat-progress-spinner {
   height: 40px;
   .icon {
     margin-top: -5px;
-    color: gray;
+    color: $gray;
   }
 }
 .active {
@@ -227,8 +217,8 @@ mat-progress-spinner {
 }
 
 .save-button {
-  background: #3d5afe;
-  color: #ffffff;
+  background: $blue-main;
+  color: $white;
   cursor: pointer;
   min-width: auto;
   border: none;
@@ -236,8 +226,8 @@ mat-progress-spinner {
 
 .save-button-arrow {
   width: 30px;
-  background: #3d5afe;
-  color: #ffffff;
+  background: $blue-main;
+  color: $white;
   cursor: pointer;
 }
 
@@ -276,7 +266,7 @@ mat-progress-spinner {
 }
 .email-dialog-head {
   margin: 0px;
-  background: #eee;
+  background: $gray;
   padding: 0px 10px;
 }
 .email-dialog-body {

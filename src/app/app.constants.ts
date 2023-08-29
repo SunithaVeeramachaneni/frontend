@@ -99,6 +99,8 @@ export const permissions = Object.freeze({
   shareRounds: 'SHARE_ROUNDS',
   viewScheduler: 'VIEW_SCHEDULER',
   scheduleRoundPlan: 'SCHEDULE_ROUND_PLAN',
+  downloadDashboardAsPDF: 'DOWNLOAD_DASHBOARD_PDF',
+  sendDashboardEmail: 'SEND_DASHBOARD_EMAIL',
   viewORPTemplates: 'VIEW_ORP_TEMPLATES',
   createORPTemplate: 'CREATE_ORP_TEMPLATES',
   updateORPTemplate: 'UPDATE_ORP_TEMPLATES',
@@ -592,5 +594,8 @@ export const colorsByStatus = {
   overdue: 'red',
   assigned: 'lightgreen',
   open: 'orange',
-  submitted: 'green'
+  submitted: 'green',
+  'In-Progress': 'blue',
+  Open: 'lightblue',
+  Resolved: 'green'
 };

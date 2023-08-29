@@ -83,5 +83,7 @@
   "yesBtn": "Yes",
   "noBtn": "No",
   "noReportsFound": "No Reports Found",
-  "noReportObjectsFound": "No Report Objects Found"
+  "noReportObjectsFound": "No Report Objects Found",
+  "plantTxt": "Plant: ",
+  "shiftsTxt": "Shifts:"
 }

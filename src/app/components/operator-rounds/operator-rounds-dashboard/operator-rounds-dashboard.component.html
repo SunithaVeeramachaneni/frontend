@@ -7,22 +7,22 @@
             <mat-button-toggle value="this_week" class="toogle-btn-text" [ngClass]="{
               'selected':dashboardForm.value.timePeriod ==='this_week'
             }">
-              This Week
+              {{'thisWeek' | translate}}
             </mat-button-toggle>
             <mat-button-toggle value="this_month" class="toogle-btn-text" [ngClass]="{
               'selected':dashboardForm.value.timePeriod ==='this_month'
             }">
-              This Month
+              {{'thisMonth' | translate}}
             </mat-button-toggle>
             <mat-button-toggle value="last_3_months" class="toogle-btn-text" [ngClass]="{
               'selected':dashboardForm.value.timePeriod ==='last_3_months'
             }">
-              Last 3 Months
+              {{'last3Months' | translate}}
             </mat-button-toggle>
             <mat-button-toggle value="last_6_months" class="toogle-btn-text" [ngClass]="{
               'selected':dashboardForm.value.timePeriod ==='last_6_months'
             }">
-              Last 6 Months
+              {{'last6Months' | translate}}
             </mat-button-toggle>
             <mat-button-toggle id="dateSegmentCustomText" value="custom" (click)="rangePicker.open()"
               class="toogle-btn-text">{{ customText | translate }}</mat-button-toggle>
@@ -51,7 +51,7 @@
             <input class="searchable-input" [placeholder]="'searchTxt' | translate" (keyup)="onKeyPlant($event)"
               #searchInput />
             <div class="scrollable-area">
-              <mat-option value="">All</mat-option>
+              <mat-option value="">{{'allTxt' | translate}}</mat-option>
               <mat-option id="addEditAssetsPlantOptions" [value]="plant.plantId" *ngFor="let plant of allPlantsData">{{
                 plant.plantId }} - {{ plant.name }}</mat-option>
             </div>
@@ -62,7 +62,7 @@
           <mat-select (valueChange)="onSelectShift($event)" formControlName="shiftId">
             <input class="searchable-input" [placeholder]="'searchTxt' | translate" #searchInput />
             <div class="scrollable-area">
-              <mat-option value="">All</mat-option>
+              <mat-option value="">{{'allTxt' | translate}}</mat-option>
               <mat-option id="addEditAssetsPlantOptions" [value]="shift.startAndEndTime"
                 *ngFor="let shift of selectedPlantShifts">
                 {{shift.name }}
@@ -87,20 +87,21 @@
         <mat-menu #emailMenu="matMenu" yPosition="below" class="emailContainer">
           <div mat-menu-item [disableRipple]="true" (click)="$event.stopPropagation()" class="emailContainer">
             <ng-container>
-              <h4 class="email-dialog-head">Share Dashboard via Email</h4>
+              <h4 class="email-dialog-head">{{ 'shareDashboard' | translate}}</h4>
               <div class="email-dialog-body">
                 <mat-form-field appearance="outline" class="user-chip-list">
-                  <mat-label>Email IDs</mat-label>
-                  <input matInput placeholder="Enter comma separated email IDs" [(ngModel)]="toEmailIDs">
+                  <mat-label>{{'emailIds' | translate}}</mat-label>
+                  <input matInput placeholder="Enter comma separated email IDs" (change)="emailChanged($event)">
                 </mat-form-field>
                 <mat-form-field appearance="outline" class="user-chip-list">
-                  <mat-label>Notes</mat-label>
+                  <mat-label>{{'notesTxt' | translate}}</mat-label>
                   <textarea matInput placeholder="Enter Notes.." [rows]="5" [(ngModel)]="emailNotes"></textarea>
                 </mat-form-field>
               </div>
               <div class="email-dialog-footer">
-                <button mat-stroked-button class="btn" (click)="cancelEmail()">Cancel</button>
-                <button mat-flat-button color="primary" class="btn" (click)="sendEmail()">Send</button>
+                <button mat-stroked-button class="btn" (click)="cancelEmail()" translate="cancelBtn"></button>
+                <button mat-flat-button color="primary" class="btn" (click)="sendEmail()"
+                  [disabled]="!toEmailIDs.length || !validEmailIDs" translate="sendBtn"></button>
               </div>
             </ng-container>
           </div>
@@ -126,9 +127,6 @@
                   <div class="gridster-item-content widget-title" matTooltip="{{ widget.name }}" matTooltipClass="">
                     {{ widget.name }}
                   </div>
-                  <!-- <button mat-menu-item (click)="editWidget(widget)" class="more-icon">
-                    <mat-icon>email</mat-icon>
-                  </button> -->
                 </div>
                 <div class="widget-body">
                   <app-widget [widget]="widget" [height]="widgetHeights[widget.id]" [width]="widgetWidths[widget.id]"

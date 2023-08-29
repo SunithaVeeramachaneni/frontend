@@ -116,51 +116,53 @@ export class WidgetComponent implements OnInit {
 
   ngOnInit(): void {
     const filtersApplied = [];
-    if (this.filters.plantId && this.filters.plantId.length) {
-      const plantFilter = {
-        column: 'plantId',
-        type: 'string',
-        filters: [
-          {
-            operation: 'equals',
-            operand: this.filters.plantId
-          }
-        ]
-      };
-      filtersApplied.push(plantFilter);
-    }
-    if (this.filters.shiftId && this.filters.shiftId.length) {
-      const shiftFilter = {
-        column: 'shiftId',
-        type: 'string',
-        filters: [
-          {
-            operation: 'equals',
-            operand: this.filters.shiftId
-          }
-        ]
-      };
-      filtersApplied.push(shiftFilter);
-    }
+    if (this.filters) {
+      if (this.filters?.plantId && this.filters?.plantId.length) {
+        const plantFilter = {
+          column: 'plantId',
+          type: 'string',
+          filters: [
+            {
+              operation: 'equals',
+              operand: this.filters.plantId
+            }
+          ]
+        };
+        filtersApplied.push(plantFilter);
+      }
+      if (this.filters?.shiftId && this.filters?.shiftId.length) {
+        const shiftFilter = {
+          column: 'shiftId',
+          type: 'string',
+          filters: [
+            {
+              operation: 'equals',
+              operand: this.filters.shiftId
+            }
+          ]
+        };
+        filtersApplied.push(shiftFilter);
+      }
 
-    const startAndEndDate = this.dateUtilService.getStartAndEndDates(
-      this.filters.timePeriod,
-      this.filters.startDate,
-      this.filters.endDate
-    );
-    filtersApplied.push({
-      column: 'updatedOn',
-      type: 'daterange',
-      filters: [
-        {
-          operation: 'custom',
-          operand: {
-            startDate: startAndEndDate.startDate,
-            endDate: startAndEndDate.endDate
+      const startAndEndDate = this.dateUtilService.getStartAndEndDates(
+        this.filters?.timePeriod,
+        this.filters?.startDate,
+        this.filters?.endDate
+      );
+      filtersApplied.push({
+        column: 'updatedOn',
+        type: 'daterange',
+        filters: [
+          {
+            operation: 'custom',
+            operand: {
+              startDate: startAndEndDate.startDate,
+              endDate: startAndEndDate.endDate
+            }
           }
-        }
-      ]
-    });
+        ]
+      });
+    }
 
     this.report.filtersApplied = [
       ...this.report.filtersApplied,
@@ -204,7 +206,10 @@ export class WidgetComponent implements OnInit {
   }
 
   onChartClickHandle = (event: any) => {
-    console.log(event);
+    let filters = {};
+    if (this.filters) {
+      filters = { ...this.filters };
+    }
     const dialogRef = this.dialog.open(ChartReportDialog, {
       disableClose: true,
       // width: '80%',
@@ -212,7 +217,7 @@ export class WidgetComponent implements OnInit {
       data: {
         chartData: event.data,
         widgetData: this.widget,
-        filters: this.filters
+        filters
       }
     });
     dialogRef.afterClosed().subscribe(() => {
