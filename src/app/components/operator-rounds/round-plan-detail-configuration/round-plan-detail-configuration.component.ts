@@ -144,7 +144,6 @@ export class RoundPlanDetailConfigurationComponent
           this.selectedNodeLoadStatus = true;
           this.selectedNodeInstances =
             this.formService.getInstanceIdMappingsByUid(this.selectedNode.uid);
-          console.log('selectedNodeInstances:', this.selectedNodeInstances);
           this.cdrf.detectChanges();
           this.store.dispatch(
             BuilderConfigurationActions.initPage({
@@ -171,7 +170,6 @@ export class RoundPlanDetailConfigurationComponent
     this.formMetadata$ = this.store.select(getFormMetadata).pipe(
       tap((formMetadata) => {
         if (Object.keys(formMetadata).length) {
-          console.log('metaData:', formMetadata);
           const { name, description, id, formLogo, formStatus } = formMetadata;
           this.formMetadata = formMetadata;
 
@@ -280,7 +278,6 @@ export class RoundPlanDetailConfigurationComponent
       this.store.select(getSelectedHierarchyList)
     ]).pipe(
       tap(([formDetails, selectedHierarchyList]) => {
-        console.log('selected hierarchy List', selectedHierarchyList);
         const {
           formMetadata,
           formStatus,

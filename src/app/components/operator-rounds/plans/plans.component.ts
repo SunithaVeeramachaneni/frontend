@@ -724,9 +724,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   }
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
-    console.log('event:', event);
     const { columnId, row, option } = event;
-    console.log('row', row);
     const activeShifts = this.prepareActiveShifts(row);
     switch (columnId) {
       case 'schedule':

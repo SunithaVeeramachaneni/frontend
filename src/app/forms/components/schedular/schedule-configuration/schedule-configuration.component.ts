@@ -255,7 +255,6 @@ export class ScheduleConfigurationComponent
   }
 
   ngOnInit(): void {
-    console.log('data in scheudleconfiguration:', this.data);
     if (this.data) {
       const {
         formDetail,

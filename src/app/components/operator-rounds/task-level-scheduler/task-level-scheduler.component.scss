@@ -1,13 +1,6 @@
 @import '../../../../scss/colors.scss';
-@import '../../../forms/components/hierarchy-container/hierarchy-container.component.scss';
-@import '../round-plan-detail-configuration/round-plan-detail-configuration.component.scss';
 
-.plans-icon {
-  width: 50px;
-  height: 50px;
-}
-
-.create-form-main {
+.task-level-schedule-main {
   overflow: hidden;
   position: relative;
   margin: 14px 0 0 0;
@@ -16,6 +9,11 @@
     position: relative;
     border-bottom: 1px solid $border-color;
     padding: 10px 20px;
+  }
+
+  .plans-icon {
+    height: 50px;
+    width: 50px;
   }
 
   .form_title_input {
@@ -32,35 +30,7 @@
     overflow: hidden;
   }
 
-  input[type='text']:focus {
-    outline: none;
-    caret-color: $light-gray;
-  }
-
-  .plans-icon {
-    width: 50px;
-    height: 50px;
-  }
-
-  .edit-icon {
-    border: none;
-    background-color: transparent;
-    position: relative;
-    margin-left: -35px;
-    .edit-icon-img {
-      width: 15px;
-      height: 15px;
-      padding: 20px;
-    }
-  }
-
   .dis-inline {
-    display: inline;
-  }
-
-  .error-fields {
-    margin: 0;
-    font-size: 80%;
     display: inline;
   }
 
@@ -78,24 +48,15 @@
     width: 100%;
   }
 
-  .plans-icon {
-    height: 50px;
-    width: 50px;
-  }
-
   .dis-flex .center {
     justify-content: space-between;
     align-items: center;
-
-    .plant {
-      font-weight: 500;
-    }
   }
 
   .header-level {
-    width: 487px;
-    height: 100px;
-    background-color: #ffffee;
+    width: 440px;
+    height: 80px;
+    background-color: $yellow-bg2;
     justify-content: space-between;
     display: flex;
     padding: 12px 10px;
@@ -119,6 +80,10 @@
       font-weight: 500;
       color: $black;
     }
+
+    .more {
+      color: $blue-main;
+    }
   }
 
   .justify-content-end {
@@ -126,13 +91,12 @@
   }
 
   .save-status {
-    color: var(--web-grays-black, #25282b);
-    font-feature-settings: 'clig' off, 'liga' off;
+    color: $gray11;
     font-family: Roboto;
     font-size: 110%;
     font-style: normal;
     font-weight: 500;
-    line-height: 20px; /* 142.857% */
+    line-height: 20px;
     letter-spacing: 0.25px;
     margin-right: 15px;
     margin-top: 7px;

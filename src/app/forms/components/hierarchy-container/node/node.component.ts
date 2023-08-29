@@ -50,8 +50,6 @@ export class NodeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    console.log('node:', this.node);
-    console.log('hierarchyMode:', this.hierarchyMode);
     this.selectedNode$ = this.operatorRoundsService.selectedNode$.pipe(
       tap((data) => {
         this.selectedNode = data;
@@ -133,7 +131,6 @@ export class NodeComponent implements OnInit {
   };
 
   toggleCheckBox(checked) {
-    console.log('checkedEvent:', checked);
     this.checkevent.emit(checked);
   }
 }
