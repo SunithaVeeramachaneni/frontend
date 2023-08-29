@@ -1,4 +1,72 @@
-<div *ngFor="let page of selectedPage">
-  <app-task-level-mid-panel-pages [page]="page" >
-  </app-task-level-mid-panel-pages>
-</div>
+<div *ngFor="let page of selectedPage"></div>
+
+<!-- <div class="pages" [formGroup]="pageForm">
+  <div class="page-header">
+    <mat-icon
+      id="pageExpandIcon"
+      (click)="toggleIsOpenState()"
+      *ngIf="pageForm.get('isOpen').value === true"
+      class="page-arrow"
+    >
+      expand_more
+    </mat-icon>
+    <mat-icon
+      id="pageRightIcon"
+      (click)="toggleIsOpenState()"
+      *ngIf="pageForm.get('isOpen').value === false"
+      class="page-arrow"
+    >
+      chevron_right
+    </mat-icon>
+
+    <mat-checkbox
+      class="page-checkbox"
+      [checked]="checkboxStatus"
+    ></mat-checkbox>
+
+    <span class="form_page_name_input">{{ page.name }} </span>
+  </div>
+  <div *ngIf="pageForm.get('isOpen').value === true" class="section-content">
+    <div *ngFor="let section of page.sections">
+      <app-task-level-mid-panel-section
+        [section]="section"
+        [question]="questionToSectionId.get(section.id)"
+      ></app-task-level-mid-panel-section>
+    </div>
+  </div>
+</div> -->
+
+<!-- <div class="section dis-flex">
+  <div class="width-95 section-margin">
+    <div class="section-header">
+      <mat-icon
+        id="sectionExpandMore"
+        (click)="toggleIsOpenState()"
+        *ngIf="sectionForm.get('isOpen').value === true"
+        class="section-arrow"
+      >
+        expand_more
+      </mat-icon>
+      <mat-icon
+        id="sectionArrow"
+        (click)="toggleIsOpenState()"
+        *ngIf="sectionForm.get('isOpen').value === false"
+        class="section-arrow"
+      >
+        chevron_right
+      </mat-icon>
+      <div class="form_section_name_input">{{ section.name }}</div>
+    </div>
+    <div class="questions-content">
+      <div *ngFor="let question of section">
+        <app-task-leve-mid-panel-question-components
+          [question]="question"
+        ></app-task-leve-mid-panel-question-components>
+      </div>
+    </div>
+  </div>
+</div> -->
+
+<!-- <div class="questions">
+  <div class="dis-flex questions-div"></div>
+</div> -->

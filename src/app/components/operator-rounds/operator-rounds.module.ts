@@ -78,9 +78,7 @@ import { TaskLevelSchedulerComponent } from './task-level-scheduler/task-level-s
 import { ReviseScheduleComponent } from './revise-schedule/revise-schedule.component';
 import { TaskLevelSchedulingEditViewComponent } from './task-level-scheduler/task-level-scheduler-edit-view.component';
 import { TaskLevelTaskComponentsComponent } from './task-level-task-components/task-level-task-components.component';
-import { TaskLevelMidPanelPagesComponent } from './task-level-mid-panel-pages/task-level-mid-panel-pages.component';
-import { TaskLevelMidPanelSectionComponent } from './task-level-mid-panel-section/task-level-mid-panel-section.component';
-import { TaskLeveMidPanelQuestionComponentsComponent } from './task-leve-mid-panel-question-components/task-leve-mid-panel-question-components.component';
+
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/operator-rounds/', '.json');
 
@@ -109,9 +107,6 @@ export const customTranslateLoader = (http: HttpClient) =>
     TaskLevelSchedulerComponent,
     TaskLevelSchedulingEditViewComponent,
     TaskLevelTaskComponentsComponent,
-    TaskLevelMidPanelPagesComponent,
-    TaskLevelMidPanelSectionComponent,
-    TaskLeveMidPanelQuestionComponentsComponent,
     ReviseScheduleComponent
   ],
   imports: [
