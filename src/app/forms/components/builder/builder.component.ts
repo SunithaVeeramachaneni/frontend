@@ -49,6 +49,7 @@ import { RoundPlanConfigurationService } from 'src/app/forms/services/round-plan
 import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
 import { v4 as uuidv4 } from 'uuid';
 import { cloneDeep } from 'lodash-es';
+import { CommonService } from 'src/app/shared/services/common.service';
 
 @Component({
   selector: 'app-builder',
@@ -131,7 +132,8 @@ export class BuilderComponent implements OnInit, OnDestroy {
   constructor(
     private store: Store<State>,
     private roundPlanConfigurationService: RoundPlanConfigurationService,
-    private raceDynamicFormService: RaceDynamicFormService
+    private raceDynamicFormService: RaceDynamicFormService,
+    private readonly commonService: CommonService
   ) {}
 
   initSubscriptions() {
@@ -506,14 +508,13 @@ export class BuilderComponent implements OnInit, OnDestroy {
 
   copySection(pageIndex, sectionIndex, section: Section) {
     const page = cloneDeep(this.subFormPages[pageIndex]);
-    let questionCounter = this.formConfigurationCounter;
     const sectionQuestionsList: SectionQuestions[] = [];
     const questionsArray = [];
     const sectionQuestions = {};
     const newQuestionIds = {};
     for (const question of page.questions || []) {
       if (question.sectionId === section.id) {
-        newQuestionIds[question.id] = `Q${++questionCounter}`;
+        newQuestionIds[question.id] = `Q${uuidv4()}`;
         sectionQuestions[question.id] = 1;
         question.id = newQuestionIds[question.id];
         question.skipIdGeneration = true;
@@ -523,12 +524,17 @@ export class BuilderComponent implements OnInit, OnDestroy {
     const logicsArray = [];
     const sectionLogics = {};
     const newLogicIds = {};
+    const newAskEvidenceIds = {};
     for (const logic of page.logics || []) {
       if (sectionQuestions[logic.questionId]) {
         newLogicIds[logic.id] = uuidv4();
         sectionLogics[`AQ_${logic.id}`] = 1;
+        sectionLogics[`EVIDENCE_${logic.id}`] = 1;
         logic.id = newLogicIds[logic.id];
         logic.questionId = newQuestionIds[logic.questionId];
+        const prevAskEvidenceId = logic.askEvidence;
+        logic.askEvidence = logic.questionId + '_0_EVIDENCE';
+        newAskEvidenceIds[prevAskEvidenceId] = logic.askEvidence;
         logic.evidenceQuestions = logic.evidenceQuestions.map(
           (item) => newQuestionIds[item] || item
         );
@@ -543,17 +549,24 @@ export class BuilderComponent implements OnInit, OnDestroy {
       }
     }
     const askQuestions = [];
+    const askEvidences = [];
     for (const question of page.questions || []) {
-      if (
-        question.sectionId.startsWith('AQ_') &&
-        sectionLogics[question.sectionId]
-      ) {
-        question.id = `AQ_${uuidv4()}`;
-        question.sectionId = `AQ_${
-          newLogicIds[question.sectionId.substring(3)]
-        }`;
-        question.skipIdGeneration = true;
-        askQuestions.push(question);
+      if (sectionLogics[question.sectionId]) {
+        if (question.sectionId.startsWith('AQ_')) {
+          question.id = `AQ_${uuidv4()}`;
+          question.sectionId = `AQ_${
+            newLogicIds[question.sectionId.substring(3)]
+          }`;
+          question.skipIdGeneration = true;
+          askQuestions.push(question);
+        } else if (question.sectionId.startsWith('EVIDENCE_')) {
+          question.id = newAskEvidenceIds[question.id];
+          question.sectionId = `EVIDENCE_${
+            newLogicIds[question.sectionId.substring(9)]
+          }`;
+          question.skipIdGeneration = true;
+          askEvidences.push(question);
+        }
       }
     }
     delete section.isImported;
@@ -563,7 +576,7 @@ export class BuilderComponent implements OnInit, OnDestroy {
     delete section.id;
     sectionQuestionsList.push({
       section,
-      questions: [...questionsArray, ...askQuestions],
+      questions: [...questionsArray, ...askQuestions, ...askEvidences],
       logics: logicsArray
     });
 

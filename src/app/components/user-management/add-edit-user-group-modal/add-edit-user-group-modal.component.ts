@@ -10,7 +10,6 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { ValidationError } from 'src/app/interfaces';
 import { SelectUserUsergroupModalComponent } from '../select-user-usergroup-modal/select-user-usergroup-modal.component';
-import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { UserGroupService } from '../services/user-group.service';
 @Component({
   selector: 'app-add-edit-user-group-modal',
@@ -23,7 +22,6 @@ export class AddEditUserGroupModalComponent implements OnInit {
   description: string;
   plantId: string;
   title;
-  dialogText: string;
   plants: any[];
   plantInformation: any[];
   userGroupForm: any;
@@ -37,7 +35,6 @@ export class AddEditUserGroupModalComponent implements OnInit {
     public dialog: MatDialog,
     private dailogRef: MatDialogRef<AddEditUserGroupModalComponent>,
     private fb: FormBuilder,
-    private plantService: PlantService,
     private userGroupService: UserGroupService,
     @Inject(MAT_DIALOG_DATA)
     public data: any
@@ -55,7 +52,8 @@ export class AddEditUserGroupModalComponent implements OnInit {
       description: new FormControl(''),
       plantId: new FormControl('', [Validators.required])
     });
-    if (this.data.type === 'create') {
+    const { type, plants } = this.data;
+    if (type === 'create') {
       this.groupData = null;
       this.groupStatus = 'create';
       this.groupTitle = 'Create User Group';
@@ -75,18 +73,8 @@ export class AddEditUserGroupModalComponent implements OnInit {
       this.userGroupForm.patchValue(groupEditData);
       this.userGroupForm.get('plantId').disable();
     }
-    this.getAllPlants();
-    const { dialogText } = this.data;
-    this.dialogText = dialogText;
-  }
-
-  getAllPlants() {
-    this.plantService.fetchAllPlants$().subscribe((data) => {
-      if (data && Object.keys(data).length > 0) {
-        this.plants = data.items;
-        this.plantInformation = this.plants;
-      }
-    });
+    this.plants = plants;
+    this.plantInformation = plants;
   }
 
   close() {

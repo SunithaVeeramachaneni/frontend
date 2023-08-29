@@ -12,7 +12,7 @@ import {
   ViewChild,
   OnDestroy
 } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -54,6 +54,8 @@ import { SlideshowComponent } from 'src/app/shared/components/slideshow/slidesho
 import { MatDialog } from '@angular/material/dialog';
 import { Base64HelperService } from 'src/app/components/work-instructions/services/base64-helper.service';
 import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
+import { CommonService } from 'src/app/shared/services/common.service';
+
 @Component({
   selector: 'app-question',
   templateUrl: './question.component.html',
@@ -230,6 +232,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     position: '',
     required: false,
     enableHistory: false,
+    historyCount: [5, [Validators.required, Validators.min(0)]],
     multi: false,
     value: 'TF',
     isPublished: false,
@@ -238,7 +241,11 @@ export class QuestionComponent implements OnInit, OnDestroy {
     isResponseTypeModalOpen: false,
     unitOfMeasurement: 'None',
     rangeMetadata: {} as NumberRangeMetadata,
-    additionalDetails: {} as AdditionalDetails
+    additionalDetails: {} as AdditionalDetails,
+    createdAt: '',
+    createdBy: '',
+    updatedAt: '',
+    updatedBy: ''
   });
   question$: Observable<Question>;
   ignoreUpdateIsOpen: boolean;
@@ -273,7 +280,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
     private formService: FormService,
     private responseSetService: ResponseSetService,
     private toast: ToastService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private readonly commonService: CommonService
   ) {}
 
   ngOnInit(): void {
@@ -340,6 +348,9 @@ export class QuestionComponent implements OnInit, OnDestroy {
             isResponseTypeModalOpen: currIsResponseTypeModalOpen,
             ...curr
           } = current;
+          if (current.historyCount === null || current.historyCount < 0) {
+            this.questionForm.get('historyCount').setValue(0);
+          }
           if (!isEqual(prev, curr)) {
             const { value: prevValue } = prev;
             const { value: currValue } = curr;
@@ -764,13 +775,14 @@ export class QuestionComponent implements OnInit, OnDestroy {
         break;
       case 'ask_question_create':
         let newQuestion = {
-          id: this.isEmbeddedForm ? `AQ_${Date.now()}` : `AQ_${uuidv4()}`,
+          id: `AQ_${uuidv4()}`,
           sectionId: `AQ_${event.logic.id}`,
           name: '',
           fieldType: 'TF',
           position: 0,
           required: false,
           enableHistory: false,
+          historyCount: 5,
           multi: false,
           value: 'TF',
           isPublished: false,
@@ -798,6 +810,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
           position: 0,
           required: true,
           enableHistory: false,
+          historyCount: 5,
           multi: false,
           value: 'ATT',
           isPublished: false,
