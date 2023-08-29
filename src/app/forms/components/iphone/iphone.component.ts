@@ -35,6 +35,7 @@ export class IphoneComponent implements OnInit {
   isHistoryVisible = false;
   isOpenHistoryBottomSheet = false;
   historyCount = '5';
+  historyRecords = Array(5).fill(0);
   historyTableHeaders = [
     { id: 'iphoneDateLabel', translate: 'dateLabel' },
     { id: 'iphoneReadingLabel', translate: 'readingLabel' },

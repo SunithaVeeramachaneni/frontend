@@ -212,30 +212,10 @@
               {{ header.translate | translate }}
             </th>
           </tr>
-          <tr>
-            <td>Date 1</td>
-            <td>Reading 1</td>
-            <td>Operator 1</td>
-          </tr>
-          <tr>
-            <td>Date 2</td>
-            <td>Reading 2</td>
-            <td>Operator 2</td>
-          </tr>
-          <tr>
-            <td>Date 3</td>
-            <td>Reading 3</td>
-            <td>Operator 3</td>
-          </tr>
-          <tr>
-            <td>Date 4</td>
-            <td>Reading 4</td>
-            <td>Operator 4</td>
-          </tr>
-          <tr>
-            <td>Date 5</td>
-            <td>Reading 5</td>
-            <td>Operator 5</td>
+          <tr *ngFor="let x of historyRecords; let i = index">
+            <td>Date {{ i + 1 }}</td>
+            <td>Reading {{ i + 1 }}</td>
+            <td>Operator {{ i + 1 }}</td>
           </tr>
         </table>
       </div>
