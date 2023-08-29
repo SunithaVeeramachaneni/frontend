@@ -132,7 +132,7 @@ export class NodeComponent implements OnInit {
     this.togglePopover = !this.togglePopover;
   };
 
-  (checked) {
+  toggleCheckBox(checked) {
     console.log('checkedEvent:', checked);
     this.checkevent.emit(checked);
   }
