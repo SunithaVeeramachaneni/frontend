@@ -372,7 +372,7 @@
               <mat-form-field class="width-100" appearance="outline">
                 <mat-label translate="shifts"></mat-label>
                 <mat-select
-                  [formControl]="shiftsSelected"
+                  formControlName="shiftsSelected"
                   multiple
                   (selectionChange)="onShiftChange($event)"
                 >
