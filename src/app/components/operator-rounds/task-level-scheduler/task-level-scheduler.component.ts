@@ -47,8 +47,10 @@ export class TaskLevelSchedulerComponent implements OnInit {
   filteredOptions$: Observable<any[]>;
   flatHierarchy: any;
   authoredData: any;
+  pages: any;
   filteredList = [];
   selectedNode = [];
+  selectedPages: any;
   statusList = {
     changesSaved: 'All Changes Saved',
     savingChanges: 'Saving Changes...',
@@ -57,6 +59,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
   };
   mode = 'scheduler';
   isPreviewActive = false;
+  checkboxStatus: Object = { status: false };
   statusSubject: BehaviorSubject<string> = new BehaviorSubject<string>(
     this.statusList.changesSaved
   );
@@ -148,6 +151,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
           'flatHierarchy:',
           JSON.parse(this.authoredData.flatHierarchy)
         );
+        this.pages = JSON.parse(this.authoredData.subForms);
         this.flatHierarchy = JSON.parse(this.authoredData.flatHierarchy);
       });
 
@@ -160,7 +164,18 @@ export class TaskLevelSchedulerComponent implements OnInit {
     this.operatorRoundService.selectedNode$
       .pipe(
         tap((data) => {
+          console.log('pages:', this.pages);
           this.selectedNode = data;
+          console.log('selected Node:', this.selectedNode);
+          for (const key in this.pages) {
+            if (this.pages.hasOwnProperty(key)) {
+              const assetLocationId = key.toString().split('_')[1];
+              if (assetLocationId === this.selectedNode['id']) {
+                console.log('selectedpages:', this.pages[key]);
+                this.selectedPages = this.pages[key];
+              }
+            }
+          }
         })
       )
       .subscribe();
@@ -217,6 +232,10 @@ export class TaskLevelSchedulerComponent implements OnInit {
 
   clearSearchResults() {
     this.searchHierarchyKey.patchValue('');
+  }
+
+  toggleCheckboxEvent(checked) {
+    this.checkboxStatus = { status: checked };
   }
 
   openCloseRightPanelEventHandler(event) {

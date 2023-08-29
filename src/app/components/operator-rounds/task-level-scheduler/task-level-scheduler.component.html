@@ -207,6 +207,7 @@
       <app-node
         [node]="node"
         [hierarchyMode]="mode"
+        (checkevent)="toggleCheckboxEvent($event)"
         *ngFor="let node of flatHierarchy"
       ></app-node>
     </div>
@@ -218,12 +219,17 @@
     }"
     *ngIf="selectedNode; else loadingSelectedNode"
   >
-    <app-builder
+    <!-- <app-builder
+      [mode]="mode"
       [isEmbeddedForm]="false"
       [selectedNode]="selectedNode"
       [isPreviewActive]="isPreviewActive"
       [moduleName]="'rounds'"
-    ></app-builder>
+    ></app-builder> -->
+    <app-task-level-task-components
+      [selectedPage]="selectedPages"
+      [checkboxStatus]="checkboxStatus"
+    ></app-task-level-task-components>
   </div>
   <ng-container *ngIf="openCloseRightPanel">
     <div class="width-30 right-panel">
