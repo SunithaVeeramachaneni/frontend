@@ -19,8 +19,71 @@ export class TaskLevelTaskComponentsComponent implements OnInit {
 
   private _checkboxStatus: any;
   constructor(private fb: FormBuilder) {}
+  ngOnInit(): void {
+    throw new Error('Method not implemented.');
+  }
+  questionToSectionId: Map<number, any[]> = new Map();
+  // @Input() set checkboxStatus(checkboxStatus: any) {
+  //   console.log('checkboxStatusinside pages:', checkboxStatus);
+  //   this._checkboxStatus = checkboxStatus;
+  // }
+  // get checkboxStatus() {
+  //   return this._checkboxStatus;
+  // }
+  // @Input() set page(page: any) {
+  //   if (page) {
+  //     if (!isEqual(this.page, page)) {
+  //       this._page = page;
+  //       this.pageForm.patchValue(page, {
+  //         emitEvent: false
+  //       });
+  //     }
+  //     this.questionToSectionId = this.mapQuestionToSection(page.questions);
+  //   }
+  // }
+  // get page() {
+  //   return this._page;
+  // }
 
-  ngOnInit(): void {}
+  // private _page: any;
+  // private _checkboxStatus: any;
+  pageForm: FormGroup = this.fb.group({
+    name: {
+      value: '',
+      disabled: true
+    },
+    position: '',
+    isOpen: true
+  });
+
+  sectionForm: FormGroup = this.fb.group({
+    id: '',
+    name: {
+      value: '',
+      disabled: true
+    },
+    position: '',
+    isOpen: true,
+    isImported: false,
+    templateId: '',
+    templateName: '',
+    externalSectionId: ''
+  });
+
+  toggleIsOpenState = () => {
+    this.pageForm.get('isOpen').setValue(!this.pageForm.get('isOpen').value);
+  };
+
+  mapQuestionToSection(questions: any[]) {
+    const questionMap = new Map<number, any[]>();
+    questions.forEach((question) => {
+      if (!questionMap.has(question.sectionId)) {
+        questionMap.set(question.sectionId, []);
+      }
+      questionMap.get(question.sectionId)!.push(question);
+    });
+    return questionMap;
+  }
 }
 
 // import { Component, OnInit, Input } from '@angular/core';
