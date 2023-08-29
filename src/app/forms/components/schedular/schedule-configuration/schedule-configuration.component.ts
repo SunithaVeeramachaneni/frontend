@@ -251,6 +251,9 @@ export class ScheduleConfigurationComponent
     this.scheduleConfigurationService.getSlotChanged().subscribe((value) => {
       this.markSlotPristine(value);
     });
+    this.schedulerConfigForm?.valueChanges.subscribe((value) => {
+      this.schedulerConfigForm.markAsDirty();
+    });
 
     if (this.data) {
       const { formDetail, roundPlanDetail, moduleName, assigneeDetails } =
@@ -591,7 +594,7 @@ export class ScheduleConfigurationComponent
       .subscribe((monthlyDaysOfWeek) => {
         const monthlyDaysOfWeekCount = monthlyDaysOfWeek.reduce(
           (acc: number, curr: number[]) => {
-            acc += curr.length;
+            acc += curr?.length;
             return acc;
           },
           0
@@ -706,6 +709,7 @@ export class ScheduleConfigurationComponent
 
   cancel() {
     this.initShiftStat();
+    this.schedulerConfigForm.reset();
     this.dialogRef.close({
       slideInOut: 'out',
       actionType: 'scheduleConfigEvent'
@@ -1298,7 +1302,7 @@ export class ScheduleConfigurationComponent
   }
 
   get shiftSlots(): FormArray {
-    return this.schedulerConfigForm.get('shiftSlots') as FormArray;
+    return this.schedulerConfigForm?.get('shiftSlots') as FormArray;
   }
 
   addShiftDetails(

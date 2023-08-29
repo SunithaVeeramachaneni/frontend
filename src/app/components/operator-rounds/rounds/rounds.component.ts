@@ -447,8 +447,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
           'assigned',
           'open',
           'in-progress',
-          'partly-open',
-          'skipped'
+          'partly-open'
         ],
         displayType: 'text'
       },
@@ -777,7 +776,11 @@ export class RoundsComponent implements OnInit, OnDestroy {
           top: `${pos?.top + 17}px`,
           left: `${pos?.left - 15}px`
         };
-        if (row.status !== 'submitted' && row.status !== 'overdue')
+        if (
+          row.status !== 'submitted' &&
+          row.status !== 'overdue' &&
+          row.status !== 'skipped'
+        )
           this.trigger.toArray()[0].openMenu();
         this.selectedRoundInfo = row;
         break;
