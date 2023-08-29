@@ -8,7 +8,17 @@ import { FormBuilder } from '@angular/forms';
   styleUrls: ['./task-level-task-components.component.scss']
 })
 export class TaskLevelTaskComponentsComponent implements OnInit {
-  @Input() selectedPage: any;
+  @Input() set selectedPage(selectedPage: any) {
+    if (selectedPage) {
+      this._selectedPage = selectedPage;
+      console.log('here doing changes');
+      this.questionToSection = this.mapQuestionToSection(this.selectedPage);
+      console.log('questionTosection', this.questionToSection);
+    }
+  }
+  get selectedPage() {
+    return this._selectedPage;
+  }
   @Input() set checkboxStatus(checkboxStatus: any) {
     console.log('inside task-levelTask:', checkboxStatus);
     this._checkboxStatus = checkboxStatus;
@@ -16,37 +26,12 @@ export class TaskLevelTaskComponentsComponent implements OnInit {
   get checkboxStatus() {
     return this._checkboxStatus;
   }
-
+  questionToSection = new Map<number, any[]>();
   private _checkboxStatus: any;
+  private _selectedPage: any;
   constructor(private fb: FormBuilder) {}
-  ngOnInit(): void {
-    throw new Error('Method not implemented.');
-  }
+  ngOnInit() {}
   questionToSectionId: Map<number, any[]> = new Map();
-  // @Input() set checkboxStatus(checkboxStatus: any) {
-  //   console.log('checkboxStatusinside pages:', checkboxStatus);
-  //   this._checkboxStatus = checkboxStatus;
-  // }
-  // get checkboxStatus() {
-  //   return this._checkboxStatus;
-  // }
-  // @Input() set page(page: any) {
-  //   if (page) {
-  //     if (!isEqual(this.page, page)) {
-  //       this._page = page;
-  //       this.pageForm.patchValue(page, {
-  //         emitEvent: false
-  //       });
-  //     }
-  //     this.questionToSectionId = this.mapQuestionToSection(page.questions);
-  //   }
-  // }
-  // get page() {
-  //   return this._page;
-  // }
-
-  // private _page: any;
-  // private _checkboxStatus: any;
   pageForm: FormGroup = this.fb.group({
     name: {
       value: '',
@@ -74,13 +59,16 @@ export class TaskLevelTaskComponentsComponent implements OnInit {
     this.pageForm.get('isOpen').setValue(!this.pageForm.get('isOpen').value);
   };
 
-  mapQuestionToSection(questions: any[]) {
+  mapQuestionToSection(pages: any[]) {
+    console.log('pagesInside MaptoSection:', pages);
     const questionMap = new Map<number, any[]>();
-    questions.forEach((question) => {
-      if (!questionMap.has(question.sectionId)) {
-        questionMap.set(question.sectionId, []);
-      }
-      questionMap.get(question.sectionId)!.push(question);
+    pages.forEach((pages) => {
+      pages.questions.forEach((question) => {
+        if (!questionMap.has(question.sectionId)) {
+          questionMap.set(question.sectionId, []);
+        }
+        questionMap.get(question.sectionId)!.push(question);
+      });
     });
     return questionMap;
   }

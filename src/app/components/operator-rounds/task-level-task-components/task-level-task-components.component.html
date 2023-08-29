@@ -46,15 +46,20 @@
               >
                 chevron_right
               </mat-icon>
+              <mat-checkbox class="page-checkbox"></mat-checkbox>
+
               <div class="form_section_name_input">{{ section.name }}</div>
             </div>
             <div class="questions-content">
-              <div *ngFor="let question of section">
+              <div
+                *ngFor="let question of questionToSection.get(section['id'])"
+              >
                 <div class="questions">
                   <div class="dis-flex questions-div">
                     <div class="width-70">
-                      <div class="width-100">
-                        <span> {{ question.name }}</span>
+                      <div class="width-100" class="dis-flex">
+                        <mat-checkbox class="page-checkbox"></mat-checkbox>
+                        <div>{{ question.name }}</div>
                       </div>
                     </div>
                   </div>

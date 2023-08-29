@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/dot-notation */
 /* eslint-disable no-underscore-dangle */
 import { Component, Input, OnInit } from '@angular/core';
+
 import { FormControl } from '@angular/forms';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { dateFormat4 } from 'src/app/app.constants';
@@ -11,6 +12,7 @@ import {
   map
 } from 'rxjs/operators';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
+
 import { tap } from 'rxjs/operators';
 import { format } from 'date-fns';
 
