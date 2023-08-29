@@ -71,8 +71,6 @@ export class ReviseScheduleComponent implements OnInit {
       endDatePicker: new Date(addDays(new Date(), 30))
     });
 
-    console.log(this.resviseScheduleConfigForm);
-
     this.startDatePickerMinDate = new Date();
     this.currentDate = new Date();
   }

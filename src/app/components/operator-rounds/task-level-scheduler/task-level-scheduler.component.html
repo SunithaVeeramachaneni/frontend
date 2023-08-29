@@ -196,13 +196,17 @@
     </span>
 
     <div class="hierarchy">
-      <div *ngIf="!flatHierarchy.length" class="emptySearchResult">
+      <div *ngIf="!flatHierarchy?.length" class="emptySearchResult">
         <span id="hierarchyContainerLocationFound">
           {{
             'noAssetsOrLocationsFound'
               | translate : { searchKey: searchHierarchyKey.value }
           }}
         </span>
+      </div>
+      <div class="locations-assets">
+        <span translate>locationsAssets</span>
+        <span class="float-right" translate>frequency</span>
       </div>
       <app-node
         [node]="node"
@@ -217,15 +221,13 @@
       'width-40': openCloseRightPanel === true,
       'width-70': openCloseRightPanel === false
     }"
+    class="mid-panel"
     *ngIf="selectedNode; else loadingSelectedNode"
   >
-    <!-- <app-builder
-      [mode]="mode"
-      [isEmbeddedForm]="false"
-      [selectedNode]="selectedNode"
-      [isPreviewActive]="isPreviewActive"
-      [moduleName]="'rounds'"
-    ></app-builder> -->
+    <div *ngIf="selectedPages === undefined" class="select-locations-assets">
+      <p class="m-0" translate>nullSelectedLocationAssetFirst</p>
+      <p translate>nullSelectedLocationAssetSecond</p>
+    </div>
     <app-task-level-task-components
       [selectedPage]="selectedPages"
       [checkboxStatus]="checkboxStatus"
@@ -240,8 +242,5 @@
     </div>
   </ng-container>
 
-  <ng-template #loadingSelectedNode>
-    {{ 'nullSelectedLocationAssetFirst' | translate }}
-    {{ 'nullSelectedLocationAssetSecond' | translate }}
-  </ng-template>
+  <ng-template #loadingSelectedNode> </ng-template>
 </div>

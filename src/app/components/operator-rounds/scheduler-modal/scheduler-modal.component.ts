@@ -8,18 +8,13 @@ import { State } from 'src/app/state/app.state';
 @Component({
   selector: 'app-scheduler-modal',
   templateUrl: './scheduler-modal.component.html',
-  styleUrls: ['./scheduler-modal.component.css']
+  styleUrls: ['./scheduler-modal.component.scss']
 })
 export class SchedulerModalComponent implements OnInit {
   payload: any;
-  payloadEmitter($event: Event) {
-    this.payload = $event;
-    console.log('this.payload', this.payload);
-  }
   steps: Step[] = [
     { title: 'Header', content: '' },
-    { title: 'Tasks', content: '' },
-    { title: 'Summary', content: '' }
+    { title: 'Tasks', content: '' }
   ];
 
   totalSteps: number;
@@ -38,7 +33,8 @@ export class SchedulerModalComponent implements OnInit {
 
   goBack() {
     if (this.currentStep === 0) {
-      this.router.navigate(['/operator-rounds']);
+      this.router.navigate(['operator-rounds/scheduler/0']);
+      this.dialogRef.close();
     } else if (this.currentStep > 0) {
       this.gotoPreviousStep();
     }
@@ -54,5 +50,9 @@ export class SchedulerModalComponent implements OnInit {
 
   gotoPreviousStep(): void {
     this.currentStep--;
+  }
+
+  payloadEmitter($event: Event) {
+    this.payload = $event;
   }
 }

@@ -67,7 +67,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
 
   formDetailPublishStatus: string;
 
-  openCloseRightPanel = true;
+  openCloseRightPanel = false;
 
   @Input() set payload(payload: any) {
     this._payload = payload;
@@ -235,6 +235,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
   }
 
   toggleCheckboxEvent(checked) {
+    if (this.openCloseRightPanel === false) this.openCloseRightPanel = true;
     this.checkboxStatus = { status: checked };
   }
 

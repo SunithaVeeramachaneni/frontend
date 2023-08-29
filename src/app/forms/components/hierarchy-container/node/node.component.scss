@@ -79,6 +79,10 @@
 .active {
   background: $active-blue;
   color: $white;
+
+  ::ng-deep .mat-checkbox-frame {
+    border-color: $white;
+  }
 }
 
 .active:hover {
