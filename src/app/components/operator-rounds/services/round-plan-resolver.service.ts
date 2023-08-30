@@ -97,18 +97,20 @@ export class RoundPlanResolverService
           formDetail[0] ?? {};
         if (instructions) {
           const { notes, attachments, pdfDocs } = JSON.parse(instructions);
-          const attachmentPromises = attachments?.map((attachmentId) =>
-            this.operatorRoundsService
-              .getAttachmentsById$(attachmentId)
-              .toPromise()
-              .then()
-          );
-          const pdfPromises = pdfDocs?.map((pdfId) =>
-            this.operatorRoundsService
-              .getAttachmentsById$(pdfId)
-              .toPromise()
-              .then()
-          );
+          const attachmentPromises =
+            attachments?.map((attachmentId) =>
+              this.operatorRoundsService
+                .getAttachmentsById$(attachmentId)
+                .toPromise()
+                .then()
+            ) || [];
+          const pdfPromises =
+            pdfDocs?.map((pdfId) =>
+              this.operatorRoundsService
+                .getAttachmentsById$(pdfId)
+                .toPromise()
+                .then()
+            ) || [];
           Promise.all(attachmentPromises).then((result) => {
             this.operatorRoundsService.attachmentsMapping$.next(result);
           });

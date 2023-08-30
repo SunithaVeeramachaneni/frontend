@@ -322,6 +322,7 @@ export class FormListComponent implements OnInit, OnDestroy {
               name: createdForm.newName,
               formStatus: formConfigurationStatus.draft,
               additionalDetails: JSON.parse(form.additionalDetails),
+              instructions: JSON.parse(form.instructions),
               isPublic: false
             })
             .subscribe((newRecord) => {
