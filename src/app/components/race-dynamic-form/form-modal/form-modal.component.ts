@@ -68,12 +68,8 @@ export class FormModalComponent implements OnInit, OnDestroy {
   }
 
   goBack(): void {
-    if (this.currentStep === 0) {
-      this.router.navigate(['/forms']);
-      this.dialogRef.close({ data: this.formData.formMetadata, type: 'add' });
-    } else if (this.currentStep > 0) {
-      this.gotoPreviousStep();
-    }
+    this.router.navigate(['/forms']);
+    this.dialogRef.close({ data: this.formData.formMetadata, type: 'add' });
   }
 
   publishedEventHandler(): void {

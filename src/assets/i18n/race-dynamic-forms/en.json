@@ -388,5 +388,6 @@
   "closeBtn": "Close",
   "downloadExcel": "Download Excel",
   "createEmbedded": "Embedded (For mWorkorder)",
-  "createStandalone": "Standalone (For mInspections)"
+  "createStandalone": "Standalone (For mInspections)",
+  "backToList": "Back to List"
 }

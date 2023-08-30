@@ -887,6 +887,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
         tap((logHistory) => {
           this.logHistory = logHistory?.rows || [];
           this.filteredMediaType = [];
+          this.prepareInitialIssueActionAttachments();
           if (this.logHistory.length > 0) {
             this.logHistory.forEach((history) => {
               if (
@@ -929,6 +930,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
         }
       }
       this.filteredMediaType = [];
+      this.prepareInitialIssueActionAttachments();
       this.logHistory = [...this.logHistory, newMessage];
       if (this.logHistory?.length > 0) {
         this.logHistory.forEach((history) => {
@@ -1008,6 +1010,18 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
           this.allData[idx] = this.data;
         }
       }
+    }
+  }
+
+  private prepareInitialIssueActionAttachments(): void {
+    if (this.data?.PHOTO?.length > 0) {
+      this.data?.PHOTO?.forEach((element) => {
+        if (element) {
+          this.filteredMediaType.push({
+            message: element
+          });
+        }
+      });
     }
   }
 }

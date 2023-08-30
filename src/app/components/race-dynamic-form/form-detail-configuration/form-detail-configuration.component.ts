@@ -28,7 +28,7 @@ import {
   tap
 } from 'rxjs/operators';
 
-import { isEqual } from 'lodash-es';
+import { isEqual, uniqBy } from 'lodash-es';
 import { FormMetadata, Page, ValidationError } from 'src/app/interfaces';
 
 import {
@@ -472,7 +472,7 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
     if (this.isEmbeddedForm) {
       this.rdfService.publishEmbeddedForms$(form).subscribe((response) => {
         form.pages[0].questions.forEach((question) => {
-          if (response.includes(question.id)) {
+          if (response?.includes(question.id)) {
             question.isPublished = true;
             question.isPublishedTillSave = true;
           }

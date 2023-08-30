@@ -415,6 +415,15 @@ li {
   list-style-type: none;
 }
 
+.questions ol,
+ul {
+  padding-left: 15px;
+}
+
+.questions li {
+  list-style-type: auto !important;
+}
+
 .instruction ol li {
   list-style-type: auto !important;
 }

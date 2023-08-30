@@ -321,6 +321,7 @@ export class FormListComponent implements OnInit, OnDestroy {
               ...omit(form, ['id', 'preTextImage']),
               name: createdForm.newName,
               formStatus: formConfigurationStatus.draft,
+              additionalDetails: JSON.parse(form.additionalDetails),
               isPublic: false
             })
             .subscribe((newRecord) => {
@@ -426,7 +427,7 @@ export class FormListComponent implements OnInit, OnDestroy {
             this.triggerCountUpdate = true;
             this.formsListCountUpdate$.next(-1);
             this.toast.show({
-              text: 'Form "' + form.form.name + '" archive successfully!',
+              text: 'Form "' + form.form.name + '" archived successfully!',
               type: 'success'
             });
           } else {
