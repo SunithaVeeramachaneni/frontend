@@ -200,7 +200,7 @@ export class SectionComponent implements OnInit, OnDestroy {
                 {
                   id: questions[0].sectionId,
                   name: prompt,
-                  position: this.sectionIndex + 1,
+                  position: this.sectionIndex,
                   isOpen: true
                 }
               ],
