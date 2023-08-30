@@ -29,7 +29,7 @@
 
   .scroll-locations {
     overflow-y: auto;
-    height: 165px;
+    max-height: 165px;
     background: $yellow-bg1;
     border-radius: 5px;
   }

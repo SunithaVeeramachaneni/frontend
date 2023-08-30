@@ -1,7 +1,4 @@
-<div
-  class="task-level-schedule-main"
-  *ngIf="taskLevelScheduleHeaderConfiguration"
->
+<div class="task-level-schedule-main">
   <div class="dis-flex form-header">
     <div class="dis-flex width-45">
       <svg-icon
@@ -10,22 +7,16 @@
         class="plans-icon"
       ></svg-icon>
       <div class="width-90">
-        <a
-          matTooltip="{{ taskLevelScheduleHeaderConfiguration.name }}"
-          class="dis-inline"
-        >
+        <a class="dis-inline">
           <span class="form_title_input">
-            {{ taskLevelScheduleHeaderConfiguration.name }}
+            {{ taskLevelScheduleHeaderConfiguration?.name }}
           </span>
         </a>
         <br />
         <div class="dis-flex center">
-          <a
-            matTooltip="{{ taskLevelScheduleHeaderConfiguration.description }}"
-            class="width-60"
-          >
+          <a class="width-60">
             <span class="form_description_input">
-              {{ taskLevelScheduleHeaderConfiguration.description }}
+              {{ taskLevelScheduleHeaderConfiguration?.description }}
             </span>
           </a>
         </div>
@@ -35,7 +26,7 @@
       <div class="row1">
         <span class="txt">{{ 'headerFrequency' | translate }} : </span>
         <span>
-          {{ taskLevelScheduleHeaderConfiguration.headerFrequency }}
+          {{ taskLevelScheduleHeaderConfiguration?.headerFrequency }}
         </span>
       </div>
       <div class="row2">
@@ -43,7 +34,7 @@
           <span class="txt">{{ 'shift' | translate }}: </span>
           <span
             *ngFor="
-              let shift of taskLevelScheduleHeaderConfiguration.shiftDetails;
+              let shift of taskLevelScheduleHeaderConfiguration?.shiftDetails;
               let i = index
             "
           >
@@ -51,7 +42,7 @@
             <span
               *ngIf="
                 i !==
-                taskLevelScheduleHeaderConfiguration.shiftDetails.length - 1
+                taskLevelScheduleHeaderConfiguration?.shiftDetails?.length - 1
               "
             >
               ,
@@ -60,36 +51,41 @@
         </div>
         <div>
           <span class="txt">{{ 'slots' | translate }}: </span>
-          <span>
-            {{ taskLevelScheduleHeaderConfiguration.slotDetails[0].startTime }}
+          <!-- <span *ngIf="taskLevelScheduleHeaderConfiguration !== undefined">
+            {{
+              taskLevelScheduleHeaderConfiguration?.slotDetails[0]?.startTime
+            }}
             -
-            {{ taskLevelScheduleHeaderConfiguration.slotDetails[0].endTime }} ,
+            {{ taskLevelScheduleHeaderConfiguration?.slotDetails[0]?.endTime }}
+            ,
             <span
               *ngIf="
-                taskLevelScheduleHeaderConfiguration.slotDetails.length > 1
+                taskLevelScheduleHeaderConfiguration?.slotDetails?.length > 1
               "
               class="more"
             >
-              +{{ taskLevelScheduleHeaderConfiguration.slotDetails.length - 1 }}
+              +{{
+                taskLevelScheduleHeaderConfiguration?.slotDetails?.length - 1
+              }}
               more
             </span>
-          </span>
+          </span> -->
         </div>
         <div>
           <span class="txt">{{ 'starts' | translate }} : </span>
           <span>
-            {{ taskLevelScheduleHeaderConfiguration.headerStartDate }}
+            {{ taskLevelScheduleHeaderConfiguration?.headerStartDate }}
           </span>
           &nbsp;
           <span class="txt">{{ 'ends' | translate }} : </span>
           <span>
-            {{ taskLevelScheduleHeaderConfiguration.headerEndDate }}
+            {{ taskLevelScheduleHeaderConfiguration?.headerEndDate }}
           </span>
         </div>
         <div>
           <span class="txt">{{ 'assigneeDetails' | translate }} : </span>
           <span>
-            {{ taskLevelScheduleHeaderConfiguration.assigneeDetails }}
+            {{ taskLevelScheduleHeaderConfiguration?.assigneeDetails }}
           </span>
         </div>
       </div>
@@ -209,6 +205,7 @@
   <ng-container *ngIf="openCloseRightPanel">
     <div class="width-30 right-panel">
       <app-revise-schedule
+        [payload]="taskLevelScheduleHeaderConfiguration"
         (openCloseRightPanelEvent)="openCloseRightPanelEventHandler($event)"
       >
       </app-revise-schedule>

@@ -1,4 +1,4 @@
-<div *ngFor="let page of selectedPage">
+<div *ngFor="let page of selectedPage" class="task-level-tasks">
   <div class="pages" [formGroup]="pageForm">
     <div class="page-header">
       <mat-icon
@@ -46,9 +46,9 @@
               >
                 chevron_right
               </mat-icon>
-              <mat-checkbox class="page-checkbox"></mat-checkbox>
+              <mat-checkbox class="section-checkbox"></mat-checkbox>
 
-              <div class="form_section_name_input">{{ section.name }}</div>
+              <span class="form_section_name_input">{{ section.name }}</span>
             </div>
             <div class="questions-content">
               <div
@@ -56,11 +56,14 @@
               >
                 <div class="questions">
                   <div class="dis-flex questions-div">
-                    <div class="width-70">
-                      <div class="width-100" class="dis-flex">
-                        <mat-checkbox class="page-checkbox"></mat-checkbox>
-                        <div>{{ question.name }}</div>
+                    <div class="width-90">
+                      <div class="dis-flex">
+                        <mat-checkbox class="question-checkbox"></mat-checkbox>
+                        <div class="task-question">{{ question.name }}</div>
                       </div>
+                    </div>
+                    <div class="width-10">
+                      <div>Header</div>
                     </div>
                   </div>
                 </div>
