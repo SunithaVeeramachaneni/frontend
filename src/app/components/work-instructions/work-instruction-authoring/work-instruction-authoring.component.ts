@@ -1,6 +1,6 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { InstructionService } from '../services/instruction.service';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { SseService } from 'src/app/shared/services/sse.service';
 import { environment } from 'src/environments/environment';
 import { data } from '../../user-management/services/users.mock';
@@ -19,12 +19,17 @@ export class WorkInstructionAuthoringComponent implements OnInit {
   stepsInstructionList: any = [];
   currentStep: any;
   generateSteps$: Observable<any>;
+  status = 'Draft Saved';
+  isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+
   constructor(
     private service: InstructionService,
     private sseService: SseService,
     private zone: NgZone
   ) {}
+
   ngOnInit(): void {
+    this.isLoading$.next(true);
     this.globalData = { ...this.service.stepsData$.value };
     console.log(this.globalData);
     const { tags, header, steps, image } = this.globalData;
@@ -38,6 +43,7 @@ export class WorkInstructionAuthoringComponent implements OnInit {
     this.generateSteps$.subscribe((data) => {
       this.stepsInstructionList.push(data.stepsObject);
       this.setCurrentStep(data.stepsObject);
+      this.isLoading$.next(false);
     });
   }
 
@@ -56,13 +62,12 @@ export class WorkInstructionAuthoringComponent implements OnInit {
 
       eventSourceForms.stream();
       eventSourceForms.onmessage = (event) => {
-        console.log(event);
         const eventData = JSON.parse(event.data);
-        const { steps } = eventData;
+        const { steps, IMAGE } = eventData;
         const stepsObject = JSON.parse(steps);
         this.zone.run(() => {
           observer.next({
-            stepsObject
+            stepsObject: { ...stepsObject, IMAGE }
           });
         });
       };
@@ -77,9 +82,17 @@ export class WorkInstructionAuthoringComponent implements OnInit {
 
   setCurrentStep = (step) => {
     const index = this.stepsInstructionList.findIndex((s) => s === step);
+    const { IMAGE, ...rest } = step;
     this.currentStep = {
-      ...step,
+      ...rest,
       index: index + 1
     };
+    setTimeout(() => {
+      this.currentStep = {
+        ...this.currentStep,
+        IMAGE
+      };
+    }, 1000);
+    console.log(this.currentStep);
   };
 }

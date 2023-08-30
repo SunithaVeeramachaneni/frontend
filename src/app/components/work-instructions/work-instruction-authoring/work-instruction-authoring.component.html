@@ -8,44 +8,107 @@
           icon="icon-back-arrow"
           class="back-arrow"
         ></svg-icon>
-        <span class="back-text"></span>
+        <span class="back-text">Back to List</span>
       </button>
     </div>
-    <div class="header-buttons">
-      <span>Draft Saved</span>
-    </div>
   </div>
-  <div class="lower-container">
-    <div class="title-section">
-      <h2 class="heading" id="formDetails">{{ globalData?.header }}</h2>
-    </div>
-    <div class="content-container">
-      <div class="left-panel">
-        <p
-          style="background-color: aliceblue; cursor: pointer"
-          *ngFor="let step of stepsInstructionList; index as i"
-          (click)="setCurrentStep(step)"
-        >
-          {{ i + 1 }} {{ step.STEP }}
-        </p>
+  <div class="card">
+    <div class="card-header" *ngIf="!(isLoading$ | async)">
+      <h2 class="card-title">{{ globalData.header }}</h2>
+      <div class="card-buttons">
+        <span>{{ status }}</span>
+        <button class="btn">Button 1</button>
+        <button class="btn">Button 2</button>
+        <!-- Add more buttons as needed -->
       </div>
-      <div class="right-panel" *ngIf="currentStep">
-        <div>{{ currentStep.index }} {{ currentStep.STEP }}</div>
-        <hr />
-        <div style="width: 100%">
-          <img
-            src="test"
-            alt="test Image"
-            width="300"
-            height="300"
-            style="width: 30%"
-          />
-          <div>
-            instructions
-            {{ currentStep.INSTRUCTIONS }}
+    </div>
+    <div class="card-body">
+      <!-- Existing content here -->
+      <div class="container" *ngIf="!(isLoading$ | async)">
+        <div class="left-panel">
+          <!-- Existing left panel content -->
+          <ul class="step-list">
+            <li
+              class="step-item"
+              *ngFor="let step of stepsInstructionList; index as i"
+              [ngClass]="{ 'current-step': currentStep.index === i + 1 }"
+              (click)="setCurrentStep(step)"
+            >
+              <span class="step-badge">{{ i + 1 }}</span>
+              {{ step.STEP }}
+            </li>
+          </ul>
+        </div>
+        <div class="vertical-separator"></div>
+        <div class="right-panel" *ngIf="currentStep">
+          <div class="step-header">
+            {{ currentStep.index }} {{ currentStep.STEP }}
+          </div>
+          <hr />
+          <div class="data-row">
+            <div class="image-column">
+              <img
+                src="{{
+                  currentStep.IMAGE
+                    ? currentStep.IMAGE
+                    : 'assets/Images/animation_llxcnda6_small.gif'
+                }}"
+                alt="Step Image"
+              />
+            </div>
+            <div class="info-column">
+              {{ currentStep.INSTRUCTIONS }}
+            </div>
           </div>
         </div>
       </div>
+
+      <div class="container-loading" *ngIf="isLoading$ | async">
+        <img src="assets/Images/loading.gif" alt="Loading Image" />
+      </div>
     </div>
   </div>
+  <!-- <div class="container" *ngIf="!(isLoading$ | async)">
+    <div class="header">
+      <div class="header-title">{{ globalData.header }}</div>
+      <div class="header-actions">
+        <span>{{ status }}</span>
+      </div>
+    </div>
+    <div class="left-panel">
+      <ul class="step-list">
+        <li
+          class="step-item"
+          *ngFor="let step of stepsInstructionList; index as i"
+          [ngClass]="{ 'current-step': currentStep.index === i + 1 }"
+          (click)="setCurrentStep(step)"
+        >
+          <span class="step-badge">{{ i + 1 }}</span>
+          {{ step.STEP }}
+        </li>
+      </ul>
+    </div>
+    <div class="vertical-separator"></div>
+    <div class="right-panel" *ngIf="currentStep">
+      <div class="step-header">
+        {{ currentStep.index }} {{ currentStep.STEP }}
+      </div>
+      <hr />
+      <div class="data-row">
+        <div class="image-column">
+          <img
+            src="{{
+              currentStep.IMAGE
+                ? currentStep.IMAGE
+                : 'assets/Images/animation_llxcnda6_small.gif'
+            }}"
+            alt="Step Image"
+          />
+        </div>
+        <div class="info-column">
+          {{ currentStep.INSTRUCTIONS }}
+        </div>
+      </div>
+    </div>
+  </div> -->
 </div>
