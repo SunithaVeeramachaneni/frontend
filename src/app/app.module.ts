@@ -45,6 +45,7 @@ import { MatListModule } from '@angular/material/list';
 import { AuthConfigService } from './auth-config.service';
 import { EffectsModule } from '@ngrx/effects';
 import { NgxImageCompressService } from 'ngx-image-compress';
+import { UploadImagePreviewComponent } from './forms/components/upload-image-preview/upload-image-preview.component';
 
 registerLocaleData(localeEn, 'en');
 
@@ -103,7 +104,8 @@ export const customTranslateLoader = (http: HttpClient) =>
       useClass: HttpRequestInterceptor,
       multi: true
     },
-    NgxImageCompressService
+    NgxImageCompressService,
+    UploadImagePreviewComponent
   ],
   bootstrap: [AppComponent]
 })

@@ -10,6 +10,7 @@ import { MediaFilesComponent } from './files/files.component';
 import { WorkInstructionsComponent } from './work-instructions.component';
 import { AuthGuard } from 'src/app/shared/guards/auth.guard';
 import { permissions } from 'src/app/app.constants';
+import { WorkInstructionHeaderComponent } from './work-instruction-header/work-instruction-header.component';
 
 const routes: Routes = [
   {
@@ -76,6 +77,10 @@ const routes: Routes = [
             }
           }
         ]
+      },
+      {
+        path: 'header',
+        component: WorkInstructionHeaderComponent
       },
       {
         path: 'published',

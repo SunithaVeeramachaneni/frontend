@@ -1,3 +1,5 @@
+<!-- routerLink="/work-instructions/create" -->
+
 <div *ngIf="currentRouteUrl$ | async as currentRouteUrl">
   <div
     *ngIf="currentRouteUrl === routingUrls.workInstructions.url"
@@ -21,7 +23,7 @@
       >
         <mat-button-toggle-group>
           <mat-button-toggle
-            routerLink="/work-instructions/create"
+            (click)="openHeaderModel()"
             *appCheckUserHasPermission="[permissions.createWorkInstruction]"
           >
             <svg-icon icon="icon-createwi" class="create-wi-img"></svg-icon>

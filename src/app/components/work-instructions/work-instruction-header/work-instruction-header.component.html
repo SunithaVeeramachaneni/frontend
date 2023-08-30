@@ -1,0 +1,122 @@
+<div class="form-header-modal">
+  <div class="dis-flex form-content">
+    <div class="width-5"></div>
+    <div class="width-95">
+      <div class="form-detials">
+        <h2 class="heading" id="formDetails">Smart Work Instructions</h2>
+        <hr class="horizontal-line" />
+        <div class="notes-attachment">
+          <div class="form-name">
+            <p
+              id="notesAndAttachementsHeading"
+              class="form-name-description m-b-0 m-t-20"
+            >
+              Enter Prompt
+            </p>
+            <mat-form-field appearance="outline" class="width-100">
+              <input
+                id="formName"
+                type="text"
+                name="formName"
+                matInput
+                [formControl]="prompt"
+                placeholder="Generate work instruction for attached image"
+              />
+            </mat-form-field>
+          </div>
+          <!-- <mat-form-field
+            class="notes-attachment width-100"
+            appearance="outline"
+          >
+            <quill-material
+              #notes
+              [ngClass]="{
+                'display-toolbar': isOpen.value
+              }"
+              [placeholder]="'addNotes' | translate"
+              class="notes-field"
+              (editorFocus)="handleEditorFocus($event)"
+            >
+            </quill-material>
+          </mat-form-field> -->
+        </div>
+
+        <div class="add-attachments">
+          <br />
+          <input
+            id="addAttachments"
+            type="file"
+            class="file-upload"
+            (change)="fileUploadHandler($event)"
+            [hidden]="true"
+            #formFileUpload
+          />
+
+          <button
+            id="attachmentsBtn"
+            mat-button
+            color="primary"
+            class="upload-button"
+            (click)="formFileUpload.click()"
+          >
+            <mat-icon class="icon-upload" id="attachmentsIcon">link</mat-icon>
+            <span id="attachmentsText">Add an image</span>
+          </button>
+
+          <div class="attachments-container">
+            <span id="attachmentsTrack" class="m-r-10">
+              <app-upload-image-preview
+                *ngIf="base64Image"
+                [image]="base64Image"
+                class="attachments cursor-pointer"
+              ></app-upload-image-preview>
+            </span>
+          </div>
+        </div>
+        <button
+          mat-raised-button
+          color="primary"
+          class="generate-btn"
+          (click)="generateSteps()"
+          [disabled]="!this.base64Image"
+        >
+          Generate Steps
+        </button>
+        <div
+          class="additional-details"
+          *ngIf="header"
+          style="margin-bottom: 5px"
+        >
+          <p id="additionalDetailsHeading" class="additional-details-text">
+            <span>Steps for {{ header }}</span>
+          </p>
+          <button class="add-button" id="additionalDetailsBtn">
+            Regenerate
+          </button>
+        </div>
+        <div class="steps-display" *ngIf="steps?.length > 0">
+          <div class="step-input" *ngFor="let step of steps; index as i">
+            <input type="text" #inputElement matInput [(ngModel)]="steps[i]" />
+            <svg-icon
+              id="closeIcon"
+              icon="icon-closeIcon"
+              class="close-icon cursor-pointer"
+              (click)="deleteStep(i)"
+            ></svg-icon>
+          </div>
+        </div>
+        <div class="add-step-btn width-20">
+          <button
+            mat-stroked-button
+            class="btn-outline-blue b-r-8 pull-right header-add-step"
+            (click)="addStep()"
+          >
+            <mat-icon>add</mat-icon>
+            <span class="header-add-step-text">Add Step</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div></div>

@@ -41,69 +41,69 @@ const role4 = {
 };
 
 export const usersMock: UserDetails[] = [
-  {
-    id: 1,
-    firstName: 'Arthur',
-    lastName: 'Dent',
-    user: 'Arthur Dent',
-    title: 'Engineer',
-    isActive: true,
-    roles: [role1],
-    email: 'arthur@gmail.com',
-    createdAt: '2022-04-21T11:03:59.000Z',
-    profileImage: 'image,123'
-  },
-  {
-    id: 2,
-    firstName: 'Ford',
-    lastName: 'Prefect',
-    user: 'Ford Prefect',
-    title: 'Engineer',
-    isActive: true,
-    roles: [role2, role3],
-    email: 'ford@gmail.com',
-    createdAt: '2022-04-21T11:03:59.000Z',
-    profileImage: 'image,123'
-  },
-  {
-    id: 3,
-    firstName: 'Tricia',
-    lastName: 'McMillan',
-    user: 'Tricia McMillan',
-    roles: [role3],
-    title: 'Engineer',
-    isActive: true,
-    email: 'trillian@gmail.com',
-    createdAt: '2022-04-21T11:03:59.000Z',
-    profileImage: 'image,123'
-  }
+  // {
+  //   id: 1,
+  //   firstName: 'Arthur',
+  //   lastName: 'Dent',
+  //   user: 'Arthur Dent',
+  //   title: 'Engineer',
+  //   isActive: true,
+  //   roles: [role1],
+  //   email: 'arthur@gmail.com',
+  //   createdAt: '2022-04-21T11:03:59.000Z',
+  //   profileImage: 'image,123'
+  // },
+  // {
+  //   id: 2,
+  //   firstName: 'Ford',
+  //   lastName: 'Prefect',
+  //   user: 'Ford Prefect',
+  //   title: 'Engineer',
+  //   isActive: true,
+  //   roles: [role2, role3],
+  //   email: 'ford@gmail.com',
+  //   createdAt: '2022-04-21T11:03:59.000Z',
+  //   profileImage: 'image,123'
+  // },
+  // {
+  //   id: 3,
+  //   firstName: 'Tricia',
+  //   lastName: 'McMillan',
+  //   user: 'Tricia McMillan',
+  //   roles: [role3],
+  //   title: 'Engineer',
+  //   isActive: true,
+  //   email: 'trillian@gmail.com',
+  //   createdAt: '2022-04-21T11:03:59.000Z',
+  //   profileImage: 'image,123'
+  // }
 ];
 
-export const addUserMock: UserDetails = {
-  id: 4,
-  firstName: 'Marvin',
-  lastName: 'A.',
-  user: 'Marvin A.',
-  roles: [{ name: 'Robotics Head' }],
-  title: 'Manager',
-  isActive: true,
-  email: 'android@gmail.com',
-  createdAt: '2022-04-21T11:03:59.000Z',
-  profileImage: 'image,456'
-};
+// export const addUserMock: UserDetails = {
+//   id: 4,
+//   firstName: 'Marvin',
+//   lastName: 'A.',
+//   user: 'Marvin A.',
+//   roles: [{ name: 'Robotics Head' }],
+//   title: 'Manager',
+//   isActive: true,
+//   email: 'android@gmail.com',
+//   createdAt: '2022-04-21T11:03:59.000Z',
+//   profileImage: 'image,456'
+// };
 
-export const updateUserMock: UserDetails = {
-  id: 5,
-  firstName: 'Zaphod',
-  lastName: 'B.',
-  user: 'Zaphod B.',
-  roles: [{ name: 'President' }],
-  title: 'Head of Human Resources',
-  isActive: true,
-  email: 'beeblebrox@gmail.com',
-  createdAt: '2022-04-21T11:03:59.000Z',
-  profileImage: 'image,123'
-};
+// export const updateUserMock: UserDetails = {
+//   id: 5,
+//   firstName: 'Zaphod',
+//   lastName: 'B.',
+//   user: 'Zaphod B.',
+//   roles: [{ name: 'President' }],
+//   title: 'Head of Human Resources',
+//   isActive: true,
+//   email: 'beeblebrox@gmail.com',
+//   createdAt: '2022-04-21T11:03:59.000Z',
+//   profileImage: 'image,123'
+// };
 
 export const allRolesMock = [role1, role2, role3, role4];
 

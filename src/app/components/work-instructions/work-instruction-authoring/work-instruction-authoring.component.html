@@ -1,0 +1,51 @@
+<div>
+  <div class="form-toolbar">
+    <div class="width-10">
+      <button id="backBtn" class="back-btn">
+        <svg-icon
+          id="stepperHeaderBackIcon"
+          id="backBtnIcon"
+          icon="icon-back-arrow"
+          class="back-arrow"
+        ></svg-icon>
+        <span class="back-text"></span>
+      </button>
+    </div>
+    <div class="header-buttons">
+      <span>Draft Saved</span>
+    </div>
+  </div>
+  <div class="lower-container">
+    <div class="title-section">
+      <h2 class="heading" id="formDetails">{{ globalData?.header }}</h2>
+    </div>
+    <div class="content-container">
+      <div class="left-panel">
+        <p
+          style="background-color: aliceblue; cursor: pointer"
+          *ngFor="let step of stepsInstructionList; index as i"
+          (click)="setCurrentStep(step)"
+        >
+          {{ i + 1 }} {{ step.STEP }}
+        </p>
+      </div>
+      <div class="right-panel" *ngIf="currentStep">
+        <div>{{ currentStep.index }} {{ currentStep.STEP }}</div>
+        <hr />
+        <div style="width: 100%">
+          <img
+            src="test"
+            alt="test Image"
+            width="300"
+            height="300"
+            style="width: 30%"
+          />
+          <div>
+            instructions
+            {{ currentStep.INSTRUCTIONS }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -28,6 +28,8 @@ import { BreadcrumbService } from 'xng-breadcrumb';
 import { permissions, routingUrls } from '../../app.constants';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { downloadFile } from 'src/app/shared/utils/fileUtils';
+import { MatDialog } from '@angular/material/dialog';
+import { WorkInstructionHeaderModalComponent } from './work-instruction-header-modal/work-instruction-header-modal.component';
 
 @Component({
   selector: 'app-work-instructions',
@@ -100,7 +102,8 @@ export class WorkInstructionsComponent
     private commonService: CommonService,
     private breadcrumbService: BreadcrumbService,
     private cdrf: ChangeDetectorRef,
-    private headerService: HeaderService
+    private headerService: HeaderService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -303,5 +306,15 @@ export class WorkInstructionsComponent
     if (this.fetchWISubscription) {
       this.fetchWISubscription.unsubscribe();
     }
+  }
+  openHeaderModel() {
+    const dialogRef = this.dialog.open(WorkInstructionHeaderModalComponent, {
+      maxWidth: '100vw',
+      maxHeight: '100vh',
+      height: '100%',
+      width: '100%',
+      panelClass: 'full-screen-modal',
+      disableClose: true
+    });
   }
 }

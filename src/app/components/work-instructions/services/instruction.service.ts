@@ -10,7 +10,8 @@ import {
   from,
   Observable,
   of,
-  throwError
+  throwError,
+  BehaviorSubject
 } from 'rxjs';
 import {
   Category,
@@ -42,6 +43,7 @@ export interface InstructionQuery {
 
 @Injectable({ providedIn: 'root' })
 export class InstructionService {
+  stepsData$: BehaviorSubject<any> = new BehaviorSubject({});
   constructor(private _appService: AppService, private store: Store<State>) {}
 
   getCategoriesObject = (categories: Category[]): CategoryObject =>
@@ -1351,4 +1353,35 @@ export class InstructionService {
       data
     );
   }
+
+  generateTags$(image): Observable<any> {
+    return this._appService._postData(
+      environment.wiApiUrl,
+      'generateTags',
+      image
+    );
+  }
+  generateHeaders$(data): Observable<any> {
+    return this._appService._postData(
+      environment.wiApiUrl,
+      'generateHeader',
+      data
+    );
+  }
+  generateSteps$(data): Observable<any> {
+    return this._appService._postData(
+      environment.wiApiUrl,
+      'generateSteps',
+      data
+    );
+  }
+  generateDetails$(data, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
+    return this._appService._postData(
+      environment.wiApiUrl,
+      'generateDetails',
+      data,
+      info
+    );
+  }
+
 }

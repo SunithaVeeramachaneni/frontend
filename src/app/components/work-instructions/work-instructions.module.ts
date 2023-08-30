@@ -63,12 +63,17 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { MatCardModule } from '@angular/material/card';
 import { MatRadioModule } from '@angular/material/radio';
-
+import { WorkInstructionHeaderComponent } from './work-instruction-header/work-instruction-header.component';
+import { WorkInstructionHeaderModalComponent } from './work-instruction-header-modal/work-instruction-header-modal.component';
+import { UploadImagePreviewComponent } from 'src/app/forms/components/upload-image-preview/upload-image-preview.component';
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/work-instructions/', '.json');
+import { FormModule } from 'src/app/forms/form.module';
+import { WorkInstructionAuthoringComponent } from './work-instruction-authoring/work-instruction-authoring.component';
 
 @NgModule({
   imports: [
+    FormModule,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
@@ -140,7 +145,10 @@ export const customTranslateLoader = (http: HttpClient) =>
     FavoritesComponent,
     MediaFilesComponent,
     CategoryWiseInstructionsComponent,
-    PlayerComponent
+    PlayerComponent,
+    WorkInstructionHeaderComponent,
+    WorkInstructionHeaderModalComponent,
+    WorkInstructionAuthoringComponent
   ]
 })
 export class WorkInstructionsPageModule {

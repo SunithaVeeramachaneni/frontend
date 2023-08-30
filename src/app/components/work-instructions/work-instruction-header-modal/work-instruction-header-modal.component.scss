@@ -1,0 +1,40 @@
+@import '../../../../scss/colors.scss';
+
+.form-toolbar {
+  height: 65px;
+  background-color: $white;
+  border-bottom: 1px solid $border-color;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+
+  .back-btn {
+    border: none;
+    background-color: transparent;
+
+    .back-btn-text {
+      font-weight: 700;
+      font-size: 120%;
+      letter-spacing: 0.15px;
+      color: $text-color;
+      margin-left: 10px;
+      position: relative;
+      top: -2px;
+    }
+
+    .back-arrow {
+      height: 15px;
+      width: 15px;
+      position: relative;
+      top: 1px;
+    }
+  }
+  .header-buttons {
+    width: 12%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    margin-right: 30px;
+  }
+}
