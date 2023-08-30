@@ -591,11 +591,21 @@ export const assetImg = 'assets/master-configurations/asset-icon.svg';
 export const plantImg = 'assets/master-configurations/default-plant.svg';
 
 export const colorsByStatus = {
-  overdue: 'red',
-  assigned: 'lightgreen',
-  open: 'orange',
-  submitted: 'green',
-  'In-Progress': 'blue',
-  Open: 'lightblue',
-  Resolved: 'green'
+  null: 'lightgray',
+  ASSIGNED: '#5AC8FA',
+  OPEN: '#E0E0E0',
+  OVERDUE: '#F44336',
+  SUBMITTED: '#4CAF50',
+  SKIPPED: '#9E9E9E',
+  Assigned: '#5AC8FA',
+  Overdue: '#F44336',
+  Submitted: '#4CAF50',
+  Skipped: '#9E9E9E',
+  'In-Progress': '#FFCD38',
+  Open: '#E0E0E0',
+  Resolved: '#4CAF50',
+  'No Exception': '#76CC6D',
+  Completed: '#CDDC39',
+  Incomplete: '#F44336',
+  Created: '#F6685E'
 };
