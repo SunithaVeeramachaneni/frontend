@@ -554,7 +554,7 @@
   </div>
   <div class="ai-form-container" *ngIf="this.isCreateAI">
     <div class="ai-create-form-container">
-      <div class="ai-prompt-container">
+      <!-- <div class="ai-prompt-container">
         <h3 class="ai-form-prompt-heading" translate>
           formCreateAISelectPlant
         </h3>
@@ -603,12 +603,13 @@
             </mat-form-field>
           </form>
         </div>
-      </div>
+      </div> -->
       <div class="ai-prompt-container">
-        <h3 class="ai-form-prompt-heading" translate>formCreateAIHeading</h3>
         <div class="ai-chat-container">
           <form [formGroup]="promptFormData" class="prompt-form">
-            <label for="prompt" translate> enterPrompt </label>
+            <label for="prompt" class="prompt-label" translate>
+              formCreateAIHeading
+            </label>
             <div class="prompt-container-parent">
               <div class="prompt-container">
                 <div class="prompt-container-icon">
@@ -659,6 +660,16 @@
               </div>
             </div>
           </form>
+          <p class="prompt-label-secondary" translate>tryPrompts</p>
+          <div class="ai-form-trial">
+            <button
+              class="prompt-trial-btn"
+              *ngFor="let prompt of aiFormPrompts; let i = index"
+              (click)="submitAiTrialPrompt(i)"
+            >
+              {{ prompt }}
+            </button>
+          </div>
         </div>
       </div>
 

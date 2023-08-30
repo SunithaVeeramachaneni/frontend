@@ -390,6 +390,7 @@
   "createFormAI": "Generate using AI",
   "createFormUsingAi": "Generate Form Using AI",
   "enterPrompt": "Enter Prompt",
+  "tryPrompts": "Try Prompts:",
   "formCreateAIHeading": "What forms would you like to generate?",
   "formCreateAISelectPlant": "Hi, Please select a plant to generate forms.",
   "selectPlant": "Select Plant",

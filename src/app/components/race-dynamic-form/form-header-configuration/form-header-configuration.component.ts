@@ -127,6 +127,10 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   transcript = '';
   inactivityTimeout: any;
   inactivityDuration = 2000;
+  aiFormPrompts = [
+    'Checklist for general inspection of the lube oil system',
+    'Form to create daily inspection of turbine motor'
+  ];
 
   plantFilterInput = '';
   readonly formConfigurationStatus = formConfigurationStatus;
@@ -366,6 +370,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
       });
   }
   onPromptSubmit() {
+    this.promptFormData.get('plantId').setValue(this.plantInformation[0]?.id);
     this.formCreateLoading$.next(true);
     this.isPromptGenerated$.next(false);
     const prompt = this.promptFormData.value.prompt.trim();
@@ -960,6 +965,11 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
         }
       });
     }
+  }
+
+  submitAiTrialPrompt(idx: number) {
+    this.promptFormData.get('prompt').setValue(this.aiFormPrompts[idx]);
+    this.onPromptSubmit();
   }
 
   deleteAdditionalDetails(index: number) {
