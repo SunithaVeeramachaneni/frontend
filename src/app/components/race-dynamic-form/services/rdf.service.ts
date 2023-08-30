@@ -47,7 +47,8 @@ export class RaceDynamicFormService {
   attachmentsMapping$ = new BehaviorSubject<any>({});
   pdfMapping$ = new BehaviorSubject<any>({});
   embeddedFormId;
-
+  showGenerateSectionId = new BehaviorSubject<string | null>(null);
+  showGenerateLoadingSectionId = new BehaviorSubject<string | null>(null);
   constructor(
     private toastService: ToastService,
     private appService: AppService,

@@ -106,6 +106,77 @@
       width: 13px;
     }
   }
+  .section-generate-container {
+    background-color: #2a3eb1;
+    border-radius: 7px;
+    margin-top: 12px;
+    .prompt-container {
+      display: flex;
+      flex-direction: row;
+
+      .prompt-submit {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0px 10px;
+        width: 3%;
+      }
+      .prompt-container-icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0px 10px;
+        width: 3%;
+
+        .prompt-submit-btn {
+          background-color: transparent;
+          border: none;
+          outline: none;
+          cursor: pointer;
+        }
+      }
+      .prompt-container-input {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        border-radius: 5px;
+        width: 94%;
+        ::ng-deep .mat-form-field-appearance-outline.mat-form-field-disabled,
+        ::ng-deep .mat-form-field-outline {
+          opacity: 0;
+        }
+        ::ng-deep .mat-form-field {
+          width: 100%;
+          border: none;
+        }
+        ::ng-deep .mat-form-field-infix {
+          border-top: none;
+        }
+        .prompt-input {
+          width: 100%;
+          height: max-content;
+          outline: none;
+          border: none;
+          resize: none;
+          overflow-y: none;
+          color: $white;
+          caret-color: $white;
+        }
+        .prompt-input::selection {
+          background: $white;
+          color: $black;
+        }
+        .prompt-input::placeholder {
+          color: $gray;
+        }
+      }
+      .icon {
+        height: 20px;
+        width: 20px;
+      }
+    }
+  }
 
   .questions-content {
     background: $white;
@@ -118,6 +189,22 @@
   .disable-questions {
     pointer-events: none;
     background: $timeago-bg;
+  }
+  .prompt-form-loader-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    .prompt-form-loader {
+      margin: 20px 10px;
+      font-size: 150%;
+      font-weight: 500;
+    }
+    .loader-icon {
+      margin: 5px;
+      width: 55px;
+      mix-blend-mode: multiply;
+    }
   }
 }
 .sectionHeadRight {

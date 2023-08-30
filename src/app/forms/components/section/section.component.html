@@ -118,6 +118,49 @@
       >
         <ng-content></ng-content>
       </div>
+      <div
+        class="section-generate-container"
+        *ngIf="
+          (showGenerateSectionId() | async) === sectionForm.get('id').value
+        "
+      >
+        <div class="prompt-container">
+          <div class="prompt-container-icon">
+            <svg-icon icon="icon-add-form-ai-white" class="icon"></svg-icon>
+          </div>
+          <div class="prompt-container-input">
+            <mat-form-field appearance="outline">
+              <textarea
+                #promptInput
+                class="prompt-input"
+                id="prompt"
+                matInput
+                matAutosize
+                name="prompt"
+                placeholder="Type your prompt here"
+                cdkTextareaAutosize
+                #autosize="cdkTextareaAutosize"
+                cdkAutosizeMinRows="1"
+                cdkAutosizeMaxRows="25"
+                (alt.enter)="addSectionFromPrompt(promptInput.value)"
+              ></textarea>
+            </mat-form-field>
+          </div>
+          <div class="prompt-submit">
+            <div class="prompt-container-icon">
+              <button
+                class="prompt-submit-btn"
+                (click)="addSectionFromPrompt(promptInput.value)"
+              >
+                <svg-icon
+                  icon="icon-send-form-ai-white"
+                  class="icon"
+                ></svg-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <button id="sectionAddBtn" class="add-section-btn" (click)="addSection()">
         <svg-icon
@@ -127,6 +170,34 @@
         ></svg-icon>
         {{ 'addSection' | translate }}
       </button>
+      <button
+        id="sectionGenerateBtn"
+        class="add-section-btn"
+        (click)="generateSectionVisible(sectionForm.get('id').value)"
+      >
+        <svg-icon
+          id="sectionAddIcon"
+          icon="icon-add-form-ai"
+          class="add-section-btn-icon"
+        ></svg-icon>
+        {{ 'addSectionAi' | translate }}
+      </button>
+      <div
+        *ngIf="
+          (showGenerateLoadingSectionId() | async) ===
+          sectionForm.get('id').value
+        "
+        class="prompt-form-loader-container"
+      >
+        <img
+          src="assets/Images/ai-form-loader.gif"
+          alt=""
+          class="loader-icon"
+        />
+        <span class="prompt-form-loader">
+          {{ 'formGenerationLoader' | translate }}</span
+        >
+      </div>
     </div>
   </div>
 </div>

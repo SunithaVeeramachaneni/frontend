@@ -8,12 +8,13 @@ import {
   Output,
   ViewChild,
   ElementRef,
-  OnDestroy
+  OnDestroy,
+  ChangeDetectorRef
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { isEqual } from 'lodash-es';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -21,12 +22,20 @@ import {
   takeUntil,
   tap
 } from 'rxjs/operators';
-import { State } from 'src/app/forms/state/builder/builder-state.selectors';
-import { SectionEvent, Section } from 'src/app/interfaces';
+import {
+  State,
+  getFormConfigurationCounter,
+  getFormMetadata,
+  getRequestCounter
+} from 'src/app/forms/state/builder/builder-state.selectors';
+import { SectionEvent, Section, Question } from 'src/app/interfaces';
 import { BuilderConfigurationActions } from '../../state/actions';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmModalPopupComponent } from 'src/app/components/race-dynamic-form/confirm-modal-popup/confirm-modal-popup/confirm-modal-popup.component';
-
+import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
+import { v4 as uuidv4 } from 'uuid';
+import { FormMetadata } from 'src/app/interfaces/form-configuration';
+import { RoundPlanConfigurationService } from '../../services/round-plan-configuration.service';
 @Component({
   selector: 'app-section',
   templateUrl: './section.component.html',
@@ -37,6 +46,10 @@ export class SectionComponent implements OnInit, OnDestroy {
   @ViewChild('sectionName') sectionName: ElementRef;
 
   @Input() isTemplate: boolean;
+  requestCounter: number;
+  formMetadata: FormMetadata;
+  getFormConfigurationCounter$: Observable<any>;
+  formConfigurationCounter: number;
   @Input() set pageIndex(pageIndex: number) {
     this._pageIndex = pageIndex;
   }
@@ -110,7 +123,9 @@ export class SectionComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private dialog: MatDialog,
-    private store: Store<State>
+    private store: Store<State>,
+    private rdfService: RaceDynamicFormService,
+    private roundPlanConfigurationServce: RoundPlanConfigurationService
   ) {}
 
   ngOnInit() {
@@ -143,7 +158,95 @@ export class SectionComponent implements OnInit, OnDestroy {
       type: 'add'
     });
   }
+  generateSectionVisible(sectionId: string) {
+    this.rdfService.showGenerateSectionId.next(sectionId);
+  }
+  showGenerateSectionId() {
+    return this.rdfService.showGenerateSectionId;
+  }
+  showGenerateLoadingSectionId() {
+    return this.rdfService.showGenerateLoadingSectionId;
+  }
 
+  addSectionFromPrompt(prompt: string) {
+    this.rdfService.showGenerateLoadingSectionId.next(this.sectionId);
+    this.store
+      .select(getRequestCounter)
+      .subscribe((count) => (this.requestCounter = count));
+    this.store
+      .select(getFormMetadata)
+      .subscribe((formMetadata) => (this.formMetadata = formMetadata));
+    this.store
+      .select(getFormConfigurationCounter())
+      .pipe(
+        tap((formConfigurationCounter) => {
+          this.formConfigurationCounter = formConfigurationCounter;
+        })
+      )
+      .subscribe();
+    this.rdfService
+      .regenerateQuestionsForSections$(
+        this.formMetadata?.name,
+        prompt,
+        uuidv4(),
+        this.formConfigurationCounter,
+        this.requestCounter
+      )
+      .pipe(
+        tap((questions: Question[]) => {
+          this.store.dispatch(
+            BuilderConfigurationActions.addSections({
+              sections: [
+                {
+                  id: questions[0].sectionId,
+                  name: prompt,
+                  position: this.sectionIndex + 1,
+                  isOpen: true
+                }
+              ],
+              questions: [questions[0]],
+              pageIndex: this.pageIndex,
+              sectionIndex: this.sectionIndex + 1,
+              formStatus: '',
+              formDetailPublishStatus: '',
+              formSaveStatus: '',
+              counter: this.formConfigurationCounter
+            })
+          );
+          const questionsArray = questions.slice(1);
+          this.addQuestionWithDelay(questions[0].sectionId, questionsArray, 0);
+          this.rdfService.showGenerateSectionId.next(null);
+          this.rdfService.showGenerateLoadingSectionId.next(null);
+        })
+      )
+      .subscribe();
+  }
+  addQuestionWithDelay(id, questionsArray, questionIndex) {
+    if (questionIndex >= questionsArray.length) {
+      return; // Base case: All questions added
+    }
+
+    const currentQuestion = questionsArray[questionIndex];
+    const questions: Question[] = [currentQuestion];
+    const sectionId = id;
+    const counter = this.formConfigurationCounter + 1;
+    const pageIndex = 0;
+
+    this.store.dispatch(
+      BuilderConfigurationActions.addQuestions({
+        questions,
+        pageIndex,
+        sectionId,
+        questionIndex: currentQuestion.position,
+        counter,
+        ...this.roundPlanConfigurationServce.getFormConfigurationStatuses()
+      })
+    );
+
+    setTimeout(() => {
+      this.addQuestionWithDelay(id, questionsArray, questionIndex + 1); // Recurse to the next question
+    }, 600);
+  }
   toggleIsOpenState = () => {
     this.sectionForm
       .get('isOpen')
