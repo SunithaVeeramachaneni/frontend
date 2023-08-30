@@ -70,6 +70,7 @@ import { getRequestCounter } from 'src/app/forms/state/builder/builder-state.sel
 import { FormUpdateProgressService } from 'src/app/forms/services/form-update-progress.service';
 import { v4 as uuidv4 } from 'uuid';
 import * as annyang from 'annyang';
+import { CdkDragDrop } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-form-header-configuration',
@@ -370,7 +371,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
       });
   }
   onPromptSubmit() {
-    this.promptFormData.get('plantId').setValue(this.plantInformation[0]?.id);
+    this.promptFormData.get('plantId').setValue(this.plantInformation[0]);
     this.formCreateLoading$.next(true);
     this.isPromptGenerated$.next(false);
     const prompt = this.promptFormData.value.prompt.trim();
@@ -400,19 +401,28 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
       });
   }
   addToGeneratedForm(form) {
-    let sectionStr = '<ul>';
-    form?.sections?.forEach((section) => {
-      sectionStr += `<li>${section?.sectionName}</li>`;
-    });
-    sectionStr += '</ul>';
     this.generatedForms.push(
       this.fb.group({
         formTitle: [form?.formTitle, [Validators.required]],
-        sections: [sectionStr, [Validators.required]]
+        sections: [form.sections, [Validators.required]]
       })
     );
   }
-
+  drop(event: CdkDragDrop<string[]>, formIdx: number) {
+    const arr = this.generatedForms.controls[formIdx].value.sections;
+    const index1 = event.previousIndex;
+    const index2 = event.currentIndex;
+    const element = arr.splice(index1, 1)[0]; // Remove element from 'fromIndex'
+    arr.splice(index2, 0, element); // Insert element at 'toIndex'
+  }
+  addSection(formIdx: number) {
+    const arr = this.generatedForms.controls[formIdx].value.sections;
+    arr.push({ sectionName: '' });
+  }
+  deleteSection(formIdx: number, sectionIdx: number) {
+    const arr = this.generatedForms.controls[formIdx].value.sections;
+    arr.splice(sectionIdx, 1);
+  }
   handleEditorFocus(focus: boolean) {
     if (this.isOpen.value !== focus) {
       this.isOpen.setValue(focus);
@@ -660,7 +670,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     } else {
       const formsArray = this.generatedForms.value.map((form) => {
         const { formTitle, sections: formSections } = form;
-        const sections = this.getSectionsArrayFromHTML(formSections);
+        const sections = this.getSectionsArray(formSections);
         return {
           uid: uuidv4(),
           formTitle,
@@ -678,19 +688,14 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
         plant: this.promptFormData.value.plantId.name,
         requestCounter: this.requestCounter
       };
-
       this.formAiGenService.aiFormGeneratePayload$.next(forms);
       this.formAiGenService.aiFormLoading$.next(true);
     }
   }
 
-  getSectionsArrayFromHTML(inputString: string) {
-    const regex = /<li>(.*?)<\/li>/g;
-    const matches = inputString.match(regex);
-
-    const sectionsArray = matches.map((match) => {
-      const sectionName = match.replace(/<\/?li>/g, '');
-      return { sectionName };
+  getSectionsArray(sections: any[]) {
+    const sectionsArray = sections.map((section) => {
+      return section;
     });
 
     return sectionsArray;

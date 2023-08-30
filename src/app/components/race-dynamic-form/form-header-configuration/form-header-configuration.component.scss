@@ -531,6 +531,7 @@
         .margin-top--6 {
           margin-top: -6px;
         }
+
         .prompt-regenerate-form-section {
           .prompt-regenerate-section-btn {
             margin-right: 10px;
@@ -559,9 +560,75 @@
               }
             }
           }
+        }
+        .prompt-generated-section-container {
+          border: 1px solid black;
+          border-radius: 5px;
+          padding: 10px;
           .prompt-generated-section-field {
             width: 100%;
-            margin-top: -6px;
+          }
+          .prompt-generated-section-list {
+            ::ng-deep .cdk-drag-placeholder {
+              box-shadow: 0 2px 1px 1px rgba(0, 0, 0, 0.2),
+                0 8px 10px 1px rgba(0, 0, 0, 0.14),
+                0 3px 14px 2px rgba(0, 0, 0, 0.12);
+            }
+
+            ::ng-deep .cdk-drag-animating {
+              transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+            }
+            .prompt-generated-section {
+              padding: 10px;
+              background-color: $attachment-bg;
+              margin-bottom: 5px;
+              border-radius: 5px;
+              .prompt-generated-section-drag-icon {
+                width: 15px;
+                height: 15px;
+                margin-right: 10px;
+                cursor: grab;
+              }
+              .prompt-generated-section-drag-icon :active {
+                cursor: grabbing;
+              }
+              .section_title_input {
+                border: none;
+                cursor: text;
+                width: 90%;
+                background: none;
+                font-size: 110%;
+                font-weight: 500;
+                text-overflow: ellipsis;
+                outline: none;
+                display: inline-block;
+                white-space: nowrap;
+                overflow: hidden;
+              }
+            }
+          }
+          .add-section-btn {
+            background: $white;
+            border: 1px solid $border-color;
+            border-radius: 5px;
+            font-weight: 400;
+            font-size: 80%;
+            letter-spacing: 0.4px;
+            color: $black;
+            padding: 2px 5px;
+            margin-top: 5px;
+
+            .add-section-btn-icon {
+              position: relative;
+              top: 2px;
+              height: 13px;
+              width: 13px;
+            }
+          }
+          .delete-section-btn-icon {
+            height: 20px;
+            width: 20px;
+            cursor: pointer;
           }
         }
       }

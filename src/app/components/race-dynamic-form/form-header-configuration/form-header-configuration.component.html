@@ -719,8 +719,6 @@
                           formControlName="formTitle"
                           autofocus="true"
                           autocomplete="off"
-                          (keyup.enter)="form.get('formTitle').disable()"
-                          (blur)="form.get('formTitle').disable()"
                         />
                       </a>
                       <button
@@ -761,7 +759,7 @@
                         </div>
                       </button>
                     </div>
-                    <mat-form-field
+                    <!-- <mat-form-field
                       class="width-100 margin-top--6"
                       appearance="outline"
                     >
@@ -783,7 +781,61 @@
                       >
                         {{ 'errorExceedingLimit' | translate }}
                       </mat-error>
-                    </mat-form-field>
+                    </mat-form-field> -->
+                    <div class="width-100 prompt-generated-section-container">
+                      <div
+                        cdkDropList
+                        class="prompt-generated-section-list"
+                        (cdkDropListDropped)="drop($event, i)"
+                      >
+                        <div
+                          class="prompt-generated-section"
+                          *ngFor="
+                            let section of generatedForms.controls[i].value
+                              .sections;
+                            let j = index
+                          "
+                          cdkDrag
+                        >
+                          <svg-icon
+                            class="prompt-generated-section-drag-icon"
+                            icon="icon-six-dots"
+                            cdkDragHandle
+                          ></svg-icon>
+                          <input
+                            id="sectionName"
+                            #sectionName
+                            type="text"
+                            class="section_title_input"
+                            [value]="section?.sectionName"
+                            autofocus="true"
+                            autocomplete="off"
+                            (blur)="
+                              generatedForms.value[i].sections[j].sectionName =
+                                sectionName.value
+                            "
+                          />
+                          <svg-icon
+                            id="sectionDeleteIcon"
+                            icon="icon-delete-cross"
+                            class="delete-section-btn-icon"
+                            (click)="deleteSection(i, j)"
+                          ></svg-icon>
+                        </div>
+                        <button
+                          id="sectionAddBtn"
+                          class="add-section-btn"
+                          (click)="addSection(i)"
+                        >
+                          <svg-icon
+                            id="sectionAddIcon"
+                            icon="icon-add-section"
+                            class="add-section-btn-icon"
+                          ></svg-icon>
+                          {{ 'addSection' | translate }}
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
