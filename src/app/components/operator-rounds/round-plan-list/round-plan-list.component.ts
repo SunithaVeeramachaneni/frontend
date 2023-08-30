@@ -610,11 +610,22 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
         if (objectKeys.length > 0) {
           const uniqueLastPublishedBy = formsList.rows
             .map((item) => item.lastPublishedBy)
-            .filter(
-              (value, index, self) => self.indexOf(value) === index && value
-            );
-          this.lastPublishedBy = [...uniqueLastPublishedBy];
+            .filter((value, index, self) => {
+              if (value !== null && value !== undefined) {
+                const hasDifferentCasingDuplicate = self
+                  .slice(0, index)
+                  .some(
+                    (item) =>
+                      item !== null &&
+                      item !== undefined &&
+                      item.toLowerCase() === value.toLowerCase()
+                  );
 
+                return !hasDifferentCasingDuplicate;
+              }
+              return false;
+            });
+          this.lastPublishedBy = [...uniqueLastPublishedBy];
           const uniqueLastModifiedBy = formsList.rows
             .map((item) => {
               if (item.lastModifiedBy) {
