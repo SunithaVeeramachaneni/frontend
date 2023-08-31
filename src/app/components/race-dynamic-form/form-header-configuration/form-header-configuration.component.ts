@@ -71,6 +71,7 @@ import { FormUpdateProgressService } from 'src/app/forms/services/form-update-pr
 import { v4 as uuidv4 } from 'uuid';
 import * as annyang from 'annyang';
 import { CdkDragDrop } from '@angular/cdk/drag-drop';
+import { AiMicModalComponent } from 'src/app/forms/components/ai-mic-modal/ai-mic-modal.component';
 
 @Component({
   selector: 'app-form-header-configuration',
@@ -239,16 +240,16 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
       })
     });
 
-    if (annyang) {
-      const commands = {
-        '*text': (text: string) => {
-          this.transcript += ' ' + text;
-          this.promptFormData.get('prompt').setValue(this.transcript);
-          this.resetInactivityTimeout();
-        }
-      };
-      annyang.addCommands(commands);
-    }
+    // if (annyang) {
+    //   const commands = {
+    //     '*text': (text: string) => {
+    //       this.transcript += ' ' + text;
+    //       this.promptFormData.get('prompt').setValue(this.transcript);
+    //       this.resetInactivityTimeout();
+    //     }
+    //   };
+    //   annyang.addCommands(commands);
+    // }
 
     this.formMetaDataSubscription = this.store
       .select(getFormMetadata)
@@ -310,28 +311,38 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     });
   }
   startListening() {
-    if (annyang) {
-      this.promptFormData.get('prompt').setValue('');
-      this.isSpeechRecgonitionOn = true;
-      annyang.start();
-    }
+    const dialogRef = this.dialog.open(AiMicModalComponent, {
+      width: '350px',
+      height: '350px'
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result && result?.trim() !== '') {
+        this.promptFormData.get('prompt').setValue(result);
+        this.onPromptSubmit();
+      }
+    });
+    // if (annyang) {
+    //   this.promptFormData.get('prompt').setValue('');
+    //   this.isSpeechRecgonitionOn = true;
+    //   annyang.start();
+    // }
   }
 
-  stopListening() {
-    if (annyang) {
-      this.isSpeechRecgonitionOn = false;
-      annyang.abort();
-      this.transcript = '';
-    }
-  }
+  // stopListening() {
+  //   if (annyang) {
+  //     this.isSpeechRecgonitionOn = false;
+  //     annyang.abort();
+  //     this.transcript = '';
+  //   }
+  // }
 
-  resetInactivityTimeout() {
-    clearTimeout(this.inactivityTimeout);
-    this.inactivityTimeout = setTimeout(() => {
-      this.stopListening();
-      this.onPromptSubmit();
-    }, this.inactivityDuration);
-  }
+  // resetInactivityTimeout() {
+  //   clearTimeout(this.inactivityTimeout);
+  //   this.inactivityTimeout = setTimeout(() => {
+  //     this.stopListening();
+  //     this.onPromptSubmit();
+  //   }, this.inactivityDuration);
+  // }
 
   getSize(value) {
     if (value && value === value.toUpperCase()) {

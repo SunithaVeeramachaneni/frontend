@@ -1,0 +1,31 @@
+.ai-mic-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  .ai-mic-icon-container {
+    width: 150px;
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .ai-mic-icon {
+      cursor: pointer;
+    }
+    .ai-mic-icon-inactive {
+      background-color: #0070fd;
+      box-shadow: 0px 0px 10px #25282b;
+      border-radius: 100%;
+      width: 25px;
+      height: 25px;
+      padding: 10px;
+      cursor: pointer;
+    }
+  }
+  .ai-mic-text {
+    text-align: center;
+    font-size: 16px;
+    font-weight: 500;
+  }
+}

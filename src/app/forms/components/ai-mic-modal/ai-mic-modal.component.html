@@ -1,0 +1,18 @@
+<div class="ai-mic-container">
+  <div class="ai-mic-icon-container">
+    <img
+      class="ai-mic-icon"
+      src="assets/Images/mic-active-animation.gif"
+      alt=""
+      *ngIf="listeningBoolean"
+      (click)="toggleListening()"
+    />
+    <svg-icon
+      class="ai-mic-icon-inactive"
+      icon="icon-inactive-mic-white"
+      *ngIf="!listeningBoolean"
+      (click)="toggleListening()"
+    ></svg-icon>
+  </div>
+  <p class="ai-mic-text">{{ transcript }}</p>
+</div>

@@ -121,6 +121,7 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { UploadImagePreviewComponent } from './components/upload-image-preview/upload-image-preview.component';
 import { FormUpdateDeleteProgressComponent } from './components/form-update-delete-progress/form-update-delete-progress.component';
 import { AiFormUpdateDeleteProgressComponent } from './components/ai-form-update-delete-progress/ai-form-update-delete-progress.component';
+import { AiMicModalComponent } from './components/ai-mic-modal/ai-mic-modal.component';
 @NgModule({
   declarations: [
     PageComponent,
@@ -196,7 +197,8 @@ import { AiFormUpdateDeleteProgressComponent } from './components/ai-form-update
     DynamicStepperComponent,
     FormUpdateDeleteProgressComponent,
     AiFormUpdateDeleteProgressComponent,
-    StepsHeaderComponent
+    StepsHeaderComponent,
+    AiMicModalComponent
   ],
   imports: [
     SharedModule,
