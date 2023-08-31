@@ -1,6 +1,4 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { FormGroup } from '@angular/forms';
-import { FormBuilder } from '@angular/forms';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
 
 @Component({
@@ -27,16 +25,14 @@ export class TaskLevelTaskComponentsComponent implements OnInit {
     return this._checkboxStatus;
   }
   questionToSection = new Map<number, any[]>();
+  questionToSectionId: Map<number, any[]> = new Map();
   allCheckedSection: boolean = false;
   partiallyFilledSection: boolean = false;
   private _checkboxStatus: any;
   private _selectedPage: any;
-  constructor(
-    private fb: FormBuilder,
-    private operatorRoundService: OperatorRoundsService
-  ) {}
+  constructor(private operatorRoundService: OperatorRoundsService) {}
   ngOnInit() {}
-  questionToSectionId: Map<number, any[]> = new Map();
+
   toggleIsOpenStatePage = (page) => {
     page.isOpen = !page.isOpen;
     page.sections.forEach((section) => {
