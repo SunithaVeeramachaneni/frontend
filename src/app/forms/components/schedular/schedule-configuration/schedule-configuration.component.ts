@@ -938,10 +938,12 @@ export class ScheduleConfigurationComponent
             } = config;
             this.startDatePickerMinDate = new Date(startDate);
             this.scheduleEndOnPickerMinDate = isBefore(
-              new Date(startDate),
-              new Date(scheduleEndOn)
+              new Date(),
+              new Date(startDate)
             )
               ? new Date(startDate)
+              : isBefore(new Date(), new Date(scheduleEndOn))
+              ? new Date()
               : new Date(scheduleEndOn);
             config = {
               ...config,
@@ -1123,10 +1125,12 @@ export class ScheduleConfigurationComponent
             } = config;
             this.startDatePickerMinDate = new Date(startDate);
             this.scheduleEndOnPickerMinDate = isBefore(
-              new Date(startDate),
-              new Date(scheduleEndOn)
+              new Date(),
+              new Date(startDate)
             )
               ? new Date(startDate)
+              : isBefore(new Date(), new Date(scheduleEndOn))
+              ? new Date()
               : new Date(scheduleEndOn);
             config = {
               ...config,
