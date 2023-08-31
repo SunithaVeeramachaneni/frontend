@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable @typescript-eslint/dot-notation */
 /* eslint-disable no-underscore-dangle */
 import {
@@ -58,18 +59,9 @@ export class TaskLevelSchedulerComponent implements OnInit {
   selectedNode = [];
   selectedPages: any;
   selectedNodeId: any;
-  statusList = {
-    changesSaved: 'All Changes Saved',
-    savingChanges: 'Saving Changes...',
-    scheduling: 'Scheduling...',
-    revising: 'Revising...'
-  };
   mode = 'scheduler';
   isPreviewActive = false;
   checkboxStatus = { status: false };
-  statusSubject: BehaviorSubject<string> = new BehaviorSubject<string>(
-    this.statusList.changesSaved
-  );
   nodeIdToNodeName = {};
   pageCheckBoxStatusObject: any = {};
   openCloseRightPanel = false;
@@ -79,7 +71,6 @@ export class TaskLevelSchedulerComponent implements OnInit {
 
   ngOnInit(): void {
     this.searchHierarchyKey = new FormControl('');
-    this.status = this.statusList.changesSaved;
     const { name, description } = this.roundPlanData.roundPlanDetail;
     this.taskLevelScheduleHeaderConfiguration = {
       name,
