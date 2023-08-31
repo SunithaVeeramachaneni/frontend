@@ -60,6 +60,7 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
 
   public responseForm: FormGroup;
   public rangeMetadataForm: FormGroup;
+  public sliderOptionsForm: FormGroup;
 
   public isFormNotUpdated = true;
   multipleChoiceOpenState = false;
@@ -72,13 +73,6 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
     isOpen: false,
     questionId: '',
     value: 'TF'
-  };
-
-  sliderOptions = {
-    value: 0,
-    min: 0,
-    max: 100,
-    increment: 1
   };
 
   lowerLimitActions = ['None', 'Warning', 'Alert', 'Note'];
@@ -108,6 +102,13 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
       maxMsg: '',
       minAction: 'None',
       maxAction: 'None'
+    });
+
+    this.sliderOptionsForm = this.fb.group({
+      value: 0,
+      min: 0,
+      max: 100,
+      increment: 1
     });
 
     this.sliderOpenState$ = this.formService.sliderOpenState$;
@@ -148,7 +149,7 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
       this.sliderOpenState = state;
       this.cdrf.detectChanges();
       if (this.question && typeof this.question.value !== 'string') {
-        this.sliderOptions = this.question.value;
+        this.sliderOptionsForm.patchValue(this.question.value);
       }
     });
 
@@ -189,6 +190,23 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
           }
           if (!curr.max) {
             this.rangeMetadataForm.patchValue({ maxAction: 'None' });
+          }
+          this.cdrf.markForCheck();
+        })
+      )
+      .subscribe();
+
+    this.sliderOptionsForm.valueChanges
+      .pipe(
+        pairwise(),
+        debounceTime(500),
+        distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
+        tap(([prev, curr]) => {
+          if (isEqual(prev, curr)) {
+            this.isFormNotUpdated = true;
+          } else {
+            this.isFormNotUpdated = false;
           }
           this.cdrf.markForCheck();
         })
@@ -255,31 +273,49 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
     this.formService.setMultiChoiceOpenState({ isOpen: false, response: {} });
   };
 
-  applySliderOptions(values) {
-    if (values.min > values.max) {
+  applySliderOptions() {
+    if (this.sliderOptionsForm.value.min >= this.sliderOptionsForm.value.max) {
       this.toast.show({
-        text: 'The upper limit cannot be lower than the lower limit',
+        text: 'The upper limit should be greater than lower limit',
         type: 'warning'
       });
       return;
     }
-    if (values.increment <= 0) {
+    if (this.sliderOptionsForm.value.increment <= 0) {
       this.toast.show({
         text: 'Increment value should be greater than 0',
         type: 'warning'
       });
       return;
     }
-    if ((values.max - values.min) % values.increment !== 0) {
+    if (
+      this.sliderOptionsForm.value.max - this.sliderOptionsForm.value.min <
+      this.sliderOptionsForm.value.increment
+    ) {
+      this.toast.show({
+        text: 'Increment value cannot be greater than range difference',
+        type: 'warning'
+      });
+      return;
+    }
+    if (
+      (this.sliderOptionsForm.value.max - this.sliderOptionsForm.value.min) %
+        this.sliderOptionsForm.value.increment !==
+      0
+    ) {
       this.toast.show({
         text: 'Increment value should divide range difference',
         type: 'warning'
       });
       return;
     }
-    if (values.value < values.min) values.value = values.min;
-    else if (values.value > values.max) values.value = values.max;
-    this.setSliderValues.emit(values);
+    if (this.sliderOptionsForm.value.value < this.sliderOptionsForm.value.min)
+      this.sliderOptionsForm.value.value = this.sliderOptionsForm.value.min;
+    else if (
+      this.sliderOptionsForm.value.value > this.sliderOptionsForm.value.max
+    )
+      this.sliderOptionsForm.value.value = this.sliderOptionsForm.value.max;
+    this.setSliderValues.emit(this.sliderOptionsForm.value);
     this.formService.setsliderOpenState({
       isOpen: false,
       questionId: '',
