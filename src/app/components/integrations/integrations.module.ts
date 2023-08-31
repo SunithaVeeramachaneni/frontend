@@ -30,6 +30,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatListModule } from '@angular/material/list';
 import { AddEditConnectorComponent } from './add-edit-connector/add-edit-connector.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/tenant-management/', '.json');
@@ -54,6 +55,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatIconModule,
     MatTabsModule,
     MatDialogModule,
+    MatProgressSpinnerModule,
     TranslateModule.forChild({
       loader: {
         provide: TranslateLoader,

@@ -8,7 +8,9 @@ import { FormControl, FormBuilder, FormArray } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { AddEditConnectorComponent } from '../add-edit-connector/add-edit-connector.component';
 import { BehaviorSubject, Observable, combineLatest, of } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { catchError, map, mergeMap, tap } from 'rxjs/operators';
+import { IntegrationsService } from '../services/integrations.service';
+import { ErrorInfo } from 'src/app/interfaces';
 
 @Component({
   selector: 'app-integrations',
@@ -95,11 +97,24 @@ export class IntegrationsComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private cdrf: ChangeDetectorRef,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private integrationsService: IntegrationsService
   ) {}
 
   ngOnInit(): void {
+    const info: ErrorInfo = {
+      displayToast: true,
+      failureResponse: 'throwError'
+    };
     this.connectorsInitial$ = of({ data: [] as any[] });
+
+    this.connectorsInitial$ = this.integrationsService
+      .getConnectors$(info)
+      .pipe(
+        mergeMap((connectors) => of({ data: connectors })),
+        catchError(() => of({ data: [] }))
+      );
+
     this.connectors$ = combineLatest([
       this.connectorsInitial$,
       this.createUpdateDeleteConnector$
@@ -118,7 +133,7 @@ export class IntegrationsComponent implements OnInit {
       disableClose: true,
       width: '600px',
       height: '600px',
-      data: {}
+      data: { mode: 'create' }
     });
     dialogRef.afterClosed().subscribe((result) => {
       //

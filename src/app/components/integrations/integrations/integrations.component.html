@@ -1,7 +1,7 @@
 <div [formGroup]="integrationConfigForm" class="integrations-container">
   <div class="w-100 connector-step">
     <div class="connectors-container">
-      <div class="w-35 connector-left" *ngIf="connectors$ | async as connectors; else loadingConnectors">
+      <div class="w-394 connector-left" *ngIf="connectors$ | async as connectors; else loadingConnectors">
         <div class="connector-head-left">
           <span class="form-name-description">
             Connections
@@ -23,15 +23,15 @@
         <div class="dis-flex flex-wrap connector-container">
           <div *ngFor="let connector of connectors" class="connector-formtype-style w-100 m-l-0"
             (click)="connectorChanged(connector.id)" [ngClass]="{
-              'inactive-connector': !connector.isActive,
+              'inactive-connector': connector.isActive,
               'active-connector': connector.isActive,
               'selected-connector':
                 integrationConfigForm.value.connector === connector.id
             }">
             <div class="radio-label">
-              <img [src]="connector.image" class="connector-icon" />
+              <img [src]="connector.connectorId" class="connector-icon" />
               <div>
-                <span class="radio-btn-text">{{ connector.name }}</span>
+                <span class="radio-btn-text">{{ connector.connectorName }}</span>
                 <p class="connector-radio-sub-text">
                   {{ connector.description }}
                 </p>

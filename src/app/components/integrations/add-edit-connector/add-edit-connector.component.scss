@@ -12,8 +12,8 @@
       padding: 10px;
     }
     .heading {
-      font-size: 120%;
-      font-weight: 600;
+      font-size: 150%;
+      font-weight: 500;
     }
   }
   .dialog-body {
@@ -42,4 +42,34 @@
       margin-left: 5px;
     }
   }
+}
+.test-conn-spinner {
+  display: inherit !important;
+  margin-left: 10px !important;
+  padding: 5px !important;
+}
+.test-conn-btn-inprogress {
+  display: flex;
+  width: 150px;
+  align-items: center;
+}
+.submit-btn {
+  background: $blue-head;
+  color: $white;
+}
+.select-option-container {
+  // display: flex;
+  // height: 40px !important;
+  // .select-option {
+  //   display: flex;
+  //   flex-direction: column;
+  //   height: 35px !important;
+  //   line-height: 1;
+  //   .title {
+  //     color: $black;
+  //   }
+  //   .description {
+  //     color: $gray;
+  //   }
+  // }
 }
