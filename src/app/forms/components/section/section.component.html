@@ -74,6 +74,14 @@
           </button>
         </a>
         <div class="sectionHeadRight">
+          <span
+            id="regenerateSections"
+            class="regenerateSection"
+            (click)="regenerateSection(sectionForm.get('name').value)"
+          >
+            {{ 'regenerateSection' | translate }}
+          </span>
+
           <span id="sectionQuestionCount" class="sectionTaskCount">
             {{ sectionQuestionsCount }}
           </span>
@@ -142,7 +150,6 @@
                 #autosize="cdkTextareaAutosize"
                 cdkAutosizeMinRows="1"
                 cdkAutosizeMaxRows="25"
-                (alt.enter)="addSectionFromPrompt(promptInput.value)"
               ></textarea>
             </mat-form-field>
           </div>

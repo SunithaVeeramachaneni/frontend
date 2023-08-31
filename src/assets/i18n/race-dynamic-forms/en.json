@@ -400,5 +400,6 @@
   "sections": "Sections",
   "regenerateForms": "Not happy with the generated response?",
   "regenerateResponse": "Regenerate Response",
-  "continue": "Continue"
+  "continue": "Continue",
+  "regenerateSection": "Regenerate "
 }
