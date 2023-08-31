@@ -37,25 +37,14 @@ export class TaskLevelTaskComponentsComponent implements OnInit {
   ) {}
   ngOnInit() {}
   questionToSectionId: Map<number, any[]> = new Map();
-  pageForm: FormGroup = this.fb.group({
-    name: {
-      value: '',
-      disabled: true
-    },
-    isOpen: true
-  });
-
-  sectionForm: FormGroup = this.fb.group({
-    id: '',
-    name: {
-      value: '',
-      disabled: true
-    },
-    isOpen: true
-  });
-
-  toggleIsOpenState = () => {
-    this.pageForm.get('isOpen').setValue(!this.pageForm.get('isOpen').value);
+  toggleIsOpenStatePage = (page) => {
+    page.isOpen = !page.isOpen;
+    page.sections.forEach((section) => {
+      section.isOpen = !section.isOpen;
+    });
+  };
+  toggleIsOpenStateSection = (section) => {
+    section.isOpen = !section.isOpen;
   };
 
   mapQuestionToSection(pages: any[]) {
@@ -69,11 +58,6 @@ export class TaskLevelTaskComponentsComponent implements OnInit {
       });
     });
     return questionMap;
-  }
-  someCompleteSection(page) {
-    if (!page.sections) return false;
-
-    return page.sections.filter((t) => t.complete).length > 0 && !page.complete;
   }
 
   toggleAllSectionCheckbox(checkedstatus, page) {

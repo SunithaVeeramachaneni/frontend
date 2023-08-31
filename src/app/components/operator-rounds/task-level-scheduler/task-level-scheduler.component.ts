@@ -87,11 +87,14 @@ export class TaskLevelSchedulerComponent implements OnInit {
       .subscribe((data) => {
         this.authoredData = data;
         this.pages = JSON.parse(this.authoredData.subForms);
+
         Object.keys(this.pages).forEach((pageObj) => {
           this.pages[pageObj].forEach((page) => {
             page.complete = false;
             page.partiallyChecked = false;
+            page.isOpen = false;
             page.sections.forEach((section) => {
+              section.isOpen = false;
               section.partiallyChecked = false;
               section.complete = false;
             });
@@ -101,6 +104,15 @@ export class TaskLevelSchedulerComponent implements OnInit {
           });
         });
         this.flatHierarchy = JSON.parse(this.authoredData.flatHierarchy);
+        this.flatHierarchy = this.flatHierarchy.filter((node) => {
+          const page_id = 'pages_' + node['id'].toString();
+          try {
+            if (this.pages[page_id].length > 0) return true;
+            else false;
+          } catch (err) {
+            return false;
+          }
+        });
       });
 
     this.filteredOptions$ = this.searchHierarchyKey.valueChanges.pipe(

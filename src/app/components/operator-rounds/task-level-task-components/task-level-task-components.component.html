@@ -1,19 +1,19 @@
 <div *ngFor="let page of selectedPage" class="task-level-tasks">
-  <div class="pages" [formGroup]="pageForm">
+  <div class="pages">
     <div class="page-header">
       <mat-icon
         id="pageExpandIcon"
-        (click)="toggleIsOpenState()"
-        *ngIf="pageForm.get('isOpen').value === true"
+        (click)="toggleIsOpenStatePage(page)"
         class="page-arrow"
+        *ngIf="page.isOpen"
       >
         expand_more
       </mat-icon>
       <mat-icon
         id="pageRightIcon"
-        (click)="toggleIsOpenState()"
-        *ngIf="pageForm.get('isOpen').value === false"
+        (click)="toggleIsOpenStatePage(page)"
         class="page-arrow"
+        *ngIf="!page.isOpen"
       >
         chevron_right
       </mat-icon>
@@ -27,24 +27,24 @@
 
       <span class="form_page_name_input">{{ page.name }} </span>
     </div>
-    <div *ngIf="pageForm.get('isOpen').value === true" class="section-content">
+    <div class="section-content" *ngIf="page.isOpen">
       <div *ngFor="let section of page.sections">
         <div class="section dis-flex">
           <div class="width-95 section-margin">
             <div class="section-header">
               <mat-icon
                 id="sectionExpandMore"
-                (click)="toggleIsOpenState()"
-                *ngIf="sectionForm.get('isOpen').value === true"
+                (click)="toggleIsOpenStateSection(section)"
                 class="section-arrow"
+                *ngIf="section.isOpen"
               >
                 expand_more
               </mat-icon>
               <mat-icon
                 id="sectionArrow"
-                (click)="toggleIsOpenState()"
-                *ngIf="sectionForm.get('isOpen').value === false"
+                (click)="toggleIsOpenStateSection(section)"
                 class="section-arrow"
+                *ngIf="!section.isOpen"
               >
                 chevron_right
               </mat-icon>
@@ -59,7 +59,7 @@
 
               <span class="form_section_name_input">{{ section.name }}</span>
             </div>
-            <div class="questions-content">
+            <div class="questions-content" *ngIf="section.isOpen">
               <div
                 *ngFor="let question of questionToSection.get(section['id'])"
               >
