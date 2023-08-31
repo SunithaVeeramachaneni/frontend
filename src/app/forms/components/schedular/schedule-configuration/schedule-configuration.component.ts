@@ -34,6 +34,7 @@ import {
   differenceInDays,
   format,
   getDay,
+  isBefore,
   weeksToDays
 } from 'date-fns';
 import { takeUntil, tap } from 'rxjs/operators';
@@ -936,7 +937,12 @@ export class ScheduleConfigurationComponent
               scheduleByDates
             } = config;
             this.startDatePickerMinDate = new Date(startDate);
-            this.scheduleEndOnPickerMinDate = new Date(scheduleEndOn);
+            this.scheduleEndOnPickerMinDate = isBefore(
+              new Date(startDate),
+              new Date(scheduleEndOn)
+            )
+              ? new Date(startDate)
+              : new Date(scheduleEndOn);
             config = {
               ...config,
               startDate: localToTimezoneDate(
@@ -1115,6 +1121,13 @@ export class ScheduleConfigurationComponent
               scheduledTill,
               scheduleByDates
             } = config;
+            this.startDatePickerMinDate = new Date(startDate);
+            this.scheduleEndOnPickerMinDate = isBefore(
+              new Date(startDate),
+              new Date(scheduleEndOn)
+            )
+              ? new Date(startDate)
+              : new Date(scheduleEndOn);
             config = {
               ...config,
               startDate: localToTimezoneDate(
