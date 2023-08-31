@@ -670,12 +670,18 @@ button.mat-menu-item {
 .task-level-shifts {
   .mat-option-text {
     overflow: visible;
+    position: relative;
+    top: -8px;
   }
 
   .mat-option {
     line-height: 35px !important;
-    height: 70px !important;
-    margin-top: -15px;
+    height: 60px !important;
+  }
+
+  .mat-pseudo-checkbox {
+    position: relative;
+    top: -6px;
   }
 
   .shift-time {

@@ -1,5 +1,8 @@
 <div class="task-level-schedule-main">
-  <div class="dis-flex form-header">
+  <div
+    class="dis-flex form-header"
+    *ngIf="taskLevelScheduleHeaderConfiguration"
+  >
     <div class="dis-flex width-45">
       <svg-icon
         id="roundPlanDetailIcon"
@@ -9,14 +12,14 @@
       <div class="width-90">
         <a class="dis-inline">
           <span class="form_title_input">
-            {{ taskLevelScheduleHeaderConfiguration?.name }}
+            {{ taskLevelScheduleHeaderConfiguration.name }}
           </span>
         </a>
         <br />
         <div class="dis-flex center">
           <a class="width-60">
             <span class="form_description_input">
-              {{ taskLevelScheduleHeaderConfiguration?.description }}
+              {{ taskLevelScheduleHeaderConfiguration.description }}
             </span>
           </a>
         </div>
@@ -26,7 +29,7 @@
       <div class="row1">
         <span class="txt">{{ 'headerFrequency' | translate }} : </span>
         <span>
-          {{ taskLevelScheduleHeaderConfiguration?.headerFrequency }}
+          {{ taskLevelScheduleHeaderConfiguration.headerFrequency }}
         </span>
       </div>
       <div class="row2">
@@ -34,7 +37,7 @@
           <span class="txt">{{ 'shift' | translate }}: </span>
           <span
             *ngFor="
-              let shift of taskLevelScheduleHeaderConfiguration?.shiftDetails;
+              let shift of taskLevelScheduleHeaderConfiguration.shiftDetails;
               let i = index
             "
           >
@@ -42,7 +45,7 @@
             <span
               *ngIf="
                 i !==
-                taskLevelScheduleHeaderConfiguration?.shiftDetails?.length - 1
+                taskLevelScheduleHeaderConfiguration.shiftDetails.length - 1
               "
             >
               ,
@@ -51,25 +54,31 @@
         </div>
         <div>
           <span class="txt">{{ 'slots' | translate }}: </span>
-          <!-- <span *ngIf="taskLevelScheduleHeaderConfiguration !== undefined">
-            {{
-              taskLevelScheduleHeaderConfiguration?.slotDetails[0]?.startTime
-            }}
-            -
-            {{ taskLevelScheduleHeaderConfiguration?.slotDetails[0]?.endTime }}
-            ,
-            <span
-              *ngIf="
-                taskLevelScheduleHeaderConfiguration?.slotDetails?.length > 1
-              "
-              class="more"
-            >
-              +{{
-                taskLevelScheduleHeaderConfiguration?.slotDetails?.length - 1
+          <ng-container
+            *ngIf="taskLevelScheduleHeaderConfiguration.slotDetails"
+          >
+            <span>
+              {{
+                taskLevelScheduleHeaderConfiguration.slotDetails[0].startTime
               }}
-              more
+              -
+              {{
+                taskLevelScheduleHeaderConfiguration?.slotDetails[0]?.endTime
+              }}
+              ,
+              <span
+                *ngIf="
+                  taskLevelScheduleHeaderConfiguration?.slotDetails?.length > 1
+                "
+                class="more"
+              >
+                +{{
+                  taskLevelScheduleHeaderConfiguration?.slotDetails?.length - 1
+                }}
+                more
+              </span>
             </span>
-          </span> -->
+          </ng-container>
         </div>
         <div>
           <span class="txt">{{ 'starts' | translate }} : </span>
@@ -206,8 +215,8 @@
   <ng-container *ngIf="openCloseRightPanel">
     <div class="width-30 right-panel">
       <app-revise-schedule
-        [payload]="taskLevelScheduleHeaderConfiguration"
         [nodeIdToNodeName]="nodeIdToNodeName"
+        [reviseSchedule]="_payload"
         (openCloseRightPanelEvent)="openCloseRightPanelEventHandler($event)"
       >
       </app-revise-schedule>

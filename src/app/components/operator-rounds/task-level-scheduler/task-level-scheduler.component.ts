@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/dot-notation */
 /* eslint-disable no-underscore-dangle */
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnInit,
+  ChangeDetectionStrategy
+} from '@angular/core';
 
 import { FormControl } from '@angular/forms';
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -19,7 +24,8 @@ import { format } from 'date-fns';
 @Component({
   selector: 'app-task-level-scheduler',
   templateUrl: './task-level-scheduler.component.html',
-  styleUrls: ['./task-level-scheduler.component.scss']
+  styleUrls: ['./task-level-scheduler.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TaskLevelSchedulerComponent implements OnInit {
   @Input() roundPlanData: any;
@@ -67,7 +73,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
   nodeIdToNodeName = {};
   pageCheckBoxStatusObject: any = {};
   openCloseRightPanel = false;
-  private _payload: any;
+  _payload: any;
 
   constructor(private operatorRoundService: OperatorRoundsService) {}
 

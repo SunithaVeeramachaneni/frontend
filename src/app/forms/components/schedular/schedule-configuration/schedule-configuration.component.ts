@@ -778,6 +778,8 @@ export class ScheduleConfigurationComponent
       scheduleByDates,
       shiftDetails: this.prepareShiftDetailsPayload(this.shiftDetails)
     };
+    this.payloadEmitter.emit(this.payload);
+    this.gotoNextStep.emit();
   }
 
   scheduleConfiguration() {
@@ -1463,15 +1465,9 @@ export class ScheduleConfigurationComponent
     }
     return '';
   }
+
   headerLevelScheduling() {
     this.prepareScheduleConfigurationDetail();
-    this.gotoNextStep.emit();
-    this.payloadEmitter.emit(this.payload);
-    this.payloadSubject.next(this.payload);
-  }
-
-  getPayload() {
-    return this.payloadSubject.asObservable();
   }
 
   ngOnDestroy(): void {

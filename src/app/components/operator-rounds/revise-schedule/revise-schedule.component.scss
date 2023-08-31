@@ -11,7 +11,7 @@
 
   .main-scroll {
     overflow-y: auto;
-    height: calc(100vh - 315px);
+    height: calc(100vh - 295px);
   }
 
   .selected-locations {
@@ -188,11 +188,26 @@
       margin: 0 calc(33% / 7 - 16px) 5% calc(33% / 7 - 16px) !important;
     }
   }
-}
 
-.slot-times {
-  background: $blue10;
-  padding: 10px;
-  border-radius: 4px;
-  margin-right: 10px;
+  ::ng-deep
+    .mat-form-field-appearance-outline.mat-form-field-disabled
+    .mat-form-field-outline {
+    color: $gray;
+    background: $gray;
+    border-radius: 7px;
+  }
+
+  .slot-times {
+    background: $blue10;
+    padding: 10px;
+    border-radius: 4px;
+    margin-right: 10px;
+  }
+
+  .no-slot-times {
+    background: $gray;
+    padding: 10px;
+    border-radius: 4px;
+    margin-right: 10px;
+  }
 }

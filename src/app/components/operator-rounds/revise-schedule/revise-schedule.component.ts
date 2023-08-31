@@ -1,24 +1,48 @@
-import { Component, EventEmitter, OnInit, Output, Input } from '@angular/core';
+/* eslint-disable no-underscore-dangle */
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  OnInit,
+  Output,
+  Input
+} from '@angular/core';
 import { scheduleConfigs } from '../../../forms/components/schedular/schedule-configuration/schedule-configuration.constants';
-import { MatDatepickerInputEvent } from '@angular/material/datepicker';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { addDays, format, getDay } from 'date-fns';
+import {
+  MatCalendarCellCssClasses,
+  MatDatepickerInputEvent
+} from '@angular/material/datepicker';
+import {
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators
+} from '@angular/forms';
+import { format } from 'date-fns';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-revise-schedule',
   templateUrl: './revise-schedule.component.html',
-  styleUrls: ['./revise-schedule.component.scss']
+  styleUrls: ['./revise-schedule.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ReviseScheduleComponent implements OnInit {
   @Output() openCloseRightPanelEvent = new EventEmitter<boolean>();
-  @Input() payload: any;
   @Input() set nodeIdToNodeName(nodeIdToNodeName: any) {
     this._nodeIdToNodeName = nodeIdToNodeName;
   }
   get nodeIdToNodeName() {
     return this._nodeIdToNodeName;
+  }
+  @Input() set reviseSchedule(reviseSchedule: any) {
+    this.reviseScheduleConfig = reviseSchedule;
+    this.shiftsSelected.patchValue(this.reviseScheduleConfig.shiftSlots);
+  }
+  get reviseSchedule() {
+    return this.reviseScheduleConfig;
   }
   locations = {};
   showLocations = true;
@@ -27,33 +51,23 @@ export class ReviseScheduleComponent implements OnInit {
   weeksOfMonth = scheduleConfigs.weeksOfMonth;
   startDatePickerMinDate: Date;
   resviseScheduleConfigForm: FormGroup;
-  LocationListToTask$: any;
+  shiftsSelected = new FormControl('');
+  allSlots = [];
+  allShifts = [];
+  currentDate: Date;
+  reviseScheduleConfig;
+  locationListToTask$: any;
   locationIdToTaskcount = new Map<string, string>();
   locationIdToTaskcountArr: [string, string][] = [];
-
-  shiftsInformation = [
-    {
-      id: '1',
-      name: 'Shift A',
-      startTime: '6:00 AM',
-      endTime: '2:00 PM'
-    },
-    {
-      id: '2',
-      name: 'Shift B',
-      startTime: '6:00 PM',
-      endTime: '8:00 PM'
-    }
-  ];
-  currentDate: Date;
   _nodeIdToNodeName: any;
+
   constructor(
     private fb: FormBuilder,
     private operatorRoundService: OperatorRoundsService
   ) {}
 
   ngOnInit(): void {
-    this.LocationListToTask$ = this.operatorRoundService.checkboxStatus$.pipe(
+    this.locationListToTask$ = this.operatorRoundService.checkboxStatus$.pipe(
       tap((data) => {
         console.log(data);
         const selectedPage = data.selectedPage;
@@ -76,18 +90,39 @@ export class ReviseScheduleComponent implements OnInit {
       })
     );
     this.resviseScheduleConfigForm = this.fb.group({
-      scheduleType: 'byFrequency',
-      repeatDuration: [1, [Validators.required, Validators.min(1)]],
-      repeatEvery: ['day'],
-      daysOfWeek: [[getDay(new Date())]],
-      monthlyDaysOfWeek: this.fb.array(
-        this.initMonthWiseWeeklyDaysOfWeek(this.weeksOfMonth.length)
-      ),
-      startDate: format(new Date(), 'd MMMM yyyy'),
-      startDatePicker: new Date(),
-      endDate: format(addDays(new Date(), 30), 'd MMMM yyyy'),
-      endDatePicker: new Date(addDays(new Date(), 30))
+      scheduleType: [''],
+      repeatDuration: ['', [Validators.required, Validators.min(1)]],
+      repeatEvery: [''],
+      daysOfWeek: [[]],
+      monthlyDaysOfWeek: this.fb.array([]),
+      startDate: [''],
+      startDatePicker: [''],
+      endDate: [''],
+      endDatePicker: ['']
     });
+
+    if (this.reviseScheduleConfig) {
+      this.resviseScheduleConfigForm.patchValue({
+        scheduleType: this.reviseScheduleConfig.scheduleType,
+        repeatDuration: this.reviseScheduleConfig.repeatDuration,
+        repeatEvery: this.reviseScheduleConfig.repeatEvery,
+        daysOfWeek: this.reviseScheduleConfig.daysOfWeek,
+        monthlyDaysOfWeek: this.reviseScheduleConfig.monthlyDaysOfWeek,
+        startDate: format(
+          new Date(this.reviseScheduleConfig.startDate),
+          'd MMM yyyy'
+        ),
+        startDatePicker: new Date(this.reviseScheduleConfig.startDate),
+        endDate: format(
+          new Date(this.reviseScheduleConfig.endDate),
+          'd MMM yyyy'
+        ),
+        endDatePicker: new Date(this.reviseScheduleConfig.endDate)
+      });
+
+      this.allSlots = this.reviseScheduleConfig.shiftSlots;
+      this.allShifts = this.reviseScheduleConfig.shiftSlots;
+    }
 
     this.startDatePickerMinDate = new Date();
     this.currentDate = new Date();
@@ -95,6 +130,16 @@ export class ReviseScheduleComponent implements OnInit {
 
   get monthlyDaysOfWeek(): FormArray {
     return this.resviseScheduleConfigForm.get('monthlyDaysOfWeek') as FormArray;
+  }
+
+  get selectedShiftData(): string {
+    if (this.allShifts.length > 0) {
+      return this.allShifts
+        ?.slice(0, 3)
+        .map((s) => s?.name)
+        .join(', ');
+    }
+    return '';
   }
 
   initMonthWiseWeeklyDaysOfWeek(weeksCount: number) {
@@ -106,9 +151,34 @@ export class ReviseScheduleComponent implements OnInit {
     formControlDateField: string
   ) {}
 
+  dateClass() {
+    return (date: Date): MatCalendarCellCssClasses => {
+      const highlightDate = this.reviseScheduleConfig?.scheduleByDates
+        .map((strDate) => new Date(strDate.date))
+        .some(
+          (d) =>
+            d.getDate() === date.getDate() &&
+            d.getMonth() === date.getMonth() &&
+            d.getFullYear() === date.getFullYear()
+        );
+      if (highlightDate) {
+        return ['selected'];
+      }
+    };
+  }
+
   updateScheduleByDates(event: MatDatepickerInputEvent<Date>) {}
+
+  onShiftChange(event) {
+    console.log(event);
+  }
 
   cancel() {
     this.openCloseRightPanelEvent.emit(false);
+  }
+
+  compareFn(o1: any, o2: any) {
+    if (o1.id === o2.id) return true;
+    else return false;
   }
 }
