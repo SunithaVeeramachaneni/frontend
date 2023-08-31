@@ -665,7 +665,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
             if (hideQuestions.includes(questionId)) {
               hideQuestions = hideQuestions.filter((q) => q !== questionId);
             }
-            return { ...logic, hideQuestions: hideQuestions };
+            return { ...logic, hideQuestions };
           });
         }
 
