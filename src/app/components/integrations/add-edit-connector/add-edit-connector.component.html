@@ -1,0 +1,186 @@
+<div [formGroup]="connectionForm" class="dialog-container">
+  <div class="dialog-head">
+    <span class="heading">
+      Add Connection
+    </span>
+    <mat-icon mat-dialog-close class="close-icon">close</mat-icon>
+  </div>
+  <div mat-dialog-content class="dialog-body">
+    <div>
+      <mat-form-field appearance="outline" class="width-100 form-field">
+        <mat-label translate>Select Connector</mat-label>
+        <mat-select formControlName="connector" (selectionChange)="connectorChanged($event)">
+          <mat-option [value]="">
+            Select
+          </mat-option>
+          <mat-option *ngFor="let connector of connectorOptions" [value]="connector.id">
+            {{connector.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="width-100 form-field">
+        <mat-label>Connection Alias</mat-label>
+        <input type="text" matInput [placeholder]="'Connection Alias'" formControlName="connectorAlias" />
+      </mat-form-field>
+    </div>
+    <ng-container [ngSwitch]="connectionForm.value.connector">
+      <ng-container *ngSwitchCase="'odbc'" [ngTemplateOutlet]="odbcTemplate"></ng-container>
+      <ng-container *ngSwitchCase="'rest'" [ngTemplateOutlet]="restApiTemplate"></ng-container>
+      <ng-container *ngSwitchCase="'sap'" [ngTemplateOutlet]="sapTemplate"></ng-container>
+      <ng-container *ngSwitchCase="'maximo'" [ngTemplateOutlet]="maximoTemplate"></ng-container>
+      <ng-container *ngSwitchCase="'ftp'" [ngTemplateOutlet]="ftpTemplate"></ng-container>
+      <ng-container *ngSwitchCase="'cloud-storage'" [ngTemplateOutlet]="cloudStorageTemplate"></ng-container>
+      <ng-container *ngSwitchCase="'email'" [ngTemplateOutlet]="emailTemplate"></ng-container>
+      <ng-container *ngSwitchCase="'webhook'" [ngTemplateOutlet]="webhookTemplate"></ng-container>
+      <ng-container *ngSwitchCase="
+                  !connectionForm.value.connector.length
+                " [ngTemplateOutlet]="emptyTemplate"></ng-container>
+    </ng-container>
+    <ng-template #odbcTemplate>
+      <div formGroupName="connectorMeta">
+        <mat-form-field appearance="outline" class="width-100 form-field">
+          <mat-label>DB Hostname</mat-label>
+          <input type="text" matInput [placeholder]="'Hostname'" formControlName="hostname" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="width-100 form-field">
+          <mat-label>Username</mat-label>
+          <input type="text" matInput [placeholder]="'DB Username'" formControlName="username" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="width-100 form-field">
+          <mat-label>Password</mat-label>
+          <input type="text" matInput [placeholder]="'DB Password'" formControlName="password" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="width-100 form-field">
+          <mat-label>Database Name</mat-label>
+          <input type="text" matInput [placeholder]="'Database Name'" formControlName="database" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="width-100 form-field">
+          <mat-label>Database PORT</mat-label>
+          <input type="text" matInput [placeholder]="'Database PORT'" formControlName="port" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="width-100 form-field">
+          <mat-label>Database Dialect</mat-label>
+          <input type="text" matInput [placeholder]="'Database Dialect'" formControlName="dialect" />
+        </mat-form-field>
+      </div>
+    </ng-template>
+    <ng-template #restApiTemplate>
+      <div>
+        <div class="apiAuthTypeField">
+          <mat-label class="label">Authentication Type</mat-label>
+          <mat-radio-group aria-label="Select Authentication Mechanism" formControlName="authenticationType"
+            class="apiAuthType">
+            <mat-radio-button value="api-key">API Key</mat-radio-button>
+            <mat-radio-button value="token">Token Based</mat-radio-button>
+            <mat-radio-button value="basic">Basic Auth</mat-radio-button>
+            <mat-radio-button value="none">None (No Auth)</mat-radio-button>
+          </mat-radio-group>
+        </div>
+        <div class="apiAuthTypeField">
+          <mat-form-field appearance="outline" class="width-100">
+            <mat-label class="label">Auth Parameters(JSON)</mat-label>
+            <textarea matInput [placeholder]="'Authentication Parameters(JSON)'"></textarea>
+          </mat-form-field>
+        </div>
+        <div></div>
+      </div>
+    </ng-template>
+
+    <ng-template #sapTemplate>
+      <div formGroupName="connectorMeta">
+        <div>
+          <mat-form-field appearance="outline" class="width-100">
+            <mat-label>SAP Details</mat-label>
+            <input type="text" matInput [placeholder]="'Hostname'" formControlName="hostname" />
+          </mat-form-field>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template #maximoTemplate>
+      <div>
+        <div>
+          <mat-form-field appearance="outline" class="width-100">
+            <mat-label>Maximo Details</mat-label>
+            <input type="text" matInput [placeholder]="'Hostname'" formControlName="hostname" />
+          </mat-form-field>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template #ftpTemplate>
+      <div>
+        <div>
+          <mat-form-field appearance="outline" class="width-100">
+            <mat-label>FTP Details</mat-label>
+            <input type="text" matInput [placeholder]="'Hostname'" formControlName="hostname" />
+          </mat-form-field>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template #cloudStorageTemplate>
+      <div>
+        <div>
+          <mat-form-field appearance="outline" class="width-100">
+            <mat-label>Cloud Storage Details</mat-label>
+            <input type="text" matInput [placeholder]="'Hostname'" formControlName="hostname" />
+          </mat-form-field>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template #emailTemplate>
+      <div>
+        <div>
+          <mat-form-field appearance="outline" class="width-100">
+            <mat-label>SMTP Hostname</mat-label>
+            <input type="text" matInput [placeholder]="'SMTP Hostname'" formControlName="hostname" />
+          </mat-form-field>
+        </div>
+        <div>
+          <mat-form-field appearance="outline" class="width-100">
+            <mat-label>SMTP Port</mat-label>
+            <input type="number" matInput [placeholder]="'SMTP Port'" formControlName="port" />
+          </mat-form-field>
+        </div>
+        <div>
+          <mat-form-field appearance="outline" class="width-100">
+            <mat-label>SMTP Username</mat-label>
+            <input type="text" matInput [placeholder]="'SMTP Username'" formControlName="username" />
+          </mat-form-field>
+        </div>
+        <div>
+          <mat-form-field appearance="outline" class="width-100">
+            <mat-label>SMTP Password</mat-label>
+            <input type="text" matInput [placeholder]="'SMTP Password'" formControlName="password" />
+          </mat-form-field>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template #webhookTemplate>
+      <div>
+        <div>
+          <mat-form-field appearance="outline" class="width-100">
+            <mat-label>Webhook Details</mat-label>
+            <input type="text" matInput [placeholder]="'Hostname'" formControlName="hostname" />
+          </mat-form-field>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template #emptyTemplate>
+      <div class="w-65 connectorMeta noConnector">
+        Please select a connector from left to configure.
+      </div>
+    </ng-template>
+  </div>
+  <div mat-dialog-actions class="dialog-footer">
+    <div class="dis-flex">
+      <button mat-stroked-button color="primary">Test Connection</button>
+      <span class="success-msg">
+        <mat-icon>check_circle</mat-icon>Connection Successful</span>
+      <!-- <span class="failure-msg">
+        <mat-icon>error</mat-icon>Connection Successful</span> -->
+    </div>
+    <div>
+      <button mat-button mat-dialog-close color="primary">Close</button>
+      <button mat-flat-button color="primary" (click)="saveConnection()">Save</button>
+    </div>
+  </div>
+</div>

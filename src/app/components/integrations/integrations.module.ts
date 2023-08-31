@@ -28,6 +28,8 @@ import { IntegrationsComponent } from './integrations/integrations.component';
 import { IntegrationsManagementContainerComponent } from './integrations-management-container/integrations-management-container.component';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatListModule } from '@angular/material/list';
+import { AddEditConnectorComponent } from './add-edit-connector/add-edit-connector.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/tenant-management/', '.json');
@@ -35,7 +37,8 @@ export const customTranslateLoader = (http: HttpClient) =>
 @NgModule({
   declarations: [
     IntegrationsComponent,
-    IntegrationsManagementContainerComponent
+    IntegrationsManagementContainerComponent,
+    AddEditConnectorComponent
   ],
   imports: [
     CommonModule,
@@ -50,6 +53,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatButtonModule,
     MatIconModule,
     MatTabsModule,
+    MatDialogModule,
     TranslateModule.forChild({
       loader: {
         provide: TranslateLoader,

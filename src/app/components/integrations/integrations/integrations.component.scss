@@ -8,6 +8,8 @@
     align-items: center;
     justify-content: space-between;
     font-weight: 800;
+    padding: 5px;
+    border-bottom: 1px solid $border-color;
     .page-title {
       font-style: normal;
       font-weight: 500;
@@ -19,7 +21,7 @@
       display: block;
       white-space: nowrap;
       overflow: hidden;
-      border-bottom: 1px solid $border-color;
+      // border-bottom: 1px solid $border-color;
       width: 100%;
       padding: 0px 10px;
       margin-bottom: 1px;
@@ -165,7 +167,7 @@
   height: 35px;
   font-weight: normal;
   line-height: normal;
-  margin-right: 30px;
+  // margin-right: 30px;
 }
 
 .skip-btn {
@@ -174,17 +176,16 @@
   height: 35px;
   font-weight: normal;
   line-height: normal;
-  border: 1px solid #3d5afe;
+  border: 1px solid $blue-main;
 }
 .horizontal-line {
   border: 1px solid $border-color;
   margin: 20px 0;
 }
 .form-name-description {
-  font-weight: 500;
-  font-size: 110%;
-  color: $black;
-  margin: 15px 5px 0px 0px;
+  font-weight: 700;
+  color: $blue-head;
+  font-size: 120%;
 }
 .margin-l-r-10 {
   margin: 0px 10px;
@@ -314,8 +315,23 @@
 .connector-step {
   padding: 0px !important;
 }
+.connector-head-left {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0px;
+  border-bottom: 1px solid $border-color;
+  padding: 15px;
+}
 .connectorMeta {
   margin: 5px 25px;
+  .connector-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0px;
+    border-bottom: 1px solid $border-color;
+  }
 }
 .connector-formtype-style {
   border: 1px solid $gray;
@@ -341,9 +357,7 @@
   font-size: large;
 }
 .test-connection-btn {
-  margin: 0px !important;
-  margin-top: 20px !important;
-  margin-right: 10px !important;
+  margin: 5px !important;
 }
 .tab-content {
   height: 64vh;
@@ -393,6 +407,15 @@
   font-size: 14pt;
   color: #000000;
   margin: 15px 5px 0px 0px;
-  /* border-bottom: 1px solid #ccc; */
   padding: 10px;
+}
+.emptyContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 90%;
+  height: 90%;
+  color: #9e9e9e;
+  font-weight: 400;
 }

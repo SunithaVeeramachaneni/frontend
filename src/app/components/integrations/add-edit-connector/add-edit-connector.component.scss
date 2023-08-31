@@ -1,0 +1,45 @@
+@import '../../../../scss/colors.scss';
+
+.dialog-container {
+  padding: 10px;
+  .dialog-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid $border-color;
+    .close-icon {
+      cursor: pointer;
+      padding: 10px;
+    }
+    .heading {
+      font-size: 120%;
+      font-weight: 600;
+    }
+  }
+  .dialog-body {
+    height: 475px;
+    margin: 0px;
+    max-height: fit-content !important;
+    border-bottom: 1px solid $border-color;
+    .form-field {
+      padding: 10px 0px;
+    }
+  }
+  .dialog-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .success-msg {
+      color: $green3;
+      display: flex;
+      align-items: center;
+      margin-left: 5px;
+    }
+    .failure-msg {
+      color: $red-main;
+      display: flex;
+      align-items: center;
+      margin-left: 5px;
+    }
+  }
+}

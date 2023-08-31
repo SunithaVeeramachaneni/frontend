@@ -5,6 +5,10 @@ import {
   OnInit
 } from '@angular/core';
 import { FormControl, FormBuilder, FormArray } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { AddEditConnectorComponent } from '../add-edit-connector/add-edit-connector.component';
+import { BehaviorSubject, Observable, combineLatest, of } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-integrations',
@@ -13,100 +17,10 @@ import { FormControl, FormBuilder, FormArray } from '@angular/forms';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class IntegrationsComponent implements OnInit {
-  connectors: any[] = [
-    {
-      id: 'odbc',
-      name: 'ODBC Connector',
-      description:
-        'Connects with ODBC Compliant databases like MySql, Oracle, MSSQL, etc..',
-      icon: 'icon-odbc',
-      isActive: true,
-      image: '/assets/Images/connectors/ODBC.png'
-    },
-
-    {
-      id: 'email',
-      name: 'Alerts/Notifications',
-      description: 'Sends out Alerts and Notifications for subscribed changes',
-      icon: 'icon-email',
-      isActive: true,
-      image: '/assets/Images/connectors/email.png'
-    },
-    {
-      id: 'webhook',
-      name: 'Webhooks',
-      description: 'Webhooks post data to desired HTTP POST Endpoint',
-      icon: 'icon-webhooks',
-      isActive: true,
-      image: '/assets/Images/connectors/webhook.png'
-    }
-    // {
-    //   id: 'rest',
-    //   name: 'App-to-App Connect',
-    //   description: 'Connects with RESTful APIs',
-    //   icon: 'icon-rest-api',
-    //   isActive: false,
-    //   image: '/assets/Images/connectors/restapi.svg'
-    // }
-    // {
-    //   id: 'ftp',
-    //   name: 'FTP/SFTP Connector',
-    //   description: 'Connects with FTP/SFTP',
-    //   icon: 'icon-ftp',
-    //   image: '/assets/Images/connectors/ftp.png',
-    //   isActive: true
-    // },
-    // {
-    //   id: 'sap',
-    //   name: 'SAP Connector',
-    //   description: 'Connects with SAP ERP',
-    //   icon: 'icon-sap',
-    //   isActive: true,
-    //   image: '/assets/Images/connectors/sap.png'
-    // },
-    // {
-    //   id: 'maximo',
-    //   name: 'IBM Maximo',
-    //   description: 'Connects with IBM Maximo',
-    //   icon: 'icon-maximo',
-    //   isActive: false,
-    //   image: '/assets/Images/connectors/maximo.png'
-    // },
-
-    // {
-    //   id: 'cloud-storage',
-    //   name: 'Cloud Storage Services',
-    //   description:
-    //     'Connects with Cloud Storage Services like AWS S3, Google Drive, DropBox, etc..',
-    //   icon: 'icon-cloud-storage',
-    //   isActive: false,
-    //   image: '/assets/Images/connectors/cloudstore.png'
-    // }
-  ];
   integrationPoints: any[] = [
     {
       name: 'Round Submission',
       id: 'round-submission'
-    },
-    {
-      name: 'Round Schedule',
-      id: 'round-schedule'
-    },
-    {
-      name: 'Create AdHoc Round',
-      id: 'create-adhoc-round'
-    },
-    {
-      name: 'Update Round',
-      id: 'update-round'
-    },
-    {
-      name: 'Schedule Inspection',
-      id: 'schedule-inspection'
-    },
-    {
-      name: 'Publish Round Plan',
-      id: 'publish-round-plan'
     }
   ];
 
@@ -171,9 +85,45 @@ export class IntegrationsComponent implements OnInit {
     dataMapping: this.fb.array([])
   });
 
-  constructor(private fb: FormBuilder, private cdrf: ChangeDetectorRef) {}
+  connectors$: Observable<any[]>;
+  connectorsInitial$: Observable<any>;
+  createUpdateDeleteConnector$ = new BehaviorSubject<any>({
+    type: 'create',
+    connector: {} as any
+  });
 
-  ngOnInit(): void {}
+  constructor(
+    private fb: FormBuilder,
+    private cdrf: ChangeDetectorRef,
+    private dialog: MatDialog
+  ) {}
+
+  ngOnInit(): void {
+    this.connectorsInitial$ = of({ data: [] as any[] });
+    this.connectors$ = combineLatest([
+      this.connectorsInitial$,
+      this.createUpdateDeleteConnector$
+    ]).pipe(
+      map(([initial, dashboardAction]) => {
+        const { type, dashboard } = dashboardAction;
+        return initial.data;
+      }),
+      tap((connectors) => {
+        //
+      })
+    );
+  }
+  addConnector() {
+    const dialogRef = this.dialog.open(AddEditConnectorComponent, {
+      disableClose: true,
+      width: '600px',
+      height: '600px',
+      data: {}
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      //
+    });
+  }
 
   selectIntegrationPoint(event): void {
     if (event) {
@@ -207,9 +157,6 @@ export class IntegrationsComponent implements OnInit {
     this.cdrf.detectChanges();
   }
 
-  getConnectorName(connectorId) {
-    return this.connectors.find((c) => c.id === connectorId);
-  }
   getIntegrationPoint(ipID) {
     return this.integrationPoints.find((ip) => ip.id === ipID);
   }
@@ -225,18 +172,6 @@ export class IntegrationsComponent implements OnInit {
           port: new FormControl(''),
           dialect: new FormControl('')
         });
-      case 'rest':
-        break;
-      case 'sap':
-        break;
-      case 'ip21':
-        break;
-      case 'osi-pi':
-        break;
-      case 'ge-apm':
-        break;
-      case 'ftp':
-        break;
       case 'email':
         return this.fb.group({
           hostname: new FormControl(''),
@@ -244,10 +179,7 @@ export class IntegrationsComponent implements OnInit {
           username: new FormControl(''),
           password: new FormControl('')
         });
-        break;
-      case 'cloud-storage':
-        break;
-      case 'honeywell-forge':
+      case 'rest':
         break;
     }
   }
@@ -255,43 +187,6 @@ export class IntegrationsComponent implements OnInit {
   getDataEntityMapping() {
     return (this.integrationConfigForm.get('dataMapping') as FormArray)
       .controls;
-  }
-
-  configureAndConnect() {
-    this.isSubmitInprogress = true;
-    // const { tenantId } = this.tenantService.getTenantInfo();
-    // this.tenantService
-    //   .createIntegration$(this.integrationConfigForm.value)
-    //   .subscribe(
-    //     (response) => {
-    //       this.isSubmitInprogress = false;
-    //       this.cdrf.markForCheck();
-    //       // this.toast.show({
-    //       //   text: 'Connection configured successfully',
-    //       //   type: 'success'
-    //       // });
-    //       this.dialogRef.close({
-    //         data: null,
-    //         type: 'close'
-    //       });
-    //       const dialogRef = this.dialog.open(SuccessModalComponent, {
-    //         disableClose: true,
-    //         width: '354px',
-    //         height: '275px',
-    //         backdropClass: 'schedule-success-modal',
-    //         data: {}
-    //       });
-    //     },
-    //     (error) => {
-    //       this.isSubmitInprogress = false;
-    //       this.cdrf.markForCheck();
-    //       this.toast.show({
-    //         text: 'Error occured while configuring connection',
-    //         type: 'warning'
-    //       });
-    //     }
-    //   );
-    //
   }
 
   close(): void {}
