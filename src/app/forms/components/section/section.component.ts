@@ -36,6 +36,7 @@ import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/ser
 import { v4 as uuidv4 } from 'uuid';
 import { FormMetadata } from 'src/app/interfaces/form-configuration';
 import { RoundPlanConfigurationService } from '../../services/round-plan-configuration.service';
+import { getFormDetails } from '../../state';
 @Component({
   selector: 'app-section',
   templateUrl: './section.component.html',
@@ -50,6 +51,7 @@ export class SectionComponent implements OnInit, OnDestroy {
   formMetadata: FormMetadata;
   getFormConfigurationCounter$: Observable<any>;
   formConfigurationCounter: number;
+  authoredFormDetails: any;
   @Input() set pageIndex(pageIndex: number) {
     this._pageIndex = pageIndex;
   }
@@ -166,6 +168,80 @@ export class SectionComponent implements OnInit, OnDestroy {
   }
   showGenerateLoadingSectionId() {
     return this.rdfService.showGenerateLoadingSectionId;
+  }
+
+  regenerateSection(sectionName) {
+    this.rdfService.showRegenerateSection.next(true);
+    this.rdfService.showGenerateLoadingSectionId.next(this.sectionId);
+
+    this.store
+      .select(getRequestCounter)
+      .subscribe((count) => (this.requestCounter = count));
+    this.store
+      .select(getFormMetadata)
+      .subscribe((formMetadata) => (this.formMetadata = formMetadata));
+    this.store
+      .select(getFormConfigurationCounter())
+      .pipe(
+        tap((formConfigurationCounter) => {
+          this.formConfigurationCounter = formConfigurationCounter;
+        })
+      )
+      .subscribe();
+    this.store
+      .select(getFormDetails)
+      .pipe(
+        tap(
+          (authoredFormDetails) =>
+            (this.authoredFormDetails = authoredFormDetails)
+        )
+      )
+      .subscribe();
+
+    let {
+      formMetadata,
+      formStatus,
+      counter,
+      pages,
+      authoredFormDetailId,
+      authoredFormDetailVersion,
+      formDetailPublishStatus,
+      authoredFormDetailDynamoDBVersion
+    } = this.authoredFormDetails;
+
+    pages[this.pageIndex].sections[this.sectionIndex].questions = [];
+    pages[this.pageIndex].questions = pages[this.pageIndex].questions.filter(
+      (q) => q.sectionId !== this.sectionId
+    );
+
+    this.store.dispatch(
+      BuilderConfigurationActions.updateAuthoredFormDetail({
+        formStatus,
+        formDetailPublishStatus,
+        formListId: formMetadata.id,
+        counter,
+        pages: pages,
+        authoredFormDetailId,
+        authoredFormDetailVersion,
+        authoredFormDetailDynamoDBVersion
+      })
+    );
+    this.rdfService
+      .regenerateQuestionsForSections$(
+        this.formMetadata?.name,
+        sectionName,
+        this.sectionId,
+        this.formConfigurationCounter,
+        this.requestCounter
+      )
+      .pipe(
+        tap((questions: Question[]) => {
+          this.addQuestionWithDelay(questions[0].sectionId, questions, 0);
+          this.rdfService.showRegenerateSection.next(false);
+          this.rdfService.showGenerateLoadingSectionId.next(null);
+        })
+      )
+      .subscribe();
   }
 
   addSectionFromPrompt(prompt: string) {

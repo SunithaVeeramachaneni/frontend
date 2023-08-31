@@ -49,6 +49,7 @@ export class RaceDynamicFormService {
   embeddedFormId;
   showGenerateSectionId = new BehaviorSubject<string | null>(null);
   showGenerateLoadingSectionId = new BehaviorSubject<string | null>(null);
+  showRegenerateSection = new BehaviorSubject<boolean>(false);
   constructor(
     private toastService: ToastService,
     private appService: AppService,
