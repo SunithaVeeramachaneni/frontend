@@ -260,7 +260,7 @@
 
 .image-column {
   height: auto;
-  width: 20%;
+  width: 30%;
   margin-right: 10px;
   display: flex;
   justify-content: center;
@@ -273,13 +273,21 @@
 }
 
 .info-column {
-  width: 40%;
+  width: 100%;
+  display: block;
+}
+.info-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .image-column,
 .info-column {
   padding: 10px;
   box-sizing: border-box;
+  width: 100%;
+  display: block;
 }
 
 .current-step {
@@ -311,6 +319,7 @@
 .card-buttons {
   display: flex;
   gap: 10px;
+  position: relative;
 }
 
 .btn {
@@ -320,10 +329,71 @@
   padding: 5px 10px;
   border-radius: 3px;
   cursor: pointer;
+  position: absolute;
+  right: 10px;
+  top: -20px;
 }
 
 .btn:hover {
   background-color: #258cd1;
+}
+
+.instruction-column {
+  padding: 10px;
+  box-sizing: border-box;
+  width: 100%;
+  display: block;
+  border-radius: 4px;
+  border-width: 2px;
+  padding: 4px;
+  border: solid;
+  border-color: cadetblue;
+  margin-top: 5px;
+}
+
+.hint-column {
+  padding: 10px;
+  box-sizing: border-box;
+  width: 100%;
+  display: block;
+  border-radius: 4px;
+  border-width: 2px;
+  padding: 4px;
+  border: solid;
+  border-color: green;
+  margin-top: 5px;
+}
+
+.warning-column {
+  padding: 10px;
+  box-sizing: border-box;
+  width: 100%;
+  display: block;
+  border-radius: 4px;
+  border-width: 2px;
+  padding: 4px;
+  border: solid;
+  border-color: red;
+  margin-top: 5px;
+}
+
+.plan-column {
+  padding: 10px;
+  box-sizing: border-box;
+  width: 100%;
+  display: block;
+  border-radius: 4px;
+  border: solid;
+  border-width: 2px;
+  padding: 4px;
+  margin-top: 5px;
+  border-color: blue;
+}
+
+.tag-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 5px;
 }
 
 /* Existing styles */

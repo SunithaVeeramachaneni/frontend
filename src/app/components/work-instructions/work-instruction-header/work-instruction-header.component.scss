@@ -326,8 +326,8 @@
 }
 
 .add-step-btn button {
-  position: absolute;
-  right: 650px;
+  position: relative;
+  left: 220%;
   border: 1px solid $blue-main;
 }
 
@@ -508,4 +508,16 @@ input:focus {
   .stepsbar {
     max-width: 250px;
   }
+}
+
+.btn-loader {
+  display: flex;
+  flex-direction: column;
+  width: 30%;
+  margin-bottom: 10px;
+}
+.horizon {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 }

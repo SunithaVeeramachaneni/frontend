@@ -40,10 +40,10 @@ export class WorkInstructionAuthoringComponent implements OnInit {
 
     this.generateSteps$ = this.getFormUploadData$(this.globalData);
 
-    this.generateSteps$.subscribe((data) => {
-      this.stepsInstructionList.push(data.stepsObject);
-      this.setCurrentStep(data.stepsObject);
+    this.generateSteps$.subscribe((newData) => {
       this.isLoading$.next(false);
+      this.stepsInstructionList.push(newData.stepsObject);
+      this.setCurrentStep(newData.stepsObject);
     });
   }
 
@@ -75,7 +75,7 @@ export class WorkInstructionAuthoringComponent implements OnInit {
       eventSourceForms.onerror = (event) => {
         console.log(event);
         this.zone.run(() => {
-          observer.error(JSON.parse(event.error));
+          observer.error(JSON.parse(event?.error));
         });
       };
     });

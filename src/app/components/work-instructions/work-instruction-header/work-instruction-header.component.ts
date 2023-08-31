@@ -3,7 +3,7 @@ import { UploadImagePreviewComponent } from 'src/app/forms/components/upload-ima
 import { FormControl } from '@angular/forms';
 import { InstructionService } from '../services/instruction.service';
 import { ViewChildren, ElementRef, QueryList } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { SseService } from 'src/app/shared/services/sse.service';
 import { environment } from 'src/environments/environment';
 @Component({
@@ -19,6 +19,8 @@ export class WorkInstructionHeaderComponent implements OnInit {
   header: any;
   tags: any;
   prompt = new FormControl('');
+  isLoading: BehaviorSubject<any> = new BehaviorSubject<boolean>(false);
+  value = '';
   constructor(
     private service: InstructionService,
     private sseService: SseService,
@@ -27,7 +29,7 @@ export class WorkInstructionHeaderComponent implements OnInit {
 
   ngOnInit(): void {
     this.prompt.valueChanges.subscribe((data) => {
-      console.log(data);
+      this.value = data;
     });
   }
   fileUploadHandler(event) {
@@ -43,6 +45,8 @@ export class WorkInstructionHeaderComponent implements OnInit {
     console.log(this.base64Image);
   }
   generateSteps() {
+    this.steps = [];
+    this.isLoading.next(true);
     this.service
       .generateTags$({ image: this.base64Image })
       .subscribe((data) => {
@@ -62,7 +66,16 @@ export class WorkInstructionHeaderComponent implements OnInit {
                 prompt: this.prompt.value
               })
               .subscribe((steps) => {
-                this.steps = steps?.steps?.steps;
+                let i = 0;
+                const intervalId = setInterval(() => {
+                  if (i < steps?.steps?.steps.length) {
+                    this.steps.push(steps?.steps?.steps[i]);
+                    i++;
+                  } else {
+                    clearInterval(intervalId);
+                    this.isLoading.next(false);
+                  }
+                }, 1000);
                 this.service.stepsData$.next({
                   tags: this.tags,
                   header: this.header,

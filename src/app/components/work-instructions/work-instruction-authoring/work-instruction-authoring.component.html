@@ -8,23 +8,21 @@
           icon="icon-back-arrow"
           class="back-arrow"
         ></svg-icon>
-        <span class="back-text">Back to List</span>
       </button>
     </div>
   </div>
   <div class="card">
-    <div class="card-header" *ngIf="!(isLoading$ | async)">
+    <div class="card-header" *ngIf="(isLoading$ | async) === false">
       <h2 class="card-title">{{ globalData.header }}</h2>
-      <div class="card-buttons">
-        <span>{{ status }}</span>
-        <button class="btn">Button 1</button>
-        <button class="btn">Button 2</button>
+      <div class="card-buttons" style="width: 100%">
+        <!-- <button class="btn" mat-raised-button></button> -->
+        <button class="btn" mat-raised-button color="primary">Publish</button>
         <!-- Add more buttons as needed -->
       </div>
     </div>
     <div class="card-body">
       <!-- Existing content here -->
-      <div class="container" *ngIf="!(isLoading$ | async)">
+      <div class="container" *ngIf="(isLoading$ | async) === false">
         <div class="left-panel">
           <!-- Existing left panel content -->
           <ul class="step-list">
@@ -56,8 +54,31 @@
                 alt="Step Image"
               />
             </div>
-            <div class="info-column">
-              {{ currentStep.INSTRUCTIONS }}
+            <div class="info-container">
+              <div class="tag-container">
+                <h4>Instruction</h4>
+                <div class="instruction-column">
+                  {{ currentStep?.INSTRUCTIONS }}
+                </div>
+              </div>
+              <div class="tag-container">
+                <h4>Hint</h4>
+                <div class="hint-column">
+                  {{ currentStep?.HINTS }}
+                </div>
+              </div>
+              <div class="tag-container">
+                <h4>Warning</h4>
+                <div class="warning-column">
+                  {{ currentStep?.WARNINGS }}
+                </div>
+              </div>
+              <div class="tag-container">
+                <h4>Reaction Plan</h4>
+                <div class="plan-column">
+                  {{ currentStep?.REACTION_PLAN }}
+                </div>
+              </div>
             </div>
           </div>
         </div>

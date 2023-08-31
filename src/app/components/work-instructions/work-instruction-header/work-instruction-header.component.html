@@ -73,15 +73,23 @@
             </span>
           </div>
         </div>
-        <button
-          mat-raised-button
-          color="primary"
-          class="generate-btn"
-          (click)="generateSteps()"
-          [disabled]="!this.base64Image"
-        >
-          Generate Steps
-        </button>
+        <div class="btn-loader">
+          <button
+            mat-raised-button
+            color="primary"
+            class="generate-btn"
+            (click)="generateSteps()"
+            [disabled]="!this.base64Image && !value"
+          >
+            Generate Steps
+          </button>
+          <img
+            *ngIf="isLoading | async"
+            src="assets\Images\animation_llxadpqm_small.gif"
+            height="30px"
+            width="30px"
+          />
+        </div>
         <div
           class="additional-details"
           *ngIf="header"
@@ -90,24 +98,39 @@
           <p id="additionalDetailsHeading" class="additional-details-text">
             <span>Steps for {{ header }}</span>
           </p>
-          <button class="add-button" id="additionalDetailsBtn">
+          <button
+            class="add-button"
+            id="additionalDetailsBtn"
+            (click)="generateSteps()"
+          >
             Regenerate
           </button>
         </div>
         <div class="steps-display" *ngIf="steps?.length > 0">
-          <div class="step-input" *ngFor="let step of steps; index as i">
-            <input type="text" #inputElement matInput [(ngModel)]="steps[i]" />
-            <svg-icon
-              id="closeIcon"
-              icon="icon-closeIcon"
-              class="close-icon cursor-pointer"
-              (click)="deleteStep(i)"
-            ></svg-icon>
+          <div class="horizon" *ngFor="let step of steps; index as i">
+            <div class="step-input">
+              <span>{{ i + 1 }}. </span>
+              <input
+                type="text"
+                #inputElement
+                matInput
+                [(ngModel)]="steps[i]"
+                style="padding-left: 5px; width: 90%"
+              />
+              <svg-icon
+                id="closeIcon"
+                icon="icon-closeIcon"
+                class="close-icon cursor-pointer"
+                (click)="deleteStep(i)"
+              ></svg-icon>
+            </div>
+            <hr />
           </div>
         </div>
         <div class="add-step-btn width-20">
           <button
             mat-stroked-button
+            *ngIf="steps?.length > 0"
             class="btn-outline-blue b-r-8 pull-right header-add-step"
             (click)="addStep()"
           >
