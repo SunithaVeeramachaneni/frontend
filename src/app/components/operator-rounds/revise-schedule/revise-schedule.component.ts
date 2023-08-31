@@ -1,8 +1,10 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, Input } from '@angular/core';
 import { scheduleConfigs } from '../../../forms/components/schedular/schedule-configuration/schedule-configuration.constants';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { addDays, format, getDay } from 'date-fns';
+import { OperatorRoundsService } from '../services/operator-rounds.service';
+import { tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-revise-schedule',
@@ -11,34 +13,24 @@ import { addDays, format, getDay } from 'date-fns';
 })
 export class ReviseScheduleComponent implements OnInit {
   @Output() openCloseRightPanelEvent = new EventEmitter<boolean>();
-  locations = [
-    {
-      name: 'Fuel Gas System',
-      count: 4
-    },
-    {
-      name: 'Fuel Gas System',
-      count: 4
-    },
-    {
-      name: 'Fuel Gas System',
-      count: 4
-    },
-    {
-      name: 'Fuel Gas System',
-      count: 4
-    },
-    {
-      name: 'Fuel Gas System',
-      count: 4
-    }
-  ];
+  @Input() payload: any;
+  @Input() set nodeIdToNodeName(nodeIdToNodeName: any) {
+    this._nodeIdToNodeName = nodeIdToNodeName;
+  }
+  get nodeIdToNodeName() {
+    return this._nodeIdToNodeName;
+  }
+  locations = {};
   showLocations = true;
   repeatTypes = scheduleConfigs.repeatTypes;
   daysOfWeek = scheduleConfigs.daysOfWeek;
   weeksOfMonth = scheduleConfigs.weeksOfMonth;
   startDatePickerMinDate: Date;
   resviseScheduleConfigForm: FormGroup;
+  LocationListToTask$: any;
+  locationIdToTaskcount = new Map<string, string>();
+  locationIdToTaskcountArr: [string, string][] = [];
+
   shiftsInformation = [
     {
       id: '1',
@@ -54,9 +46,35 @@ export class ReviseScheduleComponent implements OnInit {
     }
   ];
   currentDate: Date;
-  constructor(private fb: FormBuilder) {}
+  _nodeIdToNodeName: any;
+  constructor(
+    private fb: FormBuilder,
+    private operatorRoundService: OperatorRoundsService
+  ) {}
 
   ngOnInit(): void {
+    this.LocationListToTask$ = this.operatorRoundService.checkboxStatus$.pipe(
+      tap((data) => {
+        console.log(data);
+        const selectedPage = data.selectedPage;
+        const nodeId = data.nodeId;
+        if (!this.locationIdToTaskcount.has(nodeId)) {
+          this.locationIdToTaskcount.set(nodeId, '0');
+        }
+        let taskCount = 0;
+        let totalTaskCount = 0;
+        selectedPage.forEach((page) => {
+          page.questions.forEach((question) => {
+            if (question.complete) taskCount++;
+            totalTaskCount++;
+          });
+        });
+        if (totalTaskCount === taskCount)
+          this.locationIdToTaskcount.set(nodeId, 'All ');
+        else this.locationIdToTaskcount.set(nodeId, taskCount.toString());
+        this.locationIdToTaskcountArr = Array.from(this.locationIdToTaskcount);
+      })
+    );
     this.resviseScheduleConfigForm = this.fb.group({
       scheduleType: 'byFrequency',
       repeatDuration: [1, [Validators.required, Validators.min(1)]],

@@ -200,12 +200,14 @@
     <app-task-level-task-components
       [selectedPage]="selectedPages"
       [selectedNodeId]="selectedNodeId"
+      (isOpenThirdPanel)="openCloseRightPanelEventHandler($event)"
     ></app-task-level-task-components>
   </div>
   <ng-container *ngIf="openCloseRightPanel">
     <div class="width-30 right-panel">
       <app-revise-schedule
         [payload]="taskLevelScheduleHeaderConfiguration"
+        [nodeIdToNodeName]="nodeIdToNodeName"
         (openCloseRightPanelEvent)="openCloseRightPanelEventHandler($event)"
       >
       </app-revise-schedule>

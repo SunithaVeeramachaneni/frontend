@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
 
 @Component({
@@ -24,6 +24,8 @@ export class TaskLevelTaskComponentsComponent implements OnInit {
   get checkboxStatus() {
     return this._checkboxStatus;
   }
+  @Output() isOpenThirdPanel: EventEmitter<any> = new EventEmitter();
+  @Output() pageDataToThirdPanel: EventEmitter<any> = new EventEmitter();
   questionToSection = new Map<number, any[]>();
   questionToSectionId: Map<number, any[]> = new Map();
   allCheckedSection: boolean = false;
@@ -70,6 +72,7 @@ export class TaskLevelTaskComponentsComponent implements OnInit {
       selectedPage: this.selectedPage,
       nodeId: this.selectedNodeId
     });
+    if (checkedstatus) this.isOpenThirdPanel.emit(true);
   }
   toggleAllSectionQuestion(checkboxStatus, section, page) {
     section.complete = checkboxStatus;
@@ -85,6 +88,7 @@ export class TaskLevelTaskComponentsComponent implements OnInit {
       selectedPage: this.selectedPage,
       nodeId: this.selectedNodeId
     });
+    if (checkboxStatus) this.isOpenThirdPanel.emit(true);
   }
   toggleAllQuestion(checkboxStatus, question, section, page) {
     this.questionToSection.get(question.sectionId).forEach((ques) => {
@@ -111,5 +115,7 @@ export class TaskLevelTaskComponentsComponent implements OnInit {
       selectedPage: this.selectedPage,
       nodeId: this.selectedNodeId
     });
+
+    if (checkboxStatus) this.isOpenThirdPanel.emit(true);
   }
 }

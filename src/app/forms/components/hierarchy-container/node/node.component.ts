@@ -13,7 +13,6 @@ import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
 import { FormService } from 'src/app/forms/services/form.service';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { tap } from 'rxjs/operators';
-import { createDeflateRaw } from 'zlib';
 
 @Component({
   selector: 'app-node',
@@ -43,9 +42,6 @@ export class NodeComponent implements OnInit {
   allCheckedPages: any = { status: false };
   partiallyChecked: any = { status: false };
   checkboxStatus$: any;
-  someComplete() {
-    return false;
-  }
   public nodeSelectedForShowHierarchy = {} as any;
   public togglePopover = false;
   private _nodeWiseQuestionsCount: any = {};

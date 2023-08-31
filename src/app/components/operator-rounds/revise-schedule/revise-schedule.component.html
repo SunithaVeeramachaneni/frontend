@@ -1,4 +1,8 @@
-<div class="right" [formGroup]="resviseScheduleConfigForm">
+<div
+  class="right"
+  [formGroup]="resviseScheduleConfigForm"
+  *ngIf="{ LocationListToTask: LocationListToTask$ | async }"
+>
   <h3 class="heading" translate>reviseSchedule</h3>
 
   <div class="main-scroll">
@@ -14,9 +18,11 @@
           <span class="selected-text" translate>selected</span>
         </p>
         <div *ngIf="showLocations" class="scroll-locations">
-          <div *ngFor="let location of locations" class="locations">
-            <div>{{ location.name }}</div>
-            <div>{{ location.count }} <span translate>tasks</span></div>
+          <div *ngFor="let location of locationIdToTaskcountArr">
+            <div class="locations" *ngIf="location[1] !== '0'">
+              <div>{{ nodeIdToNodeName[location[0]] }}</div>
+              <div>{{ location[1] }} <span translate>tasks</span></div>
+            </div>
           </div>
         </div>
       </div>

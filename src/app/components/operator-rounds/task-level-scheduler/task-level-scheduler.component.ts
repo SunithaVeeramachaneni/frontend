@@ -64,6 +64,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
   statusSubject: BehaviorSubject<string> = new BehaviorSubject<string>(
     this.statusList.changesSaved
   );
+  nodeIdToNodeName = {};
   pageCheckBoxStatusObject: any = {};
   openCloseRightPanel = false;
   private _payload: any;
@@ -104,6 +105,10 @@ export class TaskLevelSchedulerComponent implements OnInit {
           });
         });
         this.flatHierarchy = JSON.parse(this.authoredData.flatHierarchy);
+        this.flatHierarchy.forEach((node) => {
+          this.nodeIdToNodeName[node.id] = node.name;
+        });
+
         this.flatHierarchy = this.flatHierarchy.filter((node) => {
           const page_id = 'pages_' + node['id'].toString();
           try {
@@ -168,6 +173,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
 
   toggleCheckboxEvent(checkStatus) {
     const checkboxStatus = checkStatus[0];
+    this.openCloseRightPanelEventHandler(checkboxStatus);
     const nodeId = checkStatus[1]['id'];
     if (this.openCloseRightPanel === false) this.openCloseRightPanel = true;
     Object.keys(this.pages).forEach((page_id) => {
@@ -185,6 +191,10 @@ export class TaskLevelSchedulerComponent implements OnInit {
           });
         });
       }
+    });
+    this.operatorRoundService.setCheckBoxStatus({
+      selectedPage: this.selectedPages,
+      nodeId: this.selectedNodeId
     });
   }
 
