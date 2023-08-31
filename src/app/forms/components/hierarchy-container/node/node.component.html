@@ -1,7 +1,8 @@
 <div
   class="node-item"
   *ngIf="{
-    selectedNode: selectedNode$ | async
+    selectedNode: selectedNode$ | async,
+    checkboxStatus: checkboxStatus$ | async
   }"
 >
   <div
@@ -23,11 +24,13 @@
         "
       ></svg-icon>
       <div class="nodeContent" (click)="setSelectedNode(node)">
+        {{ allCheckedPages.status }}
         <mat-checkbox
           class="checkbox"
           *ngIf="hierarchyMode === 'scheduler'"
-          [indeterminate]=""
-          (change)="toggleCheckBox($event.checked)"
+          [checked]="allCheckedPages.status"
+          [indeterminate]="partiallyChecked.status"
+          (change)="toggleCheckBox($event.checked, node)"
         ></mat-checkbox>
         <svg-icon
           id="nodeIcons"

@@ -20,7 +20,9 @@
 
       <mat-checkbox
         class="page-checkbox"
-        [checked]="checkboxStatus"
+        [checked]="page.complete"
+        [indeterminate]="page.partiallyChecked"
+        (change)="toggleAllSectionCheckbox($event.checked, page)"
       ></mat-checkbox>
 
       <span class="form_page_name_input">{{ page.name }} </span>
@@ -46,7 +48,14 @@
               >
                 chevron_right
               </mat-icon>
-              <mat-checkbox class="section-checkbox"></mat-checkbox>
+              <mat-checkbox
+                class="section-checkbox"
+                [checked]="section.complete"
+                [indeterminate]="section.partiallyChecked"
+                (change)="
+                  toggleAllSectionQuestion($event.checked, section, page)
+                "
+              ></mat-checkbox>
 
               <span class="form_section_name_input">{{ section.name }}</span>
             </div>
@@ -56,9 +65,20 @@
               >
                 <div class="questions">
                   <div class="dis-flex questions-div">
-                    <div class="width-90">
-                      <div class="dis-flex">
-                        <mat-checkbox class="question-checkbox"></mat-checkbox>
+                    <div class="width-70">
+                      <div class="width-100" class="dis-flex">
+                        <mat-checkbox
+                          class="question-checkbox"
+                          [checked]="question.complete"
+                          (change)="
+                            toggleAllQuestion(
+                              $event.checked,
+                              question,
+                              section,
+                              page
+                            )
+                          "
+                        ></mat-checkbox>
                         <div class="task-question">{{ question.name }}</div>
                       </div>
                     </div>

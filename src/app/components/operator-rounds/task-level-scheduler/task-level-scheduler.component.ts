@@ -24,9 +24,7 @@ import { format } from 'date-fns';
 export class TaskLevelSchedulerComponent implements OnInit {
   @Input() roundPlanData: any;
   @Input() set payload(payload: any) {
-    console.log(payload);
     this._payload = payload;
-    console.log(this._payload);
     if (this._payload) {
       this.taskLevelScheduleHeaderConfiguration = {
         assigneeDetails: this._payload.assignmentDetails?.displayValue,
@@ -37,7 +35,6 @@ export class TaskLevelSchedulerComponent implements OnInit {
         slotDetails: this._payload.shiftSlots,
         ...this.taskLevelScheduleHeaderConfiguration
       };
-      console.log(this.taskLevelScheduleHeaderConfiguration);
     }
   }
   get payload() {
@@ -54,6 +51,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
   filteredList = [];
   selectedNode = [];
   selectedPages: any;
+  selectedNodeId: any;
   statusList = {
     changesSaved: 'All Changes Saved',
     savingChanges: 'Saving Changes...',
@@ -66,7 +64,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
   statusSubject: BehaviorSubject<string> = new BehaviorSubject<string>(
     this.statusList.changesSaved
   );
-
+  pageCheckBoxStatusObject: any = {};
   openCloseRightPanel = false;
   private _payload: any;
 
@@ -89,6 +87,19 @@ export class TaskLevelSchedulerComponent implements OnInit {
       .subscribe((data) => {
         this.authoredData = data;
         this.pages = JSON.parse(this.authoredData.subForms);
+        Object.keys(this.pages).forEach((pageObj) => {
+          this.pages[pageObj].forEach((page) => {
+            page.complete = false;
+            page.partiallyChecked = false;
+            page.sections.forEach((section) => {
+              section.partiallyChecked = false;
+              section.complete = false;
+            });
+            page.questions.forEach((question) => {
+              question.complete = false;
+            });
+          });
+        });
         this.flatHierarchy = JSON.parse(this.authoredData.flatHierarchy);
       });
 
@@ -108,6 +119,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
               const assetLocationId = key.toString().split('_')[1];
               if (assetLocationId === this.selectedNode['id']) {
                 this.selectedPages = this.pages[key];
+                this.selectedNodeId = assetLocationId;
               }
             }
           }
@@ -142,9 +154,26 @@ export class TaskLevelSchedulerComponent implements OnInit {
     this.searchHierarchyKey.patchValue('');
   }
 
-  toggleCheckboxEvent(checked) {
+  toggleCheckboxEvent(checkStatus) {
+    const checkboxStatus = checkStatus[0];
+    const nodeId = checkStatus[1]['id'];
     if (this.openCloseRightPanel === false) this.openCloseRightPanel = true;
-    this.checkboxStatus = { status: checked };
+    Object.keys(this.pages).forEach((page_id) => {
+      const assetLocationId = page_id.split('_')[1];
+      if (assetLocationId === nodeId) {
+        this.selectedPages.forEach((page) => {
+          page.complete = checkboxStatus;
+          page.partiallyChecked = false;
+          page.sections.forEach((section) => {
+            section.complete = checkboxStatus;
+            section.partiallyChecked = false;
+          });
+          page.questions.forEach((question) => {
+            question.complete = checkboxStatus;
+          });
+        });
+      }
+    });
   }
 
   openCloseRightPanelEventHandler(event) {

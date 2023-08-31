@@ -13,6 +13,7 @@ import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
 import { FormService } from 'src/app/forms/services/form.service';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { tap } from 'rxjs/operators';
+import { createDeflateRaw } from 'zlib';
 
 @Component({
   selector: 'app-node',
@@ -25,7 +26,7 @@ export class NodeComponent implements OnInit {
   @Input() hierarchyMode;
   @Input() dropTargetIds;
   @Output() nodeRemoved: EventEmitter<any> = new EventEmitter();
-  @Output() checkevent: EventEmitter<any> = new EventEmitter();
+  @Output() checkevent: EventEmitter<[any, any]> = new EventEmitter();
   @Input() set nodeWiseQuestionsCount(nodeWiseQuestionsCount: any) {
     if (nodeWiseQuestionsCount) {
       this._nodeWiseQuestionsCount = nodeWiseQuestionsCount;
@@ -39,6 +40,12 @@ export class NodeComponent implements OnInit {
   selectedNode: any;
   selectedNode$: any;
   positions: any;
+  allCheckedPages: any = { status: false };
+  partiallyChecked: any = { status: false };
+  checkboxStatus$: any;
+  someComplete() {
+    return false;
+  }
   public nodeSelectedForShowHierarchy = {} as any;
   public togglePopover = false;
   private _nodeWiseQuestionsCount: any = {};
@@ -53,6 +60,24 @@ export class NodeComponent implements OnInit {
     this.selectedNode$ = this.operatorRoundsService.selectedNode$.pipe(
       tap((data) => {
         this.selectedNode = data;
+      })
+    );
+
+    this.checkboxStatus$ = this.operatorRoundsService.checkboxStatus$.pipe(
+      tap((value) => {
+        if (value !== null && value.nodeId === this.node.id) {
+          this.allCheckedPages = {
+            status: value.selectedPage.every((t) => t.complete)
+          };
+
+          this.partiallyChecked = {
+            status:
+              (value.selectedPage.filter((t) => t.partiallyChecked).length >
+                0 ||
+                value.selectedPage.filter((t) => t.complete).length > 0) &&
+              !this.allCheckedPages.status
+          };
+        }
       })
     );
   }
@@ -130,7 +155,9 @@ export class NodeComponent implements OnInit {
     this.togglePopover = !this.togglePopover;
   };
 
-  toggleCheckBox(checked) {
-    this.checkevent.emit(checked);
+  toggleCheckBox(checked, node) {
+    this.allCheckedPages.status = checked;
+    this.partiallyChecked = false;
+    this.checkevent.emit([checked, node]);
   }
 }

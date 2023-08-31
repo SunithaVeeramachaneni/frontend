@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { FormBuilder } from '@angular/forms';
+import { OperatorRoundsService } from '../services/operator-rounds.service';
 
 @Component({
   selector: 'app-task-level-task-components',
@@ -8,28 +9,32 @@ import { FormBuilder } from '@angular/forms';
   styleUrls: ['./task-level-task-components.component.scss']
 })
 export class TaskLevelTaskComponentsComponent implements OnInit {
+  @Input() selectedNodeId: any;
   @Input() set selectedPage(selectedPage: any) {
     if (selectedPage) {
       this._selectedPage = selectedPage;
-      console.log('here doing changes');
       this.questionToSection = this.mapQuestionToSection(this.selectedPage);
-      console.log('questionTosection', this.questionToSection);
     }
   }
   get selectedPage() {
     return this._selectedPage;
   }
+
   @Input() set checkboxStatus(checkboxStatus: any) {
-    console.log('inside task-levelTask:', checkboxStatus);
     this._checkboxStatus = checkboxStatus;
   }
   get checkboxStatus() {
     return this._checkboxStatus;
   }
   questionToSection = new Map<number, any[]>();
+  allCheckedSection: boolean = false;
+  partiallyFilledSection: boolean = false;
   private _checkboxStatus: any;
   private _selectedPage: any;
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    private operatorRoundService: OperatorRoundsService
+  ) {}
   ngOnInit() {}
   questionToSectionId: Map<number, any[]> = new Map();
   pageForm: FormGroup = this.fb.group({
@@ -37,7 +42,6 @@ export class TaskLevelTaskComponentsComponent implements OnInit {
       value: '',
       disabled: true
     },
-    position: '',
     isOpen: true
   });
 
@@ -47,12 +51,7 @@ export class TaskLevelTaskComponentsComponent implements OnInit {
       value: '',
       disabled: true
     },
-    position: '',
-    isOpen: true,
-    isImported: false,
-    templateId: '',
-    templateName: '',
-    externalSectionId: ''
+    isOpen: true
   });
 
   toggleIsOpenState = () => {
@@ -60,7 +59,6 @@ export class TaskLevelTaskComponentsComponent implements OnInit {
   };
 
   mapQuestionToSection(pages: any[]) {
-    console.log('pagesInside MaptoSection:', pages);
     const questionMap = new Map<number, any[]>();
     pages.forEach((pages) => {
       pages.questions.forEach((question) => {
@@ -72,175 +70,66 @@ export class TaskLevelTaskComponentsComponent implements OnInit {
     });
     return questionMap;
   }
+  someCompleteSection(page) {
+    if (!page.sections) return false;
+
+    return page.sections.filter((t) => t.complete).length > 0 && !page.complete;
+  }
+
+  toggleAllSectionCheckbox(checkedstatus, page) {
+    page.complete = checkedstatus;
+    page.partiallyChecked = false;
+    page.sections.forEach((section) => {
+      section.complete = checkedstatus;
+      section.partiallyChecked = false;
+    });
+    page.questions.forEach((question) => {
+      question.complete = checkedstatus;
+    });
+    this.operatorRoundService.setCheckBoxStatus({
+      selectedPage: this.selectedPage,
+      nodeId: this.selectedNodeId
+    });
+  }
+  toggleAllSectionQuestion(checkboxStatus, section, page) {
+    section.complete = checkboxStatus;
+    this.questionToSection.get(section.id).forEach((question) => {
+      question.complete = checkboxStatus;
+    });
+    page.complete =
+      page.sections != null && page.sections.every((t) => t.complete);
+
+    page.partiallyChecked =
+      page.sections.filter((t) => t.complete).length > 0 && !page.complete;
+    this.operatorRoundService.setCheckBoxStatus({
+      selectedPage: this.selectedPage,
+      nodeId: this.selectedNodeId
+    });
+  }
+  toggleAllQuestion(checkboxStatus, question, section, page) {
+    this.questionToSection.get(question.sectionId).forEach((ques) => {
+      if (ques.id === question.id) {
+        ques.complete = checkboxStatus;
+      }
+    });
+
+    section.complete =
+      this.questionToSection.get(question.sectionId) !== null &&
+      this.questionToSection.get(question.sectionId).every((t) => t.complete);
+    section.partiallyChecked =
+      this.questionToSection.get(question.sectionId).filter((t) => t.complete)
+        .length > 0 && !section.complete;
+
+    page.complete =
+      page.sections != null && page.sections.every((t) => t.complete);
+
+    page.partiallyChecked =
+      (page.sections.filter((t) => t.complete).length > 0 ||
+        page.sections.filter((t) => t.partiallyChecked).length > 0) &&
+      !page.complete;
+    this.operatorRoundService.setCheckBoxStatus({
+      selectedPage: this.selectedPage,
+      nodeId: this.selectedNodeId
+    });
+  }
 }
-
-// import { Component, OnInit, Input } from '@angular/core';
-// import { FormGroup, FormBuilder } from '@angular/forms';
-// import { isEqual } from 'lodash-es';
-
-// @Component({
-//   selector: 'app-task-level-mid-panel-pages',
-//   templateUrl: './task-level-mid-panel-pages.component.html',
-//   styleUrls: ['./task-level-mid-panel-pages.component.scss']
-// })
-// export class TaskLevelMidPanelPagesComponent implements OnInit {
-//   questionToSectionId: Map<number, any[]> = new Map();
-//   constructor(private fb: FormBuilder) {}
-//   @Input() set checkboxStatus(checkboxStatus: any) {
-//     console.log('checkboxStatusinside pages:', checkboxStatus);
-//     this._checkboxStatus = checkboxStatus;
-//   }
-//   get checkboxStatus() {
-//     return this._checkboxStatus;
-//   }
-//   @Input() set page(page: any) {
-//     if (page) {
-//       if (!isEqual(this.page, page)) {
-//         this._page = page;
-//         this.pageForm.patchValue(page, {
-//           emitEvent: false
-//         });
-//       }
-//       this.questionToSectionId = this.mapQuestionToSection(page.questions);
-//     }
-//   }
-//   get page() {
-//     return this._page;
-//   }
-
-//   private _page: any;
-//   private _checkboxStatus: any;
-//   pageForm: FormGroup = this.fb.group({
-//     name: {
-//       value: '',
-//       disabled: true
-//     },
-//     position: '',
-//     isOpen: true
-//   });
-
-//   ngOnInit(): void {}
-
-//   toggleIsOpenState = () => {
-//     this.pageForm.get('isOpen').setValue(!this.pageForm.get('isOpen').value);
-//   };
-
-//   mapQuestionToSection(questions: any[]) {
-//     const questionMap = new Map<number, any[]>();
-//     questions.forEach((question) => {
-//       if (!questionMap.has(question.sectionId)) {
-//         questionMap.set(question.sectionId, []);
-//       }
-//       questionMap.get(question.sectionId)!.push(question);
-//     });
-//     return questionMap;
-//   }
-// }
-
-//////////////////
-
-// import { Component, OnInit, Input } from '@angular/core';
-// import { FormGroup, FormBuilder } from '@angular/forms';
-// import { isEqual } from 'lodash-es';
-
-// @Component({
-//   selector: 'app-task-level-mid-panel-section',
-//   templateUrl: './task-level-mid-panel-section.component.html',
-//   styleUrls: ['./task-level-mid-panel-section.component.scss']
-// })
-// export class TaskLevelMidPanelSectionComponent implements OnInit {
-//   @Input() set question(question: any) {
-//     this._question = question;
-//   }
-//   get question() {
-//     return this._question;
-//   }
-
-//   @Input() set section(section: any) {
-//     if (section) {
-//       if (!isEqual(this.section, section)) {
-//         this._section = section;
-//         this.sectionForm.patchValue(section, {
-//           emitEvent: false
-//         });
-//       }
-//     }
-//   }
-//   get section() {
-//     return this._section;
-//   }
-//   private _section: any;
-//   private _question: any;
-//   sectionForm: FormGroup = this.fb.group({
-//     id: '',
-//     name: {
-//       value: '',
-//       disabled: true
-//     },
-//     position: '',
-//     isOpen: true,
-//     isImported: false,
-//     templateId: '',
-//     templateName: '',
-//     externalSectionId: ''
-//   });
-
-//   constructor(private fb: FormBuilder) {}
-
-//   ngOnInit(): void {}
-
-//   toggleIsOpenState = () => {
-//     this.sectionForm
-//       .get('isOpen')
-//       .setValue(!this.sectionForm.get('isOpen').value);
-//   };
-// }
-
-////
-
-// import { Component, OnInit, Input } from '@angular/core';
-// import { FormGroup, FormBuilder } from '@angular/forms';
-// import { isEqual } from 'lodash-es';
-// import { NumberRangeMetadata } from 'src/app/interfaces';
-// @Component({
-//   selector: 'app-task-leve-mid-panel-question-components',
-//   templateUrl: './task-leve-mid-panel-question-components.component.html',
-//   styleUrls: ['./task-leve-mid-panel-question-components.component.scss']
-// })
-// export class TaskLeveMidPanelQuestionComponentsComponent implements OnInit {
-//   questionForm: FormGroup = this.fb.group({
-//     id: '',
-//     sectionId: '',
-//     name: '',
-//     fieldType: 'TF',
-//     position: '',
-//     required: false,
-//     enableHistory: false,
-//     multi: false,
-//     value: 'TF',
-//     isPublished: false,
-//     isPublishedTillSave: false,
-//     isOpen: false,
-//     isResponseTypeModalOpen: false,
-//     unitOfMeasurement: 'None',
-//     rangeMetadata: {} as NumberRangeMetadata
-//   });
-//   @Input() set question(question: any) {
-//     if (question) {
-//       if (!isEqual(this.question, question)) {
-//         this._question = question;
-//         this.questionForm.patchValue(question, {
-//           emitEvent: false
-//         });
-//       }
-//     }
-//   }
-
-//   get question() {
-//     return this._question;
-//   }
-//   private _question: any;
-//   constructor(private fb: FormBuilder) {}
-
-//   ngOnInit(): void {}
-// }

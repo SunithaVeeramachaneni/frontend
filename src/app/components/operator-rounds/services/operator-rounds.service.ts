@@ -34,7 +34,7 @@ import { cloneDeep, isEmpty, omitBy } from 'lodash-es';
 export class OperatorRoundsService {
   private selectedNodeSubject = new BehaviorSubject<any>({});
   private hierarchyModeSubject = new BehaviorSubject<any>('asset_hierarchy');
-  checkBoxStatusSubject = new BehaviorSubject<any>({});
+  private checkBoxStatusSubject = new BehaviorSubject<any>({});
 
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
@@ -42,6 +42,7 @@ export class OperatorRoundsService {
   pdfMapping$ = new BehaviorSubject<any>({});
   selectedNode$ = this.selectedNodeSubject.asObservable();
   hierarchyMode$ = this.hierarchyModeSubject.asObservable();
+  checkboxStatus$ = this.checkBoxStatusSubject.asObservable();
   usersInfoByEmail: UsersInfoByEmail;
 
   constructor(
