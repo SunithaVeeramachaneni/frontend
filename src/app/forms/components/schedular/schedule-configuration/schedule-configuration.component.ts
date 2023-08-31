@@ -1115,6 +1115,8 @@ export class ScheduleConfigurationComponent
               scheduledTill,
               scheduleByDates
             } = config;
+            this.startDatePickerMinDate = new Date(startDate);
+            this.scheduleEndOnPickerMinDate = new Date(scheduleEndOn);
             config = {
               ...config,
               startDate: localToTimezoneDate(
