@@ -75,13 +75,24 @@ export class SelectQuestionsDialogComponent implements OnInit {
               }
             });
 
-            if (this.data.viewMode === 'MANDATE') {
-              const logics = page.logics.filter(
-                (logic) =>
-                  logic.questionId === this.data.questionId &&
-                  logic.logicTitle !== this.data.logic.logicTitle
-              );
-              logics.forEach((logic) => {
+            const logics = page.logics.filter(
+              (logic) =>
+                logic.questionId === this.data.questionId &&
+                logic.logicTitle !== this.data.logic.logicTitle
+            );
+            logics.forEach((logic) => {
+              if (this.data.viewMode === 'HIDE') {
+                const mandateQuestions = page.questions.filter((q) => {
+                  if (q.required === false) {
+                    return (
+                      q.sectionId === section.id &&
+                      logic.mandateQuestions.includes(q.id)
+                    );
+                  }
+                });
+                sectionQuestions.push(...mandateQuestions);
+              }
+              if (this.data.viewMode === 'MANDATE') {
                 const hiddenQuestions = page.questions.filter((q) => {
                   if (q.required === false) {
                     return (
@@ -91,8 +102,8 @@ export class SelectQuestionsDialogComponent implements OnInit {
                   }
                 });
                 sectionQuestions.push(...hiddenQuestions);
-              });
-            }
+              }
+            });
             if (!section?.isImported)
               this.sections.push({
                 ...section,
