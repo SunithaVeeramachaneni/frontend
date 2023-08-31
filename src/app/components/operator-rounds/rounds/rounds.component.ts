@@ -55,13 +55,13 @@ import {
 } from 'src/app/interfaces';
 import {
   formConfigurationStatus,
-  graphQLRoundsOrInspectionsLimit,
   dateTimeFormat4,
   permissions as perms,
   statusColors,
   dateTimeFormat5,
   dateFormat6,
-  timeFormat
+  timeFormat,
+  graphQLDefaultLimit
 } from 'src/app/app.constants';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
 import { LoginService } from '../../login/services/login.service';
@@ -525,7 +525,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   skip = 0;
   plantMapSubscription: Subscription;
-  limit = graphQLRoundsOrInspectionsLimit;
+  limit = graphQLDefaultLimit;
   searchForm: FormControl;
   isPopoverOpen = false;
   roundsCount = 0;
@@ -695,14 +695,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
 
         this.initial.data = this.formattingRound(this.initial.data);
         this.skip = this.initial.data.length;
-        // Just a work around to improve the perforamce as we getting more records in the single n/w call. When small chunk of records are coming n/w call we can get rid of slice implementation
-        const sliceStart = this.dataSource ? this.dataSource.data.length : 0;
-        const dataSource = this.dataSource
-          ? this.dataSource.data.concat(
-              this.initial.data.slice(sliceStart, sliceStart + this.sliceCount)
-            )
-          : this.initial.data.slice(sliceStart, this.sliceCount);
-        this.dataSource = new MatTableDataSource(dataSource);
+        this.dataSource = new MatTableDataSource(this.initial.data);
         return this.initial;
       })
     );

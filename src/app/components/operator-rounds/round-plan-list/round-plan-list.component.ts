@@ -444,7 +444,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
             initial.data = initial.data.filter((d) => d.id !== form.form.id);
             form.action = 'add';
             this.toast.show({
-              text: 'Round Plan archive successfully!',
+              text: 'Round Plan archived successfully!',
               type: 'success'
             });
           } else {
