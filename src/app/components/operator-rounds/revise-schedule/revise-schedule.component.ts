@@ -49,12 +49,10 @@ export class ReviseScheduleComponent implements OnInit {
   repeatTypes = scheduleConfigs.repeatTypes;
   daysOfWeek = scheduleConfigs.daysOfWeek;
   weeksOfMonth = scheduleConfigs.weeksOfMonth;
-  startDatePickerMinDate: Date;
   resviseScheduleConfigForm: FormGroup;
   shiftsSelected = new FormControl('');
   allSlots = [];
   allShifts = [];
-  currentDate: Date;
   reviseScheduleConfig;
   locationListToTask$: any;
   locationIdToTaskcount = new Map<string, string>();
@@ -123,9 +121,6 @@ export class ReviseScheduleComponent implements OnInit {
       this.allSlots = this.reviseScheduleConfig.shiftSlots;
       this.allShifts = this.reviseScheduleConfig.shiftSlots;
     }
-
-    this.startDatePickerMinDate = new Date();
-    this.currentDate = new Date();
   }
 
   get monthlyDaysOfWeek(): FormArray {
@@ -149,7 +144,19 @@ export class ReviseScheduleComponent implements OnInit {
   updateDate(
     event: MatDatepickerInputEvent<Date>,
     formControlDateField: string
-  ) {}
+  ) {
+    if (formControlDateField === 'startDate') {
+      this.resviseScheduleConfigForm.patchValue(
+        { startDate: format(new Date(event.target.value), 'd MMM yyyy') },
+        { emitEvent: false }
+      );
+    } else if (formControlDateField === 'endDate') {
+      this.resviseScheduleConfigForm.patchValue(
+        { endDate: format(new Date(event.target.value), 'd MMM yyyy') },
+        { emitEvent: false }
+      );
+    }
+  }
 
   dateClass() {
     return (date: Date): MatCalendarCellCssClasses => {

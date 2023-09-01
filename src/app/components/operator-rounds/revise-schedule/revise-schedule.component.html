@@ -119,21 +119,22 @@
 
         <div class="dis-flex custom-form-field-white-color m-t-10">
           <span class="f-w-400 startdate" translate>startDate</span>
-          <mat-form-field appearance="outline" class="width-40">
+          <mat-form-field
+            appearance="outline"
+            class="width-40"
+            (click)="startDate.open()"
+          >
             <input matInput formControlName="startDate" readonly />
             <input
               matInput
               [matDatepicker]="startDate"
               formControlName="startDatePicker"
               (dateChange)="updateDate($event, 'startDate')"
-              [min]="startDatePickerMinDate"
+              [min]="this.reviseScheduleConfig.startDate"
+              [max]="this.reviseScheduleConfig.endDate"
               hidden
             />
-            <mat-datepicker-toggle
-              matIconSuffix
-              [for]="startDate"
-              (click)="startDate.open()"
-            >
+            <mat-datepicker-toggle matIconSuffix [for]="startDate">
               <mat-icon matDatepickerToggleIcon>arrow_drop_down</mat-icon>
             </mat-datepicker-toggle>
             <mat-datepicker #startDate></mat-datepicker>
@@ -142,21 +143,22 @@
 
         <div class="dis-flex custom-form-field-white-color m-t-10">
           <span class="f-w-400 enddate" translate>endDate</span>
-          <mat-form-field appearance="outline" class="width-40">
+          <mat-form-field
+            appearance="outline"
+            class="width-40"
+            (click)="endDate.open()"
+          >
             <input matInput formControlName="endDate" readonly />
             <input
               matInput
               [matDatepicker]="endDate"
               formControlName="endDatePicker"
               (dateChange)="updateDate($event, 'endDate')"
-              [min]="startDatePickerMinDate"
+              [min]="this.reviseScheduleConfig.startDate"
+              [max]="this.reviseScheduleConfig.endDate"
               hidden
             />
-            <mat-datepicker-toggle
-              matIconSuffix
-              [for]="endDate"
-              (click)="endDate.open()"
-            >
+            <mat-datepicker-toggle matIconSuffix [for]="endDate">
               <mat-icon matDatepickerToggleIcon>arrow_drop_down</mat-icon>
             </mat-datepicker-toggle>
             <mat-datepicker #endDate></mat-datepicker>
@@ -172,7 +174,8 @@
         <div class="by-date">
           <mat-calendar
             #calendar
-            [minDate]="currentDate"
+            [minDate]="this.reviseScheduleConfig.startDate"
+            [maxDate]="this.reviseScheduleConfig.endDate"
             [dateClass]="dateClass()"
             (selectedChange)="updateScheduleByDates($event)"
           ></mat-calendar>
@@ -180,7 +183,7 @@
       </ng-container>
     </div>
 
-    <div class="subheadings">
+    <div class="subheadings custom-form-field-white-color shifts">
       <h3 translate>shifts</h3>
 
       <mat-form-field class="width-100" appearance="outline">

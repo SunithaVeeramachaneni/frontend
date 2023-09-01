@@ -110,7 +110,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
           const page_id = 'pages_' + node['id'].toString();
           try {
             if (this.pages[page_id].length > 0) return true;
-            else false;
+            else return false;
           } catch (err) {
             return false;
           }

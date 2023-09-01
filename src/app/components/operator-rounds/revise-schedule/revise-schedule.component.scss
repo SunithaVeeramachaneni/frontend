@@ -51,6 +51,7 @@
     h3 {
       font-size: 120%;
       font-weight: 500;
+      margin-bottom: 7px;
     }
   }
 
@@ -209,5 +210,9 @@
     padding: 10px;
     border-radius: 4px;
     margin-right: 10px;
+  }
+
+  ::ng-deep .shifts .mat-select-disabled .mat-select-arrow {
+    margin-top: -5px !important;
   }
 }
