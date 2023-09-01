@@ -5,8 +5,10 @@ import {
   EventEmitter,
   OnInit,
   Output,
-  Input
+  Input,
+  ViewChild
 } from '@angular/core';
+import { MatSelect } from '@angular/material/select';
 import { scheduleConfigs } from '../../../forms/components/schedular/schedule-configuration/schedule-configuration.constants';
 import {
   MatCalendarCellCssClasses,
@@ -30,6 +32,7 @@ import { tap } from 'rxjs/operators';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ReviseScheduleComponent implements OnInit {
+  @ViewChild('shiftSelect') shiftSelect: MatSelect;
   @Output() openCloseRightPanelEvent = new EventEmitter<boolean>();
   @Input() set nodeIdToNodeName(nodeIdToNodeName: any) {
     this._nodeIdToNodeName = nodeIdToNodeName;
@@ -118,8 +121,28 @@ export class ReviseScheduleComponent implements OnInit {
         endDatePicker: new Date(this.reviseScheduleConfig.endDate)
       });
 
-      this.allSlots = this.reviseScheduleConfig.shiftSlots;
+      this.allSlots = this.prepareShiftAndSlot(
+        this.reviseScheduleConfig.shiftSlots,
+        this.reviseScheduleConfig.shiftDetails
+      );
       this.allShifts = this.reviseScheduleConfig.shiftSlots;
+    }
+    this.shiftsSelected.valueChanges.subscribe((data) =>
+      console.log('data:', data)
+    );
+  }
+
+  prepareShiftAndSlot(shiftSlot, shiftDetails) {
+    if (Object.keys(shiftDetails)[0] === 'null') {
+      return shiftSlot;
+    } else {
+      shiftSlot.forEach((data) => {
+        data.payload = shiftDetails[data.id].map((pLoad) => {
+          pLoad.checked = true;
+          return pLoad;
+        });
+      });
+      return shiftSlot;
     }
   }
 
@@ -128,8 +151,8 @@ export class ReviseScheduleComponent implements OnInit {
   }
 
   get selectedShiftData(): string {
-    if (this.allShifts.length > 0) {
-      return this.allShifts
+    if (this.allSlots.length > 0) {
+      return this.allSlots
         ?.slice(0, 3)
         .map((s) => s?.name)
         .join(', ');
@@ -177,7 +200,17 @@ export class ReviseScheduleComponent implements OnInit {
   updateScheduleByDates(event: MatDatepickerInputEvent<Date>) {}
 
   onShiftChange(event) {
-    console.log(event);
+    if (event.value.length !== 0) {
+      event.value.forEach((shift) => {
+        shift.payload.forEach((slot) => {
+          slot.checked = true;
+        });
+      });
+      this.allSlots = event.value;
+    } else {
+      this.allSlots = [{ null: { startTime: '00:00', endTime: '23:59' } }];
+      this.shiftsSelected['controls'].value = this.allSlots;
+    }
   }
 
   cancel() {
@@ -187,5 +220,27 @@ export class ReviseScheduleComponent implements OnInit {
   compareFn(o1: any, o2: any) {
     if (o1.id === o2.id) return true;
     else return false;
+  }
+
+  checkboxEventSlots(checked, selectedShift, slotSelected) {
+    let uncheckedCount = 0;
+    selectedShift.payload.forEach((slot) => {
+      if (
+        slot.startTime === slotSelected.startTime &&
+        slot.endTime === slotSelected.endTime
+      ) {
+        checked ? (slot.checked = true) : (slot.checked = false);
+      }
+      if (!slot.checked) uncheckedCount++;
+    });
+    if (uncheckedCount === selectedShift.payload.length) {
+      this.allSlots = this.allSlots.filter(
+        (shifts) => shifts.id !== selectedShift.id
+      );
+    }
+    if (this.allSlots.length === 0) {
+      this.allSlots = [{ null: { startTime: '00:00', endTime: '23:59' } }];
+    }
+    this.shiftSelect.value = this.allSlots;
   }
 }

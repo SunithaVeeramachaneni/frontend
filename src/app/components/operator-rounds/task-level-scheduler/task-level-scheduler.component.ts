@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 
 import { FormControl } from '@angular/forms';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { dateFormat4 } from 'src/app/app.constants';
 import {
   debounceTime,

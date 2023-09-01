@@ -188,9 +188,10 @@
 
       <mat-form-field class="width-100" appearance="outline">
         <mat-select
+          #shiftSelect
           [formControl]="shiftsSelected"
           multiple
-          (selectionChange)="onShiftChange($event.value)"
+          (selectionChange)="onShiftChange($event)"
           [compareWith]="compareFn"
           panelClass="task-level-shifts"
           [disabled]="allShifts[0].null"
@@ -198,8 +199,8 @@
           <mat-select-trigger id="taskScheduleConfigInitialShift">
             {{ selectedShiftData }}
             <span id="taskScheduleConfigShiftMore" *ngIf="allShifts.length > 3">
-              (+{{ allShifts.length - 3 }}
-              {{ allShifts.length === 4 ? 'more' : 'more' }})
+              (+{{ allSlots.length - 3 }}
+              {{ allSlots.length === 4 ? 'more' : 'more' }})
             </span>
           </mat-select-trigger>
           <mat-option
@@ -220,7 +221,7 @@
 
     <div class="subheadings">
       <h3 translate>slots</h3>
-      <ng-container *ngIf="allSlots[0].null">
+      <ng-container *ngIf="allSlots[0] && allSlots[0].null">
         <span class="no-slot-times">
           <mat-checkbox [checked]="true" [disabled]="true">
             {{ allSlots[0].null.startTime }} -
@@ -228,11 +229,14 @@
           </mat-checkbox>
         </span>
       </ng-container>
-      <ng-container *ngIf="allSlots[0].id">
-        <div *ngFor="let slot of allSlots">
-          <p>{{ slot?.name }}</p>
-          <span class="slot-times">
-            <mat-checkbox [checked]="true">
+      <ng-container *ngIf="allSlots[0] && allSlots[0].id">
+        <div *ngFor="let slots of allSlots">
+          <p>{{ slots?.name }}</p>
+          <span class="slot-times" *ngFor="let slot of slots.payload">
+            <mat-checkbox
+              [checked]="true"
+              (change)="checkboxEventSlots($event.checked, slots, slot)"
+            >
               {{ slot?.startTime }} - {{ slot?.endTime }}
             </mat-checkbox>
           </span>
