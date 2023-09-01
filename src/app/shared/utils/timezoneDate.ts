@@ -14,6 +14,43 @@ export const localToTimezoneDate = (date, timezone, f) => {
   return formatInTimeZone(new Date(date), timezone.timeZoneIdentifier, f);
 };
 
+/**
+ * @description Format a date according to the format specified
+ * @param date
+ * @param timezone
+ * @param dateformat
+ */
+export const localToTimezoneDateV2 = (date, timezone, dateformat = '') => {
+  if (!date) {
+    return '';
+  }
+  if (dateformat === '') dateformat = 'yyyy-MM-dd HH:mm:ss zzz';
+  const onlyDate = date?.split('T')[0];
+  const dateObject = new Date(onlyDate);
+
+  const dateTime = new Date(date).toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true
+  });
+  const formatOptions = {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    timeZone: timezone.timeZoneIdentifier
+  };
+
+  const formattedDate: string = new Intl.DateTimeFormat(
+    'en-US',
+    formatOptions as unknown
+  ).format(dateObject);
+
+  return format(
+    new Date(formattedDate + ' ' + dateTime?.toUpperCase()),
+    dateformat
+  );
+};
+
 export const getTimezoneUTC = (date, timezone) => {
   const d = new Date(date);
   if (!timezone?.timeZoneIdentifier) return d.toISOString();

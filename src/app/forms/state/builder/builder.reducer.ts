@@ -656,6 +656,19 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
         key = `${key}_${subFormId}`;
       }
       const pages = state[key].map((page, pageIndex) => {
+        const { required, id: questionId } = action.question;
+
+        let logics = page.logics;
+        if (required) {
+          logics = logics.map((logic) => {
+            let hideQuestions = logic.hideQuestions;
+            if (hideQuestions.includes(questionId)) {
+              hideQuestions = hideQuestions.filter((q) => q !== questionId);
+            }
+            return { ...logic, hideQuestions };
+          });
+        }
+
         if (pageIndex === action.pageIndex) {
           let sectionQuestions = page.questions.filter(
             (question) => question.sectionId === action.sectionId
@@ -670,7 +683,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
           ];
           return {
             ...page,
-            questions: [...sectionQuestions, ...remainingQuestions]
+            questions: [...sectionQuestions, ...remainingQuestions],
+            logics: logics
           };
         }
         return page;

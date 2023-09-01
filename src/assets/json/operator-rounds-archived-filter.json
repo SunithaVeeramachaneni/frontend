@@ -1,26 +1,5 @@
 [
   {
-    "label": "Status",
-    "items": [],
-    "column": "status",
-    "type": "select",
-    "value": ""
-  },
-  {
-    "label": "Modified By",
-    "items": [],
-    "column": "modifiedBy",
-    "type": "select",
-    "value": ""
-  },
-  {
-    "label": "Authored By",
-    "items": [],
-    "column": "authoredBy",
-    "type": "select",
-    "value": ""
-  },
-  {
     "label": "Plant",
     "items": [],
     "column": "plant",
