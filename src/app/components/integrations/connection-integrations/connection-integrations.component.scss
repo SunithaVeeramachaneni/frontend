@@ -1,0 +1,48 @@
+@import '../../../../scss/colors.scss';
+.w-100 {
+  width: 100% !important;
+}
+.integrations-container {
+  height: calc(100vh - 80px);
+  width: 100%;
+
+  ::ng-deep .table-column {
+    width: 30% !important;
+  }
+}
+
+::ng-deep .mat-column-connectorId {
+  width: 25%;
+}
+
+::ng-deep .mat-column-integrationPointId {
+  width: 25%;
+}
+
+::ng-deep .mat-column-syncType {
+  width: 25%;
+}
+
+::ng-deep .mat-column-updatedOn {
+  width: 25%;
+}
+.connector-head-left {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0px;
+  border-bottom: 1px solid $border-color;
+  padding: 15px;
+}
+.form-name-description {
+  font-weight: 700;
+  color: $blue-head;
+  font-size: 120%;
+}
+.test-connect {
+  display: flex;
+  justify-content: flex-end;
+}
+.test-connection-btn {
+  margin: 5px !important;
+}

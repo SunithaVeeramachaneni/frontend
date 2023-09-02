@@ -14,7 +14,7 @@ import {
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { IntegrationsService } from '../services/integrations.service';
 import { ErrorInfo } from 'src/app/interfaces';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-add-edit-connector',
@@ -69,6 +69,7 @@ export class AddEditConnectorComponent implements OnInit {
   });
 
   constructor(
+    public dialogRef: MatDialogRef<AddEditConnectorComponent>,
     private fb: FormBuilder,
     private cdrf: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA)
@@ -76,7 +77,24 @@ export class AddEditConnectorComponent implements OnInit {
     private integrationsService: IntegrationsService
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if (this.data.mode === 'edit') {
+      const connector = this.data?.connector;
+      this.connectionForm.patchValue({
+        connector: connector.connectorId,
+        connectorAlias: connector.connectorName,
+        icon: connector.icon,
+        description: connector.description
+      });
+      this.connectionForm.removeControl('connectorMeta');
+      const connectorMetaFormGroup = this.getConnectorMetaFormGroup(
+        connector.connectorId
+      );
+      connectorMetaFormGroup.patchValue({ ...connector.connectorMeta });
+      this.connectionForm.setControl('connectorMeta', connectorMetaFormGroup);
+      this.cdrf.detectChanges();
+    }
+  }
 
   connectorChanged(event): void {
     this.isConnectionTested = false;
@@ -171,45 +189,41 @@ export class AddEditConnectorComponent implements OnInit {
 
   saveConnection() {
     this.isSaveInProgress = true;
-    console.log(this.connectionForm.value);
     const info: ErrorInfo = {
       displayToast: true,
       failureResponse: 'throwError'
     };
-    this.integrationsService
-      .createConnection$(this.connectionForm.value, info)
-      .subscribe(
-        (resp: any) => {
-          console.log(resp);
-          this.isSaveInProgress = false;
-        },
-        (err) => {
-          this.isSaveInProgress = false;
-        }
-      );
-  }
-
-  isTestConnectionDisabled(): boolean {
-    let isDisabled = true;
-    const currentVal = { ...this.connectionForm.value };
-    const isConnectorValid =
-      currentVal.connector && currentVal.connector.length ? true : false;
-    isDisabled = isDisabled && isConnectorValid;
-    const isConnectorAliasValid =
-      currentVal.connectorAlias && currentVal.connectorAlias.length
-        ? true
-        : false;
-    isDisabled = isDisabled && isConnectorAliasValid;
-
-    if (Object.keys(currentVal.connectorMeta).length) {
-      const properties = Object.keys(currentVal.connectorMeta);
-      properties.forEach((prop) => {
-        const propValue = currentVal.connectorMeta[prop]?.toString();
-        const isPropValid = propValue && propValue.length;
-        isDisabled = isDisabled && isPropValid;
-      });
+    if (this.data.mode === 'create') {
+      this.integrationsService
+        .createConnection$(this.connectionForm.value, info)
+        .subscribe(
+          (resp: any) => {
+            this.dialogRef.close(resp);
+            this.isSaveInProgress = false;
+          },
+          (err) => {
+            this.isSaveInProgress = false;
+          }
+        );
+    } else if (this.data.mode === 'edit') {
+      const connectorId = this.data.connector.id;
+      this.integrationsService
+        .updateConnection$(connectorId, this.connectionForm.value, info)
+        .subscribe(
+          (resp: any) => {
+            this.dialogRef.close({
+              ...this.connectionForm.value,
+              id: connectorId,
+              connectorName: this.connectionForm.value.connectorAlias,
+              connectorId: this.connectionForm.value.connector
+            });
+            this.isSaveInProgress = false;
+          },
+          (err) => {
+            this.isSaveInProgress = false;
+          }
+        );
     }
-    return !isDisabled;
   }
 
   close(): void {}

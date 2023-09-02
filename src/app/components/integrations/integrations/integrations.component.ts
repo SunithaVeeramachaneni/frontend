@@ -10,7 +10,8 @@ import { AddEditConnectorComponent } from '../add-edit-connector/add-edit-connec
 import { BehaviorSubject, Observable, combineLatest, of } from 'rxjs';
 import { catchError, map, mergeMap, tap } from 'rxjs/operators';
 import { IntegrationsService } from '../services/integrations.service';
-import { ErrorInfo } from 'src/app/interfaces';
+import { Confirmation, ErrorInfo } from 'src/app/interfaces';
+import { ConfirmationModalDialogComponent } from '../confirmation-modal/confirmation-modal.component';
 
 @Component({
   selector: 'app-integrations',
@@ -76,6 +77,7 @@ export class IntegrationsComponent implements OnInit {
   };
 
   isSubmitInprogress = false;
+  selectedConnector: any;
 
   integrationConfigForm = this.fb.group({
     integrationPoint: new FormControl(''),
@@ -119,8 +121,24 @@ export class IntegrationsComponent implements OnInit {
       this.connectorsInitial$,
       this.createUpdateDeleteConnector$
     ]).pipe(
-      map(([initial, dashboardAction]) => {
-        const { type, dashboard } = dashboardAction;
+      map(([initial, connectorAction]) => {
+        const { type, connector } = connectorAction;
+        if (Object.keys(connector).length) {
+          if (type === 'create') {
+            initial.data = initial.data.concat([connector]);
+          } else if (type === 'update') {
+            const index = initial.data.findIndex((c) => c.id === connector.id);
+            if (index > -1) {
+              initial.data[index] = connector;
+            }
+          } else if (type === 'delete') {
+            const index = initial.data.findIndex((c) => c.id === connector);
+            if (index > -1) {
+              initial.data.splice(index, 1);
+            }
+          }
+        }
+        this.selectedConnector = initial.data[0];
         return initial.data;
       }),
       tap((connectors) => {
@@ -128,7 +146,8 @@ export class IntegrationsComponent implements OnInit {
       })
     );
   }
-  addConnector() {
+
+  addConnection() {
     const dialogRef = this.dialog.open(AddEditConnectorComponent, {
       disableClose: true,
       width: '600px',
@@ -136,7 +155,59 @@ export class IntegrationsComponent implements OnInit {
       data: { mode: 'create' }
     });
     dialogRef.afterClosed().subscribe((result) => {
-      //
+      this.createUpdateDeleteConnector$.next({
+        type: 'create',
+        connector: result
+      });
+    });
+  }
+
+  updateConnection(connector) {
+    const dialogRef = this.dialog.open(AddEditConnectorComponent, {
+      disableClose: true,
+      width: '600px',
+      height: '600px',
+      data: { mode: 'edit', connector }
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      this.createUpdateDeleteConnector$.next({
+        type: 'update',
+        connector: result
+      });
+      console.log(result);
+    });
+  }
+
+  deleteConnection(id) {
+    const info: ErrorInfo = {
+      displayToast: true,
+      failureResponse: 'throwError'
+    };
+    const confirmDialog = this.dialog.open(ConfirmationModalDialogComponent, {
+      disableClose: true,
+      width: '400px',
+      height: '150px',
+      data: {
+        heading: 'Are you sure want to delete connection?',
+        message:
+          'Deleting the connection will also delete all associated integrations.'
+      }
+    });
+    confirmDialog.afterClosed().subscribe((resp: Confirmation) => {
+      if (resp.confirm === 'yes') {
+        this.integrationsService.deleteConnection$(id, info).subscribe(
+          (result: any) => {
+            // TODO: display toasty message.
+            this.createUpdateDeleteConnector$.next({
+              type: 'delete',
+              connector: id
+            });
+          },
+          (err) => {
+            // TODO: display toasty message.
+          }
+        );
+      }
     });
   }
 
@@ -159,16 +230,8 @@ export class IntegrationsComponent implements OnInit {
     }
   }
 
-  connectorChanged(connectorId: string): void {
-    this.integrationConfigForm.removeControl('connectorMeta');
-    const connectorMetaFormGroup = this.getConnectorMetaFormGroup(connectorId);
-    this.integrationConfigForm.setControl(
-      'connectorMeta',
-      connectorMetaFormGroup
-    );
-    this.integrationConfigForm.patchValue({
-      connector: connectorId
-    });
+  connectorChanged(connector: any): void {
+    this.selectedConnector = connector;
     this.cdrf.detectChanges();
   }
 

@@ -3,7 +3,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Dashboard, ErrorInfo } from 'src/app/interfaces';
+import { ErrorInfo } from 'src/app/interfaces';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from '../../../../environments/environment';
 
@@ -19,7 +19,12 @@ export class IntegrationsService {
   constructor(private appService: AppService) {}
 
   getConnectors$ = (info: ErrorInfo = {} as ErrorInfo): Observable<any> =>
-    this.appService._getResp('http://localhost:8012/', 'connections', info);
+    this.appService._getResp(
+      // environment.integrationsApiUrl,
+      'http://localhost:8012/',
+      'connections',
+      info
+    );
 
   testConnection$ = (
     connectionObj: any,
@@ -34,59 +39,46 @@ export class IntegrationsService {
   createConnection$ = (
     connectionObj: any,
     info: ErrorInfo = {} as ErrorInfo
-  ): Observable<Dashboard> =>
+  ): Observable<any> =>
     this.appService._postData(
-      environment.integrationsApiUrl,
+      // environment.integrationsApiUrl,
+      'http://localhost:8012/',
       'connections',
       connectionObj,
       info
     );
+  updateConnection$ = (
+    connectorId: string,
+    connectionObj: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService.patchData(
+      // environment.integrationsApiUrl,
+      'http://localhost:8012/',
+      `connections/${connectorId}`,
+      connectionObj,
+      info
+    );
 
-  // updateDashboard$ = (
-  //   dashboardId: string,
-  //   dashboard: Dashboard,
-  //   info: ErrorInfo = {} as ErrorInfo
-  // ): Observable<Dashboard> =>
-  //   this.appService
-  //     .patchData(
-  //       environment.dashboardApiUrl,
-  //       `dashboards/${dashboardId}`,
-  //       dashboard,
-  //       info
-  //     )
-  //     .pipe(map((response) => (response === null ? dashboard : response)));
+  deleteConnection$ = (
+    connectorId: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._removeData(
+      // environment.integrationsApiUrl,
+      'http://localhost:8012/',
+      `connections/${connectorId}`,
+      info
+    );
 
-  // deleteDashboard$ = (
-  //   dashboardId: string,
-  //   info: ErrorInfo = {} as ErrorInfo
-  // ): Observable<Dashboard> =>
-  //   this.appService._removeData(
-  //     environment.dashboardApiUrl,
-  //     `dashboards/${dashboardId}`,
-  //     info
-  //   );
-
-  // copyDashboard$ = (dashboard: Dashboard, info: ErrorInfo = {} as ErrorInfo) =>
-  //   this.appService._postData(
-  //     environment.dashboardApiUrl,
-  //     `dashboards/duplicate`,
-  //     dashboard,
-  //     info
-  //   );
-
-  // markDashboardDefault$ = (
-  //   dashboardId: string,
-  //   dashboard: Dashboard,
-  //   info: ErrorInfo = {} as ErrorInfo
-  // ): Observable<Dashboard> =>
-  //   this.appService.patchData(
-  //     environment.dashboardApiUrl,
-  //     `dashboards/${dashboardId}/markdefault`,
-  //     dashboard,
-  //     info
-  //   );
-  // getDashboards$ = (
-  //   info: ErrorInfo = {} as ErrorInfo
-  // ): Observable<Dashboard[]> =>
-  //   this.appService._getResp(environment.dashboardApiUrl, 'dashboards', info);
+  getIntegrations$ = (
+    connectorId: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._getResp(
+      // environment.integrationsApiUrl,
+      'http://localhost:8012/',
+      `connections/${connectorId}`,
+      info
+    );
 }

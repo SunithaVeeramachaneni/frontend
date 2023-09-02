@@ -1,0 +1,52 @@
+<div class="dialog-container">
+  <div class="dialog-head">
+    <span class="heading">
+      {{data.mode === 'create' ? 'Add ':'Edit '}} Integration
+    </span>
+    <mat-icon mat-dialog-close class="close-icon">close</mat-icon>
+  </div>
+  <div mat-dialog-content class="dialog-body">
+    <div>
+      <mat-form-field appearance="outline" class="width-100 form-field">
+        <mat-label translate>Select Integration Point</mat-label>
+        <mat-select formControlName="connector">
+          <mat-option [value]="">
+            Select
+          </mat-option>
+          <!-- <mat-option *ngFor="let connector of connectorOptions" [value]="connector.id" class="select-option-container">
+            {{connector.name}}
+          </mat-option> -->
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="width-100 form-field">
+        <mat-label>Connection Alias</mat-label>
+        <input type="text" matInput [placeholder]="'Connection Alias'" formControlName="connectorAlias" />
+      </mat-form-field>
+    </div>
+    <ng-template #emptyTemplate>
+      <div class="w-65 connectorMeta noConnector">
+        Please select a connector from left to configure.
+      </div>
+    </ng-template>
+  </div>
+  <div mat-dialog-actions class="dialog-footer">
+    <div class="dis-flex">
+      <button mat-stroked-button color="primary">
+        <span>Test Connection
+          <mat-progress-spinner [mode]="'indeterminate'" [diameter]="25"
+            class="test-conn-spinner"></mat-progress-spinner>
+        </span>
+      </button>
+
+    </div>
+    <div class="dis-flex">
+      <button mat-button mat-dialog-close color="primary">Close</button>
+      <button mat-flat-button class="submit-btn">
+        <span>Save Connection
+          <mat-progress-spinner [mode]="'indeterminate'" [diameter]="25"
+            class="test-conn-spinner"></mat-progress-spinner>
+        </span>
+      </button>
+    </div>
+  </div>
+</div>

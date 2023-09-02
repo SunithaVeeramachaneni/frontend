@@ -127,7 +127,8 @@
       <button mat-flat-button (click)="saveConnection()" class="submit-btn"
         [disabled]="(!connectionForm.valid || connectionForm.pristine ) || isSaveInProgress"
         [ngClass]="{'test-conn-btn-inprogress':isSaveInProgress}">
-        <span>Save Connection
+        <span>
+          {{data.mode === 'create' ? 'Save' : 'Update'}} Connection
           <mat-progress-spinner [mode]="'indeterminate'" [diameter]="25" class="test-conn-spinner"
             *ngIf="isSaveInProgress"></mat-progress-spinner>
         </span>

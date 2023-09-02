@@ -24,6 +24,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatMenuModule } from '@angular/material/menu';
+
 import { IntegrationsComponent } from './integrations/integrations.component';
 import { IntegrationsManagementContainerComponent } from './integrations-management-container/integrations-management-container.component';
 import { MatRadioModule } from '@angular/material/radio';
@@ -31,15 +33,21 @@ import { MatListModule } from '@angular/material/list';
 import { AddEditConnectorComponent } from './add-edit-connector/add-edit-connector.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { ConnectionIntegrationsComponent } from './connection-integrations/connection-integrations.component';
+import { AddEditIntegrationComponent } from './add-edit-integration/add-edit-integration.component';
+import { ConfirmationModalDialogComponent } from './confirmation-modal/confirmation-modal.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
-  new TranslateHttpLoader(http, './assets/i18n/tenant-management/', '.json');
+  new TranslateHttpLoader(http, './assets/i18n/integrations/', '.json');
 
 @NgModule({
   declarations: [
     IntegrationsComponent,
     IntegrationsManagementContainerComponent,
-    AddEditConnectorComponent
+    AddEditConnectorComponent,
+    ConnectionIntegrationsComponent,
+    AddEditIntegrationComponent,
+    ConfirmationModalDialogComponent
   ],
   imports: [
     CommonModule,
@@ -55,6 +63,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatIconModule,
     MatTabsModule,
     MatDialogModule,
+    MatMenuModule,
     MatProgressSpinnerModule,
     TranslateModule.forChild({
       loader: {

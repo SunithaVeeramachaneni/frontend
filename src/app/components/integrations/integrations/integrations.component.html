@@ -1,4 +1,4 @@
-<div [formGroup]="integrationConfigForm" class="integrations-container">
+<div class="integrations-container">
   <div class="w-100 connector-step">
     <div class="connectors-container">
       <div class="w-394 connector-left" *ngIf="connectors$ | async as connectors; else loadingConnectors">
@@ -7,35 +7,42 @@
             Connections
           </span>
           <div class="test-connect" *ngIf="connectors.length">
-            <button mat-raised-button color="primary" class="next-btn test-connection-btn" (click)="addConnector()">
-              Add Connection
+            <button mat-icon-button color="primary" class="next-btn test-connection-btn" (click)="addConnection()">
+              <mat-icon>add</mat-icon>
             </button>
           </div>
         </div>
         <div class="emptyContainer" *ngIf="!connectors.length">
-          <p>
-            You have not added any Connection yet. Start Creating one
+          <p class="text-align-center">
+            You have not added any Connection yet. <br />Start Creating one
           </p>
-          <button mat-raised-button color="primary" class="next-btn test-connection-btn" (click)="addConnector()">
+          <button mat-raised-button color="primary" class="next-btn test-connection-btn" (click)="addConnection()">
             Add Connection
           </button>
         </div>
         <div class="dis-flex flex-wrap connector-container">
-          <div *ngFor="let connector of connectors" class="connector-formtype-style w-100 m-l-0"
-            (click)="connectorChanged(connector.id)" [ngClass]="{
+          <div *ngFor="let connector of connectors" class="connector-formtype-style w-100 m-l-0" [ngClass]="{
               'inactive-connector': connector.isActive,
               'active-connector': connector.isActive,
-              'selected-connector':
-                integrationConfigForm.value.connector === connector.id
-            }">
+              'selected-connector':selectedConnector.id === connector.id
+            }" (click)="connectorChanged(connector)">
             <div class="radio-label">
-              <img [src]="connector.connectorId" class="connector-icon" />
+              <svg-icon icon="icon-{{connector.connectorId}}" class="connector-icon"></svg-icon>
               <div>
                 <span class="radio-btn-text">{{ connector.connectorName }}</span>
                 <p class="connector-radio-sub-text">
                   {{ connector.description }}
                 </p>
               </div>
+            </div>
+            <div>
+              <button mat-icon-button [matMenuTriggerFor]="menu" class="more-roles" aria-label="More Options">
+                <mat-icon id="rolesMoreIcon">more_horiz</mat-icon>
+              </button>
+              <mat-menu #menu="matMenu">
+                <button mat-menu-item (click)="updateConnection(connector)">Edit</button>
+                <button mat-menu-item (click)="deleteConnection(connector.id)">Delete</button>
+              </mat-menu>
             </div>
           </div>
         </div>
@@ -54,23 +61,9 @@
           </ngx-shimmer-loading>
         </div>
       </ng-template>
-      <!--
-      <div *ngIf="integrationConfigForm.value.connector.length" class="w-65 connectorMeta">
-        <div class="connector-head">
-          <span class="form-name-description" *ngIf="integrationConfigForm.value.connector">
-            Configure
-          </span>
-          <div class="test-connect">
-            <button mat-raised-button color="primary" class="next-btn test-connection-btn">
-              Test Connection
-            </button>
-            <button mat-raised-button color="primary" class="next-btn test-connection-btn">
-              Save
-            </button>
-          </div>
-        </div>
-
-      </div> -->
+      <div *ngIf="selectedConnector && selectedConnector.id" class="w-85 connectorMeta">
+        <app-connection-integrations [connector]="selectedConnector"></app-connection-integrations>
+      </div>
     </div>
   </div>
 </div>

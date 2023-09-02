@@ -1,0 +1,32 @@
+<ng-container class="integrations-container">
+  <div class="connector-head-left">
+    <span class="form-name-description">
+      Integrations
+    </span>
+    <div class="test-connect">
+      <button mat-raised-button color="primary" class="next-btn test-connection-btn" (click)="addIntegration()">
+        Add Integration
+      </button>
+    </div>
+  </div>
+  <div class="connector-body">
+    <div *ngIf="integrations$ | async as users; else loadingInactiveUsers">
+      <cwp-dynamictable [dataSource]="dataSource" [configOptions]="configOptions" class="w-100"></cwp-dynamictable>
+    </div>
+  </div>
+
+</ng-container>
+<ng-template #loadingInactiveUsers>
+  <div class="p-0-20">
+    <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+  </div>
+</ng-template>
