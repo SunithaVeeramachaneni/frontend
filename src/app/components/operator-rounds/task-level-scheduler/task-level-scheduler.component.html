@@ -101,7 +101,12 @@
     </div>
 
     <div class="dis-flex width-45 justify-content-end">
-      <button id="SchedulingBtn" mat-stroked-button class="schedule-btn">
+      <button
+        id="SchedulingBtn"
+        mat-stroked-button
+        class="schedule-btn"
+        (click)="onSchedule()"
+      >
         <span>
           <span translate="schedule"></span>
         </span>

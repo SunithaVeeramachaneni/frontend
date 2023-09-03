@@ -27,6 +27,7 @@ import { ToastService } from 'src/app/shared/toast';
 import { isJson } from '../../race-dynamic-form/utils/utils';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
 import { cloneDeep, isEmpty, omitBy } from 'lodash-es';
+import { isNgModuleDefWithProviders } from 'ng-mocks';
 
 @Injectable({
   providedIn: 'root'
@@ -35,6 +36,9 @@ export class OperatorRoundsService {
   private selectedNodeSubject = new BehaviorSubject<any>({});
   private hierarchyModeSubject = new BehaviorSubject<any>('asset_hierarchy');
   private checkBoxStatusSubject = new BehaviorSubject<any>({});
+  private revisedInfoSubject = new BehaviorSubject<any>({});
+  private allPageCheckBoxStatusSubject = new BehaviorSubject<any>([]);
+  private uniqueConfigurationSubject = new BehaviorSubject<any>([]);
 
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
@@ -43,6 +47,9 @@ export class OperatorRoundsService {
   selectedNode$ = this.selectedNodeSubject.asObservable();
   hierarchyMode$ = this.hierarchyModeSubject.asObservable();
   checkboxStatus$ = this.checkBoxStatusSubject.asObservable();
+  allPageCheckBoxStatus$ = this.allPageCheckBoxStatusSubject.asObservable();
+  revisedInfo$ = this.revisedInfoSubject.asObservable();
+  uniqueConfiguration$ = this.uniqueConfigurationSubject.asObservable();
   usersInfoByEmail: UsersInfoByEmail;
 
   constructor(
@@ -58,8 +65,20 @@ export class OperatorRoundsService {
     this.hierarchyModeSubject.next(mode);
   }
 
+  setRevisedInfo(info: any) {
+    this.revisedInfoSubject.next(info);
+  }
+
   setCheckBoxStatus(node: any) {
     this.checkBoxStatusSubject.next(node);
+  }
+
+  setAllPageCheckBoxStatus(page: any) {
+    this.allPageCheckBoxStatusSubject.next(page);
+  }
+
+  setuniqueConfiguration(configs: any) {
+    this.uniqueConfigurationSubject.next(configs);
   }
 
   createTags$ = (
