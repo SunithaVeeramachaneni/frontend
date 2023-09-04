@@ -34,13 +34,20 @@
     border-radius: 5px;
   }
 
+  .locations-list {
+    border-bottom: 1px solid $yellow-border;
+    transition: all 0.5s ease-in-out;
+    margin: 0 10px;
+  }
+
   .locations {
     padding: 10px;
     display: flex;
     justify-content: space-between;
-    transition: all 0.5s ease-in-out;
-    border-bottom: 1px solid $yellow-border;
-    margin: 0 10px;
+  }
+
+  .locations-list:last-child {
+    border-bottom: none;
   }
 
   .subheadings {
@@ -79,8 +86,13 @@
 
   ::ng-deep mat-datepicker-toggle .mat-icon-button {
     position: absolute;
-    top: -12px;
+    top: -13px;
     right: -14px;
+
+    svg {
+      width: 18px;
+      height: 18px;
+    }
   }
 
   .startdate {
