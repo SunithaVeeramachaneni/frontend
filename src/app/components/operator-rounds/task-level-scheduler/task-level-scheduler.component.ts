@@ -249,12 +249,10 @@ export class TaskLevelSchedulerComponent implements OnInit {
     this.operatorRoundService.revisedInfo$.subscribe((revisedInfo) => {
       this.scheduleConfig = {
         roundPlanId: this.roundPlanData.roundPlanDetail.id,
-        headerDetailConfig: {
-          ...this.payload,
-          startDate: { $data: this.payload.startDate },
-          endDate: { $data: this.payload.endDate },
-          shiftDetails: this.prepareShiftSlot(this.payload.shiftSlots)
-        },
+        ...this.payload,
+        startDate: { $data: this.payload.startDate },
+        endDate: { $data: this.payload.endDate },
+        shiftDetails: this.prepareShiftSlot(this.payload.shiftSlots),
         isArchived: false,
         assignmentDetails: this.payload.assignmentDetails,
         advanceRoundsCount: 0,
