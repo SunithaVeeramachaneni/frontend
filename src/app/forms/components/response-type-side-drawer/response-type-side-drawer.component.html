@@ -438,7 +438,7 @@
 </div>
 
 <div
-  class="app-customizer"
+  class="app-customizer additional-details-slider"
   *ngIf="
     additionalDetailsOpenState.isOpen &&
     additionalDetailsOpenState.questionId === question.id
@@ -769,6 +769,7 @@
       id="additionalDetailsSubmitBtn"
       mat-raised-button
       (click)="submitAdditionalDetails()"
+      [disabled]="additionalDetailsForm.invalid"
       color="primary"
       class="submitBtn"
       translate="done"

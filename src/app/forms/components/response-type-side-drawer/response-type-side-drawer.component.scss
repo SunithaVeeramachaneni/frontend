@@ -126,10 +126,14 @@
     display: flex;
   }
 
+  .mat-error {
+    margin-top: 16px;
+  }
+
   .attributes-list-item {
     display: flex;
     justify-content: space-between;
-    width: 360px;
+    width: 445px;
   }
 
   .margin-20 {
@@ -284,6 +288,11 @@
     right: 5px;
   }
 }
+
+.additional-details-slider {
+  width: 480px;
+}
+
 .rangeSelectorFooter {
   position: absolute;
   bottom: 0;
