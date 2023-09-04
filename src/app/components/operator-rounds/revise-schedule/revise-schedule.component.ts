@@ -26,6 +26,8 @@ import {
 import { format } from 'date-fns';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { tap } from 'rxjs/operators';
+import { isEqual } from 'lodash-es';
+import { transferQuestionFromSection } from 'src/app/forms/state/builder/builder.actions';
 import { dateFormat4 } from 'src/app/app.constants';
 
 @Component({
@@ -64,6 +66,9 @@ export class ReviseScheduleComponent implements OnInit {
   locationIdToTaskcount = new Map<string, string>();
   locationIdToTaskcountArr: [string, string][] = [];
   _nodeIdToNodeName: any;
+  scheduleConfig: any;
+  configuarations = [];
+  revisedInfo = {};
 
   constructor(
     private fb: FormBuilder,
@@ -98,7 +103,9 @@ export class ReviseScheduleComponent implements OnInit {
       repeatDuration: ['', [Validators.required, Validators.min(1)]],
       repeatEvery: [''],
       daysOfWeek: [[]],
-      monthlyDaysOfWeek: this.fb.array([]),
+      monthlyDaysOfWeek: this.fb.array(
+        this.initMonthWiseWeeklyDaysOfWeek(this.weeksOfMonth.length)
+      ),
       startDate: [''],
       startDatePicker: [''],
       endDate: [''],
@@ -130,9 +137,6 @@ export class ReviseScheduleComponent implements OnInit {
       );
       this.allShifts = this.reviseScheduleConfig.shiftSlots;
     }
-    this.shiftsSelected.valueChanges.subscribe((data) =>
-      console.log('data:', data)
-    );
   }
 
   prepareShiftAndSlot(shiftSlot, shiftDetails) {
@@ -245,5 +249,96 @@ export class ReviseScheduleComponent implements OnInit {
       this.allSlots = [{ null: { startTime: '00:00', endTime: '23:59' } }];
     }
     this.shiftSelect.value = this.allSlots;
+  }
+
+  filterConfig(config) {
+    if (config.scheduleType) {
+      if (config.repeatTypes === 'day') {
+        config.daysToWeeks = [1];
+        config.monthlyDaysOfWeek = [[1], [1], [1], [1], [1]];
+      } else if (config.repeatTypes === 'week') {
+        config.monthlyDaysOfWeek = [[1], [1], [1], [1], [1]];
+      } else {
+        config.daysToWeeks = [1];
+      }
+    } else {
+      config.daysToWeeks = [1];
+      config.monthlyDaysOfWeek = [[1], [1], [1], [1], [1]];
+    }
+  }
+
+  comparingConfig(newConfig) {
+    // newConfig.shiftDetails = JSON.parse(
+    //   JSON.stringify(this.prepareShiftSlot(this.allSlots))
+    // );
+    newConfig.shiftDetails = { ...this.prepareShiftSlot(this.allSlots) };
+    this.filterConfig(newConfig);
+    console.log('newConfig', newConfig);
+
+    let configIndex = 0;
+    let configFound = false;
+    if (!this.configuarations) {
+      this.configuarations.push(JSON.parse(JSON.stringify(newConfig)));
+      this.operatorRoundService.setuniqueConfiguration(this.configuarations);
+      return 0;
+    }
+    this.configuarations.forEach((config, index) => {
+      if (isEqual(newConfig, config)) {
+        console.log('isEqual', config);
+        configFound = true;
+        configIndex = index;
+      }
+    });
+    if (!configFound) {
+      this.configuarations.push(JSON.parse(JSON.stringify(newConfig)));
+      this.operatorRoundService.setuniqueConfiguration(this.configuarations);
+      return this.configuarations.length - 1;
+    } else {
+      return configIndex;
+    }
+  }
+
+  prepareShiftSlot(shiftSlotDetail) {
+    if (shiftSlotDetail[0].null) {
+      return shiftSlotDetail[0];
+    } else {
+      const shiftData = {};
+      shiftSlotDetail.forEach((detail) => {
+        if (detail.payload) {
+          shiftData[detail.id] = detail.payload.filter((pLoad) => {
+            if (pLoad.checked === true) return true;
+            else return false;
+          });
+        } else {
+          shiftData[detail.id] = [
+            { startTime: detail.startTiem, endTime: detail.endTime }
+          ];
+        }
+      });
+      return shiftData;
+    }
+  }
+
+  onRevise() {
+    const configPosition = this.comparingConfig(
+      this.resviseScheduleConfigForm.value
+    );
+    this.operatorRoundService.allPageCheckBoxStatus$.subscribe((pages) => {
+      Object.keys(pages).forEach((key) => {
+        pages[key].forEach((page) => {
+          const nodeId = key.split('_')[1];
+          page.questions.forEach((question) => {
+            if (question.complete) {
+              if (!this.revisedInfo[nodeId]) this.revisedInfo[nodeId] = {};
+              this.revisedInfo[nodeId][question.id] =
+                this.configuarations[configPosition];
+            }
+          });
+        });
+      });
+    });
+    this.operatorRoundService.setRevisedInfo(this.revisedInfo);
+    console.log('revisedInfo:', this.revisedInfo);
+    console.log('configurations:', this.configuarations);
   }
 }

@@ -21,6 +21,7 @@ import { OperatorRoundsService } from '../services/operator-rounds.service';
 
 import { tap } from 'rxjs/operators';
 import { format } from 'date-fns';
+import { isEqual } from 'lodash-es';
 
 @Component({
   selector: 'app-task-level-scheduler',
@@ -66,10 +67,13 @@ export class TaskLevelSchedulerComponent implements OnInit {
   pageCheckBoxStatusObject: any = {};
   openCloseRightPanel = false;
   _payload: any;
+  scheduleConfig = {};
+  authorToEmail: any;
 
   constructor(private operatorRoundService: OperatorRoundsService) {}
 
   ngOnInit(): void {
+    console.log('roundPlanData:', this.roundPlanData);
     this.searchHierarchyKey = new FormControl('');
     const { name, description } = this.roundPlanData.roundPlanDetail;
     this.taskLevelScheduleHeaderConfiguration = {
@@ -101,6 +105,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
             });
           });
         });
+        this.operatorRoundService.setAllPageCheckBoxStatus(this.pages);
         this.flatHierarchy = JSON.parse(this.authoredData.flatHierarchy);
         this.flatHierarchy.forEach((node) => {
           this.nodeIdToNodeName[node.id] = node.name;
@@ -140,6 +145,14 @@ export class TaskLevelSchedulerComponent implements OnInit {
         })
       )
       .subscribe();
+    this.roundPlanData.assigneeDetails.users.forEach((user) => {
+      if (
+        user.firstName + ' ' + user.lastName ===
+        this.roundPlanData.roundPlanDetail.author
+      ) {
+        this.authorToEmail = user.email;
+      }
+    });
   }
 
   filter(value: string): string[] {
@@ -197,5 +210,72 @@ export class TaskLevelSchedulerComponent implements OnInit {
 
   openCloseRightPanelEventHandler(event) {
     this.openCloseRightPanel = event;
+  }
+  prepareShiftSlot(shiftSlotDetail) {
+    if (shiftSlotDetail[0].null) {
+      return shiftSlotDetail[0];
+    } else {
+      let shiftData = {};
+      shiftSlotDetail.forEach((detail) => {
+        shiftData[detail.id] = this.payload.shiftDetails[detail.id];
+      });
+      return shiftData;
+    }
+  }
+
+  prepareTaskLeveConfig(revisedInfo) {
+    let taskLevelConfig = [];
+    this.operatorRoundService.uniqueConfiguration$.subscribe((configs) => {
+      configs.forEach((config) => {
+        config['nodeWiseQuestionIds'] = {};
+        Object.keys(revisedInfo).forEach((nodeId) => {
+          Object.keys(revisedInfo[nodeId]).forEach((questionId) => {
+            const questionConfig = revisedInfo[nodeId][questionId];
+            if (isEqual(config, questionConfig)) {
+              if (!config['nodeWiseQuestionIds'][nodeId])
+                config['nodeWiseQuestionIds'][nodeId] = [];
+              config['nodeWiseQuestionIds'][nodeId].push(questionId);
+            }
+          });
+        });
+        taskLevelConfig.push(config);
+      });
+    });
+    return taskLevelConfig;
+  }
+
+  onSchedule() {
+    console.log(this.payload);
+    this.operatorRoundService.revisedInfo$.subscribe((revisedInfo) => {
+      this.scheduleConfig = {
+        roundPlanId: this.roundPlanData.roundPlanDetail.id,
+        headerDetailConfig: {
+          ...this.payload,
+          startDate: { $data: this.payload.startDate },
+          endDate: { $data: this.payload.endDate },
+          shiftDetails: this.prepareShiftSlot(this.payload.shiftSlots)
+        },
+        isArchived: false,
+        assignmentDetails: this.payload.assignmentDetails,
+        advanceRoundsCount: 0,
+        createdAt: { $date: this.roundPlanData.roundPlanDetail.createdAt },
+        updatedAt: { $data: this.roundPlanData.roundPlanDetail.updatedAt },
+        createdBy: this.authorToEmail,
+        _v: 0,
+        taskLevelConfig: this.prepareTaskLeveConfig(revisedInfo)
+      };
+      delete this.scheduleConfig['headerDetailConfig'].shiftSlots;
+      delete this.scheduleConfig['headerDetailConfig'].formId;
+      delete this.scheduleConfig['headerDetailConfig'].id;
+      delete this.scheduleConfig['headerDetailConfig'].advanceFormsCount;
+      delete this.scheduleConfig['headerDetailConfig'].advanceRoundsCount;
+      delete this.scheduleConfig['headerDetailConfig'].roundPlanId;
+      delete this.scheduleConfig['headerDetailConfig'].shiftsSelected;
+    });
+    this.scheduleConfig['taskLevelConfig'].filter((config) => {
+      if (Object.keys(config.nodeWiseQuestionIds).length === 0) return false;
+      return true;
+    });
+    console.log('scheduleConfig', this.scheduleConfig);
   }
 }
