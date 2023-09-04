@@ -198,13 +198,6 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
   isPopoverOpen = false;
   filterJson = [];
   filter = {
-    status: '',
-    modifiedBy: '',
-    createdBy: '',
-    authoredBy: '',
-    lastModifiedOn: '',
-    scheduleStartDate: '',
-    scheduleEndDate: '',
     plant: ''
   };
   plantsIdNameMap = {};
@@ -448,13 +441,6 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
   resetFilter() {
     this.isPopoverOpen = false;
     this.filter = {
-      status: '',
-      createdBy: '',
-      modifiedBy: '',
-      authoredBy: '',
-      lastModifiedOn: '',
-      scheduleStartDate: '',
-      scheduleEndDate: '',
       plant: ''
     };
     this.nextToken = '';
