@@ -152,10 +152,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
     return this._question;
   }
   @Input() set logics(logics: any) {
-    if (logics?.length) {
-      if (!isEqual(this.logics, logics)) {
-        this._logics = logics;
-      }
+    if (!isEqual(this.logics, logics)) {
+      this._logics = logics;
     }
   }
   get logics() {
