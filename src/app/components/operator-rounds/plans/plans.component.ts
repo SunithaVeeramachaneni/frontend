@@ -748,9 +748,11 @@ export class PlansComponent implements OnInit, OnDestroy {
     const selectedPlant = this.allPlants?.items?.find(
       (plant) => plant.id === plan.plantId
     );
-    const selectedShifts = JSON.parse(selectedPlant?.shifts);
+    const selectedShifts = selectedPlant?.shifts
+      ? JSON.parse(selectedPlant?.shifts)
+      : [];
     const activeShifts = this.allShifts.filter((data) =>
-      selectedShifts?.some((shift) => shift.id === data.id)
+      selectedShifts?.some((shift) => shift?.id === data?.id)
     );
     return activeShifts;
   }

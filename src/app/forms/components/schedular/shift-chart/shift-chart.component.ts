@@ -80,7 +80,7 @@ export class ShiftChartComponent implements OnInit, OnChanges {
   }
 
   public onAddSlot(val: string, idx: number): void {
-    this.service.onSlotChanged$.next(true);
+    this.service.setSlotChanged(true);
     const checkSlot = this.dataArrays.filter(
       (item) => item.startTime === this.service.addLeadingZero(val)
     );
@@ -348,7 +348,7 @@ export class ShiftChartComponent implements OnInit, OnChanges {
   }
 
   public onRemoveRow(rowIndex: number, objVal): void {
-    this.service.onSlotChanged$.next(true);
+    this.service.setSlotChanged(true);
     const lastElement = this.dataArrays[this.dataArrays.length - 1];
     const ds = this.dataArrays.lastIndexOf(lastElement);
     if (ds === rowIndex) {
