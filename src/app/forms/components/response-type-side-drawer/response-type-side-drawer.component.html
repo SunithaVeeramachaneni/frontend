@@ -7,111 +7,129 @@
     *ngIf="sliderOpenState.isOpen && question.id === sliderOpenState.questionId"
   >
     <mat-card-title class="m-0 light-gray">
-      <div
-        id="responseTypeSliderText"
-        class="mcq-heading"
-        translate="slider"
-      ></div>
+      <div class="top-bar">
+        <svg-icon
+          id="sliderResponseCancelBtn"
+          icon="icon-close"
+          class="cancel"
+          (click)="cancelSlider()"
+        ></svg-icon>
+        <h1
+          id="responseTypeSliderText"
+          class="mcq-heading"
+          translate="slider"
+        ></h1>
+      </div>
     </mat-card-title>
-    <mat-card-content>
-      <div class="dis-flex">
-        <div class="width-50">
-          <label
-            id="responseTypeSliderForm"
-            for="min"
-            translate="from"
-            class="values"
-          ></label
-          ><br />
-          <input
-            id="min"
-            max="{{ sliderOptions.max }}"
-            type="number"
-            class="slider-inputs"
-            [(ngModel)]="sliderOptions.min"
-            [ngModelOptions]="{ standalone: true }"
-          />
+    <mat-card-content class="matCardContent">
+      <div [formGroup]="sliderOptionsForm">
+        <div class="dis-flex">
+          <div class="slider-input-container m-r-15">
+            <label
+              id="responseTypeSliderForm"
+              for="min"
+              translate="from"
+              class="values"
+            ></label
+            ><br />
+            <input
+              id="min"
+              max="{{ sliderOptionsForm.get('max').value - 1 }}"
+              type="number"
+              class="slider-inputs"
+              formControlName="min"
+            />
+          </div>
+          <div class="slider-input-container m-r-5">
+            <label
+              id="responseTypeSliderTo"
+              for="max"
+              translate="to"
+              class="values"
+            ></label
+            ><br />
+            <input
+              id="max"
+              min="{{ sliderOptionsForm.value.min + 1 }}"
+              type="number"
+              class="slider-inputs"
+              formControlName="max"
+            />
+          </div>
         </div>
-        <div class="width-50 text-align-end">
+        <label>Value</label>
+        <mat-slider
+          [min]="sliderOptionsForm.get('min').value"
+          [max]="sliderOptionsForm.get('max').value"
+          [step]="sliderOptionsForm.get('increment').value"
+          color="primary"
+          formControlName="value"
+          class="width-100"
+          showTickMarks
+          thumbLabel
+          discrete
+        >
+          <input matSliderThumb />
+        </mat-slider>
+        <div class="margin-20">
           <label
-            id="responseTypeSliderTo"
-            for="max"
-            translate="to"
+            id="responseTypeSliderIncrement"
+            for="incre"
+            translate="increment"
             class="values"
-          ></label
-          ><br />
+          ></label>
+          <br />
           <input
-            id="max"
-            min="{{ sliderOptions.min }}"
+            min="0"
+            max="{{
+              sliderOptionsForm.get('max').value -
+                sliderOptionsForm.get('min').value
+            }}"
+            id="incre"
             type="number"
             class="slider-inputs"
-            [(ngModel)]="sliderOptions.max"
-            [ngModelOptions]="{ standalone: true }"
+            formControlName="increment"
           />
         </div>
       </div>
-      <label>Value</label>
-      <mat-slider
-        [min]="sliderOptions.min"
-        [max]="sliderOptions.max"
-        [step]="sliderOptions.increment"
-        color="primary"
-        [(ngModel)]="sliderOptions.value"
-        [ngModelOptions]="{ standalone: true }"
-        class="width-100"
-        showTickMarks
-        thumbLabel
-        discrete
-      >
-        <input matSliderThumb />
-      </mat-slider>
-      <div class="margin-20">
-        <label
-          id="responseTypeSliderIncrement"
-          for="incre"
-          translate="increment"
-          class="values"
-        ></label>
-        <br />
-        <input
-          min="0"
-          id="incre"
-          type="number"
-          class="slider-inputs"
-          [(ngModel)]="sliderOptions.increment"
-          [ngModelOptions]="{ standalone: true }"
-        />
-      </div>
-      <br />
-      <br />
-      <button
-        id="responseTypeSliderCancelBtn"
-        mat-stroked-button
-        color="primary"
-        class="cancel-slider"
-        (click)="cancelSlider()"
-        translate="cancel"
-      ></button>
-      <button
-        id="responseTypeSliderApplyBtn"
-        mat-raised-button
-        color="primary"
-        class="apply-slider-btn"
-        (click)="applySliderOptions(sliderOptions)"
-        translate="apply"
-      ></button>
     </mat-card-content>
   </mat-card>
+  <div class="sliderFooter">
+    <button
+      id="responseTypeSliderCancelBtn"
+      mat-stroked-button
+      color="primary"
+      class="cancel-slider"
+      (click)="cancelSlider()"
+      translate="cancel"
+    ></button>
+    <button
+      id="responseTypeSliderApplyBtn"
+      mat-raised-button
+      color="primary"
+      class="apply-slider-btn"
+      (click)="applySliderOptions()"
+      translate="apply"
+    ></button>
+  </div>
 </div>
 
 <div class="app-customizer" *ngIf="multipleChoiceOpenState">
   <mat-card class="p-0" *ngIf="multipleChoiceOpenState === true">
     <mat-card-title class="m-0 light-gray">
-      <div
-        id="responseTypeSliderMCQ"
-        class="mcq-heading"
-        translate="multipleChoice"
-      ></div>
+      <div class="top-bar">
+        <svg-icon
+          id="sliderResponseCancelBtn"
+          icon="icon-close"
+          class="cancel"
+          (click)="cancelResponse()"
+        ></svg-icon>
+        <h1
+          id="responseTypeSliderMCQ"
+          class="mcq-heading"
+          translate="multipleChoice"
+        ></h1>
+      </div>
     </mat-card-title>
     <div [formGroup]="responseForm">
       <div
@@ -214,11 +232,19 @@
     "
   >
     <mat-card-title class="m-0 light-gray">
-      <div
-        id="responseTypeSliderRangeText"
-        class="mcq-heading"
-        translate="rangeSelectorHeading"
-      ></div>
+      <div class="top-bar">
+        <svg-icon
+          id="sliderResponseCancelBtn"
+          icon="icon-close"
+          class="cancel"
+          (click)="cancelRangeSelection()"
+        ></svg-icon>
+        <h1
+          id="responseTypeSliderRangeText"
+          class="mcq-heading"
+          translate="rangeSelectorHeading"
+        ></h1>
+      </div>
     </mat-card-title>
     <mat-card-content class="matCardContent">
       <div class="rangeLimitContainer" [formGroup]="rangeMetadataForm">
