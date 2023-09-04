@@ -322,7 +322,7 @@
   justify-content: space-between;
   margin: 0px;
   border-bottom: 1px solid $border-color;
-  padding: 15px;
+  padding: 5px 15px;
 }
 .connectorMeta {
   width: 100vw;
@@ -366,6 +366,9 @@
 }
 .test-connection-btn {
   margin: 5px !important;
+}
+.p-10 {
+  padding: 10px;
 }
 .tab-content {
   height: 64vh;
@@ -429,4 +432,7 @@
 }
 .text-align-center {
   text-align: center;
+}
+.color-red {
+  color: $red-main;
 }

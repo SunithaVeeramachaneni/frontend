@@ -1,4 +1,11 @@
 {
   "confirmYesBtn": "Yes",
-  "confirmNoBtn": "No"
+  "confirmNoBtn": "No",
+  "scheduleBy": "Schedule By",
+  "byFrequency": "By Frequency",
+  "byDate": "By Date",
+  "repeatEvery": "Repeat Every",
+  "repeatEveryDayAt": "Repeat Every Day At",
+  "repeatOn": "Repeat On",
+  "selectDates": "Select Dates"
 }

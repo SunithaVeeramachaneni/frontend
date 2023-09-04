@@ -20,8 +20,8 @@ export class IntegrationsService {
 
   getConnectors$ = (info: ErrorInfo = {} as ErrorInfo): Observable<any> =>
     this.appService._getResp(
-      // environment.integrationsApiUrl,
-      'http://localhost:8012/',
+      environment.integrationsApiUrl,
+      // 'http://localhost:8012/',
       'connections',
       info
     );
@@ -41,8 +41,8 @@ export class IntegrationsService {
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> =>
     this.appService._postData(
-      // environment.integrationsApiUrl,
-      'http://localhost:8012/',
+      environment.integrationsApiUrl,
+      // 'http://localhost:8012/',
       'connections',
       connectionObj,
       info
@@ -53,8 +53,8 @@ export class IntegrationsService {
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> =>
     this.appService.patchData(
-      // environment.integrationsApiUrl,
-      'http://localhost:8012/',
+      environment.integrationsApiUrl,
+      // 'http://localhost:8012/',
       `connections/${connectorId}`,
       connectionObj,
       info
@@ -65,8 +65,8 @@ export class IntegrationsService {
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> =>
     this.appService._removeData(
-      // environment.integrationsApiUrl,
-      'http://localhost:8012/',
+      environment.integrationsApiUrl,
+      // 'http://localhost:8012/',
       `connections/${connectorId}`,
       info
     );
@@ -76,9 +76,48 @@ export class IntegrationsService {
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> =>
     this.appService._getResp(
-      // environment.integrationsApiUrl,
-      'http://localhost:8012/',
+      environment.integrationsApiUrl,
+      // 'http://localhost:8012/',
       `connections/${connectorId}`,
+      info
+    );
+
+  createIntegration$ = (
+    connectorId: string,
+    integrationObj: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._postData(
+      environment.integrationsApiUrl,
+      // `http://localhost:8012/`,
+      `connections/${connectorId}/integrations`,
+      integrationObj,
+      info
+    );
+
+  updateIntegration$ = (
+    connectorId: string,
+    integrationId: string,
+    integrationObj: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService.patchData(
+      environment.integrationsApiUrl,
+      // `http://localhost:8012/`,
+      `connections/${connectorId}/integrations/${integrationId}`,
+      integrationObj,
+      info
+    );
+
+  deleteIntegration$ = (
+    connectorId: string,
+    integrationId: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._removeData(
+      environment.integrationsApiUrl,
+      // `http://localhost:8012/`,
+      `connections/${connectorId}/integrations/${integrationId}`,
       info
     );
 }

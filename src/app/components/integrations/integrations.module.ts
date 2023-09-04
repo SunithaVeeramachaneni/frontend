@@ -25,6 +25,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 
 import { IntegrationsComponent } from './integrations/integrations.component';
 import { IntegrationsManagementContainerComponent } from './integrations-management-container/integrations-management-container.component';
@@ -64,6 +66,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatTabsModule,
     MatDialogModule,
     MatMenuModule,
+    MatDatepickerModule,
+    MatButtonToggleModule,
     MatProgressSpinnerModule,
     TranslateModule.forChild({
       loader: {

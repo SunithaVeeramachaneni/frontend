@@ -10,8 +10,9 @@
     </div>
   </div>
   <div class="connector-body">
-    <div *ngIf="integrations$ | async as users; else loadingInactiveUsers">
-      <cwp-dynamictable [dataSource]="dataSource" [configOptions]="configOptions" class="w-100"></cwp-dynamictable>
+    <div *ngIf="integrations$ | async as integrations; else loadingInactiveUsers">
+      <cwp-dynamictable [dataSource]="dataSource" [configOptions]="configOptions" class="w-100"
+        (rowLevelActionHandler)="integrationsRowClickHandler($event)"></cwp-dynamictable>
     </div>
   </div>
 

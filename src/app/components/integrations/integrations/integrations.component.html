@@ -3,7 +3,7 @@
     <div class="connectors-container">
       <div class="w-394 connector-left" *ngIf="connectors$ | async as connectors; else loadingConnectors">
         <div class="connector-head-left">
-          <span class="form-name-description">
+          <span class="form-name-description p-10">
             Connections
           </span>
           <div class="test-connect" *ngIf="connectors.length">
@@ -41,7 +41,7 @@
               </button>
               <mat-menu #menu="matMenu">
                 <button mat-menu-item (click)="updateConnection(connector)">Edit</button>
-                <button mat-menu-item (click)="deleteConnection(connector.id)">Delete</button>
+                <button mat-menu-item (click)="deleteConnection(connector.id)" class="color-red">Delete</button>
               </mat-menu>
             </div>
           </div>

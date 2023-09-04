@@ -22,6 +22,7 @@ import {
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import {
+  Confirmation,
   ErrorInfo,
   LoadEvent,
   SearchEvent,
@@ -30,6 +31,7 @@ import {
 import { defaultLimit } from 'src/app/app.constants';
 import { MatDialog } from '@angular/material/dialog';
 import { AddEditIntegrationComponent } from '../add-edit-integration/add-edit-integration.component';
+import { ConfirmationModalDialogComponent } from '../confirmation-modal/confirmation-modal.component';
 
 @Component({
   selector: 'app-connection-integrations',
@@ -115,9 +117,9 @@ export class ConnectionIntegrationsComponent implements OnInit, OnChanges {
       hasPostTextImage: false
     },
     {
-      id: 'updatedOn',
-      displayName: 'Last Updated',
-      type: 'timeAgo',
+      id: 'createdBy',
+      displayName: 'Created BY',
+      type: 'string',
       controlType: 'string',
       order: 4,
       hasSubtitle: false,
@@ -173,6 +175,10 @@ export class ConnectionIntegrationsComponent implements OnInit, OnChanges {
   prepareMenuActions(): void {
     const menuActions = [
       {
+        title: 'Edit',
+        action: 'edit'
+      },
+      {
         title: 'Delete',
         action: 'delete'
       }
@@ -190,7 +196,7 @@ export class ConnectionIntegrationsComponent implements OnInit, OnChanges {
       filter(({ data }) => data === 'load' || data === 'search'),
       switchMap(() => {
         this.skip = 0;
-        const id = connectorId ? connectorId : this.connector.connectorId;
+        const id = connectorId ? connectorId : this.connector.id;
         this.prepareMenuActions();
         return this.getIntegrations(id);
       })
@@ -200,7 +206,7 @@ export class ConnectionIntegrationsComponent implements OnInit, OnChanges {
       filter(({ data }) => data !== 'load' && data !== 'search'),
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
-          return this.getIntegrations(this.connector.connectorId);
+          return this.getIntegrations(this.connector.id);
         } else {
           return of([] as any[]);
         }
@@ -222,15 +228,24 @@ export class ConnectionIntegrationsComponent implements OnInit, OnChanges {
           ...this.configOptions,
           tableHeight: 'calc(100vh - 150px)'
         };
+        if (this.skip === 0) {
+          initial.data = integrations;
+        } else {
+          initial.data = initial.data.concat(scrollData);
+        }
         if (type === 'create') {
           if (Object.keys(integration).length) {
             initial.data = [...initial.data, integration];
           }
-        } else {
-          if (this.skip === 0) {
-            initial.data = integrations;
-          } else {
-            initial.data = initial.data.concat(scrollData);
+        } else if (type === 'edit') {
+          const index = initial.data.findIndex((c) => c.id === integration.id);
+          if (index > -1) {
+            initial.data[index] = integration;
+          }
+        } else if (type === 'delete') {
+          const index = initial.data.findIndex((c) => c.id === integration);
+          if (index > -1) {
+            initial.data.splice(index, 1);
           }
         }
 
@@ -256,7 +271,7 @@ export class ConnectionIntegrationsComponent implements OnInit, OnChanges {
       disableClose: true,
       width: '600px',
       height: '600px',
-      data: { mode: 'create' }
+      data: { mode: 'create', connectorId: this.connector?.id }
     });
     dialogRef.afterClosed().subscribe((result) => {
       this.createUpdateDeleteIntegration$.next({
@@ -267,10 +282,66 @@ export class ConnectionIntegrationsComponent implements OnInit, OnChanges {
     });
   };
 
+  integrationsRowClickHandler = (row) => {
+    const {
+      action,
+      data: { id, connectorId }
+    } = row;
+    if (action === 'edit') {
+      const dialogRef = this.dialog.open(AddEditIntegrationComponent, {
+        disableClose: true,
+        width: '600px',
+        height: '600px',
+        data: {
+          mode: 'edit',
+          connectorId: this.connector?.id,
+          integration: row.data
+        }
+      });
+      dialogRef.afterClosed().subscribe((result) => {
+        this.createUpdateDeleteIntegration$.next({
+          type: action,
+          integration: result
+        });
+      });
+    } else if (action === 'delete') {
+      const info: ErrorInfo = {
+        displayToast: true,
+        failureResponse: 'throwError'
+      };
+      const confirmDialog = this.dialog.open(ConfirmationModalDialogComponent, {
+        disableClose: true,
+        width: '400px',
+        height: '150px',
+        data: {
+          heading: 'Are you sure want to delete the integration?',
+          message:
+            'Deleting the integration will permanently delete the integration.'
+        }
+      });
+      confirmDialog.afterClosed().subscribe((resp: Confirmation) => {
+        if (resp.confirm === 'yes') {
+          this.integrationsService
+            .deleteIntegration$(connectorId, id, info)
+            .subscribe(
+              (result: any) => {
+                this.createUpdateDeleteIntegration$.next({
+                  type: action,
+                  integration: id
+                });
+              },
+              (err) => {
+                // TODO: display toasty message.
+              }
+            );
+        }
+      });
+    }
+  };
+
   ngOnChanges(changes: SimpleChanges) {
     if (changes?.connector.currentValue.connectorId) {
-      this.getDisplayedIntegrations(this.connector.connectorId);
-      // this.getIntegrations();
+      this.getDisplayedIntegrations(this.connector.id);
     }
   }
 }

@@ -20,74 +20,8 @@ import { ConfirmationModalDialogComponent } from '../confirmation-modal/confirma
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class IntegrationsComponent implements OnInit {
-  integrationPoints: any[] = [
-    {
-      name: 'Round Submission',
-      id: 'round-submission'
-    }
-  ];
-
-  dataEntities = {
-    'round-submission': [
-      {
-        attributeName: 'Tag Number',
-        attributeId: 'tagNumber'
-      },
-      {
-        attributeName: 'Round ID',
-        attributeId: 'roundId'
-      },
-      {
-        attributeName: 'Round Name',
-        attributeId: 'roundName'
-      },
-      {
-        attributeName: 'Question',
-        attributeId: 'question'
-      },
-      {
-        attributeName: 'Reading',
-        attributeId: 'uomReading'
-      },
-      {
-        attributeName: 'Unit of Measurement',
-        attributeId: 'unit'
-      },
-      {
-        attributeName: 'Date and Timestamp',
-        attributeId: 'dateAndTime'
-      },
-      {
-        attributeName: 'User',
-        attributeId: 'userId'
-      },
-      {
-        attributeName: 'Plant',
-        attributeId: 'plantId'
-      },
-      {
-        attributeName: 'Location',
-        attributeId: 'locationId'
-      },
-      {
-        attributeName: 'Asset',
-        attributeId: 'assetId'
-      }
-    ]
-  };
-
   isSubmitInprogress = false;
   selectedConnector: any;
-
-  integrationConfigForm = this.fb.group({
-    integrationPoint: new FormControl(''),
-    integrationType: new FormControl('outbound'),
-    synchronization: new FormControl('real-time'),
-    cronExpression: new FormControl(''),
-    connector: new FormControl('odbc'),
-    connectorMeta: this.fb.group({}),
-    dataMapping: this.fb.array([])
-  });
 
   connectors$: Observable<any[]>;
   connectorsInitial$: Observable<any>;
@@ -188,7 +122,7 @@ export class IntegrationsComponent implements OnInit {
       width: '400px',
       height: '150px',
       data: {
-        heading: 'Are you sure want to delete connection?',
+        heading: 'Are you sure want to delete the connection?',
         message:
           'Deleting the connection will also delete all associated integrations.'
       }
@@ -211,32 +145,28 @@ export class IntegrationsComponent implements OnInit {
     });
   }
 
-  selectIntegrationPoint(event): void {
-    if (event) {
-      const mappings = this.dataEntities[event.value];
-      const formArrayCtrl = this.fb.array([]);
-      mappings?.forEach((mapping) => {
-        formArrayCtrl.push(
-          this.fb.group({
-            attributeName: mapping.attributeName,
-            attributeId: mapping.attributeId,
-            sourceKey: mapping.attributeId,
-            targetKey: mapping.attributeId
-          })
-        );
-      });
-      this.integrationConfigForm.setControl('dataMapping', formArrayCtrl);
-      this.cdrf.detectChanges();
-    }
-  }
+  // selectIntegrationPoint(event): void {
+  //   if (event) {
+  //     // const mappings = this.dataEntities[event.value];
+  //     const formArrayCtrl = this.fb.array([]);
+  //     mappings?.forEach((mapping) => {
+  //       formArrayCtrl.push(
+  //         this.fb.group({
+  //           attributeName: mapping.attributeName,
+  //           attributeId: mapping.attributeId,
+  //           sourceKey: mapping.attributeId,
+  //           targetKey: mapping.attributeId
+  //         })
+  //       );
+  //     });
+  //     this.integrationConfigForm.setControl('dataMapping', formArrayCtrl);
+  //     this.cdrf.detectChanges();
+  //   }
+  // }
 
   connectorChanged(connector: any): void {
     this.selectedConnector = connector;
     this.cdrf.detectChanges();
-  }
-
-  getIntegrationPoint(ipID) {
-    return this.integrationPoints.find((ip) => ip.id === ipID);
   }
 
   getConnectorMetaFormGroup(connectorId) {
@@ -260,11 +190,6 @@ export class IntegrationsComponent implements OnInit {
       case 'rest':
         break;
     }
-  }
-
-  getDataEntityMapping() {
-    return (this.integrationConfigForm.get('dataMapping') as FormArray)
-      .controls;
   }
 
   close(): void {}

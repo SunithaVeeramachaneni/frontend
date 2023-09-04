@@ -23,7 +23,7 @@
   width: 25%;
 }
 
-::ng-deep .mat-column-updatedOn {
+::ng-deep .mat-column-createdBy {
   width: 25%;
 }
 .connector-head-left {
@@ -32,7 +32,7 @@
   justify-content: space-between;
   margin: 0px;
   border-bottom: 1px solid $border-color;
-  padding: 15px;
+  padding: 5px 15px;
 }
 .form-name-description {
   font-weight: 700;
