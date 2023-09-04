@@ -320,11 +320,19 @@ export class ScheduleConfigurationComponent
         [Validators.required, Validators.min(1)]
       ],
       scheduleEndOccurrencesText: [{ value: 'occurrences', disabled: true }],
-      startDate: format(new Date(), dateFormat3),
+      startDate: localToTimezoneDate(
+        new Date(),
+        this.plantTimezoneMap[this.selectedDetails?.plantId],
+        dateFormat3
+      ),
       startDatePicker: new Date(),
       endDate: [
         {
-          value: format(addDays(new Date(), 30), dateFormat3),
+          value: localToTimezoneDate(
+            addDays(new Date(), 30),
+            this.plantTimezoneMap[this.selectedDetails?.plantId],
+            dateFormat3
+          ),
           disabled: true
         }
       ],
