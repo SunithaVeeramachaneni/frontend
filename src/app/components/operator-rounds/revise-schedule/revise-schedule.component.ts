@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/dot-notation */
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 /* eslint-disable no-underscore-dangle */
 import {
   ChangeDetectionStrategy,
@@ -26,6 +28,7 @@ import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { tap } from 'rxjs/operators';
 import { isEqual } from 'lodash-es';
 import { transferQuestionFromSection } from 'src/app/forms/state/builder/builder.actions';
+import { dateFormat4 } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-revise-schedule',
@@ -118,12 +121,12 @@ export class ReviseScheduleComponent implements OnInit {
         monthlyDaysOfWeek: this.reviseScheduleConfig.monthlyDaysOfWeek,
         startDate: format(
           new Date(this.reviseScheduleConfig.startDate),
-          'd MMM yyyy'
+          dateFormat4
         ),
         startDatePicker: new Date(this.reviseScheduleConfig.startDate),
         endDate: format(
           new Date(this.reviseScheduleConfig.endDate),
-          'd MMM yyyy'
+          dateFormat4
         ),
         endDatePicker: new Date(this.reviseScheduleConfig.endDate)
       });
@@ -174,12 +177,12 @@ export class ReviseScheduleComponent implements OnInit {
   ) {
     if (formControlDateField === 'startDate') {
       this.resviseScheduleConfigForm.patchValue(
-        { startDate: format(new Date(event.target.value), 'd MMM yyyy') },
+        { startDate: format(new Date(event.target.value), dateFormat4) },
         { emitEvent: false }
       );
     } else if (formControlDateField === 'endDate') {
       this.resviseScheduleConfigForm.patchValue(
-        { endDate: format(new Date(event.target.value), 'd MMM yyyy') },
+        { endDate: format(new Date(event.target.value), dateFormat4) },
         { emitEvent: false }
       );
     }

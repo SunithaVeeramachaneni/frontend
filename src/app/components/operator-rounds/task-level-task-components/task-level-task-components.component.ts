@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+/* eslint-disable no-underscore-dangle */
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
 
@@ -8,6 +10,7 @@ import { OperatorRoundsService } from '../services/operator-rounds.service';
 })
 export class TaskLevelTaskComponentsComponent implements OnInit {
   @Input() selectedNodeId: any;
+  @Input() selectedNode: any;
   @Input() set selectedPage(selectedPage: any) {
     if (selectedPage) {
       this._selectedPage = selectedPage;
@@ -28,11 +31,12 @@ export class TaskLevelTaskComponentsComponent implements OnInit {
   @Output() pageDataToThirdPanel: EventEmitter<any> = new EventEmitter();
   questionToSection = new Map<number, any[]>();
   questionToSectionId: Map<number, any[]> = new Map();
-  allCheckedSection: boolean = false;
-  partiallyFilledSection: boolean = false;
+  allCheckedSection = false;
+  partiallyFilledSection = false;
   private _checkboxStatus: any;
   private _selectedPage: any;
   constructor(private operatorRoundService: OperatorRoundsService) {}
+
   ngOnInit() {}
 
   toggleIsOpenStatePage = (page) => {
@@ -41,14 +45,15 @@ export class TaskLevelTaskComponentsComponent implements OnInit {
       section.isOpen = !section.isOpen;
     });
   };
+
   toggleIsOpenStateSection = (section) => {
     section.isOpen = !section.isOpen;
   };
 
   mapQuestionToSection(pages: any[]) {
     const questionMap = new Map<number, any[]>();
-    pages.forEach((pages) => {
-      pages.questions.forEach((question) => {
+    pages.forEach((page) => {
+      page.questions.forEach((question) => {
         if (!questionMap.has(question.sectionId)) {
           questionMap.set(question.sectionId, []);
         }
@@ -74,6 +79,7 @@ export class TaskLevelTaskComponentsComponent implements OnInit {
     });
     if (checkedstatus) this.isOpenThirdPanel.emit(true);
   }
+
   toggleAllSectionQuestion(checkboxStatus, section, page) {
     section.complete = checkboxStatus;
     this.questionToSection.get(section.id).forEach((question) => {
@@ -90,6 +96,7 @@ export class TaskLevelTaskComponentsComponent implements OnInit {
     });
     if (checkboxStatus) this.isOpenThirdPanel.emit(true);
   }
+
   toggleAllQuestion(checkboxStatus, question, section, page) {
     this.questionToSection.get(question.sectionId).forEach((ques) => {
       if (ques.id === question.id) {

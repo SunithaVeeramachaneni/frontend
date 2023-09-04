@@ -1,4 +1,8 @@
 <div *ngFor="let page of selectedPage" class="task-level-tasks">
+  <div class="task-title-div">
+    <span class="task-title">Tasks: {{ selectedNode.name }}</span>
+    <span class="task-title float-right">Frequency</span>
+  </div>
   <div class="pages">
     <div class="page-header">
       <mat-icon
@@ -64,7 +68,10 @@
                 *ngFor="let question of questionToSection.get(section['id'])"
               >
                 <div class="questions">
-                  <div class="dis-flex questions-div">
+                  <div
+                    class="dis-flex questions-div"
+                    [ngClass]="{ highlight: question.complete }"
+                  >
                     <div class="width-70">
                       <div class="width-100" class="dis-flex">
                         <mat-checkbox
