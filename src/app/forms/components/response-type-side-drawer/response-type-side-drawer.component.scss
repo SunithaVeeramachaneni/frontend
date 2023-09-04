@@ -466,3 +466,12 @@
   height: calc(100vh - 315px);
   overflow-y: auto;
 }
+
+@media only screen and (max-width: 1370px) {
+  .matCardContent {
+    height: 73vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 5px;
+  }
+}

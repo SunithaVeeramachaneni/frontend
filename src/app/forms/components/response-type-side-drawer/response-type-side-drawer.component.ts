@@ -21,7 +21,7 @@ import {
   Validators
 } from '@angular/forms';
 import { isEqual } from 'lodash-es';
-import { Observable, Subject, merge, of } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, merge, of } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -87,6 +87,9 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
   multipleChoiceOpenState$: Observable<ResponseTypeOpenState>;
   rangeSelectorOpenState$: Observable<RangeSelectorState>;
   additionalDetailsOpenState$: Observable<AdditionalDetailsState>;
+
+  detailLevelTagsSubject: BehaviorSubject<any>;
+  detailLevelAttributesSubject: BehaviorSubject<any>;
 
   responseId = '';
   respType = '';
@@ -157,14 +160,31 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.rdfService.getDataSetsByType$(this.tagDetailType).subscribe((tags) => {
+    this.detailLevelTagsSubject = this.formService.detailLevelTagsSubject;
+    if (!this.detailLevelTagsSubject.value) {
+      this.rdfService
+        .getDataSetsByType$(this.tagDetailType)
+        .subscribe((tags) => {
+          if (tags && tags.length) {
+            this.allTags = tags[0].values;
+            this.detailLevelTagsSubject.next(this.allTags);
+            this.originalTags = JSON.parse(JSON.stringify(tags[0].values));
+            this.tagsCtrl.setValue('');
+            this.cdrf.detectChanges();
+          }
+        });
+    } else {
+      const tags = JSON.parse(
+        JSON.stringify(this.detailLevelTagsSubject.value)
+      );
       if (tags && tags.length) {
-        this.allTags = tags[0].values;
-        this.originalTags = JSON.parse(JSON.stringify(tags[0].values));
+        this.allTags = tags;
+        this.detailLevelTagsSubject.next(this.allTags);
+        this.originalTags = JSON.parse(JSON.stringify(tags));
         this.tagsCtrl.setValue('');
         this.cdrf.detectChanges();
       }
-    });
+    }
 
     this.filteredTags = this.tagsCtrl.valueChanges.pipe(
       startWith(null),
@@ -397,17 +417,18 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
   }
 
   remove(tag: string): void {
-    this.allTags.push(tag);
     const index = this.tags.indexOf(tag);
+    if (index < 0) this.allTags.push(tag);
 
     if (index >= 0) {
       this.tags = [...this.tags.slice(0, index), ...this.tags.slice(index + 1)];
+      this.tagsInput.nativeElement.value = '';
+      this.tagsCtrl.setValue(null);
+      this.additionalDetailsForm.patchValue({
+        ...this.additionalDetailsForm.value,
+        tags: this.tags
+      });
     }
-    this.filteredTags = of(
-      this.tagsCtrl.value
-        ? this.filter(this.tagsCtrl.value)
-        : this.allTags.slice()
-    );
   }
 
   selected(event: MatAutocompleteSelectedEvent): void {
@@ -579,6 +600,7 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
         type: this.tagDetailType,
         values: newTags
       };
+      this.detailLevelTagsSubject.next([...this.allTags, ...newTags]);
       this.rdfService.createTags$(dataSet).subscribe((response) => {
         // do nothing
       });
@@ -762,6 +784,10 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
         this.labels[response?.label] = response?.values;
         this.filteredLabels$ = of(Object.keys(this.labels));
         this.attributesIdMap[response?.label] = response?.id;
+        this.detailLevelAttributesSubject.next({
+          labels: this.labels,
+          attributesIdMap: this.attributesIdMap
+        });
         additionalinfoArray.at(i).get('label').setValue(response.label);
       });
   }
@@ -787,6 +813,10 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
               text: 'Value added successfully'
             });
             this.labels[currentLabel] = newValues;
+            this.detailLevelAttributesSubject.next({
+              labels: this.labels,
+              attributesIdMap: this.attributesIdMap
+            });
             this.filteredValues$ = of(this.labels[currentLabel]);
             const additionalinfoArray = this.additionalDetailsForm.get(
               'attributes'
@@ -808,17 +838,29 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
   }
 
   retrieveDetails() {
-    this.operatorRoundService
-      .getAdditionalDetails$({
-        type: this.attributeDetailType,
-        level: 'detail'
-      })
-      .subscribe((details: any[]) => {
-        this.labels = this.convertArrayToObject(details);
-        details.forEach((data) => {
-          this.attributesIdMap[data.label] = data.id;
+    this.detailLevelAttributesSubject =
+      this.formService.detailLevelAttributesSubject;
+    if (!this.detailLevelAttributesSubject.value) {
+      this.operatorRoundService
+        .getAdditionalDetails$({
+          type: this.attributeDetailType,
+          level: 'detail'
+        })
+        .subscribe((details: any[]) => {
+          this.labels = this.convertArrayToObject(details);
+          details.forEach((data) => {
+            this.attributesIdMap[data.label] = data.id;
+          });
+          this.detailLevelAttributesSubject.next({
+            labels: this.labels,
+            attributesIdMap: this.attributesIdMap
+          });
         });
-      });
+    } else {
+      const details = this.detailLevelAttributesSubject.value;
+      this.labels = details.labels;
+      this.attributesIdMap = details.attributesIdMap;
+    }
   }
 
   convertArrayToObject(details) {
@@ -869,6 +911,10 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
     this.operatorRoundService.removeLabel$(documentId).subscribe(() => {
       delete this.labels[label];
       delete this.attributesIdMap[label];
+      this.detailLevelAttributesSubject.next({
+        labels: this.labels,
+        attributesIdMap: this.attributesIdMap
+      });
       this.toast.show({
         type: 'success',
         text: 'Label deleted Successfully'
@@ -898,6 +944,10 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
       })
       .subscribe(() => {
         this.labels[this.changedValues.label] = newValue;
+        this.detailLevelAttributesSubject.next({
+          labels: this.labels,
+          attributesIdMap: this.attributesIdMap
+        });
         this.toast.show({
           type: 'success',
           text: 'Value deleted Successfully'

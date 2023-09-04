@@ -34,6 +34,8 @@ export class FormService {
     isOpen: false,
     additionalDetails: {}
   });
+  detailLevelTagsSubject = new BehaviorSubject(null);
+  detailLevelAttributesSubject = new BehaviorSubject(null);
 
   private masterHierarchyData: HierarchyEntity[] = [];
   private selectedHierarchyList: HierarchyEntity[] = [];
