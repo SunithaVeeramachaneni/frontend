@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { SseService } from 'src/app/shared/services/sse.service';
 import { environment } from 'src/environments/environment';
 import { data } from '../../user-management/services/users.mock';
+import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-work-instruction-authoring',
@@ -25,7 +26,8 @@ export class WorkInstructionAuthoringComponent implements OnInit {
   constructor(
     private service: InstructionService,
     private sseService: SseService,
-    private zone: NgZone
+    private zone: NgZone,
+    private dialogRef: MatDialogRef<WorkInstructionAuthoringComponent>
   ) {}
 
   ngOnInit(): void {
@@ -37,6 +39,8 @@ export class WorkInstructionAuthoringComponent implements OnInit {
     this.header = header;
     this.steps = steps;
     this.image = image;
+
+    console.log(this.steps);
 
     this.generateSteps$ = this.getFormUploadData$(this.globalData);
 
@@ -95,4 +99,7 @@ export class WorkInstructionAuthoringComponent implements OnInit {
     }, 1000);
     console.log(this.currentStep);
   };
+  close() {
+    this.dialogRef.close();
+  }
 }

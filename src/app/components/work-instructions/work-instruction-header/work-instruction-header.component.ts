@@ -89,11 +89,6 @@ export class WorkInstructionHeaderComponent implements OnInit {
 
   addStep() {
     this.steps.push('');
-    this.onInputFocus();
-  }
-  onInputFocus() {
-    const inputElementsArray = this.inputElements.toArray();
-    inputElementsArray[this?.steps.length - 1].nativeElement.focus();
   }
   deleteStep(index) {
     this.steps.splice(index, 1);
