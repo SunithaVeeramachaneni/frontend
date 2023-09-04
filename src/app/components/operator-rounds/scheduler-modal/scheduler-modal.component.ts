@@ -32,12 +32,8 @@ export class SchedulerModalComponent implements OnInit {
   }
 
   goBack() {
-    if (this.currentStep === 0) {
-      this.router.navigate(['operator-rounds/scheduler/0']);
-      this.dialogRef.close();
-    } else if (this.currentStep > 0) {
-      this.gotoPreviousStep();
-    }
+    this.router.navigate(['operator-rounds/scheduler/0']);
+    this.dialogRef.close();
   }
 
   onGotoStep(step): void {
