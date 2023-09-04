@@ -198,7 +198,7 @@
           [disabled]="allShifts[0].null"
         >
           <mat-select-trigger id="taskScheduleConfigInitialShift">
-            {{ selectedShiftData }}
+            {{ selectedShiftData !== '' ? selectedShiftData : 'Select' }}
             <span id="taskScheduleConfigShiftMore" *ngIf="allShifts.length > 3">
               (+{{ allSlots.length - 3 }}
               {{ allSlots.length === 4 ? 'more' : 'more' }})
