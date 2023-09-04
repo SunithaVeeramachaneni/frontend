@@ -18,6 +18,10 @@
     padding: 0px !important;
   }
 
+  ::ng-deep .mat-card-title {
+    margin-bottom: 0px !important;
+  }
+
   .slider-input-container {
     width: 48%;
   }
@@ -113,8 +117,13 @@
   .dis-flex {
     display: flex;
     justify-content: space-between;
-    margin-top: 40px;
+    margin-top: 20px;
     margin-bottom: 20px;
+  }
+
+  ::ng-deep .mat-option-text {
+    font-size: 100%;
+    display: flex;
   }
 
   .attributes-list-item {

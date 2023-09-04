@@ -452,11 +452,19 @@
     "
   >
     <mat-card-title class="m-0 light-gray">
-      <div
-        id="additionalDetailsText"
-        class="additional-details-heading"
-        translate="additionalDetailsHeading"
-      ></div>
+      <div class="top-bar">
+        <svg-icon
+          id="sliderResponseCancelBtn"
+          icon="icon-close"
+          class="cancel"
+          (click)="cancelAdditionalDetails()"
+        ></svg-icon>
+        <h1
+          id="additionalDetailsText"
+          class="additional-details-heading"
+          translate="additionalDetailsHeading"
+        ></h1>
+      </div>
     </mat-card-title>
     <mat-card-content class="matCardContent">
       <div [formGroup]="additionalDetailsForm">

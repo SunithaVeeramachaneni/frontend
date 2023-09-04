@@ -154,14 +154,7 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
     private cdrf: ChangeDetectorRef,
     private readonly toast: ToastService,
     private operatorRoundService: OperatorRoundsService
-  ) {
-    this.filteredTags = this.tagsCtrl.valueChanges.pipe(
-      startWith(null),
-      map((tag: string | null) =>
-        tag ? this.filter(tag) : this.allTags.slice()
-      )
-    );
-  }
+  ) {}
 
   ngOnInit(): void {
     this.rdfService.getDataSetsByType$(this.tagDetailType).subscribe((tags) => {
@@ -172,6 +165,13 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
         this.cdrf.detectChanges();
       }
     });
+
+    this.filteredTags = this.tagsCtrl.valueChanges.pipe(
+      startWith(null),
+      map((tag: string | null) =>
+        tag ? this.filter(tag) : this.allTags.slice()
+      )
+    );
 
     this.responseForm = this.fb.group({
       id: new FormControl(''),
@@ -253,6 +253,10 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
         this.updateAttributesArray(
           this.question.additionalDetails?.attributes || []
         );
+        this.attributes = this.additionalDetailsForm.get(
+          'attributes'
+        ) as FormArray;
+        this.updateAttributesValueChanges(this.attributes);
       }
     });
 
@@ -350,8 +354,22 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
     if (Array.isArray(values)) {
       const formGroups = values?.map((value) =>
         this.fb.group({
-          label: [value.FIELDLABEL],
-          value: [value.DEFAULTVALUE]
+          label: [
+            value.FIELDLABEL,
+            [
+              Validators.maxLength(25),
+              WhiteSpaceValidator.trimWhiteSpace,
+              WhiteSpaceValidator.whiteSpace
+            ]
+          ],
+          value: [
+            value.DEFAULTVALUE,
+            [
+              Validators.maxLength(40),
+              WhiteSpaceValidator.trimWhiteSpace,
+              WhiteSpaceValidator.whiteSpace
+            ]
+          ]
         })
       );
       const formArray = this.fb.array(formGroups);
@@ -680,42 +698,43 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
     );
 
     if (this.attributes) {
-      merge(
-        ...this.attributes.controls.map(
-          (control: AbstractControl, index: number) =>
-            control.valueChanges.pipe(
-              map((value) => ({ rowIndex: index, value }))
-            )
-        )
-      ).subscribe((changes) => {
-        this.changedValues = changes.value;
-        if (this.changedValues.label) {
-          this.filteredLabels$ = of(
-            Object.keys(this.labels).filter(
-              (label) =>
-                label
-                  .toLowerCase()
-                  .indexOf(this.changedValues.label.toLowerCase()) === 0
-            )
-          );
-        } else {
-          this.filteredLabels$ = of([]);
-        }
-
-        if (this.changedValues.value && this.labels[this.changedValues.label]) {
-          this.filteredValues$ = of(
-            this.labels[this.changedValues.label]?.filter(
-              (value) =>
-                value
-                  .toLowerCase()
-                  .indexOf(this.changedValues.value.toLowerCase()) === 0
-            )
-          );
-        } else {
-          this.filteredValues$ = of([]);
-        }
-      });
+      this.updateAttributesValueChanges(this.attributes);
     }
+  }
+
+  updateAttributesValueChanges(attributes) {
+    merge(
+      ...attributes.controls.map((control: AbstractControl, index: number) =>
+        control.valueChanges.pipe(map((value) => ({ rowIndex: index, value })))
+      )
+    ).subscribe((changes: any) => {
+      this.changedValues = changes.value;
+      if (this.changedValues.label) {
+        this.filteredLabels$ = of(
+          Object.keys(this.labels).filter(
+            (label) =>
+              label
+                .toLowerCase()
+                .indexOf(this.changedValues.label.toLowerCase()) === 0
+          )
+        );
+      } else {
+        this.filteredLabels$ = of([]);
+      }
+
+      if (this.changedValues.value && this.labels[this.changedValues.label]) {
+        this.filteredValues$ = of(
+          this.labels[this.changedValues.label]?.filter(
+            (value) =>
+              value
+                .toLowerCase()
+                .indexOf(this.changedValues.value.toLowerCase()) === 0
+          )
+        );
+      } else {
+        this.filteredValues$ = of([]);
+      }
+    });
   }
 
   deleteAttributes(index: number) {
