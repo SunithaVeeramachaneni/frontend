@@ -12,6 +12,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatCalendar } from '@angular/material/datepicker';
 import { ErrorInfo } from 'src/app/interfaces';
 import { dataEntities, integrationPoints } from 'src/app/app.constants';
+import { permissions } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-add-edit-integration',
@@ -32,6 +33,7 @@ export class AddEditIntegrationComponent implements OnInit {
     repeatTime: '',
     dataMapping: this.fb.array([])
   });
+  readonly permissions = permissions;
 
   constructor(
     public dialogRef: MatDialogRef<AddEditIntegrationComponent>,

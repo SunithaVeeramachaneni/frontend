@@ -15,6 +15,7 @@ import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-valid
 import { IntegrationsService } from '../services/integrations.service';
 import { ErrorInfo } from 'src/app/interfaces';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { permissions } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-add-edit-connector',
@@ -51,6 +52,7 @@ export class AddEditConnectorComponent implements OnInit {
 
   isConnectionTested = false;
   isConnectionSuccessful = false;
+  readonly permissions = permissions;
 
   connectionForm = this.fb.group({
     connector: new FormControl('', [

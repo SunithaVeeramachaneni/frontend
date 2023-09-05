@@ -32,6 +32,7 @@ import { defaultLimit } from 'src/app/app.constants';
 import { MatDialog } from '@angular/material/dialog';
 import { AddEditIntegrationComponent } from '../add-edit-integration/add-edit-integration.component';
 import { ConfirmationModalDialogComponent } from '../confirmation-modal/confirmation-modal.component';
+import { permissions } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-connection-integrations',
@@ -163,6 +164,7 @@ export class ConnectionIntegrationsComponent implements OnInit, OnChanges {
   limit = defaultLimit;
   fetchIntegrations$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
+  readonly permissions = permissions;
 
   constructor(
     private dialog: MatDialog,
@@ -292,7 +294,11 @@ export class ConnectionIntegrationsComponent implements OnInit, OnChanges {
         disableClose: true,
         width: '600px',
         height: '600px',
-        data: { mode: 'edit', connectorId: this.connector?.id, integration: row.data }
+        data: {
+          mode: 'edit',
+          connectorId: this.connector?.id,
+          integration: row.data
+        }
       });
       dialogRef.afterClosed().subscribe((result) => {
         this.createUpdateDeleteIntegration$.next({

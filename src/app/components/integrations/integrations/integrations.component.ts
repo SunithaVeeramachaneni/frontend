@@ -12,6 +12,7 @@ import { catchError, map, mergeMap, tap } from 'rxjs/operators';
 import { IntegrationsService } from '../services/integrations.service';
 import { Confirmation, ErrorInfo } from 'src/app/interfaces';
 import { ConfirmationModalDialogComponent } from '../confirmation-modal/confirmation-modal.component';
+import { permissions } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-integrations',
@@ -29,6 +30,7 @@ export class IntegrationsComponent implements OnInit {
     type: 'create',
     connector: {} as any
   });
+  readonly permissions = permissions;
 
   constructor(
     private fb: FormBuilder,

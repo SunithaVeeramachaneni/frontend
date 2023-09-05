@@ -3,7 +3,7 @@
     <span class="form-name-description" translate="integrationsTxt"></span>
     <div class="test-connect">
       <button mat-raised-button color="primary" class="next-btn test-connection-btn" (click)="addIntegration()"
-        translate="addIntegrationBtn"></button>
+        translate="addIntegrationBtn" *appCheckUserHasPermission="[permissions.createIntegration]"></button>
     </div>
   </div>
   <div class="connector-body">
