@@ -16,20 +16,23 @@
       </div>
       <hr />
     </div>
-    <div *ngFor="let section of page.sections" class="preview-content">
+    <div
+      *ngFor="let section of page.sections; let i = index"
+      class="preview-content"
+    >
       <div class="section-header">
         <mat-icon
           id="previewExpandMore"
-          (click)="toggleSectionOpenState()"
-          *ngIf="isSectionOpenState === true"
+          (click)="toggleSectionOpenState(i)"
+          *ngIf="section?.isSectionOpenState"
           class="fix-arrow"
         >
           expand_more
         </mat-icon>
         <mat-icon
           id="previewRightArrow"
-          (click)="toggleSectionOpenState()"
-          *ngIf="isSectionOpenState === false"
+          (click)="toggleSectionOpenState(i)"
+          *ngIf="!section?.isSectionOpenState"
           class="fix-arrow"
         >
           chevron_right
@@ -43,7 +46,7 @@
         >
       </div>
 
-      <div *ngIf="isSectionOpenState === true">
+      <div *ngIf="section?.isSectionOpenState === true">
         <div id="preview" *ngFor="let question of section.questions">
           <app-preview-question
             [moduleType]="moduleType"
