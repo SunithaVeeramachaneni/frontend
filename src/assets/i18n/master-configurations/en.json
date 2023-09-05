@@ -57,7 +57,7 @@
   "zipCodeMandatory": "Zip Code *",
   "state": "State",
   "stateMandatory": "State *",
-  "additionalDetails": "Additional Details",
+  "additionalDetailsHeading": "Additional Details",
   "label": "Label",
   "field": "Field",
   "minlength": "{name} must be atleast {length} characters",

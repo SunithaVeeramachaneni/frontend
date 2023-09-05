@@ -113,14 +113,16 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
     private toastService: ToastService,
     private operatorRoundService: OperatorRoundsService
   ) {
-    this.rdfService.getDataSetsByType$('tags').subscribe((tags) => {
-      if (tags && tags.length) {
-        this.allTags = tags[0].values;
-        this.originalTags = JSON.parse(JSON.stringify(tags[0].values));
-        this.tagsCtrl.setValue('');
-        this.cdrf.detectChanges();
-      }
-    });
+    this.rdfService
+      .getDataSetsByType$('formTemplateHeaderTags')
+      .subscribe((tags) => {
+        if (tags && tags.length) {
+          this.allTags = tags[0].values;
+          this.originalTags = JSON.parse(JSON.stringify(tags[0].values));
+          this.tagsCtrl.setValue('');
+          this.cdrf.detectChanges();
+        }
+      });
     this.filteredTags = this.tagsCtrl.valueChanges.pipe(
       startWith(null),
       map((tag: string | null) =>
@@ -302,7 +304,7 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
     });
     if (newTags.length) {
       const dataSet = {
-        type: 'tags',
+        type: 'formTemplateHeaderTags',
         values: newTags
       };
       this.rdfService.createTags$(dataSet).subscribe((response) => {
@@ -491,7 +493,11 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
 
   storeDetails(i) {
     this.operatorRoundService
-      .createAdditionalDetails$({ ...this.changedValues })
+      .createAdditionalDetails$({
+        ...this.changedValues,
+        type: 'formTemplates',
+        level: 'header'
+      })
       .subscribe((response) => {
         if (response?.label) {
           this.toastService.show({
@@ -552,7 +558,7 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
 
   retrieveDetails() {
     this.operatorRoundService
-      .getAdditionalDetails$()
+      .getAdditionalDetails$({ type: 'formTemplates', level: 'header' })
       .subscribe((details: any[]) => {
         this.labels = this.convertArrayToObject(details);
         details.forEach((data) => {
