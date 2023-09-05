@@ -218,7 +218,7 @@ export class ReviseScheduleComponent implements OnInit {
           payload: [{ startTime: '00:00', endTime: '23:59', checked: true }]
         }
       ];
-      this.shiftsSelected['controls'].value = this.allSlots;
+      this.shiftsSelected.patchValue(this.allSlots);
     }
   }
 

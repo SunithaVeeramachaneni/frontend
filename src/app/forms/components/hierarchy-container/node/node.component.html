@@ -39,7 +39,12 @@
           class="node-icon"
         ></svg-icon>
         <div class="description">
-          <span id="nodeName" class="title">{{ node.name }}</span>
+          <div class="dis-flex title-status">
+            <span id="nodeName" class="title">{{ node.name }}</span>
+            <span id="nodeStatus" *ngIf="hierarchyMode === 'scheduler'">
+              Header
+            </span>
+          </div>
           <span id="nodeSubTitle" class="subTitle">
             {{
               'nodeSubTitle'
