@@ -264,29 +264,18 @@ export class OperatorRoundsDashboardComponent implements OnInit, OnDestroy {
       this.dashboardForm.value;
     bodyFormData.append('plantId', plantId);
     bodyFormData.append('shiftId', shiftId);
+    bodyFormData.append('timePeriod', timePeriod);
 
     const userName = this.loginService.getLoggedInUserName();
     bodyFormData.append('userName', userName);
     let startDateTemp = startDate;
     let endDateTemp = endDate;
     const DATE_FORMAT = 'dd MMM yyyy';
-    if (timePeriod !== 'custom') {
-      const startEndDate = this.getStartAndEndDates(timePeriod);
-      startDateTemp = formatDate(
-        new Date(startEndDate.startDate),
-        DATE_FORMAT,
-        'en-us'
-      );
-      endDateTemp = formatDate(
-        new Date(startEndDate.endDate),
-        DATE_FORMAT,
-        'en-us'
-      );
-      bodyFormData.append('timePeriod', `${startDateTemp} - ${endDateTemp}`);
-    } else {
+    if (timePeriod === 'custom') {
       startDateTemp = formatDate(new Date(startDate), DATE_FORMAT, 'en-us');
       endDateTemp = formatDate(new Date(endDate), DATE_FORMAT, 'en-us');
-      bodyFormData.append('timePeriod', `${startDate} - ${endDate}`);
+      bodyFormData.append('startDate', startDate);
+      bodyFormData.append('endDate', endDate);
     }
 
     for (let i = 0; i < this.widgets.length; i++) {
