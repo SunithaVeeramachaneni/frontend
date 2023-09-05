@@ -548,7 +548,7 @@ export class ObservationsService {
     }
     if (data.ANLNR && data.ANLNR !== placeHolder && data.ANLNR !== '--') {
       console.log('asset:', data.ANLNR);
-      desc += ` Asset ID: ${data.ANLNR}`;
+      desc = ` Asset ID: ${data.ANLNR}`;
     }
     return desc;
   }
