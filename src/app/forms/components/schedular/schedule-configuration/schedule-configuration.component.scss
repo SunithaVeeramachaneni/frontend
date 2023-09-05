@@ -369,6 +369,14 @@
     width: 50%;
     margin-left: 20%;
   }
+
+  ::ng-deep
+    .mat-form-field-appearance-outline.mat-form-field-disabled
+    .mat-form-field-outline {
+    color: $gray;
+    background: $gray;
+    border-radius: 7px;
+  }
 }
 
 #horizontal-row {

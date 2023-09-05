@@ -154,25 +154,26 @@
 
   .footer {
     padding: 12px;
+    display: flex;
   }
 
   .revise-btn {
     background-color: $blue-main;
     color: $white;
-    width: 48%;
+    width: 50%;
   }
 
   .revise-btn:disabled {
     background-color: $gray2-bg;
     color: $gray7;
-    width: 48%;
+    width: 50%;
   }
 
   .cancel-btn {
     color: $blue-main;
     border-color: $blue-main;
-    margin-right: 10px;
-    width: 48%;
+    margin-right: 7px;
+    width: 49%;
   }
 
   .by-date {
@@ -222,9 +223,5 @@
     padding: 10px;
     border-radius: 4px;
     margin-right: 10px;
-  }
-
-  ::ng-deep .shifts .mat-select-disabled .mat-select-arrow {
-    margin-top: -5px !important;
   }
 }
