@@ -250,6 +250,18 @@
   margin-top: 20px;
 }
 
+@media (min-width: 1810px) and (max-width: 3840px) {
+  .section-six-dots {
+    left: 200px !important;
+  }
+}
+
+@media (min-width: 1206px) and (max-width: 2560px) {
+  .section-six-dots {
+    left: 149px !important;
+  }
+}
+
 @media (min-width: 1900px) and (max-width: 2100px) {
   .section-six-dots {
     left: 114px !important;
