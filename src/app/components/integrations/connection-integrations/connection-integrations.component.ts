@@ -292,11 +292,7 @@ export class ConnectionIntegrationsComponent implements OnInit, OnChanges {
         disableClose: true,
         width: '600px',
         height: '600px',
-        data: {
-          mode: 'edit',
-          connectorId: this.connector?.id,
-          integration: row.data
-        }
+        data: { mode: 'edit', connectorId: this.connector?.id, integration: row.data }
       });
       dialogRef.afterClosed().subscribe((result) => {
         this.createUpdateDeleteIntegration$.next({

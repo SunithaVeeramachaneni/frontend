@@ -96,6 +96,18 @@ export class IntegrationsComponent implements OnInit {
     });
   }
 
+  viewConnection(connector) {
+    const dialogRef = this.dialog.open(AddEditConnectorComponent, {
+      disableClose: true,
+      width: '600px',
+      height: '600px',
+      data: { mode: 'view', connector }
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      // Do Nothing
+    });
+  }
+
   updateConnection(connector) {
     const dialogRef = this.dialog.open(AddEditConnectorComponent, {
       disableClose: true,
@@ -108,7 +120,6 @@ export class IntegrationsComponent implements OnInit {
         type: 'update',
         connector: result
       });
-      console.log(result);
     });
   }
 

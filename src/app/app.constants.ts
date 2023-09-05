@@ -119,7 +119,17 @@ export const permissions = Object.freeze({
   deleteGlobalResponses: 'DELETE_GLOBAL_RESPONSES',
   importGlobalResponses: 'IMPORT_GLOBAL_RESPONSES',
 
-  viewRdfObservations: 'VIEW_RDF_OBSERVATIONS'
+  viewRdfObservations: 'VIEW_RDF_OBSERVATIONS',
+
+  // Integration Manager Permissions
+  createConnection: 'CREATE_CONNECTION',
+  updateConnection: 'UPDATE_CONNECTION',
+  deleteConnection: 'DELETE_CONNECTION',
+  viewConnection: 'VIEW_CONNECTION',
+  createIntegration: 'CREATE_INTEGRATION',
+  updateIntegration: 'UPDATE_INTEGRATION',
+  deleteIntegration: 'DELETE_INTEGRATION',
+  viewIntegration: 'VIEW_INTEGRATION'
 });
 
 export const routingUrls = {
@@ -216,7 +226,7 @@ export const routingUrls = {
   integrationManagement: {
     url: '/integrations',
     title: 'Integrations Manager',
-    permission: permissions.viewTenants
+    permission: permissions.viewIntegration
   },
   inActiveTenants: {
     url: '/tenant-management/inactive-tenants',

@@ -71,11 +71,11 @@
   margin: 0px 10px;
 }
 .schedule-wrapper {
-  background: #f4f4f4;
+  background: $gray2;
   padding: 0px 10px;
   display: flex;
   align-items: center;
-  border: 1px solid #e0e0e0;
+  border: 1px solid $border-color;
   border-radius: 5px;
   flex-direction: column;
 }
@@ -257,7 +257,7 @@
     font-weight: 500;
   }
   .ip-desc {
-    color: #ccc;
+    color: $border-color-vi;
   }
 }
 .p-l-r-10 {

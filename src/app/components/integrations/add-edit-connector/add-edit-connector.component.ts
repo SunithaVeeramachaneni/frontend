@@ -93,6 +93,22 @@ export class AddEditConnectorComponent implements OnInit {
       connectorMetaFormGroup.patchValue({ ...connector.connectorMeta });
       this.connectionForm.setControl('connectorMeta', connectorMetaFormGroup);
       this.cdrf.detectChanges();
+    } else if (this.data.mode === 'view') {
+      const connector = this.data?.connector;
+      this.connectionForm.patchValue({
+        connector: connector.connectorId,
+        connectorAlias: connector.connectorName,
+        icon: connector.icon,
+        description: connector.description
+      });
+      this.connectionForm.removeControl('connectorMeta');
+      const connectorMetaFormGroup = this.getConnectorMetaFormGroup(
+        connector.connectorId
+      );
+      connectorMetaFormGroup.patchValue({ ...connector.connectorMeta });
+      this.connectionForm.setControl('connectorMeta', connectorMetaFormGroup);
+      this.connectionForm.disable();
+      this.cdrf.detectChanges();
     }
   }
 
@@ -183,7 +199,7 @@ export class AddEditConnectorComponent implements OnInit {
           this.isConnectionSuccessful = false;
         }
         this.isTestConnectionInProgress = false;
-        console.log(resp);
+        this.cdrf.detectChanges();
       });
   }
 

@@ -1,14 +1,17 @@
 <div [formGroup]="connectionForm" class="dialog-container">
   <div class="dialog-head">
-    <span class="heading">
-      {{data.mode === 'create' ? 'Add ':'Edit '}} Connection
+    <span class="heading" *ngIf="data.mode !== 'view'">
+      {{data.mode === 'create' ? 'Add ':'Edit ' }} Connection
+    </span>
+    <span class="heading" *ngIf="data.mode === 'view'">
+      {{'viewConnection' | translate}}
     </span>
     <mat-icon mat-dialog-close class="close-icon">close</mat-icon>
   </div>
   <div mat-dialog-content class="dialog-body">
     <div>
       <mat-form-field appearance="outline" class="width-100 form-field">
-        <mat-label translate>Select Connector</mat-label>
+        <mat-label translate="selectConnector"></mat-label>
         <mat-select formControlName="connector" (selectionChange)="connectorChanged($event)">
           <mat-option [value]="">
             Select
@@ -19,7 +22,7 @@
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="outline" class="width-100 form-field">
-        <mat-label>Connection Alias</mat-label>
+        <mat-label translate="connectionAlias"></mat-label>
         <input type="text" matInput [placeholder]="'Connection Alias'" formControlName="connectorAlias" />
       </mat-form-field>
     </div>
@@ -33,34 +36,34 @@
     <ng-template #odbcTemplate>
       <div formGroupName="connectorMeta">
         <mat-form-field appearance="outline" class="width-100 form-field">
-          <mat-label>DB Hostname</mat-label>
+          <mat-label translate="dbHostName"></mat-label>
           <input type="text" matInput [placeholder]="'Hostname'" formControlName="hostname" />
         </mat-form-field>
         <mat-form-field appearance="outline" class="width-100 form-field">
-          <mat-label>Username</mat-label>
+          <mat-label translate="username"></mat-label>
           <input type="text" matInput [placeholder]="'DB Username'" formControlName="username" />
         </mat-form-field>
         <mat-form-field appearance="outline" class="width-100 form-field">
-          <mat-label>Password</mat-label>
+          <mat-label translate="password"></mat-label>
           <input [type]="hidePasswordODBC ? 'password' : 'text'" matInput [placeholder]="'DB Password'"
             formControlName="password" />
           <button type="button" mat-icon-button matSuffix (click)="hidePasswordODBC = !hidePasswordODBC"
-            [attr.aria-label]="'Hide password ERPS'" [attr.aria-pressed]="hidePasswordODBC">
+            [attr.aria-label]="'Hide password ODBC'" [attr.aria-pressed]="hidePasswordODBC">
             <mat-icon>
               {{ hidePasswordODBC ? 'visibility_off' : 'visibility' }}
             </mat-icon>
           </button>
         </mat-form-field>
         <mat-form-field appearance="outline" class="width-100 form-field">
-          <mat-label>Database Name</mat-label>
+          <mat-label translate="databaseName"></mat-label>
           <input type="text" matInput [placeholder]="'Database Name'" formControlName="database" />
         </mat-form-field>
         <mat-form-field appearance="outline" class="width-100 form-field">
-          <mat-label>Database PORT</mat-label>
+          <mat-label translate="databasePort"></mat-label>
           <input type="number" matInput [placeholder]="'Database PORT'" formControlName="port" />
         </mat-form-field>
         <mat-form-field appearance="outline" class="width-100 form-field">
-          <mat-label>Database Dialect</mat-label>
+          <mat-label translate="databaseDialect"></mat-label>
           <mat-select formControlName="dialect">
             <mat-option [value]="">
               Select
@@ -78,19 +81,19 @@
     <ng-template #emailTemplate>
       <div formGroupName="connectorMeta">
         <mat-form-field appearance="outline" class="width-100">
-          <mat-label>SMTP Hostname</mat-label>
+          <mat-label translate="smtpHost"></mat-label>
           <input type="text" matInput [placeholder]="'SMTP Hostname'" formControlName="hostname" />
         </mat-form-field>
         <mat-form-field appearance="outline" class="width-100">
-          <mat-label>SMTP Port</mat-label>
+          <mat-label translate="smtpPort"></mat-label>
           <input type="number" matInput [placeholder]="'SMTP Port'" formControlName="port" />
         </mat-form-field>
         <mat-form-field appearance="outline" class="width-100">
-          <mat-label>SMTP Username</mat-label>
+          <mat-label translate="smtpUsername"></mat-label>
           <input type="text" matInput [placeholder]="'SMTP Username'" formControlName="username" />
         </mat-form-field>
         <mat-form-field appearance="outline" class="width-100">
-          <mat-label>SMTP Password</mat-label>
+          <mat-label translate="smtpPassword"></mat-label>
           <input [type]="hidePasswordSMTP ? 'password' : 'text'" matInput [placeholder]="'SMTP Password'"
             formControlName="password" />
           <button type="button" mat-icon-button matSuffix (click)="hidePasswordSMTP = !hidePasswordSMTP"
@@ -104,23 +107,24 @@
     </ng-template>
     <ng-template #emptyTemplate>
       <div class="w-65 connectorMeta noConnector">
-        Please select a connector from left to configure.
+        {{'selectConnectorToConfigure'|translate}}
       </div>
     </ng-template>
   </div>
-  <div mat-dialog-actions class="dialog-footer">
+  <div mat-dialog-actions class="dialog-footer" *ngIf="data.mode !== 'view'">
     <div class="dis-flex">
       <button mat-stroked-button color="primary" [disabled]="!connectionForm.valid || connectionForm.pristine"
         (click)="testConnection()" [ngClass]="{'test-conn-btn-inprogress':isTestConnectionInProgress}">
-        <span>Test Connection
+        <span>
+          {{'testConnectionTxt' | translate}}
           <mat-progress-spinner [mode]="'indeterminate'" [diameter]="25" class="test-conn-spinner"
             *ngIf="isTestConnectionInProgress"></mat-progress-spinner>
         </span>
       </button>
       <span class="success-msg" *ngIf="isConnectionTested && isConnectionSuccessful">
-        <mat-icon>check_circle</mat-icon>Connection Successful</span>
+        <mat-icon>check_circle</mat-icon>{{'connectionSuccessTxt' | translate}}</span>
       <span class="failure-msg" *ngIf="isConnectionTested && !isConnectionSuccessful">
-        <mat-icon>error</mat-icon>Connection Failed</span>
+        <mat-icon>error</mat-icon>{{'connectionFailTxt'}}</span>
     </div>
     <div class="dis-flex">
       <button mat-button mat-dialog-close color="primary">Close</button>

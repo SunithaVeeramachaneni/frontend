@@ -48,6 +48,9 @@ export class AddEditIntegrationComponent implements OnInit {
       this.integrationConfigForm.patchValue({
         ...this.data?.integration
       });
+      this.selectIntegrationPoint({
+        value: this.data?.integration?.integrationPointId
+      });
     }
   }
 

@@ -8,7 +8,7 @@
   <div mat-dialog-content class="dialog-body">
     <div>
       <mat-form-field appearance="outline" class="width-100 form-field">
-        <mat-label translate>Select Integration Point</mat-label>
+        <mat-label translate="selectIntegrationPoint"></mat-label>
         <mat-select formControlName="integrationPointId" (selectionChange)="selectIntegrationPoint($event)">
           <mat-option [value]="">
             Select
@@ -22,8 +22,9 @@
       <div class="form-field-wrapper">
         <span class="field-label">Data Synchronization</span>
         <mat-radio-group aria-label="Select an option" formControlName="syncType">
-          <mat-radio-button value="realtime" class="radio-group-option">Real-time</mat-radio-button>
-          <mat-radio-button value="scheduled" class="radio-group-option" disabled>Scheduled</mat-radio-button>
+          <mat-radio-button value="realtime" class="radio-group-option" translate="realtime"></mat-radio-button>
+          <mat-radio-button value="scheduled" class="radio-group-option" translate="scheduled"
+            disabled></mat-radio-button>
         </mat-radio-group>
       </div>
       <div class="schedule-wrapper" *ngIf="integrationConfigForm.value.syncType ==='scheduled' ">
@@ -44,17 +45,14 @@
       </div>
       <div class="data-mapping-container"
         *ngIf="integrationConfigForm.value.integrationPointId && integrationConfigForm.value.integrationPointId.length">
-        <span class="field-label">Data Mapping</span>
+        <span class="field-label" translate="dataMappingTxt"></span>
         <div class="dis-flex">
           <div class="w-100">
             <mat-list role="list">
               <mat-list-item role="listitem">
                 <div class="attribute-list">
-                  <span class="mapping-head">
-                    CBO(Source) Data Attribute
-                  </span>
-                  <span class="mapping-head">
-                    Destination Data Attribute</span>
+                  <span class="mapping-head" translate="sourceAttrHeading"></span>
+                  <span class="mapping-head" translate="destAttrHeading"></span>
                 </div>
               </mat-list-item>
               <mat-list-item *ngFor="
@@ -90,7 +88,7 @@
     <div class="dis-flex">
       <button mat-button mat-dialog-close color="primary">Close</button>
       <button mat-flat-button class="submit-btn" (click)="saveIntegration()">
-        <span>Save Integration
+        <span>{{'saveIntegrationTxt'|translate}}
           <mat-progress-spinner *ngIf="isSaveInProgress" [mode]="'indeterminate'" [diameter]="25"
             class="test-conn-spinner"></mat-progress-spinner>
         </span>
