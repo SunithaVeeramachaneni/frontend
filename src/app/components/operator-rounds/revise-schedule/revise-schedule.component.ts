@@ -57,7 +57,7 @@ export class ReviseScheduleComponent implements OnInit {
   repeatTypes = scheduleConfigs.repeatTypes;
   daysOfWeek = scheduleConfigs.daysOfWeek;
   weeksOfMonth = scheduleConfigs.weeksOfMonth;
-  resviseScheduleConfigForm: FormGroup;
+  reviseScheduleConfigForm: FormGroup;
   shiftsSelected = new FormControl('');
   allSlots = [];
   allShifts = [];
@@ -78,7 +78,6 @@ export class ReviseScheduleComponent implements OnInit {
   ngOnInit(): void {
     this.locationListToTask$ = this.operatorRoundService.checkboxStatus$.pipe(
       tap((data) => {
-        console.log(data);
         const selectedPage = data.selectedPage;
         const nodeId = data.nodeId;
         if (!this.locationIdToTaskcount.has(nodeId)) {
@@ -94,11 +93,16 @@ export class ReviseScheduleComponent implements OnInit {
         });
         if (totalTaskCount === taskCount)
           this.locationIdToTaskcount.set(nodeId, 'All ');
+        else if (taskCount === 0) this.locationIdToTaskcount.delete(nodeId);
         else this.locationIdToTaskcount.set(nodeId, taskCount.toString());
         this.locationIdToTaskcountArr = Array.from(this.locationIdToTaskcount);
+
+        if (this.locationIdToTaskcountArr.length === 0)
+          this.openCloseRightPanelEvent.emit(false);
+        this.setCommonConfig();
       })
     );
-    this.resviseScheduleConfigForm = this.fb.group({
+    this.reviseScheduleConfigForm = this.fb.group({
       scheduleType: [''],
       repeatDuration: ['', [Validators.required, Validators.min(1)]],
       repeatEvery: [''],
@@ -113,23 +117,7 @@ export class ReviseScheduleComponent implements OnInit {
     });
 
     if (this.reviseScheduleConfig) {
-      this.resviseScheduleConfigForm.patchValue({
-        scheduleType: this.reviseScheduleConfig.scheduleType,
-        repeatDuration: this.reviseScheduleConfig.repeatDuration,
-        repeatEvery: this.reviseScheduleConfig.repeatEvery,
-        daysOfWeek: this.reviseScheduleConfig.daysOfWeek,
-        monthlyDaysOfWeek: this.reviseScheduleConfig.monthlyDaysOfWeek,
-        startDate: format(
-          new Date(this.reviseScheduleConfig.startDate),
-          dateFormat4
-        ),
-        startDatePicker: new Date(this.reviseScheduleConfig.startDate),
-        endDate: format(
-          new Date(this.reviseScheduleConfig.endDate),
-          dateFormat4
-        ),
-        endDatePicker: new Date(this.reviseScheduleConfig.endDate)
-      });
+      this.resetReviseScheduleConfigForm();
 
       this.allSlots = this.prepareShiftAndSlot(
         this.reviseScheduleConfig.shiftSlots,
@@ -137,6 +125,9 @@ export class ReviseScheduleComponent implements OnInit {
       );
       this.allShifts = this.reviseScheduleConfig.shiftSlots;
     }
+    this.operatorRoundService.revisedInfo$.subscribe((revisedInfo) => {
+      this.revisedInfo = revisedInfo;
+    });
   }
 
   prepareShiftAndSlot(shiftSlot, shiftDetails) {
@@ -160,7 +151,7 @@ export class ReviseScheduleComponent implements OnInit {
   }
 
   get monthlyDaysOfWeek(): FormArray {
-    return this.resviseScheduleConfigForm.get('monthlyDaysOfWeek') as FormArray;
+    return this.reviseScheduleConfigForm.get('monthlyDaysOfWeek') as FormArray;
   }
 
   get selectedShiftData(): string {
@@ -182,12 +173,12 @@ export class ReviseScheduleComponent implements OnInit {
     formControlDateField: string
   ) {
     if (formControlDateField === 'startDate') {
-      this.resviseScheduleConfigForm.patchValue(
+      this.reviseScheduleConfigForm.patchValue(
         { startDate: format(new Date(event.target.value), dateFormat4) },
         { emitEvent: false }
       );
     } else if (formControlDateField === 'endDate') {
-      this.resviseScheduleConfigForm.patchValue(
+      this.reviseScheduleConfigForm.patchValue(
         { endDate: format(new Date(event.target.value), dateFormat4) },
         { emitEvent: false }
       );
@@ -289,7 +280,6 @@ export class ReviseScheduleComponent implements OnInit {
     // );
     newConfig.shiftDetails = { ...this.prepareShiftSlot(this.allSlots) };
     this.filterConfig(newConfig);
-    console.log('newConfig', newConfig);
 
     let configIndex = 0;
     let configFound = false;
@@ -300,7 +290,6 @@ export class ReviseScheduleComponent implements OnInit {
     }
     this.configuarations.forEach((config, index) => {
       if (isEqual(newConfig, config)) {
-        console.log('isEqual', config);
         configFound = true;
         configIndex = index;
       }
@@ -335,9 +324,66 @@ export class ReviseScheduleComponent implements OnInit {
     }
   }
 
+  setCommonConfig() {
+    // Common Config for Shifts is Left
+    const questionKeys = [];
+    if (Object.keys(this.revisedInfo).length === 0) return;
+    this.operatorRoundService.allPageCheckBoxStatus$.subscribe((pages) => {
+      Object.keys(pages).forEach((key) => {
+        pages[key].forEach((page) => {
+          const nodeId = key.split('_')[1];
+          page.questions.forEach((question) => {
+            if (question.complete) {
+              questionKeys.push(question.id);
+            }
+          });
+        });
+      });
+    });
+    const { commonConfig, isQuestionNotIncluded } =
+      this.operatorRoundService.findCommonConfigurations(
+        this.revisedInfo,
+        questionKeys
+      );
+    if (isQuestionNotIncluded) {
+      this.resetReviseScheduleConfigForm();
+      return;
+    }
+    this.reviseScheduleConfigForm.patchValue({
+      repeatDuration: '',
+      repeatEvery: '',
+      scheduleType: 'byFrequency',
+      ...commonConfig,
+      startDate: commonConfig?.startDate
+        ? format(new Date(commonConfig?.startDate), dateFormat4)
+        : '',
+      startDatePicker: new Date(commonConfig?.startDate),
+      endDate: commonConfig?.endDate
+        ? format(new Date(commonConfig?.endDate), dateFormat4)
+        : '',
+      endDatePicker: new Date(commonConfig?.endDate)
+    });
+  }
+  resetReviseScheduleConfigForm() {
+    this.reviseScheduleConfigForm.patchValue({
+      scheduleType: this.reviseScheduleConfig.scheduleType,
+      repeatDuration: this.reviseScheduleConfig.repeatDuration,
+      repeatEvery: this.reviseScheduleConfig.repeatEvery,
+      daysOfWeek: this.reviseScheduleConfig.daysOfWeek,
+      monthlyDaysOfWeek: this.reviseScheduleConfig.monthlyDaysOfWeek,
+      startDate: format(
+        new Date(this.reviseScheduleConfig.startDate),
+        dateFormat4
+      ),
+      startDatePicker: new Date(this.reviseScheduleConfig.startDate),
+      endDate: format(new Date(this.reviseScheduleConfig.endDate), dateFormat4),
+      endDatePicker: new Date(this.reviseScheduleConfig.endDate)
+    });
+  }
+
   onRevise() {
     const configPosition = this.comparingConfig(
-      this.resviseScheduleConfigForm.value
+      this.reviseScheduleConfigForm.value
     );
     this.operatorRoundService.allPageCheckBoxStatus$.subscribe((pages) => {
       Object.keys(pages).forEach((key) => {
@@ -354,7 +400,5 @@ export class ReviseScheduleComponent implements OnInit {
       });
     });
     this.operatorRoundService.setRevisedInfo(this.revisedInfo);
-    console.log('revisedInfo:', this.revisedInfo);
-    console.log('configurations:', this.configuarations);
   }
 }

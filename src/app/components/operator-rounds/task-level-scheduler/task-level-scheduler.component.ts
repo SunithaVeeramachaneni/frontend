@@ -78,7 +78,6 @@ export class TaskLevelSchedulerComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    console.log('roundPlanData:', this.roundPlanData);
     this.searchHierarchyKey = new FormControl('');
     const { name, description } = this.roundPlanData.roundPlanDetail;
     this.taskLevelScheduleHeaderConfiguration = {
@@ -250,7 +249,6 @@ export class TaskLevelSchedulerComponent implements OnInit {
   }
 
   onSchedule() {
-    console.log(this.payload);
     this.operatorRoundService.revisedInfo$.subscribe((revisedInfo) => {
       this.scheduleConfig = {
         roundPlanId: this.roundPlanData.roundPlanDetail.id,
@@ -272,7 +270,6 @@ export class TaskLevelSchedulerComponent implements OnInit {
       if (Object.keys(config.nodeWiseQuestionIds).length === 0) return false;
       return true;
     });
-    console.log('scheduleConfig', this.scheduleConfig);
     this.schedulerConfigurationService
       .createRoundPlanScheduleConfiguration$(this.scheduleConfig)
       .subscribe();
