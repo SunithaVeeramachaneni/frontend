@@ -41,7 +41,7 @@ export class PreviewComponent implements OnInit, OnChanges {
   };
   previewFormData$: Observable<any>;
   previewFormData = [];
-
+  sectionsData: any[];
   constructor(private store: Store<State>) {}
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.page && changes.page.currentValue) {
@@ -68,6 +68,7 @@ export class PreviewComponent implements OnInit, OnChanges {
                   });
                   return { ...section, questions: questionsArray };
                 });
+                this.sectionsData = sectionData;
                 return { ...page, sections: sectionData };
               });
             }
@@ -82,8 +83,11 @@ export class PreviewComponent implements OnInit, OnChanges {
     this.fieldTypes = fieldTypesMock.fieldTypes;
   }
 
-  toggleSectionOpenState = () => {
-    this.isSectionOpenState = !this.isSectionOpenState;
+  toggleSectionOpenState = (sectionIdx: number): void => {
+    if (this.sectionsData?.length > 0) {
+      this.sectionsData[sectionIdx].isSectionOpenState =
+        !this.sectionsData[sectionIdx].isSectionOpenState;
+    }
   };
 
   openBottomSheet(isOpenBottomSheet) {
