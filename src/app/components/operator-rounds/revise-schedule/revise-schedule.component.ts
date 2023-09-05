@@ -141,6 +141,12 @@ export class ReviseScheduleComponent implements OnInit {
 
   prepareShiftAndSlot(shiftSlot, shiftDetails) {
     if (Object.keys(shiftDetails)[0] === 'null') {
+      shiftSlot.forEach((data) => {
+        data.payload = shiftDetails.null.map((pLoad) => {
+          pLoad.checked = true;
+          return pLoad;
+        });
+      });
       return shiftSlot;
     } else {
       shiftSlot.forEach((data) => {
@@ -246,7 +252,12 @@ export class ReviseScheduleComponent implements OnInit {
       );
     }
     if (this.allSlots.length === 0) {
-      this.allSlots = [{ null: { startTime: '00:00', endTime: '23:59' } }];
+      this.allSlots = [
+        {
+          null: { startTime: '12:00 AM', endTime: '11:59 PM' },
+          payload: [{ startTime: '00:00', endTime: '23:59', checked: true }]
+        }
+      ];
     }
     this.shiftSelect.value = this.allSlots;
   }
