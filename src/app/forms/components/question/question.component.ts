@@ -698,7 +698,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
       questions: [],
       evidenceQuestions: [],
       mandateQuestions: [],
-      hideQuestions: []
+      hideQuestions: [],
+      hiddenLogicQuestions: []
     };
   }
 

@@ -186,7 +186,10 @@
                 class="mandateAction"
                 (click)="openSelectQuestionsDialog(logic.value, i, 'HIDE')"
               >
-                Hide ({{ logic.value.hideQuestions.length }}) Questions
+                Hide ({{
+                  logic.value.hideQuestions.length -
+                    logic.value.hiddenLogicQuestions.length
+                }}) Questions
                 <mat-icon id="addLogicEditIcon">edit</mat-icon>
               </span>
               <span

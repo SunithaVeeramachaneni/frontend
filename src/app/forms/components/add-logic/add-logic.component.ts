@@ -99,6 +99,7 @@ export class AddLogicComponent implements OnInit, OnDestroy {
   });
 
   fieldOperators: any[] = [];
+  logicsList: any[] = [];
   dropDownTypes = ['DD', 'VI', 'DDM', 'CB'];
   raiseIssueApplicableFields = ['NF', 'VI', 'RT'];
   checkBoxResponses = ['true'];
@@ -166,6 +167,7 @@ export class AddLogicComponent implements OnInit, OnDestroy {
                 this.pageWiseLogicSectionAskEvidenceQuestions[this.pageIndex][
                   logic.id
                 ];
+              const hiddenLogicQuestions = logic.hiddenLogicQuestions;
 
               let mandateQuestionsFormArray = [];
               if (mandateQuestions && mandateQuestions.length) {
@@ -224,6 +226,13 @@ export class AddLogicComponent implements OnInit, OnDestroy {
                 );
               }
 
+              let hiddenLogicQuestionsFormArray = [];
+              if (hiddenLogicQuestions?.length) {
+                hiddenLogicQuestionsFormArray = hiddenLogicQuestions.map((lq) =>
+                  this.fb.control(lq)
+                );
+              }
+
               return this.fb.group({
                 id: logic.id || '',
                 questionId: logic.questionId || '',
@@ -243,7 +252,10 @@ export class AddLogicComponent implements OnInit, OnDestroy {
                 questions: this.fb.array(askQuestionsFormArray),
                 evidenceQuestions: this.fb.array(askEvidenceQuestionsFormArray),
                 mandateQuestions: this.fb.array(mandateQuestionsFormArray),
-                hideQuestions: this.fb.array(hideQuestionsFormArray)
+                hideQuestions: this.fb.array(hideQuestionsFormArray),
+                hiddenLogicQuestions: this.fb.array(
+                  hiddenLogicQuestionsFormArray
+                )
               });
             }) || [];
           this.logicsForm.setControl('logics', this.fb.array(logicsFormArray));
@@ -261,6 +273,7 @@ export class AddLogicComponent implements OnInit, OnDestroy {
                     takeUntil(this.onDestroy$),
                     tap(([prev, curr]) => {
                       if (!isEqual(curr, prev)) {
+                        console.log(curr);
                         const logicSymbol = this.fieldOperators.find(
                           (op) => op.code === curr.operator
                         );
@@ -437,7 +450,71 @@ export class AddLogicComponent implements OnInit, OnDestroy {
         logic.mandateQuestions = result.selectedQuestions;
         logic.action = result.type;
       } else if (result.type === 'HIDE') {
+        let hiddenLogicQuestions = [];
         logic.hideQuestions = result.selectedQuestions;
+        for (const question of result.selectedQuestions) {
+          this.store
+            .select(
+              getQuestionLogics(this.pageIndex, question, this.selectedNodeId)
+            )
+            .pipe(
+              tap((logicsT) => {
+                logicsT?.map((logicObject, index) => {
+                  const askQuestions =
+                    this.pageWiseLogicsAskQuestions[this.pageIndex][
+                      logicObject.id
+                    ];
+                  const evidenceQuestions =
+                    this.pageWiseLogicSectionAskEvidenceQuestions[
+                      this.pageIndex
+                    ][logicObject.id];
+
+                  let askQuestionsFormArray = [];
+                  if (askQuestions && askQuestions.length) {
+                    askQuestionsFormArray = askQuestions.map((aq) => aq.id);
+                  }
+
+                  let askEvidenceQuestionsFormArray = [];
+                  if (evidenceQuestions && evidenceQuestions.length) {
+                    askEvidenceQuestionsFormArray = evidenceQuestions.map(
+                      (eq) => eq.id
+                    );
+                  }
+
+                  const isAlreadyExists = this.logicsList.some(
+                    (l) => l.id === logicObject.id
+                  );
+
+                  if (!isAlreadyExists) {
+                    this.logicsList.push({
+                      id: logicObject.id || '',
+                      questions: askQuestionsFormArray,
+                      evidenceQuestions: askEvidenceQuestionsFormArray
+                    });
+                  }
+                }) || [];
+              })
+            )
+            .subscribe();
+          for (const l of this.logicsList) {
+            hiddenLogicQuestions.push(
+              ...[...l.questions, ...l.evidenceQuestions]
+            );
+          }
+        }
+        hiddenLogicQuestions = hiddenLogicQuestions.filter(
+          (value, index, self) => {
+            return self.indexOf(value) === index;
+          }
+        );
+        logic.hiddenLogicQuestions = hiddenLogicQuestions;
+        logic.hideQuestions.push(...hiddenLogicQuestions);
+        logic.hideQuestions = logic.hideQuestions.filter(
+          (value, index, self) => {
+            return self.indexOf(value) === index;
+          }
+        );
+        console.log(logic, hiddenLogicQuestions);
         logic.action = result.type;
       }
 
