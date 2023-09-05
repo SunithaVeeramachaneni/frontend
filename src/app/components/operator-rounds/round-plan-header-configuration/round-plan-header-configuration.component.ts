@@ -139,14 +139,16 @@ export class RoundPlanHeaderConfigurationComponent
     private imageCompress: NgxImageCompressService,
     private router: Router
   ) {
-    this.operatorRoundsService.getDataSetsByType$('tags').subscribe((tags) => {
-      if (tags && tags.length) {
-        this.allTags = tags[0].values;
-        this.originalTags = cloneDeep(tags[0].values);
-        this.tagsCtrl.setValue('');
-        this.cdrf.detectChanges();
-      }
-    });
+    this.operatorRoundsService
+      .getDataSetsByType$('roundHeaderTags')
+      .subscribe((tags) => {
+        if (tags && tags.length) {
+          this.allTags = tags[0].values;
+          this.originalTags = cloneDeep(tags[0].values);
+          this.tagsCtrl.setValue('');
+          this.cdrf.detectChanges();
+        }
+      });
     this.filteredTags = this.tagsCtrl.valueChanges.pipe(
       startWith(null),
       map((tag: string | null) =>
@@ -395,12 +397,12 @@ export class RoundPlanHeaderConfigurationComponent
     });
     if (newTags.length) {
       const dataSet = {
-        type: 'tags',
+        type: 'roundHeaderTags',
         values: newTags
       };
-      // this.operatorRoundsService.createTags$(dataSet).subscribe((response) => {
-      //   // do nothing
-      // });
+      this.operatorRoundsService.createTags$(dataSet).subscribe((response) => {
+        // do nothing
+      });
     }
 
     const plant = this.allPlantsData.find(
@@ -799,7 +801,11 @@ export class RoundPlanHeaderConfigurationComponent
 
   storeDetails(i) {
     this.operatorRoundsService
-      .createAdditionalDetails$({ ...this.changedValues })
+      .createAdditionalDetails$({
+        ...this.changedValues,
+        type: 'rounds',
+        level: 'header'
+      })
       .subscribe((response) => {
         if (response?.label) {
           this.toastService.show({
@@ -860,7 +866,7 @@ export class RoundPlanHeaderConfigurationComponent
 
   retrieveDetails() {
     this.operatorRoundsService
-      .getAdditionalDetails$()
+      .getAdditionalDetails$({ type: 'rounds', level: 'header' })
       .subscribe((details: any[]) => {
         this.labels = this.convertArrayToObject(details);
         details.forEach((data) => {

@@ -1,4 +1,4 @@
-import { NumberRangeMetadata } from './form-configuration';
+import { AdditionalDetails, NumberRangeMetadata } from './form-configuration';
 
 export interface ResponseTypeOpenState {
   isOpen: boolean;
@@ -15,4 +15,10 @@ export interface SliderSelectorState {
   isOpen: boolean;
   questionId: string;
   value: any;
+}
+
+export interface AdditionalDetailsState {
+  isOpen: boolean;
+  questionId: string;
+  additionalDetails: AdditionalDetails;
 }
