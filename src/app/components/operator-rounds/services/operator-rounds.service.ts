@@ -26,7 +26,7 @@ import { formConfigurationStatus, dateFormat2 } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { isJson } from '../../race-dynamic-form/utils/utils';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
-import { cloneDeep, isEmpty, omitBy } from 'lodash-es';
+import { cloneDeep, isEmpty, omitBy, isEqual } from 'lodash-es';
 import { isNgModuleDefWithProviders } from 'ng-mocks';
 
 @Injectable({
@@ -815,4 +815,38 @@ export class OperatorRoundsService {
       {},
       'arraybuffer'
     );
+
+  findCommonConfigurations = (revisedInfoConfigs, questionIds) => {
+    const configurations = [];
+    let commonConfig: any = {};
+
+    for (const a of Object.values(revisedInfoConfigs)) {
+      for (const b of Object.keys(a)) {
+        if (questionIds.includes(b)) {
+          configurations.push(a[b]);
+        }
+      }
+    }
+
+    if (configurations.length === 0) {
+      return { commonConfig: {}, isQuestionNotIncluded: true };
+    }
+
+    commonConfig = { ...configurations[0] };
+
+    for (let i = 1; i < configurations.length; i++) {
+      const currentConfig = configurations[i];
+
+      for (const key of Object.keys(commonConfig)) {
+        if (
+          !currentConfig.hasOwnProperty(key) ||
+          !isEqual(commonConfig[key], currentConfig[key])
+        ) {
+          delete commonConfig[key];
+        }
+      }
+    }
+
+    return { commonConfig, isQuestionNotIncluded: false };
+  };
 }

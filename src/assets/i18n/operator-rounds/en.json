@@ -371,5 +371,6 @@
   "scheduleByFrequency": "Schedule by Frequency",
   "scheduleByDate": "Schedule by Date",
   "slots": "Slots",
-  "reviseBtn": "Revise"
+  "reviseBtn": "Revise",
+  "revised": "Revised"
 }

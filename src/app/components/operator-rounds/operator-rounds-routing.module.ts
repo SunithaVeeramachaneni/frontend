@@ -9,7 +9,6 @@ import { RoundPlanResolverService } from './services/round-plan-resolver.service
 import { SchedulerComponent } from './scheduler/scheduler.component';
 import { RoundObservationsComponent } from './round-observations/round-observations.component';
 import { RoundPlanEditViewComponent } from './round-plan-modal/round-plan-edit-view.component';
-import { TaskLevelSchedulingEditViewComponent } from './task-level-scheduler/task-level-scheduler-edit-view.component';
 
 const routes: Routes = [
   {
@@ -39,16 +38,6 @@ const routes: Routes = [
         data: {
           permissions: [permissions.updateORPlan],
           componentMode: 'edit'
-        }
-      },
-      {
-        path: '/operator-rounds/task-level-scheduler/:id',
-        component: TaskLevelSchedulingEditViewComponent,
-        canActivate: [AuthGuard],
-        resolve: { form: RoundPlanResolverService },
-        data: {
-          permissions: [permissions.scheduleRoundPlan],
-          compoentMode: 'edit'
         }
       },
       {

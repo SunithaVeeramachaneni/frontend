@@ -22,6 +22,8 @@ import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { tap } from 'rxjs/operators';
 import { format } from 'date-fns';
 import { isEqual } from 'lodash-es';
+import { RoundPlanScheduleConfigurationService } from '../services/round-plan-schedule-configuration.service';
+import { RoundPlanScheduleConfiguration } from 'src/app/interfaces/operator-rounds';
 
 @Component({
   selector: 'app-task-level-scheduler',
@@ -67,13 +69,17 @@ export class TaskLevelSchedulerComponent implements OnInit {
   pageCheckBoxStatusObject: any = {};
   openCloseRightPanel = false;
   _payload: any;
-  scheduleConfig = {};
+  scheduleConfig: RoundPlanScheduleConfiguration;
   authorToEmail: any;
+  revisedInfo: any;
+  displayTaskLevelConfig = new Map();
 
-  constructor(private operatorRoundService: OperatorRoundsService) {}
+  constructor(
+    private operatorRoundService: OperatorRoundsService,
+    private schedulerConfigurationService: RoundPlanScheduleConfigurationService
+  ) {}
 
   ngOnInit(): void {
-    console.log('roundPlanData:', this.roundPlanData);
     this.searchHierarchyKey = new FormControl('');
     const { name, description } = this.roundPlanData.roundPlanDetail;
     this.taskLevelScheduleHeaderConfiguration = {
@@ -152,6 +158,14 @@ export class TaskLevelSchedulerComponent implements OnInit {
       ) {
         this.authorToEmail = user.email;
       }
+    });
+    this.operatorRoundService.revisedInfo$.subscribe((revisedInfo) => {
+      this.revisedInfo = revisedInfo;
+      Object.values(revisedInfo).forEach((config) => {
+        Object.keys(config).forEach((questionId) => {
+          this.displayTaskLevelConfig.set(questionId, config[questionId]);
+        });
+      });
     });
   }
 
@@ -245,37 +259,28 @@ export class TaskLevelSchedulerComponent implements OnInit {
   }
 
   onSchedule() {
-    console.log(this.payload);
-    this.operatorRoundService.revisedInfo$.subscribe((revisedInfo) => {
-      this.scheduleConfig = {
-        roundPlanId: this.roundPlanData.roundPlanDetail.id,
-        headerDetailConfig: {
-          ...this.payload,
-          startDate: { $data: this.payload.startDate },
-          endDate: { $data: this.payload.endDate },
-          shiftDetails: this.prepareShiftSlot(this.payload.shiftSlots)
-        },
-        isArchived: false,
-        assignmentDetails: this.payload.assignmentDetails,
-        advanceRoundsCount: 0,
-        createdAt: { $date: this.roundPlanData.roundPlanDetail.createdAt },
-        updatedAt: { $data: this.roundPlanData.roundPlanDetail.updatedAt },
-        createdBy: this.authorToEmail,
-        _v: 0,
-        taskLevelConfig: this.prepareTaskLeveConfig(revisedInfo)
-      };
-      delete this.scheduleConfig['headerDetailConfig'].shiftSlots;
-      delete this.scheduleConfig['headerDetailConfig'].formId;
-      delete this.scheduleConfig['headerDetailConfig'].id;
-      delete this.scheduleConfig['headerDetailConfig'].advanceFormsCount;
-      delete this.scheduleConfig['headerDetailConfig'].advanceRoundsCount;
-      delete this.scheduleConfig['headerDetailConfig'].roundPlanId;
-      delete this.scheduleConfig['headerDetailConfig'].shiftsSelected;
-    });
+    this.scheduleConfig = {
+      roundPlanId: this.roundPlanData.roundPlanDetail.id,
+      ...this.payload,
+      startDate: this.payload.startDate,
+      endDate: this.payload.endDate,
+      shiftDetails: this.prepareShiftSlot(this.payload.shiftSlots),
+      isArchived: false,
+      assignmentDetails: this.payload.assignmentDetails,
+      advanceRoundsCount: 0,
+      createdAt: this.roundPlanData.roundPlanDetail.createdAt,
+      updatedAt: this.roundPlanData.roundPlanDetail.updatedAt,
+      createdBy: this.authorToEmail,
+      _v: 0,
+      taskLevelConfig: this.prepareTaskLeveConfig(this.revisedInfo)
+    };
+
     this.scheduleConfig['taskLevelConfig'].filter((config) => {
       if (Object.keys(config.nodeWiseQuestionIds).length === 0) return false;
       return true;
     });
-    console.log('scheduleConfig', this.scheduleConfig);
+    this.schedulerConfigurationService
+      .createRoundPlanScheduleConfiguration$(this.scheduleConfig)
+      .subscribe();
   }
 }

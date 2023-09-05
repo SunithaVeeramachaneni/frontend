@@ -1,6 +1,6 @@
 <div
   class="right"
-  [formGroup]="resviseScheduleConfigForm"
+  [formGroup]="reviseScheduleConfigForm"
   *ngIf="{ locationListToTask: locationListToTask$ | async }"
 >
   <h3 class="heading" translate>reviseSchedule</h3>
@@ -34,7 +34,7 @@
     <div class="subheadings">
       <ng-container
         *ngIf="
-          resviseScheduleConfigForm.get('scheduleType').value === 'byFrequency'
+          reviseScheduleConfigForm.get('scheduleType').value === 'byFrequency'
         "
       >
         <h3 translate>scheduleByFrequency</h3>
@@ -50,10 +50,11 @@
               matInput
               min="1"
               formControlName="repeatDuration"
+              placeholder="_ _"
             />
           </mat-form-field>
           <mat-form-field appearance="fill" class="repeat-day">
-            <mat-select formControlName="repeatEvery">
+            <mat-select formControlName="repeatEvery" placeholder="_ _">
               <mat-option
                 *ngFor="let repeatEvery of repeatTypes"
                 [value]="repeatEvery"
@@ -64,7 +65,7 @@
           </mat-form-field>
         </div>
         <ng-container
-          *ngIf="resviseScheduleConfigForm.get('repeatEvery').value === 'week'"
+          *ngIf="reviseScheduleConfigForm.get('repeatEvery').value === 'week'"
         >
           <div id="scheduleConfigurationRepeatOn" class="row-title">
             {{ 'repeatOn' | translate }}
@@ -83,7 +84,7 @@
           </mat-button-toggle-group>
         </ng-container>
         <ng-container
-          *ngIf="resviseScheduleConfigForm.get('repeatEvery').value === 'month'"
+          *ngIf="reviseScheduleConfigForm.get('repeatEvery').value === 'month'"
         >
           <div id="scheduleConfigurationRepeatOnMonth" class="row-title">
             {{ 'repeatOn' | translate }}
@@ -127,7 +128,12 @@
             class="width-40"
             (click)="startDate.open()"
           >
-            <input matInput formControlName="startDate" readonly />
+            <input
+              matInput
+              formControlName="startDate"
+              placeholder="_ _"
+              readonly
+            />
             <input
               matInput
               [matDatepicker]="startDate"
@@ -150,7 +156,12 @@
             class="width-40"
             (click)="endDate.open()"
           >
-            <input matInput formControlName="endDate" readonly />
+            <input
+              matInput
+              formControlName="endDate"
+              placeholder="_ _"
+              readonly
+            />
             <input
               matInput
               [matDatepicker]="endDate"
@@ -168,7 +179,7 @@
       </ng-container>
 
       <ng-container
-        *ngIf="resviseScheduleConfigForm.get('scheduleType').value === 'byDate'"
+        *ngIf="reviseScheduleConfigForm.get('scheduleType').value === 'byDate'"
       >
         <h3 translate>scheduleByDate</h3>
 

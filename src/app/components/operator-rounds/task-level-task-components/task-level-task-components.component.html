@@ -90,7 +90,19 @@
                       </div>
                     </div>
                     <div class="width-10">
-                      <div>Header</div>
+                      <div
+                        *ngIf="displayTaskLevelConfig.get(question.id)"
+                        translate
+                      >
+                        revised
+                      </div>
+                      <div
+                        *ngIf="!displayTaskLevelConfig.get(question.id)"
+                        translate
+                      >
+                        header
+                      </div>
+                      <!-- displayTaskLevelConfig.get(question.id) will provide configuration of that particular question -->
                     </div>
                   </div>
                 </div>
