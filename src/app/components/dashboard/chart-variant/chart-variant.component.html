@@ -1,134 +1,50 @@
 <div class="configurations-div" [formGroup]="chartVarientForm">
   <p class="variants-title" translate>variants</p>
-  <mat-button-toggle-group
-    [value]="f.chartVarient.value"
-    formControlName="chartVarient"
-    (change)="onChartVarientChange($event)"
-    class="chart-toggle-buttons"
-  >
-    <mat-button-toggle
-      value="bar_y"
-      [disabled]="report.groupBy?.length === 0"
-      matTooltip="Column Chart"
-    >
-      <svg-icon
-        icon="icon-bar_chart"
-        class="chart-icons"
-        *ngIf="f.chartVarient.value !== 'bar_y'"
-      ></svg-icon>
-      <svg-icon
-        icon="icon-bar_chart_active"
-        class="chart-icons"
-        *ngIf="f.chartVarient.value === 'bar_y'"
-      ></svg-icon>
+  <mat-button-toggle-group [value]="f.chartVarient.value" formControlName="chartVarient"
+    (change)="onChartVarientChange($event)" class="chart-toggle-buttons">
+    <mat-button-toggle value="bar_y" [disabled]="report.groupBy?.length === 0" matTooltip="Column Chart">
+      <svg-icon icon="icon-bar_chart" class="chart-icons" *ngIf="f.chartVarient.value !== 'bar_y'"></svg-icon>
+      <svg-icon icon="icon-bar_chart_active" class="chart-icons" *ngIf="f.chartVarient.value === 'bar_y'"></svg-icon>
     </mat-button-toggle>
-    <mat-button-toggle
-      value="bar_x"
-      [disabled]="report.groupBy?.length === 0"
-      matTooltip="Bar Chart"
-    >
-      <svg-icon
-        icon="icon-column_chart"
-        class="chart-icons"
-        *ngIf="f.chartVarient.value !== 'bar_x'"
-      ></svg-icon>
-      <svg-icon
-        icon="icon-column_chart_active"
-        class="chart-icons"
-        *ngIf="f.chartVarient.value === 'bar_x'"
-      ></svg-icon>
+    <mat-button-toggle value="bar_x" [disabled]="report.groupBy?.length === 0" matTooltip="Bar Chart">
+      <svg-icon icon="icon-column_chart" class="chart-icons" *ngIf="f.chartVarient.value !== 'bar_x'"></svg-icon>
+      <svg-icon icon="icon-column_chart_active" class="chart-icons" *ngIf="f.chartVarient.value === 'bar_x'"></svg-icon>
     </mat-button-toggle>
-    <mat-button-toggle
-      value="stacked_bar_y"
-      [disabled]="report.groupBy?.length < 2"
-      matTooltip="Horizontal Stacked Chart"
-    >
-      <svg-icon
-        icon="icon-stacked_bar_chart"
-        class="chart-icons"
-        *ngIf="f.chartVarient.value !== 'stacked_bar_y'"
-      ></svg-icon>
-      <svg-icon
-        icon="icon-stacked_bar_chart_active"
-        class="chart-icons"
-        *ngIf="f.chartVarient.value === 'stacked_bar_y'"
-      ></svg-icon>
+    <mat-button-toggle value="stacked_bar_y" [disabled]="report.groupBy?.length < 2"
+      matTooltip="Horizontal Stacked Chart">
+      <svg-icon icon="icon-stacked_bar_chart" class="chart-icons"
+        *ngIf="f.chartVarient.value !== 'stacked_bar_y'"></svg-icon>
+      <svg-icon icon="icon-stacked_bar_chart_active" class="chart-icons"
+        *ngIf="f.chartVarient.value === 'stacked_bar_y'"></svg-icon>
     </mat-button-toggle>
-    <mat-button-toggle
-      value="stacked_bar_x"
-      [disabled]="report.groupBy?.length < 2"
-      matTooltip="Vertical Stacked Chart"
-    >
-      <svg-icon
-        icon="icon-stacked_column_chart"
-        class="chart-icons"
-        *ngIf="f.chartVarient.value !== 'stacked_bar_x'"
-      ></svg-icon>
-      <svg-icon
-        icon="icon-stacked_column_chart_active"
-        class="chart-icons"
-        *ngIf="f.chartVarient.value === 'stacked_bar_x'"
-      ></svg-icon>
+    <mat-button-toggle value="multiline" [disabled]="report.groupBy?.length < 2" matTooltip="Multiline Chart">
+      <svg-icon icon="icon-line_chart" class="chart-icons" *ngIf="f.chartVarient.value !== 'multiline'"></svg-icon>
+      <svg-icon icon="icon-line_chart_active" class="chart-icons"
+        *ngIf="f.chartVarient.value === 'multiline'"></svg-icon>
     </mat-button-toggle>
-    <mat-button-toggle
-      value="line_x"
-      [disabled]="report.groupBy?.length === 0"
-      matTooltip="Area Chart"
-    >
-      <svg-icon
-        icon="icon-line_chart"
-        class="chart-icons"
-        *ngIf="f.chartVarient.value !== 'line_x'"
-      ></svg-icon>
-      <svg-icon
-        icon="icon-line_chart_active"
-        class="chart-icons"
-        *ngIf="f.chartVarient.value === 'line_x'"
-      ></svg-icon>
+    <mat-button-toggle value="stacked_bar_x" [disabled]="report.groupBy?.length < 2"
+      matTooltip="Vertical Stacked Chart">
+      <svg-icon icon="icon-stacked_column_chart" class="chart-icons"
+        *ngIf="f.chartVarient.value !== 'stacked_bar_x'"></svg-icon>
+      <svg-icon icon="icon-stacked_column_chart_active" class="chart-icons"
+        *ngIf="f.chartVarient.value === 'stacked_bar_x'"></svg-icon>
     </mat-button-toggle>
-    <mat-button-toggle
-      value="pie"
-      [disabled]="report.groupBy?.length === 0"
-      matTooltip="Pie Chart"
-    >
-      <svg-icon
-        icon="icon-pie_chart"
-        class="chart-icons"
-        *ngIf="f.chartVarient.value !== 'pie'"
-      ></svg-icon>
-      <svg-icon
-        icon="icon-pie_chart_active"
-        class="chart-icons"
-        *ngIf="f.chartVarient.value === 'pie'"
-      ></svg-icon>
+    <mat-button-toggle value="line_x" [disabled]="report.groupBy?.length === 0" matTooltip="Area Chart">
+      <svg-icon icon="icon-line_chart" class="chart-icons" *ngIf="f.chartVarient.value !== 'line_x'"></svg-icon>
+      <svg-icon icon="icon-line_chart_active" class="chart-icons" *ngIf="f.chartVarient.value === 'line_x'"></svg-icon>
     </mat-button-toggle>
-    <mat-button-toggle
-      value="doughnut"
-      matTooltip="Donut Chart"
-      [disabled]="report.groupBy?.length === 0"
-    >
-      <svg-icon
-        icon="icon-donut_chart"
-        class="chart-icons"
-        *ngIf="f.chartVarient.value !== 'doughnut'"
-      ></svg-icon>
-      <svg-icon
-        icon="icon-donut_chart_active"
-        class="chart-icons"
-        *ngIf="f.chartVarient.value === 'doughnut'"
-      ></svg-icon>
+    <mat-button-toggle value="pie" [disabled]="report.groupBy?.length === 0" matTooltip="Pie Chart">
+      <svg-icon icon="icon-pie_chart" class="chart-icons" *ngIf="f.chartVarient.value !== 'pie'"></svg-icon>
+      <svg-icon icon="icon-pie_chart_active" class="chart-icons" *ngIf="f.chartVarient.value === 'pie'"></svg-icon>
+    </mat-button-toggle>
+    <mat-button-toggle value="doughnut" matTooltip="Donut Chart" [disabled]="report.groupBy?.length === 0">
+      <svg-icon icon="icon-donut_chart" class="chart-icons" *ngIf="f.chartVarient.value !== 'doughnut'"></svg-icon>
+      <svg-icon icon="icon-donut_chart_active" class="chart-icons"
+        *ngIf="f.chartVarient.value === 'doughnut'"></svg-icon>
     </mat-button-toggle>
     <mat-button-toggle value="table" *ngIf="displayTableVarient">
-      <svg-icon
-        icon="icon-table"
-        class="chart-icons table-icon"
-        *ngIf="f.chartVarient.value !== 'table'"
-      ></svg-icon>
-      <svg-icon
-        icon="icon-table_active"
-        class="chart-icons"
-        *ngIf="f.chartVarient.value === 'table'"
-      ></svg-icon>
+      <svg-icon icon="icon-table" class="chart-icons table-icon" *ngIf="f.chartVarient.value !== 'table'"></svg-icon>
+      <svg-icon icon="icon-table_active" class="chart-icons" *ngIf="f.chartVarient.value === 'table'"></svg-icon>
     </mat-button-toggle>
   </mat-button-toggle-group>
   <ng-container *ngIf="f.chartVarient.value !== 'table'">
@@ -136,10 +52,7 @@
       <mat-form-field appearance="outline" class="width-90">
         <mat-label>{{ firstInputName }}</mat-label>
         <mat-select formControlName="datasetFieldName">
-          <mat-option
-            [value]="field.name"
-            *ngFor="let field of chartConfig.datasetFields"
-          >
+          <mat-option [value]="field.name" *ngFor="let field of chartConfig.datasetFields">
             {{ field.displayName }}
           </mat-option>
         </mat-select>
@@ -147,28 +60,18 @@
       <mat-form-field appearance="outline" class="width-90">
         <mat-label>{{ secondInputName }}</mat-label>
         <mat-select formControlName="countFieldName">
-          <mat-option
-            [value]="field.name"
-            *ngFor="let field of chartConfig.countFields"
-          >
+          <mat-option [value]="field.name" *ngFor="let field of chartConfig.countFields">
             {{ field.displayName }}
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <mat-form-field
-        appearance="outline"
-        class="width-90"
-        *ngIf="
+      <mat-form-field appearance="outline" class="width-90" *ngIf="
           f.chartVarient.value === 'stacked_bar_x' ||
           f.chartVarient.value === 'stacked_bar_y'
-        "
-      >
+        ">
         <mat-label translate>stackBy</mat-label>
         <mat-select formControlName="stackFieldName">
-          <mat-option
-            [value]="field.name"
-            *ngFor="let field of chartConfig.datasetFields"
-          >
+          <mat-option [value]="field.name" *ngFor="let field of chartConfig.datasetFields">
             {{ field.displayName }}
           </mat-option>
         </mat-select>
@@ -178,22 +81,22 @@
         <input matInput placeholder="Title" formControlName="chartTitle" />
         <mat-error *ngIf="processValidationErrors('chartTitle')">
           {{
-            errors.chartTitle.name
-              | translate
-                : {
-                    name: 'title' | translate,
-                    length: errors.chartTitle.length
-                  }
+          errors.chartTitle.name
+          | translate
+          : {
+          name: 'title' | translate,
+          length: errors.chartTitle.length
+          }
           }}
         </mat-error>
       </mat-form-field>
       <mat-checkbox formControlName="showValues">{{
         'showValues' | translate
-      }}</mat-checkbox>
+        }}</mat-checkbox>
       <p>
         <mat-checkbox formControlName="showLegends">{{
           'showLegends' | translate
-        }}</mat-checkbox>
+          }}</mat-checkbox>
       </p>
     </div>
   </ng-container>

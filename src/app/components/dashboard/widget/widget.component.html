@@ -41,6 +41,11 @@
           (chartClickEvent)="onChartClickHandle($event)"
           [hasCustomColorScheme]="hasCustomColorScheme"></app-horizontal-stacked-chart>
       </ng-container>
+      <ng-container *ngIf="chartConfig.type === 'multiline'">
+        <app-multi-line-chart [chartConfig]="chartConfig" [chartData]="data"
+          (chartClickEvent)="onChartClickHandle($event)" [hasCustomColorScheme]="hasCustomColorScheme">
+        </app-multi-line-chart>
+      </ng-container>
 
       <ng-container *ngIf="chartConfig.type === 'line'">
         <app-line-chart [chartConfig]="chartConfig" [chartData]="data" (chartClickEvent)="onChartClickHandle($event)"

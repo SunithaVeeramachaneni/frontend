@@ -121,6 +121,7 @@ export class LineChartComponent implements OnInit {
     },
     series: {
       name: '',
+      areaStyle: {},
       label: {
         show: false
       },
