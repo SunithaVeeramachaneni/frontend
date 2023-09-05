@@ -376,3 +376,8 @@ export const replacePagesAndCounter = createAction(
     pages: Page[];
   }>()
 );
+
+export const updateFormStatus = createAction(
+  '[Builder Configuration] updateFormStatus',
+  props<{ formStatus: string }>()
+);
