@@ -487,6 +487,9 @@ export class ObservationsService {
         case 'location':
           item.items = data?.location ?? [];
           break;
+        case 'asset':
+          item.items = data?.asset ?? [];
+          break;
         case 'plant':
           item.items = data?.plant ?? [];
           break;
@@ -537,6 +540,18 @@ export class ObservationsService {
     });
     return allColumns;
   }
+  createLocationAssetDescription(data) {
+    console.log('data:', data);
+    let desc = '';
+    if (data.SWERK) {
+      desc = `Location ID: ${data.SWERK}`;
+    }
+    if (data.ANLNR && data.ANLNR !== placeHolder && data.ANLNR !== '--') {
+      console.log('asset:', data.ANLNR);
+      desc += ` Asset ID: ${data.ANLNR}`;
+    }
+    return desc;
+  }
 
   private formateGetObservationResponse(resp, type) {
     if (resp?.filters?.assignedTo?.length > 0) {
@@ -578,12 +593,8 @@ export class ObservationsService {
         location,
         asset,
         locationAsset: location !== placeHolder ? location : asset,
-        locationAssetDescription:
-          location !== placeHolder
-            ? `Location ID: ${item.SWERK}`
-            : asset !== placeHolder
-            ? `Asset ID: ${item.ANLNR}`
-            : '',
+        locationAssetDescription: this.createLocationAssetDescription(item),
+
         priority: item.PRIORITY,
         status: item?.STATUS ?? '',
         statusDisplay: this.prepareStatus(item?.STATUS),
