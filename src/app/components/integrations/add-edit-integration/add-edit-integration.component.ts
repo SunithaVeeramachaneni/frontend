@@ -6,11 +6,12 @@ import {
   Inject,
   ViewChild
 } from '@angular/core';
-import { FormBuilder, FormControl } from '@angular/forms';
+import { FormBuilder, FormControl, FormArray } from '@angular/forms';
 import { IntegrationsService } from '../services/integrations.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatCalendar } from '@angular/material/datepicker';
 import { ErrorInfo } from 'src/app/interfaces';
+import { dataEntities, integrationPoints } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-add-edit-integration',
@@ -21,68 +22,15 @@ import { ErrorInfo } from 'src/app/interfaces';
 export class AddEditIntegrationComponent implements OnInit {
   @ViewChild(MatCalendar) calendar: MatCalendar<Date>;
 
-  integrationPoints: any[] = [
-    {
-      name: 'Round Submission',
-      id: 'round-submission'
-    }
-  ];
-
-  dataEntities = {
-    'round-submission': [
-      {
-        attributeName: 'Tag Number',
-        attributeId: 'tagNumber'
-      },
-      {
-        attributeName: 'Round ID',
-        attributeId: 'roundId'
-      },
-      {
-        attributeName: 'Round Name',
-        attributeId: 'roundName'
-      },
-      {
-        attributeName: 'Question',
-        attributeId: 'question'
-      },
-      {
-        attributeName: 'Reading',
-        attributeId: 'uomReading'
-      },
-      {
-        attributeName: 'Unit of Measurement',
-        attributeId: 'unit'
-      },
-      {
-        attributeName: 'Date and Timestamp',
-        attributeId: 'dateAndTime'
-      },
-      {
-        attributeName: 'User',
-        attributeId: 'userId'
-      },
-      {
-        attributeName: 'Plant',
-        attributeId: 'plantId'
-      },
-      {
-        attributeName: 'Location',
-        attributeId: 'locationId'
-      },
-      {
-        attributeName: 'Asset',
-        attributeId: 'assetId'
-      }
-    ]
-  };
+  integrationPoints = [];
   isSaveInProgress = false;
 
   integrationConfigForm = this.fb.group({
     integrationPointId: new FormControl(''),
     syncType: new FormControl('realtime'),
     scheduleType: 'byFrequency',
-    repeatTime: ''
+    repeatTime: '',
+    dataMapping: this.fb.array([])
   });
 
   constructor(
@@ -95,11 +43,36 @@ export class AddEditIntegrationComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.integrationPoints = integrationPoints;
     if (this.data.mode === 'edit') {
       this.integrationConfigForm.patchValue({
         ...this.data?.integration
       });
     }
+  }
+
+  selectIntegrationPoint(event): void {
+    if (event) {
+      const mappings = dataEntities[event.value];
+      const formArrayCtrl = this.fb.array([]);
+      mappings?.forEach((mapping) => {
+        formArrayCtrl.push(
+          this.fb.group({
+            attributeName: mapping.attributeName,
+            attributeId: mapping.attributeId,
+            sourceKey: mapping.attributeId,
+            targetKey: mapping.attributeId
+          })
+        );
+      });
+      this.integrationConfigForm.setControl('dataMapping', formArrayCtrl);
+      this.cdrf.detectChanges();
+    }
+  }
+
+  getDataEntityMapping() {
+    return (this.integrationConfigForm.get('dataMapping') as FormArray)
+      .controls;
   }
 
   saveIntegration() {

@@ -590,6 +590,198 @@ export const locationImg = 'assets/master-configurations/locationIcon.svg';
 export const assetImg = 'assets/master-configurations/asset-icon.svg';
 export const plantImg = 'assets/master-configurations/default-plant.svg';
 
+export const integrationPoints = [
+  {
+    name: 'Round Submission',
+    id: 'round-submission'
+  }
+];
+export const dataEntities = {
+  'round-submission': [
+    {
+      attributeName: 'Round Plan ID',
+      attributeId: 'ROUND_PLAN_ID'
+    },
+    {
+      attributeName: 'Round Plan Name',
+      attributeId: 'ROUND_PLAN_NAME'
+    },
+    {
+      attributeName: 'Round Plan Description',
+      attributeId: 'ROUND_PLAN_DESC'
+    },
+    {
+      attributeName: 'Plant ID',
+      attributeId: 'PLANT_ID'
+    },
+    {
+      attributeName: 'Plant Name',
+      attributeId: 'PLANT_NAME'
+    },
+    {
+      attributeName: 'Shift Name',
+      attributeId: 'SHIFT_NAME'
+    },
+    {
+      attributeName: 'Shift Time',
+      attributeId: 'SHIFT_TIME'
+    },
+    {
+      attributeName: 'Frequency',
+      attributeId: 'FREQUENCY'
+    },
+    {
+      attributeName: 'Slot',
+      attributeId: 'SLOT'
+    },
+    {
+      attributeName: 'Slot Time',
+      attributeId: 'SLOT_TIME'
+    },
+    {
+      attributeName: 'Due Date',
+      attributeId: 'DUE_DATE'
+    },
+    {
+      attributeName: 'Round ID',
+      attributeId: 'ROUND_ID'
+    },
+    {
+      attributeName: 'Task ID',
+      attributeId: 'TASK_ID'
+    },
+    {
+      attributeName: 'Task Description',
+      attributeId: 'TASK_DESCRIPTION'
+    },
+    {
+      attributeName: 'Location ID',
+      attributeId: 'LOCATION_ID'
+    },
+    {
+      attributeName: 'Location Name',
+      attributeId: 'LOCATION_NAME'
+    },
+    {
+      attributeName: 'Asset ID',
+      attributeId: 'ASSET_ID'
+    },
+    {
+      attributeName: 'Asset Name',
+      attributeId: 'ASSET_NAME'
+    },
+    {
+      attributeName: 'Task Value',
+      attributeId: 'TASK_VALUE'
+    },
+    {
+      attributeName: 'Task Completed By',
+      attributeId: 'TASK_COMPLETED_BY'
+    },
+    {
+      attributeName: 'Tag Value',
+      attributeId: 'TAG_VALUE'
+    },
+    ,
+    {
+      attributeName: 'Min Value',
+      attributeId: 'MIN_VALUE'
+    },
+    {
+      attributeName: 'Max Value',
+      attributeId: 'MAX_VALUE'
+    },
+    {
+      attributeName: 'Measurement',
+      attributeId: 'UOM'
+    },
+    {
+      attributeName: 'Round Skip Reason',
+      attributeId: 'ROUND_SKIP_REASON'
+    },
+    {
+      attributeName: 'Task Skip Reason',
+      attributeId: 'TASK_SKIP_REASON'
+    },
+    {
+      attributeName: 'Asset or Location Skip Reason',
+      attributeId: 'ASSET_LOC_SKIP_REASON'
+    },
+    {
+      attributeName: 'Round Status',
+      attributeId: 'ROUND_STATUS'
+    },
+    {
+      attributeName: 'Submitted By',
+      attributeId: 'SUBMITTED_BY'
+    },
+    {
+      attributeName: 'Submitted Date',
+      attributeId: 'SUBMITTED_DATE'
+    },
+    {
+      attributeName: 'Submitted Time',
+      attributeId: 'SUBMITTED_TIME'
+    },
+    {
+      attributeName: 'Issue ID',
+      attributeId: 'ISSUE_ID'
+    },
+    {
+      attributeName: 'Issue Description',
+      attributeId: 'ISSUE_DESC'
+    },
+    {
+      attributeName: 'Issue Priority',
+      attributeId: 'ISSUE_PRIORITY'
+    },
+    {
+      attributeName: 'Issue Assignee',
+      attributeId: 'ISSUE_ASSIGNEE'
+    },
+    {
+      attributeName: 'Issue Status',
+      attributeId: 'ISSUE_STATUS'
+    },
+    {
+      attributeName: 'Issue Category',
+      attributeId: 'ISSUE_CATEGORY'
+    },
+    {
+      attributeName: 'Issue Due Date',
+      attributeId: 'ISSUE_DUE_DATE'
+    },
+    {
+      attributeName: 'Notification Num',
+      attributeId: 'NOTIFICATION_NUM'
+    },
+    {
+      attributeName: 'Action ID',
+      attributeId: 'ACTION_ID'
+    },
+    {
+      attributeName: 'Action Description',
+      attributeId: 'ACTION_DESC'
+    },
+    {
+      attributeName: 'Aciton Priority',
+      attributeId: 'ACTION_PRIORITY'
+    },
+    {
+      attributeName: 'Action Assignee',
+      attributeId: 'ACTION_ASSIGNEE'
+    },
+    {
+      attributeName: 'Action Status',
+      attributeId: 'ACTION_STATUS'
+    },
+    {
+      attributeName: 'Action Due Date',
+      attributeId: 'ACTION_DUE_DATE'
+    }
+  ]
+};
+
 export const colorsByStatus = {
   null: 'lightgray',
   ASSIGNED: '#5AC8FA',

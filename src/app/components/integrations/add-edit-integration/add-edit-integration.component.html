@@ -9,7 +9,7 @@
     <div>
       <mat-form-field appearance="outline" class="width-100 form-field">
         <mat-label translate>Select Integration Point</mat-label>
-        <mat-select formControlName="integrationPointId">
+        <mat-select formControlName="integrationPointId" (selectionChange)="selectIntegrationPoint($event)">
           <mat-option [value]="">
             Select
           </mat-option>
@@ -23,7 +23,7 @@
         <span class="field-label">Data Synchronization</span>
         <mat-radio-group aria-label="Select an option" formControlName="syncType">
           <mat-radio-button value="realtime" class="radio-group-option">Real-time</mat-radio-button>
-          <mat-radio-button value="scheduled" class="radio-group-option">Scheduled</mat-radio-button>
+          <mat-radio-button value="scheduled" class="radio-group-option" disabled>Scheduled</mat-radio-button>
         </mat-radio-group>
       </div>
       <div class="schedule-wrapper" *ngIf="integrationConfigForm.value.syncType ==='scheduled' ">
@@ -41,6 +41,45 @@
             </div>
           </div>
         </ng-container>
+      </div>
+      <div class="data-mapping-container"
+        *ngIf="integrationConfigForm.value.integrationPointId && integrationConfigForm.value.integrationPointId.length">
+        <span class="field-label">Data Mapping</span>
+        <div class="dis-flex">
+          <div class="w-100">
+            <mat-list role="list">
+              <mat-list-item role="listitem">
+                <div class="attribute-list">
+                  <span class="mapping-head">
+                    CBO(Source) Data Attribute
+                  </span>
+                  <span class="mapping-head">
+                    Destination Data Attribute</span>
+                </div>
+              </mat-list-item>
+              <mat-list-item *ngFor="
+                  let field of getDataEntityMapping();
+                  let i = index
+                " role="listitem" formArrayName="dataMapping">
+                <div [formGroupName]="i" class="attribute-list">
+                  <span class="ip-head w-100 p-l-r-10">
+                    <input type="hidden" formControlName="sourceKey" [value]="field.value.attributeId" />
+                    <span class="ip-title">{{
+                      field.value.attributeName
+                      }}</span>
+                    <span class="ip-desc">{{
+                      field.value.attributeId
+                      }}</span>
+                  </span>
+                  <mat-form-field appearance="outline" class="width-100">
+                    <input type="text" matInput formControlName="targetKey" />
+                  </mat-form-field>
+                </div>
+              </mat-list-item>
+            </mat-list>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>

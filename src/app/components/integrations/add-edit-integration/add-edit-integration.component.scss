@@ -230,3 +230,36 @@
   align-items: flex-start;
   width: 100%;
 }
+.data-mapping-container {
+}
+.attribute-list {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+.w-50 {
+  width: 50%;
+}
+.w-100 {
+  width: 100%;
+}
+.mapping-head {
+  padding: 10px;
+  font-size: 120%;
+  font-weight: 500;
+  width: 50%;
+}
+.ip-head {
+  display: flex;
+  flex-direction: column;
+  .ip-title {
+    font-weight: 500;
+  }
+  .ip-desc {
+    color: #ccc;
+  }
+}
+.p-l-r-10 {
+  padding: 10px;
+}
