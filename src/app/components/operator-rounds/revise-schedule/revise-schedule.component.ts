@@ -221,7 +221,12 @@ export class ReviseScheduleComponent implements OnInit {
       });
       this.allSlots = event.value;
     } else {
-      this.allSlots = [{ null: { startTime: '00:00', endTime: '23:59' } }];
+      this.allSlots = [
+        {
+          null: { startTime: '12:00 AM', endTime: '11:59 PM' },
+          payload: [{ startTime: '00:00', endTime: '23:59', checked: true }]
+        }
+      ];
       this.shiftsSelected['controls'].value = this.allSlots;
     }
   }

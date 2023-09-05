@@ -196,6 +196,7 @@
           [compareWith]="compareFn"
           panelClass="task-level-shifts"
           [disabled]="allShifts[0].null"
+          placeholder="Select"
         >
           <mat-select-trigger id="taskScheduleConfigInitialShift">
             {{ selectedShiftData !== '' ? selectedShiftData : 'Select' }}
