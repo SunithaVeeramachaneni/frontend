@@ -124,7 +124,7 @@
       <span class="success-msg" *ngIf="isConnectionTested && isConnectionSuccessful">
         <mat-icon>check_circle</mat-icon>{{'connectionSuccessTxt' | translate}}</span>
       <span class="failure-msg" *ngIf="isConnectionTested && !isConnectionSuccessful">
-        <mat-icon>error</mat-icon>{{'connectionFailTxt'}}</span>
+        <mat-icon>error</mat-icon>{{'connectionFailTxt' | translate}}</span>
     </div>
     <div class="dis-flex">
       <button mat-button mat-dialog-close color="primary">Close</button>
