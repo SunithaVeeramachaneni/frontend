@@ -84,9 +84,9 @@ export class PreviewComponent implements OnInit, OnChanges {
   }
 
   toggleSectionOpenState = (sectionIdx: number): void => {
-    if (this.sectionsData?.length > 0) {
-      this.sectionsData[sectionIdx].isSectionOpenState =
-        !this.sectionsData[sectionIdx].isSectionOpenState;
+    const section = this.sectionsData[sectionIdx];
+    if (section) {
+      section.isSectionOpenState = !section.isSectionOpenState;
     }
   };
 
