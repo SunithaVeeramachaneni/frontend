@@ -34,8 +34,11 @@ export class FormService {
     isOpen: false,
     additionalDetails: {}
   });
-  detailLevelTagsSubject = new BehaviorSubject(null);
-  detailLevelAttributesSubject = new BehaviorSubject(null);
+  detailLevelTagsSubject = new BehaviorSubject([]);
+  detailLevelAttributesSubject = new BehaviorSubject({
+    label: {},
+    attributesIdMap: {}
+  });
 
   private masterHierarchyData: HierarchyEntity[] = [];
   private selectedHierarchyList: HierarchyEntity[] = [];
@@ -46,8 +49,19 @@ export class FormService {
   rangeSelectorOpenState$ = this.rangeSelectorOpenStateSubject.asObservable();
   additionalDetailsOpenState$ =
     this.additionalDetailsOpenStateSubject.asObservable();
+  detailLevelTagsState$ = this.detailLevelTagsSubject.asObservable();
+  detailLevelAttributesState$ =
+    this.detailLevelAttributesSubject.asObservable();
 
   constructor(private _appService: AppService) {}
+
+  setDetailLevelTagsState(tags) {
+    this.detailLevelTagsSubject.next(tags);
+  }
+
+  setDetailLevelAttributesState(attributesData) {
+    this.detailLevelAttributesSubject.next(attributesData);
+  }
 
   setsliderOpenState(sliderResponse: SliderSelectorState) {
     this.sliderOpenStateSubject.next(sliderResponse);

@@ -209,17 +209,19 @@ export class BuilderComponent implements OnInit, OnDestroy {
 
   setTagType() {
     if (this.moduleName === 'forms') {
-      this.attributeDetailType = 'forms';
       if (this.isTemplate) {
+        this.attributeDetailType = 'formTemplates';
         this.tagDetailType = 'formTemplateDetailTags';
       } else {
+        this.attributeDetailType = 'forms';
         this.tagDetailType = 'formDetailTags';
       }
     } else if (this.moduleName === 'rounds') {
-      this.attributeDetailType = 'rounds';
       if (this.isTemplate) {
+        this.attributeDetailType = 'roundTemplates';
         this.tagDetailType = 'roundTemplateDetailTags';
       } else {
+        this.attributeDetailType = 'rounds';
         this.tagDetailType = 'roundDetailTags';
       }
     }
