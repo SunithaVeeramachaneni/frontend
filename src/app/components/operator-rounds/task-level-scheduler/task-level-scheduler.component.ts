@@ -71,6 +71,8 @@ export class TaskLevelSchedulerComponent implements OnInit {
   _payload: any;
   scheduleConfig: RoundPlanScheduleConfiguration;
   authorToEmail: any;
+  revisedInfo: any;
+  displayTaskLevelConfig = new Map();
 
   constructor(
     private operatorRoundService: OperatorRoundsService,
@@ -156,6 +158,14 @@ export class TaskLevelSchedulerComponent implements OnInit {
       ) {
         this.authorToEmail = user.email;
       }
+    });
+    this.operatorRoundService.revisedInfo$.subscribe((revisedInfo) => {
+      this.revisedInfo = revisedInfo;
+      Object.values(revisedInfo).forEach((config) => {
+        Object.keys(config).forEach((questionId) => {
+          this.displayTaskLevelConfig.set(questionId, config[questionId]);
+        });
+      });
     });
   }
 
@@ -249,23 +259,22 @@ export class TaskLevelSchedulerComponent implements OnInit {
   }
 
   onSchedule() {
-    this.operatorRoundService.revisedInfo$.subscribe((revisedInfo) => {
-      this.scheduleConfig = {
-        roundPlanId: this.roundPlanData.roundPlanDetail.id,
-        ...this.payload,
-        startDate: this.payload.startDate,
-        endDate: this.payload.endDate,
-        shiftDetails: this.prepareShiftSlot(this.payload.shiftSlots),
-        isArchived: false,
-        assignmentDetails: this.payload.assignmentDetails,
-        advanceRoundsCount: 0,
-        createdAt: this.roundPlanData.roundPlanDetail.createdAt,
-        updatedAt: this.roundPlanData.roundPlanDetail.updatedAt,
-        createdBy: this.authorToEmail,
-        _v: 0,
-        taskLevelConfig: this.prepareTaskLeveConfig(revisedInfo)
-      };
-    });
+    this.scheduleConfig = {
+      roundPlanId: this.roundPlanData.roundPlanDetail.id,
+      ...this.payload,
+      startDate: this.payload.startDate,
+      endDate: this.payload.endDate,
+      shiftDetails: this.prepareShiftSlot(this.payload.shiftSlots),
+      isArchived: false,
+      assignmentDetails: this.payload.assignmentDetails,
+      advanceRoundsCount: 0,
+      createdAt: this.roundPlanData.roundPlanDetail.createdAt,
+      updatedAt: this.roundPlanData.roundPlanDetail.updatedAt,
+      createdBy: this.authorToEmail,
+      _v: 0,
+      taskLevelConfig: this.prepareTaskLeveConfig(this.revisedInfo)
+    };
+
     this.scheduleConfig['taskLevelConfig'].filter((config) => {
       if (Object.keys(config.nodeWiseQuestionIds).length === 0) return false;
       return true;

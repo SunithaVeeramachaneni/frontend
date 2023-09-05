@@ -11,6 +11,7 @@ import { OperatorRoundsService } from '../services/operator-rounds.service';
 export class TaskLevelTaskComponentsComponent implements OnInit {
   @Input() selectedNodeId: any;
   @Input() selectedNode: any;
+  @Input() displayTaskLevelConfig: any;
   @Input() set selectedPage(selectedPage: any) {
     if (selectedPage) {
       this._selectedPage = selectedPage;
