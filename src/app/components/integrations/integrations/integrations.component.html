@@ -27,7 +27,9 @@
             <div class="radio-label">
               <svg-icon icon="icon-{{connector.connectorId}}" class="connector-icon"></svg-icon>
               <div>
-                <span class="radio-btn-text">{{ connector.connectorName }}</span>
+                <span class="radio-btn-text">{{ connector.connectorName }}
+                  <svg-icon icon="icon-verified" class="verify-icon" *ngIf="connector.isVerified"></svg-icon>
+                </span>
                 <p class="connector-radio-sub-text">
                   {{ connector.description }}
                 </p>

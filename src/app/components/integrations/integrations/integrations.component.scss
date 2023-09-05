@@ -135,6 +135,14 @@
   color: $black;
   position: relative;
   left: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.verify-icon {
+  height: 15px;
+  width: 15px;
+  margin-left: 5px;
 }
 
 .radio-sub-text {
@@ -207,8 +215,7 @@
   cursor: pointer;
 }
 .selected-connector {
-  background: $blue4;
-  border-right: 5px solid $blue-main !important;
+  background: $lavendar;
 }
 .radio-container {
   display: flex;
