@@ -67,7 +67,7 @@ export class ReviseScheduleComponent implements OnInit {
   locationIdToTaskcountArr: [string, string][] = [];
   _nodeIdToNodeName: any;
   scheduleConfig: any;
-  configuarations = [];
+  configurations = [];
   revisedInfo = {};
 
   constructor(
@@ -283,21 +283,21 @@ export class ReviseScheduleComponent implements OnInit {
 
     let configIndex = 0;
     let configFound = false;
-    if (!this.configuarations) {
-      this.configuarations.push(JSON.parse(JSON.stringify(newConfig)));
-      this.operatorRoundService.setuniqueConfiguration(this.configuarations);
+    if (!this.configurations) {
+      this.configurations.push(JSON.parse(JSON.stringify(newConfig)));
+      this.operatorRoundService.setuniqueConfiguration(this.configurations);
       return 0;
     }
-    this.configuarations.forEach((config, index) => {
+    this.configurations.forEach((config, index) => {
       if (isEqual(newConfig, config)) {
         configFound = true;
         configIndex = index;
       }
     });
     if (!configFound) {
-      this.configuarations.push(JSON.parse(JSON.stringify(newConfig)));
-      this.operatorRoundService.setuniqueConfiguration(this.configuarations);
-      return this.configuarations.length - 1;
+      this.configurations.push(JSON.parse(JSON.stringify(newConfig)));
+      this.operatorRoundService.setuniqueConfiguration(this.configurations);
+      return this.configurations.length - 1;
     } else {
       return configIndex;
     }
@@ -382,6 +382,11 @@ export class ReviseScheduleComponent implements OnInit {
   }
 
   onRevise() {
+    const sameConfigAsHeader =
+      this.operatorRoundService.compareConfigWithHeader(
+        this.reviseScheduleConfig,
+        this.reviseScheduleConfigForm
+      );
     const configPosition = this.comparingConfig(
       this.reviseScheduleConfigForm.value
     );
@@ -389,13 +394,24 @@ export class ReviseScheduleComponent implements OnInit {
       Object.keys(pages).forEach((key) => {
         pages[key].forEach((page) => {
           const nodeId = key.split('_')[1];
-          page.questions.forEach((question) => {
+          for (const question of page.questions) {
+            if (sameConfigAsHeader && question.complete) {
+              if (
+                this.revisedInfo[nodeId] &&
+                this.revisedInfo[nodeId][question.id]
+              ) {
+                delete this.revisedInfo[nodeId][question.id];
+                if (Object.keys(this.revisedInfo[nodeId]).length === 0)
+                  delete this.revisedInfo[nodeId];
+              }
+              continue;
+            }
             if (question.complete) {
               if (!this.revisedInfo[nodeId]) this.revisedInfo[nodeId] = {};
               this.revisedInfo[nodeId][question.id] =
-                this.configuarations[configPosition];
+                this.configurations[configPosition];
             }
-          });
+          }
         });
       });
     });

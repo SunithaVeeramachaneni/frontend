@@ -80,6 +80,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
   scheduleConfig: RoundPlanScheduleConfiguration;
   authorToEmail: any;
   revisedInfo: any;
+  displayNodeLevelConfig = new Set();
   displayTaskLevelConfig = new Map();
   allSlots = [];
 
@@ -170,6 +171,11 @@ export class TaskLevelSchedulerComponent implements OnInit {
     });
     this.operatorRoundService.revisedInfo$.subscribe((revisedInfo) => {
       this.revisedInfo = revisedInfo;
+      this.displayTaskLevelConfig.clear();
+      this.displayNodeLevelConfig.clear();
+      Object.keys(revisedInfo).forEach((nodeId) => {
+        this.displayNodeLevelConfig.add(nodeId);
+      });
       Object.values(revisedInfo).forEach((config) => {
         Object.keys(config).forEach((questionId) => {
           this.displayTaskLevelConfig.set(questionId, config[questionId]);

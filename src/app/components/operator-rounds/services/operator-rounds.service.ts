@@ -22,7 +22,11 @@ import {
   UsersInfoByEmail,
   Count
 } from '../../../interfaces';
-import { formConfigurationStatus, dateFormat2 } from 'src/app/app.constants';
+import {
+  formConfigurationStatus,
+  dateFormat2,
+  dateFormat4
+} from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { isJson } from '../../race-dynamic-form/utils/utils';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
@@ -849,4 +853,28 @@ export class OperatorRoundsService {
 
     return { commonConfig, isQuestionNotIncluded: false };
   };
+  compareConfigWithHeader = (reviseScheduleConfig, reviseScheduleConfigForm) =>
+    isEqual(
+      {
+        scheduleType: reviseScheduleConfig?.scheduleType,
+        repeatDuration: reviseScheduleConfig?.repeatDuration,
+        repeatEvery: reviseScheduleConfig?.repeatEvery,
+        daysOfWeek: reviseScheduleConfig?.daysOfWeek,
+        monthlyDaysOfWeek: reviseScheduleConfig?.monthlyDaysOfWeek,
+        startDate: format(
+          new Date(reviseScheduleConfig?.startDate),
+          dateFormat4
+        ),
+        endDate: format(new Date(reviseScheduleConfig?.endDate), dateFormat4)
+      },
+      {
+        scheduleType: reviseScheduleConfigForm.value?.scheduleType,
+        repeatDuration: reviseScheduleConfigForm.value?.repeatDuration,
+        repeatEvery: reviseScheduleConfigForm.value?.repeatEvery,
+        daysOfWeek: reviseScheduleConfigForm.value?.daysOfWeek,
+        monthlyDaysOfWeek: reviseScheduleConfigForm.value?.monthlyDaysOfWeek,
+        startDate: reviseScheduleConfigForm.value?.startDate,
+        endDate: reviseScheduleConfigForm.value?.endDate
+      }
+    );
 }

@@ -24,6 +24,7 @@ export class NodeComponent implements OnInit {
   @Input() node;
   @Input() hierarchyMode;
   @Input() dropTargetIds;
+  @Input() isRevised = false;
   @Output() nodeRemoved: EventEmitter<any> = new EventEmitter();
   @Output() checkevent: EventEmitter<[any, any]> = new EventEmitter();
   @Input() set nodeWiseQuestionsCount(nodeWiseQuestionsCount: any) {
