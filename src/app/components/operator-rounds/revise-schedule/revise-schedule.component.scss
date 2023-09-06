@@ -11,7 +11,11 @@
 
   .main-scroll {
     overflow-y: auto;
-    height: calc(100vh - 295px);
+    height: calc(100vh - 285px);
+  }
+
+  .custom-main-scroll {
+    height: calc(100vh - 260px);
   }
 
   .selected-locations {

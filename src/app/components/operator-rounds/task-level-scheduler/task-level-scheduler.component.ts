@@ -36,14 +36,22 @@ export class TaskLevelSchedulerComponent implements OnInit {
   @Input() set payload(payload: any) {
     this._payload = payload;
     if (this._payload) {
+      this.allSlots = this.prepareShiftAndSlot(
+        this._payload.shiftSlots,
+        this._payload.shiftDetails
+      );
       this.taskLevelScheduleHeaderConfiguration = {
-        assigneeDetails: this._payload.assignmentDetails?.displayValue,
+        ...this.taskLevelScheduleHeaderConfiguration,
+        assigneeDetails: this._payload.assignmentDetails.displayValue,
         headerStartDate: format(new Date(this._payload.startDate), dateFormat4),
         headerEndDate: format(new Date(this._payload.endDate), dateFormat4),
-        headerFrequency: `Every ${this._payload.repeatDuration} ${this._payload.repeatEvery},`,
-        shiftDetails: this._payload.shiftSlots,
-        slotDetails: this._payload.shiftSlots,
-        ...this.taskLevelScheduleHeaderConfiguration
+        headerFrequency:
+          this._payload.scheduleType === 'byDate'
+            ? 'Custom Dates'
+            : `Every ${this._payload.repeatDuration} ${this._payload.repeatEvery},`,
+        shiftDetails: this.allSlots,
+        slotDetails: this.allSlots,
+        slotsCount: this.countOfSlots(this.allSlots)
       };
     }
   }
@@ -73,6 +81,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
   authorToEmail: any;
   revisedInfo: any;
   displayTaskLevelConfig = new Map();
+  allSlots = [];
 
   constructor(
     private operatorRoundService: OperatorRoundsService,
@@ -226,11 +235,12 @@ export class TaskLevelSchedulerComponent implements OnInit {
   openCloseRightPanelEventHandler(event) {
     this.openCloseRightPanel = event;
   }
+
   prepareShiftSlot(shiftSlotDetail) {
     if (shiftSlotDetail[0].null) {
       return shiftSlotDetail[0];
     } else {
-      let shiftData = {};
+      const shiftData = {};
       shiftSlotDetail.forEach((detail) => {
         shiftData[detail.id] = this.payload.shiftDetails[detail.id];
       });
@@ -238,8 +248,16 @@ export class TaskLevelSchedulerComponent implements OnInit {
     }
   }
 
+  countOfSlots(slots) {
+    let count = 0;
+    slots.forEach((slot) => {
+      count += slot.payload.length;
+    });
+    return count;
+  }
+
   prepareTaskLeveConfig(revisedInfo) {
-    let taskLevelConfig = [];
+    const taskLevelConfig = [];
     this.operatorRoundService.uniqueConfiguration$.subscribe((configs) => {
       configs.forEach((config) => {
         config['nodeWiseQuestionIds'] = {};
@@ -283,5 +301,19 @@ export class TaskLevelSchedulerComponent implements OnInit {
     this.schedulerConfigurationService
       .createRoundPlanScheduleConfiguration$(this.scheduleConfig)
       .subscribe();
+  }
+
+  prepareShiftAndSlot(shiftSlot, shiftDetails) {
+    if (Object.keys(shiftDetails)[0] === 'null') {
+      shiftSlot.forEach((data) => {
+        data.payload = shiftDetails.null.map((pLoad) => pLoad);
+      });
+      return shiftSlot;
+    } else {
+      shiftSlot.forEach((data) => {
+        data.payload = shiftDetails[data.id].map((pLoad) => pLoad);
+      });
+      return shiftSlot;
+    }
   }
 }

@@ -3,7 +3,7 @@
 .task-level-schedule-main {
   overflow: hidden;
   position: relative;
-  margin: 14px 0 0 0;
+  margin: 0;
 
   .form-header {
     position: relative;
@@ -55,7 +55,7 @@
 
   .header-level {
     width: 440px;
-    height: 80px;
+    max-height: 80px;
     background-color: $yellow-bg2;
     justify-content: space-between;
     display: flex;
@@ -83,6 +83,7 @@
 
     .more {
       color: $blue-main;
+      cursor: pointer;
     }
   }
 
@@ -154,17 +155,18 @@
 }
 
 .form {
-  height: calc(100vh - 160px);
-  overflow-y: auto;
-
   .asset-location-search {
     display: flex;
     flex-direction: column;
     border-right: 1px solid $border-color;
     .hierarchy {
       overflow-y: auto;
-      height: calc(100vh - 265px);
+      height: calc(100vh - 235px);
       margin-top: 10px;
+    }
+
+    .custom-height {
+      height: calc(100vh - 210px);
     }
   }
 }
@@ -180,6 +182,9 @@
 }
 
 .mid-panel {
+  overflow-y: auto;
+  height: calc(100vh - 180px);
+
   .select-locations-assets {
     color: $gray1;
     text-align: center;
@@ -193,7 +198,46 @@
   }
 }
 
+.mid-panel-custom-height {
+  height: calc(100vh - 160px);
+}
+
 .right-panel {
   background-color: $white;
   border-left: 2px solid $border-color;
+}
+
+::ng-deep .more-slots-menu + * .cdk-overlay-pane {
+  &::after {
+    position: absolute;
+    content: '';
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid $white;
+    left: 15px;
+  }
+}
+
+::ng-deep .more-slots-menu + * .mat-menu-panel {
+  margin-top: 10px;
+  margin-left: -45px;
+  min-width: 160px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  max-height: 170px;
+}
+
+.menu-slot {
+  padding: 10px 15px 0 15px;
+
+  p {
+    margin: 10px 0;
+  }
+
+  span {
+    font-weight: 500;
+    font-size: 110%;
+  }
 }

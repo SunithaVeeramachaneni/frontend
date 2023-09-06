@@ -5,7 +5,12 @@
 >
   <h3 class="heading" translate>reviseSchedule</h3>
 
-  <div class="main-scroll">
+  <div
+    class="main-scroll"
+    [ngClass]="{
+      'custom-main-scroll': reviseSchedule.scheduleType === 'byDate'
+    }"
+  >
     <div>
       <div class="selected-locations">
         <p class="m-0 m-b-5" (click)="showLocations = !showLocations">

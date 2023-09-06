@@ -17,7 +17,7 @@
   min-width: max-content;
   .left {
     display: flex;
-    width: 85%;
+    width: 100%;
     flex-direction: column;
     img {
       max-width: 40px;
@@ -29,11 +29,15 @@
       margin-left: 10px;
       justify-content: center;
       line-height: 1.5;
+      width: 100%;
       .title {
         font-weight: 500;
       }
       .subTitle {
         font-weight: 400;
+      }
+      .title-status {
+        justify-content: space-between;
       }
     }
   }
