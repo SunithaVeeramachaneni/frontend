@@ -330,7 +330,6 @@
   "roundGenerationSlots": "Round Generation Slots",
   "defaultSlotInMultipleSlotsWithoutOverlapping": "You can split default slot into multiple slots without overlapping.",
   "slot": "Slot",
-  "additionalDetails": "Additional Details",
   "value": "Value",
   "add": "Add",
   "standaloneSubText": "On Publishing form will show in mInspections app",
@@ -389,5 +388,9 @@
   "downloadExcel": "Download Excel",
   "createEmbedded": "Embedded (For mWorkorder)",
   "createStandalone": "Standalone (For mInspections)",
-  "backToList": "Back to List"
+  "backToList": "Back to List",
+  "additionalDetailsHeading": "Additional Details",
+  "additionalDetails": "Additional Details:",
+  "attributesHeading": "Attributes",
+  "addMoreUpto5": "Add More ( Select Upto 5 )"
 }

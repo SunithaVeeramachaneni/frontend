@@ -470,6 +470,11 @@
                 [question]="questionForm.value"
                 [formId]="formId"
                 (setSliderValues)="questionForm.get('value').setValue($event)"
+                (setAdditionalDetails)="
+                  questionForm.get('additionalDetails').setValue($event)
+                "
+                [tagDetailType]="tagDetailType"
+                [attributeDetailType]="attributeDetailType"
               ></app-response-type-side-drawer>
 
               <span
@@ -503,6 +508,17 @@
                   [question]="questionForm"
                   (checkedMultiple)="questionForm.get('multi').setValue($event)"
                 ></app-drop-down>
+              </span>
+              <span *ngIf="!isEmbeddedForm" class="action"
+                ><label translate="additionalDetails"></label>&nbsp;
+                <span
+                  class="additionalDetailsBtn"
+                  (click)="additionalDetailsOpen()"
+                >
+                  <span class="additionalDetailsValues">{{
+                    additionalDetailsText
+                  }}</span>
+                </span>
               </span>
             </div>
             <div class="addLogicRow" *ngIf="logics.length">

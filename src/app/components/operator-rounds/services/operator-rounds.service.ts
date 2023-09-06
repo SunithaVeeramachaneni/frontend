@@ -97,11 +97,12 @@ export class OperatorRoundsService {
     );
 
   getAdditionalDetails$ = (
+    data,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any[]> =>
     this.appService._getResp(
       environment.operatorRoundsApiUrl,
-      `additional-details`,
+      `additional-details/${data.type}/${data.level}`,
       info
     );
 

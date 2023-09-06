@@ -138,6 +138,15 @@ export class RoundPlanDetailConfigurationComponent
   ) {}
 
   ngOnInit(): void {
+    this.operatorRoundsService
+      .getDataSetsByType$('roundDetailTags')
+      .subscribe((tags) => {
+        if (tags && tags.length)
+          this.formService.setDetailLevelTagsState(tags[0].values);
+      });
+
+    this.retrieveDetails();
+
     this.selectedNode$ = this.operatorRoundsService.selectedNode$.pipe(
       tap((data) => {
         if (data && Object.keys(data).length) {
@@ -486,6 +495,33 @@ export class RoundPlanDetailConfigurationComponent
         }
       })
     );
+  }
+
+  retrieveDetails() {
+    this.operatorRoundsService
+      .getAdditionalDetails$({
+        type: 'rounds',
+        level: 'detail'
+      })
+      .subscribe((details: any[]) => {
+        const labels = this.convertArrayToObject(details);
+        const attributesIdMap = {};
+        details.forEach((data) => {
+          attributesIdMap[data.label] = data.id;
+        });
+        this.formService.setDetailLevelAttributesState({
+          labels,
+          attributesIdMap
+        });
+      });
+  }
+
+  convertArrayToObject(details) {
+    const convertedDetail = {};
+    details.map((obj) => {
+      convertedDetail[obj.label] = obj.values;
+    });
+    return convertedDetail;
   }
 
   getImage = (imageName: string, active: boolean) =>

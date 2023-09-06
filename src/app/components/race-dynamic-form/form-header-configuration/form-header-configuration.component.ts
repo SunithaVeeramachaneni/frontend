@@ -134,7 +134,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     private imageCompress: NgxImageCompressService,
     private router: Router
   ) {
-    this.rdfService.getDataSetsByType$('tags').subscribe((tags) => {
+    this.rdfService.getDataSetsByType$('formHeaderTags').subscribe((tags) => {
       if (tags && tags.length) {
         this.allTags = tags[0].values;
         this.originalTags = JSON.parse(JSON.stringify(tags[0].values));
@@ -325,10 +325,10 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
 
   add(event: MatChipInputEvent): void {
     const input = event.input;
-    const value = event.value;
+    const value = event.value || '';
 
-    if ((value || '').trim()) {
-      this.tags.push(value.trim());
+    if (value.trim()) {
+      this.tags = [...this.tags, value.trim()];
     }
 
     if (input) {
@@ -405,7 +405,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     });
     if (newTags.length) {
       const dataSet = {
-        type: 'tags',
+        type: 'formHeaderTags',
         values: newTags
       };
       this.rdfService.createTags$(dataSet).subscribe((response) => {
@@ -781,7 +781,11 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
 
   storeDetails(i) {
     this.operatorRoundService
-      .createAdditionalDetails$({ ...this.changedValues })
+      .createAdditionalDetails$({
+        ...this.changedValues,
+        type: 'forms',
+        level: 'header'
+      })
       .subscribe((response) => {
         if (response?.label) {
           this.toastService.show({
@@ -842,7 +846,10 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
 
   retrieveDetails() {
     this.operatorRoundService
-      .getAdditionalDetails$()
+      .getAdditionalDetails$({
+        type: 'forms',
+        level: 'header'
+      })
       .subscribe((details: any[]) => {
         this.labels = this.convertArrayToObject(details);
         details.forEach((data) => {
