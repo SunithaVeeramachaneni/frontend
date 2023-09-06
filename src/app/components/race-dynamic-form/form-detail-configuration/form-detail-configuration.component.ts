@@ -450,6 +450,16 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
   }
 
   publishFormDetail() {
+    this.store.dispatch(
+      BuilderConfigurationActions.updateFormPublishStatus({
+        formDetailPublishStatus: formConfigurationStatus.publishing
+      })
+    );
+    this.store.dispatch(
+      BuilderConfigurationActions.updateIsFormDetailPublished({
+        isFormDetailPublished: true
+      })
+    );
     const form = {
       formMetadata: {
         ...this.formMetadata,
@@ -489,30 +499,8 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
           })
         );
 
-        this.store.dispatch(
-          BuilderConfigurationActions.updateFormPublishStatus({
-            formDetailPublishStatus: formConfigurationStatus.publishing
-          })
-        );
-        this.store.dispatch(
-          BuilderConfigurationActions.updateIsFormDetailPublished({
-            isFormDetailPublished: true
-          })
-        );
-
         this.router.navigate(['/forms']);
       });
-    } else {
-      this.store.dispatch(
-        BuilderConfigurationActions.updateFormPublishStatus({
-          formDetailPublishStatus: formConfigurationStatus.publishing
-        })
-      );
-      this.store.dispatch(
-        BuilderConfigurationActions.updateIsFormDetailPublished({
-          isFormDetailPublished: true
-        })
-      );
     }
   }
 
