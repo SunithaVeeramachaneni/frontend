@@ -161,6 +161,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
     });
     this.operatorRoundService.revisedInfo$.subscribe((revisedInfo) => {
       this.revisedInfo = revisedInfo;
+      this.displayTaskLevelConfig.clear();
       Object.values(revisedInfo).forEach((config) => {
         Object.keys(config).forEach((questionId) => {
           this.displayTaskLevelConfig.set(questionId, config[questionId]);
