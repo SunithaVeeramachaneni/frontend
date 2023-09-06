@@ -92,7 +92,7 @@ export class MultiLineChartComponent implements OnInit {
       }
     ],
     xAxis: {
-      type: 'value',
+      type: 'category',
       name: '',
       nameLocation: 'middle',
       nameTextStyle: {
@@ -109,7 +109,7 @@ export class MultiLineChartComponent implements OnInit {
       }
     },
     yAxis: {
-      type: 'category',
+      type: 'value',
       name: '',
       axisLabel: {
         interval: 0,
@@ -160,7 +160,7 @@ export class MultiLineChartComponent implements OnInit {
     if (this.chartData && this.chartConfig) {
       const {
         title,
-        type = 'bar',
+        type = 'line',
         isStacked = 'true',
         indexAxis = 'x',
         showLegends = false,
@@ -173,6 +173,7 @@ export class MultiLineChartComponent implements OnInit {
       this.chartOptions.legend.show = showLegends;
       this.chartOptions.xAxis.name = this.chartConfig.datasetFieldName;
       this.chartOptions.yAxis.name = this.chartConfig.countFieldName;
+
       this.countField = countFields.find((countField) => countField.visible);
       this.datasetField = datasetFields.find(
         (datasetField) => datasetField.visible
@@ -241,7 +242,7 @@ export class MultiLineChartComponent implements OnInit {
     });
 
     newOptions.series = datasets;
-    newOptions.yAxis = {};
+    newOptions.yAxis = { type: 'value' };
     this.chartOptions = newOptions;
   };
 }

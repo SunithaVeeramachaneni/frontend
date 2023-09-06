@@ -212,8 +212,8 @@ export class WidgetComponent implements OnInit {
     }
     const dialogRef = this.dialog.open(ChartReportDialog, {
       disableClose: true,
-      // width: '80%',
-      // height: '80%',
+      width: '80%',
+      height: '95%',
       data: {
         chartData: event.data,
         widgetData: this.widget,
