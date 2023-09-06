@@ -27,10 +27,10 @@
     </div>
     <div class="header-level">
       <div class="row1">
-        <span class="txt" *ngIf="_payload.scheduleType === 'byDate'">
+        <span class="txt" *ngIf="_payload?.scheduleType === 'byDate'">
           {{ 'headerDates' | translate }} :
         </span>
-        <span class="txt" *ngIf="_payload.scheduleType !== 'byDate'">
+        <span class="txt" *ngIf="_payload?.scheduleType !== 'byDate'">
           {{ 'headerFrequency' | translate }} :
         </span>
 
@@ -99,7 +99,7 @@
             </span>
           </ng-container>
         </div>
-        <div *ngIf="_payload.scheduleType !== 'byDate'">
+        <div *ngIf="_payload?.scheduleType !== 'byDate'">
           <span class="txt">{{ 'starts' | translate }} : </span>
           <span>
             {{ taskLevelScheduleHeaderConfiguration?.headerStartDate }}
@@ -201,7 +201,7 @@
     <div
       class="hierarchy"
       [ngClass]="{
-        'custom-height': _payload.scheduleType === 'byDate'
+        'custom-height': _payload?.scheduleType === 'byDate'
       }"
     >
       <div *ngIf="!flatHierarchy?.length" class="emptySearchResult">
@@ -228,7 +228,7 @@
     [ngClass]="{
       'width-40': openCloseRightPanel === true,
       'width-70': openCloseRightPanel === false,
-      'mid-panel-custom-height': _payload.scheduleType === 'byDate'
+      'mid-panel-custom-height': _payload?.scheduleType === 'byDate'
     }"
     class="mid-panel"
     *ngIf="selectedNode; else loadingSelectedNode"
