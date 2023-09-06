@@ -40,16 +40,6 @@ const routes: Routes = [
           componentMode: 'edit'
         }
       },
-      // {
-      //   path: '/operator-rounds/task-level-scheduler/:id',
-      //   component: TaskLevelSchedulingEditViewComponent,
-      //   canActivate: [AuthGuard],
-      //   resolve: { form: RoundPlanResolverService },
-      //   data: {
-      //     permissions: [permissions.scheduleRoundPlan],
-      //     compoentMode: 'edit'
-      //   }
-      // },
       {
         path: 'scheduler/:tabIndex',
         component: SchedulerComponent,
