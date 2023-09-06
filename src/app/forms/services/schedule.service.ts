@@ -16,6 +16,7 @@ export class ScheduleConfigurationService {
     viewRounds?: boolean;
     actionType: 'scheduleConfigEvent';
     mode?: 'create' | 'update';
+    id?: string;
   }>(null);
   private onSlotChanged$ = new Subject();
   constructor() {}

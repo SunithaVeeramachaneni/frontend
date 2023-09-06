@@ -76,6 +76,7 @@ export interface ScheduleConfigEvent {
   viewRounds?: boolean;
   viewForms?: boolean;
   mode?: 'create' | 'update';
+  id?: string;
 }
 export interface ScheduleConfig {
   roundPlanScheduleConfiguration?: RoundPlanScheduleConfiguration;
@@ -800,7 +801,7 @@ export class ScheduleConfigurationComponent
                 this.disableSchedule = false;
                 if (scheduleConfig && Object.keys(scheduleConfig)?.length) {
                   // Close popup and pass data through it
-                  this.openScheduleSuccessModal('update');
+                  this.openScheduleSuccessModal('update', id);
                   this.dialogRef.close({
                     formsScheduleConfiguration: scheduleConfig,
                     mode: 'update',
@@ -828,7 +829,7 @@ export class ScheduleConfigurationComponent
                     mode: 'update',
                     actionType: 'scheduleConfig'
                   });
-                  this.openScheduleSuccessModal('update');
+                  this.openScheduleSuccessModal('update', id);
                   this.schedulerConfigForm.markAsPristine();
                 }
                 this.initShiftStat();
@@ -862,7 +863,7 @@ export class ScheduleConfigurationComponent
                     mode: 'create',
                     actionType: 'scheduleConfig'
                   });
-                  this.openScheduleSuccessModal('create');
+                  this.openScheduleSuccessModal('create', scheduleConfig?.id);
                   this.schedulerConfigForm
                     .get('id')
                     .patchValue(scheduleConfig.id);
@@ -888,7 +889,7 @@ export class ScheduleConfigurationComponent
                     mode: 'create',
                     actionType: 'scheduleConfig'
                   });
-                  this.openScheduleSuccessModal('create');
+                  this.openScheduleSuccessModal('create', scheduleConfig?.id);
                   this.schedulerConfigForm
                     .get('id')
                     .patchValue(scheduleConfig.id);
@@ -1246,7 +1247,7 @@ export class ScheduleConfigurationComponent
     });
   }
 
-  openScheduleSuccessModal(dialogMode: 'create' | 'update') {
+  openScheduleSuccessModal(dialogMode: 'create' | 'update', id: string) {
     const dialogRef = this.dialog.open(ScheduleSuccessModalComponent, {
       disableClose: true,
       width: '354px',
@@ -1265,20 +1266,23 @@ export class ScheduleConfigurationComponent
             this.scheduleConfigurationService.scheduleConfigEvent.next({
               slideInOut: 'out',
               viewForms: true,
-              actionType: 'scheduleConfigEvent'
+              actionType: 'scheduleConfigEvent',
+              id
             });
           } else {
             this.scheduleConfigurationService.scheduleConfigEvent.next({
               slideInOut: 'out',
               viewRounds: true,
-              actionType: 'scheduleConfigEvent'
+              actionType: 'scheduleConfigEvent',
+              id
             });
           }
         } else {
           this.scheduleConfigurationService.scheduleConfigEvent.next({
             slideInOut: 'out',
             mode: data?.mode,
-            actionType: 'scheduleConfigEvent'
+            actionType: 'scheduleConfigEvent',
+            id
           });
         }
       }

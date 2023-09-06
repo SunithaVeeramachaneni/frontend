@@ -824,7 +824,7 @@ export class PlansComponent implements OnInit, OnDestroy {
 
   openRoundPlanHandler(row: RoundPlanDetail): void {
     this.hideRoundPlanDetail = false;
-    this.scheduleConfigEventHandler({ slideInOut: 'out' });
+    this.scheduleConfigEventHandler({ slideInOut: 'out', id: row?.id });
     this.roundPlanDetail = { ...row, roundPlanId: row.id };
     this.formDetailState = 'in';
     this.zIndexDelay = 400;
@@ -864,17 +864,16 @@ export class PlansComponent implements OnInit, OnDestroy {
       }
       if (data?.actionType === 'scheduleConfigEvent') {
         delete data?.actionType;
-        this.scheduleConfigEventHandler(data);
+        this.scheduleConfigEventHandler({ ...data, id: row?.id });
       }
     });
   }
 
   scheduleConfigEventHandler(event: ScheduleConfigEvent) {
-    const { slideInOut: state, viewRounds, mode } = event;
+    const { slideInOut: state, viewRounds, mode, id } = event;
     this.scheduleConfigState = state;
-
+    const roundPlanId = id;
     if (mode === 'create') {
-      const roundPlanId = this.scheduleRoundPlanDetail.id;
       this.operatorRoundsService
         .getRoundsCountByRoundPlanId$(roundPlanId)
         .pipe(
@@ -903,7 +902,7 @@ export class PlansComponent implements OnInit, OnDestroy {
           if (viewRounds) {
             this.selectTab.emit({
               index: 1,
-              queryParams: { id: this.scheduleRoundPlanDetail.id }
+              queryParams: { id: roundPlanId }
             });
           }
           this.scheduleRoundPlanDetail = null;
