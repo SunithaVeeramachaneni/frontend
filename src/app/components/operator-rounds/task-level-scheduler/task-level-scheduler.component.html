@@ -219,6 +219,7 @@
       <app-node
         [node]="node"
         [hierarchyMode]="mode"
+        [isRevised]="displayNodeLevelConfig.has(node.id)"
         (checkevent)="toggleCheckboxEvent($event)"
         *ngFor="let node of flatHierarchy"
       ></app-node>
