@@ -372,7 +372,7 @@ export class FormsComponent implements OnInit, OnDestroy {
         this.allShifts = shifts?.items?.filter((s) => s?.isActive) || [];
         for (const item of this.filterJson) {
           if (item.column === 'shiftId') {
-            item.items = Object.values(this.shiftIdNameMap);
+            item.items = Object.values(this.shiftIdNameMap).sort();
           }
         }
         if (this.skip === 0) {
@@ -447,10 +447,10 @@ export class FormsComponent implements OnInit, OnDestroy {
         }
         for (const item of this.filterJson) {
           if (item.column === 'assignedTo') {
-            item.items = this.assignedTo;
+            item.items = this.assignedTo.sort();
           }
           if (item.column === 'schedule') {
-            item.items = this.schedules;
+            item.items = this.schedules.sort();
           }
         }
         this.dataSource = new MatTableDataSource(filteredForms);
