@@ -199,7 +199,8 @@
   position: relative;
   width: 5%;
 
-  .section-six-dots {
+  .section-six-dots,
+  .section-six-dots-preview {
     position: absolute;
     top: 28px;
     left: 92px;
@@ -250,20 +251,42 @@
   margin-top: 20px;
 }
 
-@media (min-width: 1810px) and (max-width: 3840px) {
+@media (min-width: 2560px) and (max-width: 3840px) {
   .section-six-dots {
+    left: 180px !important;
+  }
+
+  .section-six-dots-preview {
     left: 200px !important;
   }
 }
 
-@media (min-width: 1206px) and (max-width: 2560px) {
+@media (min-width: 2390px) and (max-width: 2560px) {
   .section-six-dots {
+    left: 135px !important;
+  }
+
+  .section-six-dots-preview {
     left: 149px !important;
+  }
+}
+
+@media (min-width: 2105px) and (max-width: 2390px) {
+  .section-six-dots {
+    left: 120px !important;
+  }
+
+  .section-six-dots-preview {
+    left: 120px !important;
   }
 }
 
 @media (min-width: 1900px) and (max-width: 2100px) {
   .section-six-dots {
+    left: 108px !important;
+  }
+
+  .section-six-dots-preview {
     left: 114px !important;
   }
   .questions-responses-width {
@@ -281,6 +304,9 @@
   .section-six-dots {
     left: 105px !important;
   }
+  .section-six-dots-preview {
+    left: 105px !important;
+  }
   .questions-responses-width {
     width: 80%;
     overflow-y: auto;
@@ -294,6 +320,10 @@
 
 @media (min-width: 1600px) and (max-width: 1800px) {
   .section-six-dots {
+    left: 101px !important;
+  }
+
+  .section-six-dots-preview {
     left: 101px !important;
   }
   .questions-responses-width {
@@ -311,6 +341,10 @@
   .section-six-dots {
     left: 95px !important;
   }
+
+  .section-six-dots-preview {
+    left: 95px !important;
+  }
   .questions-responses-width {
     width: 75%;
     overflow-y: auto;
@@ -324,6 +358,10 @@
 
 @media (min-width: 1280px) and (max-width: 1400px) {
   .section-six-dots {
+    left: 90px !important;
+  }
+
+  .section-six-dots-preview {
     left: 90px !important;
   }
   .questions-responses-width {
@@ -341,6 +379,10 @@
   .section-six-dots {
     left: 87px !important;
   }
+
+  .section-six-dots-preview {
+    left: 87px !important;
+  }
   .questions-responses-width {
     width: 70%;
     overflow-y: auto;
@@ -354,6 +396,10 @@
 
 @media (min-width: 768px) and (max-width: 1200px) {
   .section-six-dots {
+    left: 80px !important;
+  }
+
+  .section-six-dots-preview {
     left: 80px !important;
   }
   .questions-responses-width {

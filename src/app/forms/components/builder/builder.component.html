@@ -38,6 +38,11 @@
                   <svg-icon
                     icon="icon-six-dots-white"
                     class="section-six-dots"
+                    [ngClass]="{
+                      'section-six-dots': isPreviewActive === false,
+                      'section-six-dots-preview': isPreviewActive === true
+                    }"
+                    [ngStyle]="{ left: position?.left }"
                     cdkDragHandle
                   ></svg-icon>
                 </div>
