@@ -370,7 +370,6 @@ export class AddEditUserModalComponent implements OnInit {
       },
       action: this.dialogText === 'addUser' ? 'add' : 'edit'
     };
-    console.log(payload);
     this.dialogRef.close(payload);
   }
 
