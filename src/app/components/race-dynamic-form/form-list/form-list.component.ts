@@ -622,7 +622,7 @@ export class FormListComponent implements OnInit, OnDestroy {
     this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
   }
 
-  openFormCreationModal(data: any) {
+  openFormCreationModal(data: any, formType) {
     const dialogRef = this.dialog.open(FormModalComponent, {
       maxWidth: '100vw',
       maxHeight: '100vh',
@@ -632,6 +632,7 @@ export class FormListComponent implements OnInit, OnDestroy {
       disableClose: true,
       data: {
         formData: data,
+        formType,
         type: 'add'
       }
     });

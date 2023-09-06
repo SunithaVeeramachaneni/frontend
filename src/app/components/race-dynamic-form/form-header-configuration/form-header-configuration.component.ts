@@ -177,7 +177,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
       isPublic: [false],
       isArchived: [false],
       formStatus: [formConfigurationStatus.draft],
-      formType: [formConfigurationStatus.standalone],
+      formType: [this.data?.formType],
       tags: [this.tags],
       plantId: ['', Validators.required],
       additionalDetails: this.fb.array([]),
@@ -265,7 +265,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
         {
           name: this.data.formData.name,
           description: this.data.formData.description,
-          formType: this.data.formData.formType,
+          formType: this.data.formType,
           formStatus: this.data.formData.formStatus,
           instructions: this.data.formData.instructions
         },
