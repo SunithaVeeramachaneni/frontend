@@ -913,9 +913,9 @@ export class FormsComponent implements OnInit, OnDestroy {
 
       for (const item of this.filterJson) {
         if (item.column === 'plant') {
-          item.items = plants.items.map(
-            (plant) => `${plant.plantId} - ${plant.name}`
-          );
+          item.items = plants.items
+            .map((plant) => `${plant.plantId} - ${plant.name}`)
+            .sort();
         }
       }
     });
