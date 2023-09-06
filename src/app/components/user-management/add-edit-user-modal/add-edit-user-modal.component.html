@@ -331,7 +331,7 @@
       <mat-label id="addEditUserGroupsPlant">{{
         'plant' | translate
       }}</mat-label>
-      <mat-select formControlName="plantId">
+      <mat-select formControlName="plantId" multiple>
         <mat-option
           *ngFor="let plant of data.plantsList"
           [value]="plant.id"

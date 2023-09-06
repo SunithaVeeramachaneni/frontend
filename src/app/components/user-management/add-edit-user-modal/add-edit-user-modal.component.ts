@@ -85,7 +85,7 @@ export class AddEditUserModalComponent implements OnInit {
     profileImageFileName: new FormControl(''),
     validFrom: new FormControl('', [Validators.required]),
     validThrough: new FormControl('', [Validators.required]),
-    plantId: new FormControl('', [this.matSelectValidator()])
+    plantId: new FormControl([], [this.matSelectValidator()])
   });
   emailValidated = false;
   isValidIDPUser = false;
@@ -182,17 +182,19 @@ export class AddEditUserModalComponent implements OnInit {
   }
 
   ngOnInit() {
+    if (this.data?.user?.plantId)
+      this.data.user.plantId = this.data?.user.plantId.split(',');
     const userDetails = this.data?.user;
     this.permissionsList$ = this.data?.permissionsList$;
     this.rolesInput = this.data?.roles?.rows;
     this.rolesList$ = this.data?.rolesList$;
     this.userGroupList = this.data?.usergroup?.items;
-    if (this.userForm.get('plantId').value === '') {
+    if (this.userForm.get('plantId').value.length === 0) {
       this.usergroupInput = this.userGroupList;
     }
     this.userForm.get('plantId').valueChanges.subscribe(() => {
-      this.usergroupInput = this.userGroupList.filter(
-        (group) => group.plantId === this.userForm.get('plantId').value
+      this.usergroupInput = this.userGroupList.filter((group) =>
+        this.userForm.get('plantId').value?.includes(group.plantId)
       );
     });
 
@@ -354,14 +356,21 @@ export class AddEditUserModalComponent implements OnInit {
         profileImageFileName: 'default.png'
       });
     }
+    const latestPlant =
+      this.data.user?.plantId?.toString() ===
+      this.userForm.get('plantId').value?.toString()
+        ? this.data.user?.plantId?.toString()
+        : this.userForm.get('plantId').value?.toString();
     const payload = {
       user: {
         ...this.data.user,
         ...this.userForm.value,
+        plantId: latestPlant,
         userGroups: newGroupsIds?.toString()
       },
       action: this.dialogText === 'addUser' ? 'add' : 'edit'
     };
+    console.log(payload);
     this.dialogRef.close(payload);
   }
 
