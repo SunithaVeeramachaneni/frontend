@@ -982,7 +982,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
             });
           }
 
-          const uniquePlants = formsList
+          this.plants = formsList
             .map((item) => {
               if (item.plant) {
                 this.plantsIdNameMap[item.plant] = item.plantId;
@@ -990,20 +990,20 @@ export class RoundsComponent implements OnInit, OnDestroy {
               }
               return '';
             })
-            .filter((value, index, self) => self.indexOf(value) === index);
-          this.plants = [...uniquePlants];
+            .filter((value, index, self) => self.indexOf(value) === index)
+            .sort();
 
           for (const item of this.filterJson) {
             if (item.column === 'assignedTo') {
-              item.items = this.assignedTo;
+              item.items = this.assignedTo.sort();
             } else if (item['column'] === 'plant') {
               item.items = this.plants;
             }
             if (item.column === 'schedule') {
-              item.items = this.schedules;
+              item.items = this.schedules.sort();
             }
             if (item['column'] === 'shiftId') {
-              item.items = Object.values(this.shiftNameMap);
+              item.items = Object.values(this.shiftNameMap).sort();
             }
           }
         }

@@ -482,13 +482,13 @@ export class ObservationsService {
     filterJson?.forEach((item) => {
       switch (item.column) {
         case 'title':
-          item.items = data?.title ?? [];
+          item.items = (data?.title ?? []).sort();
           break;
         case 'location':
-          item.items = data?.location ?? [];
+          item.items = (data?.location ?? []).sort();
           break;
         case 'plant':
-          item.items = data?.plant ?? [];
+          item.items = (data?.plant ?? []).sort();
           break;
         case 'priority':
           item.items = data?.priority ?? [];
@@ -497,7 +497,7 @@ export class ObservationsService {
           item.items = data?.status ?? [];
           break;
         case 'assignedTo':
-          item.items = data?.assignedTo ?? [];
+          item.items = (data?.assignedTo ?? []).sort();
           break;
         default:
           break;

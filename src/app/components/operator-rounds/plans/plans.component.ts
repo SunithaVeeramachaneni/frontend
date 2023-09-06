@@ -605,13 +605,13 @@ export class PlansComponent implements OnInit, OnDestroy {
 
         for (const item of this.filterJson) {
           if (item.column === 'assignedTo') {
-            item.items = this.assignedTo;
+            item.items = this.assignedTo.sort();
           }
           if (item.column === 'schedule') {
-            item.items = this.schedules;
+            item.items = this.schedules.sort();
           }
           if (item.column === 'shiftId') {
-            item.items = Object.values(this.activeShiftIdMap);
+            item.items = Object.values(this.activeShiftIdMap).sort();
           }
         }
         this.dataSource = new MatTableDataSource(filteredRoundPlans);
