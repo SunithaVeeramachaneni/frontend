@@ -2,7 +2,12 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, of, ReplaySubject } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { LoadEvent, SearchEvent, TableEvent } from './../../../../interfaces';
+import {
+  ErrorInfo,
+  LoadEvent,
+  SearchEvent,
+  TableEvent
+} from './../../../../interfaces';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
 import {
@@ -68,7 +73,7 @@ export class PlantService {
   getPlantsList$(queryParams: {
     next?: string;
     limit: number;
-    searchKey: string;
+    searchTerm: string;
     fetchType: string;
   }) {
     if (
@@ -76,23 +81,12 @@ export class PlantService {
       (['infiniteScroll'].includes(queryParams.fetchType) &&
         queryParams.next !== null)
     ) {
-      const params: URLSearchParams = new URLSearchParams();
-
-      params.set('limit', `${queryParams.limit}`);
-
-      params.set('next', queryParams.next);
-
-      if (queryParams.searchKey) {
-        const filter: GetPlants = {
-          searchTerm: { contains: queryParams?.searchKey.toLowerCase() }
-        };
-        params.set('filter', JSON.stringify(filter));
-      }
-
       return this._appService
         ._getResp(
           environment.masterConfigApiUrl,
-          'plants/list?' + params.toString()
+          'plants/list',
+          {} as ErrorInfo,
+          queryParams
         )
         .pipe(map((res) => this.formatPlantResponse(res)));
     } else {

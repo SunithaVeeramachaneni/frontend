@@ -897,11 +897,14 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
 
   updateInstructionTag(event: string) {
-    const originalValue = this.questionForm.get('value').value;
-    originalValue.tag = {
-      title: event,
-      colour: this.instructionTagColours[event],
-      textColour: this.instructionTagTextColour[event]
+    let originalValue = this.questionForm.get('value').value;
+    originalValue = {
+      ...originalValue,
+      tag: {
+        title: event,
+        colour: this.instructionTagColours[event],
+        textColour: this.instructionTagTextColour[event]
+      }
     };
     this.questionForm.get('value').setValue(originalValue);
     this.instructionsUpdateValue();
