@@ -1190,5 +1190,12 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       counter: action.counter,
       skipAuthoredDetail: false
     })
+  ),
+  on(
+    BuilderConfigurationActions.updateFormStatus,
+    (state, action): FormConfigurationState => ({
+      ...state,
+      formStatus: action.formStatus
+    })
   )
 );

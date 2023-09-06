@@ -230,11 +230,21 @@ export class RoundPlanHeaderConfigurationComponent
         takeUntil(this.destroy$),
         pairwise(),
         tap(([previous, current]) => {
+          delete previous.plantId;
+          delete current.plantId;
           if (isEqual(previous, current)) this.hasFormChanges = false;
           else this.hasFormChanges = true;
         })
       )
-      .subscribe();
+      .subscribe(() => {
+        if (this.hasFormChanges) {
+          this.store.dispatch(
+            BuilderConfigurationActions.updateFormStatus({
+              formStatus: formConfigurationStatus.draft
+            })
+          );
+        }
+      });
   }
 
   getAllPlantsData() {
@@ -243,7 +253,7 @@ export class RoundPlanHeaderConfigurationComponent
       this.plantInformation = this.allPlantsData;
       const plantId = this.roundData?.formMetadata?.plantId;
       if (plantId !== undefined) {
-        this.headerDataForm.patchValue({ plantId }, { emitEvent: false });
+        this.headerDataForm.patchValue({ plantId });
       }
     });
 
