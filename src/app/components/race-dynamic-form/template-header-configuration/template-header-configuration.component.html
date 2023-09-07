@@ -15,7 +15,9 @@
     color="primary"
     class="next-btn"
     (click)="next()"
-    [disabled]="headerDataForm.invalid || headerDataForm.pristine"
+    [disabled]="
+      headerDataForm.invalid || headerDataForm.pristine || tagsCtrl.invalid
+    "
     translate="nextBtn"
   ></button>
 </div>
@@ -161,6 +163,20 @@
                 </mat-option>
               </mat-autocomplete>
             </mat-form-field>
+            <mat-error
+              id="tagsError"
+              *ngIf="processValidationErrorTags()"
+              class="m-5"
+            >
+              {{
+                errors.tagsCtrl.name
+                  | translate
+                    : {
+                        name: 'tags' | translate,
+                        length: errors.tagsCtrl.length
+                      }
+              }}
+            </mat-error>
           </div>
 
           <div class="additional-details">
