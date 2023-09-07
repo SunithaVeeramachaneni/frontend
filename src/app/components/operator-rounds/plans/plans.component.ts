@@ -952,6 +952,7 @@ export class PlansComponent implements OnInit, OnDestroy {
         }
       }
     }
+    this.cdrf.markForCheck();
   }
 
   rowLevelActionHandler = (event: RowLevelActionEvent) => {
