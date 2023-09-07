@@ -37,7 +37,14 @@ import {
   isBefore,
   weeksToDays
 } from 'date-fns';
-import { takeUntil, tap } from 'rxjs/operators';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  pairwise,
+  startWith,
+  takeUntil,
+  tap
+} from 'rxjs/operators';
 import { RoundPlanScheduleConfigurationService } from 'src/app/components/operator-rounds/services/round-plan-schedule-configuration.service';
 import {
   AssigneeDetails,
@@ -70,6 +77,7 @@ import {
   hourFormat
 } from 'src/app/app.constants';
 import { ScheduleConfigurationService } from 'src/app/forms/services/schedule.service';
+import { isEqual } from 'lodash-es';
 
 export interface ScheduleConfigEvent {
   slideInOut: 'out' | 'in';
@@ -358,6 +366,28 @@ export class ScheduleConfigurationComponent
       shiftSlots: this.fb.array([this.addShiftDetails(true)]),
       shiftsSelected: []
     });
+
+    this.schedulerConfigForm
+      .get('assignmentDetails')
+      .valueChanges.pipe(
+        startWith({}),
+        distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
+        pairwise(),
+        tap(([prev, curr]) => {
+          if (!isEqual(prev, curr)) {
+            if (prev.type !== curr.type) {
+              this.schedulerConfigForm.get('assignmentDetails').patchValue({
+                type: curr.type,
+                value: '',
+                displayValue: ''
+              });
+            }
+          }
+        })
+      )
+      .subscribe();
+
     this.schedulerConfigForm
       .get('scheduleEndType')
       .valueChanges.pipe(takeUntil(this.onDestroy$))
@@ -1277,11 +1307,19 @@ export class ScheduleConfigurationComponent
     });
   }
 
-  selectedAssigneeHandler({ user }: SelectedAssignee) {
-    const { email: value, firstName, lastName } = user;
-    this.schedulerConfigForm
-      .get('assignmentDetails')
-      .patchValue({ value, displayValue: `${firstName} ${lastName}` });
+  selectedAssigneeHandler(selectedAssignee: any) {
+    if (selectedAssignee.assigneeType === 'user') {
+      const { email: value, firstName, lastName } = selectedAssignee.user;
+      this.schedulerConfigForm
+        .get('assignmentDetails')
+        .patchValue({ value, displayValue: `${firstName} ${lastName}` });
+    }
+    if (selectedAssignee.assigneeType === 'userGroup') {
+      const { id: value, name: displayValue } = selectedAssignee.userGroup;
+      this.schedulerConfigForm
+        .get('assignmentDetails')
+        .patchValue({ value, displayValue });
+    }
     this.schedulerConfigForm.markAsDirty();
     this.menuTrigger.closeMenu();
   }

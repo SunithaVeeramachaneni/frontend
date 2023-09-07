@@ -113,11 +113,12 @@
       #assigneeMenuTrigger="matMenuTrigger"
     ></button>
     <mat-menu #assigneeMenu="matMenu" backdropClass="assign-menu-list">
-      <app-assign-inspection
+      <app-assigned-to
+        [showAssigneeOptions]="true"
         [assigneeDetails]="assigneeDetails"
         [dropdownPosition]="assigneePosition"
         (selectedAssignee)="selectedAssigneeHandler($event)"
-      ></app-assign-inspection>
+      ></app-assigned-to>
     </mat-menu>
   </ng-container>
 

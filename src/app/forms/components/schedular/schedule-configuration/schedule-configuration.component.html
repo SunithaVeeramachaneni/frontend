@@ -447,7 +447,6 @@
                   color="primary"
                   *ngFor="let assignType of assignTypes; let i = index"
                   [value]="assignType"
-                  [disabled]="i !== 0"
                 >
                   {{ assignType | translate }}</mat-radio-button
                 >
@@ -554,6 +553,9 @@
           </div>
           <mat-menu #menu="matMenu" backdropClass="assign-menu">
             <app-assigned-to
+              [assigneeType]="
+                schedulerConfigForm.get('assignmentDetails').get('type').value
+              "
               [assigneeDetails]="assigneeDetails"
               [dropdownPosition]="dropdownPosition"
               (selectedAssignee)="selectedAssigneeHandler($event)"

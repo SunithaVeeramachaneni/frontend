@@ -48,7 +48,8 @@ import {
   ScheduleFormDetail,
   FormScheduleConfiguration,
   AssigneeDetails,
-  UserDetails
+  UserDetails,
+  UserGroup
 } from 'src/app/interfaces';
 import {
   dateFormat,
@@ -258,7 +259,7 @@ export class FormsComponent implements OnInit, OnDestroy {
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
       tap((users) => {
-        this.assigneeDetails = { users };
+        this.assigneeDetails = { ...this.assigneeDetails, users };
         this.userFullNameByEmail = this.userService.getUsersInfo();
       })
     );
@@ -266,7 +267,21 @@ export class FormsComponent implements OnInit, OnDestroy {
   get users$(): Observable<UserDetails[]> {
     return this._users$;
   }
+  @Input() set userGroups$(userGroups$: Observable<UserGroup[]>) {
+    this._userGroups$ = userGroups$.pipe(
+      tap((userGroups: any) => {
+        this.assigneeDetails = {
+          ...this.assigneeDetails,
+          userGroups: userGroups.items
+        };
+      })
+    );
+  }
+  get userGroups$(): Observable<UserGroup[]> {
+    return this._userGroups$;
+  }
   private _users$: Observable<UserDetails[]>;
+  private _userGroups$: Observable<UserGroup[]>;
   private onDestroy$ = new Subject();
   private scheduleConfigEvent: Subscription;
 
@@ -361,7 +376,8 @@ export class FormsComponent implements OnInit, OnDestroy {
       formScheduleConfigurations$,
       this.shiftService.fetchAllShifts$(),
       this.plantService.fetchAllPlants$(),
-      this.users$
+      this.users$,
+      this.userGroups$
     ]).pipe(
       map(([forms, scrollData, formScheduleConfigurations, shifts, plants]) => {
         this.isLoading$.next(false);
