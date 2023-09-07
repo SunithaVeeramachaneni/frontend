@@ -78,7 +78,7 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
   removable = true;
   addOnBlur = true;
   separatorKeysCodes: number[] = [ENTER, COMMA];
-  tagsCtrl = new FormControl();
+  tagsCtrl: FormControl;
   filteredTags: Observable<string[]>;
   tags: string[] = [];
 
@@ -112,14 +112,21 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
     private formProgressService: FormUpdateProgressService,
     private toastService: ToastService,
     private operatorRoundService: OperatorRoundsService
-  ) {
+  ) {}
+
+  ngOnInit(): void {
+    this.tagsCtrl = new FormControl('', [
+      Validators.maxLength(25),
+      WhiteSpaceValidator.whiteSpace,
+      WhiteSpaceValidator.trimWhiteSpace
+    ]);
     this.rdfService
       .getDataSetsByType$('formTemplateHeaderTags')
       .subscribe((tags) => {
         if (tags && tags.length) {
           this.allTags = tags[0].values;
           this.originalTags = JSON.parse(JSON.stringify(tags[0].values));
-          this.tagsCtrl.setValue('');
+          this.tagsCtrl.patchValue('');
           this.cdrf.detectChanges();
         }
       });
@@ -129,9 +136,6 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
         tag ? this.filter(tag) : this.allTags.slice()
       )
     );
-  }
-
-  ngOnInit(): void {
     this.headerDataForm = this.fb.group({
       name: [
         '',
@@ -181,18 +185,35 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
   }
 
   add(event: MatChipInputEvent): void {
-    const input = event.input;
-    const value = event.value;
+    if (!this.processValidationErrorTags()) {
+      const input = event.input;
+      const value = event.value;
 
-    if ((value || '').trim()) {
-      this.tags.push(value.trim());
+      if ((value || '').trim()) {
+        this.tags.push(value.trim());
+      }
+
+      if (input) {
+        input.value = '';
+      }
+
+      this.tagsCtrl.patchValue('');
     }
+  }
 
-    if (input) {
-      input.value = '';
+  processValidationErrorTags(): boolean {
+    const errors = this.tagsCtrl.errors;
+
+    this.errors.tagsCtrl = null;
+    if (errors) {
+      Object.keys(errors).forEach((messageKey) => {
+        this.errors.tagsCtrl = {
+          name: messageKey,
+          length: errors[messageKey]?.requiredLength
+        };
+      });
     }
-
-    this.tagsCtrl.setValue(null);
+    return this.errors.tagsCtrl === null ? false : true;
   }
 
   remove(tag: string): void {
@@ -213,7 +234,7 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
 
     this.tags = [...this.tags, event.option.viewValue];
     this.tagsInput.nativeElement.value = '';
-    this.tagsCtrl.setValue(null);
+    this.tagsCtrl.patchValue('');
     this.headerDataForm.patchValue({
       ...this.headerDataForm.value,
       tags: this.tags
