@@ -166,7 +166,6 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
         const tags = JSON.parse(JSON.stringify(detailLevelTags));
         if (tags && tags.length) {
           this.allTags = tags;
-          this.formService.setDetailLevelTagsState(this.allTags);
           this.originalTags = JSON.parse(JSON.stringify(tags));
           this.tagsCtrl.setValue('');
           this.cdrf.detectChanges();
