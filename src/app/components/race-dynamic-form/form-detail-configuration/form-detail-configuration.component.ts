@@ -460,7 +460,6 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
         isFormDetailPublished: true
       })
     );
-
     const form = {
       formMetadata: {
         ...this.formMetadata,

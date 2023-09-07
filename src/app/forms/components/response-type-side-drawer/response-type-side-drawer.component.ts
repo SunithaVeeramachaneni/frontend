@@ -148,7 +148,7 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
       this.sliderOpenState = state;
       this.cdrf.detectChanges();
       if (this.question && typeof this.question.value !== 'string') {
-        this.sliderOptions = this.question.value;
+        this.sliderOptions = { ...this.question.value };
       }
     });
 
@@ -279,6 +279,7 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
     }
     if (values.value < values.min) values.value = values.min;
     else if (values.value > values.max) values.value = values.max;
+    this.question = { ...this.question, value: values };
     this.setSliderValues.emit(values);
     this.formService.setsliderOpenState({
       isOpen: false,

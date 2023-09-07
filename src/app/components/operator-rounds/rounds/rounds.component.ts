@@ -73,7 +73,7 @@ import { MatMenuTrigger } from '@angular/material/menu';
 import { ToastService } from 'src/app/shared/toast';
 import { UsersService } from '../../user-management/services/users.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
-import { localToTimezoneDateV2 } from 'src/app/shared/utils/timezoneDate';
+import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
 import { format } from 'date-fns';
 import { formatInTimeZone, zonedTimeToUtc } from 'date-fns-tz';
 import { ShiftService } from '../../master-configurations/shifts/services/shift.service';
@@ -756,7 +756,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   }
   formatDate(date, plantId) {
     if (this.plantTimezoneMap[plantId]?.timeZoneIdentifier) {
-      return localToTimezoneDateV2(
+      return localToTimezoneDate(
         date,
         this.plantTimezoneMap[plantId],
         dateTimeFormat4
