@@ -24,7 +24,7 @@ import {
   tap
 } from 'rxjs/operators';
 import {
-  defaultLimit,
+  graphQLDefaultLimit,
   permissions as perms,
   routingUrls
 } from 'src/app/app.constants';
@@ -237,7 +237,7 @@ export class AssetsListComponent implements OnInit, OnDestroy {
   selectedAsset;
 
   skip = 0;
-  limit = defaultLimit;
+  limit = graphQLDefaultLimit;
   fetchType = 'load';
   nextToken = '';
   userInfo$: Observable<UserInfo>;
@@ -425,7 +425,7 @@ export class AssetsListComponent implements OnInit, OnDestroy {
         {
           next: this.nextToken,
           limit: this.limit,
-          searchKey: this.searchAssets.value,
+          searchTerm: this.searchAssets.value,
           fetchType: this.fetchType
         },
         this.filter
