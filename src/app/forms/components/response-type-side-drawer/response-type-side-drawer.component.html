@@ -512,6 +512,20 @@
               </mat-option>
             </mat-autocomplete>
           </mat-form-field>
+          <mat-error
+            id="tagsError"
+            *ngIf="processValidationErrorTags()"
+            class="m-5"
+          >
+            {{
+              errors.tagsCtrl.name
+                | translate
+                  : {
+                      name: 'tags' | translate,
+                      length: errors.tagsCtrl.length
+                    }
+            }}
+          </mat-error>
         </div>
         <div class="additional-details">
           <p
@@ -769,7 +783,7 @@
       id="additionalDetailsSubmitBtn"
       mat-raised-button
       (click)="submitAdditionalDetails()"
-      [disabled]="additionalDetailsForm.invalid"
+      [disabled]="additionalDetailsForm.invalid || tagsCtrl.invalid"
       color="primary"
       class="submitBtn"
       translate="done"

@@ -130,7 +130,7 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
     additionalDetails: {} as AdditionalDetails
   };
 
-  tagsCtrl = new FormControl();
+  tagsCtrl: FormControl;
   filteredTags: Observable<string[]>;
   tags: string[] = [];
   allTags: string[] = [];
@@ -159,6 +159,11 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.tagsCtrl = new FormControl('', [
+      Validators.maxLength(25),
+      WhiteSpaceValidator.whiteSpace,
+      WhiteSpaceValidator.trimWhiteSpace
+    ]);
     this.detailLevelTagsState$ = this.formService.detailLevelTagsState$;
     this.detailLevelTagsState$
       .pipe(takeUntil(this.onDestroy$))
@@ -167,7 +172,7 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
         if (tags && tags.length) {
           this.allTags = tags;
           this.originalTags = JSON.parse(JSON.stringify(tags));
-          this.tagsCtrl.setValue('');
+          this.tagsCtrl.patchValue('');
           this.cdrf.detectChanges();
         }
       });
@@ -381,18 +386,35 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
   }
 
   add(event: MatChipInputEvent): void {
-    const input = event.input;
-    const value = event.value || '';
+    if (!this.processValidationErrorTags()) {
+      const input = event.input;
+      const value = event.value || '';
 
-    if (value.trim()) {
-      this.tags = [...this.tags, value.trim()];
+      if (value.trim()) {
+        this.tags = [...this.tags, value.trim()];
+      }
+
+      if (input) {
+        input.value = '';
+      }
+
+      this.tagsCtrl.patchValue('');
     }
+  }
 
-    if (input) {
-      input.value = '';
+  processValidationErrorTags(): boolean {
+    const errors = this.tagsCtrl.errors;
+
+    this.errors.tagsCtrl = null;
+    if (errors) {
+      Object.keys(errors).forEach((messageKey) => {
+        this.errors.tagsCtrl = {
+          name: messageKey,
+          length: errors[messageKey]?.requiredLength
+        };
+      });
     }
-
-    this.tagsCtrl.setValue(null);
+    return this.errors.tagsCtrl === null ? false : true;
   }
 
   openAutoComplete() {
@@ -407,7 +429,7 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
     if (index >= 0) {
       this.tags = [...this.tags.slice(0, index), ...this.tags.slice(index + 1)];
       this.tagsInput.nativeElement.value = '';
-      this.tagsCtrl.setValue(null);
+      this.tagsCtrl.patchValue('');
       this.additionalDetailsForm.patchValue({
         ...this.additionalDetailsForm.value,
         tags: this.tags
@@ -424,7 +446,7 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
 
     this.tags = [...this.tags, event.option.viewValue];
     this.tagsInput.nativeElement.value = '';
-    this.tagsCtrl.setValue(null);
+    this.tagsCtrl.patchValue('');
     this.additionalDetailsForm.patchValue({
       ...this.additionalDetailsForm.value,
       tags: this.tags
@@ -557,6 +579,7 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
   };
 
   cancelAdditionalDetails = () => {
+    this.tagsCtrl.patchValue('');
     this.formService.setAdditionalDetailsOpenState({
       isOpen: false,
       questionId: '',
@@ -596,6 +619,7 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
       ...this.additionalDetailsForm.getRawValue(),
       attributes: updatedattributes
     });
+    this.tagsCtrl.patchValue('');
     this.formService.setAdditionalDetailsOpenState({
       isOpen: false,
       questionId: '',
