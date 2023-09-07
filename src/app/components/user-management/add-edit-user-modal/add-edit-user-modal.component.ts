@@ -109,6 +109,9 @@ export class AddEditUserModalComponent implements OnInit {
   get usergroup() {
     return this.userForm.get('usergroup');
   }
+  get plant() {
+    return this.userForm.get('plantId');
+  }
   rolePermissions: Permission[];
   userRolePermissions = userRolePermissions;
   errors: ValidationError = {};
@@ -182,8 +185,11 @@ export class AddEditUserModalComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (this.data?.user?.plantId)
-      this.data.user.plantId = this.data?.user.plantId.split(',');
+    if (this.data?.user?.plantId && !Array.isArray(this.data?.user?.plantId)) {
+      this.data.user.plantId = this.data.plantsList.filter((plant) =>
+        this.data?.user?.plantId?.split(',')?.includes(plant.id)
+      );
+    }
     const userDetails = this.data?.user;
     this.permissionsList$ = this.data?.permissionsList$;
     this.rolesInput = this.data?.roles?.rows;
@@ -193,8 +199,12 @@ export class AddEditUserModalComponent implements OnInit {
       this.usergroupInput = this.userGroupList;
     }
     this.userForm.get('plantId').valueChanges.subscribe(() => {
+      const plantsList = [];
+      this.userForm.get('plantId')?.value?.forEach((plant) => {
+        plantsList.push(plant.id);
+      });
       this.usergroupInput = this.userGroupList.filter((group) =>
-        this.userForm.get('plantId').value?.includes(group.plantId)
+        plantsList.includes(group.plantId)
       );
     });
 
@@ -280,6 +290,10 @@ export class AddEditUserModalComponent implements OnInit {
     return option.id === value.id;
   }
 
+  plantComparisonFunction(option, value): boolean {
+    return option.id === value;
+  }
+
   arrayBufferToBase64(buffer) {
     let binary = '';
     const bytes = new Uint8Array(buffer);
@@ -356,11 +370,18 @@ export class AddEditUserModalComponent implements OnInit {
         profileImageFileName: 'default.png'
       });
     }
+
     const latestPlant =
-      this.data.user?.plantId?.toString() ===
-      this.userForm.get('plantId').value?.toString()
-        ? this.data.user?.plantId?.toString()
-        : this.userForm.get('plantId').value?.toString();
+      this.data.user?.plantId?.map((plant) => plant.id).toString() ===
+      this.userForm
+        .get('plantId')
+        .value?.map((plant) => plant.id)
+        .toString()
+        ? this.data.user?.plantId?.map((plant) => plant.id).toString()
+        : this.userForm
+            .get('plantId')
+            .value?.map((plant) => plant.id)
+            .toString();
     const payload = {
       user: {
         ...this.data.user,
@@ -370,7 +391,6 @@ export class AddEditUserModalComponent implements OnInit {
       },
       action: this.dialogText === 'addUser' ? 'add' : 'edit'
     };
-    console.log(payload);
     this.dialogRef.close(payload);
   }
 

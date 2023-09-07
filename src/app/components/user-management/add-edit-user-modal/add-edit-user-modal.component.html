@@ -331,13 +331,28 @@
       <mat-label id="addEditUserGroupsPlant">{{
         'plant' | translate
       }}</mat-label>
-      <mat-select formControlName="plantId" multiple>
+      <mat-select
+        name="priority"
+        multiple
+        [compareWith]="objectComparisonFunction"
+        formControlName="plantId"
+      >
+        <mat-select-trigger id="addEditUserGroupsPlantName">
+          {{ plant?.value[0]?.plantId }}
+          <span
+            id="addEditUserGroupLength"
+            *ngIf="plant.value?.length > 1"
+            class="example-additional-selection"
+          >
+            ( + {{ plant.value.length - 1 }} more )
+          </span>
+        </mat-select-trigger>
         <mat-option
-          *ngFor="let plant of data.plantsList"
-          [value]="plant.id"
-          class="roles-select p-r-0"
+          *ngFor="let plant of data.plantsList; let i = index"
+          [value]="plant"
+          class="usergroup-select"
         >
-          <span id="addEditUserGroupPlantId">{{ plant.plantId }}</span>
+          <span id="addEditUserGroupName">{{ plant.plantId }} </span>
         </mat-option>
       </mat-select>
       <mat-error
