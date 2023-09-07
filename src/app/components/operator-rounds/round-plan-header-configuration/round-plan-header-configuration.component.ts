@@ -310,7 +310,7 @@ export class RoundPlanHeaderConfigurationComponent
       const value = event.value;
 
       if ((value || '').trim()) {
-        this.tags.push(value.trim());
+        this.tags = [...this.tags, value.trim()];
       }
 
       if (input) {
