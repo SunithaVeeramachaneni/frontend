@@ -582,3 +582,13 @@ export const defaultProfilePic =
 export const locationImg = 'assets/master-configurations/locationIcon.svg';
 export const assetImg = 'assets/master-configurations/asset-icon.svg';
 export const plantImg = 'assets/master-configurations/default-plant.svg';
+
+export const scheduleType = {
+  byFrequency: 'byFrequency',
+  byDate: 'byDate'
+};
+export const repeatEvery = {
+  day: 'day',
+  week: 'week',
+  month: 'month'
+};

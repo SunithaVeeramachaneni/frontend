@@ -28,7 +28,7 @@ import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { tap } from 'rxjs/operators';
 import { isEqual } from 'lodash-es';
 import { transferQuestionFromSection } from 'src/app/forms/state/builder/builder.actions';
-import { dateFormat4 } from 'src/app/app.constants';
+import { dateFormat4, repeatEvery, scheduleType } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-revise-schedule',
@@ -52,6 +52,8 @@ export class ReviseScheduleComponent implements OnInit {
   get reviseSchedule() {
     return this.reviseScheduleConfig;
   }
+  @Input() uniqueConfigurations;
+
   locations = {};
   showLocations = true;
   repeatTypes = scheduleConfigs.repeatTypes;
@@ -259,19 +261,21 @@ export class ReviseScheduleComponent implements OnInit {
   }
 
   filterConfig(config) {
-    if (config.scheduleType) {
-      if (config.repeatTypes === 'day') {
-        config.daysToWeeks = [1];
+    if (config.scheduleType === scheduleType.byFrequency) {
+      if (config.repeatEvery === repeatEvery.day) {
+        config.daysOfWeek = [1];
         config.monthlyDaysOfWeek = [[1], [1], [1], [1], [1]];
-      } else if (config.repeatTypes === 'week') {
+      } else if (config.repeatEvery === repeatEvery.week) {
         config.monthlyDaysOfWeek = [[1], [1], [1], [1], [1]];
       } else {
-        config.daysToWeeks = [1];
+        config.daysOfWeek = [1];
       }
     } else {
-      config.daysToWeeks = [1];
+      config.daysOfWeek = [1];
+      config.repeatDuration = 1;
       config.monthlyDaysOfWeek = [[1], [1], [1], [1], [1]];
     }
+    return JSON.parse(JSON.stringify(config));
   }
 
   comparingConfig(newConfig) {
@@ -283,21 +287,25 @@ export class ReviseScheduleComponent implements OnInit {
 
     let configIndex = 0;
     let configFound = false;
-    if (!this.configurations) {
-      this.configurations.push(JSON.parse(JSON.stringify(newConfig)));
-      this.operatorRoundService.setuniqueConfiguration(this.configurations);
+    if (!this.uniqueConfigurations.length) {
+      this.uniqueConfigurations.push(JSON.parse(JSON.stringify(newConfig)));
+      this.operatorRoundService.setuniqueConfiguration(
+        this.uniqueConfigurations
+      );
       return 0;
     }
-    this.configurations.forEach((config, index) => {
+    this.uniqueConfigurations.forEach((config, index) => {
       if (isEqual(newConfig, config)) {
         configFound = true;
         configIndex = index;
       }
     });
     if (!configFound) {
-      this.configurations.push(JSON.parse(JSON.stringify(newConfig)));
-      this.operatorRoundService.setuniqueConfiguration(this.configurations);
-      return this.configurations.length - 1;
+      this.uniqueConfigurations.push(JSON.parse(JSON.stringify(newConfig)));
+      this.operatorRoundService.setuniqueConfiguration(
+        this.uniqueConfigurations
+      );
+      return this.uniqueConfigurations.length - 1;
     } else {
       return configIndex;
     }
@@ -409,7 +417,7 @@ export class ReviseScheduleComponent implements OnInit {
             if (question.complete) {
               if (!this.revisedInfo[nodeId]) this.revisedInfo[nodeId] = {};
               this.revisedInfo[nodeId][question.id] =
-                this.configurations[configPosition];
+                this.uniqueConfigurations[configPosition];
             }
           }
         });

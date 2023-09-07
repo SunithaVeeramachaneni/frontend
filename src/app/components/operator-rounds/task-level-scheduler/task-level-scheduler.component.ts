@@ -83,6 +83,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
   displayNodeLevelConfig = new Set();
   displayTaskLevelConfig = new Map();
   allSlots = [];
+  uniqueConfigurations = [];
 
   constructor(
     private operatorRoundService: OperatorRoundsService,
@@ -182,6 +183,11 @@ export class TaskLevelSchedulerComponent implements OnInit {
         });
       });
     });
+    this.operatorRoundService.uniqueConfiguration$.subscribe(
+      (configurations) => {
+        this.uniqueConfigurations = configurations;
+      }
+    );
   }
 
   filter(value: string): string[] {
@@ -247,6 +253,9 @@ export class TaskLevelSchedulerComponent implements OnInit {
     } else {
       const shiftData = {};
       shiftSlotDetail.forEach((detail) => {
+        this.payload.shiftDetails[detail.id].forEach((slot) => {
+          delete slot.checked;
+        });
         shiftData[detail.id] = this.payload.shiftDetails[detail.id];
       });
       return shiftData;
@@ -263,21 +272,23 @@ export class TaskLevelSchedulerComponent implements OnInit {
 
   prepareTaskLeveConfig(revisedInfo) {
     const taskLevelConfig = [];
-    this.operatorRoundService.uniqueConfiguration$.subscribe((configs) => {
-      configs.forEach((config) => {
-        config['nodeWiseQuestionIds'] = {};
-        Object.keys(revisedInfo).forEach((nodeId) => {
-          Object.keys(revisedInfo[nodeId]).forEach((questionId) => {
-            const questionConfig = revisedInfo[nodeId][questionId];
-            if (isEqual(config, questionConfig)) {
-              if (!config['nodeWiseQuestionIds'][nodeId])
-                config['nodeWiseQuestionIds'][nodeId] = [];
-              config['nodeWiseQuestionIds'][nodeId].push(questionId);
-            }
-          });
+    let isQuestionInConfig = false;
+    this.uniqueConfigurations.forEach((config) => {
+      isQuestionInConfig = false;
+      config['nodeWiseQuestionIds'] = {};
+      Object.keys(revisedInfo).forEach((nodeId) => {
+        Object.keys(revisedInfo[nodeId]).forEach((questionId) => {
+          const questionConfig = revisedInfo[nodeId][questionId];
+          if (isEqual(config, questionConfig)) {
+            if (!config['nodeWiseQuestionIds'][nodeId])
+              config['nodeWiseQuestionIds'][nodeId] = [];
+            config['nodeWiseQuestionIds'][nodeId].push(questionId);
+          }
+          if (config['nodeWiseQuestionIds'][nodeId]?.length > 0)
+            isQuestionInConfig = true;
         });
-        taskLevelConfig.push(config);
       });
+      if (isQuestionInConfig) taskLevelConfig.push(config);
     });
     return taskLevelConfig;
   }
