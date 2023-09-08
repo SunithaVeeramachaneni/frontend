@@ -90,7 +90,13 @@ export class InspectionComponent implements OnInit, OnDestroy {
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
       tap((users) => {
-        this.assigneeDetails = { ...this.assigneeDetails, users };
+        this.assigneeDetails = {
+          ...this.assigneeDetails,
+          users
+        };
+        this.assigneeDetailsFiltered = {
+          ...this.assigneeDetails
+        };
         this.userFullNameByEmail = this.userService.getUsersInfo();
       })
     );
@@ -105,6 +111,9 @@ export class InspectionComponent implements OnInit, OnDestroy {
           ...this.assigneeDetails,
           userGroups: userGroups.items
         };
+        this.assigneeDetailsFiltered = {
+          ...this.assigneeDetails
+        };
         userGroups?.items?.map((userGroup) => {
           this.userGroupsIdMap[userGroup.id] = userGroup.name;
         });
@@ -115,6 +124,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
     return this._userGroups$;
   }
   assigneeDetails: AssigneeDetails;
+  assigneeDetailsFiltered: AssigneeDetails;
   filterJson = [];
   userGroupsIdMap = {};
   status = [
@@ -687,6 +697,14 @@ export class InspectionComponent implements OnInit, OnDestroy {
         this.assigneePosition = {
           top: `${pos?.top + 17}px`,
           left: `${pos?.left - 15}px`
+        };
+        this.assigneeDetailsFiltered = {
+          users: this.assigneeDetails.users?.filter((user) =>
+            user.plantId?.includes(row.plantId)
+          ),
+          userGroups: this.assigneeDetails.userGroups?.filter((userGroup) =>
+            userGroup.plantId?.includes(row.plantId)
+          )
         };
         if (row.status !== 'submitted' && row.status !== 'overdue')
           this.trigger.toArray()[0].openMenu();

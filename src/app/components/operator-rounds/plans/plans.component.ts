@@ -87,7 +87,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
       tap((users) => {
-        this.assigneeDetails = { users };
+        this.assigneeDetails = { ...this.assigneeDetails, users };
         this.userFullNameByEmail = this.userService.getUsersInfo();
       })
     );

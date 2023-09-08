@@ -267,7 +267,15 @@ export class ScheduleConfigurationComponent
     if (this.data) {
       const { formDetail, roundPlanDetail, moduleName, assigneeDetails } =
         this.data;
-      this.assigneeDetails = assigneeDetails;
+        const plantId = moduleName === 'RDF' ? formDetail.plantId : roundPlanDetail.plantId;
+        this.assigneeDetails = {
+          users: assigneeDetails.users?.filter((user) =>
+            user.plantId?.includes(plantId)
+          ),
+          userGroups: assigneeDetails.userGroups?.filter((userGroup) =>
+            userGroup.plantId?.includes(plantId)
+          )
+        };
       this.moduleName = moduleName;
 
       // If the module name is RDF

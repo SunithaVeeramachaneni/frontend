@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
-import { Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, combineLatest } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -34,6 +34,8 @@ import {
 export class AssignedToComponent implements OnInit, OnDestroy {
   @Input() set assigneeDetails(assigneeDetails: AssigneeDetails) {
     this._assigneeDetails = assigneeDetails;
+    // this.searchInput.setValue('', { emitModelToViewChange: true });
+    this.assigneeDetails$.next(assigneeDetails);
   }
   get assigneeDetails(): AssigneeDetails {
     return this._assigneeDetails;
@@ -60,11 +62,12 @@ export class AssignedToComponent implements OnInit, OnDestroy {
   @Input() dropdownPosition;
   @Input() isMultiple = false;
   @Input() assignedTo: string;
-  searchInput: FormControl;
+  searchInput = new FormControl('');
   filteredData$: Observable<any[]>;
   filteredDataCount: number;
   assignTypes = ['user', 'userGroup'];
-  assigneeTypeControl: FormControl;
+  assigneeTypeControl = new FormControl('user');
+  assigneeDetails$ = new BehaviorSubject({} as AssigneeDetails);
   private _assigneeType = 'user';
   private _showAssigneeOptions = false;
   private _assigneeDetails: AssigneeDetails;
@@ -72,9 +75,6 @@ export class AssignedToComponent implements OnInit, OnDestroy {
   constructor() {}
 
   ngOnInit(): void {
-    this.searchInput = new FormControl('');
-    this.assigneeTypeControl = new FormControl('user');
-
     this.assigneeTypeControl.valueChanges
       .pipe(
         takeUntil(this.onDestroy$),
@@ -82,14 +82,18 @@ export class AssignedToComponent implements OnInit, OnDestroy {
       )
       .subscribe();
 
-    this.filteredData$ = this.searchInput.valueChanges.pipe(
-      startWith(''),
-      debounceTime(500),
-      distinctUntilChanged(),
-      map((search) => {
+    this.filteredData$ = combineLatest([
+      this.searchInput.valueChanges.pipe(
+        startWith(''),
+        debounceTime(500),
+        distinctUntilChanged()
+      ),
+      this.assigneeDetails$
+    ]).pipe(
+      map(([search, assigneeDetails]) => {
         search = search.toLowerCase();
         if (this.assigneeType === 'user') {
-          return this.assigneeDetails.users.filter(
+          return assigneeDetails.users.filter(
             (user) =>
               user.isActive &&
               (user.firstName.toLowerCase().indexOf(search) !== -1 ||
@@ -97,7 +101,7 @@ export class AssignedToComponent implements OnInit, OnDestroy {
           );
         }
         if (this.assigneeType === 'userGroup') {
-          return this.assigneeDetails.userGroups.filter(
+          return assigneeDetails.userGroups.filter(
             (userGroup: any) => userGroup.searchTerm.indexOf(search) !== -1
           );
         }
