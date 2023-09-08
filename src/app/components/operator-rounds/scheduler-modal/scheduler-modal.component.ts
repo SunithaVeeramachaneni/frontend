@@ -1,9 +1,12 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogRef
+} from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { Store } from '@ngrx/store';
 import { Step } from 'src/app/interfaces/stepper';
-import { State } from 'src/app/state/app.state';
+import { AlertModalComponent } from './alert-modal/alert-modal.component';
 
 @Component({
   selector: 'app-scheduler-modal',
@@ -21,10 +24,10 @@ export class SchedulerModalComponent implements OnInit {
   currentStep = 0;
 
   constructor(
-    private store: Store<State>,
     private router: Router,
     public dialogRef: MatDialogRef<SchedulerModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data
+    @Inject(MAT_DIALOG_DATA) public data,
+    public dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -32,8 +35,16 @@ export class SchedulerModalComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['operator-rounds/scheduler/0']);
-    this.dialogRef.close();
+    const alertDialog = this.dialog.open(AlertModalComponent, {
+      height: '150px',
+      width: '400px'
+    });
+    alertDialog.afterClosed().subscribe((res) => {
+      if (res) {
+        this.router.navigate(['operator-rounds/scheduler/0']);
+        this.dialogRef.close();
+      }
+    });
   }
 
   onGotoStep(step): void {

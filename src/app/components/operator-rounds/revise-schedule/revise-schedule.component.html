@@ -48,8 +48,7 @@
           <p id="taskScheduleConfigurationRepeatEvery" class="f-w-400">
             {{ 'repeatEvery' | translate }}
           </p>
-
-          <mat-form-field appearance="fill" class="repeat-num">
+          <mat-form-field appearance="fill" class="task-repeat-num m-l-20">
             <input
               type="number"
               matInput
@@ -58,17 +57,17 @@
               placeholder="_ _"
             />
           </mat-form-field>
-          <mat-form-field appearance="fill" class="repeat-day">
-            <mat-select formControlName="repeatEvery" placeholder="_ _">
-              <mat-option
-                *ngFor="let repeatEvery of repeatTypes"
-                [value]="repeatEvery"
-              >
-                {{ repeatEvery }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
+
+          <select formControlName="repeatEvery" class="task-repeat-day">
+            <option
+              *ngFor="let repeatEvery of repeatTypes"
+              [value]="repeatEvery"
+            >
+              {{ repeatEvery }}
+            </option>
+          </select>
         </div>
+
         <ng-container
           *ngIf="reviseScheduleConfigForm.get('repeatEvery').value === 'week'"
         >

@@ -1,6 +1,6 @@
 <mat-toolbar class="form-toolbar">
   <div class="stepper-toolbar">
-    <div class="width-10">
+    <div class="width-10" *ngIf="moduleName !== 'Scheduler'">
       <button id="backBtn" (click)="onGoBack(currentStep)" class="back-btn">
         <svg-icon
           id="stepperHeaderBackIcon"
@@ -8,6 +8,18 @@
           icon="icon-back-arrow"
           class="back-arrow"
         ></svg-icon>
+      </button>
+    </div>
+
+    <div class="width-10" *ngIf="moduleName === 'Scheduler'">
+      <button id="backBtn" (click)="onGoBack(currentStep)" class="back-btn">
+        <svg-icon
+          id="stepperHeaderBackIcon"
+          id="backBtnIcon"
+          icon="icon-close"
+          class="close-icon"
+        ></svg-icon>
+        <span class="close-txt">Close</span>
       </button>
     </div>
 

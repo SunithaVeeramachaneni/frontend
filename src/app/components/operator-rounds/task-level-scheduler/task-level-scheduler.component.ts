@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable @typescript-eslint/dot-notation */
 /* eslint-disable no-underscore-dangle */
@@ -24,12 +25,37 @@ import { format } from 'date-fns';
 import { isEqual } from 'lodash-es';
 import { RoundPlanScheduleConfigurationService } from '../services/round-plan-schedule-configuration.service';
 import { RoundPlanScheduleConfiguration } from 'src/app/interfaces/operator-rounds';
+import {
+  animate,
+  state,
+  style,
+  transition,
+  trigger
+} from '@angular/animations';
 
 @Component({
   selector: 'app-task-level-scheduler',
   templateUrl: './task-level-scheduler.component.html',
   styleUrls: ['./task-level-scheduler.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  animations: [
+    trigger('widthGrow', [
+      state(
+        'closed',
+        style({
+          width: '0%'
+        })
+      ),
+      state(
+        'open',
+        style({
+          width: '30%'
+        })
+      ),
+      //transition('* => *', animate(250))
+      transition('* => *', animate('0.4s linear'))
+    ])
+  ]
 })
 export class TaskLevelSchedulerComponent implements OnInit {
   @Input() roundPlanData: any;
@@ -84,6 +110,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
   displayTaskLevelConfig = new Map();
   allSlots = [];
 
+  state = 'closed';
   constructor(
     private operatorRoundService: OperatorRoundsService,
     private schedulerConfigurationService: RoundPlanScheduleConfigurationService
@@ -239,6 +266,9 @@ export class TaskLevelSchedulerComponent implements OnInit {
 
   openCloseRightPanelEventHandler(event) {
     this.openCloseRightPanel = event;
+    this.openCloseRightPanel === true
+      ? (this.state = 'open')
+      : (this.state = 'closed');
   }
 
   prepareShiftSlot(shiftSlotDetail) {

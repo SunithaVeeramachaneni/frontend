@@ -77,6 +77,7 @@ import { SchedulerModalComponent } from './scheduler-modal/scheduler-modal.compo
 import { TaskLevelSchedulerComponent } from './task-level-scheduler/task-level-scheduler.component';
 import { ReviseScheduleComponent } from './revise-schedule/revise-schedule.component';
 import { TaskLevelTaskComponentsComponent } from './task-level-task-components/task-level-task-components.component';
+import { AlertModalComponent } from './scheduler-modal/alert-modal/alert-modal.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/operator-rounds/', '.json');
@@ -105,7 +106,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     SchedulerModalComponent,
     TaskLevelSchedulerComponent,
     TaskLevelTaskComponentsComponent,
-    ReviseScheduleComponent
+    ReviseScheduleComponent,
+    AlertModalComponent
   ],
   imports: [
     FormsModule,

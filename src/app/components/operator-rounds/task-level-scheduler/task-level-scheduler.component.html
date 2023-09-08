@@ -247,7 +247,7 @@
     ></app-task-level-task-components>
   </div>
   <ng-container *ngIf="openCloseRightPanel">
-    <div class="width-30 right-panel">
+    <div [@widthGrow]="state" class="right-panel">
       <app-revise-schedule
         [nodeIdToNodeName]="nodeIdToNodeName"
         [reviseSchedule]="_payload"
