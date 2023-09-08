@@ -11,7 +11,7 @@
 
   .main-scroll {
     overflow-y: auto;
-    height: calc(100vh - 285px);
+    height: calc(100vh - 280px);
   }
 
   .custom-main-scroll {
@@ -19,7 +19,7 @@
   }
 
   .selected-locations {
-    padding: 10px 15px 10px 15px;
+    padding: 10px 15px 3px 15px;
     border-bottom: 1px solid $border-color;
   }
 
@@ -31,16 +31,27 @@
     left: 3px;
   }
 
-  .scroll-locations {
+  .show-locations {
     overflow-y: auto;
-    max-height: 165px;
     background: $yellow-bg1;
     border-radius: 5px;
+    transition: all 0.9s linear;
+    max-height: 140px;
+    transition: max-height 0.5s linear;
+    margin-bottom: 12px;
+  }
+
+  .hide-locations {
+    overflow-y: auto;
+    background: $yellow-bg1;
+    border-radius: 5px;
+    transition: all 0.9s linear;
+    max-height: 0;
+    transition: max-height 0.5s linear;
   }
 
   .locations-list {
     border-bottom: 1px solid $yellow-border;
-    transition: all 0.5s ease-in-out;
     margin: 0 10px;
   }
 
@@ -175,20 +186,23 @@
   .revise-btn {
     background-color: $blue-main;
     color: $white;
-    width: 50%;
+    width: 49%;
+    height: 34px;
   }
 
   .revise-btn:disabled {
     background-color: $gray2-bg;
     color: $gray7;
-    width: 50%;
+    width: 49%;
+    height: 34px;
   }
 
   .cancel-btn {
     color: $blue-main;
     border-color: $blue-main;
-    margin-right: 7px;
+    margin-right: 8px;
     width: 49%;
+    height: 34px;
   }
 
   .by-date {

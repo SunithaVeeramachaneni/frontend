@@ -453,6 +453,10 @@ a {
   font-size: 80%;
 }
 
+.cursor-pointer {
+  cursor: pointer;
+}
+
 @media screen and (min-width: 769px) {
   .custom-modal-card {
     width: 640px;

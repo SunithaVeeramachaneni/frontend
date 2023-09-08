@@ -74,7 +74,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
         headerFrequency:
           this._payload.scheduleType === 'byDate'
             ? 'Custom Dates'
-            : `Every ${this._payload.repeatDuration} ${this._payload.repeatEvery},`,
+            : `Every ${this._payload.repeatDuration} ${this._payload.repeatEvery}`,
         shiftDetails: this.allSlots,
         slotDetails: this.allSlots,
         slotsCount: this.countOfSlots(this.allSlots)
