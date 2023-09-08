@@ -33,12 +33,7 @@ import {
 })
 export class AssignedToComponent implements OnInit, OnDestroy {
   @Input() set assigneeDetails(assigneeDetails: AssigneeDetails) {
-    this._assigneeDetails = assigneeDetails;
-    // this.searchInput.setValue('', { emitModelToViewChange: true });
     this.assigneeDetails$.next(assigneeDetails);
-  }
-  get assigneeDetails(): AssigneeDetails {
-    return this._assigneeDetails;
   }
   @Output() selectedAssignee: EventEmitter<SelectedAssignee> =
     new EventEmitter<SelectedAssignee>();
@@ -70,7 +65,6 @@ export class AssignedToComponent implements OnInit, OnDestroy {
   assigneeDetails$ = new BehaviorSubject({} as AssigneeDetails);
   private _assigneeType = 'user';
   private _showAssigneeOptions = false;
-  private _assigneeDetails: AssigneeDetails;
   private onDestroy$ = new Subject();
   constructor() {}
 
@@ -78,7 +72,10 @@ export class AssignedToComponent implements OnInit, OnDestroy {
     this.assigneeTypeControl.valueChanges
       .pipe(
         takeUntil(this.onDestroy$),
-        tap((type) => (this.assigneeType = type))
+        tap((type) => {
+          this.assigneeType = type;
+          this.searchInput.patchValue('');
+        })
       )
       .subscribe();
 
