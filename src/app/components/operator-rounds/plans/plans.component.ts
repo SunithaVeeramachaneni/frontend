@@ -54,6 +54,7 @@ import {
 import {
   dateFormat,
   graphQLDefaultLimit,
+  graphQLPlanLimit,
   permissions as perms
 } from 'src/app/app.constants';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
@@ -373,6 +374,7 @@ export class PlansComponent implements OnInit, OnDestroy {
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   skip = 0;
   limit = graphQLDefaultLimit;
+  plansLimit = graphQLPlanLimit;
   searchForm: FormControl;
   isPopoverOpen = false;
   roundPlanCounts = {
@@ -605,13 +607,13 @@ export class PlansComponent implements OnInit, OnDestroy {
 
         for (const item of this.filterJson) {
           if (item.column === 'assignedTo') {
-            item.items = this.assignedTo;
+            item.items = this.assignedTo.sort();
           }
           if (item.column === 'schedule') {
-            item.items = this.schedules;
+            item.items = this.schedules.sort();
           }
           if (item.column === 'shiftId') {
-            item.items = Object.values(this.activeShiftIdMap);
+            item.items = Object.values(this.activeShiftIdMap).sort();
           }
         }
         this.dataSource = new MatTableDataSource(filteredRoundPlans);
@@ -662,7 +664,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   getRoundPlanList() {
     const obj = {
       next: this.nextToken,
-      limit: this.limit,
+      limit: this.plansLimit,
       searchTerm: this.searchForm.value,
       fetchType: this.fetchType,
       roundPlanId: this.roundPlanId
@@ -952,6 +954,7 @@ export class PlansComponent implements OnInit, OnDestroy {
         }
       }
     }
+    this.cdrf.markForCheck();
   }
 
   rowLevelActionHandler = (event: RowLevelActionEvent) => {

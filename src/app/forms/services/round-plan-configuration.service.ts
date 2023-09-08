@@ -332,6 +332,7 @@ export class RoundPlanConfigurationService {
       position: questionIndex + 1,
       required: question ? question.required : false,
       enableHistory: question ? question.enableHistory : false,
+      historyCount: question ? question.historyCount : 5,
       multi: question ? question.multi : false,
       value: question ? question.value : 'TF',
       isPublished: false,
@@ -341,7 +342,10 @@ export class RoundPlanConfigurationService {
       unitOfMeasurement: question ? question.unitOfMeasurement : 'None',
       rangeMetadata: question
         ? question.rangeMetadata
-        : ({} as NumberRangeMetadata)
+        : ({} as NumberRangeMetadata),
+      additionalDetails: question?.additionalDetails
+        ? question.additionalDetails
+        : { tags: [], attributes: [] }
     };
   }
 }

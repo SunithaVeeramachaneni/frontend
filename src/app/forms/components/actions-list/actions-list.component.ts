@@ -285,6 +285,7 @@ export class ActionsListComponent implements OnInit, OnDestroy {
   filter = {
     title: '',
     location: '',
+    asset: '',
     plant: '',
     priority: '',
     status: '',
@@ -568,6 +569,7 @@ export class ActionsListComponent implements OnInit, OnDestroy {
     this.filter = {
       title: '',
       location: '',
+      asset: '',
       plant: '',
       priority: '',
       status: '',
