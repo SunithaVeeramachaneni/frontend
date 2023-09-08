@@ -558,9 +558,16 @@ export class OperatorRoundsDashboardComponent implements OnInit, OnDestroy {
   }
 
   openEmailDialog = () => {
+    const widgetsData = [];
+    (async () => {
+      for (let i = 0; i < this.widgets.length; i++) {
+        const imgData: any = await this.getWidgetImage(this.widgets[i].id);
+        widgetsData.push(imgData);
+      }
+    })();
     const dialogRef = this.dialog.open(EmailDialogComponent, {
       disableClose: true,
-      data: {}
+      data: { filters: this.dashboardForm.value, widgetsData }
     });
     dialogRef.afterClosed().subscribe((resp) => {
       if (Object.keys(resp).length && resp.toEmailIDs) {

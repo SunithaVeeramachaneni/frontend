@@ -3,6 +3,7 @@
 import {
   Component,
   OnInit,
+  Inject,
   ChangeDetectionStrategy,
   ElementRef,
   ViewChild,
@@ -13,10 +14,15 @@ import { FormControl } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { map, startWith, tap } from 'rxjs/operators';
+import { DatePipe, formatDate } from '@angular/common';
 
-import { MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UsersService } from '../../user-management/services/users.service';
+import { OperatorRoundsService } from '../services/operator-rounds.service';
+import { LoginService } from '../../login/services/login.service';
+import { DateUtilService } from 'src/app/shared/utils/dateUtils';
+import { ErrorInfo } from 'src/app/interfaces';
 
 @Component({
   selector: 'app-email-dialog',
@@ -49,8 +55,13 @@ export class EmailDialogComponent implements OnInit {
 
   constructor(
     private dialogRef: MatDialogRef<any>,
+    @Inject(MAT_DIALOG_DATA)
+    public data: any,
     private cdrf: ChangeDetectorRef,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private operatorRoundService: OperatorRoundsService,
+    private loginService: LoginService,
+    private readonly dateUtilService: DateUtilService
   ) {
     this.allUsers$ = this.usersService
       .getUsers$({
@@ -97,8 +108,75 @@ export class EmailDialogComponent implements OnInit {
     this.cdrf.detectChanges();
     return this.validEmailIDs;
   };
-  sendEmail = () => {
-    //
+  sendEmail = async () => {
+    const toEmailIDs = 'shiva.kanneboina@innovapptive.com';
+    const emailNotes = 'sample notes';
+    const bodyFormData = new FormData();
+    const { timePeriod, plantId, shiftId, startDate, endDate } =
+      this.data.filters;
+    bodyFormData.append('plantId', plantId);
+    bodyFormData.append('shiftId', shiftId);
+    bodyFormData.append('toEmailIDs', toEmailIDs);
+    bodyFormData.append('notes', emailNotes);
+
+    const userName = this.loginService.getLoggedInUserName();
+    bodyFormData.append('userName', userName);
+    let startDateTemp = startDate;
+    let endDateTemp = endDate;
+    const DATE_FORMAT = 'dd MMM yyyy';
+    if (timePeriod !== 'custom') {
+      const startEndDate = this.dateUtilService.getStartAndEndDates(
+        timePeriod,
+        startDateTemp,
+        endDateTemp
+      );
+      startDateTemp = formatDate(
+        new Date(startEndDate.startDate),
+        DATE_FORMAT,
+        'en-us'
+      );
+      endDateTemp = formatDate(
+        new Date(startEndDate.endDate),
+        DATE_FORMAT,
+        'en-us'
+      );
+      bodyFormData.append('timePeriod', `${startDateTemp} - ${endDateTemp}`);
+    } else {
+      startDateTemp = formatDate(new Date(startDate), DATE_FORMAT, 'en-us');
+      endDateTemp = formatDate(new Date(endDate), DATE_FORMAT, 'en-us');
+      bodyFormData.append('timePeriod', `${startDate} - ${endDate}`);
+    }
+    const { widgetsData = [] } = this.data;
+    for (let i = 0; i < widgetsData?.length; i++) {
+      // const imgData: any = await this.getWidgetImage(this.widgets[i].id);
+      bodyFormData.append('image', widgetsData[i]);
+    }
+    const info: ErrorInfo = {
+      displayToast: true,
+      failureResponse: 'throwError'
+    };
+    const customHeaders = {
+      headers: {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    };
+    console.log(bodyFormData);
+    this.operatorRoundService
+      .sendDashboardAsEmail$(bodyFormData, customHeaders, info)
+      .pipe(tap((resp: any) => {}))
+      .subscribe(
+        (res) => {
+          // this.emailMenuTrigger.closeMenu();
+          this.emailNotes = '';
+          this.toEmailIDs = '';
+        },
+        (err) => {
+          // this.emailMenuTrigger.closeMenu();
+          this.emailNotes = '';
+          this.toEmailIDs = '';
+        }
+      );
   };
 
   confirm() {
