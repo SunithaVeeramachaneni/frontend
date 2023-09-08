@@ -1163,12 +1163,17 @@ export class RoundsComponent implements OnInit, OnDestroy {
     }
 
     let { status } = this.selectedRoundInfo;
-    status =
-      status.toLowerCase() === 'open'
-        ? 'assigned'
-        : status.toLowerCase() === 'partly-open'
-        ? 'in-progress'
-        : status;
+
+    if (status.toLowerCase() === 'open' && assigneeType === 'user') {
+      status = 'assigned';
+    } else if (status.toLowerCase() === 'partly-open') {
+      status = 'in-progress';
+    } else if (
+      status.toLowerCase() === 'assigned' &&
+      assigneeType === 'userGroup'
+    ) {
+      status = 'open';
+    }
 
     this.operatorRoundsService
       .updateRound$(
