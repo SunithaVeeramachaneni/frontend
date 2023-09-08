@@ -363,7 +363,7 @@ export class ResponsesListComponent implements OnInit, OnDestroy {
       .fetchResponseSetList$({
         next: this.nextToken,
         limit: this.limit,
-        searchKey: this.searchResponseSet.value,
+        searchTerm: this.searchResponseSet.value,
         fetchType: this.fetchType
       })
       .pipe(

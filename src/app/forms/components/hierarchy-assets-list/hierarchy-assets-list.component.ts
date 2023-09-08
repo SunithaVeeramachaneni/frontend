@@ -9,6 +9,7 @@ import { FormControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { cloneDeep } from 'lodash-es';
 
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
 
@@ -90,8 +91,8 @@ export class HierarchyAssetsListComponent implements OnInit {
         this.searchMasterData.patchValue(node.name);
       }, 0);
 
-      const tempHierarchyList = JSON.parse(JSON.stringify(this.hierarchyList));
-      this.hierarchyList = this.assetHierarchyUtil.toggleSearchSelectedNode(
+      const tempHierarchyList = cloneDeep(this.hierarchyList);
+      this.assetHierarchyUtil.toggleSearchSelectedNode(
         node.uid,
         tempHierarchyList
       );
