@@ -101,6 +101,8 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
 
   public responseForm: FormGroup;
   public rangeMetadataForm: FormGroup;
+  public additionalDetailsForm: FormGroup;
+  public sliderOptionsForm: FormGroup;
 
   public isFormNotUpdated = true;
   multipleChoiceOpenState = false;
@@ -121,6 +123,25 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
     max: 100,
     increment: 1
   };
+
+  additionalDetailsOpenState: AdditionalDetailsState = {
+    isOpen: false,
+    questionId: '',
+    additionalDetails: {} as AdditionalDetails
+  };
+
+  tagsCtrl = new FormControl();
+  filteredTags: Observable<string[]>;
+  tags: string[] = [];
+  allTags: string[] = [];
+  originalTags: string[] = [];
+  attributesIdMap = {};
+  attributes: FormArray;
+  changedValues: any;
+  filteredLabels$: Observable<any>;
+  filteredValues$: Observable<any>;
+  labels: any = {};
+  errors: ValidationError = {};
 
   lowerLimitActions = ['None', 'Warning', 'Alert', 'Note'];
   upperLimitActions = ['None', 'Warning', 'Alert', 'Note'];
@@ -172,6 +193,21 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
       maxMsg: '',
       minAction: 'None',
       maxAction: 'None'
+    });
+
+    this.additionalDetailsForm = this.fb.group({
+      tags: [],
+      attributes: this.fb.array([])
+    });
+
+    this.patchTags(this.question.additionalDetails?.tags || []);
+    this.retrieveDetails();
+
+    this.sliderOptionsForm = this.fb.group({
+      value: 0,
+      min: 0,
+      max: 100,
+      increment: 1
     });
 
     this.sliderOpenState$ = this.formService.sliderOpenState$;
@@ -278,6 +314,122 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
+
+    this.sliderOptionsForm.valueChanges
+      .pipe(
+        pairwise(),
+        debounceTime(500),
+        distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
+        tap(([prev, curr]) => {
+          if (isEqual(prev, curr)) {
+            this.isFormNotUpdated = true;
+          } else {
+            this.isFormNotUpdated = false;
+          }
+          this.cdrf.markForCheck();
+        })
+      )
+      .subscribe();
+
+    this.additionalDetailsForm.valueChanges
+      .pipe(
+        pairwise(),
+        debounceTime(500),
+        distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
+        tap(([prev, curr]) => {
+          if (isEqual(prev, curr)) {
+            this.isFormNotUpdated = true;
+          } else {
+            this.isFormNotUpdated = false;
+          }
+          this.cdrf.markForCheck();
+        })
+      )
+      .subscribe();
+  }
+
+  patchTags(values: any[]): void {
+    this.tags = values;
+  }
+
+  updateAttributesArray(values) {
+    if (Array.isArray(values)) {
+      const formGroups = values?.map((value) =>
+        this.fb.group({
+          label: [
+            value.FIELDLABEL,
+            [
+              Validators.maxLength(25),
+              WhiteSpaceValidator.trimWhiteSpace,
+              WhiteSpaceValidator.whiteSpace
+            ]
+          ],
+          value: [
+            value.DEFAULTVALUE,
+            [
+              Validators.maxLength(40),
+              WhiteSpaceValidator.trimWhiteSpace,
+              WhiteSpaceValidator.whiteSpace
+            ]
+          ]
+        })
+      );
+      const formArray = this.fb.array(formGroups);
+      this.additionalDetailsForm.setControl('attributes', formArray);
+    }
+  }
+
+  add(event: MatChipInputEvent): void {
+    const input = event.input;
+    const value = event.value || '';
+
+    if (value.trim()) {
+      this.tags = [...this.tags, value.trim()];
+    }
+
+    if (input) {
+      input.value = '';
+    }
+
+    this.tagsCtrl.setValue(null);
+  }
+
+  openAutoComplete() {
+    this.auto.openPanel();
+  }
+
+  remove(tag: string): void {
+    const idx = this.allTags.indexOf(tag);
+    if (idx < 0) this.allTags.push(tag);
+    const index = this.tags.indexOf(tag);
+
+    if (index >= 0) {
+      this.tags = [...this.tags.slice(0, index), ...this.tags.slice(index + 1)];
+      this.tagsInput.nativeElement.value = '';
+      this.tagsCtrl.setValue(null);
+      this.additionalDetailsForm.patchValue({
+        ...this.additionalDetailsForm.value,
+        tags: this.tags
+      });
+    }
+  }
+
+  selected(event: MatAutocompleteSelectedEvent): void {
+    const index = this.allTags.indexOf(event.option.viewValue);
+
+    if (index >= 0) {
+      this.allTags.splice(index, 1);
+    }
+
+    this.tags = [...this.tags, event.option.viewValue];
+    this.tagsInput.nativeElement.value = '';
+    this.tagsCtrl.setValue(null);
+    this.additionalDetailsForm.patchValue({
+      ...this.additionalDetailsForm.value,
+      tags: this.tags
+    });
   }
 
   get responses(): FormArray {

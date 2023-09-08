@@ -18,6 +18,14 @@
     padding: 0px !important;
   }
 
+  ::ng-deep .mat-card-title {
+    margin-bottom: 0px !important;
+  }
+
+  .slider-input-container {
+    width: 48%;
+  }
+
   .mcq-heading {
     font-size: 1.2rem;
     border-bottom: 1px solid $border-color;
@@ -303,6 +311,46 @@
   .cancelBtn {
     width: 48%;
     margin-right: 10px;
+  }
+}
+.additionalDetailsFooter {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  padding: 10px;
+  height: 40px;
+  align-items: center;
+  width: 94%;
+  justify-content: center;
+  .submitBtn {
+    width: 48%;
+  }
+  .cancelBtn {
+    width: 48%;
+    margin-right: 10px;
+  }
+}
+.sliderFooter {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  padding: 12px 16px;
+  height: 40px;
+  align-items: center;
+  width: 94%;
+  justify-content: center;
+  .apply-slider-btn {
+    width: 48%;
+    background-color: $blue-main;
+  }
+
+  .cancel-slider {
+    width: 48%;
+    margin-right: 10px;
+    border: 1px solid $blue-main;
+    color: $blue-main;
   }
 }
 .rangeLimitContainer {
