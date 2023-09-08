@@ -36,7 +36,7 @@ export class SchedulerModalComponent implements OnInit {
 
   goBack() {
     const alertDialog = this.dialog.open(AlertModalComponent, {
-      height: '150px',
+      height: '142px',
       width: '400px'
     });
     alertDialog.afterClosed().subscribe((res) => {

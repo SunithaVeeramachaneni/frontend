@@ -2,6 +2,10 @@
   padding: 12px 15px;
   overflow: hidden;
 
+  .title {
+    margin-bottom: 10px !important;
+  }
+
   ::ng-deep .mat-dialog-actions {
     justify-content: flex-end;
     margin-top: 5px;

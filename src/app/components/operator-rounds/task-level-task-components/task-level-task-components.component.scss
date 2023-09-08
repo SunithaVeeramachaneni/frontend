@@ -115,3 +115,54 @@
     margin-top: 1px;
   }
 }
+
+.revised-state {
+  color: $blue-main;
+  cursor: pointer;
+}
+
+.revised-hover-container:hover {
+  background-color: $gray;
+}
+
+.status-div {
+  display: grid;
+}
+
+.status {
+  text-align: right;
+  margin: 0 15px 0 0;
+}
+
+.show-revised-content {
+  display: block;
+  height: 0;
+  overflow: hidden;
+  transition: height 0.5s linear;
+  background: $gray;
+  color: $black;
+
+  p {
+    margin: 10px;
+  }
+
+  .revised-title {
+    font-size: 120%;
+    font-weight: 500;
+  }
+
+  .revised-slots {
+    p {
+      margin: 0 0 5px 5px;
+    }
+  }
+
+  .revised-value {
+    font-size: 110%;
+  }
+}
+
+.revised-hover-me:hover .show-revised-content {
+  height: 130px;
+  max-height: 300px;
+}

@@ -34,6 +34,7 @@ export class TaskLevelTaskComponentsComponent implements OnInit {
   questionToSectionId: Map<number, any[]> = new Map();
   allCheckedSection = false;
   partiallyFilledSection = false;
+  revisedQuestionData: any;
   private _checkboxStatus: any;
   private _selectedPage: any;
   constructor(private operatorRoundService: OperatorRoundsService) {}
@@ -125,5 +126,9 @@ export class TaskLevelTaskComponentsComponent implements OnInit {
     });
 
     if (checkboxStatus) this.isOpenThirdPanel.emit(true);
+  }
+
+  getData(question) {
+    this.revisedQuestionData = question;
   }
 }

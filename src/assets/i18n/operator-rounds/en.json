@@ -373,5 +373,6 @@
   "scheduleByDate": "Schedule by Date",
   "slots": "Slots",
   "reviseBtn": "Revise",
-  "revised": "Revised"
+  "revised": "Revised",
+  "taskLevel": "Task Level"
 }

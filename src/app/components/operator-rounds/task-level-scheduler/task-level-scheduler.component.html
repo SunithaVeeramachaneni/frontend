@@ -47,7 +47,7 @@
               let i = index
             "
           >
-            {{ shift.name ? shift.name : '-' }}
+            {{ shift.name ? shift.name : '--' }}
             <span
               *ngIf="
                 i !==
@@ -116,7 +116,7 @@
             {{
               taskLevelScheduleHeaderConfiguration?.assigneeDetails
                 ? taskLevelScheduleHeaderConfiguration?.assigneeDetails
-                : '-'
+                : '--'
             }}
           </span>
         </div>

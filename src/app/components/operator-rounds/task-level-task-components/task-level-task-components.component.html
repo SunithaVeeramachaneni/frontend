@@ -1,108 +1,154 @@
-<div *ngFor="let page of selectedPage" class="task-level-tasks">
-  <div class="task-title-div">
+<div class="task-level-tasks">
+  <div class="task-title-div" *ngIf="selectedPage">
     <span class="task-title">Tasks: {{ selectedNode.name }}</span>
     <span class="task-title float-right">Frequency</span>
   </div>
-  <div class="pages">
-    <div class="page-header">
-      <mat-icon
-        id="pageExpandIcon"
-        (click)="toggleIsOpenStatePage(page)"
-        class="page-arrow"
-        *ngIf="page.isOpen"
-      >
-        expand_more
-      </mat-icon>
-      <mat-icon
-        id="pageRightIcon"
-        (click)="toggleIsOpenStatePage(page)"
-        class="page-arrow"
-        *ngIf="!page.isOpen"
-      >
-        chevron_right
-      </mat-icon>
+  <div *ngFor="let page of selectedPage">
+    <div class="pages">
+      <div class="page-header">
+        <mat-icon
+          id="pageExpandIcon"
+          (click)="toggleIsOpenStatePage(page)"
+          class="page-arrow"
+          *ngIf="page.isOpen"
+        >
+          expand_more
+        </mat-icon>
+        <mat-icon
+          id="pageRightIcon"
+          (click)="toggleIsOpenStatePage(page)"
+          class="page-arrow"
+          *ngIf="!page.isOpen"
+        >
+          chevron_right
+        </mat-icon>
 
-      <mat-checkbox
-        class="page-checkbox"
-        [checked]="page.complete"
-        [indeterminate]="page.partiallyChecked"
-        (change)="toggleAllSectionCheckbox($event.checked, page)"
-      ></mat-checkbox>
+        <mat-checkbox
+          class="page-checkbox"
+          [checked]="page.complete"
+          [indeterminate]="page.partiallyChecked"
+          (change)="toggleAllSectionCheckbox($event.checked, page)"
+        ></mat-checkbox>
 
-      <span class="form_page_name_input">{{ page.name }} </span>
-    </div>
-    <div class="section-content" *ngIf="page.isOpen">
-      <div *ngFor="let section of page.sections">
-        <div class="section dis-flex">
-          <div class="width-100 section-margin">
-            <div class="section-header">
-              <mat-icon
-                id="sectionExpandMore"
-                (click)="toggleIsOpenStateSection(section)"
-                class="section-arrow"
-                *ngIf="section.isOpen"
-              >
-                expand_more
-              </mat-icon>
-              <mat-icon
-                id="sectionArrow"
-                (click)="toggleIsOpenStateSection(section)"
-                class="section-arrow"
-                *ngIf="!section.isOpen"
-              >
-                chevron_right
-              </mat-icon>
-              <mat-checkbox
-                class="section-checkbox"
-                [checked]="section.complete"
-                [indeterminate]="section.partiallyChecked"
-                (change)="
-                  toggleAllSectionQuestion($event.checked, section, page)
-                "
-              ></mat-checkbox>
+        <span class="form_page_name_input">{{ page.name }} </span>
+      </div>
+      <div class="section-content" *ngIf="page.isOpen">
+        <div *ngFor="let section of page.sections">
+          <div class="section dis-flex">
+            <div class="width-100 section-margin">
+              <div class="section-header">
+                <mat-icon
+                  id="sectionExpandMore"
+                  (click)="toggleIsOpenStateSection(section)"
+                  class="section-arrow"
+                  *ngIf="section.isOpen"
+                >
+                  expand_more
+                </mat-icon>
+                <mat-icon
+                  id="sectionArrow"
+                  (click)="toggleIsOpenStateSection(section)"
+                  class="section-arrow"
+                  *ngIf="!section.isOpen"
+                >
+                  chevron_right
+                </mat-icon>
+                <mat-checkbox
+                  class="section-checkbox"
+                  [checked]="section.complete"
+                  [indeterminate]="section.partiallyChecked"
+                  (change)="
+                    toggleAllSectionQuestion($event.checked, section, page)
+                  "
+                ></mat-checkbox>
 
-              <span class="form_section_name_input">{{ section.name }}</span>
-            </div>
-            <div class="questions-content" *ngIf="section.isOpen">
-              <div
-                *ngFor="let question of questionToSection.get(section['id'])"
-              >
-                <div class="questions">
-                  <div
-                    class="dis-flex questions-div"
-                    [ngClass]="{ highlight: question.complete }"
-                  >
-                    <div class="width-70">
-                      <div class="width-100" class="dis-flex">
-                        <mat-checkbox
-                          class="question-checkbox"
-                          [checked]="question.complete"
-                          (change)="
-                            toggleAllQuestion(
-                              $event.checked,
-                              question,
-                              section,
-                              page
-                            )
+                <span class="form_section_name_input">{{ section.name }}</span>
+              </div>
+              <div class="questions-content" *ngIf="section.isOpen">
+                <div
+                  *ngFor="let question of questionToSection.get(section['id'])"
+                >
+                  <div class="questions">
+                    <div
+                      class="dis-flex questions-div revised-hover-container"
+                      [ngClass]="{ highlight: question.complete }"
+                    >
+                      <div class="width-70">
+                        <div class="width-100" class="dis-flex">
+                          <mat-checkbox
+                            class="question-checkbox questions"
+                            [checked]="question.complete"
+                            (change)="
+                              toggleAllQuestion(
+                                $event.checked,
+                                question,
+                                section,
+                                page
+                              )
+                            "
+                          ></mat-checkbox>
+                          <div class="task-question">{{ question.name }}</div>
+                        </div>
+                      </div>
+                      <div class="width-30">
+                        <div
+                          *ngIf="!displayTaskLevelConfig.get(question.id)"
+                          class="status-div"
+                        >
+                          <p class="status" translate>header</p>
+                        </div>
+                        <div
+                          *ngIf="displayTaskLevelConfig.get(question.id)"
+                          class="revised-state revised-hover-me status-div"
+                          (mouseenter)="
+                            getData(displayTaskLevelConfig.get(question.id))
                           "
-                        ></mat-checkbox>
-                        <div class="task-question">{{ question.name }}</div>
+                        >
+                          <p class="status" translate>revised</p>
+
+                          <div class="show-revised-content">
+                            <p
+                              *ngIf="
+                                revisedQuestionData?.scheduleType ===
+                                'byFrequency'
+                              "
+                            >
+                              <span class="revised-title">
+                                Revised Frequency:
+                              </span>
+                              <span class="revised-value">
+                                Every {{ revisedQuestionData?.repeatDuration }}
+                                {{ revisedQuestionData?.repeatEvery }}
+                              </span>
+                            </p>
+                            <p
+                              *ngIf="
+                                revisedQuestionData?.scheduleType === 'byDate'
+                              "
+                            >
+                              <span class="revised-title">
+                                Revised Dates:
+                              </span>
+                              <span class="revised-value">
+                                Every {{ revisedQuestionData?.repeatDuration }}
+                                {{ revisedQuestionData?.repeatEvery }}
+                              </span>
+                            </p>
+                            <p>
+                              <span class="revised-title">Shifts: </span>
+                              <span class="revised-value"> ShiftA </span>
+                            </p>
+                            <div class="dis-flex m-l-10">
+                              <span class="revised-title">Slots: </span>
+                              <div class="revised-slots">
+                                <p class="revised-value">12:00 - 22:00,</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- displayTaskLevelConfig.get(question.id) will provide configuration of that particular question -->
                       </div>
-                    </div>
-                    <div class="width-10">
-                      <div
-                        *ngIf="displayTaskLevelConfig.get(question.id)"
-                        translate
-                      >
-                        revised
-                      </div>
-                      <div
-                        *ngIf="!displayTaskLevelConfig.get(question.id)"
-                        translate
-                      >
-                        header
-                      </div>
-                      <!-- displayTaskLevelConfig.get(question.id) will provide configuration of that particular question -->
                     </div>
                   </div>
                 </div>
