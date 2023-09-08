@@ -20,11 +20,10 @@
         </mat-select>
       </mat-form-field>
       <div class="form-field-wrapper">
-        <span class="field-label">Data Synchronization</span>
+        <span class="field-label" translate="dataSyncTxt"></span>
         <mat-radio-group aria-label="Select an option" formControlName="syncType">
-          <mat-radio-button value="realtime" class="radio-group-option" translate="realtime"></mat-radio-button>
-          <mat-radio-button value="scheduled" class="radio-group-option" translate="scheduled"
-            disabled></mat-radio-button>
+          <mat-radio-button value="realtime" class="radio-group-option">Real-time</mat-radio-button>
+          <mat-radio-button value="scheduled" class="radio-group-option" disabled>Scheduled</mat-radio-button>
         </mat-radio-group>
       </div>
       <div class="schedule-wrapper" *ngIf="integrationConfigForm.value.syncType ==='scheduled' ">
