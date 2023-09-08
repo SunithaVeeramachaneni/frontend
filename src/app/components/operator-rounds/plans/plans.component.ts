@@ -55,6 +55,7 @@ import {
 import {
   dateFormat,
   graphQLDefaultLimit,
+  graphQLPlanLimit,
   permissions as perms
 } from 'src/app/app.constants';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
@@ -387,6 +388,7 @@ export class PlansComponent implements OnInit, OnDestroy {
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   skip = 0;
   limit = graphQLDefaultLimit;
+  plansLimit = graphQLPlanLimit;
   searchForm: FormControl;
   isPopoverOpen = false;
   roundPlanCounts = {
@@ -678,7 +680,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   getRoundPlanList() {
     const obj = {
       next: this.nextToken,
-      limit: this.limit,
+      limit: this.plansLimit,
       searchTerm: this.searchForm.value,
       fetchType: this.fetchType,
       roundPlanId: this.roundPlanId
@@ -968,6 +970,7 @@ export class PlansComponent implements OnInit, OnDestroy {
         }
       }
     }
+    this.cdrf.markForCheck();
   }
 
   rowLevelActionHandler = (event: RowLevelActionEvent) => {
