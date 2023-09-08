@@ -1382,7 +1382,19 @@ export class ScheduleConfigurationComponent
               id: foundShift?.id,
               name: foundShift?.name,
               startTime: foundShift?.startTime,
-              endTime: foundShift?.endTime
+              endTime: foundShift?.endTime,
+              payload: [
+                {
+                  startTime:
+                    this.scheduleConfigurationService.convertTo12HourFormat(
+                      foundShift?.startTime
+                    ),
+                  endTime:
+                    this.scheduleConfigurationService.convertTo12HourFormat(
+                      foundShift?.endTime
+                    )
+                }
+              ]
             })
           );
         }
@@ -1403,7 +1415,22 @@ export class ScheduleConfigurationComponent
       this.shiftSlots.clear();
       this.shiftApiResponse = null;
       this.shiftDetails = shiftDefaultPayload;
-      this.shiftSlots.push(this.addShiftDetails(true));
+      if (this.shiftDetails) {
+        this.shiftSlots.push(
+          this.addShiftDetails(false, {
+            null: {
+              startTime: this.shiftDetails?.null[0]?.startTime,
+              endTime: this.shiftDetails?.null[0]?.endTime,
+              payload: [
+                {
+                  startTime: this.shiftDetails?.null[0]?.startTime,
+                  endTime: this.shiftDetails?.null[0]?.endTime
+                }
+              ]
+            }
+          })
+        );
+      }
     }
     this.scheduleConfigurationService.setSlotChanged(true);
   }
