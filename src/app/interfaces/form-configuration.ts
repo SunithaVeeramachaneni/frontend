@@ -66,6 +66,7 @@ export interface Question {
   isResponseTypeModalOpen: boolean;
   unitOfMeasurement?: string;
   rangeMetadata?: NumberRangeMetadata;
+  additionalDetails?: AdditionalDetails;
   skipIdGeneration?: boolean;
   createdAt?: string;
   updatedAt?: string;
@@ -87,6 +88,11 @@ export interface NumberRangeMetadata {
   minMsg: string;
   maxMsg: string;
   value: number;
+}
+
+export interface AdditionalDetails {
+  tags: any[];
+  attributes: any[];
 }
 
 export interface PageEvent {

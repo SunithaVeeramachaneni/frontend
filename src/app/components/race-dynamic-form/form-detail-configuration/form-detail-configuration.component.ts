@@ -50,6 +50,7 @@ import { FormConfigurationService } from 'src/app/forms/services/form-configurat
 import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
 import { SaveTemplateContainerComponent } from '../save-template-container/save-template-container.component';
 import { RaceDynamicFormService } from '../services/rdf.service';
+import { FormService } from 'src/app/forms/services/form.service';
 
 @Component({
   selector: 'app-form-detail-configuration',
@@ -104,10 +105,18 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
     private cdrf: ChangeDetectorRef,
     private formConfigurationService: FormConfigurationService,
     private loginService: LoginService,
-    private rdfService: RaceDynamicFormService
+    private rdfService: RaceDynamicFormService,
+    private formService: FormService
   ) {}
 
   ngOnInit(): void {
+    this.rdfService.getDataSetsByType$('formDetailTags').subscribe((tags) => {
+      if (tags && tags.length)
+        this.formService.setDetailLevelTagsState(tags[0].values);
+    });
+
+    this.retrieveDetails();
+
     this.formConfiguration = this.fb.group({
       id: [''],
       formLogo: [''],
@@ -427,6 +436,33 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
         }
       }
     });
+  }
+
+  retrieveDetails() {
+    this.rdfService
+      .getAdditionalDetails$({
+        type: 'forms',
+        level: 'detail'
+      })
+      .subscribe((details: any[]) => {
+        const labels = this.convertArrayToObject(details);
+        const attributesIdMap = {};
+        details.forEach((data) => {
+          attributesIdMap[data.label] = data.id;
+        });
+        this.formService.setDetailLevelAttributesState({
+          labels,
+          attributesIdMap
+        });
+      });
+  }
+
+  convertArrayToObject(details) {
+    const convertedDetail = {};
+    details.map((obj) => {
+      convertedDetail[obj.label] = obj.values;
+    });
+    return convertedDetail;
   }
 
   editFormName() {
