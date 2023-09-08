@@ -5,7 +5,7 @@
       *ngIf="dashboards$ | async as dashboards" (selectionChange)="dashboardSelectionChanged($event)">
       <ng-container *ngFor="let dashboard of dashboards.concat(staticDropDownOptions)">
         <ng-container *ngIf="dashboard.id === 'CREATE_DASHBOARD'; else displayOptions">
-          <ng-container *appCheckUserHasPermission="[permissions.createDashboard]">
+          <ng-container *appCheckUserHasPermission="[permissions.createDashboard,permissions.createOPRDashboard]">
             <mat-option [value]="dashboard">
               <a class="dropdown-dashboard-name-ellipsis">
                 {{ dashboard.name | translate }}
@@ -36,7 +36,10 @@
     <ng-container *appCheckUserHasPermission="[
         permissions.updateDashboard,
         permissions.copyDashboard,
-        permissions.deleteDashboard
+        permissions.deleteDashboard,
+        permissions.updateOPRDashboard,
+        permissions.copyOPRDashboard,
+        permissions.deleteOPRDashboard
       ]">
       <button [matMenuTriggerFor]="menu" class="more-icon" *ngIf="dashboardDisplayMode !== 'ALL'"
         [ngClass]="dashboardDisplayMode === 'ALL' ? 'more-icon-all' : ''" aria-label="More Options">
@@ -46,20 +49,20 @@
 
     <mat-menu #menu="matMenu" xPosition="before">
       <button mat-menu-item (click)="editDashboard(dashboard)"
-        *appCheckUserHasPermission="[permissions.updateDashboard]" translate>
+        *appCheckUserHasPermission="[permissions.updateDashboard,permissions.updateOPRDashboard]" translate>
         edit
       </button>
-      <button mat-menu-item (click)="copyDashboard(dashboard)" *appCheckUserHasPermission="[permissions.copyDashboard]"
-        translate>
+      <button mat-menu-item (click)="copyDashboard(dashboard)"
+        *appCheckUserHasPermission="[permissions.copyDashboard,permissions.copyOPRDashboard]" translate>
         copy
       </button>
-      <ng-container *appCheckUserHasPermission="[permissions.updateDashboard]">
+      <ng-container *appCheckUserHasPermission="[permissions.updateDashboard,permissions.updateOPRDashboard]">
         <button mat-menu-item (click)="markDashboardDefault(dashboard)" *ngIf="!dashboard.isDefault" translate>
           markDefault
         </button>
       </ng-container>
       <button mat-menu-item class="delete-menu-item" (click)="deleteDashboard(dashboard)"
-        *appCheckUserHasPermission="[permissions.deleteDashboard]" translate>
+        *appCheckUserHasPermission="[permissions.deleteDashboard,permissions.deleteOPRDashboard]" translate>
         delete
       </button>
     </mat-menu>
@@ -71,7 +74,7 @@
       <span class="widget-count-text" translate="widgetsText"></span>
     </span>
     <button class="new-widget-btn" translate="newWidget" [disabled]="!dashboard.id" (click)="createWidget()"
-      *appCheckUserHasPermission="[permissions.createDashboard]"></button>
+      *appCheckUserHasPermission="[permissions.createDashboard,permissions.createOPRDashboard]"></button>
   </div>
 </div>
 <mat-divider></mat-divider>
@@ -88,20 +91,24 @@
           <button [matMenuTriggerFor]="widgetMenu" class="more-icon" *appCheckUserHasPermission="[
               permissions.updateDashboard,
               permissions.copyDashboard,
-              permissions.deleteDashboard
+              permissions.deleteDashboard,
+              permissions.updateOPRDashboard,
+              permissions.copyOPRDashboard,
+              permissions.deleteOPRDashboard
             ]" aria-label="More Options">
             <svg-icon icon="icon-more" class="more-icon-no-color"></svg-icon>
           </button>
           <mat-menu #widgetMenu="matMenu">
             <button mat-menu-item (click)="editWidget(widget)"
-              *appCheckUserHasPermission="[permissions.updateDashboard]">
+              *appCheckUserHasPermission="[permissions.updateDashboard,permissions.updateOPRDashboard]">
               <span translate>editWidget</span>
             </button>
-            <button mat-menu-item (click)="copyWidget(widget)" *appCheckUserHasPermission="[permissions.copyDashboard]">
+            <button mat-menu-item (click)="copyWidget(widget)"
+              *appCheckUserHasPermission="[permissions.copyDashboard,permissions.copyOPRDashboard]">
               <span translate>copyWidget</span>
             </button>
             <button mat-menu-item (click)="deleteWidget(widget)" class="text-red"
-              *appCheckUserHasPermission="[permissions.deleteDashboard]">
+              *appCheckUserHasPermission="[permissions.deleteDashboard,permissions.deleteOPRDashboard]">
               <span translate>deleteWidget</span>
             </button>
           </mat-menu>

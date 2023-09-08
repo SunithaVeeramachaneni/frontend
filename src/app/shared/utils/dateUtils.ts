@@ -13,6 +13,7 @@ export class DateUtilService {
 
   getStartAndEndDates(timePeriod, customStartDate, customEndDate): any {
     const today = new Date();
+    const yesterday = new Date(Date.now() - 86400000);
     let startDate;
     let endDate;
     switch (timePeriod) {
@@ -20,20 +21,24 @@ export class DateUtilService {
         // eslint-disable-next-line no-case-declarations
         const todayClone1 = new Date(today.getTime());
         startDate = todayClone1.setMonth(todayClone1.getMonth() - 6);
-        endDate = today;
+        endDate = yesterday;
         break;
       case 'last_3_months':
         // eslint-disable-next-line no-case-declarations
         const todayClone2 = new Date(today.getTime());
         startDate = todayClone2.setMonth(todayClone2.getMonth() - 3);
+        endDate = yesterday;
+        break;
+      case 'last_month':
+        startDate = new Date(Date.now() - 31 * 24 * 60 * 60 * 1000);
         endDate = today;
         break;
-      case 'this_week':
-        startDate = new Date(today.setDate(today.getDate() - today.getDay()));
-        endDate = new Date(today.setDate(today.getDate() - today.getDay() + 6));
+      case 'last_week':
+        startDate = new Date(Date.now() - 8 * 24 * 60 * 60 * 1000);
+        endDate = yesterday;
         break;
-      case 'this_month':
-        startDate = new Date(today.getFullYear(), today.getMonth(), 1);
+      case 'last_day':
+        startDate = yesterday;
         endDate = today;
         break;
       case 'custom':

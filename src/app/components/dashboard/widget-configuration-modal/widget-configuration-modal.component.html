@@ -78,7 +78,7 @@
                   <app-horizontal-stacked-chart [chartConfig]="chartConfig" [chartData]="data">
                   </app-horizontal-stacked-chart>
                 </ng-container>
-                
+
                 <ng-container *ngIf="chartVarient === 'multiline'">
                   <app-multi-line-chart [chartConfig]="chartConfig" [chartData]="data">
                   </app-multi-line-chart>
@@ -133,7 +133,9 @@
         !isChartVarientFormValid
       " *appCheckUserHasPermission="[
         permissions.createDashboard,
-        permissions.updateDashboard
+        permissions.updateDashboard,
+        permissions.createOPRDashboard,
+        permissions.updateOPRDashboard
       ]">
       Save
     </button>

@@ -11,7 +11,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     data: {
       breadcrumb: { label: 'Integrations Manager' },
-      permissions: [permissions.viewDashboards]
+      permissions: [permissions.viewIntegration]
     }
   }
 ];

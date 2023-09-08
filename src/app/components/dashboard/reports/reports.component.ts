@@ -294,14 +294,15 @@ export class ReportsComponent implements OnInit {
       data: { id, name, isFavorite }
     } = event;
     let report;
+    const moduleName = `operator-rounds`;
     switch (action) {
       case 'preview':
-        this.router.navigate(['dashboard/reports/editreport', id], {
+        this.router.navigate([`${moduleName}/editreport`, id], {
           queryParams: { preview: true }
         });
         break;
       case 'edit':
-        this.router.navigate(['dashboard/reports/editreport', id]);
+        this.router.navigate([`${moduleName}/reports/editreport`, id]);
         break;
       case 'delete':
         this.reportService.getWidgets$(id).subscribe((groupedWidgets) => {

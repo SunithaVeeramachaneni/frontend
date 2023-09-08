@@ -80,6 +80,7 @@ import { RoundPlanModalComponent } from './round-plan-modal/round-plan-modal.com
 // import { WidgetComponent } from '../dashboard/widget/widget.component';
 import { DashboardModule } from '../dashboard/dashboard.module';
 import { OperatorRoundsDashboardComponent } from './operator-rounds-dashboard/operator-rounds-dashboard.component';
+import { EmailDialogComponent } from './email-dialog/email-dialog.component';
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/operator-rounds/', '.json');
 
@@ -104,7 +105,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     AssetsModalComponent,
     RoundObservationsComponent,
     RoundPlanModalComponent,
-    RoundPlanEditViewComponent
+    RoundPlanEditViewComponent,
+    EmailDialogComponent
   ],
   imports: [
     FormsModule,

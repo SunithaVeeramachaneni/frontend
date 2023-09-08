@@ -1,67 +1,33 @@
 <div class="report-configuration">
-  <div
-    class="content-div"
-    *ngIf="reportDetails$ | async as reportDetails; else loading"
-  >
-    <div
-      class="column1"
-      [ngStyle]="{ display: showPreview ? 'none' : 'block' }"
-    >
+  <div class="content-div" *ngIf="reportDetails$ | async as reportDetails; else loading">
+    <div class="column1" [ngStyle]="{ display: showPreview ? 'none' : 'block' }">
       <div class="report-name-col dis-flex custom-form-field-gray-color">
         <div class="width-80 m-t-14">
           <mat-form-field appearance="outline" class="m-r-10 width-100">
             <mat-label translate>reportName</mat-label>
-            <svg-icon
-              matSuffix
-              *ngIf="reportNameDisabled"
-              icon="icon-edit-icon-gray"
-              (click)="toggleReportInputField()"
-              class="report-edit-icon"
-            ></svg-icon>
-            <input
-              matInput
-              *ngIf="reportNameDisabled"
-              [value]="reportTitle.value"
-              disabled
-              class="report-input"
-            />
-            <input
-              [formControl]="reportTitle"
-              matInput
-              type="text"
-              (keyup)="updateReportTitleHeaders($event)"
-              (blur)="toggleReportInputField()"
-              [hidden]="reportNameDisabled"
-            />
+            <svg-icon matSuffix *ngIf="reportNameDisabled" icon="icon-edit-icon-gray" (click)="toggleReportInputField()"
+              class="report-edit-icon"></svg-icon>
+            <input matInput *ngIf="reportNameDisabled" [value]="reportTitle.value" disabled class="report-input" />
+            <input [formControl]="reportTitle" matInput type="text" (keyup)="updateReportTitleHeaders($event)"
+              (blur)="toggleReportInputField()" [hidden]="reportNameDisabled" />
           </mat-form-field>
-          <mat-error
-            class="report-name-error"
-            *ngIf="processValidationErrors('reportTitle')"
-          >
+          <mat-error class="report-name-error" *ngIf="processValidationErrors('reportTitle')">
             {{
-              errors.reportTitle.name
-                | translate
-                  : {
-                      name: 'reportName' | translate,
-                      length: errors.reportTitle.length
-                    }
+            errors.reportTitle.name
+            | translate
+            : {
+            name: 'reportName' | translate,
+            length: errors.reportTitle.length
+            }
             }}
           </mat-error>
         </div>
 
         <a (click)="favoriteToggle()" class="favorite-toggle width-20">
-          <span
-            *ngIf="!reportDetails.report?.isFavorite"
-            matTooltip="Mark as Favorite"
-            matTooltipClass=""
-          >
+          <span *ngIf="!reportDetails.report?.isFavorite" matTooltip="Mark as Favorite" matTooltipClass="">
             <svg-icon icon="icon-favriotes" class="favorite-icon"></svg-icon>
           </span>
-          <span
-            *ngIf="reportDetails.report?.isFavorite"
-            matTooltip="Un-Favorite"
-            matTooltipClass=""
-          >
+          <span *ngIf="reportDetails.report?.isFavorite" matTooltip="Un-Favorite" matTooltipClass="">
             <svg-icon icon="icon-fav-fill" class="favorite-icon"></svg-icon>
           </span>
         </a>
@@ -70,36 +36,23 @@
       <div class="table-filter-panel height-100">
         <mat-tab-group class="outline-filter-tabs">
           <mat-tab label="OUTLINE">
-            <cwp-table-filter-panel
-              [configOptions]="configOptions"
-              class="custom-form-field-gray-color"
-            >
+            <cwp-table-filter-panel [configOptions]="configOptions" class="custom-form-field-gray-color">
             </cwp-table-filter-panel>
           </mat-tab>
           <mat-tab label="FILTER" class="height-100">
-            <app-dynamic-filters
-              [filtersApplied]="reportDetails.report?.filtersApplied"
-              [reportColumns]="this.reportColumns"
-              [filterOptions]="reportDetails.report?.filterOptions"
-              (appliedFilters)="applyFilter($event)"
-            >
+            <app-dynamic-filters [filtersApplied]="reportDetails.report?.filtersApplied"
+              [reportColumns]="this.reportColumns" [filterOptions]="reportDetails.report?.filterOptions"
+              (appliedFilters)="applyFilter($event)">
             </app-dynamic-filters>
           </mat-tab>
         </mat-tab-group>
       </div>
     </div>
-    <div
-      class="column2 custom-form-field-gray-color"
-      [ngStyle]="{ width: showPreview ? '98.8%' : '76%' }"
-    >
+    <div class="column2 custom-form-field-gray-color" [ngStyle]="{ width: showPreview ? '98.8%' : '76%' }">
       <div class="dis-flex m-b-5">
         <div class="width-50">
-          <app-common-filter
-            [title]="title"
-            [filtersApplied]="reportDetails.report?.filtersApplied"
-            [reportColumns]="this.reportColumns"
-            (appliedFilters)="applyFilter($event)"
-          >
+          <app-common-filter [title]="title" [filtersApplied]="reportDetails.report?.filtersApplied"
+            [reportColumns]="this.reportColumns" (appliedFilters)="applyFilter($event)">
           </app-common-filter>
           <div class="no-of-records">
             <ng-template #loadingCount>
@@ -108,329 +61,171 @@
             <div *ngIf="dataCount$ | async as totalCount; else loadingCount">
               <span>
                 {{
-                  'recordPlural'
-                    | translate
-                      : {
-                          totalCount: totalCount.count
-                            ? (totalCount.count | numberToKM)
-                            : 0,
-                          count: reportDetails.reportData
-                            ? reportDetails.reportData.length
-                            : 0
-                        }
+                'recordPlural'
+                | translate
+                : {
+                totalCount: totalCount.count
+                ? (totalCount.count | numberToKM)
+                : 0,
+                count: reportDetails.reportData
+                ? reportDetails.reportData.length
+                : 0
+                }
                 }}
               </span>
             </div>
           </div>
         </div>
         <div class="width-50 text-align-right m-t-3 m-r-10 no-wrap">
-          <button
-            mat-stroked-button
-            color="primary"
-            class="report-button"
-            matTooltip="Undo"
-            matTooltipClass=""
-            (click)="undo($event)"
-            [disabled]="!undoRedoUtil.undoSize()"
-            aria-label="Undo"
-          >
+          <button mat-stroked-button color="primary" class="report-button" matTooltip="Undo" matTooltipClass=""
+            (click)="undo($event)" [disabled]="!undoRedoUtil.undoSize()" aria-label="Undo">
             <mat-icon>undo</mat-icon>
           </button>
-          <button
-            mat-stroked-button
-            color="primary"
-            class="report-button"
-            (click)="redo($event)"
-            matTooltip="Redo"
-            matTooltipClass=""
-            [disabled]="!undoRedoUtil.redoSize()"
-            aria-label="Redo"
-          >
+          <button mat-stroked-button color="primary" class="report-button" (click)="redo($event)" matTooltip="Redo"
+            matTooltipClass="" [disabled]="!undoRedoUtil.redoSize()" aria-label="Redo">
             <mat-icon>redo</mat-icon>
           </button>
-          <button
-            mat-stroked-button
-            color="primary"
-            class="highlight-btn"
-            matTooltip="Hide Chart"
-            (click)="toggleChart()"
-            *ngIf="reportDetails.report?.showChart"
-            aria-label="Hide Chart"
-          >
-            <svg-icon
-              icon="icon-show_chart"
-              class="chart-control-icon"
-            ></svg-icon>
+          <button mat-stroked-button color="primary" class="highlight-btn" matTooltip="Hide Chart"
+            (click)="toggleChart()" *ngIf="reportDetails.report?.showChart" aria-label="Hide Chart">
+            <svg-icon icon="icon-show_chart" class="chart-control-icon"></svg-icon>
           </button>
-          <button
-            mat-stroked-button
-            color="primary"
-            class="report-button show-chart-btn"
-            matTooltip="Show Chart"
-            (click)="toggleChart()"
-            *ngIf="!reportDetails.report?.showChart"
-            [disabled]="!reportDetails.report?.groupBy?.length"
-            aria-label="Show Chart"
-          >
-            <svg-icon
-              icon="icon-show_chart"
-              class="chart-control-icon"
-              *ngIf="reportDetails.report?.groupBy?.length"
-            ></svg-icon>
-            <svg-icon
-              icon="icon-show_chart_disabled"
-              class="chart-control-icon"
-              *ngIf="!reportDetails.report?.groupBy?.length"
-            ></svg-icon>
+          <button mat-stroked-button color="primary" class="report-button show-chart-btn" matTooltip="Show Chart"
+            (click)="toggleChart()" *ngIf="!reportDetails.report?.showChart"
+            [disabled]="!reportDetails.report?.groupBy?.length" aria-label="Show Chart">
+            <svg-icon icon="icon-show_chart" class="chart-control-icon"
+              *ngIf="reportDetails.report?.groupBy?.length"></svg-icon>
+            <svg-icon icon="icon-show_chart_disabled" class="chart-control-icon"
+              *ngIf="!reportDetails.report?.groupBy?.length"></svg-icon>
           </button>
-          <button
-            mat-stroked-button
-            color="primary"
-            matTooltip="Preview"
-            class="report-button"
-            [ngClass]="{ 'highlight-btn': showPreview }"
-            (click)="togglePreview()"
-            *appCheckUserHasPermission="[
+          <button mat-stroked-button color="primary" matTooltip="Preview" class="report-button"
+            [ngClass]="{ 'highlight-btn': showPreview }" (click)="togglePreview()" *appCheckUserHasPermission="[
               permissions.createReport,
-              permissions.updateReport
-            ]"
-            aria-label="Preview"
-          >
-            <svg-icon
-              *ngIf="showPreview"
-              icon="icon-preview_active"
-              class="chart-control-icon"
-            ></svg-icon>
-            <svg-icon
-              *ngIf="!showPreview"
-              icon="icon-preview"
-              class="chart-control-icon"
-            ></svg-icon>
+              permissions.updateReport,
+              permissions.createOPRReport,
+              permissions.updateOPRReport
+            ]" aria-label="Preview">
+            <svg-icon *ngIf="showPreview" icon="icon-preview_active" class="chart-control-icon"></svg-icon>
+            <svg-icon *ngIf="!showPreview" icon="icon-preview" class="chart-control-icon"></svg-icon>
           </button>
-          <button
-            mat-stroked-button
-            color="primary"
-            class="report-button"
-            matTooltip="Export to Excel"
-            [disabled]="!reportDetails.report?.id || isExportInProgress"
-            (click)="downloadReport($event)"
-            *appCheckUserHasPermission="[permissions.reportExportToExcel]"
-            [ngClass]="{ 'spinner-class btn-background': isExportInProgress }"
-            aria-label="Export to Excel"
-          >
-            <svg-icon
-              icon="icon-export"
-              class="chart-control-icon"
-              *ngIf="!isExportInProgress"
-            ></svg-icon>
+          <button mat-stroked-button color="primary" class="report-button" matTooltip="Export to Excel"
+            [disabled]="!reportDetails.report?.id || isExportInProgress" (click)="downloadReport($event)"
+            *appCheckUserHasPermission="[permissions.reportExportToExcel,permissions.reportOPRExportToExcel]"
+            [ngClass]="{ 'spinner-class btn-background': isExportInProgress }" aria-label="Export to Excel">
+            <svg-icon icon="icon-export" class="chart-control-icon" *ngIf="!isExportInProgress"></svg-icon>
           </button>
-          <button
-            mat-stroked-button
-            color="primary"
-            class="cancel-button"
-            matTooltip="Cancel"
-            [routerLink]="['/dashboard/reports']"
-            routerLinkActive="router-link-active"
-            translate="cancel"
-            aria-label="Cancel"
-          ></button>
+          <button mat-stroked-button color="primary" class="cancel-button" matTooltip="Cancel" (click)="cancel()"
+            translate="cancel" aria-label="Cancel"></button>
 
-          <ng-container
-            *ngIf="reportDetails.report?.id === undefined; else updateButton"
-          >
-            <mat-button-toggle-group
-              class="save-btn-toggle"
-              *appCheckUserHasPermission="[permissions.createReport]"
-            >
-              <mat-button-toggle
-                matTooltip="Save"
-                class="save-button"
-                [disabled]="!reportDetails.report || disabledSaveButton"
-                (click)="
+          <ng-container *ngIf="reportDetails.report?.id === undefined; else updateButton">
+            <mat-button-toggle-group class="save-btn-toggle"
+              *appCheckUserHasPermission="[permissions.createReport,permissions.createOPRReport]">
+              <mat-button-toggle matTooltip="Save" class="save-button"
+                [disabled]="!reportDetails.report || disabledSaveButton" (click)="
                   !!reportDetails.report && saveReport({ saveAs: false })
-                "
-              >
+                ">
                 <span>Save</span>
               </mat-button-toggle>
             </mat-button-toggle-group>
           </ng-container>
           <ng-template #updateButton>
-            <mat-button-toggle-group
-              class="save-btn-toggle"
-              *appCheckUserHasPermission="[permissions.updateReport]"
-            >
-              <mat-button-toggle
-                matTooltip="Save"
-                class="save-button"
-                [disabled]="!reportDetails.report || disabledSaveButton"
-                (click)="
+            <mat-button-toggle-group class="save-btn-toggle"
+              *appCheckUserHasPermission="[permissions.updateReport,permissions.updateOPRReport]">
+              <mat-button-toggle matTooltip="Save" class="save-button"
+                [disabled]="!reportDetails.report || disabledSaveButton" (click)="
                   !!reportDetails.report && saveReport({ saveAs: false })
-                "
-              >
+                ">
                 <span>Save</span>
               </mat-button-toggle>
-              <mat-button-toggle
-                *ngIf="reportDetails.report?.id"
-                [disabled]="!reportDetails.report || disabledSaveButton"
-                [matMenuTriggerFor]="menu"
-                class="save-button-arrow"
-                aria-label="Save As"
-              >
+              <mat-button-toggle *ngIf="reportDetails.report?.id"
+                [disabled]="!reportDetails.report || disabledSaveButton" [matMenuTriggerFor]="menu"
+                class="save-button-arrow" aria-label="Save As">
                 <svg-icon icon="icon-dropdown" class="dropdown-icon"></svg-icon>
               </mat-button-toggle>
             </mat-button-toggle-group>
           </ng-template>
           <mat-menu #menu="matMenu">
-            <button
-              mat-menu-item
-              matTooltip="Save As"
-              [disabled]="!reportDetails.report || disabledSaveButton"
-              (click)="!!reportDetails.report && openSaveAsDialog()"
-              aria-label="Save As"
-            >
+            <button mat-menu-item matTooltip="Save As" [disabled]="!reportDetails.report || disabledSaveButton"
+              (click)="!!reportDetails.report && openSaveAsDialog()" aria-label="Save As">
               Save As
             </button>
           </mat-menu>
         </div>
       </div>
 
-      <div
-        class="chart-wrapper"
-        *ngIf="
+      <div class="chart-wrapper" *ngIf="
           reportDetails.report?.showChart &&
           reportDetails.report?.groupBy?.length
-        "
-      >
-        <mat-icon
-          cdkOverlayOrigin
-          class="settings-icon"
-          #trigger="cdkOverlayOrigin"
-          (click)="isPopoverOpen = !isPopoverOpen"
-          >settings_border</mat-icon
-        >
+        ">
+        <mat-icon cdkOverlayOrigin class="settings-icon" #trigger="cdkOverlayOrigin"
+          (click)="isPopoverOpen = !isPopoverOpen">settings_border</mat-icon>
         <div class="chart-wrapper">
-          <ng-container
-            *ngIf="chartData$ | async as data; else loadingChartData"
-          >
-            <ng-container
-              *ngIf="
+          <ng-container *ngIf="chartData$ | async as data; else loadingChartData">
+            <ng-container *ngIf="
                 chartConfig.type === 'bar' &&
                 chartConfig.indexAxis === 'x' &&
                 chartConfig.isStacked !== true
-              "
-            >
-              <app-bar-chart
-                [chartConfig]="chartConfig"
-                [chartData]="data"
-              ></app-bar-chart>
+              ">
+              <app-bar-chart [chartConfig]="chartConfig" [chartData]="data"></app-bar-chart>
             </ng-container>
 
-            <ng-container
-              *ngIf="
+            <ng-container *ngIf="
                 chartConfig.type === 'bar' &&
                 chartConfig.indexAxis === 'y' &&
                 chartConfig.isStacked !== true
-              "
-            >
-              <app-column-chart
-                [chartConfig]="chartConfig"
-                [chartData]="data"
-              ></app-column-chart>
+              ">
+              <app-column-chart [chartConfig]="chartConfig" [chartData]="data"></app-column-chart>
             </ng-container>
 
-            <ng-container
-              *ngIf="
+            <ng-container *ngIf="
                 chartConfig.type === 'bar' &&
                 chartConfig.indexAxis === 'x' &&
                 chartConfig.isStacked === true
-              "
-            >
-              <app-vertical-stacked-chart
-                [chartConfig]="chartConfig"
-                [chartData]="data"
-              ></app-vertical-stacked-chart>
+              ">
+              <app-vertical-stacked-chart [chartConfig]="chartConfig" [chartData]="data"></app-vertical-stacked-chart>
             </ng-container>
 
-            <ng-container
-              *ngIf="
+            <ng-container *ngIf="
                 chartConfig.type === 'bar' &&
                 chartConfig.indexAxis === 'y' &&
                 chartConfig.isStacked === true
-              "
-            >
-              <app-horizontal-stacked-chart
-                [chartConfig]="chartConfig"
-                [chartData]="data"
-              ></app-horizontal-stacked-chart>
+              ">
+              <app-horizontal-stacked-chart [chartConfig]="chartConfig"
+                [chartData]="data"></app-horizontal-stacked-chart>
             </ng-container>
 
             <ng-container *ngIf="chartConfig.type === 'line'">
-              <app-line-chart
-                [chartConfig]="chartConfig"
-                [chartData]="data"
-              ></app-line-chart>
+              <app-line-chart [chartConfig]="chartConfig" [chartData]="data"></app-line-chart>
             </ng-container>
 
             <ng-container *ngIf="chartConfig.type === 'area'">
-              <app-area-chart
-                [chartConfig]="chartConfig"
-                [chartData]="data"
-              ></app-area-chart>
+              <app-area-chart [chartConfig]="chartConfig" [chartData]="data"></app-area-chart>
             </ng-container>
 
             <ng-container *ngIf="chartConfig.type === 'pie'">
-              <app-pie-chart
-                [chartConfig]="chartConfig"
-                [chartData]="data"
-              ></app-pie-chart>
+              <app-pie-chart [chartConfig]="chartConfig" [chartData]="data"></app-pie-chart>
             </ng-container>
 
             <ng-container *ngIf="chartConfig.type === 'doughnut'">
-              <app-donut-chart
-                [chartConfig]="chartConfig"
-                [chartData]="data"
-              ></app-donut-chart>
+              <app-donut-chart [chartConfig]="chartConfig" [chartData]="data"></app-donut-chart>
             </ng-container>
           </ng-container>
         </div>
-        <ng-template
-          cdkConnectedOverlay
-          cdkConnectedOverlayPanelClass="custom-popover"
-          cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-          [cdkConnectedOverlayHasBackdrop]="true"
-          [cdkConnectedOverlayOpen]="isPopoverOpen"
-          [cdkConnectedOverlayOrigin]="trigger"
-          cdkConnectedOverlayWidth="400px"
-          (backdropClick)="isPopoverOpen = false"
-        >
+        <ng-template cdkConnectedOverlay cdkConnectedOverlayPanelClass="custom-popover"
+          cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop" [cdkConnectedOverlayHasBackdrop]="true"
+          [cdkConnectedOverlayOpen]="isPopoverOpen" [cdkConnectedOverlayOrigin]="trigger"
+          cdkConnectedOverlayWidth="400px" (backdropClick)="isPopoverOpen = false">
           <div class="settings-modal">
             <div class="header">
-              <app-chart-variant
-                [report]="reportConfiguration"
-                [chartConfig]="chartConfig"
-                [configOptions]="configOptions"
-                [displayTableVarient]="false"
-                (chartVarientChanges)="appendChartVariantChanges($event)"
-              ></app-chart-variant>
-              <button
-                mat-raised-button
-                color="primary"
-                class="yes-no-btn done-btn"
-                autofocus="false"
-                mat-dialog-close
-                [disabled]="isChartVariantApplyDisabled"
-                (click)="applyChartVariantChanges()"
-                aria-label="Apply Chart Variant Changes"
-              >
+              <app-chart-variant [report]="reportConfiguration" [chartConfig]="chartConfig"
+                [configOptions]="configOptions" [displayTableVarient]="false"
+                (chartVarientChanges)="appendChartVariantChanges($event)"></app-chart-variant>
+              <button mat-raised-button color="primary" class="yes-no-btn done-btn" autofocus="false" mat-dialog-close
+                [disabled]="isChartVariantApplyDisabled" (click)="applyChartVariantChanges()"
+                aria-label="Apply Chart Variant Changes">
                 Done
               </button>
-              <button
-                mat-button
-                color="primary"
-                class="yes-no-btn cancel-btn"
-                (click)="isPopoverOpen = false; chartVariantChanges = {}"
-                aria-label="Cancel Chart Variant Changes"
-              >
+              <button mat-button color="primary" class="yes-no-btn cancel-btn"
+                (click)="isPopoverOpen = false; chartVariantChanges = {}" aria-label="Cancel Chart Variant Changes">
                 Cancel
               </button>
             </div>
@@ -438,12 +233,9 @@
         </ng-template>
       </div>
       <div class="m-r-10">
-        <cwp-dynamictable
-          [dataSource]="dataSource"
-          [configOptions]="configOptions"
+        <cwp-dynamictable [dataSource]="dataSource" [configOptions]="configOptions"
           (fetchDataCallback)="tableEventHandler($event)"
-          (onConfigOptionsChange)="configOptionsChangeHandler($event)"
-        ></cwp-dynamictable>
+          (onConfigOptionsChange)="configOptionsChangeHandler($event)"></cwp-dynamictable>
       </div>
     </div>
   </div>

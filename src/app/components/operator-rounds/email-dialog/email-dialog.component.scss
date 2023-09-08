@@ -1,0 +1,68 @@
+@import '../../../../scss/colors.scss';
+
+.email-modal {
+  width: 800px;
+  max-width: 800px;
+  min-height: 430px;
+  background: $white;
+  overflow: hidden;
+  // padding: 20px;
+  .dialog-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    border-bottom: 1px solid $border-color;
+    .close-btn {
+      cursor: pointer;
+      color: $gray-text;
+    }
+    .email-title {
+      font-style: normal;
+      font-weight: bold;
+      font-size: 110%;
+      color: $black;
+      margin-bottom: 0px;
+    }
+  }
+  .dialog-content {
+    border-bottom: 1px solid $border-color-gray;
+    height: 345px;
+    overflow: hidden;
+    padding-right: 0;
+  }
+  .dialog-footer {
+    padding: 10px;
+    margin: 0px;
+  }
+}
+
+.email-send-btn {
+  background-color: $blue-main;
+  color: $white;
+}
+.emailContainer {
+  width: 92%;
+  cursor: auto;
+  display: flex;
+  flex-direction: column;
+  padding: 0px 20px;
+  align-items: center;
+  margin: 0px;
+}
+.email-dialog-head {
+  margin: 0px;
+  background: $gray;
+  padding: 0px 10px;
+}
+.email-dialog-body {
+  margin: 0px;
+  padding: 10px 10px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.autocomplete-input {
+  height: 40px;
+  margin: 0px;
+}

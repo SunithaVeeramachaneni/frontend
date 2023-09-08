@@ -4,15 +4,20 @@
       <div class="toggle-btns" [formGroup]="dashboardForm">
         <div class="date-segment">
           <mat-button-toggle-group (change)="dateChanged($event)">
-            <mat-button-toggle value="this_week" class="toogle-btn-text" [ngClass]="{
-              'selected':dashboardForm.value.timePeriod ==='this_week'
+            <mat-button-toggle value="last_day" class="toogle-btn-text" [ngClass]="{
+              'selected':dashboardForm.value.timePeriod ==='last_day'
             }">
-              {{'thisWeek' | translate}}
+              {{'lastDay' | translate}}
             </mat-button-toggle>
-            <mat-button-toggle value="this_month" class="toogle-btn-text" [ngClass]="{
-              'selected':dashboardForm.value.timePeriod ==='this_month'
+            <mat-button-toggle value="last_week" class="toogle-btn-text" [ngClass]="{
+              'selected':dashboardForm.value.timePeriod ==='last_week'
             }">
-              {{'thisMonth' | translate}}
+              {{'lastWeek' | translate}}
+            </mat-button-toggle>
+            <mat-button-toggle value="last_month" class="toogle-btn-text" [ngClass]="{
+              'selected':dashboardForm.value.timePeriod ==='last_month'
+            }">
+              {{'lastMonth' | translate}}
             </mat-button-toggle>
             <mat-button-toggle value="last_3_months" class="toogle-btn-text" [ngClass]="{
               'selected':dashboardForm.value.timePeriod ==='last_3_months'
@@ -80,39 +85,17 @@
           matTooltipClass="" [disabled]="!undoRedoUtil.redoSize()" aria-label="Redo">
           <mat-icon class="icon" [ngClass]="{'active':undoRedoUtil.redoSize()}">redo</mat-icon>
         </button>
-        <button mat-stroked-button color="primary" class="report-button" aria-label="share"
-          [matMenuTriggerFor]="emailMenu" #emailMenuTrigger="matMenuTrigger">
+        <button mat-stroked-button color="primary" class="report-button" aria-label="share" (click)="openEmailDialog()">
           <mat-icon class="icon active">forward_to_inbox</mat-icon>
         </button>
-        <mat-menu #emailMenu="matMenu" yPosition="below" class="emailContainer">
-          <div mat-menu-item [disableRipple]="true" (click)="$event.stopPropagation()" class="emailContainer">
-            <ng-container>
-              <h4 class="email-dialog-head">{{ 'shareDashboard' | translate}}</h4>
-              <div class="email-dialog-body">
-                <mat-form-field appearance="outline" class="user-chip-list">
-                  <mat-label>{{'emailIds' | translate}}</mat-label>
-                  <input matInput placeholder="Enter comma separated email IDs" (change)="emailChanged($event)">
-                </mat-form-field>
-                <mat-form-field appearance="outline" class="user-chip-list">
-                  <mat-label>{{'notesTxt' | translate}}</mat-label>
-                  <textarea matInput placeholder="Enter Notes.." [rows]="5" [(ngModel)]="emailNotes"></textarea>
-                </mat-form-field>
-              </div>
-              <div class="email-dialog-footer">
-                <button mat-stroked-button class="btn" (click)="cancelEmail()" translate="cancelBtn"></button>
-                <button mat-flat-button color="primary" class="btn" (click)="sendEmail()"
-                  [disabled]="!toEmailIDs.length || !validEmailIDs" translate="sendBtn"></button>
-              </div>
-            </ng-container>
-          </div>
-        </mat-menu>
-
-        <button mat-stroked-button color="primary" class="report-button" [ngClass]="{'t-minus4':downloadInProgress}"
+         <button mat-stroked-button color="primary" class="report-button" [ngClass]="{'t-minus4':downloadInProgress}"
           aria-label="share" (click)="downloadDashboardAsImage()">
           <mat-progress-spinner [mode]="'indeterminate'" [diameter]="25"
             *ngIf="downloadInProgress"></mat-progress-spinner>
           <mat-icon class="icon active" *ngIf="!downloadInProgress">picture_as_pdf</mat-icon>
         </button>
+        <button class="new-widget-btn" translate="newWidget"
+          *appCheckUserHasPermission="[permissions.createOPRDashboard]" (click)="createWidget()"></button>
       </div>
 
     </div>
@@ -127,6 +110,27 @@
                   <div class="gridster-item-content widget-title" matTooltip="{{ widget.name }}" matTooltipClass="">
                     {{ widget.name }}
                   </div>
+                  <button [matMenuTriggerFor]="widgetMenu" class="more-icon" *appCheckUserHasPermission="[
+                    permissions.updateOPRDashboard,
+                    permissions.copyOPRDashboard,
+                    permissions.deleteOPRDashboard
+                  ]" aria-label="More Options">
+                    <svg-icon icon="icon-more" class="more-icon-no-color"></svg-icon>
+                  </button>
+                  <mat-menu #widgetMenu="matMenu">
+                    <button mat-menu-item (click)="editWidget(widget)"
+                      *appCheckUserHasPermission="[permissions.updateOPRDashboard]">
+                      <span translate>editWidget</span>
+                    </button>
+                    <button mat-menu-item (click)="copyWidget(widget)"
+                      *appCheckUserHasPermission="[permissions.copyOPRDashboard]">
+                      <span translate>copyWidget</span>
+                    </button>
+                    <button mat-menu-item (click)="deleteWidget(widget)" class="text-red"
+                      *appCheckUserHasPermission="[permissions.deleteOPRDashboard]">
+                      <span translate>deleteWidget</span>
+                    </button>
+                  </mat-menu>
                 </div>
                 <div class="widget-body">
                   <app-widget [widget]="widget" [height]="widgetHeights[widget.id]" [width]="widgetWidths[widget.id]"
@@ -134,11 +138,11 @@
                     [hasCustomColorScheme]="true"></app-widget>
                 </div>
               </div>
-
             </gridster-item>
           </ng-container>
         </gridster>
       </div>
+
       <ng-container *ngIf="applyingFilters$ | async" class="spinnerContainer">
         <div class="overlay"></div>
         <mat-progress-spinner [mode]="'indeterminate'" [diameter]="175" [strokeWidth]="10"></mat-progress-spinner>

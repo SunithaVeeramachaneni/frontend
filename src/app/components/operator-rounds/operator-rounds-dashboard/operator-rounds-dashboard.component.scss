@@ -1,5 +1,18 @@
 @import '../../../../scss/colors.scss';
 
+.new-widget-btn {
+  font-style: normal;
+  font-weight: 500;
+  font-size: 100%;
+  letter-spacing: 0.15px;
+  color: $white;
+  border: 1px solid $blue-main;
+  border-radius: 4px;
+  background-color: $blue-main;
+  padding: 10px 14px;
+  float: right;
+  cursor: pointer;
+}
 .widgets {
   width: 300px;
   background: $white;
@@ -255,37 +268,23 @@ mat-progress-spinner {
   height: 35px;
 }
 
-.emailContainer {
-  max-width: 600px;
-  width: 450px;
-  height: 300px;
-  cursor: auto;
-  display: flex;
-  flex-direction: column;
-  padding: 0px;
-}
-.email-dialog-head {
-  margin: 0px;
-  background: $gray;
-  padding: 0px 10px;
-}
-.email-dialog-body {
-  margin: 0px;
-  padding: 10px 10px;
-  display: flex;
-  flex-direction: column;
-}
-.email-dialog-footer {
-  margin: 0px;
-  padding: 5px 10px;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  margin-top: 15px;
-  .btn {
-    margin-left: 5px;
-  }
-}
 .t-minus4 {
   top: -4px;
+}
+.more-icon {
+  position: relative;
+  left: 10px;
+  background: none;
+  border: none;
+  z-index: 10;
+  .more-icon-no-color {
+    color: #757575;
+  }
+  ::ng-deep svg {
+    width: 17px !important;
+    height: 17px !important;
+  }
+}
+.more-icon-all {
+  margin-top: 18px;
 }

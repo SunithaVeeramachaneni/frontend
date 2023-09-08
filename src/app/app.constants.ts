@@ -107,6 +107,18 @@ export const permissions = Object.freeze({
   viewArchivedORP: 'VIEW_OR_ARCHIVED_PLANS',
   viewORObservations: 'VIEW_OR_OBSERVATIONS',
 
+  viewOPRDashboards: 'OPR_VIEW_DASHBOARDS',
+  createOPRDashboard: 'OPR_CREATE_DASHBOARD',
+  updateOPRDashboard: 'OPR_UPDATE_DASHBOARD',
+  deleteOPRDashboard: 'OPR_DELETE_DASHBOARD',
+  copyOPRDashboard: 'OPR_COPY_DASHBOARD',
+  viewOPRReports: 'OPR_VIEW_REPORTS',
+  createOPRReport: 'OPR_CREATE_REPORT',
+  updateOPRReport: 'OPR_UPDATE_REPORT',
+  deleteOPRReport: 'OPR_DELETE_REPORT',
+  copyOPRReport: 'OPR_COPY_REPORT',
+  reportOPRExportToExcel: 'OPR_REPORT_EXPORT_TO_EXCEL',
+
   viewUnitOfMeasurement: 'VIEW_UNIT_OF_MEASUREMENTS',
   createUnitOfMeasurement: 'CREATE_UNIT_OF_MEASUREMENT',
   updateUnitOfMeasurement: 'UPDATE_UNIT_OF_MEASUREMENT',
@@ -269,6 +281,11 @@ export const routingUrls = {
     url: '/operator-rounds',
     title: 'Operator Rounds',
     permission: permissions.viewORPlans
+  },
+  oprReports: {
+    url: '/operator-rounds/reports',
+    title: 'Reports',
+    permission: permissions.viewOPRReports
   },
   myRoundPlans: {
     url: '/operator-rounds/round-plans',
@@ -793,21 +810,22 @@ export const dataEntities = {
 };
 
 export const colorsByStatus = {
-  null: 'lightgray',
-  ASSIGNED: '#5AC8FA',
-  OPEN: '#E0E0E0',
+  // null: 'lightgray',
+  ASSIGNED: '#32ADE6',
+  OPEN: '#E4E4E6',
   OVERDUE: '#F44336',
-  SUBMITTED: '#4CAF50',
+  SUBMITTED: '#34C759',
   SKIPPED: '#9E9E9E',
-  Assigned: '#5AC8FA',
-  Overdue: '#F44336',
-  Submitted: '#4CAF50',
+  Assigned: '#32ADE6',
+  Overdue: '#FF3B30',
+  Submitted: '#34C759',
   Skipped: '#9E9E9E',
-  'In-Progress': '#FFCD38',
-  Open: '#E0E0E0',
+  'In-Progress': '#FFCC00',
+  Open: '#E4E4E6',
   Resolved: '#4CAF50',
   'No Exception': '#76CC6D',
+  Exception: '#ED8E4B',
   Completed: '#CDDC39',
-  Incomplete: '#F44336',
+  Incomplete: '#FF3B30',
   Created: '#F6685E'
 };

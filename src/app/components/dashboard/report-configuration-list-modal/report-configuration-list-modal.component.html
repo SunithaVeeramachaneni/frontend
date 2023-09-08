@@ -10,29 +10,16 @@
           <input matInput placeholder="" [formControl]="searchObject" />
         </mat-form-field>
         <h6 class="titles" translate>objects</h6>
-        <ng-container
-          *ngIf="
+        <ng-container *ngIf="
             filteredReportCategories$ | async as reportCategories;
             else loadingObjects
-          "
-        >
-          <ul
-            *ngFor="let reportCategory of reportCategories; let i = index"
-            class="p-0 m-b-0 m-0"
-          >
-            <li
-              class="list-group-item"
-              [ngClass]="{ active: selectedIndex === i }"
-              (click)="updateSelectedIndex(i)"
-            >
+          ">
+          <ul *ngFor="let reportCategory of reportCategories; let i = index" class="p-0 m-b-0 m-0">
+            <li class="list-group-item" [ngClass]="{ active: selectedIndex === i }" (click)="updateSelectedIndex(i)">
               {{ reportCategory.category }}
             </li>
           </ul>
-          <div
-            *ngIf="reportCategories.length === 0"
-            class="no-report-objects"
-            translate="noReportObjectsFound"
-          ></div>
+          <div *ngIf="reportCategories.length === 0" class="no-report-objects" translate="noReportObjectsFound"></div>
         </ng-container>
       </div>
       <div class="content-right-div">
@@ -41,37 +28,21 @@
           <input matInput placeholder="" [formControl]="searchReport" />
         </mat-form-field>
         <h6 class="titles" translate>reports</h6>
-        <ng-container
-          *ngIf="
+        <ng-container *ngIf="
             filteredReportCategories$ | async as reportCategories;
             else loadingReports
-          "
-        >
-          <ng-container
-            *ngFor="let reportCategory of reportCategories; let i = index"
-          >
+          ">
+          <ng-container *ngFor="let reportCategory of reportCategories; let i = index">
             <ng-container *ngIf="selectedIndex === i">
-              <li
-                class="list-group-item"
-                *ngFor="let subCategory of reportCategory.subCategories"
-                (click)="updateReportDefinitionName(subCategory)"
-                mat-dialog-close
-                routerLink="/dashboard/reports/addreport"
-              >
+              <li class="list-group-item" *ngFor="let subCategory of reportCategory.subCategories"
+                (click)="updateReportDefinitionName(subCategory)" mat-dialog-close>
                 {{ subCategory }}
               </li>
-              <div
-                *ngIf="reportCategory.subCategories?.length === 0"
-                class="no-report-objects"
-                translate="noReportsFound"
-              ></div>
+              <div *ngIf="reportCategory.subCategories?.length === 0" class="no-report-objects"
+                translate="noReportsFound"></div>
             </ng-container>
           </ng-container>
-          <div
-            *ngIf="reportCategories.length === 0"
-            class="no-report-objects"
-            translate="noReportsFound"
-          ></div>
+          <div *ngIf="reportCategories.length === 0" class="no-report-objects" translate="noReportsFound"></div>
         </ng-container>
       </div>
     </div>
@@ -82,34 +53,16 @@
 </div>
 <ng-template #loadingObjects>
   <div class="p-0-20">
-    <ngx-shimmer-loading
-      [width]="'80%'"
-      [height]="'30px'"
-    ></ngx-shimmer-loading>
-    <ngx-shimmer-loading
-      [width]="'80%'"
-      [height]="'30px'"
-    ></ngx-shimmer-loading>
-    <ngx-shimmer-loading
-      [width]="'80%'"
-      [height]="'30px'"
-    ></ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'80%'" [height]="'30px'"></ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'80%'" [height]="'30px'"></ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'80%'" [height]="'30px'"></ngx-shimmer-loading>
   </div>
 </ng-template>
 
 <ng-template #loadingReports>
   <div class="p-0-20">
-    <ngx-shimmer-loading
-      [width]="'80%'"
-      [height]="'30px'"
-    ></ngx-shimmer-loading>
-    <ngx-shimmer-loading
-      [width]="'80%'"
-      [height]="'30px'"
-    ></ngx-shimmer-loading>
-    <ngx-shimmer-loading
-      [width]="'80%'"
-      [height]="'30px'"
-    ></ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'80%'" [height]="'30px'"></ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'80%'" [height]="'30px'"></ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'80%'" [height]="'30px'"></ngx-shimmer-loading>
   </div>
 </ng-template>
