@@ -113,6 +113,7 @@
     color: $white;
     display: flex;
     align-items: center;
+    line-height: 29px;
   }
 }
 
@@ -205,6 +206,8 @@
 .right-panel {
   background-color: $white;
   border-left: 2px solid $border-color;
+  position: absolute;
+  right: 0;
 }
 
 ::ng-deep .more-slots-menu + * .cdk-overlay-pane {

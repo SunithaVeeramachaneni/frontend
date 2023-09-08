@@ -13,7 +13,10 @@
   >
     <div>
       <div class="selected-locations">
-        <p class="m-0 m-b-5" (click)="showLocations = !showLocations">
+        <p
+          class="m-0 m-b-5 cursor-pointer"
+          (click)="showLocations = !showLocations"
+        >
           <mat-icon *ngIf="showLocations === true">
             keyboard_arrow_down
           </mat-icon>
@@ -22,16 +25,23 @@
           </mat-icon>
           <span class="selected-text" translate>selected</span>
         </p>
-        <div *ngIf="showLocations" class="scroll-locations">
-          <div
-            class="locations-list"
-            *ngFor="let location of locationIdToTaskcountArr"
-          >
-            <div class="locations" *ngIf="location[1] !== '0'">
-              <div>{{ nodeIdToNodeName[location[0]] }}</div>
-              <div>{{ location[1] }} <span translate>tasks</span></div>
+        <div
+          [ngClass]="{
+            'show-locations': showLocations === true,
+            'hide-locations': showLocations === false
+          }"
+        >
+          <ng-container *ngIf="showLocations">
+            <div
+              class="locations-list"
+              *ngFor="let location of locationIdToTaskcountArr"
+            >
+              <div class="locations" *ngIf="location[1] !== '0'">
+                <div>{{ nodeIdToNodeName[location[0]] }}</div>
+                <div>{{ location[1] }} <span translate>tasks</span></div>
+              </div>
             </div>
-          </div>
+          </ng-container>
         </div>
       </div>
     </div>
@@ -48,8 +58,7 @@
           <p id="taskScheduleConfigurationRepeatEvery" class="f-w-400">
             {{ 'repeatEvery' | translate }}
           </p>
-
-          <mat-form-field appearance="fill" class="repeat-num">
+          <mat-form-field appearance="fill" class="task-repeat-num m-l-20">
             <input
               type="number"
               matInput
@@ -58,17 +67,17 @@
               placeholder="_ _"
             />
           </mat-form-field>
-          <mat-form-field appearance="fill" class="repeat-day">
-            <mat-select formControlName="repeatEvery" placeholder="_ _">
-              <mat-option
-                *ngFor="let repeatEvery of repeatTypes"
-                [value]="repeatEvery"
-              >
-                {{ repeatEvery }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
+
+          <select formControlName="repeatEvery" class="task-repeat-day">
+            <option
+              *ngFor="let repeatEvery of repeatTypes"
+              [value]="repeatEvery"
+            >
+              {{ repeatEvery }}
+            </option>
+          </select>
         </div>
+
         <ng-container
           *ngIf="reviseScheduleConfigForm.get('repeatEvery').value === 'week'"
         >

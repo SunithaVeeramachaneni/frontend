@@ -47,7 +47,7 @@
               let i = index
             "
           >
-            {{ shift.name }}
+            {{ shift.name ? shift.name : '--' }}
             <span
               *ngIf="
                 i !==
@@ -113,7 +113,11 @@
         <div>
           <span class="txt">{{ 'assigneeDetails' | translate }} : </span>
           <span>
-            {{ taskLevelScheduleHeaderConfiguration?.assigneeDetails }}
+            {{
+              taskLevelScheduleHeaderConfiguration?.assigneeDetails
+                ? taskLevelScheduleHeaderConfiguration?.assigneeDetails
+                : '--'
+            }}
           </span>
         </div>
       </div>
@@ -247,7 +251,7 @@
     ></app-task-level-task-components>
   </div>
   <ng-container *ngIf="openCloseRightPanel">
-    <div class="width-30 right-panel">
+    <div [@widthGrow]="state" class="right-panel">
       <app-revise-schedule
         [nodeIdToNodeName]="nodeIdToNodeName"
         [reviseSchedule]="_payload"

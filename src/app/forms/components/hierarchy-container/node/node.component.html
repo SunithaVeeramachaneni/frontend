@@ -41,8 +41,12 @@
         <div class="description">
           <div class="dis-flex title-status">
             <span id="nodeName" class="title">{{ node.name }}</span>
-            <span id="nodeStatus" *ngIf="hierarchyMode === 'scheduler'">
-              <div *ngIf="isRevised" translate>revised</div>
+            <span
+              id="nodeStatus"
+              *ngIf="hierarchyMode === 'scheduler'"
+              class="nodeStatus"
+            >
+              <div *ngIf="isRevised" translate>taskLevel</div>
               <div *ngIf="!isRevised" translate>header</div>
             </span>
           </div>

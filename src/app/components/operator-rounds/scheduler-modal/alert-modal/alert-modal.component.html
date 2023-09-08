@@ -1,0 +1,10 @@
+<div class="alert-modal">
+  <h1 mat-dialog-title class="title">Alert</h1>
+  <div mat-dialog-content>
+    Are you sure you want to exit? All your work will be lost.
+  </div>
+  <div mat-dialog-actions>
+    <button mat-button (click)="close()" color="primary">Cancel</button>
+    <button mat-flat-button (click)="yes()" color="warn">Yes</button>
+  </div>
+</div>

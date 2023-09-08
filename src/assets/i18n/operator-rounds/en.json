@@ -379,5 +379,6 @@
   "additionalDetailsHeading": "Additional Details",
   "additionalDetails": "Additional Details:",
   "attributesHeading": "Attributes",
-  "addMoreUpto5": "Add More ( Select Upto 5 )"
+  "addMoreUpto5": "Add More ( Select Upto 5 )",
+  "taskLevel": "Task Level"
 }

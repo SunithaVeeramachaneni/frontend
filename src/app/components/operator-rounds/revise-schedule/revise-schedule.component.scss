@@ -11,7 +11,7 @@
 
   .main-scroll {
     overflow-y: auto;
-    height: calc(100vh - 285px);
+    height: calc(100vh - 280px);
   }
 
   .custom-main-scroll {
@@ -19,7 +19,7 @@
   }
 
   .selected-locations {
-    padding: 10px 15px 10px 15px;
+    padding: 10px 15px 3px 15px;
     border-bottom: 1px solid $border-color;
   }
 
@@ -31,17 +31,25 @@
     left: 3px;
   }
 
-  .scroll-locations {
+  .show-locations {
     overflow-y: auto;
-    max-height: 165px;
     background: $yellow-bg1;
     border-radius: 5px;
+    max-height: 140px;
+    transition: max-height 0.5s linear;
+    margin-bottom: 12px;
+  }
+
+  .hide-locations {
+    overflow-y: auto;
+    background: $yellow-bg1;
+    border-radius: 5px;
+    max-height: 0;
+    transition: max-height 0.5s linear;
   }
 
   .locations-list {
     border-bottom: 1px solid $yellow-border;
-    transition: all 0.5s ease-in-out;
-    margin: 0 10px;
   }
 
   .locations {
@@ -66,14 +74,29 @@
     }
   }
 
-  .repeat-num {
+  .task-repeat-num {
     width: 12%;
     font-weight: 500;
   }
 
-  .repeat-day {
-    width: 20%;
+  .task-repeat-day {
+    padding: 10px;
+    border: none;
+    background: $gray;
+    border-radius: 4px;
+    margin-left: 10px;
+    position: relative;
     font-weight: 500;
+    top: -1px;
+    width: 22%;
+    background-image: linear-gradient(45deg, transparent 50%, gray 50%),
+      linear-gradient(135deg, gray 50%, transparent 50%);
+    background-position: calc(100% - 13px) calc(1em + 3px),
+      calc(100% - 8px) calc(1em + 3px), calc(100% - 2.5em) 0.5em;
+    background-size: 5px 5px, 5px 5px, 1px 1.5em;
+    background-repeat: no-repeat;
+    box-sizing: border-box;
+    -webkit-appearance: none;
   }
 
   .schedule-frequency {
@@ -81,10 +104,6 @@
       padding: 0 6px !important;
       border-radius: 4px !important;
       text-align: center !important;
-    }
-
-    mat-form-field {
-      margin-left: 20px;
     }
   }
 
@@ -164,20 +183,23 @@
   .revise-btn {
     background-color: $blue-main;
     color: $white;
-    width: 50%;
+    width: 49%;
+    height: 34px;
   }
 
   .revise-btn:disabled {
     background-color: $gray2-bg;
     color: $gray7;
-    width: 50%;
+    width: 49%;
+    height: 34px;
   }
 
   .cancel-btn {
     color: $blue-main;
     border-color: $blue-main;
-    margin-right: 7px;
+    margin-right: 8px;
     width: 49%;
+    height: 34px;
   }
 
   .by-date {
