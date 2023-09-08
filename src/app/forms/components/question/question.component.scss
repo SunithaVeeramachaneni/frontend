@@ -199,6 +199,15 @@
 .enableHistory-checkbox {
   margin: 0 8px 0 0px;
 }
+.history-count-input {
+  height: 20px;
+  margin: 0px 5px 0px 10px;
+  border: 1px solid $border-color-gray;
+  width: 20%;
+}
+.history-error {
+  border: 1px solid $issue-raised;
+}
 
 .uomBtn {
   color: $blue-main;
@@ -253,6 +262,17 @@
     color: $blue-main;
   }
   .rangeValuesNone {
+    color: $blue-main;
+  }
+}
+
+.additionalDetailsBtn {
+  cursor: pointer;
+  margin-left: 5px;
+  .additionalDetailsValues {
+    color: $blue-main;
+  }
+  .additionalDetailsValuesNone {
     color: $blue-main;
   }
 }

@@ -44,6 +44,10 @@ export interface Section {
   templateName?: string;
   externalSectionId?: string;
   counter?: number;
+  createdAt?: string;
+  updatedAt?: string;
+  createdBy?: string;
+  updatedBy?: string;
 }
 
 export interface Question {
@@ -54,6 +58,7 @@ export interface Question {
   position: number;
   required: boolean;
   enableHistory: boolean;
+  historyCount: number;
   multi: boolean;
   value: any;
   isPublished: boolean;
@@ -62,7 +67,12 @@ export interface Question {
   isResponseTypeModalOpen: boolean;
   unitOfMeasurement?: string;
   rangeMetadata?: NumberRangeMetadata;
+  additionalDetails?: AdditionalDetails;
   skipIdGeneration?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+  createdBy?: string;
+  updatedBy?: string;
 }
 
 export interface SectionQuestions {
@@ -79,6 +89,11 @@ export interface NumberRangeMetadata {
   minMsg: string;
   maxMsg: string;
   value: number;
+}
+
+export interface AdditionalDetails {
+  tags: any[];
+  attributes: any[];
 }
 
 export interface PageEvent {

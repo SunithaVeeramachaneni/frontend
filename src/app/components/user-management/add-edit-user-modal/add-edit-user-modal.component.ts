@@ -33,7 +33,8 @@ import {
   distinctUntilChanged,
   first,
   map,
-  switchMap
+  switchMap,
+  tap
 } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { defaultProfile, superAdminText } from 'src/app/app.constants';
@@ -41,6 +42,7 @@ import { userRolePermissions } from 'src/app/app.constants';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { UsersService } from '../services/users.service';
 import { NgxImageCompressService } from 'ngx-image-compress';
+import { LoginService } from '../../login/services/login.service';
 @Component({
   selector: 'app-add-edit-user-modal',
   templateUrl: './add-edit-user-modal.component.html',
@@ -59,7 +61,7 @@ export class AddEditUserModalComponent implements OnInit {
     ]),
     lastName: new FormControl('', [
       Validators.required,
-      Validators.minLength(3),
+      Validators.minLength(2),
       Validators.maxLength(100),
       Validators.pattern('^[a-zA-Z0-9 ]+$'),
       WhiteSpaceValidator.whiteSpace,
@@ -83,14 +85,15 @@ export class AddEditUserModalComponent implements OnInit {
     profileImageFileName: new FormControl(''),
     validFrom: new FormControl('', [Validators.required]),
     validThrough: new FormControl('', [Validators.required]),
-    plantId: new FormControl('', [this.matSelectValidator()])
+    plantId: new FormControl([], [this.matSelectValidator()])
   });
   emailValidated = false;
   isValidIDPUser = false;
   verificationInProgress = false;
-
+  permissionsArray = [];
   rolesInput: any;
-  usergroupInput: any;
+  usergroupInput: any[];
+  userGroupList: any[];
   dialogText: 'addUser' | 'editUser';
   isfilterTooltipOpen = [];
   displayedPermissions;
@@ -98,7 +101,6 @@ export class AddEditUserModalComponent implements OnInit {
   profileImage;
   permissionsList$: Observable<any>;
   rolesList$: Observable<Role[]>;
-  usergroupList$: Observable<UserGroup[]>;
   superAdminText = superAdminText;
   selectedRolePermissions$: Observable<any[]>;
   get roles() {
@@ -106,6 +108,9 @@ export class AddEditUserModalComponent implements OnInit {
   }
   get usergroup() {
     return this.userForm.get('usergroup');
+  }
+  get plant() {
+    return this.userForm.get('plantId');
   }
   rolePermissions: Permission[];
   userRolePermissions = userRolePermissions;
@@ -123,6 +128,7 @@ export class AddEditUserModalComponent implements OnInit {
     private usersService: UsersService,
     private http: HttpClient,
     private imageCompress: NgxImageCompressService,
+    private loginService: LoginService,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
 
@@ -179,12 +185,28 @@ export class AddEditUserModalComponent implements OnInit {
   }
 
   ngOnInit() {
+    if (this.data?.user?.plantId && !Array.isArray(this.data?.user?.plantId)) {
+      this.data.user.plantId = this.data.plantsList.filter((plant) =>
+        this.data?.user?.plantId?.split(',')?.includes(plant.id)
+      );
+    }
     const userDetails = this.data?.user;
     this.permissionsList$ = this.data?.permissionsList$;
     this.rolesInput = this.data?.roles?.rows;
     this.rolesList$ = this.data?.rolesList$;
-    this.usergroupInput = this.data?.usergroup?.items;
-    this.usergroupList$ = this.data?.usergroupList$;
+    this.userGroupList = this.data?.usergroup?.items;
+    if (this.userForm.get('plantId').value.length === 0) {
+      this.usergroupInput = this.userGroupList;
+    }
+    this.userForm.get('plantId').valueChanges.subscribe(() => {
+      const plantsList = [];
+      this.userForm.get('plantId')?.value?.forEach((plant) => {
+        plantsList.push(plant.id);
+      });
+      this.usergroupInput = this.userGroupList.filter((group) =>
+        plantsList.includes(group.plantId)
+      );
+    });
 
     if (Object.keys(userDetails).length === 0) {
       this.dialogText = 'addUser';
@@ -216,6 +238,16 @@ export class AddEditUserModalComponent implements OnInit {
 
     this.minDate = this.userForm.controls['validFrom'].value || new Date();
     this.userValidFromDate = new Date();
+    this.loginService.loggedInUserInfo$
+      .pipe(
+        tap(({ permissions = [] }) => {
+          this.permissionsArray = permissions;
+          if (!this.checkPermissions('VIEW_USER_GROUPS')) {
+            this.userForm.get('usergroup').disable();
+          }
+        })
+      )
+      .subscribe();
   }
 
   validFromDateChange(validFromDate) {
@@ -256,6 +288,10 @@ export class AddEditUserModalComponent implements OnInit {
 
   objectComparisonFunction(option, value): boolean {
     return option.id === value.id;
+  }
+
+  plantComparisonFunction(option, value): boolean {
+    return option.id === value;
   }
 
   arrayBufferToBase64(buffer) {
@@ -334,10 +370,23 @@ export class AddEditUserModalComponent implements OnInit {
         profileImageFileName: 'default.png'
       });
     }
+
+    const latestPlant =
+      this.data.user?.plantId?.map((plant) => plant.id).toString() ===
+      this.userForm
+        .get('plantId')
+        .value?.map((plant) => plant.id)
+        .toString()
+        ? this.data.user?.plantId?.map((plant) => plant.id).toString()
+        : this.userForm
+            .get('plantId')
+            .value?.map((plant) => plant.id)
+            .toString();
     const payload = {
       user: {
         ...this.data.user,
         ...this.userForm.value,
+        plantId: latestPlant,
         userGroups: newGroupsIds?.toString()
       },
       action: this.dialogText === 'addUser' ? 'add' : 'edit'
@@ -363,4 +412,6 @@ export class AddEditUserModalComponent implements OnInit {
     }
     return !touched || this.errors[controlName] === null ? false : true;
   }
+  checkPermissions = (permission) =>
+    this.loginService.checkUserHasPermission(this.permissionsArray, permission);
 }

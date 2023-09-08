@@ -243,6 +243,12 @@
                   id="addLogicAskEvdienceBtn"
                   class="logicActionMenuItem"
                   mat-menu-item
+                  *ngIf="
+                    !(
+                      logic.value.mandateAttachment ||
+                      logic.value.evidenceQuestions.length
+                    )
+                  "
                   (click)="
                     mandateAttachment('mandate_attachment', i, logic.value)
                   "
@@ -307,6 +313,8 @@
                       (questionEvent)="
                         askQuestionEventHandler($event, logic.value, i)
                       "
+                      [tagDetailType]="tagDetailType"
+                      [attributeDetailType]="attributeDetailType"
                     ></app-question>
                   </div>
                 </div>
@@ -345,6 +353,8 @@
                       (questionEvent)="
                         askQuestionEventHandler($event, logic.value, i)
                       "
+                      [tagDetailType]="tagDetailType"
+                      [attributeDetailType]="attributeDetailType"
                     ></app-question>
                   </div>
                 </div>

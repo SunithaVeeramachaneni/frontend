@@ -148,7 +148,8 @@ export class ImportTemplateQuestionsSliderComponent
       let index = 1;
       const logicsArray = filteredTemplate.logics.filter((logic) => {
         if (!questionsInSection[logic.questionId]) return false;
-        logicsInSection[`AQ_${logic.id}`] = index++;
+        logicsInSection[`AQ_${logic.id}`] = index;
+        logicsInSection[`EVIDENCE_${logic.id}`] = index++;
         logic.questions = [];
         return true;
       });
@@ -292,13 +293,15 @@ export class ImportTemplateQuestionsSliderComponent
                 }`)
           );
           logic.questions.forEach((question) => {
-            question.id =
-              question.id +
-              `_${
-                sectionCounters[this.formTemplateUsage.formId][
-                  d.section.externalSectionId
-                ]
-              }`;
+            if (question.id.includes('AQ_')) {
+              question.id =
+                question.id +
+                `_${
+                  sectionCounters[this.formTemplateUsage.formId][
+                    d.section.externalSectionId
+                  ]
+                }`;
+            }
             question.sectionId =
               question.sectionId +
               `_${
@@ -309,7 +312,7 @@ export class ImportTemplateQuestionsSliderComponent
             d.questions.push({
               ...question,
               id: question.id,
-              sectonId: question.sectionId
+              sectionId: question.sectionId
             });
           });
           delete logic.questions;

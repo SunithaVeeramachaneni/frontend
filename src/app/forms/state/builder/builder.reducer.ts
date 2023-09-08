@@ -12,6 +12,7 @@ import {
   FormConfigurationApiActions,
   RoundPlanConfigurationApiActions
 } from '../actions';
+import { cloneDeep } from 'lodash-es';
 
 export interface FormConfigurationState {
   formMetadata: FormMetadata;
@@ -256,13 +257,14 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       const idx = pageToBeUpdated.findIndex(
         (page) => page.position === action.pageIndex + 1
       );
-      pageToBeUpdated[idx] = {
-        ...pageToBeUpdated[idx],
-        logics: [...pageToBeUpdated[idx].logics, ...(action.logics || [])]
+      const newArray = cloneDeep(pageToBeUpdated);
+      newArray[idx] = {
+        ...newArray[idx],
+        logics: [...newArray[idx].logics, ...(action.logics || [])]
       };
       return {
         ...state,
-        [key]: [...pageToBeUpdated],
+        [key]: [...newArray],
         formStatus: action.formStatus,
         formDetailPublishStatus: action.formDetailPublishStatus,
         formSaveStatus: action.formSaveStatus,
@@ -654,6 +656,19 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
         key = `${key}_${subFormId}`;
       }
       const pages = state[key].map((page, pageIndex) => {
+        const { required, id: questionId } = action.question;
+
+        let logics = page.logics;
+        if (required) {
+          logics = logics.map((logic) => {
+            let hideQuestions = logic.hideQuestions;
+            if (hideQuestions.includes(questionId)) {
+              hideQuestions = hideQuestions.filter((q) => q !== questionId);
+            }
+            return { ...logic, hideQuestions };
+          });
+        }
+
         if (pageIndex === action.pageIndex) {
           let sectionQuestions = page.questions.filter(
             (question) => question.sectionId === action.sectionId
@@ -668,7 +683,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
           ];
           return {
             ...page,
-            questions: [...sectionQuestions, ...remainingQuestions]
+            questions: [...sectionQuestions, ...remainingQuestions],
+            logics: logics
           };
         }
         return page;
@@ -765,8 +781,10 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
           for (const logic of page.logics)
             questionIdByLogic[logic.id] = logic.questionId;
 
-          let sectionQuestions = page.questions.filter(
-            (question) => question.sectionId === action.sectionId
+          let sectionQuestions = cloneDeep(
+            page.questions.filter(
+              (question) => question.sectionId === action.sectionId
+            )
           );
           const questionToBeDeleted =
             sectionQuestions[action.questionIndex]?.id;
@@ -1171,6 +1189,13 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       pages: action.pages,
       counter: action.counter,
       skipAuthoredDetail: false
+    })
+  ),
+  on(
+    BuilderConfigurationActions.updateFormStatus,
+    (state, action): FormConfigurationState => ({
+      ...state,
+      formStatus: action.formStatus
     })
   )
 );

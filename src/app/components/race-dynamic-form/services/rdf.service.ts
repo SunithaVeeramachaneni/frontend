@@ -23,7 +23,8 @@ import {
 import {
   formConfigurationStatus,
   LIST_LENGTH,
-  dateFormat2
+  dateFormat2,
+  graphQLDefaultMaxLimit
 } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { isJson } from '../utils/utils';
@@ -133,6 +134,17 @@ export class RaceDynamicFormService {
       `datasets/${datasetType}`,
       info
     );
+
+  getAdditionalDetails$ = (
+    data,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any[]> =>
+    this.appService._getResp(
+      environment.operatorRoundsApiUrl,
+      `additional-details/${data.type}/${data.level}`,
+      info
+    );
+
   getDataSetsByFormId$ = (
     datasetType: string,
     formId: string,
@@ -753,17 +765,18 @@ export class RaceDynamicFormService {
       info
     );
   }
-  fetchAllInspections$ = () => {
-    const params: URLSearchParams = new URLSearchParams();
-    params.set('limit', '2000000');
-    params.set('next', '');
-    return this.appService
-      ._getResp(environment.rdfApiUrl, 'inspections?' + params.toString(), {
-        displayToast: true,
-        failureResponse: {}
-      })
+  fetchAllInspections$ = () =>
+    this.appService
+      ._getResp(
+        environment.rdfApiUrl,
+        'inspections',
+        {
+          displayToast: true,
+          failureResponse: {}
+        },
+        { limit: graphQLDefaultMaxLimit, next: '' }
+      )
       .pipe(map((res) => this.formatInspections(res.items || [])));
-  };
 
   getInspectionsList$(
     queryParams: any,

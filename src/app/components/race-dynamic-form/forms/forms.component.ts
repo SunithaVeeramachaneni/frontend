@@ -253,6 +253,7 @@ export class FormsComponent implements OnInit, OnDestroy {
   plantTimezoneMap = {};
   userFullNameByEmail = {};
   shiftIdNameMap = {};
+  allForms = [];
 
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
@@ -371,7 +372,7 @@ export class FormsComponent implements OnInit, OnDestroy {
         this.allShifts = shifts?.items?.filter((s) => s?.isActive) || [];
         for (const item of this.filterJson) {
           if (item.column === 'shiftId') {
-            item.items = Object.values(this.shiftIdNameMap);
+            item.items = Object.values(this.shiftIdNameMap).sort();
           }
         }
         if (this.skip === 0) {
@@ -399,6 +400,7 @@ export class FormsComponent implements OnInit, OnDestroy {
     ]).pipe(
       map(([forms, formCategory]) => {
         let filteredForms = [];
+        this.allForms = forms.data;
         this.configOptions = {
           ...this.configOptions,
           tableHeight: 'calc(100vh - 150px)'
@@ -445,10 +447,10 @@ export class FormsComponent implements OnInit, OnDestroy {
         }
         for (const item of this.filterJson) {
           if (item.column === 'assignedTo') {
-            item.items = this.assignedTo;
+            item.items = this.assignedTo.sort();
           }
           if (item.column === 'schedule') {
-            item.items = this.schedules;
+            item.items = this.schedules.sort();
           }
         }
         this.dataSource = new MatTableDataSource(filteredForms);
@@ -506,7 +508,9 @@ export class FormsComponent implements OnInit, OnDestroy {
       formId: this.formId,
       formType: formConfigurationStatus.standalone
     };
-    this.isLoading$.next(true);
+    if (this.fetchType !== 'infiniteScroll') {
+      this.isLoading$.next(true);
+    }
     return this.raceDynamicFormService
       .getFormsForScheduler$(obj, this.filter)
       .pipe(
@@ -685,7 +689,7 @@ export class FormsComponent implements OnInit, OnDestroy {
         .getFormsCountByFormId$(this.scheduleFormDetail?.id)
         .pipe(
           tap(({ count = 0 }) => {
-            this.initial.data = this.dataSource?.data?.map((data) => {
+            this.initial.data = this.allForms.map((data) => {
               if (data.id === this.scheduleFormDetail?.id) {
                 return {
                   ...data,
@@ -737,7 +741,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       Object.keys(formsScheduleConfiguration)?.length &&
       formsScheduleConfiguration.id !== ''
     ) {
-      this.initial.data = this.dataSource?.data?.map((data) => {
+      this.initial.data = this.allForms.map((data) => {
         if (data?.id === this.scheduleFormDetail?.id) {
           return {
             ...data,
@@ -909,9 +913,9 @@ export class FormsComponent implements OnInit, OnDestroy {
 
       for (const item of this.filterJson) {
         if (item.column === 'plant') {
-          item.items = plants.items.map(
-            (plant) => `${plant.plantId} - ${plant.name}`
-          );
+          item.items = plants.items
+            .map((plant) => `${plant.plantId} - ${plant.name}`)
+            .sort();
         }
       }
     });

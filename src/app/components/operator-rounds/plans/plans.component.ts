@@ -54,6 +54,7 @@ import {
 import {
   dateFormat,
   graphQLDefaultLimit,
+  graphQLPlanLimit,
   permissions as perms
 } from 'src/app/app.constants';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
@@ -379,12 +380,14 @@ export class PlansComponent implements OnInit, OnDestroy {
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   skip = 0;
   limit = graphQLDefaultLimit;
+  plansLimit = graphQLPlanLimit;
   searchForm: FormControl;
   isPopoverOpen = false;
   roundPlanCounts = {
     scheduled: 0,
     unscheduled: 0
   };
+  allroundPlans = [];
   nextToken = '';
   formDetailState = 'out';
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
@@ -561,6 +564,7 @@ export class PlansComponent implements OnInit, OnDestroy {
     ]).pipe(
       map(([roundPlans, planCategory]) => {
         let filteredRoundPlans = [];
+        this.allroundPlans = roundPlans?.data;
         this.configOptions = {
           ...this.configOptions,
           tableHeight: 'calc(100vh - 150px)'
@@ -609,13 +613,13 @@ export class PlansComponent implements OnInit, OnDestroy {
 
         for (const item of this.filterJson) {
           if (item.column === 'assignedTo') {
-            item.items = this.assignedTo;
+            item.items = this.assignedTo.sort();
           }
           if (item.column === 'schedule') {
-            item.items = this.schedules;
+            item.items = this.schedules.sort();
           }
           if (item.column === 'shiftId') {
-            item.items = Object.values(this.activeShiftIdMap);
+            item.items = Object.values(this.activeShiftIdMap).sort();
           }
         }
         this.dataSource = new MatTableDataSource(filteredRoundPlans);
@@ -666,12 +670,14 @@ export class PlansComponent implements OnInit, OnDestroy {
   getRoundPlanList() {
     const obj = {
       next: this.nextToken,
-      limit: this.limit,
+      limit: this.plansLimit,
       searchTerm: this.searchForm.value,
       fetchType: this.fetchType,
       roundPlanId: this.roundPlanId
     };
-    this.isLoading$.next(true);
+    if (this.fetchType !== 'infiniteScroll') {
+      this.isLoading$.next(true);
+    }
     return this.operatorRoundsService
       .getPlansList$({ ...obj, ...this.filter })
       .pipe(
@@ -760,9 +766,11 @@ export class PlansComponent implements OnInit, OnDestroy {
     const selectedPlant = this.allPlants?.items?.find(
       (plant) => plant.id === plan.plantId
     );
-    const selectedShifts = JSON.parse(selectedPlant?.shifts);
+    const selectedShifts = selectedPlant?.shifts
+      ? JSON.parse(selectedPlant?.shifts)
+      : [];
     const activeShifts = this.allShifts.filter((data) =>
-      selectedShifts?.some((shift) => shift.id === data.id)
+      selectedShifts?.some((shift) => shift?.id === data?.id)
     );
     return activeShifts;
   }
@@ -918,7 +926,7 @@ export class PlansComponent implements OnInit, OnDestroy {
         .getRoundsCountByRoundPlanId$(roundPlanId)
         .pipe(
           tap(({ count = 0 }) => {
-            this.initial.data = this.dataSource.data.map((data) => {
+            this.initial.data = this.allroundPlans.map((data) => {
               if (data.id === roundPlanId) {
                 return {
                   ...data,
@@ -962,7 +970,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       Object.keys(roundPlanScheduleConfiguration).length &&
       roundPlanScheduleConfiguration.id !== ''
     ) {
-      this.initial.data = this.dataSource.data.map((data) => {
+      this.initial.data = this.allroundPlans.map((data) => {
         if (data.id === this.scheduleRoundPlanDetail.id) {
           return {
             ...data,
@@ -991,6 +999,7 @@ export class PlansComponent implements OnInit, OnDestroy {
         }
       }
     }
+    this.cdrf.markForCheck();
   }
 
   rowLevelActionHandler = (event: RowLevelActionEvent) => {

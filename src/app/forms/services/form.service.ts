@@ -6,7 +6,8 @@ import { HierarchyEntity } from 'src/app/interfaces';
 import {
   RangeSelectorState,
   ResponseTypeOpenState,
-  SliderSelectorState
+  SliderSelectorState,
+  AdditionalDetailsState
 } from 'src/app/interfaces/response-type';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
@@ -29,6 +30,15 @@ export class FormService {
     isOpen: false,
     rangeMetadata: {}
   });
+  private additionalDetailsOpenStateSubject = new BehaviorSubject<any>({
+    isOpen: false,
+    additionalDetails: {}
+  });
+  detailLevelTagsSubject = new BehaviorSubject([]);
+  detailLevelAttributesSubject = new BehaviorSubject({
+    label: {},
+    attributesIdMap: {}
+  });
 
   private masterHierarchyData: HierarchyEntity[] = [];
   private selectedHierarchyList: HierarchyEntity[] = [];
@@ -37,8 +47,21 @@ export class FormService {
   sliderOpenState$ = this.sliderOpenStateSubject.asObservable();
   multiChoiceOpenState$ = this.multiChoiceOpenStateSubject.asObservable();
   rangeSelectorOpenState$ = this.rangeSelectorOpenStateSubject.asObservable();
+  additionalDetailsOpenState$ =
+    this.additionalDetailsOpenStateSubject.asObservable();
+  detailLevelTagsState$ = this.detailLevelTagsSubject.asObservable();
+  detailLevelAttributesState$ =
+    this.detailLevelAttributesSubject.asObservable();
 
   constructor(private _appService: AppService) {}
+
+  setDetailLevelTagsState(tags) {
+    this.detailLevelTagsSubject.next(tags);
+  }
+
+  setDetailLevelAttributesState(attributesData) {
+    this.detailLevelAttributesSubject.next(attributesData);
+  }
 
   setsliderOpenState(sliderResponse: SliderSelectorState) {
     this.sliderOpenStateSubject.next(sliderResponse);
@@ -50,6 +73,10 @@ export class FormService {
 
   setRangeSelectorOpenState(rangeMetadata: RangeSelectorState) {
     this.rangeSelectorOpenStateSubject.next(rangeMetadata);
+  }
+
+  setAdditionalDetailsOpenState(additionalDetails: AdditionalDetailsState) {
+    this.additionalDetailsOpenStateSubject.next(additionalDetails);
   }
 
   setMasterHierarchyList = (hierarchyData: HierarchyEntity[]) => {

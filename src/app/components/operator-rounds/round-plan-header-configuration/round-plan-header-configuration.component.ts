@@ -84,7 +84,7 @@ export class RoundPlanHeaderConfigurationComponent
   removable = true;
   addOnBlur = true;
   separatorKeysCodes: number[] = [ENTER, COMMA];
-  tagsCtrl = new FormControl();
+  tagsCtrl: FormControl;
   filteredTags: Observable<string[]>;
   tags: string[] = [];
   labels: any = {};
@@ -138,24 +138,30 @@ export class RoundPlanHeaderConfigurationComponent
     public dialog: MatDialog,
     private imageCompress: NgxImageCompressService,
     private router: Router
-  ) {
-    this.operatorRoundsService.getDataSetsByType$('tags').subscribe((tags) => {
-      if (tags && tags.length) {
-        this.allTags = tags[0].values;
-        this.originalTags = cloneDeep(tags[0].values);
-        this.tagsCtrl.setValue('');
-        this.cdrf.detectChanges();
-      }
-    });
+  ) {}
+
+  ngOnInit(): void {
+    this.tagsCtrl = new FormControl('', [
+      Validators.maxLength(25),
+      WhiteSpaceValidator.whiteSpace,
+      WhiteSpaceValidator.trimWhiteSpace
+    ]);
+    this.operatorRoundsService
+      .getDataSetsByType$('roundHeaderTags')
+      .subscribe((tags) => {
+        if (tags && tags.length) {
+          this.allTags = tags[0].values;
+          this.originalTags = cloneDeep(tags[0].values);
+          this.tagsCtrl.patchValue('');
+          this.cdrf.detectChanges();
+        }
+      });
     this.filteredTags = this.tagsCtrl.valueChanges.pipe(
       startWith(null),
       map((tag: string | null) =>
         tag ? this.filter(tag) : this.allTags.slice()
       )
     );
-  }
-
-  ngOnInit(): void {
     this.headerDataForm = this.fb.group({
       name: [
         '',
@@ -230,11 +236,21 @@ export class RoundPlanHeaderConfigurationComponent
         takeUntil(this.destroy$),
         pairwise(),
         tap(([previous, current]) => {
+          delete previous.plantId;
+          delete current.plantId;
           if (isEqual(previous, current)) this.hasFormChanges = false;
           else this.hasFormChanges = true;
         })
       )
-      .subscribe();
+      .subscribe(() => {
+        if (this.hasFormChanges) {
+          this.store.dispatch(
+            BuilderConfigurationActions.updateFormStatus({
+              formStatus: formConfigurationStatus.draft
+            })
+          );
+        }
+      });
   }
 
   getAllPlantsData() {
@@ -243,7 +259,7 @@ export class RoundPlanHeaderConfigurationComponent
       this.plantInformation = this.allPlantsData;
       const plantId = this.roundData?.formMetadata?.plantId;
       if (plantId !== undefined) {
-        this.headerDataForm.patchValue({ plantId }, { emitEvent: false });
+        this.headerDataForm.patchValue({ plantId });
       }
     });
 
@@ -299,18 +315,35 @@ export class RoundPlanHeaderConfigurationComponent
   }
 
   add(event: MatChipInputEvent): void {
-    const input = event.input;
-    const value = event.value;
+    if (!this.processValidationErrorTags()) {
+      const input = event.input;
+      const value = event.value;
 
-    if ((value || '').trim()) {
-      this.tags.push(value.trim());
+      if ((value || '').trim()) {
+        this.tags = [...this.tags, value.trim()];
+      }
+
+      if (input) {
+        input.value = '';
+      }
+
+      this.tagsCtrl.patchValue('');
     }
+  }
 
-    if (input) {
-      input.value = '';
+  processValidationErrorTags(): boolean {
+    const errors = this.tagsCtrl.errors;
+
+    this.errors.tagsCtrl = null;
+    if (errors) {
+      Object.keys(errors).forEach((messageKey) => {
+        this.errors.tagsCtrl = {
+          name: messageKey,
+          length: errors[messageKey]?.requiredLength
+        };
+      });
     }
-
-    this.tagsCtrl.setValue(null);
+    return this.errors.tagsCtrl === null ? false : true;
   }
 
   openAutoComplete() {
@@ -338,9 +371,13 @@ export class RoundPlanHeaderConfigurationComponent
       this.allTags.splice(index, 1);
     }
 
-    this.tags.push(event.option.viewValue);
+    this.tags = [...this.tags, event.option.viewValue];
     this.tagsInput.nativeElement.value = '';
-    this.tagsCtrl.setValue(null);
+    this.tagsCtrl.patchValue('');
+    this.headerDataForm.patchValue({
+      ...this.headerDataForm.value,
+      tags: this.tags
+    });
   }
 
   filter(value: string): string[] {
@@ -381,12 +418,12 @@ export class RoundPlanHeaderConfigurationComponent
     });
     if (newTags.length) {
       const dataSet = {
-        type: 'tags',
+        type: 'roundHeaderTags',
         values: newTags
       };
-      // this.operatorRoundsService.createTags$(dataSet).subscribe((response) => {
-      //   // do nothing
-      // });
+      this.operatorRoundsService.createTags$(dataSet).subscribe((response) => {
+        // do nothing
+      });
     }
 
     const plant = this.allPlantsData.find(
@@ -785,7 +822,11 @@ export class RoundPlanHeaderConfigurationComponent
 
   storeDetails(i) {
     this.operatorRoundsService
-      .createAdditionalDetails$({ ...this.changedValues })
+      .createAdditionalDetails$({
+        ...this.changedValues,
+        type: 'rounds',
+        level: 'header'
+      })
       .subscribe((response) => {
         if (response?.label) {
           this.toastService.show({
@@ -846,7 +887,7 @@ export class RoundPlanHeaderConfigurationComponent
 
   retrieveDetails() {
     this.operatorRoundsService
-      .getAdditionalDetails$()
+      .getAdditionalDetails$({ type: 'rounds', level: 'header' })
       .subscribe((details: any[]) => {
         this.labels = this.convertArrayToObject(details);
         details.forEach((data) => {

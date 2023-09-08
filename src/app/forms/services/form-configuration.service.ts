@@ -10,6 +10,7 @@ import {
 } from 'src/app/interfaces';
 import { State } from '../state';
 import { v4 as uuidv4 } from 'uuid';
+import { CommonService } from 'src/app/shared/services/common.service';
 
 @Injectable({
   providedIn: 'root'
@@ -23,6 +24,7 @@ export class FormConfigurationService {
     position: 0,
     required: false,
     enableHistory: false,
+    historyCount: 5,
     multi: false,
     value: 'TF',
     isPublished: false,
@@ -32,7 +34,10 @@ export class FormConfigurationService {
     unitOfMeasurement: 'None',
     rangeMetadata: {} as NumberRangeMetadata
   };
-  constructor(private store: Store<State>) {}
+  constructor(
+    private store: Store<State>,
+    private readonly commonService: CommonService
+  ) {}
 
   addPage(
     pageIndex: number,
@@ -252,7 +257,10 @@ export class FormConfigurationService {
             questionIndex,
             sectionQuestionsList[sectionIndex]?.questions[
               questionIndex
-            ]?.sectionId?.startsWith('AQ')
+            ]?.sectionId?.startsWith('AQ') ||
+              sectionQuestionsList[sectionIndex]?.questions[
+                questionIndex
+              ]?.sectionId?.startsWith('EVIDENCE')
               ? sectionQuestionsList[sectionIndex]?.questions[questionIndex]
                   ?.sectionId
               : section.id,
@@ -307,13 +315,14 @@ export class FormConfigurationService {
       id:
         question?.id?.startsWith('TQ') || question?.id?.startsWith('AQ')
           ? question.id
-          : `Q${questionCounter}`,
+          : `Q${uuidv4()}`,
       sectionId,
       name: question ? question.name : '',
       fieldType: question ? question.fieldType : 'TF',
       position: questionIndex + 1,
       required: question ? question.required : false,
       enableHistory: question ? question.enableHistory : false,
+      historyCount: question ? question.historyCount : 5,
       multi: question ? question.multi : false,
       value: question ? question.value : 'TF',
       isPublished: false,
@@ -323,7 +332,10 @@ export class FormConfigurationService {
       unitOfMeasurement: question ? question.unitOfMeasurement : 'None',
       rangeMetadata: question
         ? question.rangeMetadata
-        : ({} as NumberRangeMetadata)
+        : ({} as NumberRangeMetadata),
+      additionalDetails: question?.additionalDetails
+        ? question.additionalDetails
+        : { tags: [], attributes: [] }
     };
   }
 }

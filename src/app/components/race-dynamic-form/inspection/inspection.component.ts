@@ -56,7 +56,8 @@ import {
   permissions as perms,
   statusColors,
   dateTimeFormat4,
-  dateTimeFormat5
+  dateTimeFormat5,
+  graphQLDefaultLimit
 } from 'src/app/app.constants';
 import { LoginService } from '../../login/services/login.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -330,7 +331,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
   skip = 0;
   plantMapSubscription: Subscription;
   allActiveShifts$: Observable<any>;
-  limit = graphQLRoundsOrInspectionsLimit;
+  limit = graphQLDefaultLimit;
   searchForm: FormControl;
   isPopoverOpen = false;
   inspectionsCount = 0;
@@ -519,14 +520,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
         }
         this.skip = this.initial.data.length;
         this.initial.data = this.formattingInspection(this.initial.data);
-        // Just a work around to improve the perforamce as we getting more records in the single n/w call. When small chunk of records are coming n/w call we can get rid of slice implementation
-        const sliceStart = this.dataSource ? this.dataSource.data.length : 0;
-        const dataSource = this.dataSource
-          ? this.dataSource.data.concat(
-              this.initial.data.slice(sliceStart, sliceStart + this.sliceCount)
-            )
-          : this.initial.data.slice(sliceStart, this.sliceCount);
-        this.dataSource = new MatTableDataSource(dataSource);
+        this.dataSource = new MatTableDataSource(this.initial.data);
         return this.initial;
       })
     );
@@ -607,7 +601,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
               }
             });
           }
-          const uniquePlants = formsList
+          this.plants = formsList
             .map((item) => {
               if (item.plant) {
                 this.plantsIdNameMap[item.plant] = item.plantId;
@@ -615,18 +609,18 @@ export class InspectionComponent implements OnInit, OnDestroy {
               }
               return '';
             })
-            .filter((value, index, self) => self.indexOf(value) === index);
-          this.plants = [...uniquePlants];
+            .filter((value, index, self) => self.indexOf(value) === index)
+            .sort();
 
           for (const item of this.filterJson) {
             if (item.column === 'assignedTo') {
-              item.items = this.assignedTo;
+              item.items = this.assignedTo.sort();
             } else if (item.column === 'plant') {
               item.items = this.plants;
             } else if (item.column === 'schedule') {
-              item.items = this.schedules;
+              item.items = this.schedules.sort();
             } else if (item.column === 'shiftId') {
-              item.items = Object.values(this.shiftNameMap);
+              item.items = Object.values(this.shiftNameMap).sort();
             }
           }
         }

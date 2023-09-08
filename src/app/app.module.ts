@@ -62,15 +62,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatSidenavModule,
     MatListModule,
     ErrorHandlerModule,
-    StoreModule.forRoot(
-      {},
-      {
-        runtimeChecks: {
-          strictStateImmutability: false,
-          strictActionImmutability: false
-        }
-      }
-    ),
+    StoreModule.forRoot({}, {}),
     StoreDevtoolsModule.instrument({
       name: 'CWP',
       maxAge: 25,

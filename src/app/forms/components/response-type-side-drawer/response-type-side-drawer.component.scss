@@ -11,14 +11,78 @@
   background-color: $white;
   border-left: 1px solid $border-color;
   box-shadow: -15px 0px 17px -7px rgb(0 0 0 / 46%);
-  padding: 0px 20px;
+  padding: 0px 16px;
 
   ::ng-deep .mat-card {
     box-shadow: none !important;
     padding: 0px !important;
   }
 
+  ::ng-deep .mat-card-title {
+    margin-bottom: 0px !important;
+  }
+
+  .slider-input-container {
+    width: 48%;
+  }
+
   .mcq-heading {
+    font-size: 1.2rem;
+    border-bottom: 1px solid $border-color;
+    padding: 15px;
+    font-weight: 600;
+    padding-left: 0;
+    margin: 0;
+  }
+
+  .top-bar {
+    padding: 16px 0;
+    .cancel {
+      cursor: pointer;
+      height: 15px;
+      width: 15px;
+    }
+  }
+
+  .remove-btn {
+    color: $disabled-color;
+    float: right;
+    cursor: pointer;
+    margin-top: 5px;
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
+  .additional-details-heading {
+    font-size: 1.2rem;
+    border-bottom: 1px solid $border-color;
+    padding: 15px;
+    font-weight: 600;
+    padding-left: 0;
+    margin: 0;
+  }
+
+  .top-bar {
+    padding: 16px 0;
+    .cancel {
+      cursor: pointer;
+      height: 15px;
+      width: 15px;
+    }
+  }
+
+  .remove-btn {
+    color: $disabled-color;
+    float: right;
+    cursor: pointer;
+    margin-top: 5px;
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
+  .additional-details-heading {
     font-size: 1.2rem;
     border-bottom: 1px solid $border-color;
     padding: 15px;
@@ -53,8 +117,23 @@
   .dis-flex {
     display: flex;
     justify-content: space-between;
-    margin-top: 40px;
+    margin-top: 20px;
     margin-bottom: 20px;
+  }
+
+  ::ng-deep .mat-option-text {
+    font-size: 100%;
+    display: flex;
+  }
+
+  .mat-error {
+    margin-top: 16px;
+  }
+
+  .attributes-list-item {
+    display: flex;
+    justify-content: space-between;
+    width: 445px;
   }
 
   .margin-20 {
@@ -83,40 +162,30 @@
   }
 
   .slider-inputs {
-    width: 100px;
+    width: 98%;
     height: 35px;
     border: 1px solid $border-color;
     border-radius: 4px;
+    padding: 5px;
   }
 
   .delete-btn {
     float: right;
     padding: 0;
     min-width: 40px;
-    margin-top: 3px;
-    height: 2px;
+    margin-top: -32px;
+    height: 35px;
 
     .delete-btn-icon {
+      width: 20px;
+      height: 25px;
       position: relative;
-      top: -88px;
-      width: 15px;
+      top: 9px;
     }
   }
 
   .text-align-end {
     text-align: end;
-  }
-
-  .apply-slider-btn {
-    width: 48%;
-    background-color: $blue-main;
-  }
-
-  .cancel-slider {
-    width: 48%;
-    margin-right: 10px;
-    border: 1px solid $blue-main;
-    color: $blue-main;
   }
 
   .submit-response-btn {
@@ -143,14 +212,99 @@
     position: relative;
     top: 142px;
   }
+
+  .tags-heading {
+    font-weight: bold;
+    font-size: 120%;
+    color: $black;
+    margin: 0px;
+    padding-bottom: 10px;
+  }
+
+  .tags {
+    ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
+      padding: 17px 0 0 0 !important;
+    }
+
+    .mat-error {
+      margin: 5px;
+    }
+  }
+
+  .tags-mat-chips {
+    margin: 5px 5px !important;
+  }
+
+  .additional-details {
+    .close-icon {
+      width: 20px;
+      height: 30px;
+    }
+    .value-field {
+      margin-left: 18px;
+    }
+  }
+
+  .attributes-text {
+    font-weight: bold;
+    font-size: 120%;
+    margin: 10px 0;
+  }
+
+  .add-button {
+    color: $blue-main;
+    border: none;
+    background: none;
+    margin: 0;
+  }
+
+  .add-button:disabled {
+    color: $gray7;
+  }
+
+  .add-new-button {
+    width: 100%;
+    text-align: start;
+  }
+
+  .label-value-text {
+    display: flex;
+    margin: 15px 0 5px 10px;
+  }
+
+  .label,
+  .value {
+    font-size: 120%;
+    font-weight: 500;
+  }
+
+  .cancel-icon {
+    position: relative;
+    top: 15px;
+    left: 35px;
+    cursor: pointer;
+  }
+
+  .add-more-icon {
+    height: 15px;
+    width: 15px;
+    position: relative;
+    top: 3px;
+    right: 5px;
+  }
 }
+
+.additional-details-slider {
+  width: 480px;
+}
+
 .rangeSelectorFooter {
   position: absolute;
   bottom: 0;
   left: 0;
   display: flex;
-  padding: 10px;
-  height: 75px;
+  padding: 12px 16px;
+  height: 40px;
   align-items: center;
   width: 94%;
   justify-content: center;
@@ -162,12 +316,51 @@
     margin-right: 10px;
   }
 }
+.additionalDetailsFooter {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  padding: 10px;
+  height: 40px;
+  align-items: center;
+  width: 94%;
+  justify-content: center;
+  .submitBtn {
+    width: 48%;
+  }
+  .cancelBtn {
+    width: 48%;
+    margin-right: 10px;
+  }
+}
+.sliderFooter {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  padding: 12px 16px;
+  height: 40px;
+  align-items: center;
+  width: 94%;
+  justify-content: center;
+  .apply-slider-btn {
+    width: 48%;
+    background-color: $blue-main;
+  }
+
+  .cancel-slider {
+    width: 48%;
+    margin-right: 10px;
+    border: 1px solid $blue-main;
+    color: $blue-main;
+  }
+}
 .rangeLimitContainer {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin: 0px 15px;
   .limitDivider {
     position: relative;
     margin: 15px 0px;
@@ -181,6 +374,7 @@
         font-weight: 500;
         .inputField {
           width: 80%;
+          padding: 5px;
           height: 25px;
           margin-top: 10px;
           border: 1px solid $gray3;
@@ -276,7 +470,7 @@
   }
 }
 .matCardContent {
-  height: 75vh;
+  height: 80vh;
   overflow-y: auto;
   overflow-x: hidden;
   padding: 5px;
@@ -285,4 +479,13 @@
 .response-drop-list {
   height: calc(100vh - 315px);
   overflow-y: auto;
+}
+
+@media only screen and (max-width: 1370px) {
+  .matCardContent {
+    height: 73vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 5px;
+  }
 }

@@ -405,7 +405,7 @@ export class ArchivedFormListComponent implements OnInit, OnDestroy {
         tap((formsList) => {
           const objectKeys = Object.keys(formsList);
           if (objectKeys.length > 0) {
-            const uniquePlants = formsList.rows
+            this.plants = formsList.rows
               .map((item) => {
                 if (item.plantId) {
                   this.plantsIdNameMap[item.plant] = item.plantId;
@@ -413,8 +413,8 @@ export class ArchivedFormListComponent implements OnInit, OnDestroy {
                 }
                 return '';
               })
-              .filter((value, index, self) => self.indexOf(value) === index);
-            this.plants = [...uniquePlants];
+              .filter((value, index, self) => self.indexOf(value) === index)
+              .sort();
 
             for (const item of this.filterJson) {
               if (item.column === 'plant') {
@@ -513,14 +513,7 @@ export class ArchivedFormListComponent implements OnInit, OnDestroy {
                 } else {
                   return this.raceDynamicFormService
                     .deactivateAbapForm$(form)
-                    .pipe(
-                      mergeMap((response) => {
-                        if (response === null) {
-                          return this.deleteFormFromDynamo$(form);
-                        }
-                        return of({});
-                      })
-                    );
+                    .pipe(mergeMap(() => this.deleteFormFromDynamo$(form)));
                 }
               })
             )
@@ -529,6 +522,9 @@ export class ArchivedFormListComponent implements OnInit, OnDestroy {
                 action: 'delete',
                 form: updatedForm
               });
+              this.raceDynamicFormService
+                .deleteTemplateReferenceByFormId$(form.id)
+                .subscribe();
             });
         }
       }

@@ -15,7 +15,7 @@
     color="primary"
     class="next-btn"
     (click)="next()"
-    [disabled]="headerDataForm.invalid"
+    [disabled]="headerDataForm.invalid || tagsCtrl.invalid"
     translate="nextBtn"
   ></button>
 </div>
@@ -195,6 +195,20 @@
               </mat-option>
             </mat-autocomplete>
           </mat-form-field>
+          <mat-error
+            id="tagsError"
+            *ngIf="processValidationErrorTags()"
+            class="m-5"
+          >
+            {{
+              errors.tagsCtrl.name
+                | translate
+                  : {
+                      name: 'tags' | translate,
+                      length: errors.tagsCtrl.length
+                    }
+            }}
+          </mat-error>
         </div>
 
         <div class="notes-attachment" formGroupName="instructions">
@@ -286,7 +300,10 @@
         </div>
 
         <div class="additional-details">
-          <p translate="additionalDetails" class="additional-details-text"></p>
+          <p
+            translate="additionalDetailsHeading"
+            class="additional-details-text"
+          ></p>
           <button
             id="roundPlanHeaderAdditionalDetailsBtn"
             *ngIf="

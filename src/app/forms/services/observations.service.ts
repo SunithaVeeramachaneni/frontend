@@ -482,13 +482,16 @@ export class ObservationsService {
     filterJson?.forEach((item) => {
       switch (item.column) {
         case 'title':
-          item.items = data?.title ?? [];
+          item.items = (data?.title ?? []).sort();
           break;
         case 'location':
-          item.items = data?.location ?? [];
+          item.items = (data?.location ?? []).sort();
+          break;
+        case 'asset':
+          item.items = data?.asset ?? [];
           break;
         case 'plant':
-          item.items = data?.plant ?? [];
+          item.items = (data?.plant ?? []).sort();
           break;
         case 'priority':
           item.items = data?.priority ?? [];
@@ -497,7 +500,7 @@ export class ObservationsService {
           item.items = data?.status ?? [];
           break;
         case 'assignedTo':
-          item.items = data?.assignedTo ?? [];
+          item.items = (data?.assignedTo ?? []).sort();
           break;
         default:
           break;
@@ -537,7 +540,16 @@ export class ObservationsService {
     });
     return allColumns;
   }
-
+  createLocationAssetDescription(data) {
+    let desc = '';
+    if (data.SWERK) {
+      desc = `Location ID: ${data.SWERK}`;
+    }
+    if (data.ANLNR && data.ANLNR !== placeHolder && data.ANLNR !== '--') {
+      desc = ` Asset ID: ${data.ANLNR}`;
+    }
+    return desc;
+  }
   private formateGetObservationResponse(resp, type) {
     if (resp?.filters?.assignedTo?.length > 0) {
       resp.filters.assignedTo = resp.filters.assignedTo
@@ -578,12 +590,7 @@ export class ObservationsService {
         location,
         asset,
         locationAsset: location !== placeHolder ? location : asset,
-        locationAssetDescription:
-          location !== placeHolder
-            ? `Location ID: ${item.SWERK}`
-            : asset !== placeHolder
-            ? `Asset ID: ${item.ANLNR}`
-            : '',
+        locationAssetDescription: this.createLocationAssetDescription(item),
         priority: item.PRIORITY,
         status: item?.STATUS ?? '',
         statusDisplay: this.prepareStatus(item?.STATUS),

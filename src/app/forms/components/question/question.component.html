@@ -315,11 +315,33 @@
                 "
               >
                 <mat-checkbox
+                  #enableHistory
                   formControlName="enableHistory"
                   class="enableHistory-checkbox"
                 >
                 </mat-checkbox>
                 <label class="required-label" translate="historyTxt"></label>
+                <input
+                  id="historyCount"
+                  #historyCount
+                  autocomplete="off"
+                  type="number"
+                  min="0"
+                  step="1"
+                  formControlName="historyCount"
+                  class="history-count-input"
+                  *ngIf="questionForm.get('enableHistory').value"
+                  [ngClass]="[
+                    questionForm.get('historyCount').invalid
+                      ? 'history-error'
+                      : ''
+                  ]"
+                />
+                <label
+                  class="required-label"
+                  translate="readingLabelPlural"
+                  *ngIf="questionForm.get('enableHistory').value"
+                ></label>
               </span>
 
               <span
@@ -448,6 +470,11 @@
                 [question]="questionForm.value"
                 [formId]="formId"
                 (setSliderValues)="questionForm.get('value').setValue($event)"
+                (setAdditionalDetails)="
+                  questionForm.get('additionalDetails').setValue($event)
+                "
+                [tagDetailType]="tagDetailType"
+                [attributeDetailType]="attributeDetailType"
               ></app-response-type-side-drawer>
 
               <span
@@ -482,6 +509,17 @@
                   (checkedMultiple)="questionForm.get('multi').setValue($event)"
                 ></app-drop-down>
               </span>
+              <span *ngIf="!isEmbeddedForm" class="action"
+                ><label translate="additionalDetails"></label>&nbsp;
+                <span
+                  class="additionalDetailsBtn"
+                  (click)="additionalDetailsOpen()"
+                >
+                  <span class="additionalDetailsValues">{{
+                    additionalDetailsText
+                  }}</span>
+                </span>
+              </span>
             </div>
             <div class="addLogicRow" *ngIf="logics.length">
               <app-add-logic
@@ -495,6 +533,8 @@
                 [selectedNodeId]="selectedNodeId"
                 [isEmbeddedForm]="isEmbeddedForm"
                 [questionName]="questionForm.get('name').value"
+                [tagDetailType]="tagDetailType"
+                [attributeDetailType]="attributeDetailType"
               ></app-add-logic>
             </div>
           </div>

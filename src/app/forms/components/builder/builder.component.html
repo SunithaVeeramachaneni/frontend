@@ -38,6 +38,10 @@
                   <svg-icon
                     icon="icon-six-dots-white"
                     class="section-six-dots"
+                    [ngClass]="{
+                      'section-six-dots': isPreviewActive === false,
+                      'section-six-dots-preview': isPreviewActive === true
+                    }"
                     cdkDragHandle
                   ></svg-icon>
                 </div>
@@ -187,6 +191,8 @@
                           [selectedNodeId]="selectedNode.id"
                           [isPreviewActive]="isPreviewActive"
                           [isEmbeddedForm]="isEmbeddedForm"
+                          [tagDetailType]="tagDetailType"
+                          [attributeDetailType]="attributeDetailType"
                         ></app-question>
                       </div>
                     </ng-container>

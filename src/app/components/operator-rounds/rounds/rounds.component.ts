@@ -55,13 +55,13 @@ import {
 } from 'src/app/interfaces';
 import {
   formConfigurationStatus,
-  graphQLRoundsOrInspectionsLimit,
   dateTimeFormat4,
   permissions as perms,
   statusColors,
   dateTimeFormat5,
   dateFormat6,
-  timeFormat
+  timeFormat,
+  graphQLDefaultLimit
 } from 'src/app/app.constants';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
 import { LoginService } from '../../login/services/login.service';
@@ -447,8 +447,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
           'assigned',
           'open',
           'in-progress',
-          'partly-open',
-          'skipped'
+          'partly-open'
         ],
         displayType: 'text'
       },
@@ -525,7 +524,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   skip = 0;
   plantMapSubscription: Subscription;
-  limit = graphQLRoundsOrInspectionsLimit;
+  limit = graphQLDefaultLimit;
   searchForm: FormControl;
   isPopoverOpen = false;
   roundsCount = 0;
@@ -695,14 +694,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
 
         this.initial.data = this.formattingRound(this.initial.data);
         this.skip = this.initial.data.length;
-        // Just a work around to improve the perforamce as we getting more records in the single n/w call. When small chunk of records are coming n/w call we can get rid of slice implementation
-        const sliceStart = this.dataSource ? this.dataSource.data.length : 0;
-        const dataSource = this.dataSource
-          ? this.dataSource.data.concat(
-              this.initial.data.slice(sliceStart, sliceStart + this.sliceCount)
-            )
-          : this.initial.data.slice(sliceStart, this.sliceCount);
-        this.dataSource = new MatTableDataSource(dataSource);
+        this.dataSource = new MatTableDataSource(this.initial.data);
         return this.initial;
       })
     );
@@ -772,7 +764,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
     }
     const dateString = format(new Date(date), dateFormat6);
     const timeString = format(new Date(date), timeFormat);
-    return `${dateString} ${timeFormat}`;
+    return `${dateString} ${timeString}`;
   }
 
   cellClickActionHandler = (event: CellClickActionEvent) => {
@@ -784,7 +776,11 @@ export class RoundsComponent implements OnInit, OnDestroy {
           top: `${pos?.top + 17}px`,
           left: `${pos?.left - 15}px`
         };
-        if (row.status !== 'submitted' && row.status !== 'overdue')
+        if (
+          row.status !== 'submitted' &&
+          row.status !== 'overdue' &&
+          row.status !== 'skipped'
+        )
           this.trigger.toArray()[0].openMenu();
         this.selectedRoundInfo = row;
         break;
@@ -986,7 +982,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
             });
           }
 
-          const uniquePlants = formsList
+          this.plants = formsList
             .map((item) => {
               if (item.plant) {
                 this.plantsIdNameMap[item.plant] = item.plantId;
@@ -994,20 +990,20 @@ export class RoundsComponent implements OnInit, OnDestroy {
               }
               return '';
             })
-            .filter((value, index, self) => self.indexOf(value) === index);
-          this.plants = [...uniquePlants];
+            .filter((value, index, self) => self.indexOf(value) === index)
+            .sort();
 
           for (const item of this.filterJson) {
             if (item.column === 'assignedTo') {
-              item.items = this.assignedTo;
+              item.items = this.assignedTo.sort();
             } else if (item['column'] === 'plant') {
               item.items = this.plants;
             }
             if (item.column === 'schedule') {
-              item.items = this.schedules;
+              item.items = this.schedules.sort();
             }
             if (item['column'] === 'shiftId') {
-              item.items = Object.values(this.shiftNameMap);
+              item.items = Object.values(this.shiftNameMap).sort();
             }
           }
         }

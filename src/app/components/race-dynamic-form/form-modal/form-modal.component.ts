@@ -25,11 +25,7 @@ import { Subscription } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FormModalComponent implements OnInit, OnDestroy {
-  steps: Step[] = [
-    { title: 'Form Details', content: '' },
-    { title: 'Add Questions', content: '' },
-    { title: 'PDF Setup', content: '' }
-  ];
+  steps: Step[];
 
   totalSteps: number;
   currentStep = 0;
@@ -44,19 +40,25 @@ export class FormModalComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    if (this.data.formType === 'Standalone') {
+      this.steps = [
+        { title: 'Form Details', content: '' },
+        { title: 'Add Questions', content: '' },
+        { title: 'PDF Setup', content: '' }
+      ];
+    } else if (this.data.formType === 'Embedded') {
+      this.steps = [
+        { title: 'Form Details', content: '' },
+        { title: 'Add Questions', content: '' }
+      ];
+    }
+
     this.totalSteps = this.steps.length;
 
     this.authoredFormDetailSubscription = this.store
       .select(getFormDetails)
       .subscribe((formDetails) => {
-        const { formMetadata, formListDynamoDBVersion, pages } = formDetails;
-        const { formType } = formMetadata;
-        if (formType === 'Embedded') {
-          this.steps = [
-            { title: 'Form Details', content: '' },
-            { title: 'Add Questions', content: '' }
-          ];
-        }
+        const { formMetadata, formListDynamoDBVersion } = formDetails;
         this.formData = {
           formListDynamoDBVersion,
           formMetadata,
@@ -66,12 +68,8 @@ export class FormModalComponent implements OnInit, OnDestroy {
   }
 
   goBack(): void {
-    if (this.currentStep === 0) {
-      this.router.navigate(['/forms']);
-      this.dialogRef.close({ data: this.formData.formMetadata, type: 'add' });
-    } else if (this.currentStep > 0) {
-      this.gotoPreviousStep();
-    }
+    this.router.navigate(['/forms']);
+    this.dialogRef.close({ data: this.formData.formMetadata, type: 'add' });
   }
 
   publishedEventHandler(): void {

@@ -70,7 +70,7 @@ export class ResponseSetService {
   fetchResponseSetList$ = (queryParams: {
     next?: string;
     limit: number;
-    searchKey?: string;
+    searchTerm?: string;
     fetchType: string;
   }) => {
     if (
@@ -78,22 +78,12 @@ export class ResponseSetService {
       (['infiniteScroll'].includes(queryParams.fetchType) &&
         queryParams.next !== null)
     ) {
-      const params: URLSearchParams = new URLSearchParams();
-
-      params.set('limit', `${queryParams.limit}`);
-
-      params.set('next', queryParams.next);
-      if (queryParams.searchKey) {
-        const filter = {
-          searchTerm: { contains: queryParams?.searchKey.toLowerCase() }
-        };
-        params.set('filter', JSON.stringify(filter));
-      }
-
       return this._appService
         ._getResp(
           environment.masterConfigApiUrl,
-          'response-set/list?' + params.toString()
+          'response-set/list',
+          { displayToast: true, failureResponse: {} },
+          queryParams
         )
         .pipe(map((res) => this.formatGraphQLocationResponse(res)));
     }

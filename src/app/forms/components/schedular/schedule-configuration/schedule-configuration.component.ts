@@ -36,6 +36,7 @@ import {
   differenceInDays,
   format,
   getDay,
+  isBefore,
   weeksToDays
 } from 'date-fns';
 import { takeUntil, tap } from 'rxjs/operators';
@@ -255,6 +256,13 @@ export class ScheduleConfigurationComponent
   }
 
   ngOnInit(): void {
+    this.scheduleConfigurationService.getSlotChanged().subscribe((value) => {
+      this.markSlotPristine(value);
+    });
+    this.schedulerConfigForm?.valueChanges.subscribe((value) => {
+      this.schedulerConfigForm.markAsDirty();
+    });
+
     if (this.data) {
       const {
         formDetail,
@@ -329,11 +337,19 @@ export class ScheduleConfigurationComponent
         [Validators.required, Validators.min(1)]
       ],
       scheduleEndOccurrencesText: [{ value: 'occurrences', disabled: true }],
-      startDate: format(new Date(), dateFormat3),
+      startDate: localToTimezoneDate(
+        new Date(),
+        this.plantTimezoneMap[this.selectedDetails?.plantId],
+        dateFormat3
+      ),
       startDatePicker: new Date(),
       endDate: [
         {
-          value: format(addDays(new Date(), 30), dateFormat3),
+          value: localToTimezoneDate(
+            addDays(new Date(), 30),
+            this.plantTimezoneMap[this.selectedDetails?.plantId],
+            dateFormat3
+          ),
           disabled: true
         }
       ],
@@ -600,7 +616,7 @@ export class ScheduleConfigurationComponent
       .subscribe((monthlyDaysOfWeek) => {
         const monthlyDaysOfWeekCount = monthlyDaysOfWeek.reduce(
           (acc: number, curr: number[]) => {
-            acc += curr.length;
+            acc += curr?.length;
             return acc;
           },
           0
@@ -715,6 +731,7 @@ export class ScheduleConfigurationComponent
 
   cancel() {
     this.initShiftStat();
+    this.schedulerConfigForm.reset();
     this.dialogRef.close({
       slideInOut: 'out',
       actionType: 'scheduleConfigEvent'
@@ -997,7 +1014,14 @@ export class ScheduleConfigurationComponent
               scheduleByDates
             } = config;
             this.startDatePickerMinDate = new Date(startDate);
-            this.scheduleEndOnPickerMinDate = new Date(scheduleEndOn);
+            this.scheduleEndOnPickerMinDate = isBefore(
+              new Date(),
+              new Date(startDate)
+            )
+              ? new Date(startDate)
+              : isBefore(new Date(), new Date(scheduleEndOn))
+              ? new Date()
+              : new Date(scheduleEndOn);
             config = {
               ...config,
               startDate: localToTimezoneDate(
@@ -1176,6 +1200,15 @@ export class ScheduleConfigurationComponent
               scheduledTill,
               scheduleByDates
             } = config;
+            this.startDatePickerMinDate = new Date(startDate);
+            this.scheduleEndOnPickerMinDate = isBefore(
+              new Date(),
+              new Date(startDate)
+            )
+              ? new Date(startDate)
+              : isBefore(new Date(), new Date(scheduleEndOn))
+              ? new Date()
+              : new Date(scheduleEndOn);
             config = {
               ...config,
               startDate: localToTimezoneDate(
@@ -1363,7 +1396,7 @@ export class ScheduleConfigurationComponent
   }
 
   get shiftSlots(): FormArray {
-    return this.schedulerConfigForm.get('shiftSlots') as FormArray;
+    return this.schedulerConfigForm?.get('shiftSlots') as FormArray;
   }
 
   addShiftDetails(
@@ -1441,6 +1474,7 @@ export class ScheduleConfigurationComponent
       this.shiftDetails = shiftDefaultPayload;
       this.shiftSlots.push(this.addShiftDetails(true));
     }
+    this.scheduleConfigurationService.setSlotChanged(true);
   }
 
   onUpdateShiftSlot(event: {
@@ -1476,6 +1510,7 @@ export class ScheduleConfigurationComponent
     this.onDestroy$.complete();
     this.shiftDetails = {};
     this.shiftApiResponse = null;
+    this.scheduleConfigurationService.setInitialSlotChanged();
   }
 
   private prepareShiftDetailsPayload(shiftDetails, type: '24' | '12' = '24') {
@@ -1504,5 +1539,14 @@ export class ScheduleConfigurationComponent
       }
     );
     return payload;
+  }
+
+  private markSlotPristine(value = null): void {
+    const shiftSlots = this.schedulerConfigForm?.get('shiftSlots');
+    const shiftsSelected = this.schedulerConfigForm?.get('shiftsSelected');
+    if (value && (shiftSlots?.pristine || shiftsSelected?.pristine)) {
+      shiftSlots.markAsDirty();
+      shiftsSelected.markAsDirty();
+    }
   }
 }

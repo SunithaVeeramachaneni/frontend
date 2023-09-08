@@ -198,13 +198,6 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
   isPopoverOpen = false;
   filterJson = [];
   filter = {
-    status: '',
-    modifiedBy: '',
-    createdBy: '',
-    authoredBy: '',
-    lastModifiedOn: '',
-    scheduleStartDate: '',
-    scheduleEndDate: '',
     plant: ''
   };
   plantsIdNameMap = {};
@@ -407,7 +400,7 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
         const objectKeys = Object.keys(plansList);
 
         if (objectKeys.length > 0) {
-          const uniquePlants = plansList.rows
+          this.plants = plansList.rows
             .map((item) => {
               if (item?.plant) {
                 this.plantsIdNameMap[item?.plant?.plantId] = item?.plant?.id;
@@ -415,8 +408,9 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
               }
               return '';
             })
-            .filter((value, index, self) => self.indexOf(value) === index);
-          this.plants = [...uniquePlants];
+            .filter((value, index, self) => self.indexOf(value) === index)
+            .sort();
+
           for (const item of this.filterJson) {
             if (item.column === 'plant') {
               item.items = this.plants;
@@ -448,13 +442,6 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
   resetFilter() {
     this.isPopoverOpen = false;
     this.filter = {
-      status: '',
-      createdBy: '',
-      modifiedBy: '',
-      authoredBy: '',
-      lastModifiedOn: '',
-      scheduleStartDate: '',
-      scheduleEndDate: '',
       plant: ''
     };
     this.nextToken = '';

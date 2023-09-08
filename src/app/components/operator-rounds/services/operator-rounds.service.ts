@@ -25,13 +25,13 @@ import {
 import {
   formConfigurationStatus,
   dateFormat2,
-  dateFormat4
+  dateFormat4,
+  graphQLDefaultMaxLimit
 } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { isJson } from '../../race-dynamic-form/utils/utils';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
 import { cloneDeep, isEmpty, omitBy, isEqual } from 'lodash-es';
-import { isNgModuleDefWithProviders } from 'ng-mocks';
 
 @Injectable({
   providedIn: 'root'
@@ -124,11 +124,12 @@ export class OperatorRoundsService {
     );
 
   getAdditionalDetails$ = (
+    data,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any[]> =>
     this.appService._getResp(
       environment.operatorRoundsApiUrl,
-      `additional-details`,
+      `additional-details/${data.type}/${data.level}`,
       info
     );
 
@@ -707,19 +708,15 @@ export class OperatorRoundsService {
       .pipe(map((res) => this.formateGetRoundPlanResponse(res)));
   };
 
-  fetchAllRounds$ = () => {
-    const params: URLSearchParams = new URLSearchParams();
-    params.set('limit', '2000000');
-    params.set('next', '');
-
-    return this.appService
+  fetchAllRounds$ = () =>
+    this.appService
       ._getResp(
         environment.operatorRoundsApiUrl,
-        'rounds?' + params.toString(),
-        { displayToast: true, failureResponse: {} }
+        'rounds',
+        { displayToast: true, failureResponse: {} },
+        { limit: graphQLDefaultMaxLimit, next: '' }
       )
       .pipe(map((res) => this.formatRounds(res?.items || [])));
-  };
 
   fetchAllPlansList$ = () => {
     const params: URLSearchParams = new URLSearchParams();

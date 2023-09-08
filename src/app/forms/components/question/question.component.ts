@@ -12,7 +12,7 @@ import {
   ViewChild,
   OnDestroy
 } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -32,7 +32,8 @@ import {
   NumberRangeMetadata,
   FormMetadata,
   InstructionsFile,
-  UnitOfMeasurement
+  UnitOfMeasurement,
+  AdditionalDetails
 } from 'src/app/interfaces';
 import {
   State,
@@ -53,6 +54,8 @@ import { SlideshowComponent } from 'src/app/shared/components/slideshow/slidesho
 import { MatDialog } from '@angular/material/dialog';
 import { Base64HelperService } from 'src/app/components/work-instructions/services/base64-helper.service';
 import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
+import { CommonService } from 'src/app/shared/services/common.service';
+
 @Component({
   selector: 'app-question',
   templateUrl: './question.component.html',
@@ -69,6 +72,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
   @Input() selectedNodeId: any;
   @Input() isTemplate: boolean;
   @Input() isImported: boolean;
+  @Input() tagDetailType: string;
+  @Input() attributeDetailType: string;
 
   @Input() set questionId(id: string) {
     this._id = id;
@@ -147,10 +152,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
     return this._question;
   }
   @Input() set logics(logics: any) {
-    if (logics?.length) {
-      if (!isEqual(this.logics, logics)) {
-        this._logics = logics;
-      }
+    if (!isEqual(this.logics, logics)) {
+      this._logics = logics;
     }
   }
   get logics() {
@@ -176,6 +179,24 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
 
   private _rangeDisplayText = 'None';
+
+  get additionalDetailsText() {
+    return this._additionalDetailsText;
+  }
+
+  set additionalDetailsText(d) {
+    const additionalDetails = this.questionForm.get('additionalDetails').value;
+    if (
+      !additionalDetails.tags?.length &&
+      !additionalDetails.attributes?.length
+    ) {
+      this._additionalDetailsText = 'None';
+    } else {
+      this._additionalDetailsText = 'Show';
+    }
+  }
+
+  private _additionalDetailsText = 'None';
 
   addLogicNotAppliedFields = [
     'LTV',
@@ -209,6 +230,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     position: '',
     required: false,
     enableHistory: false,
+    historyCount: [5, [Validators.required, Validators.min(0)]],
     multi: false,
     value: 'TF',
     isPublished: false,
@@ -216,7 +238,12 @@ export class QuestionComponent implements OnInit, OnDestroy {
     isOpen: false,
     isResponseTypeModalOpen: false,
     unitOfMeasurement: 'None',
-    rangeMetadata: {} as NumberRangeMetadata
+    rangeMetadata: {} as NumberRangeMetadata,
+    additionalDetails: {} as AdditionalDetails,
+    createdAt: '',
+    createdBy: '',
+    updatedAt: '',
+    updatedBy: ''
   });
   question$: Observable<Question>;
   ignoreUpdateIsOpen: boolean;
@@ -252,6 +279,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     private responseSetService: ResponseSetService,
     private toast: ToastService,
     private translate: TranslateService,
+    private readonly commonService: CommonService
   ) {}
 
   ngOnInit(): void {
@@ -318,6 +346,9 @@ export class QuestionComponent implements OnInit, OnDestroy {
             isResponseTypeModalOpen: currIsResponseTypeModalOpen,
             ...curr
           } = current;
+          if (current.historyCount === null || current.historyCount < 0) {
+            this.questionForm.get('historyCount').setValue(0);
+          }
           if (!isEqual(prev, curr)) {
             const { value: prevValue } = prev;
             const { value: currValue } = curr;
@@ -337,6 +368,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
 
               if (!isEqual(prev.rangeMetadata, curr.rangeMetadata))
                 this.rangeDisplayText = '';
+              if (!isEqual(prev.additionalDetails, curr.additionalDetails))
+                this.additionalDetailsText = '';
 
               this.questionEvent.emit({
                 pageIndex: this.pageIndex,
@@ -397,6 +430,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     });
     this.checkAskQuestionFeatures();
     this.rangeDisplayText = '';
+    this.additionalDetailsText = '';
   }
 
   getRangeMetadata() {
@@ -578,6 +612,13 @@ export class QuestionComponent implements OnInit, OnDestroy {
       rangeMetadata: question.rangeMetadata
     });
   }
+  additionalDetailsOpen() {
+    this.formService.setAdditionalDetailsOpenState({
+      isOpen: true,
+      questionId: this.questionForm.get('id').value,
+      additionalDetails: this.questionForm.get('additionalDetails').value
+    });
+  }
 
   insertImageHandler(event) {
     const { files } = event.target as HTMLInputElement;
@@ -732,13 +773,14 @@ export class QuestionComponent implements OnInit, OnDestroy {
         break;
       case 'ask_question_create':
         let newQuestion = {
-          id: this.isEmbeddedForm ? `AQ_${Date.now()}` : `AQ_${uuidv4()}`,
+          id: `AQ_${uuidv4()}`,
           sectionId: `AQ_${event.logic.id}`,
           name: '',
           fieldType: 'TF',
           position: 0,
           required: false,
           enableHistory: false,
+          historyCount: 5,
           multi: false,
           value: 'TF',
           isPublished: false,
@@ -766,6 +808,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
           position: 0,
           required: true,
           enableHistory: false,
+          historyCount: 5,
           multi: false,
           value: 'ATT',
           isPublished: false,
@@ -892,11 +935,14 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
 
   updateInstructionTag(event: string) {
-    const originalValue = this.questionForm.get('value').value;
-    originalValue.tag = {
-      title: event,
-      colour: this.instructionTagColours[event],
-      textColour: this.instructionTagTextColour[event]
+    let originalValue = this.questionForm.get('value').value;
+    originalValue = {
+      ...originalValue,
+      tag: {
+        title: event,
+        colour: this.instructionTagColours[event],
+        textColour: this.instructionTagTextColour[event]
+      }
     };
     this.questionForm.get('value').setValue(originalValue);
     this.instructionsUpdateValue();

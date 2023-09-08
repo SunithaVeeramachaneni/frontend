@@ -81,6 +81,7 @@ export class FormEditViewComponent implements OnInit, OnDestroy {
       disableClose: true,
       data: {
         formData: this.formMetadata,
+        formType: this.formMetadata.formType,
         type: 'edit'
       }
     });
