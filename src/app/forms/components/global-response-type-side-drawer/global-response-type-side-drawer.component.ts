@@ -10,7 +10,9 @@ import {
   ViewChildren,
   QueryList,
   ElementRef,
-  OnDestroy
+  OnDestroy,
+  OnChanges,
+  SimpleChanges
 } from '@angular/core';
 import {
   FormBuilder,
@@ -45,7 +47,7 @@ import { FormValidationUtil } from 'src/app/shared/utils/formValidationUtil';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GlobalResponseTypeSideDrawerComponent
-  implements OnInit, OnDestroy
+  implements OnInit, OnDestroy, OnChanges
 {
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Output() globalResponseHandler: EventEmitter<any> = new EventEmitter<any>();
@@ -54,11 +56,18 @@ export class GlobalResponseTypeSideDrawerComponent
   private globalResponses: QueryList<ElementRef>;
   isCreate = false;
   public isViewMode: boolean;
-  public responseForm: FormGroup;
+  public responseForm: FormGroup = this.fb.group({
+    name: new FormControl('', [
+      Validators.required,
+      Validators.minLength(3),
+      WhiteSpaceValidator.trimWhiteSpace
+    ]),
+    description: new FormControl('', [WhiteSpaceValidator.trimWhiteSpace]),
+    responses: this.fb.array([])
+  });
   errors: ValidationError = {};
   public isResponseFormUpdated = false;
   public globalResponse: any;
-  private globalResponseSubscription: Subscription;
   private onDestroy$ = new Subject();
 
   @Input() set globalResponseToBeEdited(response: any) {
@@ -79,15 +88,6 @@ export class GlobalResponseTypeSideDrawerComponent
   ) {}
 
   ngOnInit(): void {
-    this.responseForm = this.fb.group({
-      name: new FormControl('', [
-        Validators.required,
-        Validators.minLength(3),
-        WhiteSpaceValidator.trimWhiteSpace
-      ]),
-      description: new FormControl('', [WhiteSpaceValidator.trimWhiteSpace]),
-      responses: this.fb.array([])
-    });
     this.responseForm.valueChanges
       .pipe(
         pairwise(),
@@ -110,19 +110,18 @@ export class GlobalResponseTypeSideDrawerComponent
         })
       )
       .subscribe();
+  }
 
-    if (this.globalResponse) {
-      this.name.patchValue(this.globalResponse.name);
-      this.description.patchValue(this.globalResponse.description);
-      const globalresponseValues = JSON.parse(this.globalResponse.values);
-      const reponseTimer = timer(0, 1000);
-      let responseCount = 0;
-      this.globalResponseSubscription = reponseTimer.subscribe(() => {
-        const items = globalresponseValues.slice(
-          responseCount * 100,
-          (responseCount + 1) * 100
-        );
-        items.forEach((item) => {
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.globalResponseToBeEdited) {
+      const response = changes.globalResponseToBeEdited.currentValue;
+      if (response) {
+        this.responseForm.reset();
+        this.name.patchValue(response.name);
+        this.description.patchValue(response.description);
+        const globalresponseValues = JSON.parse(response.values);
+        this.responses.clear();
+        globalresponseValues.forEach((item) => {
           this.responses.push(
             this.fb.group({
               title: [
@@ -133,12 +132,8 @@ export class GlobalResponseTypeSideDrawerComponent
             })
           );
         });
-        responseCount++;
-        if (items.length === 0) {
-          this.globalResponseSubscription.unsubscribe();
-        }
-      });
-    } else if (!this.globalResponse && !this.isViewMode) this.addResponse(1);
+      } else if (!response && !this.isViewMode) this.addResponse(1);
+    }
   }
 
   toggleViewMode = () => {
