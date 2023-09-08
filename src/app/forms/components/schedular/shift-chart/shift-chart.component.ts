@@ -59,22 +59,24 @@ export class ShiftChartComponent implements OnInit, OnChanges {
     this.addForm.addControl('slotsArray', this.slotsArray);
   }
 
-  ngOnChanges(_changes: SimpleChanges): void {
-    if (this.shift?.value?.null) {
-      this.slots = this.service.generateTimeSlots(
-        this.shift.value.null.startTime,
-        this.shift.value.null.endTime
-      );
-      if (this.shift?.value?.null?.payload) {
-        this.initEditPayloadForSlots(this.shift.value.null.payload);
-      }
-    } else if (this.shift?.value?.id) {
-      this.slots = this.service.generateTimeSlots(
-        this.shift.value.startTime,
-        this.shift.value.endTime
-      );
-      if (this.shift?.value?.payload) {
-        this.initEditPayloadForSlots(this.shift.value.payload);
+  ngOnChanges(changes): void {
+    if (changes?.shiftIdx?.previousValue === undefined) {
+      if (this.shift?.value?.null) {
+        this.slots = this.service.generateTimeSlots(
+          this.shift.value.null.startTime,
+          this.shift.value.null.endTime
+        );
+        if (this.shift?.value?.null?.payload) {
+          this.initEditPayloadForSlots(this.shift.value.null.payload);
+        }
+      } else if (this.shift?.value?.id) {
+        this.slots = this.service.generateTimeSlots(
+          this.shift.value.startTime,
+          this.shift.value.endTime
+        );
+        if (this.shift?.value?.payload) {
+          this.initEditPayloadForSlots(this.shift.value.payload);
+        }
       }
     }
   }
