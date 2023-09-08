@@ -876,7 +876,7 @@ export class PlansComponent implements OnInit, OnDestroy {
     this.scheduleConfigState = state;
 
     if (mode === 'create') {
-      const roundPlanId = this.scheduleRoundPlanDetail.id;
+      const roundPlanId = this.scheduleRoundPlanDetail?.id;
       this.operatorRoundsService
         .getRoundsCountByRoundPlanId$(roundPlanId)
         .pipe(
@@ -953,6 +953,8 @@ export class PlansComponent implements OnInit, OnDestroy {
           this.planCategory.patchValue('unscheduled');
         }
       }
+      this.nextToken = '';
+      this.fetchPlans$.next({ data: 'load' });
     }
     this.cdrf.markForCheck();
   }
