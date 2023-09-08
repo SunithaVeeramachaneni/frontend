@@ -49,7 +49,8 @@ import {
   RoundPlanDetail,
   SelectTab,
   UserDetails,
-  AssigneeDetails
+  AssigneeDetails,
+  UserGroup
 } from 'src/app/interfaces';
 import {
   dateFormat,
@@ -87,13 +88,26 @@ export class PlansComponent implements OnInit, OnDestroy {
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
       tap((users) => {
-        this.assigneeDetails = { users };
+        this.assigneeDetails = { ...this.assigneeDetails, users };
         this.userFullNameByEmail = this.userService.getUsersInfo();
       })
     );
   }
   get users$(): Observable<UserDetails[]> {
     return this._users$;
+  }
+  @Input() set userGroups$(userGroups$: Observable<UserGroup[]>) {
+    this._userGroups$ = userGroups$.pipe(
+      tap((userGroups: any) => {
+        this.assigneeDetails = {
+          ...this.assigneeDetails,
+          userGroups: userGroups.items
+        };
+      })
+    );
+  }
+  get userGroups$(): Observable<UserGroup[]> {
+    return this._userGroups$;
   }
   @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
   filterJson = [];
@@ -415,6 +429,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   allShifts: any;
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
+  private _userGroups$: Observable<UserGroup[]>;
   private _users$: Observable<UserDetails[]>;
   private destroy$ = new Subject();
   private scheduleConfigEvent: Subscription;
@@ -513,7 +528,8 @@ export class PlansComponent implements OnInit, OnDestroy {
       roundPlanScheduleConfigurations$,
       this.plantService.fetchAllPlants$(),
       this.shiftService.fetchAllShifts$(),
-      this.users$
+      this.users$,
+      this.userGroups$
     ]).pipe(
       map(
         ([
