@@ -7,7 +7,7 @@
   </div>
   <mat-dialog-content class="dialog-content">
     <div class="emailContainer">
-      <div class="email-dialog-body" *ngIf="allUsers$ | async as allUsersList">
+      <div class="email-dialog-body" *ngIf="allUsers$ | async as allUsersList; else loadingUsers">
         <mat-form-field>
           <mat-chip-list #chipList>
             <mat-chip *ngFor="let user of users" [selectable]="selectable" [removable]="removable"
@@ -39,7 +39,22 @@
   </mat-dialog-content>
   <mat-dialog-actions align="end" class="dialog-footer">
     <button mat-button mat-dialog-close translate="cancelBtn"></button>
-    <button mat-flat-button color="primary" class="btn" (click)="sendEmail()" translate="sendBtn">
+    <button mat-flat-button color="primary" class="btn sendBtn" (click)="sendEmail()" translate="sendBtn"
+      [disabled]="sendEmailInprogress || enableSend">
+      <mat-progress-spinner [mode]="'indeterminate'" [diameter]="25" *ngIf="sendEmailInprogress"
+        class="spinner"></mat-progress-spinner>
     </button>
   </mat-dialog-actions>
 </div>
+<ng-template #loadingUsers>
+  <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+  </ngx-shimmer-loading>
+  <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+  </ngx-shimmer-loading>
+  <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+  </ngx-shimmer-loading>
+  <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+  </ngx-shimmer-loading>
+  <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+  </ngx-shimmer-loading>
+</ng-template>

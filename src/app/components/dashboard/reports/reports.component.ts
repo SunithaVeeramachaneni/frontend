@@ -273,12 +273,13 @@ export class ReportsComponent implements OnInit {
       columnId,
       row: { id }
     } = event;
+    const moduleName = `operator-rounds`;
     switch (columnId) {
       case 'name':
       case 'description':
       case 'createdBy':
       case 'createdOn':
-        this.router.navigate(['dashboard/reports/editreport', id], {
+        this.router.navigate([`${moduleName}/editreport`, id], {
           queryParams: { preview: true }
         });
 
@@ -367,7 +368,10 @@ export class ReportsComponent implements OnInit {
   prepareMenuActions(permissions: Permission[]) {
     const menuActions = [];
 
-    if (this.loginService.checkUserHasPermission(permissions, 'VIEW_REPORTS')) {
+    if (
+      this.loginService.checkUserHasPermission(permissions, 'VIEW_REPORTS') ||
+      this.loginService.checkUserHasPermission(permissions, 'OPR_VIEW_REPORTS')
+    ) {
       menuActions.push({
         title: 'Preview',
         action: 'preview'
@@ -375,7 +379,8 @@ export class ReportsComponent implements OnInit {
     }
 
     if (
-      this.loginService.checkUserHasPermission(permissions, 'UPDATE_REPORT')
+      this.loginService.checkUserHasPermission(permissions, 'UPDATE_REPORT') ||
+      this.loginService.checkUserHasPermission(permissions, 'OPR_UPDATE_REPORT')
     ) {
       menuActions.push({
         title: 'Edit',
@@ -387,6 +392,10 @@ export class ReportsComponent implements OnInit {
       this.loginService.checkUserHasPermission(
         permissions,
         'REPORT_EXPORT_TO_EXCEL'
+      ) ||
+      this.loginService.checkUserHasPermission(
+        permissions,
+        'OPR_REPORT_EXPORT_TO_EXCEL'
       )
     ) {
       menuActions.push({
@@ -395,7 +404,10 @@ export class ReportsComponent implements OnInit {
       });
     }
 
-    if (this.loginService.checkUserHasPermission(permissions, 'COPY_REPORT')) {
+    if (
+      this.loginService.checkUserHasPermission(permissions, 'COPY_REPORT') ||
+      this.loginService.checkUserHasPermission(permissions, 'OPR_COPY_REPORT')
+    ) {
       menuActions.push({
         title: 'Copy',
         action: 'copy'
@@ -403,7 +415,8 @@ export class ReportsComponent implements OnInit {
     }
 
     if (
-      this.loginService.checkUserHasPermission(permissions, 'DELETE_REPORT')
+      this.loginService.checkUserHasPermission(permissions, 'DELETE_REPORT') ||
+      this.loginService.checkUserHasPermission(permissions, 'OPR_DELETE_REPORT')
     ) {
       menuActions.push({
         title: 'Delete',

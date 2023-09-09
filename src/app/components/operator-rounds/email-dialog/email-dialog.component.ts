@@ -35,8 +35,8 @@ export class EmailDialogComponent implements OnInit {
   allUsers$: Observable<any>;
 
   emailNotes: '';
-  toEmailIDs: '';
-  validEmailIDs = false;
+  enableSend = false;
+  sendEmailInprogress = false;
 
   visible = true;
   selectable = true;
@@ -50,6 +50,7 @@ export class EmailDialogComponent implements OnInit {
   filteredUsers: Observable<any[]>;
 
   users = [];
+  selectedUsers = [];
 
   allUsers = [];
 
@@ -85,7 +86,6 @@ export class EmailDialogComponent implements OnInit {
 
   ngOnInit() {
     this.emailNotes = '';
-    this.toEmailIDs = '';
     this.filteredUsers = this.userCtrl.valueChanges.pipe(
       startWith(null),
       map((user: string | null) =>
@@ -94,23 +94,23 @@ export class EmailDialogComponent implements OnInit {
     );
   }
 
-  emailChanged = (event) => {
-    this.validEmailIDs = false;
-    this.toEmailIDs = event.target.value;
-    const emails = this.toEmailIDs.split(',');
-
-    this.validEmailIDs = emails
-      .filter((e) => e.length)
-      .every((email) => {
-        const re = /\S+@\S+\.\S+/;
-        return re.test(email);
-      });
-    this.cdrf.detectChanges();
-    return this.validEmailIDs;
-  };
   sendEmail = async () => {
-    const toEmailIDs = 'shiva.kanneboina@innovapptive.com';
-    const emailNotes = 'sample notes';
+    this.sendEmailInprogress = true;
+    let isValid = true;
+    this.selectedUsers.forEach((email) => {
+      const re = /\S+@\S+\.\S+/;
+      isValid = isValid && re.test(email);
+    });
+    if (!isValid) {
+      this.enableSend = isValid;
+      this.cdrf.detectChanges();
+
+      // TODO: Display toast message
+      return;
+    }
+    this.cdrf.detectChanges();
+    const toEmailIDs = this.selectedUsers.join(',');
+    const emailNotes = this.emailNotes;
     const bodyFormData = new FormData();
     const { timePeriod, plantId, shiftId, startDate, endDate } =
       this.data.filters;
@@ -161,20 +161,20 @@ export class EmailDialogComponent implements OnInit {
         'Content-Type': 'application/x-www-form-urlencoded'
       }
     };
-    console.log(bodyFormData);
     this.operatorRoundService
       .sendDashboardAsEmail$(bodyFormData, customHeaders, info)
       .pipe(tap((resp: any) => {}))
       .subscribe(
         (res) => {
-          // this.emailMenuTrigger.closeMenu();
           this.emailNotes = '';
-          this.toEmailIDs = '';
+          this.sendEmailInprogress = true;
+          this.cdrf.detectChanges();
+          this.dialogRef.close({ confirmed: true });
         },
         (err) => {
-          // this.emailMenuTrigger.closeMenu();
           this.emailNotes = '';
-          this.toEmailIDs = '';
+          this.sendEmailInprogress = true;
+          this.cdrf.detectChanges();
         }
       );
   };
@@ -188,6 +188,9 @@ export class EmailDialogComponent implements OnInit {
     const value = event.value;
     if ((value || '').trim()) {
       this.users.push(value.trim());
+      this.selectedUsers.push(value.trim());
+      const re = /\S+@\S+\.\S+/;
+      this.enableSend = this.enableSend && re.test(value.trim());
     }
 
     // Reset the input value
@@ -203,6 +206,7 @@ export class EmailDialogComponent implements OnInit {
 
     if (index >= 0) {
       this.users.splice(index, 1);
+      this.selectedUsers.splice(index, 1);
     }
   }
 
@@ -214,6 +218,7 @@ export class EmailDialogComponent implements OnInit {
 
   selected(event: MatAutocompleteSelectedEvent): void {
     this.users.push(event.option.viewValue);
+    this.selectedUsers.push(event.option.value);
     this.userInput.nativeElement.value = '';
     this.userCtrl.setValue(null);
   }

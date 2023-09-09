@@ -66,3 +66,11 @@
   height: 40px;
   margin: 0px;
 }
+.sendBtn {
+  display: flex;
+  align-items: center;
+}
+.sendBtn ::ng-deep .mat-progress-spinner circle,
+.mat-spinner circle {
+  stroke: $white;
+}
