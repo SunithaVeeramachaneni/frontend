@@ -141,9 +141,9 @@
       (click)="openHistoryBottomSheet()"
       [disabled]="!isHistoryVisible"
       translate="historyTxt"
-      *ngIf="props.moduleName === 'OPERATOR_ROUNDS'"
+      *ngIf="props.moduleName === operatorRounds"
     ></button>
-    <hr *ngIf="props.moduleName === 'OPERATOR_ROUNDS'" />
+    <hr *ngIf="props.moduleName === operatorRounds" />
     <div
       id="iphoneSkipTask"
       class="bottom-list-item skip-task"
