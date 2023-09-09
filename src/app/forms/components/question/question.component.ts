@@ -32,7 +32,8 @@ import {
   NumberRangeMetadata,
   FormMetadata,
   InstructionsFile,
-  UnitOfMeasurement
+  UnitOfMeasurement,
+  AdditionalDetails
 } from 'src/app/interfaces';
 import {
   State,
@@ -41,7 +42,7 @@ import {
 } from 'src/app/forms/state/builder/builder-state.selectors';
 import { Store } from '@ngrx/store';
 import { FormService } from '../../services/form.service';
-import { isEqual } from 'lodash-es';
+import { cloneDeep, isEqual } from 'lodash-es';
 import { BuilderConfigurationActions } from '../../state/actions';
 import { AddLogicActions } from '../../state/actions';
 import { MatMenuTrigger } from '@angular/material/menu';
@@ -71,6 +72,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
   @Input() selectedNodeId: any;
   @Input() isTemplate: boolean;
   @Input() isImported: boolean;
+  @Input() tagDetailType: string;
+  @Input() attributeDetailType: string;
 
   @Input() set questionId(id: string) {
     this._id = id;
@@ -149,10 +152,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
     return this._question;
   }
   @Input() set logics(logics: any) {
-    if (logics?.length) {
-      if (!isEqual(this.logics, logics)) {
-        this._logics = logics;
-      }
+    if (!isEqual(this.logics, logics)) {
+      this._logics = logics;
     }
   }
   get logics() {
@@ -178,6 +179,24 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
 
   private _rangeDisplayText = 'None';
+
+  get additionalDetailsText() {
+    return this._additionalDetailsText;
+  }
+
+  set additionalDetailsText(d) {
+    const additionalDetails = this.questionForm.get('additionalDetails').value;
+    if (
+      !additionalDetails.tags?.length &&
+      !additionalDetails.attributes?.length
+    ) {
+      this._additionalDetailsText = 'None';
+    } else {
+      this._additionalDetailsText = 'Show';
+    }
+  }
+
+  private _additionalDetailsText = 'None';
 
   addLogicNotAppliedFields = [
     'LTV',
@@ -220,6 +239,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     isResponseTypeModalOpen: false,
     unitOfMeasurement: 'None',
     rangeMetadata: {} as NumberRangeMetadata,
+    additionalDetails: {} as AdditionalDetails,
     createdAt: '',
     createdBy: '',
     updatedAt: '',
@@ -348,6 +368,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
 
               if (!isEqual(prev.rangeMetadata, curr.rangeMetadata))
                 this.rangeDisplayText = '';
+              if (!isEqual(prev.additionalDetails, curr.additionalDetails))
+                this.additionalDetailsText = '';
 
               this.questionEvent.emit({
                 pageIndex: this.pageIndex,
@@ -408,6 +430,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     });
     this.checkAskQuestionFeatures();
     this.rangeDisplayText = '';
+    this.additionalDetailsText = '';
   }
 
   getRangeMetadata() {
@@ -587,6 +610,13 @@ export class QuestionComponent implements OnInit, OnDestroy {
       isOpen: true,
       questionId: question.id,
       rangeMetadata: question.rangeMetadata
+    });
+  }
+  additionalDetailsOpen() {
+    this.formService.setAdditionalDetailsOpenState({
+      isOpen: true,
+      questionId: this.questionForm.get('id').value,
+      additionalDetails: this.questionForm.get('additionalDetails').value
     });
   }
 
@@ -867,7 +897,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
   };
 
   sendFileToS3(file, params): void {
-    const { originalValue, isImage, index } = params;
+    const { isImage, index } = params;
+    let { originalValue } = params;
     this.formService
       .uploadToS3$(`${this.moduleName}/${this.formMetadata?.id}`, file)
       .subscribe((event) => {
@@ -878,9 +909,17 @@ export class QuestionComponent implements OnInit, OnDestroy {
           objectURL: event.message.objectURL
         };
         if (isImage) {
-          originalValue.images[index] = value;
+          const images = [...originalValue.images];
+          images[index] = value;
+          originalValue = cloneDeep({
+            ...originalValue,
+            images
+          });
         } else {
-          originalValue.pdf = value;
+          originalValue = cloneDeep({
+            ...originalValue,
+            pdf: value
+          });
         }
         this.instructionsUpdateValue();
         this.questionForm.get('value').setValue(originalValue);
@@ -905,11 +944,14 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
 
   updateInstructionTag(event: string) {
-    const originalValue = this.questionForm.get('value').value;
-    originalValue.tag = {
-      title: event,
-      colour: this.instructionTagColours[event],
-      textColour: this.instructionTagTextColour[event]
+    let originalValue = this.questionForm.get('value').value;
+    originalValue = {
+      ...originalValue,
+      tag: {
+        title: event,
+        colour: this.instructionTagColours[event],
+        textColour: this.instructionTagTextColour[event]
+      }
     };
     this.questionForm.get('value').setValue(originalValue);
     this.instructionsUpdateValue();
@@ -921,16 +963,21 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
 
   instructionsFileDeleteHandler(index: number) {
-    const originalValue = this.questionForm.get('value').value;
+    let originalValue = this.questionForm.get('value').value;
     if (index < 3) {
       this.formService.deleteFromS3(originalValue.images[index].objectKey);
-      originalValue.images[index] = null;
-      originalValue.images = this.imagesArrayRemoveNullGaps(
-        originalValue.images
-      );
+      const images = [...originalValue.images];
+      images[index] = null;
+      originalValue = cloneDeep({
+        ...originalValue,
+        images: this.imagesArrayRemoveNullGaps(images)
+      });
     } else {
       this.formService.deleteFromS3(originalValue.pdf.objectKey);
-      originalValue.pdf = null;
+      originalValue = cloneDeep({
+        ...originalValue,
+        pdf: null
+      });
     }
     this.questionForm.get('value').setValue(originalValue);
     this.instructionsUpdateValue();

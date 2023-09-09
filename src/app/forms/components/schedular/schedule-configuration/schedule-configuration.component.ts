@@ -34,9 +34,17 @@ import {
   differenceInDays,
   format,
   getDay,
+  isBefore,
   weeksToDays
 } from 'date-fns';
-import { takeUntil, tap } from 'rxjs/operators';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  pairwise,
+  startWith,
+  takeUntil,
+  tap
+} from 'rxjs/operators';
 import { RoundPlanScheduleConfigurationService } from 'src/app/components/operator-rounds/services/round-plan-schedule-configuration.service';
 import {
   AssigneeDetails,
@@ -69,6 +77,7 @@ import {
   hourFormat
 } from 'src/app/app.constants';
 import { ScheduleConfigurationService } from 'src/app/forms/services/schedule.service';
+import { isEqual } from 'lodash-es';
 
 export interface ScheduleConfigEvent {
   slideInOut: 'out' | 'in';
@@ -248,14 +257,25 @@ export class ScheduleConfigurationComponent
   }
 
   ngOnInit(): void {
-    this.scheduleConfigurationService.onSlotChanged$.subscribe((value) =>
-      this.markSlotPristine(value)
-    );
+    this.scheduleConfigurationService.getSlotChanged().subscribe((value) => {
+      this.markSlotPristine(value);
+    });
+    this.schedulerConfigForm?.valueChanges.subscribe((value) => {
+      this.schedulerConfigForm.markAsDirty();
+    });
 
     if (this.data) {
       const { formDetail, roundPlanDetail, moduleName, assigneeDetails } =
         this.data;
-      this.assigneeDetails = assigneeDetails;
+        const plantId = moduleName === 'RDF' ? formDetail.plantId : roundPlanDetail.plantId;
+        this.assigneeDetails = {
+          users: assigneeDetails.users?.filter((user) =>
+            user.plantId?.includes(plantId)
+          ),
+          userGroups: assigneeDetails.userGroups?.filter((userGroup) =>
+            userGroup.plantId?.includes(plantId)
+          )
+        };
       this.moduleName = moduleName;
 
       // If the module name is RDF
@@ -320,11 +340,19 @@ export class ScheduleConfigurationComponent
         [Validators.required, Validators.min(1)]
       ],
       scheduleEndOccurrencesText: [{ value: 'occurrences', disabled: true }],
-      startDate: format(new Date(), dateFormat3),
+      startDate: localToTimezoneDate(
+        new Date(),
+        this.plantTimezoneMap[this.selectedDetails?.plantId],
+        dateFormat3
+      ),
       startDatePicker: new Date(),
       endDate: [
         {
-          value: format(addDays(new Date(), 30), dateFormat3),
+          value: localToTimezoneDate(
+            addDays(new Date(), 30),
+            this.plantTimezoneMap[this.selectedDetails?.plantId],
+            dateFormat3
+          ),
           disabled: true
         }
       ],
@@ -354,6 +382,28 @@ export class ScheduleConfigurationComponent
       shiftSlots: this.fb.array([this.addShiftDetails(true)]),
       shiftsSelected: []
     });
+
+    this.schedulerConfigForm
+      .get('assignmentDetails')
+      .valueChanges.pipe(
+        startWith({}),
+        distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
+        pairwise(),
+        tap(([prev, curr]) => {
+          if (!isEqual(prev, curr)) {
+            if (prev.type !== curr.type) {
+              this.schedulerConfigForm.get('assignmentDetails').patchValue({
+                type: curr.type,
+                value: '',
+                displayValue: ''
+              });
+            }
+          }
+        })
+      )
+      .subscribe();
+
     this.schedulerConfigForm
       .get('scheduleEndType')
       .valueChanges.pipe(takeUntil(this.onDestroy$))
@@ -591,7 +641,7 @@ export class ScheduleConfigurationComponent
       .subscribe((monthlyDaysOfWeek) => {
         const monthlyDaysOfWeekCount = monthlyDaysOfWeek.reduce(
           (acc: number, curr: number[]) => {
-            acc += curr.length;
+            acc += curr?.length;
             return acc;
           },
           0
@@ -706,6 +756,7 @@ export class ScheduleConfigurationComponent
 
   cancel() {
     this.initShiftStat();
+    this.schedulerConfigForm.reset();
     this.dialogRef.close({
       slideInOut: 'out',
       actionType: 'scheduleConfigEvent'
@@ -932,7 +983,14 @@ export class ScheduleConfigurationComponent
               scheduleByDates
             } = config;
             this.startDatePickerMinDate = new Date(startDate);
-            this.scheduleEndOnPickerMinDate = new Date(scheduleEndOn);
+            this.scheduleEndOnPickerMinDate = isBefore(
+              new Date(),
+              new Date(startDate)
+            )
+              ? new Date(startDate)
+              : isBefore(new Date(), new Date(scheduleEndOn))
+              ? new Date()
+              : new Date(scheduleEndOn);
             config = {
               ...config,
               startDate: localToTimezoneDate(
@@ -1111,6 +1169,15 @@ export class ScheduleConfigurationComponent
               scheduledTill,
               scheduleByDates
             } = config;
+            this.startDatePickerMinDate = new Date(startDate);
+            this.scheduleEndOnPickerMinDate = isBefore(
+              new Date(),
+              new Date(startDate)
+            )
+              ? new Date(startDate)
+              : isBefore(new Date(), new Date(scheduleEndOn))
+              ? new Date()
+              : new Date(scheduleEndOn);
             config = {
               ...config,
               startDate: localToTimezoneDate(
@@ -1256,11 +1323,19 @@ export class ScheduleConfigurationComponent
     });
   }
 
-  selectedAssigneeHandler({ user }: SelectedAssignee) {
-    const { email: value, firstName, lastName } = user;
-    this.schedulerConfigForm
-      .get('assignmentDetails')
-      .patchValue({ value, displayValue: `${firstName} ${lastName}` });
+  selectedAssigneeHandler(selectedAssignee: any) {
+    if (selectedAssignee.assigneeType === 'user') {
+      const { email: value, firstName, lastName } = selectedAssignee.user;
+      this.schedulerConfigForm
+        .get('assignmentDetails')
+        .patchValue({ value, displayValue: `${firstName} ${lastName}` });
+    }
+    if (selectedAssignee.assigneeType === 'userGroup') {
+      const { id: value, name: displayValue } = selectedAssignee.userGroup;
+      this.schedulerConfigForm
+        .get('assignmentDetails')
+        .patchValue({ value, displayValue });
+    }
     this.schedulerConfigForm.markAsDirty();
     this.menuTrigger.closeMenu();
   }
@@ -1298,7 +1373,7 @@ export class ScheduleConfigurationComponent
   }
 
   get shiftSlots(): FormArray {
-    return this.schedulerConfigForm.get('shiftSlots') as FormArray;
+    return this.schedulerConfigForm?.get('shiftSlots') as FormArray;
   }
 
   addShiftDetails(
@@ -1353,7 +1428,19 @@ export class ScheduleConfigurationComponent
               id: foundShift?.id,
               name: foundShift?.name,
               startTime: foundShift?.startTime,
-              endTime: foundShift?.endTime
+              endTime: foundShift?.endTime,
+              payload: [
+                {
+                  startTime:
+                    this.scheduleConfigurationService.convertTo12HourFormat(
+                      foundShift?.startTime
+                    ),
+                  endTime:
+                    this.scheduleConfigurationService.convertTo12HourFormat(
+                      foundShift?.endTime
+                    )
+                }
+              ]
             })
           );
         }
@@ -1374,9 +1461,24 @@ export class ScheduleConfigurationComponent
       this.shiftSlots.clear();
       this.shiftApiResponse = null;
       this.shiftDetails = shiftDefaultPayload;
-      this.shiftSlots.push(this.addShiftDetails(true));
+      if (this.shiftDetails) {
+        this.shiftSlots.push(
+          this.addShiftDetails(false, {
+            null: {
+              startTime: this.shiftDetails?.null[0]?.startTime,
+              endTime: this.shiftDetails?.null[0]?.endTime,
+              payload: [
+                {
+                  startTime: this.shiftDetails?.null[0]?.startTime,
+                  endTime: this.shiftDetails?.null[0]?.endTime
+                }
+              ]
+            }
+          })
+        );
+      }
     }
-    this.scheduleConfigurationService.onSlotChanged$.next(true);
+    this.scheduleConfigurationService.setSlotChanged(true);
   }
 
   onUpdateShiftSlot(event: {
@@ -1408,8 +1510,7 @@ export class ScheduleConfigurationComponent
     this.onDestroy$.complete();
     this.shiftDetails = {};
     this.shiftApiResponse = null;
-    this.scheduleConfigurationService.onSlotChanged$.next();
-    this.scheduleConfigurationService.onSlotChanged$.complete();
+    this.scheduleConfigurationService.setInitialSlotChanged();
   }
 
   private prepareShiftDetailsPayload(shiftDetails, type: '24' | '12' = '24') {
@@ -1441,8 +1542,8 @@ export class ScheduleConfigurationComponent
   }
 
   private markSlotPristine(value = null): void {
-    const shiftSlots = this.schedulerConfigForm.get('shiftSlots');
-    const shiftsSelected = this.schedulerConfigForm.get('shiftsSelected');
+    const shiftSlots = this.schedulerConfigForm?.get('shiftSlots');
+    const shiftsSelected = this.schedulerConfigForm?.get('shiftsSelected');
     if (value && (shiftSlots?.pristine || shiftsSelected?.pristine)) {
       shiftSlots.markAsDirty();
       shiftsSelected.markAsDirty();

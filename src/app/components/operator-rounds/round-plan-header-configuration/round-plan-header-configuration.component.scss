@@ -76,6 +76,10 @@
         ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
           padding: 17px 0 0 0 !important;
         }
+
+        .mat-error {
+          margin: 20px 5px 5px 5px;
+        }
       }
 
       .tags-mat-chips {

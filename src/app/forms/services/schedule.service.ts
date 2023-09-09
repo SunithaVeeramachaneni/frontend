@@ -17,8 +17,20 @@ export class ScheduleConfigurationService {
     actionType: 'scheduleConfigEvent';
     mode?: 'create' | 'update';
   }>(null);
-  onSlotChanged$ = new Subject();
+  private onSlotChanged$ = new Subject();
   constructor() {}
+
+  setSlotChanged(action: boolean): void {
+    this.onSlotChanged$.next(action);
+  }
+
+  getSlotChanged() {
+    return this.onSlotChanged$.asObservable();
+  }
+
+  setInitialSlotChanged() {
+    this.onSlotChanged$.next(null);
+  }
 
   // The convertTo24Hour function takes a time string in the 12-hour format with AM/PM indicator and converts it to the 24-hour format.
   convertTo24Hour(timeString: string): string {

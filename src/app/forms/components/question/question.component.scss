@@ -266,6 +266,17 @@
   }
 }
 
+.additionalDetailsBtn {
+  cursor: pointer;
+  margin-left: 5px;
+  .additionalDetailsValues {
+    color: $blue-main;
+  }
+  .additionalDetailsValuesNone {
+    color: $blue-main;
+  }
+}
+
 .question-icon {
   height: 25px;
   width: 25px;

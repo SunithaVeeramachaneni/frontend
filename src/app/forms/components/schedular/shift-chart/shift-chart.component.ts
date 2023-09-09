@@ -59,28 +59,30 @@ export class ShiftChartComponent implements OnInit, OnChanges {
     this.addForm.addControl('slotsArray', this.slotsArray);
   }
 
-  ngOnChanges(_changes: SimpleChanges): void {
-    if (this.shift?.value?.null) {
-      this.slots = this.service.generateTimeSlots(
-        this.shift.value.null.startTime,
-        this.shift.value.null.endTime
-      );
-      if (this.shift?.value?.null?.payload) {
-        this.initEditPayloadForSlots(this.shift.value.null.payload);
-      }
-    } else if (this.shift?.value?.id) {
-      this.slots = this.service.generateTimeSlots(
-        this.shift.value.startTime,
-        this.shift.value.endTime
-      );
-      if (this.shift?.value?.payload) {
-        this.initEditPayloadForSlots(this.shift.value.payload);
+  ngOnChanges(changes): void {
+    if (changes?.shiftIdx?.previousValue === undefined) {
+      if (this.shift?.value?.null) {
+        this.slots = this.service.generateTimeSlots(
+          this.shift.value.null.startTime,
+          this.shift.value.null.endTime
+        );
+        if (this.shift?.value?.null?.payload) {
+          this.initEditPayloadForSlots(this.shift.value.null.payload);
+        }
+      } else if (this.shift?.value?.id) {
+        this.slots = this.service.generateTimeSlots(
+          this.shift.value.startTime,
+          this.shift.value.endTime
+        );
+        if (this.shift?.value?.payload) {
+          this.initEditPayloadForSlots(this.shift.value.payload);
+        }
       }
     }
   }
 
   public onAddSlot(val: string, idx: number): void {
-    this.service.onSlotChanged$.next(true);
+    this.service.setSlotChanged(true);
     const checkSlot = this.dataArrays.filter(
       (item) => item.startTime === this.service.addLeadingZero(val)
     );
@@ -348,7 +350,7 @@ export class ShiftChartComponent implements OnInit, OnChanges {
   }
 
   public onRemoveRow(rowIndex: number, objVal): void {
-    this.service.onSlotChanged$.next(true);
+    this.service.setSlotChanged(true);
     const lastElement = this.dataArrays[this.dataArrays.length - 1];
     const ds = this.dataArrays.lastIndexOf(lastElement);
     if (ds === rowIndex) {

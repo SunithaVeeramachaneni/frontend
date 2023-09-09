@@ -608,14 +608,26 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
       .subscribe((formsList: any) => {
         const objectKeys = Object.keys(formsList);
         if (objectKeys.length > 0) {
-          const uniqueLastPublishedBy = formsList.rows
+          this.lastPublishedBy = formsList.rows
             .map((item) => item.lastPublishedBy)
-            .filter(
-              (value, index, self) => self.indexOf(value) === index && value
-            );
-          this.lastPublishedBy = [...uniqueLastPublishedBy];
+            .filter((value, index, self) => {
+              if (value !== null && value !== undefined) {
+                const hasDifferentCasingDuplicate = self
+                  .slice(0, index)
+                  .some(
+                    (item) =>
+                      item !== null &&
+                      item !== undefined &&
+                      item.toLowerCase() === value.toLowerCase()
+                  );
 
-          const uniqueLastModifiedBy = formsList.rows
+                return !hasDifferentCasingDuplicate;
+              }
+              return false;
+            })
+            .sort();
+
+          this.lastModifiedBy = formsList.rows
             .map((item) => {
               if (item.lastModifiedBy) {
                 return item.lastModifiedBy;
@@ -624,13 +636,13 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
             })
             .filter((value) => value)
             .filter((value, index, self) => self.indexOf(value) === index);
-          this.lastModifiedBy = [...uniqueLastModifiedBy];
-          const uniqueAuthoredBy = formsList.rows
-            .map((item) => item.author)
-            .filter((value, index, self) => self.indexOf(value) === index);
-          this.createdBy = [...uniqueAuthoredBy];
 
-          const uniquePlants = formsList.rows
+          this.createdBy = formsList.rows
+            .map((item) => item.author)
+            .filter((value, index, self) => self.indexOf(value) === index)
+            .sort();
+
+          this.plants = formsList.rows
             .map((item) => {
               if (item.plant) {
                 this.plantsIdNameMap[item.plant.plantId] = item.plant.id;
@@ -641,8 +653,8 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
             .filter(
               (value, index, self) =>
                 self.indexOf(value) === index && value !== null
-            );
-          this.plants = [...uniquePlants];
+            )
+            .sort();
 
           for (const item of this.filterJson) {
             if (item.column === 'status') {

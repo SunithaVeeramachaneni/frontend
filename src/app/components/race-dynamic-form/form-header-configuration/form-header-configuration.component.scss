@@ -93,6 +93,10 @@
         ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
           padding: 17px 0 0 0 !important;
         }
+
+        .mat-error {
+          margin: 5px;
+        }
       }
 
       .tags-mat-chips {
@@ -296,4 +300,11 @@
   font-weight: normal;
   line-height: normal;
   border: 1px solid $blue-main;
+}
+
+.formtype-formfield {
+  background: $gray;
+  padding: 12px 10px;
+  border-radius: 4px;
+  color: $black;
 }

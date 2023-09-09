@@ -26,7 +26,7 @@ import {
 import { uniqBy } from 'lodash-es';
 
 import {
-  defaultLimit,
+  graphQLDefaultLimit,
   permissions as perms,
   routingUrls
 } from 'src/app/app.constants';
@@ -244,7 +244,7 @@ export class LocationsListComponent implements OnInit, OnDestroy {
   selectedLocation;
 
   skip = 0;
-  limit = defaultLimit;
+  limit = graphQLDefaultLimit;
   fetchType = 'load';
   nextToken = '';
   userInfo$: Observable<UserInfo>;
@@ -442,7 +442,7 @@ export class LocationsListComponent implements OnInit, OnDestroy {
         {
           next: this.nextToken,
           limit: this.limit,
-          searchKey: this.searchLocation.value,
+          searchTerm: this.searchLocation.value,
           fetchType: this.fetchType
         },
         this.filter

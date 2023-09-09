@@ -785,20 +785,20 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
         this.plantTimezoneMap[
           this.issuesActionsDetailViewForm.get('plantId').value
         ],
-        dateFormat2
+        dateTimeFormat2
       );
     }
-    return format(parsedDate, dateFormat2);
+    return format(parsedDate, dateTimeFormat2);
   }
 
   compareDates(dateString: string): string {
-    const parsedDate = parse(dateString, dateFormat2, new Date());
+    const parsedDate = parse(dateString, dateTimeFormat2, new Date());
 
     return isToday(parsedDate)
       ? 'Today'
       : isYesterday(parsedDate)
       ? 'Yesterday'
-      : format(parsedDate, dateFormat2);
+      : format(new Date(parsedDate), dateFormat2);
   }
 
   ngOnDestroy(): void {
@@ -886,7 +886,6 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
       .pipe(
         tap((logHistory) => {
           this.logHistory = logHistory?.rows || [];
-          this.filteredMediaType = [];
           this.prepareInitialIssueActionAttachments();
           if (this.logHistory.length > 0) {
             this.logHistory.forEach((history) => {
@@ -929,7 +928,6 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
           newMessage.message = foundImageData?.imageData || newMessage.message;
         }
       }
-      this.filteredMediaType = [];
       this.prepareInitialIssueActionAttachments();
       this.logHistory = [...this.logHistory, newMessage];
       if (this.logHistory?.length > 0) {
@@ -988,6 +986,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
             statusDisplay: this.observations.prepareStatus(
               jsonData.STATUS ?? ''
             ),
+            PHOTO: this.data?.PHOTO ?? [],
             assignedTo: data?.assignedTo,
             assignedToDisplay: this.observations.formatUsersDisplay(
               data?.assignedTo
@@ -1014,7 +1013,12 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   private prepareInitialIssueActionAttachments(): void {
-    if (this.data?.PHOTO?.length > 0) {
+    this.filteredMediaType = [];
+    if (
+      this.data &&
+      Array.isArray(this.data?.PHOTO) &&
+      this.data?.PHOTO?.length > 0
+    ) {
       this.data?.PHOTO?.forEach((element) => {
         if (element) {
           this.filteredMediaType.push({
