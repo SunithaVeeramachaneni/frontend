@@ -35,7 +35,7 @@ export class EmailDialogComponent implements OnInit {
   allUsers$: Observable<any>;
 
   emailNotes: '';
-  enableSend = false;
+  allValidEmails = true;
   sendEmailInprogress = false;
 
   visible = true;
@@ -77,11 +77,6 @@ export class EmailDialogComponent implements OnInit {
           return resp.rows;
         })
       );
-
-    // .subscribe((resp) => {
-    //   this.allUsers = resp.rows;
-    //   this.cdrf.detectChanges();
-    // });
   }
 
   ngOnInit() {
@@ -102,7 +97,7 @@ export class EmailDialogComponent implements OnInit {
       isValid = isValid && re.test(email);
     });
     if (!isValid) {
-      this.enableSend = isValid;
+      this.allValidEmails = isValid;
       this.cdrf.detectChanges();
 
       // TODO: Display toast message
@@ -190,7 +185,7 @@ export class EmailDialogComponent implements OnInit {
       this.users.push(value.trim());
       this.selectedUsers.push(value.trim());
       const re = /\S+@\S+\.\S+/;
-      this.enableSend = this.enableSend && re.test(value.trim());
+      this.allValidEmails = this.allValidEmails && re.test(value.trim());
     }
 
     // Reset the input value

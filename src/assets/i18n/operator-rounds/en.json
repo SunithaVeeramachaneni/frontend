@@ -429,5 +429,6 @@
   "cancel": "Cancel",
   "save": "Save",
   "update": "Update",
-  "newReport": "Create Report"
+  "newReport": "Create Report",
+  "invalidEmail": "Invalid Email input"
 }

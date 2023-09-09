@@ -25,11 +25,7 @@
             </mat-option>
           </mat-autocomplete>
         </mat-form-field>
-
-        <!-- <mat-form-field appearance="outline" class="user-chip-list">
-          <mat-label>{{'emailIds' | translate}}</mat-label>
-          <input matInput placeholder="Enter comma separated email IDs" (change)="emailChanged($event)">
-        </mat-form-field> -->
+        <span *ngIf="selectedUsers.length && !allValidEmails" class="invalidEmail" translate="invalidEmail"></span>
         <mat-form-field appearance="outline" class="user-chip-list">
           <mat-label>{{'notesTxt' | translate}}</mat-label>
           <textarea matInput placeholder="Enter Notes.." [rows]="15" [(ngModel)]="emailNotes"></textarea>
@@ -40,21 +36,23 @@
   <mat-dialog-actions align="end" class="dialog-footer">
     <button mat-button mat-dialog-close translate="cancelBtn"></button>
     <button mat-flat-button color="primary" class="btn sendBtn" (click)="sendEmail()" translate="sendBtn"
-      [disabled]="sendEmailInprogress || enableSend">
+      [disabled]="sendEmailInprogress || !selectedUsers.length">
       <mat-progress-spinner [mode]="'indeterminate'" [diameter]="25" *ngIf="sendEmailInprogress"
         class="spinner"></mat-progress-spinner>
     </button>
   </mat-dialog-actions>
 </div>
 <ng-template #loadingUsers>
-  <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
-  </ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-  </ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-  </ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-  </ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-  </ngx-shimmer-loading>
+  <div>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+  </div>
 </ng-template>

@@ -88,8 +88,8 @@
         <button mat-stroked-button color="primary" class="report-button" aria-label="share" (click)="openEmailDialog()">
           <mat-icon class="icon active">forward_to_inbox</mat-icon>
         </button>
-         <button mat-stroked-button color="primary" class="report-button" [ngClass]="{'t-minus4':downloadInProgress}"
-          aria-label="share" (click)="downloadDashboardAsImage()">
+        <button mat-stroked-button color="primary" class="report-button" [ngClass]="{'t-minus4':downloadInProgress}"
+          aria-label="share" (click)="downloadDashboardAsImage()" [disabled]="downloadInProgress">
           <mat-progress-spinner [mode]="'indeterminate'" [diameter]="25"
             *ngIf="downloadInProgress"></mat-progress-spinner>
           <mat-icon class="icon active" *ngIf="!downloadInProgress">picture_as_pdf</mat-icon>
