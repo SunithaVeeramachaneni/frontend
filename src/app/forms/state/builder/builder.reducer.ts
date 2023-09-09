@@ -13,6 +13,7 @@ import {
   RoundPlanConfigurationApiActions
 } from '../actions';
 import { cloneDeep } from 'lodash-es';
+import { operatorRounds } from 'src/app/app.constants';
 
 export interface FormConfigurationState {
   formMetadata: FormMetadata;
@@ -51,7 +52,7 @@ const initialState = {
   formDetailDynamoDBVersion: 0,
   authoredFormDetailDynamoDBVersion: 0,
   isFormCreated: false,
-  moduleName: 'operator-rounds',
+  moduleName: operatorRounds,
   skipAuthoredDetail: false
 };
 
@@ -1175,6 +1176,20 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       pages: action.pages,
       counter: action.counter,
       skipAuthoredDetail: false
+    })
+  ),
+  on(
+    BuilderConfigurationActions.updateFormStatus,
+    (state, action): FormConfigurationState => ({
+      ...state,
+      formStatus: action.formStatus
+    })
+  ),
+  on(
+    BuilderConfigurationActions.updateModuleName,
+    (state, action): FormConfigurationState => ({
+      ...state,
+      moduleName: action.moduleName
     })
   )
 );

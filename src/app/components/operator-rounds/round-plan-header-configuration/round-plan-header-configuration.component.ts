@@ -109,7 +109,6 @@ export class RoundPlanHeaderConfigurationComponent
   modalIsOpen = false;
   attachment: any;
   formMetadata: FormMetadata;
-  moduleName: string;
   form: FormGroup;
   isOpen = new FormControl(false);
   options: any = [];
@@ -405,8 +404,7 @@ export class RoundPlanHeaderConfigurationComponent
             formMetadata: {
               ...this.headerDataForm.value,
               additionalDetails: updatedAdditionalDetails,
-              plant: plant.name,
-              moduleName: 'rdf'
+              plant: plant.name
             },
             formDetailPublishStatus: formConfigurationStatus.draft,
             formSaveStatus: formConfigurationStatus.saving
@@ -439,7 +437,6 @@ export class RoundPlanHeaderConfigurationComponent
               id: this.roundData.formMetadata.id,
               additionalDetails: updatedAdditionalDetails,
               plant: plant.name,
-              moduleName: 'rdf',
               lastModifiedBy: this.loginService.getLoggedInUserName()
             },
             formStatus: this.hasFormChanges
@@ -461,7 +458,6 @@ export class RoundPlanHeaderConfigurationComponent
               id: this.roundData.formMetadata.id,
               additionalDetails: updatedAdditionalDetails,
               plant: plant.name,
-              moduleName: 'rdf',
               lastModifiedBy: this.loginService.getLoggedInUserName()
             },
             formListDynamoDBVersion: this.roundData.formListDynamoDBVersion,

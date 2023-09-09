@@ -2,8 +2,9 @@
   class="bg-iphone"
   *ngIf="{
     formMetadata: formMetadata$ | async,
-    pagesCount: pagesCount$ | async
-  }"
+    pagesCount: pagesCount$ | async,
+    moduleName: moduleName$ | async
+  } as props"
 >
   <span id="iphoneTime" class="current-time">
     {{ currentTime }}
@@ -17,9 +18,9 @@
     <p
       id="iphoneName"
       class="form-heading"
-      matTooltip="{{ formMetadata.name }}"
+      matTooltip="{{ props.formMetadata.name }}"
     >
-      {{ formMetadata.name }}
+      {{ props.formMetadata.name }}
     </p>
     <svg-icon
       id="iphoneScanAssetIcon"
@@ -140,8 +141,9 @@
       (click)="openHistoryBottomSheet()"
       [disabled]="!isHistoryVisible"
       translate="historyTxt"
+      *ngIf="props.moduleName === 'OPERATOR_ROUNDS'"
     ></button>
-    <hr />
+    <hr *ngIf="props.moduleName === 'OPERATOR_ROUNDS'" />
     <div
       id="iphoneSkipTask"
       class="bottom-list-item skip-task"

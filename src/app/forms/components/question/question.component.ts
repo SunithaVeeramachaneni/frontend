@@ -54,7 +54,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Base64HelperService } from 'src/app/components/work-instructions/services/base64-helper.service';
 import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
 import { CommonService } from 'src/app/shared/services/common.service';
-
+import { raceDynamicForms } from 'src/app/app.constants';
 @Component({
   selector: 'app-question',
   templateUrl: './question.component.html',

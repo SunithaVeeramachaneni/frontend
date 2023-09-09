@@ -52,7 +52,8 @@ import { State, getFormMetadata } from 'src/app/forms/state';
 import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
 import {
   DEFAULT_PDF_BUILDER_CONFIG,
-  formConfigurationStatus
+  formConfigurationStatus,
+  raceDynamicForms
 } from 'src/app/app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
@@ -418,6 +419,11 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     );
 
     if (this.headerDataForm.valid) {
+      this.store.dispatch(
+        BuilderConfigurationActions.updateModuleName({
+          moduleName: raceDynamicForms
+        })
+      );
       const userName = this.loginService.getLoggedInUserName();
       if (this.formData.formExists === false) {
         this.store.dispatch(
