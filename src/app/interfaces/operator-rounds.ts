@@ -84,6 +84,7 @@ export interface RoundPlanDetail extends RoundPlan {
   rounds: number;
   plantId?: string;
   plant?: string;
+  assignedTo?: string;
   shifts: [];
 }
 
