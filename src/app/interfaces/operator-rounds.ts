@@ -177,6 +177,7 @@ export interface SelectTab {
 export interface AssigneeDetails {
   users: UserDetails[];
   userGroups?: UserGroup[];
+  plants?: any[];
 }
 
 export interface IssueOrAction {

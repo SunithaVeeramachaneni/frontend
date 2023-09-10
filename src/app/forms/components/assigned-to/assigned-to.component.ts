@@ -106,6 +106,13 @@ export class AssignedToComponent implements OnInit, OnDestroy {
             ) || []
           );
         }
+        if (this.assigneeType === 'plant') {
+          return (
+            assigneeDetails.plants?.filter(
+              (plant: any) => plant.indexOf(search) !== -1
+            ) || []
+          );
+        }
       }),
       tap((data) => (this.filteredDataCount = data.length))
     );
@@ -124,6 +131,9 @@ export class AssignedToComponent implements OnInit, OnDestroy {
     }
     if (this.assigneeType === 'userGroup') {
       selectedAssignee.userGroup = data;
+    }
+    if (this.assigneeType === 'plant') {
+      selectedAssignee.plant = data;
     }
     if (this.assigneeType) this.selectedAssignee.emit(selectedAssignee);
   }

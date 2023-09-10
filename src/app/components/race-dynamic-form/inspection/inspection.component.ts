@@ -369,6 +369,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   userInfo$: Observable<UserInfo>;
+  filterData$: Observable<any>;
   selectedForm: InspectionDetail;
   selectedFormInfo: InspectionDetail;
   selectedDate = null;
@@ -428,8 +429,98 @@ export class InspectionComponent implements OnInit, OnDestroy {
     this.allActiveShifts$ = this.shiftService.fetchAllShifts$();
     this.fetchInspection$.next({} as TableEvent);
     this.searchForm = new FormControl('');
-    this.getFilter();
-    this.getAllInspections();
+    let filterJson = [];
+    this.filterData$ = combineLatest([
+      this.users$,
+      this.raceDynamicFormService.getInspectionFilter().pipe(
+        tap((res) => {
+          filterJson = res;
+          for (const item of filterJson) {
+            if (item.column === 'status') {
+              item.items = this.status;
+            }
+          }
+        })
+      ),
+      this.raceDynamicFormService.fetchAllInspections$().pipe(
+        tap((formsList) => {
+          this.isLoading$.next(false);
+          const objectKeys = Object.keys(formsList);
+          if (objectKeys.length > 0) {
+            const uniqueAssignTo = formsList
+              ?.filter((item) => item.assignedTo.length)
+              .map((item) => item.assignedTo)
+              .filter((value, index, self) => self.indexOf(value) === index);
+
+            const uniqueUserGroupsIds = formsList
+              ?.filter((item) => item.userGroupsIds?.length)
+              .map((item) => item.userGroupsIds)
+              .filter((value, index, self) => self.indexOf(value) === index);
+
+            if (uniqueAssignTo?.length > 0) {
+              uniqueAssignTo?.filter(Boolean).forEach((item) => {
+                if (item && this.userFullNameByEmail[item] !== undefined) {
+                  this.assignedTo = [
+                    ...this.assignedTo,
+                    {
+                      type: 'user',
+                      value: this.userFullNameByEmail[item]
+                    }
+                  ];
+                }
+              });
+            }
+            if (uniqueUserGroupsIds?.length > 0) {
+              uniqueUserGroupsIds?.filter(Boolean).forEach((item) => {
+                if (item && this.userGroupsIdMap[item]?.name !== undefined) {
+                  this.assignedTo = [
+                    ...this.assignedTo,
+                    {
+                      type: 'userGroup',
+                      value: this.userGroupsIdMap[item]
+                    }
+                  ];
+                }
+              });
+            }
+
+            const uniqueSchedules = formsList
+              ?.map((item) => item?.schedule)
+              .filter((value, index, self) => self?.indexOf(value) === index);
+
+            if (uniqueSchedules?.length > 0) {
+              uniqueSchedules?.filter(Boolean).forEach((item) => {
+                if (item) {
+                  this.schedules.push(item);
+                }
+              });
+            }
+            this.plants = formsList
+              .map((item) => {
+                if (item.plant) {
+                  this.plantsIdNameMap[item.plant] = item.plantId;
+                  return item.plant;
+                }
+                return '';
+              })
+              .filter((value, index, self) => self.indexOf(value) === index)
+              .sort();
+
+            for (const item of filterJson) {
+              if (item.column === 'assignedToDisplay') {
+                item.items = this.assignedTo.sort();
+              } else if (item.column === 'plant') {
+                item.items = this.plants;
+              } else if (item.column === 'schedule') {
+                item.items = this.schedules.sort();
+              } else if (item.column === 'shiftId') {
+                item.items = Object.values(this.shiftNameMap).sort();
+              }
+            }
+          }
+        })
+      )
+    ]).pipe(tap(() => (this.filterJson = filterJson)));
     this.searchForm.valueChanges
       .pipe(
         debounceTime(500),
@@ -619,82 +710,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
         })
       );
   }
-  getAllInspections() {
-    this.isLoading$.next(true);
-    this.raceDynamicFormService.fetchAllInspections$().subscribe(
-      (formsList) => {
-        this.isLoading$.next(false);
-        const objectKeys = Object.keys(formsList);
-        if (objectKeys.length > 0) {
-          const uniqueAssignTo = formsList
-            ?.filter((item) => item.assignedTo.length)
-            .map((item) => item.assignedTo)
-            .filter((value, index, self) => self.indexOf(value) === index);
-
-          const uniqueUserGroupsIds = formsList
-            ?.filter((item) => item.userGroupsIds?.length)
-            .map((item) => item.userGroupsIds)
-            .filter((value, index, self) => self.indexOf(value) === index);
-
-          if (uniqueAssignTo?.length > 0) {
-            uniqueAssignTo?.filter(Boolean).forEach((item) => {
-              if (item && this.userFullNameByEmail[item] !== undefined) {
-                this.assignedTo.push({
-                  type: 'user',
-                  value: this.userFullNameByEmail[item]
-                });
-              }
-            });
-          }
-          if (uniqueUserGroupsIds?.length > 0) {
-            uniqueUserGroupsIds?.filter(Boolean).forEach((item) => {
-              if (item && this.userGroupsIdMap[item]?.name !== undefined) {
-                this.assignedTo.push({
-                  type: 'userGroup',
-                  value: this.userGroupsIdMap[item]
-                });
-              }
-            });
-          }
-
-          const uniqueSchedules = formsList
-            ?.map((item) => item?.schedule)
-            .filter((value, index, self) => self?.indexOf(value) === index);
-
-          if (uniqueSchedules?.length > 0) {
-            uniqueSchedules?.filter(Boolean).forEach((item) => {
-              if (item) {
-                this.schedules.push(item);
-              }
-            });
-          }
-          this.plants = formsList
-            .map((item) => {
-              if (item.plant) {
-                this.plantsIdNameMap[item.plant] = item.plantId;
-                return item.plant;
-              }
-              return '';
-            })
-            .filter((value, index, self) => self.indexOf(value) === index)
-            .sort();
-
-          for (const item of this.filterJson) {
-            if (item.column === 'assignedToDisplay') {
-              item.items = this.assignedTo.sort();
-            } else if (item.column === 'plant') {
-              item.items = this.plants;
-            } else if (item.column === 'schedule') {
-              item.items = this.schedules.sort();
-            } else if (item.column === 'shiftId') {
-              item.items = Object.values(this.shiftNameMap).sort();
-            }
-          }
-        }
-      },
-      () => this.isLoading$.next(true)
-    );
-  }
 
   handleTableEvent = (event): void => {
     this.fetchInspection$.next(event);
@@ -721,7 +736,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
           ),
           userGroups: this.assigneeDetails.userGroups?.filter((userGroup) =>
             userGroup.plantId?.includes(row.plantId)
-          )
+          ),
+          plants: [row.plant]
         };
         if (row.status !== 'submitted' && row.status !== 'overdue')
           this.trigger.toArray()[0].openMenu();
@@ -895,17 +911,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
       );
   }
 
-  getFilter() {
-    this.raceDynamicFormService.getInspectionFilter().subscribe((res) => {
-      this.filterJson = res;
-      for (const item of this.filterJson) {
-        if (item.column === 'status') {
-          item.items = this.status;
-        }
-      }
-    });
-  }
-
   getFullNameToEmailArray(data: any) {
     const emailArray = [];
     data?.forEach((name: any) => {
@@ -1011,34 +1016,35 @@ export class InspectionComponent implements OnInit, OnDestroy {
     let userGroupsIds = '';
     if (assigneeType === 'user') {
       assignedTo = user.email;
-      if (assignedTo !== assignedToEmail) {
-        previouslyAssignedTo += previouslyAssignedTo.length
-          ? `,${assignedToEmail}`
-          : assignedToEmail;
-      }
-
-      if (previouslyAssignedTo.includes(assignedTo)) {
-        previouslyAssignedTo = previouslyAssignedTo
-          .split(',')
-          .filter((email) => email !== assignedTo)
-          .join(',');
-      }
     }
 
     if (assigneeType === 'userGroup' || assignmentType === 'userGroup') {
       userGroupsIds += `${userGroup.id}`;
     }
 
+    if (assignedTo !== assignedToEmail) {
+      previouslyAssignedTo += previouslyAssignedTo.length
+        ? `,${assignedToEmail}`
+        : assignedToEmail;
+    }
+
+    if (previouslyAssignedTo.includes(assignedTo)) {
+      previouslyAssignedTo = previouslyAssignedTo
+        .split(',')
+        .filter((email) => email !== assignedTo)
+        .join(',');
+    }
+
     let { status } = this.selectedFormInfo;
 
     if (status.toLowerCase() === 'open' && assigneeType === 'user') {
       status = 'assigned';
-    } else if (status.toLowerCase() === 'partly-open') {
-      status = 'in-progress';
     } else if (
-      status.toLowerCase() === 'assigned' &&
-      assigneeType === 'userGroup'
+      status.toLowerCase() === 'partly-open' &&
+      assigneeType === 'user'
     ) {
+      status = 'in-progress';
+    } else if (status.toLowerCase() === 'assigned' && assigneeType !== 'user') {
       status = 'open';
     }
 

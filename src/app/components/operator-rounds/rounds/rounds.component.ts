@@ -925,7 +925,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
           ),
           userGroups: this.assigneeDetails.userGroups?.filter((userGroup) =>
             userGroup.plantId?.includes(row.plantId)
-          )
+          ),
+          plants: [row.plant]
         };
         if (
           row.status !== 'submitted' &&
@@ -1213,34 +1214,35 @@ export class RoundsComponent implements OnInit, OnDestroy {
     let userGroupsIds = '';
     if (assigneeType === 'user') {
       assignedTo = user.email;
-      if (assignedTo !== assignedToEmail) {
-        previouslyAssignedTo += previouslyAssignedTo.length
-          ? `,${assignedToEmail}`
-          : assignedToEmail;
-      }
-
-      if (previouslyAssignedTo.includes(assignedTo)) {
-        previouslyAssignedTo = previouslyAssignedTo
-          .split(',')
-          .filter((email) => email !== assignedTo)
-          .join(',');
-      }
     }
 
     if (assigneeType === 'userGroup' || assignmentType === 'userGroup') {
       userGroupsIds += `${userGroup.id}`;
     }
 
+    if (assignedTo !== assignedToEmail) {
+      previouslyAssignedTo += previouslyAssignedTo.length
+        ? `,${assignedToEmail}`
+        : assignedToEmail;
+    }
+
+    if (previouslyAssignedTo.includes(assignedTo)) {
+      previouslyAssignedTo = previouslyAssignedTo
+        .split(',')
+        .filter((email) => email !== assignedTo)
+        .join(',');
+    }
+
     let { status } = this.selectedRoundInfo;
 
     if (status.toLowerCase() === 'open' && assigneeType === 'user') {
       status = 'assigned';
-    } else if (status.toLowerCase() === 'partly-open') {
-      status = 'in-progress';
     } else if (
-      status.toLowerCase() === 'assigned' &&
-      assigneeType === 'userGroup'
+      status.toLowerCase() === 'partly-open' &&
+      assigneeType === 'user'
     ) {
+      status = 'in-progress';
+    } else if (status.toLowerCase() === 'assigned' && assigneeType !== 'user') {
       status = 'open';
     }
 

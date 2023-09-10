@@ -50,17 +50,18 @@ export class FilterComponent implements OnInit, OnChanges, OnDestroy {
   readonly FilterSidePanelComponent = FilterSidePanelComponent;
   @Input() set json(json) {
     if (json?.length) {
-      this.isLoading$.next(false);
       this.assignmentTypeIndex = json
         .map((item) => item.type)
         .indexOf('assignmentType');
-      if (json[this.assignmentTypeIndex]?.value?.value?.length) {
-        this.assigneeTypeControl.patchValue(
-          json[this.assignmentTypeIndex].value.value.type
-        );
-      }
       this._json = json;
       this.json$.next(json);
+      // if (json[this.assignmentTypeIndex]?.value?.length) {
+      //   this.assigneeType = json[this.assignmentTypeIndex].value[0].type;
+      //   this.assigneeTypeControl.patchValue(
+      //     json[this.assignmentTypeIndex].value[0].type
+      //   );
+      // }
+      this.isLoading$.next(false);
     }
   }
 
@@ -222,11 +223,13 @@ export class FilterComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   compareAssignedToObjects(o1: any, o2: any): boolean {
-    if (o1.type === 'userGroup') {
-      return o1.value.id === o2.value.id;
+    if (o1?.type === 'userGroup') {
+      return o1?.value?.id === o2?.value?.id && o1?.value?.id !== undefined;
     }
-    if (o1.type === 'user') {
-      return o1.value.email === o2.value.email;
+    if (o1?.type === 'user') {
+      return (
+        o1?.value?.email === o2?.value?.email && o1?.value?.email !== undefined
+      );
     }
   }
 

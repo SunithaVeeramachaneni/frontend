@@ -207,3 +207,10 @@ mat-radio-button {
   justify-content: center;
   height: 125px;
 }
+
+.loader-container {
+  margin: 6px 12px;
+  .loader {
+    margin: 6px 0px;
+  }
+}
