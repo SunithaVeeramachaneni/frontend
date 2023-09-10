@@ -795,7 +795,10 @@ export class ScheduleConfigurationComponent
       scheduleByDates,
       shiftDetails: this.prepareShiftDetailsPayload(this.shiftDetails)
     };
-    this.payloadEmitter.emit(this.payload);
+    this.payloadEmitter.emit({
+      payload: this.payload,
+      plantTimezoneMap: this.plantTimezoneMap
+    });
     this.gotoNextStep.emit();
   }
 

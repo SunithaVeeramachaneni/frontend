@@ -20,7 +20,8 @@ import {
   RoundDetail,
   RoundPlanQueryParam,
   UsersInfoByEmail,
-  Count
+  Count,
+  RoundPlanScheduleConfiguration
 } from '../../../interfaces';
 import {
   formConfigurationStatus,
@@ -32,6 +33,7 @@ import { ToastService } from 'src/app/shared/toast';
 import { isJson } from '../../race-dynamic-form/utils/utils';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
 import { cloneDeep, isEmpty, omitBy, isEqual } from 'lodash-es';
+import { scheduleConfigs } from 'src/app/forms/components/schedular/schedule-configuration/schedule-configuration.constants';
 
 @Injectable({
   providedIn: 'root'
@@ -850,28 +852,87 @@ export class OperatorRoundsService {
 
     return { commonConfig, isQuestionNotIncluded: false };
   };
-  compareConfigWithHeader = (reviseScheduleConfig, reviseScheduleConfigForm) =>
-    isEqual(
-      {
-        scheduleType: reviseScheduleConfig?.scheduleType,
-        repeatDuration: reviseScheduleConfig?.repeatDuration,
-        repeatEvery: reviseScheduleConfig?.repeatEvery,
-        daysOfWeek: reviseScheduleConfig?.daysOfWeek,
-        monthlyDaysOfWeek: reviseScheduleConfig?.monthlyDaysOfWeek,
-        startDate: format(
-          new Date(reviseScheduleConfig?.startDate),
-          dateFormat4
-        ),
-        endDate: format(new Date(reviseScheduleConfig?.endDate), dateFormat4)
-      },
-      {
-        scheduleType: reviseScheduleConfigForm.value?.scheduleType,
-        repeatDuration: reviseScheduleConfigForm.value?.repeatDuration,
-        repeatEvery: reviseScheduleConfigForm.value?.repeatEvery,
-        daysOfWeek: reviseScheduleConfigForm.value?.daysOfWeek,
-        monthlyDaysOfWeek: reviseScheduleConfigForm.value?.monthlyDaysOfWeek,
-        startDate: reviseScheduleConfigForm.value?.startDate,
-        endDate: reviseScheduleConfigForm.value?.endDate
-      }
-    );
+  compareConfigWithHeader = (
+    reviseScheduleConfig: RoundPlanScheduleConfiguration,
+    reviseScheduleConfigFormValue: RoundPlanScheduleConfiguration
+  ) => {
+    const {
+      repeatEvery,
+      repeatDuration,
+      daysOfWeek,
+      monthlyDaysOfWeek,
+      startDate,
+      endDate,
+      shiftDetails
+    } = reviseScheduleConfig;
+    const {
+      repeatEvery: repeatEveryFormValue,
+      repeatDuration: repeatDurationFormValue,
+      daysOfWeek: daysOfWeekFormValue,
+      monthlyDaysOfWeek: monthlyDaysOfWeekFormValue,
+      startDate: startDateFormValue,
+      endDate: endDateFormValue,
+      shiftDetails: shiftDetailsFormValue
+    } = reviseScheduleConfigFormValue;
+
+    const { repeatTypes } = scheduleConfigs;
+
+    switch (repeatEveryFormValue) {
+      case repeatTypes[0]:
+        return isEqual(
+          {
+            repeatEvery,
+            repeatDuration,
+            startDate: format(new Date(startDate), dateFormat4),
+            endDate: format(new Date(endDate), dateFormat4),
+            shiftDetails
+          },
+          {
+            repeatEvery: repeatEveryFormValue,
+            repeatDuration: repeatDurationFormValue,
+            startDate: startDateFormValue,
+            endDate: endDateFormValue,
+            shiftDetails: shiftDetailsFormValue
+          }
+        );
+      case repeatTypes[1]:
+        return isEqual(
+          {
+            repeatEvery,
+            repeatDuration,
+            daysOfWeek,
+            startDate: format(new Date(startDate), dateFormat4),
+            endDate: format(new Date(endDate), dateFormat4),
+            shiftDetails
+          },
+          {
+            repeatEvery: repeatEveryFormValue,
+            repeatDuration: repeatDurationFormValue,
+            daysOfWeek: daysOfWeekFormValue,
+            startDate: startDateFormValue,
+            endDate: endDateFormValue,
+            shiftDetails: shiftDetailsFormValue
+          }
+        );
+      case repeatTypes[2]:
+        return isEqual(
+          {
+            repeatEvery,
+            repeatDuration,
+            monthlyDaysOfWeek,
+            startDate: format(new Date(startDate), dateFormat4),
+            endDate: format(new Date(endDate), dateFormat4),
+            shiftDetails
+          },
+          {
+            repeatEvery: repeatEveryFormValue,
+            repeatDuration: repeatDurationFormValue,
+            monthlyDaysOfWeek: monthlyDaysOfWeekFormValue,
+            startDate: startDateFormValue,
+            endDate: endDateFormValue,
+            shiftDetails: shiftDetailsFormValue
+          }
+        );
+    }
+  };
 }

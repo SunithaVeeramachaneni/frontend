@@ -11,7 +11,12 @@ import {
 
 import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { dateFormat4 } from 'src/app/app.constants';
+import {
+  dateFormat4,
+  dateFormat5,
+  dateTimeFormat3,
+  hourFormat
+} from 'src/app/app.constants';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -22,7 +27,7 @@ import { OperatorRoundsService } from '../services/operator-rounds.service';
 
 import { tap } from 'rxjs/operators';
 import { format } from 'date-fns';
-import { isEqual } from 'lodash-es';
+import { cloneDeep, isEqual } from 'lodash-es';
 import { RoundPlanScheduleConfigurationService } from '../services/round-plan-schedule-configuration.service';
 import { RoundPlanScheduleConfiguration } from 'src/app/interfaces/operator-rounds';
 import {
@@ -32,6 +37,9 @@ import {
   transition,
   trigger
 } from '@angular/animations';
+import { ShiftService } from '../../master-configurations/shifts/services/shift.service';
+import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
+import { zonedTimeToUtc } from 'date-fns-tz';
 
 @Component({
   selector: 'app-task-level-scheduler',
@@ -61,20 +69,20 @@ export class TaskLevelSchedulerComponent implements OnInit {
   @Input() roundPlanData: any;
   @Input() set payload(payload: any) {
     this._payload = payload;
-    if (this._payload) {
+    if (payload) {
       this.allSlots = this.prepareShiftAndSlot(
-        this._payload.shiftSlots,
-        this._payload.shiftDetails
+        payload.shiftSlots,
+        payload.shiftDetails
       );
       this.taskLevelScheduleHeaderConfiguration = {
         ...this.taskLevelScheduleHeaderConfiguration,
-        assigneeDetails: this._payload.assignmentDetails.displayValue,
-        headerStartDate: format(new Date(this._payload.startDate), dateFormat4),
-        headerEndDate: format(new Date(this._payload.endDate), dateFormat4),
+        assigneeDetails: payload.assignmentDetails.displayValue,
+        headerStartDate: format(new Date(payload.startDate), dateFormat4),
+        headerEndDate: format(new Date(payload.endDate), dateFormat4),
         headerFrequency:
-          this._payload.scheduleType === 'byDate'
+          payload.scheduleType === 'byDate'
             ? 'Custom Dates'
-            : `Every ${this._payload.repeatDuration} ${this._payload.repeatEvery}`,
+            : `Every ${payload.repeatDuration} ${payload.repeatEvery}`,
         shiftDetails: this.allSlots,
         slotDetails: this.allSlots,
         slotsCount: this.countOfSlots(this.allSlots)
@@ -85,16 +93,25 @@ export class TaskLevelSchedulerComponent implements OnInit {
     return this._payload;
   }
 
+  @Input() set plantTimezoneMap(plantTimezoneMap: any) {
+    this._plantTimezoneMap = plantTimezoneMap;
+  }
+
+  get plantTimezoneMap() {
+    return this._plantTimezoneMap;
+  }
+
   status: string;
   taskLevelScheduleHeaderConfiguration;
   searchHierarchyKey: FormControl;
   filteredOptions$: Observable<any[]>;
+  selectedNode$: Observable<any>;
   flatHierarchy: any;
   authoredData: any;
   pages: any;
   filteredList = [];
   selectedNode = [];
-  selectedPages: any;
+  selectedPages: any = [];
   selectedNodeId: any;
   mode = 'scheduler';
   isPreviewActive = false;
@@ -103,6 +120,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
   pageCheckBoxStatusObject: any = {};
   openCloseRightPanel = false;
   _payload: any;
+  _plantTimezoneMap: any;
   scheduleConfig: RoundPlanScheduleConfiguration;
   authorToEmail: any;
   revisedInfo: any;
@@ -173,22 +191,30 @@ export class TaskLevelSchedulerComponent implements OnInit {
       map((value) => this.filter(value.trim() || ''))
     );
 
-    this.operatorRoundService.selectedNode$
-      .pipe(
-        tap((data) => {
-          this.selectedNode = data;
-          for (const key in this.pages) {
-            if (this.pages.hasOwnProperty(key)) {
-              const assetLocationId = key.toString().split('_')[1];
-              if (assetLocationId === this.selectedNode['id']) {
-                this.selectedPages = this.pages[key];
-                this.selectedNodeId = assetLocationId;
-              }
+    this.selectedNode$ = this.operatorRoundService.selectedNode$.pipe(
+      tap((data) => {
+        this.selectedNode = data;
+        for (const key in this.pages) {
+          if (this.pages.hasOwnProperty(key)) {
+            const assetLocationId = key.toString().split('_')[1];
+            if (assetLocationId === this.selectedNode['id']) {
+              this.selectedPages = this.pages[key].map((page) => {
+                page.isOpen = true;
+                page.sections.forEach((section) => {
+                  section.isOpen = true;
+                });
+                page.questions.forEach((question) => {
+                  question.isOpen = true;
+                });
+                return page;
+              });
+              this.selectedNodeId = assetLocationId;
             }
           }
-        })
-      )
-      .subscribe();
+        }
+      })
+    );
+
     this.roundPlanData.assigneeDetails.users.forEach((user) => {
       if (
         user.firstName + ' ' + user.lastName ===
@@ -209,6 +235,18 @@ export class TaskLevelSchedulerComponent implements OnInit {
           this.displayTaskLevelConfig.set(questionId, config[questionId]);
         });
       });
+      /* this.selectedPages = this.selectedPages.map((page) => {
+        page.complete = false;
+        page.partiallyChecked = false;
+        page.sections.forEach((section) => {
+          section.complete = false;
+          section.partiallyChecked = false;
+        });
+        page.questions.forEach((question) => {
+          question.complete = false;
+        });
+        return page;
+      }); */
     });
     this.operatorRoundService.uniqueConfiguration$.subscribe(
       (configurations) => {
@@ -277,27 +315,32 @@ export class TaskLevelSchedulerComponent implements OnInit {
       : (this.state = 'closed');
   }
 
-  prepareShiftSlot(shiftSlotDetail) {
-    if (shiftSlotDetail[0].null) {
-      return shiftSlotDetail[0];
-    } else {
-      const shiftData = {};
-      shiftSlotDetail.forEach((detail) => {
-        this.payload.shiftDetails[detail.id].forEach((slot) => {
-          delete slot.checked;
-        });
-        shiftData[detail.id] = this.payload.shiftDetails[detail.id];
-      });
-      return shiftData;
-    }
-  }
-
   countOfSlots(slots) {
     let count = 0;
     slots.forEach((slot) => {
       count += slot.payload.length;
     });
     return count;
+  }
+
+  prepareScheduleByDates(scheduleByDates) {
+    return scheduleByDates.map((scheduleByDate) => {
+      let dateByPlantTimezone = new Date(
+        format(scheduleByDate.date, dateTimeFormat3)
+      );
+      if (
+        this.plantTimezoneMap[this.roundPlanData?.plantId]?.timeZoneIdentifier
+      ) {
+        dateByPlantTimezone = zonedTimeToUtc(
+          format(scheduleByDate.date, dateTimeFormat3),
+          this.plantTimezoneMap[this.roundPlanData?.plantId]?.timeZoneIdentifier
+        );
+      }
+      return {
+        ...scheduleByDate,
+        date: dateByPlantTimezone
+      };
+    });
   }
 
   prepareTaskLeveConfig(revisedInfo) {
@@ -318,25 +361,61 @@ export class TaskLevelSchedulerComponent implements OnInit {
             isQuestionInConfig = true;
         });
       });
-      if (isQuestionInConfig) taskLevelConfig.push(config);
+      if (isQuestionInConfig) {
+        let time = format(new Date(), hourFormat);
+        const { startDate, endDate, shiftDetails } = config;
+        const scheduleByDates =
+          config.scheduleType === 'byDate'
+            ? this.prepareScheduleByDates(config.scheduleByDates)
+            : [];
+
+        let startDateByPlantTimezone = new Date(
+          `${startDate} ${time}`
+        ).toISOString();
+        let endDateByPlantTimezone = new Date(
+          `${endDate} ${time}`
+        ).toISOString();
+
+        if (
+          this.plantTimezoneMap[this.roundPlanData?.plantId]?.timeZoneIdentifier
+        ) {
+          time = localToTimezoneDate(
+            new Date(),
+            this.plantTimezoneMap[this.roundPlanData?.plantId],
+            hourFormat
+          );
+
+          startDateByPlantTimezone = zonedTimeToUtc(
+            format(new Date(startDate), dateFormat5) + ` ${time}`,
+            this.plantTimezoneMap[this.roundPlanData?.plantId]
+              ?.timeZoneIdentifier
+          ).toISOString();
+
+          endDateByPlantTimezone = zonedTimeToUtc(
+            format(new Date(endDate), dateFormat5) + ` ${time}`,
+            this.plantTimezoneMap[this.roundPlanData?.plantId]
+              ?.timeZoneIdentifier
+          ).toISOString();
+        }
+        taskLevelConfig.push({
+          ...config,
+          startDate: startDateByPlantTimezone,
+          endDate: endDateByPlantTimezone
+        });
+      }
     });
     return taskLevelConfig;
   }
 
   onSchedule() {
+    const payloadCopy = cloneDeep(this.payload);
+    delete payloadCopy.advanceFormsCount;
+    delete payloadCopy.formId;
+    delete payloadCopy.scheduleEndOccurrencesText;
+    delete payloadCopy.shiftSlots;
+    delete payloadCopy.shiftsSelected;
     this.scheduleConfig = {
-      roundPlanId: this.roundPlanData.roundPlanDetail.id,
-      ...this.payload,
-      startDate: this.payload.startDate,
-      endDate: this.payload.endDate,
-      shiftDetails: this.prepareShiftSlot(this.payload.shiftSlots),
-      isArchived: false,
-      assignmentDetails: this.payload.assignmentDetails,
-      advanceRoundsCount: 0,
-      createdAt: this.roundPlanData.roundPlanDetail.createdAt,
-      updatedAt: this.roundPlanData.roundPlanDetail.updatedAt,
-      createdBy: this.authorToEmail,
-      _v: 0,
+      ...payloadCopy,
       taskLevelConfig: this.prepareTaskLeveConfig(this.revisedInfo)
     };
 
@@ -344,22 +423,27 @@ export class TaskLevelSchedulerComponent implements OnInit {
       if (Object.keys(config.nodeWiseQuestionIds).length === 0) return false;
       return true;
     });
+    /* console.log(this.scheduleConfig);
+    return; */
     this.schedulerConfigurationService
       .createRoundPlanScheduleConfiguration$(this.scheduleConfig)
       .subscribe();
   }
 
   prepareShiftAndSlot(shiftSlot, shiftDetails) {
+    let shifSlots = [];
     if (Object.keys(shiftDetails)[0] === 'null') {
-      shiftSlot.forEach((data) => {
-        data.payload = shiftDetails.null.map((pLoad) => pLoad);
-      });
-      return shiftSlot;
+      shifSlots = shiftSlot.map((data) => ({
+        ...data,
+        payload: shiftDetails.null.map((pLoad) => pLoad)
+      }));
+      return shifSlots;
     } else {
-      shiftSlot.forEach((data) => {
-        data.payload = shiftDetails[data.id].map((pLoad) => pLoad);
-      });
-      return shiftSlot;
+      shifSlots = shiftSlot.map((data) => ({
+        ...data,
+        payload: shiftDetails[data.id].map((pLoad) => pLoad)
+      }));
+      return shifSlots;
     }
   }
 }

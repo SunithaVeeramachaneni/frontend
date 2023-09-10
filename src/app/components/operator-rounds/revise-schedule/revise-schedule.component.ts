@@ -27,8 +27,7 @@ import { format } from 'date-fns';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { tap } from 'rxjs/operators';
 import { isEqual } from 'lodash-es';
-import { transferQuestionFromSection } from 'src/app/forms/state/builder/builder.actions';
-import { dateFormat4, repeatEvery, scheduleType } from 'src/app/app.constants';
+import { dateFormat4 } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-revise-schedule',
@@ -260,31 +259,10 @@ export class ReviseScheduleComponent implements OnInit {
     this.shiftSelect.value = this.allSlots;
   }
 
-  filterConfig(config) {
-    if (config.scheduleType === scheduleType.byFrequency) {
-      if (config.repeatEvery === repeatEvery.day) {
-        config.daysOfWeek = [1];
-        config.monthlyDaysOfWeek = [[1], [1], [1], [1], [1]];
-      } else if (config.repeatEvery === repeatEvery.week) {
-        config.monthlyDaysOfWeek = [[1], [1], [1], [1], [1]];
-      } else {
-        config.daysOfWeek = [1];
-      }
-    } else {
-      config.daysOfWeek = [1];
-      config.repeatDuration = 1;
-      config.monthlyDaysOfWeek = [[1], [1], [1], [1], [1]];
-    }
-    return JSON.parse(JSON.stringify(config));
-  }
-
   comparingConfig(newConfig) {
-    // newConfig.shiftDetails = JSON.parse(
-    //   JSON.stringify(this.prepareShiftSlot(this.allSlots))
-    // );
-    newConfig.shiftDetails = { ...this.prepareShiftSlot(this.allSlots) };
-    this.filterConfig(newConfig);
-
+    newConfig.shiftDetails = {
+      ...this.prepareShiftSlot(this.allSlots)
+    };
     let configIndex = 0;
     let configFound = false;
     if (!this.uniqueConfigurations.length) {
@@ -312,24 +290,17 @@ export class ReviseScheduleComponent implements OnInit {
   }
 
   prepareShiftSlot(shiftSlotDetail) {
-    if (shiftSlotDetail[0].null) {
-      return shiftSlotDetail[0];
-    } else {
-      const shiftData = {};
-      shiftSlotDetail.forEach((detail) => {
-        if (detail.payload) {
-          shiftData[detail.id] = detail.payload.filter((pLoad) => {
-            if (pLoad.checked === true) return true;
-            else return false;
-          });
-        } else {
-          shiftData[detail.id] = [
-            { startTime: detail.startTiem, endTime: detail.endTime }
-          ];
-        }
-      });
-      return shiftData;
-    }
+    // const shiftData = {};
+    return shiftSlotDetail.reduce((acc, curr) => {
+      acc[curr.id ? curr.id : 'null'] = curr.payload
+        .map((pLoad) => {
+          if (pLoad.checked === true) {
+            return pLoad;
+          }
+        })
+        .filter((value) => value);
+      return acc;
+    }, {});
   }
 
   setCommonConfig() {
@@ -390,14 +361,14 @@ export class ReviseScheduleComponent implements OnInit {
   }
 
   onRevise() {
-    const sameConfigAsHeader =
-      this.operatorRoundService.compareConfigWithHeader(
-        this.reviseScheduleConfig,
-        this.reviseScheduleConfigForm
-      );
     const configPosition = this.comparingConfig(
       this.reviseScheduleConfigForm.value
     );
+    const sameConfigAsHeader =
+      this.operatorRoundService.compareConfigWithHeader(
+        this.reviseScheduleConfig,
+        this.reviseScheduleConfigForm.value
+      );
     this.operatorRoundService.allPageCheckBoxStatus$.subscribe((pages) => {
       Object.keys(pages).forEach((key) => {
         pages[key].forEach((page) => {
@@ -422,7 +393,7 @@ export class ReviseScheduleComponent implements OnInit {
           }
         });
       });
+      this.operatorRoundService.setRevisedInfo(this.revisedInfo);
     });
-    this.operatorRoundService.setRevisedInfo(this.revisedInfo);
   }
 }

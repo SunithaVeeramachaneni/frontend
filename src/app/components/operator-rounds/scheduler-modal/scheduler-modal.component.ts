@@ -15,6 +15,7 @@ import { AlertModalComponent } from './alert-modal/alert-modal.component';
 })
 export class SchedulerModalComponent implements OnInit {
   payload: any;
+  plantTimezoneMap: any;
   steps: Step[] = [
     { title: 'Header', content: '' },
     { title: 'Tasks', content: '' }
@@ -59,7 +60,9 @@ export class SchedulerModalComponent implements OnInit {
     this.currentStep--;
   }
 
-  payloadEmitter($event: Event) {
-    this.payload = $event;
+  payloadEmitter($event: any) {
+    const { payload, plantTimezoneMap } = $event;
+    this.payload = payload;
+    this.plantTimezoneMap = plantTimezoneMap;
   }
 }

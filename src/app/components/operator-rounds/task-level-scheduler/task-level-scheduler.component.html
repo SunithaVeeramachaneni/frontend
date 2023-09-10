@@ -27,10 +27,10 @@
     </div>
     <div class="header-level">
       <div class="row1">
-        <span class="txt" *ngIf="_payload?.scheduleType === 'byDate'">
+        <span class="txt" *ngIf="payload?.scheduleType === 'byDate'">
           {{ 'headerDates' | translate }} :
         </span>
-        <span class="txt" *ngIf="_payload?.scheduleType !== 'byDate'">
+        <span class="txt" *ngIf="payload?.scheduleType !== 'byDate'">
           {{ 'headerFrequency' | translate }} :
         </span>
 
@@ -99,7 +99,7 @@
             </span>
           </ng-container>
         </div>
-        <div *ngIf="_payload?.scheduleType !== 'byDate'">
+        <div *ngIf="payload?.scheduleType !== 'byDate'">
           <span class="txt">{{ 'starts' | translate }} : </span>
           <span>
             {{ taskLevelScheduleHeaderConfiguration?.headerStartDate }}
@@ -205,7 +205,7 @@
     <div
       class="hierarchy"
       [ngClass]="{
-        'custom-height': _payload?.scheduleType === 'byDate'
+        'custom-height': payload?.scheduleType === 'byDate'
       }"
     >
       <div *ngIf="!flatHierarchy?.length" class="emptySearchResult">
@@ -229,32 +229,34 @@
       ></app-node>
     </div>
   </div>
-  <div
-    [ngClass]="{
-      'width-40': openCloseRightPanel === true,
-      'width-70': openCloseRightPanel === false,
-      'mid-panel-custom-height': _payload?.scheduleType === 'byDate'
-    }"
-    class="mid-panel"
-    *ngIf="selectedNode; else loadingSelectedNode"
-  >
-    <div *ngIf="selectedPages === undefined" class="select-locations-assets">
-      <p class="m-0" translate>nullSelectedLocationAssetFirst</p>
-      <p translate>nullSelectedLocationAssetSecond</p>
+  <ng-container *ngIf="selectedNode$ | async">
+    <div
+      [ngClass]="{
+        'width-40': openCloseRightPanel === true,
+        'width-70': openCloseRightPanel === false,
+        'mid-panel-custom-height': payload?.scheduleType === 'byDate'
+      }"
+      class="mid-panel"
+      *ngIf="selectedNode; else loadingSelectedNode"
+    >
+      <div *ngIf="selectedPages === undefined" class="select-locations-assets">
+        <p class="m-0" translate>nullSelectedLocationAssetFirst</p>
+        <p translate>nullSelectedLocationAssetSecond</p>
+      </div>
+      <app-task-level-task-components
+        [selectedPage]="selectedPages"
+        [selectedNodeId]="selectedNodeId"
+        [selectedNode]="selectedNode"
+        [displayTaskLevelConfig]="displayTaskLevelConfig"
+        (isOpenThirdPanel)="openCloseRightPanelEventHandler($event)"
+      ></app-task-level-task-components>
     </div>
-    <app-task-level-task-components
-      [selectedPage]="selectedPages"
-      [selectedNodeId]="selectedNodeId"
-      [selectedNode]="selectedNode"
-      [displayTaskLevelConfig]="displayTaskLevelConfig"
-      (isOpenThirdPanel)="openCloseRightPanelEventHandler($event)"
-    ></app-task-level-task-components>
-  </div>
+  </ng-container>
   <ng-container *ngIf="openCloseRightPanel">
     <div [@widthGrow]="state" class="right-panel">
       <app-revise-schedule
         [nodeIdToNodeName]="nodeIdToNodeName"
-        [reviseSchedule]="_payload"
+        [reviseSchedule]="payload"
         [uniqueConfigurations]="uniqueConfigurations"
         (openCloseRightPanelEvent)="openCloseRightPanelEventHandler($event)"
       >
