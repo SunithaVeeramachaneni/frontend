@@ -134,6 +134,17 @@ export class RaceDynamicFormService {
       `datasets/${datasetType}`,
       info
     );
+
+  getAdditionalDetails$ = (
+    data,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any[]> =>
+    this.appService._getResp(
+      environment.operatorRoundsApiUrl,
+      `additional-details/${data.type}/${data.level}`,
+      info
+    );
+
   getDataSetsByFormId$ = (
     datasetType: string,
     formId: string,

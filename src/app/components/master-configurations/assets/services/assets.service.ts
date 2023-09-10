@@ -31,20 +31,16 @@ export class AssetsService {
 
   constructor(private _appService: AppService) {}
 
-  fetchAllAssets$ = (plantsID = null, info: ErrorInfo = {} as ErrorInfo) => {
-    const params: URLSearchParams = new URLSearchParams();
-    if (plantsID) {
-      const filter = {
-        plantsID: {
-          eq: plantsID
-        }
-      };
-      params.set('filter', JSON.stringify(filter));
+  fetchAllAssets$ = (plantId = null, info: ErrorInfo = {} as ErrorInfo) => {
+    let queryParamaters = {};
+    if (plantId) {
+      queryParamaters = { ...queryParamaters, plantId };
     }
     return this._appService._getResp(
       environment.masterConfigApiUrl,
-      'asset/listAll?' + params.toString(),
-      { displayToast: true, failureResponse: {} }
+      'asset/listAll',
+      { displayToast: true, failureResponse: {} },
+      queryParamaters
     );
   };
 
@@ -52,38 +48,25 @@ export class AssetsService {
     queryParams: {
       next?: string;
       limit: number;
-      searchKey: string;
+      searchTerm: string;
       fetchType: string;
     },
-    filterData: any = null
+    filterData: any = {}
   ) {
     if (
       ['load', 'search'].includes(queryParams.fetchType) ||
       (['infiniteScroll'].includes(queryParams.fetchType) &&
         queryParams.next !== null)
     ) {
-      const assetsListFilter = JSON.stringify(
-        Object.fromEntries(
-          Object.entries({
-            searchTerm: {
-              contains: queryParams?.searchKey.toLocaleLowerCase()
-            },
-            plantsID: { eq: filterData?.plant }
-          }).filter(([_, v]) => Object.values(v).some((x) => x !== ''))
-        )
-      );
-
+      const { plant: plantId } = filterData;
       return this._appService
         ._getResp(
           environment.masterConfigApiUrl,
           'asset/list',
           { displayToast: true, failureResponse: {} },
           {
-            limit: `${queryParams.limit}`,
-            next: queryParams.next,
-            ...(Object.keys(assetsListFilter).length > 0 && {
-              filter: assetsListFilter
-            })
+            ...queryParams,
+            plantId
           }
         )
         .pipe(map((res) => this.formatGraphQAssetsResponse(res)));

@@ -432,6 +432,7 @@ services:
       - ENCRYPTION_KEY=${ENCRYPTION_KEY}
       - RABBITMQ_URL=${RABBITMQ_URL}
       - LOGGING_QUEUE_NAME=${LOGGING_QUEUE_NAME}
+      - DATASET_DB_QUEUE=${DATASET_DB_QUEUE}
     ports:
       - '8010:8010'
     depends_on:

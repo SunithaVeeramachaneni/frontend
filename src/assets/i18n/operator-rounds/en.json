@@ -332,7 +332,6 @@
   "roundGenerationSlots": "Round Generation Slots",
   "defaultSlotInMultipleSlotsWithoutOverlapping": "You can split default slot into multiple slots without overlapping.",
   "slot": "Slot",
-  "additionalDetails": "Additional Details",
   "value": "Value",
   "add": "Add",
   "timeZone": "Plant Timezone",
@@ -430,5 +429,9 @@
   "save": "Save",
   "update": "Update",
   "newReport": "Create Report",
-  "invalidEmail": "Invalid Email input"
+  "invalidEmail": "Invalid Email input",
+  "additionalDetailsHeading": "Additional Details",
+  "additionalDetails": "Additional Details:",
+  "attributesHeading": "Attributes",
+  "addMoreUpto5": "Add More ( Select Upto 5 )"
 }

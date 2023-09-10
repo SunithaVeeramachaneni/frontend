@@ -24,7 +24,10 @@ import {
   tap,
   skipWhile
 } from 'rxjs/operators';
-import { defaultLimit, permissions as perms } from 'src/app/app.constants';
+import {
+  graphQLDefaultLimit,
+  permissions as perms
+} from 'src/app/app.constants';
 import {
   CellClickActionEvent,
   Count,
@@ -268,7 +271,7 @@ export class PlantListComponent implements OnInit, OnDestroy {
   selectedPlant;
 
   skip = 0;
-  limit = defaultLimit;
+  limit = graphQLDefaultLimit;
   fetchType = 'load';
   nextToken = '';
   parentInformation: any;
@@ -410,7 +413,7 @@ export class PlantListComponent implements OnInit, OnDestroy {
       .getPlantsList$({
         next: this.nextToken,
         limit: this.limit,
-        searchKey: this.searchPlant.value,
+        searchTerm: this.searchPlant.value,
         fetchType: this.fetchType
       })
       .pipe(

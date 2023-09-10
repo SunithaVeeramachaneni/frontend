@@ -15,7 +15,7 @@
     color="primary"
     class="next-btn"
     (click)="next()"
-    [disabled]="headerDataForm.invalid"
+    [disabled]="headerDataForm.invalid || tagsCtrl.invalid"
     translate="nextBtn"
   ></button>
 </div>
@@ -70,7 +70,7 @@
               </span
               ><br />
               <p
-                id="standaloneSubText"
+                id="embeddedSubText"
                 class="radio-sub-text"
                 translate="embeddedSubText"
               ></p>
@@ -204,6 +204,20 @@
               </mat-option>
             </mat-autocomplete>
           </mat-form-field>
+          <mat-error
+            id="tagsError"
+            *ngIf="processValidationErrorTags()"
+            class="m-5"
+          >
+            {{
+              errors.tagsCtrl.name
+                | translate
+                  : {
+                      name: 'tags' | translate,
+                      length: errors.tagsCtrl.length
+                    }
+            }}
+          </mat-error>
         </div>
 
         <div
@@ -310,7 +324,7 @@
 
         <div class="additional-details">
           <p
-            translate="additionalDetails"
+            translate="additionalDetailsHeading"
             id="additionalDetailsHeading"
             class="additional-details-text"
           ></p>
