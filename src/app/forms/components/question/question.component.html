@@ -311,7 +311,8 @@
                 *ngIf="
                   (questionForm.get('fieldType').value === 'NF' ||
                     questionForm.get('fieldType').value === 'RT') &&
-                  !isEmbeddedForm
+                  !isEmbeddedForm &&
+                  moduleName === operatorRounds
                 "
               >
                 <mat-checkbox
