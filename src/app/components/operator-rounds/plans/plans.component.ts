@@ -694,14 +694,8 @@ export class PlansComponent implements OnInit, OnDestroy {
           const { scheduled, unscheduled } = this.roundPlanCounts;
           this.roundPlanCounts = {
             ...this.roundPlanCounts,
-            scheduled:
-              scheduledCount === undefined || scheduledCount === null
-                ? scheduled
-                : scheduledCount,
-            unscheduled:
-              unscheduledCount === undefined || unscheduledCount === null
-                ? unscheduled
-                : unscheduledCount
+            scheduled: scheduledCount ?? scheduled,
+            unscheduled: unscheduledCount ?? unscheduled
           };
         })
       );
