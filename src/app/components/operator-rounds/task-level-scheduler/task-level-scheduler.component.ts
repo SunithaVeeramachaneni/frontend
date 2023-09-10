@@ -438,8 +438,8 @@ export class TaskLevelSchedulerComponent implements OnInit {
       if (Object.keys(config.nodeWiseQuestionIds).length === 0) return false;
       return true;
     });
-    console.log(this.scheduleConfig);
-    return;
+    /* console.log(this.scheduleConfig);
+    return; */
     this.schedulerConfigurationService
       .createRoundPlanScheduleConfiguration$(this.scheduleConfig)
       .subscribe();
