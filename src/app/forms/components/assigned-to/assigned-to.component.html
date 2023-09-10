@@ -21,6 +21,7 @@
           *ngFor="let assignType of assignTypes; let i = index"
           (click)="$event.stopPropagation()"
           [value]="assignType"
+          [disabled]="i === 0"
         >
           {{ assignType | translate }}</mat-radio-button
         >

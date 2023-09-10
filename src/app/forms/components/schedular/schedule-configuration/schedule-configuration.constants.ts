@@ -12,7 +12,7 @@ export const scheduleConfigs = Object.freeze({
     'saturday'
   ],
   weeksOfMonth: ['1st Week', '2nd Week', '3rd Week', '4th Week', '5th Week'],
-  assignTypes: ['user', 'userGroup'] // ['user', 'userGroup', 'plant']
+  assignTypes: ['plant', 'userGroup', 'user']
 });
 
 export const TIME_SLOTS: string[] = [

@@ -115,7 +115,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
           ...this.assigneeDetails
         };
         userGroups?.items?.map((userGroup) => {
-          this.userGroupsIdMap[userGroup.id] = userGroup.name;
+          this.userGroupsIdMap[userGroup.id] = userGroup;
         });
       })
     );
@@ -146,13 +146,13 @@ export class InspectionComponent implements OnInit, OnDestroy {
   filter = {
     status: '',
     schedule: '',
-    assignedTo: '',
+    assignedToDisplay: '',
     dueDate: '',
     plant: '',
     shiftId: '',
     scheduledAt: ''
   };
-  assignedTo: string[] = [];
+  assignedTo: any[] = [];
   schedules: string[] = [];
   assigneePosition: any;
   partialColumns: Partial<Column>[] = [
@@ -525,17 +525,17 @@ export class InspectionComponent implements OnInit, OnDestroy {
             assignedTo: inspectionDetail?.assignedTo
               ? this.userService.getUserFullName(inspectionDetail.assignedTo)
               : '',
-            assignedToDisplay:
-              inspectionDetail.assignmentType === 'user'
-                ? this.userService.getUserFullName(inspectionDetail.assignedTo)
-                : this.userGroupsIdMap[
-                    inspectionDetail.userGroupsIds?.split(',')[0]
-                  ],
+            assignedToDisplay: inspectionDetail.assignedTo?.length
+              ? this.userService.getUserFullName(inspectionDetail.assignedTo)
+              : inspectionDetail.userGroupsIds?.length
+              ? this.userGroupsIdMap[
+                  inspectionDetail.userGroupsIds?.split(',')[0]
+                ]?.name
+              : '',
             statusDisplay: inspectionDetail.status.replace('-', ' '),
-            assignedToEmail:
-              inspectionDetail.assignmentType === 'user'
-                ? inspectionDetail.assignedTo
-                : ''
+            assignedToEmail: inspectionDetail.assignedTo?.length
+              ? inspectionDetail.assignedTo
+              : ''
           }));
         } else {
           this.initial.data = this.initial.data.concat(
@@ -552,19 +552,17 @@ export class InspectionComponent implements OnInit, OnDestroy {
               assignedTo: this.userService.getUserFullName(
                 inspectionDetail.assignedTo
               ),
-              assignedToDisplay:
-                inspectionDetail.assignmentType === 'user'
-                  ? this.userService.getUserFullName(
-                      inspectionDetail.assignedTo
-                    )
-                  : this.userGroupsIdMap[
-                      inspectionDetail.userGroupsIds?.split(',')[0]
-                    ],
+              assignedToDisplay: inspectionDetail.assignedTo?.length
+                ? this.userService.getUserFullName(inspectionDetail.assignedTo)
+                : inspectionDetail.userGroupsIds?.length
+                ? this.userGroupsIdMap[
+                    inspectionDetail.userGroupsIds?.split(',')[0]
+                  ]?.name
+                : '',
               statusDisplay: inspectionDetail.status.replace('-', ' '),
-              assignedToEmail:
-                inspectionDetail.assignmentType === 'user'
-                  ? inspectionDetail.assignedTo
-                  : ''
+              assignedToEmail: inspectionDetail.assignedTo?.length
+                ? inspectionDetail.assignedTo
+                : ''
             }))
           );
         }
@@ -629,13 +627,32 @@ export class InspectionComponent implements OnInit, OnDestroy {
         const objectKeys = Object.keys(formsList);
         if (objectKeys.length > 0) {
           const uniqueAssignTo = formsList
-            ?.map((item) => item.assignedTo)
+            ?.filter((item) => item.assignedTo.length)
+            .map((item) => item.assignedTo)
+            .filter((value, index, self) => self.indexOf(value) === index);
+
+          const uniqueUserGroupsIds = formsList
+            ?.filter((item) => item.userGroupsIds?.length)
+            .map((item) => item.userGroupsIds)
             .filter((value, index, self) => self.indexOf(value) === index);
 
           if (uniqueAssignTo?.length > 0) {
             uniqueAssignTo?.filter(Boolean).forEach((item) => {
               if (item && this.userFullNameByEmail[item] !== undefined) {
-                this.assignedTo.push(this.userFullNameByEmail[item].fullName);
+                this.assignedTo.push({
+                  type: 'user',
+                  value: this.userFullNameByEmail[item]
+                });
+              }
+            });
+          }
+          if (uniqueUserGroupsIds?.length > 0) {
+            uniqueUserGroupsIds?.filter(Boolean).forEach((item) => {
+              if (item && this.userGroupsIdMap[item]?.name !== undefined) {
+                this.assignedTo.push({
+                  type: 'userGroup',
+                  value: this.userGroupsIdMap[item]
+                });
               }
             });
           }
@@ -663,7 +680,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
             .sort();
 
           for (const item of this.filterJson) {
-            if (item.column === 'assignedTo') {
+            if (item.column === 'assignedToDisplay') {
               item.items = this.assignedTo.sort();
             } else if (item.column === 'plant') {
               item.items = this.plants;
@@ -889,6 +906,30 @@ export class InspectionComponent implements OnInit, OnDestroy {
     });
   }
 
+  getFullNameToEmailArray(data: any) {
+    const emailArray = [];
+    data?.forEach((name: any) => {
+      emailArray.push(
+        Object.keys(this.userFullNameByEmail).find(
+          (email) => this.userFullNameByEmail[email].fullName === name
+        )
+      );
+    });
+    return emailArray;
+  }
+
+  getUserGroupNameToIdsArray(data: any) {
+    const userGroupIdsArray = [];
+    data?.forEach((name: any) => {
+      userGroupIdsArray.push(
+        Object.keys(this.userGroupsIdMap).find(
+          (id) => this.userGroupsIdMap[id].name === name
+        )
+      );
+    });
+    return userGroupIdsArray;
+  }
+
   applyFilters(data: any): void {
     this.isPopoverOpen = false;
     for (const item of data) {
@@ -904,6 +945,23 @@ export class InspectionComponent implements OnInit, OnDestroy {
         this.filter[item.column] = item.value;
       } else if (item.column === 'dueDate' && item.value) {
         this.filter[item.column] = item.value;
+      } else if (item.column === 'assignedToDisplay' && item.value) {
+        if (item.value[0].type === 'user') {
+          this.filter[item.column] = {
+            type: 'user',
+            value: this.getFullNameToEmailArray(
+              item.value.map((user) => user.value.fullName)
+            )
+          };
+        }
+        if (item.value[0].type === 'userGroup') {
+          this.filter[item.column] = {
+            type: 'userGroup',
+            value: this.getUserGroupNameToIdsArray(
+              item.value.map((userGroup) => userGroup.value.name)
+            )
+          };
+        }
       } else if (item.type !== 'date' && item.value) {
         this.filter[item.column] = item.value;
       } else if (item.type === 'date' && item.value) {
@@ -919,7 +977,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
     this.filter = {
       status: '',
       schedule: '',
-      assignedTo: '',
+      assignedToDisplay: '',
       dueDate: '',
       plant: '',
       shiftId: '',
@@ -945,11 +1003,11 @@ export class InspectionComponent implements OnInit, OnDestroy {
 
   selectedAssigneeHandler(selectedAssignee: any) {
     const { assigneeType, user, userGroup } = selectedAssignee;
-    const { inspectionId, assignedToEmail, ...rest } = this.selectedFormInfo;
+    const { assignmentType, inspectionId, assignedToEmail, ...rest } =
+      this.selectedFormInfo;
     let previouslyAssignedTo = this.selectedFormInfo.previouslyAssignedTo || '';
 
     let assignedTo = '';
-    let assignmentType = 'user';
     let userGroupsIds = '';
     if (assigneeType === 'user') {
       assignedTo = user.email;
@@ -967,8 +1025,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
       }
     }
 
-    if (assigneeType === 'userGroup') {
-      assignmentType = 'userGroup';
+    if (assigneeType === 'userGroup' || assignmentType === 'userGroup') {
       userGroupsIds += `${userGroup.id}`;
     }
 
@@ -1008,17 +1065,17 @@ export class InspectionComponent implements OnInit, OnDestroy {
                   ...data,
                   inspectionDBVersion: resp.inspectionDBVersion + 1,
                   status,
-                  assignedTo:
-                    assigneeType === 'user'
-                      ? this.userService.getUserFullName(assignedTo)
-                      : '',
+                  assignedTo: assignedTo?.length
+                    ? this.userService.getUserFullName(assignedTo)
+                    : '',
                   assignmentType,
                   userGroupsIds,
-                  assignedToDisplay:
-                    assigneeType === 'user'
-                      ? this.userService.getUserFullName(assignedTo)
-                      : this.userGroupsIdMap[userGroupsIds.split(',')[0]],
-                  assignedToEmail: assignmentType === 'user' ? assignedTo : ''
+                  assignedToDisplay: assignedTo?.length
+                    ? this.userService.getUserFullName(assignedTo)
+                    : userGroupsIds?.length
+                    ? this.userGroupsIdMap[userGroupsIds.split(',')[0]]?.name
+                    : '',
+                  assignedToEmail: assignedTo?.length ? assignedTo : ''
                 };
               }
               return data;

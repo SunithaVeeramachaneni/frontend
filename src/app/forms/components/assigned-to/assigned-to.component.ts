@@ -60,10 +60,10 @@ export class AssignedToComponent implements OnInit, OnDestroy {
   searchInput = new FormControl('');
   filteredData$: Observable<any[]>;
   filteredDataCount: number;
-  assignTypes = ['user', 'userGroup'];
-  assigneeTypeControl = new FormControl('user');
+  assignTypes = ['plant', 'userGroup', 'user'];
+  assigneeTypeControl = new FormControl('userGroup');
   assigneeDetails$ = new BehaviorSubject({} as AssigneeDetails);
-  private _assigneeType = 'user';
+  private _assigneeType = 'userGroup';
   private _showAssigneeOptions = false;
   private onDestroy$ = new Subject();
   constructor() {}

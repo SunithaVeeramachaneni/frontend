@@ -117,7 +117,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
           ...this.assigneeDetails
         };
         userGroups?.items?.map((userGroup) => {
-          this.userGroupsIdMap[userGroup.id] = userGroup.name;
+          this.userGroupsIdMap[userGroup.id] = userGroup;
         });
       })
     );
@@ -150,7 +150,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   filter = {
     status: '',
     schedule: '',
-    assignedTo: '',
+    assignedToDisplay: '',
     dueDate: '',
     plant: '',
     scheduledAt: '',
@@ -698,17 +698,16 @@ export class RoundsComponent implements OnInit, OnDestroy {
             assignedTo: this.userService.getUserFullName(
               roundDetail.assignedTo
             ),
-            assignedToDisplay:
-              roundDetail.assignmentType === 'user'
-                ? this.userService.getUserFullName(roundDetail.assignedTo)
-                : this.userGroupsIdMap[
-                    roundDetail.userGroupsIds?.split(',')[0]
-                  ],
+            assignedToDisplay: roundDetail.assignedTo?.length
+              ? this.userService.getUserFullName(roundDetail.assignedTo)
+              : roundDetail.userGroupsIds?.length
+              ? this.userGroupsIdMap[roundDetail.userGroupsIds?.split(',')[0]]
+                  ?.name
+              : '',
             statusDisplay: roundDetail.status.replace('-', ' '),
-            assignedToEmail:
-              roundDetail.assignmentType === 'user'
-                ? roundDetail.assignedTo
-                : ''
+            assignedToEmail: roundDetail.assignedTo?.length
+              ? roundDetail.assignedTo
+              : ''
           }));
         } else {
           this.initial.data = this.initial.data.concat(
@@ -725,17 +724,16 @@ export class RoundsComponent implements OnInit, OnDestroy {
               assignedTo: this.userService.getUserFullName(
                 roundDetail.assignedTo
               ),
-              assignedToDisplay:
-                roundDetail.assignmentType === 'user'
-                  ? this.userService.getUserFullName(roundDetail.assignedTo)
-                  : this.userGroupsIdMap[
-                      roundDetail.userGroupsIds?.split(',')[0]
-                    ],
+              assignedToDisplay: roundDetail.assignedTo?.length
+                ? this.userService.getUserFullName(roundDetail.assignedTo)
+                : roundDetail.userGroupsIds?.length
+                ? this.userGroupsIdMap[roundDetail.userGroupsIds?.split(',')[0]]
+                    ?.name
+                : '',
               statusDisplay: roundDetail.status.replace('-', ' '),
-              assignedToEmail:
-                roundDetail.assignmentType === 'user'
-                  ? roundDetail.assignedTo
-                  : ''
+              assignedToEmail: roundDetail.assignedTo?.length
+                ? roundDetail.assignedTo
+                : ''
             }))
           );
         }
@@ -1016,7 +1014,13 @@ export class RoundsComponent implements OnInit, OnDestroy {
         const objectKeys = Object.keys(formsList);
         if (objectKeys.length > 0) {
           const uniqueAssignTo = formsList
-            ?.map((item) => item.assignedTo)
+            ?.filter((item) => item.assignedTo.length)
+            .map((item) => item.assignedTo)
+            .filter((value, index, self) => self.indexOf(value) === index);
+
+          const uniqueUserGroupsIds = formsList
+            ?.filter((item) => item.userGroupsIds?.length)
+            .map((item) => item.userGroupsIds)
             .filter((value, index, self) => self.indexOf(value) === index);
 
           const uniqueSchedules = formsList
@@ -1033,7 +1037,20 @@ export class RoundsComponent implements OnInit, OnDestroy {
           if (uniqueAssignTo?.length > 0) {
             uniqueAssignTo?.filter(Boolean).forEach((item) => {
               if (item && this.userFullNameByEmail[item] !== undefined) {
-                this.assignedTo.push(this.userFullNameByEmail[item].fullName);
+                this.assignedTo.push({
+                  type: 'user',
+                  value: this.userFullNameByEmail[item]
+                });
+              }
+            });
+          }
+          if (uniqueUserGroupsIds?.length > 0) {
+            uniqueUserGroupsIds?.filter(Boolean).forEach((item) => {
+              if (item && this.userGroupsIdMap[item]?.name !== undefined) {
+                this.assignedTo.push({
+                  type: 'userGroup',
+                  value: this.userGroupsIdMap[item]
+                });
               }
             });
           }
@@ -1050,7 +1067,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
             .sort();
 
           for (const item of this.filterJson) {
-            if (item.column === 'assignedTo') {
+            if (item.column === 'assignedToDisplay') {
               item.items = this.assignedTo.sort();
             } else if (item['column'] === 'plant') {
               item.items = this.plants;
@@ -1091,6 +1108,18 @@ export class RoundsComponent implements OnInit, OnDestroy {
     return emailArray;
   }
 
+  getUserGroupNameToIdsArray(data: any) {
+    const userGroupIdsArray = [];
+    data?.forEach((name: any) => {
+      userGroupIdsArray.push(
+        Object.keys(this.userGroupsIdMap).find(
+          (id) => this.userGroupsIdMap[id].name === name
+        )
+      );
+    });
+    return userGroupIdsArray;
+  }
+
   applyFilters(data: any): void {
     this.isPopoverOpen = false;
     for (const item of data) {
@@ -1106,14 +1135,30 @@ export class RoundsComponent implements OnInit, OnDestroy {
         this.filter[item.column] = item.value;
       } else if (item.column === 'schedule' && item.value) {
         this.filter[item.column] = item.value;
-      } else if (item.column === 'assignedTo' && item.value) {
-        this.filter[item.column] = this.getFullNameToEmailArray(item.value);
+      } else if (item.column === 'assignedToDisplay' && item.value) {
+        if (item.value[0].type === 'user') {
+          this.filter[item.column] = {
+            type: 'user',
+            value: this.getFullNameToEmailArray(
+              item.value.map((user) => user.value.fullName)
+            )
+          };
+        }
+        if (item.value[0].type === 'userGroup') {
+          this.filter[item.column] = {
+            type: 'userGroup',
+            value: this.getUserGroupNameToIdsArray(
+              item.value.map((userGroup) => userGroup.value.name)
+            )
+          };
+        }
       } else if (item.column === 'dueDate' && item.value) {
         this.filter[item.column] = item.value;
       } else if (item.column === 'scheduledAt' && item.value) {
         this.filter[item.column] = item.value;
       }
     }
+
     this.nextToken = '';
     this.fetchRounds$.next({ data: 'load' });
   }
@@ -1123,7 +1168,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
     this.filter = {
       status: '',
       schedule: '',
-      assignedTo: '',
+      assignedToDisplay: '',
       dueDate: '',
       plant: '',
       scheduledAt: '',
@@ -1152,12 +1197,12 @@ export class RoundsComponent implements OnInit, OnDestroy {
 
   selectedAssigneeHandler(selectedAssignee: any) {
     const { assigneeType, user, userGroup } = selectedAssignee;
-    const { roundId, assignedToEmail, ...rest } = this.selectedRoundInfo;
+    const { assignmentType, roundId, assignedToEmail, ...rest } =
+      this.selectedRoundInfo;
     let previouslyAssignedTo =
       this.selectedRoundInfo.previouslyAssignedTo || '';
 
     let assignedTo = '';
-    let assignmentType = 'user';
     let userGroupsIds = '';
     if (assigneeType === 'user') {
       assignedTo = user.email;
@@ -1175,8 +1220,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       }
     }
 
-    if (assigneeType === 'userGroup') {
-      assignmentType = 'userGroup';
+    if (assigneeType === 'userGroup' || assignmentType === 'userGroup') {
       userGroupsIds += `${userGroup.id}`;
     }
 
@@ -1214,19 +1258,18 @@ export class RoundsComponent implements OnInit, OnDestroy {
               if (data.roundId === roundId) {
                 return {
                   ...data,
-                  assignedTo:
-                    assigneeType === 'user'
-                      ? this.userService.getUserFullName(assignedTo)
-                      : '',
-                  assignmentType,
+                  assignedTo: assignedTo?.length
+                    ? this.userService.getUserFullName(assignedTo)
+                    : '',
                   userGroupsIds,
-                  assignedToDisplay:
-                    assigneeType === 'user'
-                      ? this.userService.getUserFullName(assignedTo)
-                      : this.userGroupsIdMap[userGroupsIds.split(',')[0]],
+                  assignedToDisplay: assignedTo?.length
+                    ? this.userService.getUserFullName(assignedTo)
+                    : userGroupsIds?.length
+                    ? this.userGroupsIdMap[userGroupsIds?.split(',')[0]]?.name
+                    : '',
                   status,
                   roundDBVersion: resp.roundDBVersion + 1,
-                  assignedToEmail: assignmentType === 'user' ? assignedTo : ''
+                  assignedToEmail: assignedTo?.length ? assignedTo : ''
                 };
               }
               return data;

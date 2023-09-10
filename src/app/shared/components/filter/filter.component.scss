@@ -158,3 +158,52 @@ mat-datepicker-toggle.mat-datepicker-toggle.arrow-toggle button {
   overflow: auto;
   max-height: 200px;
 }
+
+.user-menu-item {
+  display: flex;
+  flex-direction: row;
+  padding-left: 0;
+
+  .profile-image {
+    height: 30px;
+    width: 30px;
+    margin-top: 3px;
+    margin-right: 5px;
+    border-radius: 50%;
+  }
+
+  .user-info {
+    display: flex;
+    flex-direction: column;
+    margin-top: 2px;
+    width: 195px;
+
+    .name {
+      font-size: 93%;
+      font-weight: 700;
+      line-height: 19px;
+    }
+
+    .email {
+      font-size: 72%;
+      font-weight: 400;
+      line-height: 15px;
+    }
+  }
+}
+
+mat-radio-button {
+  margin-left: 12px;
+}
+
+.search {
+  margin: 12px 12px 8px 12px;
+  width: 93%;
+}
+
+.no-results {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 125px;
+}

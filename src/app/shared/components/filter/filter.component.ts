@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable @angular-eslint/no-output-native */
@@ -7,6 +8,7 @@ import {
   EventEmitter,
   Input,
   OnChanges,
+  OnDestroy,
   OnInit,
   Output,
   SimpleChanges
@@ -19,6 +21,17 @@ import {
   MatOption
 } from '@angular/material/core';
 import { MatSelect } from '@angular/material/select';
+import { FormControl } from '@angular/forms';
+import { BehaviorSubject, Observable, Subject, combineLatest } from 'rxjs';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  skip,
+  startWith,
+  takeUntil,
+  tap
+} from 'rxjs/operators';
 
 @Component({
   selector: 'app-filter',
@@ -33,10 +46,21 @@ import { MatSelect } from '@angular/material/select';
     }
   ]
 })
-export class FilterComponent implements OnInit, OnChanges {
+export class FilterComponent implements OnInit, OnChanges, OnDestroy {
   readonly FilterSidePanelComponent = FilterSidePanelComponent;
-  @Input()
-  json: any[] = [];
+  @Input() set json(json) {
+    if (json?.length) {
+      this.assignmentTypeIndex = json
+        .map((item) => item.type)
+        .indexOf('assignmentType');
+      this._json = json;
+      this.json$.next(json);
+    }
+  }
+
+  get json() {
+    return this._json;
+  }
 
   @Output()
   close: EventEmitter<any> = new EventEmitter();
@@ -47,6 +71,17 @@ export class FilterComponent implements OnInit, OnChanges {
   @Output()
   reset: EventEmitter<any> = new EventEmitter();
 
+  assignTypes = ['plant', 'userGroup', 'user'];
+  assigneeTypeControl = new FormControl('userGroup');
+  assigneeType = 'userGroup';
+  assignmentTypeIndex: number;
+  filteredAssignedToCount: number;
+  searchInput = new FormControl('');
+  filteredAssignedToData$: Observable<any[]>;
+  json$ = new BehaviorSubject([]);
+  private _json;
+  private onDestroy$ = new Subject();
+
   constructor() {}
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.json && changes.json.currentValue) {
@@ -54,7 +89,51 @@ export class FilterComponent implements OnInit, OnChanges {
     }
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.assigneeTypeControl.valueChanges
+      .pipe(
+        takeUntil(this.onDestroy$),
+        startWith('userGroup'),
+        tap((assigneeType) => {
+          this.assigneeType = assigneeType;
+          this.searchInput.patchValue('');
+        })
+      )
+      .subscribe();
+    this.filteredAssignedToData$ = combineLatest([
+      this.searchInput.valueChanges.pipe(
+        startWith(''),
+        debounceTime(500),
+        distinctUntilChanged()
+      ),
+      this.json$,
+      this.assigneeTypeControl.valueChanges.pipe(startWith('userGroup'))
+    ]).pipe(
+      map(([search, json, assigneeType]) => {
+        this.assigneeType = assigneeType;
+        search = search.toLowerCase();
+        if (this.assigneeType === 'user') {
+          return (
+            json[this.assignmentTypeIndex]?.items.filter(
+              (item) =>
+                item.type === 'user' &&
+                item.value?.fullName?.toLowerCase().includes(search)
+            ) || []
+          );
+        }
+        if (this.assigneeType === 'userGroup') {
+          return (
+            json[this.assignmentTypeIndex]?.items.filter(
+              (item) =>
+                item.type === 'userGroup' &&
+                item.value?.name?.toLowerCase().includes(search)
+            ) || []
+          );
+        }
+      }),
+      tap((data) => (this.filteredAssignedToCount = data.length))
+    );
+  }
 
   closeFilter() {
     this.close.emit();
@@ -132,5 +211,10 @@ export class FilterComponent implements OnInit, OnChanges {
 
   isOptionArrayEmpty(options: MatOption[] | any[]): boolean {
     return Array.isArray(options) && options.length === 0;
+  }
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 }
