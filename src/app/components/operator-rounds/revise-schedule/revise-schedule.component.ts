@@ -45,8 +45,15 @@ export class ReviseScheduleComponent implements OnInit {
     return this._nodeIdToNodeName;
   }
   @Input() set reviseSchedule(reviseSchedule: any) {
-    this.reviseScheduleConfig = reviseSchedule;
-    this.shiftsSelected.patchValue(this.reviseScheduleConfig.shiftSlots);
+    if (reviseSchedule) {
+      this.reviseScheduleConfig = reviseSchedule;
+      this.shiftsSelected.patchValue(this.reviseScheduleConfig.shiftSlots);
+      this.allSlots = this.prepareShiftAndSlot(
+        this.reviseScheduleConfig.shiftSlots,
+        this.reviseScheduleConfig.shiftDetails
+      );
+      this.allShifts = this.reviseScheduleConfig.shiftSlots;
+    }
   }
   get reviseSchedule() {
     return this.reviseScheduleConfig;
@@ -119,12 +126,6 @@ export class ReviseScheduleComponent implements OnInit {
 
     if (this.reviseScheduleConfig) {
       this.resetReviseScheduleConfigForm();
-
-      this.allSlots = this.prepareShiftAndSlot(
-        this.reviseScheduleConfig.shiftSlots,
-        this.reviseScheduleConfig.shiftDetails
-      );
-      this.allShifts = this.reviseScheduleConfig.shiftSlots;
     }
     this.operatorRoundService.revisedInfo$.subscribe((revisedInfo) => {
       this.revisedInfo = revisedInfo;

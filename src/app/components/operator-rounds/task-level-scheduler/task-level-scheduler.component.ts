@@ -68,8 +68,8 @@ import { zonedTimeToUtc } from 'date-fns-tz';
 export class TaskLevelSchedulerComponent implements OnInit {
   @Input() roundPlanData: any;
   @Input() set payload(payload: any) {
-    this._payload = payload;
     if (payload) {
+      this._payload = payload;
       this.allSlots = this.prepareShiftAndSlot(
         payload.shiftSlots,
         payload.shiftDetails
@@ -108,7 +108,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
   selectedNode$: Observable<any>;
   flatHierarchy: any;
   authoredData: any;
-  pages: any;
+  subForms: any = {};
   filteredList = [];
   selectedNode = [];
   selectedPages: any = [];
@@ -150,10 +150,10 @@ export class TaskLevelSchedulerComponent implements OnInit {
       )
       .subscribe((data) => {
         this.authoredData = data;
-        this.pages = JSON.parse(this.authoredData.subForms);
+        this.subForms = JSON.parse(this.authoredData.subForms);
 
-        Object.keys(this.pages).forEach((pageObj) => {
-          this.pages[pageObj].forEach((page) => {
+        Object.keys(this.subForms).forEach((subFormId) => {
+          this.subForms[subFormId].forEach((page) => {
             page.complete = false;
             page.partiallyChecked = false;
             page.isOpen = false;
@@ -167,16 +167,16 @@ export class TaskLevelSchedulerComponent implements OnInit {
             });
           });
         });
-        this.operatorRoundService.setAllPageCheckBoxStatus(this.pages);
+        this.operatorRoundService.setAllPageCheckBoxStatus(this.subForms);
         this.flatHierarchy = JSON.parse(this.authoredData.flatHierarchy);
         this.flatHierarchy.forEach((node) => {
           this.nodeIdToNodeName[node.id] = node.name;
         });
 
         this.flatHierarchy = this.flatHierarchy.filter((node) => {
-          const page_id = 'pages_' + node['id'].toString();
+          const subFormId = 'pages_' + node['id'].toString();
           try {
-            if (this.pages[page_id].length > 0) return true;
+            if (this.subForms[subFormId].length > 0) return true;
             else return false;
           } catch (err) {
             return false;
@@ -194,24 +194,22 @@ export class TaskLevelSchedulerComponent implements OnInit {
     this.selectedNode$ = this.operatorRoundService.selectedNode$.pipe(
       tap((data) => {
         this.selectedNode = data;
-        for (const key in this.pages) {
-          if (this.pages.hasOwnProperty(key)) {
-            const assetLocationId = key.toString().split('_')[1];
-            if (assetLocationId === this.selectedNode['id']) {
-              this.selectedPages = this.pages[key].map((page) => {
-                page.isOpen = true;
-                page.sections.forEach((section) => {
-                  section.isOpen = true;
-                });
-                page.questions.forEach((question) => {
-                  question.isOpen = true;
-                });
-                return page;
+        Object.keys(this.subForms).forEach((subFormId) => {
+          const assetLocationId = subFormId.split('_')[1];
+          if (assetLocationId === this.selectedNode['id']) {
+            this.selectedPages = this.subForms[subFormId].map((page) => {
+              page.isOpen = true;
+              page.sections.forEach((section) => {
+                section.isOpen = true;
               });
-              this.selectedNodeId = assetLocationId;
-            }
+              page.questions.forEach((question) => {
+                question.isOpen = true;
+              });
+              return page;
+            });
+            this.selectedNodeId = assetLocationId;
           }
-        }
+        });
       })
     );
 
@@ -235,18 +233,35 @@ export class TaskLevelSchedulerComponent implements OnInit {
           this.displayTaskLevelConfig.set(questionId, config[questionId]);
         });
       });
-      /* this.selectedPages = this.selectedPages.map((page) => {
-        page.complete = false;
-        page.partiallyChecked = false;
-        page.sections.forEach((section) => {
-          section.complete = false;
-          section.partiallyChecked = false;
+
+      const revisedInfoNodes = Object.keys(revisedInfo);
+      Object.keys(this.subForms).forEach((subFormId) => {
+        if (revisedInfoNodes.includes(subFormId.split('_')[1])) {
+          const pages = this.subForms[subFormId].map((page) => {
+            page.complete = false;
+            page.partiallyChecked = false;
+            page.sections.forEach((section) => {
+              section.complete = false;
+              section.partiallyChecked = false;
+            });
+            page.questions.forEach((question) => {
+              question.complete = false;
+            });
+            return page;
+          });
+          if (this.selectedNodeId === subFormId.split('_')[1]) {
+            this.selectedPages = pages;
+          }
+          this.operatorRoundService.setCheckBoxStatus({
+            selectedPage: pages,
+            nodeId: subFormId.split('_')[1]
+          });
+        }
+        this.operatorRoundService.setCheckBoxStatus({
+          selectedPage: this.selectedPages,
+          nodeId: this.selectedNodeId
         });
-        page.questions.forEach((question) => {
-          question.complete = false;
-        });
-        return page;
-      }); */
+      });
     });
     this.operatorRoundService.uniqueConfiguration$.subscribe(
       (configurations) => {
@@ -286,8 +301,8 @@ export class TaskLevelSchedulerComponent implements OnInit {
     this.openCloseRightPanelEventHandler(checkboxStatus);
     const nodeId = checkStatus[1]['id'];
     if (this.openCloseRightPanel === false) this.openCloseRightPanel = true;
-    Object.keys(this.pages).forEach((page_id) => {
-      const assetLocationId = page_id.split('_')[1];
+    Object.keys(this.subForms).forEach((subFormId) => {
+      const assetLocationId = subFormId.split('_')[1];
       if (assetLocationId === nodeId) {
         this.selectedPages.forEach((page) => {
           page.complete = checkboxStatus;
@@ -423,8 +438,8 @@ export class TaskLevelSchedulerComponent implements OnInit {
       if (Object.keys(config.nodeWiseQuestionIds).length === 0) return false;
       return true;
     });
-    /* console.log(this.scheduleConfig);
-    return; */
+    console.log(this.scheduleConfig);
+    return;
     this.schedulerConfigurationService
       .createRoundPlanScheduleConfiguration$(this.scheduleConfig)
       .subscribe();
