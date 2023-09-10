@@ -1,11 +1,19 @@
 <div class="app-customizer">
   <mat-card class="p-0">
     <mat-card-title class="m-0 light-gray">
-      <div
-        id="hyperlinkHeading"
-        class="hyperlink-heading"
-        translate="hyperlink"
-      ></div>
+      <div class="top-bar">
+        <svg-icon
+          id="sliderResponseCancelBtn"
+          icon="icon-close"
+          class="cancel"
+          (click)="cancelHyperlink()"
+        ></svg-icon>
+        <h1
+          id="hyperlinkHeading"
+          class="hyperlink-heading"
+          translate="hyperlink"
+        ></h1>
+      </div>
     </mat-card-title>
     <div [formGroup]="hyperlinkForm">
       <mat-form-field appearance="outline" class="m-r-10 width-100">
@@ -47,24 +55,23 @@
         }}
       </mat-error>
     </div>
-
-    <div class="buttons">
-      <button
-        id="hyperlinkCancelBtn"
-        mat-stroked-button
-        (click)="cancelHyperlink()"
-        class="cancel-response-btn"
-        translate="cancel"
-      ></button>
-      <button
-        id="hyperlinkApplyBtn"
-        mat-raised-button
-        (click)="submitHyperlink()"
-        color="primary"
-        class="submit-response-btn"
-        translate="apply"
-        [disabled]="hyperlinkForm.invalid || hyperlinkForm.pristine"
-      ></button>
-    </div>
   </mat-card>
+  <div class="hyperlinkFooter">
+    <button
+      id="hyperlinkCancelBtn"
+      mat-stroked-button
+      (click)="cancelHyperlink()"
+      class="cancel-response-btn"
+      translate="cancel"
+    ></button>
+    <button
+      id="hyperlinkApplyBtn"
+      mat-raised-button
+      (click)="submitHyperlink()"
+      color="primary"
+      class="submit-response-btn"
+      translate="apply"
+      [disabled]="hyperlinkForm.invalid || hyperlinkForm.pristine"
+    ></button>
+  </div>
 </div>

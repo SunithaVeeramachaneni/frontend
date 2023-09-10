@@ -49,6 +49,8 @@ export class AddLogicComponent implements OnInit, OnDestroy {
   @Input() isEmbeddedForm: boolean;
   @Input() isTemplate: boolean;
   @Output() logicEvent: EventEmitter<any> = new EventEmitter<any>();
+  @Input() tagDetailType: string;
+  @Input() attributeDetailType: string;
 
   @Input() set questionId(id: string) {
     this._questionId = id;
@@ -317,6 +319,7 @@ export class AddLogicComponent implements OnInit, OnDestroy {
           position: 0,
           required: false,
           enableHistory: false,
+          historyCount: 5,
           multi: false,
           value: 'TF',
           isPublished: false,

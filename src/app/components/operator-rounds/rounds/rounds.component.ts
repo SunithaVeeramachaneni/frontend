@@ -51,7 +51,8 @@ import {
   UserDetails,
   AssigneeDetails,
   ErrorInfo,
-  SelectedAssignee
+  SelectedAssignee,
+  UserGroup
 } from 'src/app/interfaces';
 import {
   formConfigurationStatus,
@@ -91,7 +92,13 @@ export class RoundsComponent implements OnInit, OnDestroy {
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
       tap((users) => {
-        this.assigneeDetails = { users };
+        this.assigneeDetails = {
+          ...this.assigneeDetails,
+          users
+        };
+        this.assigneeDetailsFiltered = {
+          ...this.assigneeDetails
+        };
         this.userFullNameByEmail = this.userService.getUsersInfo();
       })
     );
@@ -99,8 +106,28 @@ export class RoundsComponent implements OnInit, OnDestroy {
   get users$(): Observable<UserDetails[]> {
     return this._users$;
   }
+  @Input() set userGroups$(userGroups$: Observable<UserGroup[]>) {
+    this._userGroups$ = userGroups$.pipe(
+      tap((userGroups: any) => {
+        this.assigneeDetails = {
+          ...this.assigneeDetails,
+          userGroups: userGroups.items
+        };
+        this.assigneeDetailsFiltered = {
+          ...this.assigneeDetails
+        };
+        userGroups?.items?.map((userGroup) => {
+          this.userGroupsIdMap[userGroup.id] = userGroup.name;
+        });
+      })
+    );
+  }
+  get userGroups$(): Observable<UserGroup[]> {
+    return this._userGroups$;
+  }
   @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
   assigneeDetails: AssigneeDetails;
+  assigneeDetailsFiltered: AssigneeDetails;
   filterJson = [];
   status = [
     'Open',
@@ -129,10 +156,11 @@ export class RoundsComponent implements OnInit, OnDestroy {
     scheduledAt: '',
     shiftId: ''
   };
-  assignedTo: string[] = [];
+  assignedTo: any[] = [];
   schedules: string[] = [];
   shiftObj: any = {};
   shiftNameMap = {};
+  userGroupsIdMap = {};
   columns: Column[] = [
     {
       id: 'name',
@@ -437,7 +465,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       hasConditionalStyles: true
     },
     {
-      id: 'assignedTo',
+      id: 'assignedToDisplay',
       displayName: 'Assigned To',
       type: 'string',
       controlType: 'dropdown',
@@ -560,6 +588,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   private _users$: Observable<UserDetails[]>;
+  private _userGroups$: Observable<UserGroup[]>;
   private onDestroy$ = new Subject();
 
   constructor(
@@ -631,6 +660,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       roundsOnLoadSearch$,
       onScrollRounds$,
       this.users$,
+      this.userGroups$,
       this.shiftSevice.fetchAllShifts$().pipe(
         tap((shifts) => {
           shifts?.items?.map((shift) => {
@@ -668,8 +698,17 @@ export class RoundsComponent implements OnInit, OnDestroy {
             assignedTo: this.userService.getUserFullName(
               roundDetail.assignedTo
             ),
+            assignedToDisplay:
+              roundDetail.assignmentType === 'user'
+                ? this.userService.getUserFullName(roundDetail.assignedTo)
+                : this.userGroupsIdMap[
+                    roundDetail.userGroupsIds?.split(',')[0]
+                  ],
             statusDisplay: roundDetail.status.replace('-', ' '),
-            assignedToEmail: roundDetail.assignedTo
+            assignedToEmail:
+              roundDetail.assignmentType === 'user'
+                ? roundDetail.assignedTo
+                : ''
           }));
         } else {
           this.initial.data = this.initial.data.concat(
@@ -686,8 +725,17 @@ export class RoundsComponent implements OnInit, OnDestroy {
               assignedTo: this.userService.getUserFullName(
                 roundDetail.assignedTo
               ),
+              assignedToDisplay:
+                roundDetail.assignmentType === 'user'
+                  ? this.userService.getUserFullName(roundDetail.assignedTo)
+                  : this.userGroupsIdMap[
+                      roundDetail.userGroupsIds?.split(',')[0]
+                    ],
               statusDisplay: roundDetail.status.replace('-', ' '),
-              assignedToEmail: roundDetail.assignedTo
+              assignedToEmail:
+                roundDetail.assignmentType === 'user'
+                  ? roundDetail.assignedTo
+                  : ''
             }))
           );
         }
@@ -771,10 +819,18 @@ export class RoundsComponent implements OnInit, OnDestroy {
     const { columnId, row } = event;
     const pos = document.getElementById(`${row.id}`).getBoundingClientRect();
     switch (columnId) {
-      case 'assignedTo':
+      case 'assignedToDisplay':
         this.assigneePosition = {
           top: `${pos?.top + 17}px`,
           left: `${pos?.left - 15}px`
+        };
+        this.assigneeDetailsFiltered = {
+          users: this.assigneeDetails.users?.filter((user) =>
+            user.plantId?.includes(row.plantId)
+          ),
+          userGroups: this.assigneeDetails.userGroups?.filter((userGroup) =>
+            userGroup.plantId?.includes(row.plantId)
+          )
         };
         if (
           row.status !== 'submitted' &&
@@ -982,7 +1038,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
             });
           }
 
-          const uniquePlants = formsList
+          this.plants = formsList
             .map((item) => {
               if (item.plant) {
                 this.plantsIdNameMap[item.plant] = item.plantId;
@@ -990,20 +1046,20 @@ export class RoundsComponent implements OnInit, OnDestroy {
               }
               return '';
             })
-            .filter((value, index, self) => self.indexOf(value) === index);
-          this.plants = [...uniquePlants];
+            .filter((value, index, self) => self.indexOf(value) === index)
+            .sort();
 
           for (const item of this.filterJson) {
             if (item.column === 'assignedTo') {
-              item.items = this.assignedTo;
+              item.items = this.assignedTo.sort();
             } else if (item['column'] === 'plant') {
               item.items = this.plants;
             }
             if (item.column === 'schedule') {
-              item.items = this.schedules;
+              item.items = this.schedules.sort();
             }
             if (item['column'] === 'shiftId') {
-              item.items = Object.values(this.shiftNameMap);
+              item.items = Object.values(this.shiftNameMap).sort();
             }
           }
         }
@@ -1094,35 +1150,61 @@ export class RoundsComponent implements OnInit, OnDestroy {
     }
   };
 
-  selectedAssigneeHandler({ user }: SelectedAssignee) {
-    const { email: assignedTo } = user;
+  selectedAssigneeHandler(selectedAssignee: any) {
+    const { assigneeType, user, userGroup } = selectedAssignee;
     const { roundId, assignedToEmail, ...rest } = this.selectedRoundInfo;
     let previouslyAssignedTo =
       this.selectedRoundInfo.previouslyAssignedTo || '';
-    if (assignedTo !== assignedToEmail) {
-      previouslyAssignedTo += previouslyAssignedTo.length
-        ? `,${assignedToEmail}`
-        : assignedToEmail;
+
+    let assignedTo = '';
+    let assignmentType = 'user';
+    let userGroupsIds = '';
+    if (assigneeType === 'user') {
+      assignedTo = user.email;
+      if (assignedTo !== assignedToEmail) {
+        previouslyAssignedTo += previouslyAssignedTo.length
+          ? `,${assignedToEmail}`
+          : assignedToEmail;
+      }
+
+      if (previouslyAssignedTo.includes(assignedTo)) {
+        previouslyAssignedTo = previouslyAssignedTo
+          .split(',')
+          .filter((email) => email !== assignedTo)
+          .join(',');
+      }
     }
 
-    if (previouslyAssignedTo.includes(assignedTo)) {
-      previouslyAssignedTo = previouslyAssignedTo
-        .split(',')
-        .filter((email) => email !== assignedTo)
-        .join(',');
+    if (assigneeType === 'userGroup') {
+      assignmentType = 'userGroup';
+      userGroupsIds += `${userGroup.id}`;
     }
 
     let { status } = this.selectedRoundInfo;
-    status =
-      status.toLowerCase() === 'open'
-        ? 'assigned'
-        : status.toLowerCase() === 'partly-open'
-        ? 'in-progress'
-        : status;
+
+    if (status.toLowerCase() === 'open' && assigneeType === 'user') {
+      status = 'assigned';
+    } else if (status.toLowerCase() === 'partly-open') {
+      status = 'in-progress';
+    } else if (
+      status.toLowerCase() === 'assigned' &&
+      assigneeType === 'userGroup'
+    ) {
+      status = 'open';
+    }
+
     this.operatorRoundsService
       .updateRound$(
         roundId,
-        { ...rest, roundId, assignedTo, previouslyAssignedTo, status },
+        {
+          ...rest,
+          roundId,
+          assignedTo,
+          previouslyAssignedTo,
+          assignmentType,
+          userGroupsIds,
+          status
+        },
         'assigned-to'
       )
       .pipe(
@@ -1132,10 +1214,19 @@ export class RoundsComponent implements OnInit, OnDestroy {
               if (data.roundId === roundId) {
                 return {
                   ...data,
-                  assignedTo: this.userService.getUserFullName(assignedTo),
+                  assignedTo:
+                    assigneeType === 'user'
+                      ? this.userService.getUserFullName(assignedTo)
+                      : '',
+                  assignmentType,
+                  userGroupsIds,
+                  assignedToDisplay:
+                    assigneeType === 'user'
+                      ? this.userService.getUserFullName(assignedTo)
+                      : this.userGroupsIdMap[userGroupsIds.split(',')[0]],
                   status,
                   roundDBVersion: resp.roundDBVersion + 1,
-                  assignedToEmail: resp.assignedTo
+                  assignedToEmail: assignmentType === 'user' ? assignedTo : ''
                 };
               }
               return data;
@@ -1163,6 +1254,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
       status,
       locationAndAssetTasksCompleted,
       assignedTo,
+      assignmentType,
+      userGroupsIds,
       ...rest
     } = this.selectedRoundInfo;
     if (changedDueDate.getTime() < new Date(scheduledAt).getTime()) {
@@ -1265,7 +1358,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
                 scheduledAt,
                 slotDetails: slot,
                 locationAndAssetTasksCompleted,
-                assignedTo
+                assignedTo,
+                assignmentType,
+                userGroupsIds
               },
               'due-date'
             )
@@ -1286,7 +1381,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
                         slotDetails: slot,
                         roundDBVersion: resp.roundDBVersion + 1,
                         roundDetailDBVersion: resp.roundDetailDBVersion + 1,
-                        assignedToEmail: resp.assignedTo
+                        assignedToEmail:
+                          assignmentType === 'user' ? assignedTo : ''
                       };
                     }
                     return data;
@@ -1322,6 +1418,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
       status,
       locationAndAssetTasksCompleted,
       assignedTo,
+      assignmentType,
+      userGroupsIds,
       ...rest
     } = this.selectedRoundInfo;
     if (new Date(dueDate).getTime() < changedScheduledAt.getTime()) {
@@ -1425,7 +1523,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
                 assignedTo,
                 slotDetails: slot,
                 scheduledAt: changedScheduledAt,
-                dueDate
+                dueDate,
+                assignmentType,
+                userGroupsIds
               },
               'start-date'
             )
@@ -1445,7 +1545,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
                         slotDetails: slot,
                         roundDBVersion: resp.roundDBVersion + 1,
                         roundDetailDBVersion: resp.roundDetailDBVersion + 1,
-                        assignedToEmail: resp.assignedTo
+                        assignedToEmail:
+                          assignmentType === 'user' ? assignedTo : ''
                       };
                     }
                     return data;
@@ -1482,6 +1583,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
       dueDate,
       status,
       slotDetails,
+      assignmentType,
+      userGroupsIds,
       ...rest
     } = this.selectedRoundInfo;
     const shiftId = shift.id;
@@ -1583,7 +1686,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
               locationAndAssetTasksCompleted,
               assignedTo,
               slotDetails: slot,
-              status: changedStatus
+              status: changedStatus,
+              assignmentType,
+              userGroupsIds
             },
             'shift'
           )
@@ -1611,7 +1716,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
                       dueDate: shiftEndDateAndTime,
                       roundDBVersion: resp.roundDBVersion + 1,
                       roundDetailDBVersion: resp.roundDetailDBVersion + 1,
-                      assignedToEmail: resp.assignedTo
+                      assignedToEmail:
+                        assignmentType === 'user' ? assignedTo : ''
                     };
                   }
                   return data;

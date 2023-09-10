@@ -66,7 +66,6 @@ import { FormsComponent } from './forms/forms.component';
 import { InspectionComponent } from './inspection/inspection.component';
 import { environment } from 'src/environments/environment';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { AssignInspectionComponent } from './assign-inspection/assign-inspection.component';
 import { TemplateListComponent } from './template-list/template-list.component';
 import { SaveTemplateNamingModalComponent } from './save-template-naming-modal/save-template-naming-modal.component';
 import { TemplateHeaderConfigurationComponent } from './template-header-configuration/template-header-configuration.component';
@@ -107,7 +106,6 @@ export const customTranslateLoader = (http: HttpClient) =>
     ArchivedFormListComponent,
     ArchivedTemplateListComponent,
     DeleteTemplateModalComponent,
-    AssignInspectionComponent,
     ArchivedDeleteModalComponent,
     ImportQuestionsModalComponent,
     SchedulerComponent,

@@ -12,7 +12,7 @@ import {
   ViewChild,
   OnDestroy
 } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -32,7 +32,8 @@ import {
   NumberRangeMetadata,
   FormMetadata,
   InstructionsFile,
-  UnitOfMeasurement
+  UnitOfMeasurement,
+  AdditionalDetails
 } from 'src/app/interfaces';
 import {
   State,
@@ -41,7 +42,7 @@ import {
 } from 'src/app/forms/state/builder/builder-state.selectors';
 import { Store } from '@ngrx/store';
 import { FormService } from '../../services/form.service';
-import { isEqual } from 'lodash-es';
+import { cloneDeep, isEqual } from 'lodash-es';
 import { BuilderConfigurationActions } from '../../state/actions';
 import { AddLogicActions } from '../../state/actions';
 import { MatMenuTrigger } from '@angular/material/menu';
@@ -54,7 +55,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Base64HelperService } from 'src/app/components/work-instructions/services/base64-helper.service';
 import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
 import { CommonService } from 'src/app/shared/services/common.service';
-
+import { operatorRounds } from 'src/app/app.constants';
 @Component({
   selector: 'app-question',
   templateUrl: './question.component.html',
@@ -71,6 +72,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
   @Input() selectedNodeId: any;
   @Input() isTemplate: boolean;
   @Input() isImported: boolean;
+  @Input() tagDetailType: string;
+  @Input() attributeDetailType: string;
 
   @Input() set questionId(id: string) {
     this._id = id;
@@ -162,6 +165,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   fieldTypes: any = [this.fieldType];
   formMetadata: FormMetadata;
   moduleName: string;
+  operatorRounds: string = operatorRounds;
   showAskQuestionFeatures = true;
 
   get rangeDisplayText() {
@@ -176,6 +180,24 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
 
   private _rangeDisplayText = 'None';
+
+  get additionalDetailsText() {
+    return this._additionalDetailsText;
+  }
+
+  set additionalDetailsText(d) {
+    const additionalDetails = this.questionForm.get('additionalDetails').value;
+    if (
+      !additionalDetails.tags?.length &&
+      !additionalDetails.attributes?.length
+    ) {
+      this._additionalDetailsText = 'None';
+    } else {
+      this._additionalDetailsText = 'Show';
+    }
+  }
+
+  private _additionalDetailsText = 'None';
 
   addLogicNotAppliedFields = [
     'LTV',
@@ -209,6 +231,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     position: '',
     required: false,
     enableHistory: false,
+    historyCount: [5, [Validators.required, Validators.min(0)]],
     multi: false,
     value: 'TF',
     isPublished: false,
@@ -217,6 +240,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     isResponseTypeModalOpen: false,
     unitOfMeasurement: 'None',
     rangeMetadata: {} as NumberRangeMetadata,
+    additionalDetails: {} as AdditionalDetails,
     createdAt: '',
     createdBy: '',
     updatedAt: '',
@@ -323,6 +347,9 @@ export class QuestionComponent implements OnInit, OnDestroy {
             isResponseTypeModalOpen: currIsResponseTypeModalOpen,
             ...curr
           } = current;
+          if (current.historyCount === null || current.historyCount < 0) {
+            this.questionForm.get('historyCount').setValue(0);
+          }
           if (!isEqual(prev, curr)) {
             const { value: prevValue } = prev;
             const { value: currValue } = curr;
@@ -342,6 +369,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
 
               if (!isEqual(prev.rangeMetadata, curr.rangeMetadata))
                 this.rangeDisplayText = '';
+              if (!isEqual(prev.additionalDetails, curr.additionalDetails))
+                this.additionalDetailsText = '';
 
               this.questionEvent.emit({
                 pageIndex: this.pageIndex,
@@ -402,6 +431,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     });
     this.checkAskQuestionFeatures();
     this.rangeDisplayText = '';
+    this.additionalDetailsText = '';
   }
 
   getRangeMetadata() {
@@ -583,6 +613,13 @@ export class QuestionComponent implements OnInit, OnDestroy {
       rangeMetadata: question.rangeMetadata
     });
   }
+  additionalDetailsOpen() {
+    this.formService.setAdditionalDetailsOpenState({
+      isOpen: true,
+      questionId: this.questionForm.get('id').value,
+      additionalDetails: this.questionForm.get('additionalDetails').value
+    });
+  }
 
   insertImageHandler(event) {
     const { files } = event.target as HTMLInputElement;
@@ -744,6 +781,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
           position: 0,
           required: false,
           enableHistory: false,
+          historyCount: 5,
           multi: false,
           value: 'TF',
           isPublished: false,
@@ -771,6 +809,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
           position: 0,
           required: true,
           enableHistory: false,
+          historyCount: 5,
           multi: false,
           value: 'ATT',
           isPublished: false,
@@ -859,7 +898,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
   };
 
   sendFileToS3(file, params): void {
-    const { originalValue, isImage, index } = params;
+    const { isImage, index } = params;
+    let { originalValue } = params;
     this.formService
       .uploadToS3$(`${this.moduleName}/${this.formMetadata?.id}`, file)
       .subscribe((event) => {
@@ -870,9 +910,17 @@ export class QuestionComponent implements OnInit, OnDestroy {
           objectURL: event.message.objectURL
         };
         if (isImage) {
-          originalValue.images[index] = value;
+          const images = [...originalValue.images];
+          images[index] = value;
+          originalValue = cloneDeep({
+            ...originalValue,
+            images
+          });
         } else {
-          originalValue.pdf = value;
+          originalValue = cloneDeep({
+            ...originalValue,
+            pdf: value
+          });
         }
         this.instructionsUpdateValue();
         this.questionForm.get('value').setValue(originalValue);
@@ -916,16 +964,21 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
 
   instructionsFileDeleteHandler(index: number) {
-    const originalValue = this.questionForm.get('value').value;
+    let originalValue = this.questionForm.get('value').value;
     if (index < 3) {
       this.formService.deleteFromS3(originalValue.images[index].objectKey);
-      originalValue.images[index] = null;
-      originalValue.images = this.imagesArrayRemoveNullGaps(
-        originalValue.images
-      );
+      const images = [...originalValue.images];
+      images[index] = null;
+      originalValue = cloneDeep({
+        ...originalValue,
+        images: this.imagesArrayRemoveNullGaps(images)
+      });
     } else {
       this.formService.deleteFromS3(originalValue.pdf.objectKey);
-      originalValue.pdf = null;
+      originalValue = cloneDeep({
+        ...originalValue,
+        pdf: null
+      });
     }
     this.questionForm.get('value').setValue(originalValue);
     this.instructionsUpdateValue();

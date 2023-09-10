@@ -24,6 +24,7 @@ export class FormConfigurationService {
     position: 0,
     required: false,
     enableHistory: false,
+    historyCount: 5,
     multi: false,
     value: 'TF',
     isPublished: false,
@@ -321,6 +322,7 @@ export class FormConfigurationService {
       position: questionIndex + 1,
       required: question ? question.required : false,
       enableHistory: question ? question.enableHistory : false,
+      historyCount: question ? question.historyCount : 5,
       multi: question ? question.multi : false,
       value: question ? question.value : 'TF',
       isPublished: false,
@@ -330,7 +332,10 @@ export class FormConfigurationService {
       unitOfMeasurement: question ? question.unitOfMeasurement : 'None',
       rangeMetadata: question
         ? question.rangeMetadata
-        : ({} as NumberRangeMetadata)
+        : ({} as NumberRangeMetadata),
+      additionalDetails: question?.additionalDetails
+        ? question.additionalDetails
+        : { tags: [], attributes: [] }
     };
   }
 }

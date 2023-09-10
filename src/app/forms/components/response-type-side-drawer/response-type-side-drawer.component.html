@@ -7,111 +7,129 @@
     *ngIf="sliderOpenState.isOpen && question.id === sliderOpenState.questionId"
   >
     <mat-card-title class="m-0 light-gray">
-      <div
-        id="responseTypeSliderText"
-        class="mcq-heading"
-        translate="slider"
-      ></div>
+      <div class="top-bar">
+        <svg-icon
+          id="sliderResponseCancelBtn"
+          icon="icon-close"
+          class="cancel"
+          (click)="cancelSlider()"
+        ></svg-icon>
+        <h1
+          id="responseTypeSliderText"
+          class="mcq-heading"
+          translate="slider"
+        ></h1>
+      </div>
     </mat-card-title>
-    <mat-card-content>
-      <div class="dis-flex">
-        <div class="width-50">
-          <label
-            id="responseTypeSliderForm"
-            for="min"
-            translate="from"
-            class="values"
-          ></label
-          ><br />
-          <input
-            id="min"
-            max="{{ sliderOptions.max }}"
-            type="number"
-            class="slider-inputs"
-            [(ngModel)]="sliderOptions.min"
-            [ngModelOptions]="{ standalone: true }"
-          />
+    <mat-card-content class="matCardContent">
+      <div [formGroup]="sliderOptionsForm">
+        <div class="dis-flex">
+          <div class="slider-input-container m-r-15">
+            <label
+              id="responseTypeSliderForm"
+              for="min"
+              translate="from"
+              class="values"
+            ></label
+            ><br />
+            <input
+              id="min"
+              max="{{ sliderOptionsForm.get('max').value - 1 }}"
+              type="number"
+              class="slider-inputs"
+              formControlName="min"
+            />
+          </div>
+          <div class="slider-input-container m-r-5">
+            <label
+              id="responseTypeSliderTo"
+              for="max"
+              translate="to"
+              class="values"
+            ></label
+            ><br />
+            <input
+              id="max"
+              min="{{ sliderOptionsForm.value.min + 1 }}"
+              type="number"
+              class="slider-inputs"
+              formControlName="max"
+            />
+          </div>
         </div>
-        <div class="width-50 text-align-end">
+        <label>Value</label>
+        <mat-slider
+          [min]="sliderOptionsForm.get('min').value"
+          [max]="sliderOptionsForm.get('max').value"
+          [step]="sliderOptionsForm.get('increment').value"
+          color="primary"
+          formControlName="value"
+          class="width-100"
+          showTickMarks
+          thumbLabel
+          discrete
+        >
+          <input matSliderThumb />
+        </mat-slider>
+        <div class="margin-20">
           <label
-            id="responseTypeSliderTo"
-            for="max"
-            translate="to"
+            id="responseTypeSliderIncrement"
+            for="incre"
+            translate="increment"
             class="values"
-          ></label
-          ><br />
+          ></label>
+          <br />
           <input
-            id="max"
-            min="{{ sliderOptions.min }}"
+            min="0"
+            max="{{
+              sliderOptionsForm.get('max').value -
+                sliderOptionsForm.get('min').value
+            }}"
+            id="incre"
             type="number"
             class="slider-inputs"
-            [(ngModel)]="sliderOptions.max"
-            [ngModelOptions]="{ standalone: true }"
+            formControlName="increment"
           />
         </div>
       </div>
-      <label>Value</label>
-      <mat-slider
-        [min]="sliderOptions.min"
-        [max]="sliderOptions.max"
-        [step]="sliderOptions.increment"
-        color="primary"
-        [(ngModel)]="sliderOptions.value"
-        [ngModelOptions]="{ standalone: true }"
-        class="width-100"
-        showTickMarks
-        thumbLabel
-        discrete
-      >
-        <input matSliderThumb />
-      </mat-slider>
-      <div class="margin-20">
-        <label
-          id="responseTypeSliderIncrement"
-          for="incre"
-          translate="increment"
-          class="values"
-        ></label>
-        <br />
-        <input
-          min="0"
-          id="incre"
-          type="number"
-          class="slider-inputs"
-          [(ngModel)]="sliderOptions.increment"
-          [ngModelOptions]="{ standalone: true }"
-        />
-      </div>
-      <br />
-      <br />
-      <button
-        id="responseTypeSliderCancelBtn"
-        mat-stroked-button
-        color="primary"
-        class="cancel-slider"
-        (click)="cancelSlider()"
-        translate="cancel"
-      ></button>
-      <button
-        id="responseTypeSliderApplyBtn"
-        mat-raised-button
-        color="primary"
-        class="apply-slider-btn"
-        (click)="applySliderOptions(sliderOptions)"
-        translate="apply"
-      ></button>
     </mat-card-content>
   </mat-card>
+  <div class="sliderFooter">
+    <button
+      id="responseTypeSliderCancelBtn"
+      mat-stroked-button
+      color="primary"
+      class="cancel-slider"
+      (click)="cancelSlider()"
+      translate="cancel"
+    ></button>
+    <button
+      id="responseTypeSliderApplyBtn"
+      mat-raised-button
+      color="primary"
+      class="apply-slider-btn"
+      (click)="applySliderOptions()"
+      translate="apply"
+    ></button>
+  </div>
 </div>
 
 <div class="app-customizer" *ngIf="multipleChoiceOpenState">
   <mat-card class="p-0" *ngIf="multipleChoiceOpenState === true">
     <mat-card-title class="m-0 light-gray">
-      <div
-        id="responseTypeSliderMCQ"
-        class="mcq-heading"
-        translate="multipleChoice"
-      ></div>
+      <div class="top-bar">
+        <svg-icon
+          id="sliderResponseCancelBtn"
+          icon="icon-close"
+          class="cancel"
+          (click)="cancelResponse()"
+        ></svg-icon>
+        <h1
+          id="responseTypeSliderMCQ"
+          class="mcq-heading"
+          translate="multipleChoice"
+        ></h1>
+      </div>
     </mat-card-title>
     <div [formGroup]="responseForm">
       <div
@@ -214,11 +232,19 @@
     "
   >
     <mat-card-title class="m-0 light-gray">
-      <div
-        id="responseTypeSliderRangeText"
-        class="mcq-heading"
-        translate="rangeSelectorHeading"
-      ></div>
+      <div class="top-bar">
+        <svg-icon
+          id="sliderResponseCancelBtn"
+          icon="icon-close"
+          class="cancel"
+          (click)="cancelRangeSelection()"
+        ></svg-icon>
+        <h1
+          id="responseTypeSliderRangeText"
+          class="mcq-heading"
+          translate="rangeSelectorHeading"
+        ></h1>
+      </div>
     </mat-card-title>
     <mat-card-content class="matCardContent">
       <div class="rangeLimitContainer" [formGroup]="rangeMetadataForm">
@@ -407,6 +433,360 @@
       color="primary"
       class="applyBtn"
       translate="apply"
+    ></button>
+  </div>
+</div>
+
+<div
+  class="app-customizer additional-details-slider"
+  *ngIf="
+    additionalDetailsOpenState.isOpen &&
+    additionalDetailsOpenState.questionId === question.id
+  "
+>
+  <mat-card
+    class="p-0"
+    *ngIf="
+      additionalDetailsOpenState.isOpen &&
+      additionalDetailsOpenState.questionId === question.id
+    "
+  >
+    <mat-card-title class="m-0 light-gray">
+      <div class="top-bar">
+        <svg-icon
+          id="sliderResponseCancelBtn"
+          icon="icon-close"
+          class="cancel"
+          (click)="cancelAdditionalDetails()"
+        ></svg-icon>
+        <h1
+          id="additionalDetailsText"
+          class="additional-details-heading"
+          translate="additionalDetailsHeading"
+        ></h1>
+      </div>
+    </mat-card-title>
+    <mat-card-content class="matCardContent">
+      <div [formGroup]="additionalDetailsForm">
+        <div class="tags">
+          <p id="tagsHeading" class="tags-heading m-b-0">
+            {{ 'tags' | translate }}
+          </p>
+          <mat-form-field class="chips-list width-100" appearance="outline">
+            <mat-chip-list #chipList>
+              <mat-chip
+                *ngFor="let tag of tags"
+                [selectable]="selectable"
+                [removable]="removable"
+                (removed)="remove(tag)"
+                class="tags-mat-chips"
+              >
+                {{ tag }}
+                <mat-icon matChipRemove *ngIf="removable" id="cancelTag"
+                  >cancel</mat-icon
+                >
+              </mat-chip>
+              <input
+                id="AddTag"
+                [placeholder]="'startTypingTags' | translate"
+                [matChipInputFor]="chipList"
+                [matAutocomplete]="auto"
+                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                (matChipInputTokenEnd)="add($event)"
+                (click)="openAutoComplete()"
+                #tagsInput
+                [formControl]="tagsCtrl"
+              />
+            </mat-chip-list>
+
+            <mat-autocomplete
+              #auto="matAutocomplete"
+              (optionSelected)="selected($event)"
+            >
+              <mat-option
+                *ngFor="let tag of filteredTags | async"
+                [value]="tag"
+                id="tagOptions"
+              >
+                {{ tag }}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+          <mat-error
+            id="tagsError"
+            *ngIf="processValidationErrorTags()"
+            class="m-5"
+          >
+            {{
+              errors.tagsCtrl.name
+                | translate
+                  : {
+                      name: 'tags' | translate,
+                      length: errors.tagsCtrl.length
+                    }
+            }}
+          </mat-error>
+        </div>
+        <div class="additional-details">
+          <p
+            translate="attributesHeading"
+            id="attributesHeading"
+            class="attributes-text"
+          ></p>
+          <div
+            class="label-value-text"
+            *ngIf="
+              additionalDetailsForm.get('attributes')['controls']?.length > 0
+            "
+          >
+            <div class="width-45 label" id="labelHeading">
+              {{ 'label' | translate }}
+            </div>
+            <div class="width-45 m-l-20 value" id="valueHeading">
+              {{ 'value' | translate }}
+            </div>
+          </div>
+          <div formArrayName="attributes">
+            <div
+              *ngFor="
+                let additionalDetails of getAttributeList();
+                let i = index
+              "
+            >
+              <div [formGroupName]="i" class="attributes-list-item">
+                <div class="width-45">
+                  <mat-form-field
+                    appearance="outline"
+                    class="m-l-5 symbol m-b-10 width-100"
+                  >
+                    <input
+                      id="labelValueText"
+                      #labelInput
+                      matInput
+                      type="text"
+                      formControlName="label"
+                      [matAutocomplete]="autolabel"
+                      (click)="labelOptionClick(i)"
+                    />
+                    <mat-autocomplete #autolabel="matAutocomplete">
+                      <mat-option
+                        id="labelOption"
+                        *ngFor="let label of filteredLabels$ | async"
+                        [value]="label"
+                      >
+                        {{ label }}
+                        <button
+                          id="removeBtn"
+                          mat-button
+                          class="remove-btn"
+                          (click)="removeLabel(label, i)"
+                        >
+                          <span>{{ 'removeBtn' | translate }}</span>
+                        </button>
+                      </mat-option>
+                      <mat-option
+                        *ngIf="
+                          additionalDetailsForm.get('attributes')['controls'][i]
+                            .value.label
+                        "
+                      >
+                        <ng-container>
+                          <button
+                            id="labelBtn"
+                            mat-button
+                            color="primary"
+                            class="p-0 add-new-button"
+                            (click)="storeDetails(i)"
+                            [disabled]="
+                              additionalDetailsForm.get('attributes')[
+                                'controls'
+                              ][i].invalid ||
+                              additionalDetailsForm.get('attributes')[
+                                'controls'
+                              ][i].pristine
+                            "
+                          >
+                            <mat-icon class="m-r-5" id="addLabelIcon"
+                              >add</mat-icon
+                            >
+
+                            <span id="LabelText"
+                              >{{ 'addNew' | translate }} ({{
+                                additionalDetailsForm.get('attributes')[
+                                  'controls'
+                                ][i].value.label
+                              }})</span
+                            >
+                          </button>
+                        </ng-container>
+                      </mat-option>
+                    </mat-autocomplete>
+
+                    <mat-error
+                      id="labelError"
+                      *ngIf="processValidationErrorsAttributes(i, 'label')"
+                      class="m-t-5 error-fields"
+                    >
+                      {{
+                        errors?.label?.name
+                          | translate
+                            : {
+                                name: 'label' | translate,
+                                length: errors?.label?.length
+                              }
+                      }}
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+
+                <div class="width-45">
+                  <mat-form-field
+                    appearance="outline"
+                    class="m-l-20 symbol m-b-10 width-100 value-field"
+                  >
+                    <input
+                      id="valueText"
+                      #valueInput
+                      matInput
+                      type="text"
+                      formControlName="value"
+                      [matAutocomplete]="autoValue"
+                      class="example-input"
+                      (click)="valueOptionClick(i)"
+                    />
+                    <mat-autocomplete #autoValue="matAutocomplete">
+                      <mat-option
+                        id="valueOptions"
+                        *ngFor="let value of filteredValues$ | async"
+                        [value]="value"
+                      >
+                        {{ value }}
+                        <button
+                          id="removeValueBtn"
+                          mat-button
+                          class="remove-btn"
+                          (click)="removeValue(value, i)"
+                        >
+                          <span>{{ 'removeBtn' | translate }}</span>
+                        </button>
+                      </mat-option>
+
+                      <mat-option
+                        *ngIf="
+                          additionalDetailsForm.get('attributes')['controls'][
+                            i
+                          ]['value'].value
+                        "
+                      >
+                        <button
+                          id="addValueBtn"
+                          mat-button
+                          color="primary"
+                          class="p-0 add-new-button"
+                          (click)="storeValueDetails(i)"
+                          [disabled]="
+                            additionalDetailsForm.get('attributes')['controls'][
+                              i
+                            ].invalid ||
+                            additionalDetailsForm.get('attributes')['controls'][
+                              i
+                            ].pristine
+                          "
+                        >
+                          <mat-icon id="addValueIcon" class="m-r-5"
+                            >add</mat-icon
+                          >
+
+                          <span id="addValue"
+                            >{{ 'addNew' | translate }} ({{
+                              additionalDetailsForm.get('attributes')[
+                                'controls'
+                              ][i]['value'].value
+                            }})</span
+                          >
+                        </button>
+                      </mat-option>
+                    </mat-autocomplete>
+
+                    <mat-error
+                      id="valueError"
+                      *ngIf="processValidationErrorsAttributes(i, 'value')"
+                      class="m-t-5 error-fields"
+                    >
+                      {{
+                        errors?.value?.name
+                          | translate
+                            : {
+                                name: 'value' | translate,
+                                length: errors?.value?.length
+                              }
+                      }}
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+                <div class="width-10 cancel-icon">
+                  <svg-icon
+                    id="closeIcon"
+                    icon="icon-closeIcon"
+                    class="close-icon cursor-pointer"
+                    (click)="deleteAttributes(i)"
+                  ></svg-icon>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button
+            [disabled]="
+              additionalDetailsForm.get('attributes')['controls'].length >= 5
+            "
+            class="add-button"
+            (click)="addAttributes()"
+            id="attributesBtn"
+          >
+            <span
+              *ngIf="
+                additionalDetailsForm.get('attributes')['controls'].length < 5
+              "
+            >
+              <svg-icon
+                id="addMoreIcon"
+                icon="icon-add-more"
+                class="add-more-icon"
+              ></svg-icon
+            ></span>
+            <span
+              *ngIf="
+                additionalDetailsForm.get('attributes')['controls'].length >= 5
+              "
+            >
+              <svg-icon
+                id="addMoreIcon"
+                icon="icon-add-more-gray"
+                class="add-more-icon"
+              ></svg-icon
+            ></span>
+            <span>{{ 'addMoreUpto5' | translate }}</span>
+          </button>
+        </div>
+      </div></mat-card-content
+    ></mat-card
+  >
+  <div class="additionalDetailsFooter">
+    <button
+      id="additionalDetailsCancelBtn"
+      mat-stroked-button
+      class="cancelBtn"
+      (click)="cancelAdditionalDetails()"
+      translate="cancel"
+    ></button>
+    <button
+      id="additionalDetailsSubmitBtn"
+      mat-raised-button
+      (click)="submitAdditionalDetails()"
+      [disabled]="additionalDetailsForm.invalid || tagsCtrl.invalid"
+      color="primary"
+      class="submitBtn"
+      translate="done"
     ></button>
   </div>
 </div>

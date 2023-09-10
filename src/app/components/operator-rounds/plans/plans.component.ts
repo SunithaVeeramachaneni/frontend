@@ -49,11 +49,13 @@ import {
   RoundPlanDetail,
   SelectTab,
   UserDetails,
-  AssigneeDetails
+  AssigneeDetails,
+  UserGroup
 } from 'src/app/interfaces';
 import {
   dateFormat,
   graphQLDefaultLimit,
+  graphQLPlanLimit,
   permissions as perms
 } from 'src/app/app.constants';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
@@ -86,13 +88,26 @@ export class PlansComponent implements OnInit, OnDestroy {
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
       tap((users) => {
-        this.assigneeDetails = { users };
+        this.assigneeDetails = { ...this.assigneeDetails, users };
         this.userFullNameByEmail = this.userService.getUsersInfo();
       })
     );
   }
   get users$(): Observable<UserDetails[]> {
     return this._users$;
+  }
+  @Input() set userGroups$(userGroups$: Observable<UserGroup[]>) {
+    this._userGroups$ = userGroups$.pipe(
+      tap((userGroups: any) => {
+        this.assigneeDetails = {
+          ...this.assigneeDetails,
+          userGroups: userGroups.items
+        };
+      })
+    );
+  }
+  get userGroups$(): Observable<UserGroup[]> {
+    return this._userGroups$;
   }
   @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
   filterJson = [];
@@ -373,6 +388,7 @@ export class PlansComponent implements OnInit, OnDestroy {
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   skip = 0;
   limit = graphQLDefaultLimit;
+  plansLimit = graphQLPlanLimit;
   searchForm: FormControl;
   isPopoverOpen = false;
   roundPlanCounts = {
@@ -413,6 +429,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   allShifts: any;
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
+  private _userGroups$: Observable<UserGroup[]>;
   private _users$: Observable<UserDetails[]>;
   private destroy$ = new Subject();
   private scheduleConfigEvent: Subscription;
@@ -511,7 +528,8 @@ export class PlansComponent implements OnInit, OnDestroy {
       roundPlanScheduleConfigurations$,
       this.plantService.fetchAllPlants$(),
       this.shiftService.fetchAllShifts$(),
-      this.users$
+      this.users$,
+      this.userGroups$
     ]).pipe(
       map(
         ([
@@ -541,9 +559,6 @@ export class PlansComponent implements OnInit, OnDestroy {
             );
           }
           this.initial.data = this.formattingPlans(this.initial.data);
-          if (this.filter.assignedTo) {
-            this.initial.data = this.assingedToFilter(this.initial.data);
-          }
           this.skip = this.initial.data.length;
           return this.initial;
         }
@@ -605,13 +620,13 @@ export class PlansComponent implements OnInit, OnDestroy {
 
         for (const item of this.filterJson) {
           if (item.column === 'assignedTo') {
-            item.items = this.assignedTo;
+            item.items = this.assignedTo.sort();
           }
           if (item.column === 'schedule') {
-            item.items = this.schedules;
+            item.items = this.schedules.sort();
           }
           if (item.column === 'shiftId') {
-            item.items = Object.values(this.activeShiftIdMap);
+            item.items = Object.values(this.activeShiftIdMap).sort();
           }
         }
         this.dataSource = new MatTableDataSource(filteredRoundPlans);
@@ -662,7 +677,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   getRoundPlanList() {
     const obj = {
       next: this.nextToken,
-      limit: this.limit,
+      limit: this.plansLimit,
       searchTerm: this.searchForm.value,
       fetchType: this.fetchType,
       roundPlanId: this.roundPlanId
@@ -679,10 +694,8 @@ export class PlansComponent implements OnInit, OnDestroy {
           const { scheduled, unscheduled } = this.roundPlanCounts;
           this.roundPlanCounts = {
             ...this.roundPlanCounts,
-            scheduled:
-              scheduledCount !== undefined ? scheduledCount : scheduled,
-            unscheduled:
-              unscheduledCount !== undefined ? unscheduledCount : unscheduled
+            scheduled: scheduledCount ?? scheduled,
+            unscheduled: unscheduledCount ?? unscheduled
           };
         })
       );
@@ -874,7 +887,7 @@ export class PlansComponent implements OnInit, OnDestroy {
     this.scheduleConfigState = state;
 
     if (mode === 'create') {
-      const roundPlanId = this.scheduleRoundPlanDetail.id;
+      const roundPlanId = this.scheduleRoundPlanDetail?.id;
       this.operatorRoundsService
         .getRoundsCountByRoundPlanId$(roundPlanId)
         .pipe(
@@ -951,7 +964,10 @@ export class PlansComponent implements OnInit, OnDestroy {
           this.planCategory.patchValue('unscheduled');
         }
       }
+      this.nextToken = '';
+      this.fetchPlans$.next({ data: 'load' });
     }
+    this.cdrf.markForCheck();
   }
 
   rowLevelActionHandler = (event: RowLevelActionEvent) => {
@@ -985,12 +1001,8 @@ export class PlansComponent implements OnInit, OnDestroy {
             roundPlan.plantId
           ),
           rounds: roundPlan.rounds || this.placeHolder,
-          assignedTo: this.getAssignedTo(
-            roundPlanScheduleConfigurations[roundPlan.id]
-          ),
-          assigneeToEmail: this.getAssignedToEmail(
-            roundPlanScheduleConfigurations[roundPlan.id]
-          )
+          assignedTo: this.userService.getUserFullName(roundPlan.assignedTo),
+          assigneeToEmail: roundPlan.assignedTo
         };
       }
       return {

@@ -171,7 +171,8 @@ export class UsersService {
           profileImage: this.getImageSrc(
             Buffer.from(user.profileImage).toString()
           ),
-          isActive: user.isActive
+          isActive: user.isActive,
+          plantId: user.plantId
         }))
       ),
       tap((users) => this.setUsers(users)),
