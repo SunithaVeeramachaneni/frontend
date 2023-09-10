@@ -559,9 +559,6 @@ export class PlansComponent implements OnInit, OnDestroy {
             );
           }
           this.initial.data = this.formattingPlans(this.initial.data);
-          if (this.filter.assignedTo) {
-            this.initial.data = this.assingedToFilter(this.initial.data);
-          }
           this.skip = this.initial.data.length;
           return this.initial;
         }
@@ -697,10 +694,8 @@ export class PlansComponent implements OnInit, OnDestroy {
           const { scheduled, unscheduled } = this.roundPlanCounts;
           this.roundPlanCounts = {
             ...this.roundPlanCounts,
-            scheduled:
-              scheduledCount !== undefined ? scheduledCount : scheduled,
-            unscheduled:
-              unscheduledCount !== undefined ? unscheduledCount : unscheduled
+            scheduled: scheduledCount ?? scheduled,
+            unscheduled: unscheduledCount ?? unscheduled
           };
         })
       );
@@ -1006,12 +1001,8 @@ export class PlansComponent implements OnInit, OnDestroy {
             roundPlan.plantId
           ),
           rounds: roundPlan.rounds || this.placeHolder,
-          assignedTo: this.getAssignedTo(
-            roundPlanScheduleConfigurations[roundPlan.id]
-          ),
-          assigneeToEmail: this.getAssignedToEmail(
-            roundPlanScheduleConfigurations[roundPlan.id]
-          )
+          assignedTo: this.userService.getUserFullName(roundPlan.assignedTo),
+          assigneeToEmail: roundPlan.assignedTo
         };
       }
       return {
