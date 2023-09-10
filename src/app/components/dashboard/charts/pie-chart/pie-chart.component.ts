@@ -10,7 +10,6 @@ import {
   Output
 } from '@angular/core';
 import { EChartsOption } from 'echarts';
-import { colorsByStatus } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-pie-chart',
@@ -24,6 +23,13 @@ export class PieChartComponent implements OnInit, OnChanges {
 
   @Input() set chartConfig(chartConfig) {
     this.chartConfigurations = chartConfig;
+    if (chartConfig.customColors) {
+      try {
+        this.colorsByStatus = JSON.parse(chartConfig.customColors);
+      } catch (err) {
+        this.colorsByStatus = {};
+      }
+    }
     if (chartConfig.renderChart) {
       this.prepareChartDetails();
     }
@@ -42,6 +48,7 @@ export class PieChartComponent implements OnInit, OnChanges {
   @Input() width;
   @Input() height;
 
+  colorsByStatus: any = {};
   chartOptions: any = {
     title: {
       text: ''
@@ -102,9 +109,9 @@ export class PieChartComponent implements OnInit, OnChanges {
   constructor(private datePipe: DatePipe) {}
 
   ngOnInit(): void {
-    if (this.hasCustomColorScheme) {
+    if (this.hasCustomColorScheme && Object.keys(this.colorsByStatus).length) {
       this.chartOptions.series.itemStyle = {
-        color: (param: any) => colorsByStatus[param.name]
+        color: (param: any) => this.colorsByStatus[param.name]
       };
     }
   }

@@ -486,6 +486,14 @@ export class WidgetConfigurationModalComponent implements OnInit {
           renderChart: !this.isFetchingChartData
         };
         break;
+      case 'customColors':
+        this.selectedReport.chartDetails.customColors = value;
+        this.chartConfig = {
+          ...this.chartConfig,
+          customColors: value,
+          renderChart: !this.isFetchingChartData
+        };
+        break;
 
       default:
       // do nothing

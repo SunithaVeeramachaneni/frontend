@@ -810,7 +810,6 @@ export const dataEntities = {
 };
 
 export const colorsByStatus = {
-  // null: 'lightgray',
   ASSIGNED: '#32ADE6',
   OPEN: '#E4E4E6',
   OVERDUE: '#F44336',

@@ -24,6 +24,13 @@ export class VerticalStackedChartComponent implements OnInit {
 
   @Input() set chartConfig(chartConfig) {
     this.chartConfigurations = chartConfig;
+    if (chartConfig.customColors) {
+      try {
+        this.colorsByStatus = JSON.parse(chartConfig.customColors);
+      } catch (err) {
+        this.colorsByStatus = {};
+      }
+    }
     if (chartConfig.renderChart) {
       this.prepareChartDetails();
     }
@@ -39,6 +46,7 @@ export class VerticalStackedChartComponent implements OnInit {
     return this._chartData;
   }
 
+  colorsByStatus: any = {};
   chartOptions: any = {
     title: {
       text: ''
@@ -146,9 +154,9 @@ export class VerticalStackedChartComponent implements OnInit {
   constructor(private datePipe: DatePipe) {}
 
   ngOnInit(): void {
-    if (this.hasCustomColorScheme) {
+    if (this.hasCustomColorScheme && Object.keys(this.colorsByStatus).length) {
       this.chartOptions.series.itemStyle = {
-        color: (param: any) => colorsByStatus[param.name]
+        color: (param: any) => this.colorsByStatus[param.name]
       };
     }
   }

@@ -9,7 +9,6 @@ import {
   Output
 } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { colorsByStatus } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-multi-line-chart',
@@ -23,6 +22,13 @@ export class MultiLineChartComponent implements OnInit {
 
   @Input() set chartConfig(chartConfig) {
     this.chartConfigurations = chartConfig;
+    if (chartConfig.customColors) {
+      try {
+        this.colorsByStatus = JSON.parse(chartConfig.customColors);
+      } catch (err) {
+        this.colorsByStatus = {};
+      }
+    }
     if (chartConfig.renderChart) {
       this.prepareChartDetails();
     }
@@ -38,6 +44,7 @@ export class MultiLineChartComponent implements OnInit {
     return this._chartData;
   }
 
+  colorsByStatus: any = {};
   chartOptions: any = {
     title: {
       text: ''
@@ -145,9 +152,9 @@ export class MultiLineChartComponent implements OnInit {
   constructor(private datePipe: DatePipe) {}
 
   ngOnInit(): void {
-    if (this.hasCustomColorScheme) {
+    if (this.hasCustomColorScheme && Object.keys(this.colorsByStatus).length) {
       this.chartOptions.series.itemStyle = {
-        color: (param: any) => colorsByStatus[param.name]
+        color: (param: any) => this.colorsByStatus[param.name]
       };
     }
   }
