@@ -53,14 +53,14 @@ export class FilterComponent implements OnInit, OnChanges, OnDestroy {
       this.assignmentTypeIndex = json
         .map((item) => item.type)
         .indexOf('assignmentType');
+      this.plantTypeIndex = json.map((item) => item.column).indexOf('plant');
       this._json = json;
       this.json$.next(json);
-      // if (json[this.assignmentTypeIndex]?.value?.length) {
-      //   this.assigneeType = json[this.assignmentTypeIndex].value[0].type;
-      //   this.assigneeTypeControl.patchValue(
-      //     json[this.assignmentTypeIndex].value[0].type
-      //   );
-      // }
+      if (json[this.assignmentTypeIndex]?.value?.length) {
+        this.assigneeTypeControl.patchValue(
+          json[this.assignmentTypeIndex].value[0].type
+        );
+      }
       this.isLoading$.next(false);
     }
   }
@@ -81,10 +81,11 @@ export class FilterComponent implements OnInit, OnChanges, OnDestroy {
   ghostLoading = new Array(5).fill(0).map((v, i) => i);
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   assignTypes = ['plant', 'userGroup', 'user'];
-  assigneeTypeControl = new FormControl('userGroup');
-  assigneeType = 'userGroup';
-  assignmentTypeIndex: number;
-  filteredAssignedToCount: number;
+  assigneeType = 'plant';
+  assignmentTypeIndex = -1;
+  plantTypeIndex = -1;
+  filteredAssignedToCount = 0;
+  assigneeTypeControl = new FormControl(this.getAssignedToTypeStartWith());
   searchInput = new FormControl('');
   filteredAssignedToData$: Observable<any[]>;
   json$ = new BehaviorSubject([]);
@@ -102,7 +103,7 @@ export class FilterComponent implements OnInit, OnChanges, OnDestroy {
     this.assigneeTypeControl.valueChanges
       .pipe(
         takeUntil(this.onDestroy$),
-        startWith('userGroup'),
+        startWith(this.getAssignedToTypeStartWith()),
         tap((assigneeType) => {
           this.assigneeType = assigneeType;
           this.searchInput.patchValue('');
@@ -116,7 +117,9 @@ export class FilterComponent implements OnInit, OnChanges, OnDestroy {
         distinctUntilChanged()
       ),
       this.json$,
-      this.assigneeTypeControl.valueChanges.pipe(startWith('userGroup'))
+      this.assigneeTypeControl.valueChanges.pipe(
+        startWith(this.getAssignedToTypeStartWith())
+      )
     ]).pipe(
       map(([search, json, assigneeType]) => {
         this.assigneeType = assigneeType;
@@ -139,9 +142,23 @@ export class FilterComponent implements OnInit, OnChanges, OnDestroy {
             ) || []
           );
         }
+        if (this.assigneeType === 'plant') {
+          return (
+            json[this.plantTypeIndex]?.items.filter((item) =>
+              item?.toLowerCase().includes(search)
+            ) || []
+          ).map((item) => ({ type: 'plant', plant: item }));
+        }
       }),
       tap((data) => (this.filteredAssignedToCount = data.length))
     );
+  }
+
+  getAssignedToTypeStartWith() {
+    return this.assignmentTypeIndex >= 0 &&
+      this.json[this.assignmentTypeIndex]?.value?.length
+      ? this.json[this.assignmentTypeIndex].value[0].type
+      : 'plant';
   }
 
   closeFilter() {
@@ -230,6 +247,9 @@ export class FilterComponent implements OnInit, OnChanges, OnDestroy {
       return (
         o1?.value?.email === o2?.value?.email && o1?.value?.email !== undefined
       );
+    }
+    if (o1?.type === 'plant') {
+      return o1?.plant === o2?.plant && o1?.plant !== undefined;
     }
   }
 

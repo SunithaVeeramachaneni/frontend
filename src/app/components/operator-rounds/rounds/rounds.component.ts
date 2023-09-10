@@ -1116,6 +1116,14 @@ export class RoundsComponent implements OnInit, OnDestroy {
     return emailArray;
   }
 
+  getPlantNameToPlantId(data: any) {
+    const plantIdArray = [];
+    data?.forEach((name: any) => {
+      plantIdArray.push(this.plantsIdNameMap[name]);
+    });
+    return plantIdArray;
+  }
+
   getUserGroupNameToIdsArray(data: any) {
     const userGroupIdsArray = [];
     data?.forEach((name: any) => {
@@ -1158,6 +1166,12 @@ export class RoundsComponent implements OnInit, OnDestroy {
             value: this.getUserGroupNameToIdsArray(
               item.value.map((userGroup) => userGroup.value.name)
             )
+          };
+        }
+        if (item.value[0].type === 'plant') {
+          this.filter[item.column] = {
+            type: 'plant',
+            value: this.getPlantNameToPlantId(item.value.map((p) => p.plant))
           };
         }
       } else if (item.column === 'dueDate' && item.value) {

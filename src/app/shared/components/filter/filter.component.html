@@ -196,7 +196,7 @@
               ><span
                 *ngFor="let it of item.value; let i = index"
                 [attr.data-index]="i"
-                >{{ it.value.fullName
+                >{{ it.value?.fullName
                 }}<span *ngIf="i !== item.value.length - 1">, </span></span
               ></span
             >
@@ -204,7 +204,15 @@
               ><span
                 *ngFor="let it of item.value; let i = index"
                 [attr.data-index]="i"
-                >{{ it.value.name
+                >{{ it.value?.name
+                }}<span *ngIf="i !== item.value.length - 1">, </span></span
+              ></span
+            >
+            <span *ngIf="assigneeTypeControl.value === 'plant'"
+              ><span
+                *ngFor="let it of item.value; let i = index"
+                [attr.data-index]="i"
+                >{{ it.plant
                 }}<span *ngIf="i !== item.value.length - 1">, </span></span
               ></span
             >
@@ -225,10 +233,9 @@
           >
             <mat-radio-button
               color="primary"
-              *ngFor="let assignType of assignTypes; let i = index"
+              *ngFor="let assignType of assignTypes"
               (click)="$event.stopPropagation()"
               [value]="assignType"
-              [disabled]="i === 0"
             >
               {{ assignType | translate }}</mat-radio-button
             >
@@ -259,21 +266,24 @@
               >
                 <img
                   id="assignedToProfileImg"
-                  [src]="item.value.profileImage"
+                  [src]="item.value?.profileImage"
                   alt="Profile Image"
                   class="profile-image"
                 />
                 <div class="user-info">
                   <span id="assignedToName" class="name">{{
-                    item.value.fullName
+                    item.value?.fullName
                   }}</span>
                   <span id="assignedToEmail" class="email">{{
-                    item.value.email
+                    item.value?.email
                   }}</span>
                 </div>
               </div>
               <span *ngIf="assigneeTypeControl.value === 'userGroup'">{{
-                item.value.name
+                item.value?.name
+              }}</span>
+              <span *ngIf="assigneeTypeControl.value === 'plant'">{{
+                item.plant
               }}</span>
             </mat-option>
             <div
