@@ -90,16 +90,20 @@ export class AssignedToComponent implements OnInit, OnDestroy {
       map(([search, assigneeDetails]) => {
         search = search.toLowerCase();
         if (this.assigneeType === 'user') {
-          return assigneeDetails.users.filter(
-            (user) =>
-              user.isActive &&
-              (user.firstName.toLowerCase().indexOf(search) !== -1 ||
-                user.lastName.toLowerCase().indexOf(search) !== -1)
+          return (
+            assigneeDetails.users?.filter(
+              (user) =>
+                user.isActive &&
+                (user.firstName.toLowerCase().indexOf(search) !== -1 ||
+                  user.lastName.toLowerCase().indexOf(search) !== -1)
+            ) || []
           );
         }
         if (this.assigneeType === 'userGroup') {
-          return assigneeDetails.userGroups.filter(
-            (userGroup: any) => userGroup.searchTerm.indexOf(search) !== -1
+          return (
+            assigneeDetails.userGroups?.filter(
+              (userGroup: any) => userGroup.searchTerm.indexOf(search) !== -1
+            ) || []
           );
         }
       }),

@@ -14,7 +14,7 @@
       ></svg-icon>
     </button>
   </div>
-  <div class="filter-form-fields">
+  <div class="filter-form-fields" *ngIf="(isLoading$ | async) === false">
     <div class="filter-items" *ngFor="let item of json$ | async">
       <mat-form-field
         *ngIf="item.type === 'select'"
@@ -187,6 +187,7 @@
         <mat-select
           #matSelect
           multiple
+          [compareWith]="compareAssignedToObjects"
           [(ngModel)]="item.value"
           name="showStatus"
         >
@@ -286,6 +287,15 @@
           </div>
         </mat-select>
       </mat-form-field>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading$ | async">
+    <div class="padding-lr-20">
+      <div *ngFor="let number of ghostLoading">
+        <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+        </ngx-shimmer-loading>
+      </div>
     </div>
   </div>
 

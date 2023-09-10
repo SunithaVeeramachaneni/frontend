@@ -50,9 +50,15 @@ export class FilterComponent implements OnInit, OnChanges, OnDestroy {
   readonly FilterSidePanelComponent = FilterSidePanelComponent;
   @Input() set json(json) {
     if (json?.length) {
+      this.isLoading$.next(false);
       this.assignmentTypeIndex = json
         .map((item) => item.type)
         .indexOf('assignmentType');
+      if (json[this.assignmentTypeIndex]?.value?.value?.length) {
+        this.assigneeTypeControl.patchValue(
+          json[this.assignmentTypeIndex].value.value.type
+        );
+      }
       this._json = json;
       this.json$.next(json);
     }
@@ -71,6 +77,8 @@ export class FilterComponent implements OnInit, OnChanges, OnDestroy {
   @Output()
   reset: EventEmitter<any> = new EventEmitter();
 
+  ghostLoading = new Array(5).fill(0).map((v, i) => i);
+  isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   assignTypes = ['plant', 'userGroup', 'user'];
   assigneeTypeControl = new FormControl('userGroup');
   assigneeType = 'userGroup';
@@ -79,7 +87,7 @@ export class FilterComponent implements OnInit, OnChanges, OnDestroy {
   searchInput = new FormControl('');
   filteredAssignedToData$: Observable<any[]>;
   json$ = new BehaviorSubject([]);
-  private _json;
+  private _json = [];
   private onDestroy$ = new Subject();
 
   constructor() {}
@@ -211,6 +219,15 @@ export class FilterComponent implements OnInit, OnChanges, OnDestroy {
 
   isOptionArrayEmpty(options: MatOption[] | any[]): boolean {
     return Array.isArray(options) && options.length === 0;
+  }
+
+  compareAssignedToObjects(o1: any, o2: any): boolean {
+    if (o1.type === 'userGroup') {
+      return o1.value.id === o2.value.id;
+    }
+    if (o1.type === 'user') {
+      return o1.value.email === o2.value.email;
+    }
   }
 
   ngOnDestroy(): void {

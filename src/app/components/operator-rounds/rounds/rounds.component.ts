@@ -562,6 +562,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   userInfo$: Observable<UserInfo>;
+  filterData$: Observable<any>;
   selectedRound: RoundDetail;
   selectedRoundInfo: RoundDetail;
   selectedDueDate = null;
@@ -612,8 +613,104 @@ export class RoundsComponent implements OnInit, OnDestroy {
       );
     this.fetchRounds$.next({} as TableEvent);
     this.searchForm = new FormControl('');
-    this.getFilter();
-    this.getAllOperatorRounds();
+    let filterJson = [];
+    this.filterData$ = combineLatest([
+      this.users$,
+      this.operatorRoundsService.getRoundFilter().pipe(
+        tap((res) => {
+          filterJson = res;
+          for (const item of filterJson) {
+            if (item['column'] === 'status') {
+              item.items = this.status;
+            }
+          }
+        })
+      ),
+      this.operatorRoundsService.fetchAllRounds$().pipe(
+        tap((formsList) => {
+          this.isLoading$.next(false);
+          const objectKeys = Object.keys(formsList);
+          if (objectKeys.length > 0) {
+            const uniqueAssignTo = formsList
+              ?.filter((item) => item.assignedTo.length)
+              .map((item) => item.assignedTo)
+              .filter((value, index, self) => self.indexOf(value) === index);
+
+            const uniqueUserGroupsIds = formsList
+              ?.filter((item) => item.userGroupsIds?.length)
+              .map((item) => item.userGroupsIds)
+              .filter((value, index, self) => self.indexOf(value) === index);
+
+            const uniqueSchedules = formsList
+              ?.map((item) => item?.schedule)
+              .filter((value, index, self) => self?.indexOf(value) === index);
+
+            if (uniqueSchedules?.length > 0) {
+              uniqueSchedules?.filter(Boolean).forEach((item) => {
+                if (item) {
+                  this.schedules.push(item);
+                }
+              });
+            }
+            if (uniqueAssignTo?.length > 0) {
+              uniqueAssignTo?.filter(Boolean).forEach((item) => {
+                if (item && this.userFullNameByEmail[item] !== undefined) {
+                  this.assignedTo = [
+                    ...this.assignedTo,
+                    {
+                      type: 'user',
+                      value: this.userFullNameByEmail[item]
+                    }
+                  ];
+                }
+              });
+            }
+            if (uniqueUserGroupsIds?.length > 0) {
+              uniqueUserGroupsIds?.filter(Boolean).forEach((item) => {
+                if (item && this.userGroupsIdMap[item]?.name !== undefined) {
+                  this.assignedTo = [
+                    ...this.assignedTo,
+                    {
+                      type: 'userGroup',
+                      value: this.userGroupsIdMap[item]
+                    }
+                  ];
+                }
+              });
+            }
+
+            this.plants = formsList
+              .map((item) => {
+                if (item.plant) {
+                  this.plantsIdNameMap[item.plant] = item.plantId;
+                  return item.plant;
+                }
+                return '';
+              })
+              .filter((value, index, self) => self.indexOf(value) === index)
+              .sort();
+
+            for (const item of filterJson) {
+              if (item.column === 'assignedToDisplay') {
+                item.items = this.assignedTo.sort();
+              } else if (item['column'] === 'plant') {
+                item.items = this.plants;
+              }
+              if (item.column === 'schedule') {
+                item.items = this.schedules.sort();
+              }
+              if (item['column'] === 'shiftId') {
+                item.items = Object.values(this.shiftNameMap).sort();
+              }
+            }
+          }
+        })
+      )
+    ]).pipe(
+      tap(() => {
+        this.filterJson = filterJson;
+      })
+    );
     this.searchForm.valueChanges
       .pipe(
         debounceTime(500),
@@ -1004,96 +1101,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
           });
         }
       );
-  }
-
-  getAllOperatorRounds() {
-    this.isLoading$.next(true);
-    this.operatorRoundsService.fetchAllRounds$().subscribe(
-      (formsList) => {
-        this.isLoading$.next(false);
-        const objectKeys = Object.keys(formsList);
-        if (objectKeys.length > 0) {
-          const uniqueAssignTo = formsList
-            ?.filter((item) => item.assignedTo.length)
-            .map((item) => item.assignedTo)
-            .filter((value, index, self) => self.indexOf(value) === index);
-
-          const uniqueUserGroupsIds = formsList
-            ?.filter((item) => item.userGroupsIds?.length)
-            .map((item) => item.userGroupsIds)
-            .filter((value, index, self) => self.indexOf(value) === index);
-
-          const uniqueSchedules = formsList
-            ?.map((item) => item?.schedule)
-            .filter((value, index, self) => self?.indexOf(value) === index);
-
-          if (uniqueSchedules?.length > 0) {
-            uniqueSchedules?.filter(Boolean).forEach((item) => {
-              if (item) {
-                this.schedules.push(item);
-              }
-            });
-          }
-          if (uniqueAssignTo?.length > 0) {
-            uniqueAssignTo?.filter(Boolean).forEach((item) => {
-              if (item && this.userFullNameByEmail[item] !== undefined) {
-                this.assignedTo.push({
-                  type: 'user',
-                  value: this.userFullNameByEmail[item]
-                });
-              }
-            });
-          }
-          if (uniqueUserGroupsIds?.length > 0) {
-            uniqueUserGroupsIds?.filter(Boolean).forEach((item) => {
-              if (item && this.userGroupsIdMap[item]?.name !== undefined) {
-                this.assignedTo.push({
-                  type: 'userGroup',
-                  value: this.userGroupsIdMap[item]
-                });
-              }
-            });
-          }
-
-          this.plants = formsList
-            .map((item) => {
-              if (item.plant) {
-                this.plantsIdNameMap[item.plant] = item.plantId;
-                return item.plant;
-              }
-              return '';
-            })
-            .filter((value, index, self) => self.indexOf(value) === index)
-            .sort();
-
-          for (const item of this.filterJson) {
-            if (item.column === 'assignedToDisplay') {
-              item.items = this.assignedTo.sort();
-            } else if (item['column'] === 'plant') {
-              item.items = this.plants;
-            }
-            if (item.column === 'schedule') {
-              item.items = this.schedules.sort();
-            }
-            if (item['column'] === 'shiftId') {
-              item.items = Object.values(this.shiftNameMap).sort();
-            }
-          }
-        }
-      },
-      () => this.isLoading$.next(false)
-    );
-  }
-
-  getFilter() {
-    this.operatorRoundsService.getRoundFilter().subscribe((res) => {
-      this.filterJson = res;
-      for (const item of this.filterJson) {
-        if (item['column'] === 'status') {
-          item.items = this.status;
-        }
-      }
-    });
   }
 
   getFullNameToEmailArray(data: any) {
