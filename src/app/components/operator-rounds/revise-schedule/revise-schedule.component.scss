@@ -80,23 +80,9 @@
   }
 
   .task-repeat-day {
-    padding: 10px;
-    border: none;
-    background: $gray;
-    border-radius: 4px;
-    margin-left: 10px;
-    position: relative;
+    width: 25%;
     font-weight: 500;
-    top: -1px;
-    width: 22%;
-    background-image: linear-gradient(45deg, transparent 50%, gray 50%),
-      linear-gradient(135deg, gray 50%, transparent 50%);
-    background-position: calc(100% - 13px) calc(1em + 3px),
-      calc(100% - 8px) calc(1em + 3px), calc(100% - 2.5em) 0.5em;
-    background-size: 5px 5px, 5px 5px, 1px 1.5em;
-    background-repeat: no-repeat;
-    box-sizing: border-box;
-    -webkit-appearance: none;
+    margin-left: 2%;
   }
 
   .schedule-frequency {

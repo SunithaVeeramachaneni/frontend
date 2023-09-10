@@ -68,14 +68,16 @@
             />
           </mat-form-field>
 
-          <select formControlName="repeatEvery" class="task-repeat-day">
-            <option
-              *ngFor="let repeatEvery of repeatTypes"
-              [value]="repeatEvery"
-            >
-              {{ repeatEvery }}
-            </option>
-          </select>
+          <mat-form-field appearance="fill" class="task-repeat-day">
+            <mat-select formControlName="repeatEvery">
+              <mat-option
+                *ngFor="let repeatEvery of repeatTypes"
+                [value]="repeatEvery"
+              >
+                {{ repeatEvery }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
         </div>
 
         <ng-container
@@ -255,7 +257,11 @@
               *ngIf="slot.startTime === '00:00' && slot.endTime === '23:59'"
             >
               <span class="no-slot-times">
-                <mat-checkbox [checked]="true" [disabled]="true" class="m-b-20">
+                <mat-checkbox
+                  [checked]="true"
+                  [disabled]="true"
+                  class="m-b-20 width-95"
+                >
                   {{ slot?.startTime }} - {{ slot?.endTime }}
                 </mat-checkbox>
               </span>
