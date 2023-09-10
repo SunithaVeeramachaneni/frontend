@@ -16,6 +16,7 @@ import { IntegrationsService } from '../services/integrations.service';
 import { ErrorInfo } from 'src/app/interfaces';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { permissions } from 'src/app/app.constants';
+import { ToastService } from 'src/app/shared/toast';
 
 @Component({
   selector: 'app-add-edit-connector',
@@ -76,7 +77,8 @@ export class AddEditConnectorComponent implements OnInit {
     private cdrf: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA)
     public data: any,
-    private integrationsService: IntegrationsService
+    private integrationsService: IntegrationsService,
+    private toast: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -192,17 +194,25 @@ export class AddEditConnectorComponent implements OnInit {
     };
     this.integrationsService
       .testConnection$(this.connectionForm.value, info)
-      .subscribe((resp: any) => {
-        if (resp.connectionSuccessful) {
-          this.isConnectionTested = true;
-          this.isConnectionSuccessful = true;
-        } else {
-          this.isConnectionTested = true;
-          this.isConnectionSuccessful = false;
+      .subscribe(
+        (resp: any) => {
+          if (resp.connectionSuccessful) {
+            this.isConnectionTested = true;
+            this.isConnectionSuccessful = true;
+          } else {
+            this.isConnectionTested = true;
+            this.isConnectionSuccessful = false;
+          }
+          this.isTestConnectionInProgress = false;
+          this.cdrf.detectChanges();
+        },
+        (err) => {
+          this.toast.show({
+            text: 'Error occured while testing connection',
+            type: 'warning'
+          });
         }
-        this.isTestConnectionInProgress = false;
-        this.cdrf.detectChanges();
-      });
+      );
   }
 
   saveConnection() {
@@ -218,9 +228,17 @@ export class AddEditConnectorComponent implements OnInit {
           (resp: any) => {
             this.dialogRef.close(resp);
             this.isSaveInProgress = false;
+            this.toast.show({
+              text: 'Connection Created successfully',
+              type: 'success'
+            });
           },
           (err) => {
             this.isSaveInProgress = false;
+            this.toast.show({
+              text: 'Error occured while creating connection',
+              type: 'warning'
+            });
           }
         );
     } else if (this.data.mode === 'edit') {
@@ -236,9 +254,17 @@ export class AddEditConnectorComponent implements OnInit {
               connectorId: this.connectionForm.value.connector
             });
             this.isSaveInProgress = false;
+            this.toast.show({
+              text: 'Connection updated successfully',
+              type: 'success'
+            });
           },
           (err) => {
             this.isSaveInProgress = false;
+            this.toast.show({
+              text: 'Error occured while updating connection',
+              type: 'warning'
+            });
           }
         );
     }

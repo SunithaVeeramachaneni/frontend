@@ -13,6 +13,7 @@ import { IntegrationsService } from '../services/integrations.service';
 import { Confirmation, ErrorInfo } from 'src/app/interfaces';
 import { ConfirmationModalDialogComponent } from '../confirmation-modal/confirmation-modal.component';
 import { permissions } from 'src/app/app.constants';
+import { ToastService } from 'src/app/shared/toast';
 
 @Component({
   selector: 'app-integrations',
@@ -36,7 +37,8 @@ export class IntegrationsComponent implements OnInit {
     private fb: FormBuilder,
     private cdrf: ChangeDetectorRef,
     private dialog: MatDialog,
-    private integrationsService: IntegrationsService
+    private integrationsService: IntegrationsService,
+    private toast: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -144,38 +146,25 @@ export class IntegrationsComponent implements OnInit {
       if (resp.confirm === 'yes') {
         this.integrationsService.deleteConnection$(id, info).subscribe(
           (result: any) => {
-            // TODO: display toasty message.
             this.createUpdateDeleteConnector$.next({
               type: 'delete',
               connector: id
             });
+            this.toast.show({
+              text: 'Connection deleted successfully',
+              type: 'success'
+            });
           },
           (err) => {
-            // TODO: display toasty message.
+            this.toast.show({
+              text: 'Error occured while deleting connection',
+              type: 'success'
+            });
           }
         );
       }
     });
   }
-
-  // selectIntegrationPoint(event): void {
-  //   if (event) {
-  //     // const mappings = this.dataEntities[event.value];
-  //     const formArrayCtrl = this.fb.array([]);
-  //     mappings?.forEach((mapping) => {
-  //       formArrayCtrl.push(
-  //         this.fb.group({
-  //           attributeName: mapping.attributeName,
-  //           attributeId: mapping.attributeId,
-  //           sourceKey: mapping.attributeId,
-  //           targetKey: mapping.attributeId
-  //         })
-  //       );
-  //     });
-  //     this.integrationConfigForm.setControl('dataMapping', formArrayCtrl);
-  //     this.cdrf.detectChanges();
-  //   }
-  // }
 
   connectorChanged(connector: any): void {
     this.selectedConnector = connector;

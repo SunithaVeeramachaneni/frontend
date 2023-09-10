@@ -13,6 +13,7 @@ import { MatCalendar } from '@angular/material/datepicker';
 import { ErrorInfo } from 'src/app/interfaces';
 import { dataEntities, integrationPoints } from 'src/app/app.constants';
 import { permissions } from 'src/app/app.constants';
+import { ToastService } from 'src/app/shared/toast';
 
 @Component({
   selector: 'app-add-edit-integration',
@@ -41,7 +42,8 @@ export class AddEditIntegrationComponent implements OnInit {
     private cdrf: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA)
     public data: any,
-    private integrationsService: IntegrationsService
+    private integrationsService: IntegrationsService,
+    private toast: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -95,9 +97,17 @@ export class AddEditIntegrationComponent implements OnInit {
           (resp: any) => {
             this.dialogRef.close(resp);
             this.isSaveInProgress = false;
+            this.toast.show({
+              text: 'Integration created successfully',
+              type: 'success'
+            });
           },
           (err) => {
             this.isSaveInProgress = false;
+            this.toast.show({
+              text: 'Error occured while creating integration',
+              type: 'warning'
+            });
           }
         );
     } else if (this.data.mode === 'edit') {
@@ -116,9 +126,17 @@ export class AddEditIntegrationComponent implements OnInit {
               id: integrationId
             });
             this.isSaveInProgress = false;
+            this.toast.show({
+              text: 'Integration updated successfully',
+              type: 'success'
+            });
           },
           (err) => {
             this.isSaveInProgress = false;
+            this.toast.show({
+              text: 'Error occured while updating integration',
+              type: 'warning'
+            });
           }
         );
     }

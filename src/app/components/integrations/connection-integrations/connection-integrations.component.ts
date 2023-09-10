@@ -33,6 +33,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { AddEditIntegrationComponent } from '../add-edit-integration/add-edit-integration.component';
 import { ConfirmationModalDialogComponent } from '../confirmation-modal/confirmation-modal.component';
 import { permissions } from 'src/app/app.constants';
+import { ToastService } from 'src/app/shared/toast';
 
 @Component({
   selector: 'app-connection-integrations',
@@ -169,7 +170,8 @@ export class ConnectionIntegrationsComponent implements OnInit, OnChanges {
   constructor(
     private dialog: MatDialog,
     private integrationsService: IntegrationsService,
-    private cdrf: ChangeDetectorRef
+    private cdrf: ChangeDetectorRef,
+    private toast: ToastService
   ) {}
 
   ngOnInit(): void {}
@@ -280,7 +282,6 @@ export class ConnectionIntegrationsComponent implements OnInit, OnChanges {
         type: 'create',
         integration: result
       });
-      console.log(result);
     });
   };
 
@@ -331,9 +332,16 @@ export class ConnectionIntegrationsComponent implements OnInit, OnChanges {
                   type: action,
                   integration: id
                 });
+                this.toast.show({
+                  text: 'Integration deleted successfully',
+                  type: 'success'
+                });
               },
               (err) => {
-                // TODO: display toasty message.
+                this.toast.show({
+                  text: 'Error occured while deleting integration',
+                  type: 'warning'
+                });
               }
             );
         }
