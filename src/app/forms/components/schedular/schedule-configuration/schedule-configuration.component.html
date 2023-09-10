@@ -1,7 +1,7 @@
 <div id="scheduler-customizer">
   <mat-card class="bg-white">
     <mat-card-title class="m-0 light-gray">
-      <!-- <span>
+      <span *ngIf="!isTaskLevel">
         <span class="cancel-side-drawer" (click)="cancel()">
           <mat-icon id="scheduleConfigurationCloseIcon" class="dialog-close"
             >close</mat-icon
@@ -13,7 +13,7 @@
         <h2 id="scheduleConfigurationText" class="center schedule-text">
           {{ 'scheduling' | translate }}
         </h2>
-      </span> -->
+      </span>
       <div class="heading-schedule" translate>
         <div class="left">
           <div>
