@@ -104,6 +104,8 @@ export type FormList = {
 };
 
 export interface FormScheduleConfiguration {
+  endDateDisplay: string;
+  startDateDisplay: string;
   shiftSlots: any;
   id?: string;
   formId: string;
