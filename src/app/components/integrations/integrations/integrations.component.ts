@@ -129,7 +129,7 @@ export class IntegrationsComponent implements OnInit {
 
   deleteConnection(id) {
     const info: ErrorInfo = {
-      displayToast: true,
+      displayToast: false,
       failureResponse: 'throwError'
     };
     const confirmDialog = this.dialog.open(ConfirmationModalDialogComponent, {

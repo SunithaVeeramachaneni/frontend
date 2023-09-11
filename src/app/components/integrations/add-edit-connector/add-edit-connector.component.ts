@@ -189,7 +189,7 @@ export class AddEditConnectorComponent implements OnInit {
   testConnection() {
     this.isTestConnectionInProgress = true;
     const info: ErrorInfo = {
-      displayToast: true,
+      displayToast: false,
       failureResponse: 'throwError'
     };
     this.integrationsService
@@ -218,7 +218,7 @@ export class AddEditConnectorComponent implements OnInit {
   saveConnection() {
     this.isSaveInProgress = true;
     const info: ErrorInfo = {
-      displayToast: true,
+      displayToast: false,
       failureResponse: 'throwError'
     };
     if (this.data.mode === 'create') {

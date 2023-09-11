@@ -85,7 +85,7 @@ export class AddEditIntegrationComponent implements OnInit {
   saveIntegration() {
     this.isSaveInProgress = true;
     const info: ErrorInfo = {
-      displayToast: true,
+      displayToast: false,
       failureResponse: 'throwError'
     };
     const { connectorId } = this.data;

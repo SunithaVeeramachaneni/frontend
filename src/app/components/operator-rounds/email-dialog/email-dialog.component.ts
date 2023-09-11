@@ -23,6 +23,7 @@ import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { LoginService } from '../../login/services/login.service';
 import { DateUtilService } from 'src/app/shared/utils/dateUtils';
 import { ErrorInfo } from 'src/app/interfaces';
+import { ToastService } from 'src/app/shared/toast';
 
 @Component({
   selector: 'app-email-dialog',
@@ -62,7 +63,8 @@ export class EmailDialogComponent implements OnInit {
     private usersService: UsersService,
     private operatorRoundService: OperatorRoundsService,
     private loginService: LoginService,
-    private readonly dateUtilService: DateUtilService
+    private readonly dateUtilService: DateUtilService,
+    private toast: ToastService
   ) {
     this.allUsers$ = this.usersService
       .getUsers$({
@@ -147,7 +149,7 @@ export class EmailDialogComponent implements OnInit {
       bodyFormData.append('image', widgetsData[i]);
     }
     const info: ErrorInfo = {
-      displayToast: true,
+      displayToast: false,
       failureResponse: 'throwError'
     };
     const customHeaders = {
@@ -164,12 +166,20 @@ export class EmailDialogComponent implements OnInit {
           this.emailNotes = '';
           this.sendEmailInprogress = true;
           this.cdrf.detectChanges();
+          this.toast.show({
+            text: 'Successfully sent email.',
+            type: 'success'
+          });
           this.dialogRef.close({ confirmed: true });
         },
         (err) => {
           this.emailNotes = '';
-          this.sendEmailInprogress = true;
+          this.sendEmailInprogress = false;
           this.cdrf.detectChanges();
+          this.toast.show({
+            text: 'Error occured while sending email.',
+            type: 'warning'
+          });
         }
       );
   };

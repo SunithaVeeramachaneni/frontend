@@ -96,6 +96,7 @@ export class DonutChartComponent implements OnInit, OnChanges {
   preparedChartData: any;
   datasetField: any;
   countField: any;
+  showTotalCount = true;
   private chartConfigurations: any;
   private _chartData: any;
 
@@ -143,6 +144,25 @@ export class DonutChartComponent implements OnInit, OnChanges {
       this.preparedChartData = this.prepareChartData();
       newOptions.series.data = this.preparedChartData.data;
       newOptions.legend.data = this.preparedChartData.labels;
+      if (this.showTotalCount) {
+        newOptions.series = [newOptions.series];
+        newOptions.series.push({
+          name: 'COUNT',
+          type: 'pie',
+          radius: [0, '35%'],
+          label: {
+            position: 'center',
+            color: 'white'
+          },
+          data: [
+            {
+              value: this.preparedChartData.totalCount,
+              name: `Total Count\n ${this.preparedChartData.totalCount}`
+            }
+          ]
+        });
+      }
+
       this.chartOptions = newOptions;
     }
   };
@@ -175,9 +195,16 @@ export class DonutChartComponent implements OnInit, OnChanges {
       name: key,
       value
     }));
+
+    let totalCount = 0;
+    converted.forEach((c: any) => {
+      totalCount = totalCount + c.value;
+    });
+
     return {
       labels,
-      data: converted
+      data: converted,
+      totalCount
     };
   };
 

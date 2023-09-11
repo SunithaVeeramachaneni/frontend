@@ -309,7 +309,7 @@ export class ConnectionIntegrationsComponent implements OnInit, OnChanges {
       });
     } else if (action === 'delete') {
       const info: ErrorInfo = {
-        displayToast: true,
+        displayToast: false,
         failureResponse: 'throwError'
       };
       const confirmDialog = this.dialog.open(ConfirmationModalDialogComponent, {
