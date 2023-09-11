@@ -35,6 +35,7 @@ export class TaskLevelTaskComponentsComponent implements OnInit {
   allCheckedSection = false;
   partiallyFilledSection = false;
   revisedQuestionData: any;
+  shiftArray: any;
   private _checkboxStatus: any;
   private _selectedPage: any;
   constructor(private operatorRoundService: OperatorRoundsService) {}
@@ -130,5 +131,9 @@ export class TaskLevelTaskComponentsComponent implements OnInit {
 
   getData(question) {
     this.revisedQuestionData = question;
+    this.shiftArray = Object.keys(question.shiftDetails).map((key) => ({
+      id: key,
+      shifts: question.shiftDetails[key]
+    }));
   }
 }

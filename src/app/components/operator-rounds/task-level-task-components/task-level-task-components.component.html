@@ -90,7 +90,12 @@
                           <div class="task-question">{{ question.name }}</div>
                         </div>
                       </div>
-                      <div class="width-30">
+                      <div
+                        [ngClass]="{
+                          'revised-content': question.complete === false,
+                          'revised-content-width': question.complete === true
+                        }"
+                      >
                         <div
                           *ngIf="!displayTaskLevelConfig.get(question.id)"
                           class="status-div"
@@ -140,8 +145,31 @@
                             </p>
                             <div class="dis-flex m-l-10">
                               <span class="revised-title">Slots: </span>
+                              <div
+                                class="revised-slots"
+                                *ngFor="let shiftGroup of shiftArray"
+                              >
+                                <p
+                                  class="revised-value"
+                                  *ngFor="let shift of shiftGroup?.shifts"
+                                >
+                                  {{ shift.startTime }} - {{ shift.endTime }}
+                                </p>
+                              </div>
+                            </div>
+                            <div class="dis-flex m-l-10">
+                              <span class="revised-title">Starts: </span>
                               <div class="revised-slots">
-                                <p class="revised-value">12:00 - 22:00,</p>
+                                <p class="revised-value">
+                                  {{ revisedQuestionData?.startDate }}
+                                </p>
+                              </div>
+                              &nbsp;
+                              <span class="revised-title">Ends: </span>
+                              <div class="revised-slots">
+                                <p class="revised-value">
+                                  {{ revisedQuestionData?.endDate }}
+                                </p>
                               </div>
                             </div>
                           </div>

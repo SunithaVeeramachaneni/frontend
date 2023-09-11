@@ -160,9 +160,20 @@
   .revised-value {
     font-size: 110%;
   }
+
+  .shift-time {
+    display: flex;
+  }
 }
 
 .revised-hover-me:hover .show-revised-content {
-  height: 130px;
-  max-height: 300px;
+  height: 100%;
+}
+
+.revised-content {
+  width: 30%;
+}
+
+.revised-content-width {
+  width: 100%;
 }
