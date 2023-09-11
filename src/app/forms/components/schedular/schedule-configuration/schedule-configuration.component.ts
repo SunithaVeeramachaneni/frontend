@@ -267,15 +267,16 @@ export class ScheduleConfigurationComponent
     if (this.data) {
       const { formDetail, roundPlanDetail, moduleName, assigneeDetails } =
         this.data;
-        const plantId = moduleName === 'RDF' ? formDetail.plantId : roundPlanDetail.plantId;
-        this.assigneeDetails = {
-          users: assigneeDetails.users?.filter((user) =>
-            user.plantId?.includes(plantId)
-          ),
-          userGroups: assigneeDetails.userGroups?.filter((userGroup) =>
-            userGroup.plantId?.includes(plantId)
-          )
-        };
+      const plantId =
+        moduleName === 'RDF' ? formDetail.plantId : roundPlanDetail.plantId;
+      this.assigneeDetails = {
+        users: assigneeDetails.users?.filter((user) =>
+          user.plantId?.includes(plantId)
+        ),
+        userGroups: assigneeDetails.userGroups?.filter((userGroup) =>
+          userGroup.plantId?.includes(plantId)
+        )
+      };
       this.moduleName = moduleName;
 
       // If the module name is RDF
@@ -359,7 +360,7 @@ export class ScheduleConfigurationComponent
       endDatePicker: new Date(addDays(new Date(), 30)),
       scheduledTill: null,
       assignmentDetails: this.fb.group({
-        type: ['User'],
+        type: ['userGroup'],
         value: '',
         displayValue: ''
       }),
@@ -817,6 +818,9 @@ export class ScheduleConfigurationComponent
           this.plantTimezoneMap[this.selectedDetails?.plantId]
             ?.timeZoneIdentifier
         ).toISOString();
+      }
+      if (rest.assignmentDetails.type === 'plant') {
+        rest.assignmentDetails.type = 'user';
       }
       if (id) {
         const payload = {

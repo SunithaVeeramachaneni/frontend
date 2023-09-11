@@ -85,6 +85,7 @@ export interface RoundPlanDetail extends RoundPlan {
   plantId?: string;
   plant?: string;
   assignedTo?: string;
+  userGroupsIds?: string;
   shifts: [];
 }
 
@@ -178,6 +179,7 @@ export interface SelectTab {
 export interface AssigneeDetails {
   users: UserDetails[];
   userGroups?: UserGroup[];
+  plants?: any[];
 }
 
 export interface IssueOrAction {

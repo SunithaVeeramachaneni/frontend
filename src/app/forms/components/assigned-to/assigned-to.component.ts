@@ -60,10 +60,10 @@ export class AssignedToComponent implements OnInit, OnDestroy {
   searchInput = new FormControl('');
   filteredData$: Observable<any[]>;
   filteredDataCount: number;
-  assignTypes = ['user', 'userGroup'];
-  assigneeTypeControl = new FormControl('user');
+  assignTypes = ['plant', 'userGroup', 'user'];
+  assigneeTypeControl = new FormControl('plant');
   assigneeDetails$ = new BehaviorSubject({} as AssigneeDetails);
-  private _assigneeType = 'user';
+  private _assigneeType = 'plant';
   private _showAssigneeOptions = false;
   private onDestroy$ = new Subject();
   constructor() {}
@@ -90,16 +90,27 @@ export class AssignedToComponent implements OnInit, OnDestroy {
       map(([search, assigneeDetails]) => {
         search = search.toLowerCase();
         if (this.assigneeType === 'user') {
-          return assigneeDetails.users.filter(
-            (user) =>
-              user.isActive &&
-              (user.firstName.toLowerCase().indexOf(search) !== -1 ||
-                user.lastName.toLowerCase().indexOf(search) !== -1)
+          return (
+            assigneeDetails.users?.filter(
+              (user) =>
+                user.isActive &&
+                (user.firstName.toLowerCase().indexOf(search) !== -1 ||
+                  user.lastName.toLowerCase().indexOf(search) !== -1)
+            ) || []
           );
         }
         if (this.assigneeType === 'userGroup') {
-          return assigneeDetails.userGroups.filter(
-            (userGroup: any) => userGroup.searchTerm.indexOf(search) !== -1
+          return (
+            assigneeDetails.userGroups?.filter(
+              (userGroup: any) => userGroup.searchTerm.indexOf(search) !== -1
+            ) || []
+          );
+        }
+        if (this.assigneeType === 'plant') {
+          return (
+            assigneeDetails.plants?.filter(
+              (plant: any) => plant.indexOf(search) !== -1
+            ) || []
           );
         }
       }),
@@ -120,6 +131,9 @@ export class AssignedToComponent implements OnInit, OnDestroy {
     }
     if (this.assigneeType === 'userGroup') {
       selectedAssignee.userGroup = data;
+    }
+    if (this.assigneeType === 'plant') {
+      selectedAssignee.plant = data;
     }
     if (this.assigneeType) this.selectedAssignee.emit(selectedAssignee);
   }

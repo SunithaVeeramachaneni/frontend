@@ -183,7 +183,9 @@ export class UsersService {
     this.usersInfoByEmail = users.reduce((acc, curr) => {
       acc[curr.email] = {
         fullName: `${curr.firstName} ${curr.lastName}`,
-        isActive: curr.isActive
+        isActive: curr.isActive,
+        profileImage: curr.profileImage,
+        email: curr.email
       };
       return acc;
     }, {});

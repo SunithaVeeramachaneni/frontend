@@ -455,8 +455,33 @@
             <mat-form-field
               appearance="outline"
               class="width-100 cursor"
+              *ngIf="
+                schedulerConfigForm?.get('assignmentDetails').value.type ===
+                'plant'
+              "
+            >
+              <mat-label id="scheduleConfigSelect" translate>select</mat-label>
+              <input
+                id="scheduleConfigSelectText"
+                type="text"
+                matInput
+                [value]="selectedDetails?.plant"
+                class="cursor"
+                [disabled]="true"
+              />
+              <mat-icon id="scheduleConfigDropDown" matSuffix class="cursor"
+                >arrow_drop_down</mat-icon
+              >
+            </mat-form-field>
+            <mat-form-field
+              appearance="outline"
+              class="width-100 cursor"
               [matMenuTriggerFor]="menu"
               #menuTrigger="matMenuTrigger"
+              *ngIf="
+                schedulerConfigForm?.get('assignmentDetails').value.type !==
+                'plant'
+              "
             >
               <mat-label id="scheduleConfigSelect" translate>select</mat-label>
               <input
