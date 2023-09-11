@@ -65,17 +65,15 @@ export class SelectQuestionsDialogComponent implements OnInit {
             this.selectedSections = page.sections;
           }
           this.selectedSections.map((section) => {
-            const sectionQuestions = page.questions.filter((q) => {
-              if (this.data.isEmbeddedForm || q.required === false) {
-                return this.data.viewMode === 'HIDE'
-                  ? q.sectionId === section.id &&
-                      (this.data.isEmbeddedForm ||
-                        (!q.required && !mandateQuestion.includes(q.id)))
-                  : q.sectionId === section.id &&
-                      (this.data.isEmbeddedForm ||
-                        !hideQuestion.includes(q.id));
-              }
-            });
+            const sectionQuestions = page.questions.filter((q) =>
+              this.data.viewMode === 'HIDE'
+                ? q.sectionId === section.id &&
+                  (this.data.isEmbeddedForm ||
+                    (!q.required && !mandateQuestion.includes(q.id)))
+                : q.sectionId === section.id &&
+                  (this.data.isEmbeddedForm ||
+                    (!q.required && !hideQuestion.includes(q.id)))
+            );
 
             if (this.data.isEmbeddedForm) {
               const logics = page.logics.filter(
