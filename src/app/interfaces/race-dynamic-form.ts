@@ -117,6 +117,8 @@ export interface FormScheduleConfiguration {
   scheduleEndOccurrences: number;
   startDate: string;
   endDate: string;
+  endDateDisplay: string;
+  startDateDisplay: string;
   scheduleByDates: FormScheduleByDate[];
   scheduledTill?: string;
   startDatePicker?: Date;

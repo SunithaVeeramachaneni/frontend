@@ -15,6 +15,8 @@ export interface RoundPlanScheduleConfiguration {
   scheduleEndOccurrences: number;
   startDate: string;
   endDate: string;
+  startDateDisplay: any;
+  endDateDisplay: any;
   scheduleByDates: ScheduleByDate[];
   scheduledTill?: string;
   assignmentDetails: AssignmentDetail;
