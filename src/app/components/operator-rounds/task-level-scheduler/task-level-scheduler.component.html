@@ -1,4 +1,4 @@
-<div class="task-level-schedule-main">
+<div class="task-level-schedule-main" *ngIf="revisedInfo$ | async">
   <div
     class="dis-flex form-header"
     *ngIf="taskLevelScheduleHeaderConfiguration"
@@ -255,6 +255,8 @@
   <ng-container *ngIf="openCloseRightPanel">
     <div [@widthGrow]="state" class="right-panel">
       <app-revise-schedule
+        [roundPlanData]="roundPlanData"
+        [plantTimezoneMap]="plantTimezoneMap"
         [nodeIdToNodeName]="nodeIdToNodeName"
         [reviseSchedule]="payload"
         [uniqueConfigurations]="uniqueConfigurations"

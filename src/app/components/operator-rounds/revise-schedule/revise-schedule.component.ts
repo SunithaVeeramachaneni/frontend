@@ -13,6 +13,7 @@ import {
 import { MatSelect } from '@angular/material/select';
 import { scheduleConfigs } from '../../../forms/components/schedular/schedule-configuration/schedule-configuration.constants';
 import {
+  MatCalendar,
   MatCalendarCellCssClasses,
   MatDatepickerInputEvent
 } from '@angular/material/datepicker';
@@ -26,8 +27,11 @@ import {
 import { format } from 'date-fns';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { tap } from 'rxjs/operators';
-import { isEqual } from 'lodash-es';
+import { cloneDeep, isEqual } from 'lodash-es';
 import { dateFormat4 } from 'src/app/app.constants';
+import { ScheduleByDate } from 'src/app/interfaces';
+import { Observable } from 'rxjs';
+import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
 
 @Component({
   selector: 'app-revise-schedule',
@@ -37,7 +41,10 @@ import { dateFormat4 } from 'src/app/app.constants';
 })
 export class ReviseScheduleComponent implements OnInit {
   @ViewChild('shiftSelect') shiftSelect: MatSelect;
+  @ViewChild(MatCalendar) calendar: MatCalendar<Date>;
   @Output() openCloseRightPanelEvent = new EventEmitter<boolean>();
+  @Input() roundPlanData: any;
+  @Input() plantTimezoneMap: any;
   @Input() set nodeIdToNodeName(nodeIdToNodeName: any) {
     this._nodeIdToNodeName = nodeIdToNodeName;
   }
@@ -77,6 +84,8 @@ export class ReviseScheduleComponent implements OnInit {
   scheduleConfig: any;
   configurations = [];
   revisedInfo = {};
+  scheduleByDates: ScheduleByDate[];
+  revisedInfo$: Observable<any>;
 
   constructor(
     private fb: FormBuilder,
@@ -126,10 +135,13 @@ export class ReviseScheduleComponent implements OnInit {
 
     if (this.reviseScheduleConfig) {
       this.resetReviseScheduleConfigForm();
+      this.scheduleByDates = this.reviseScheduleConfig.scheduleByDates;
     }
-    this.operatorRoundService.revisedInfo$.subscribe((revisedInfo) => {
-      this.revisedInfo = revisedInfo;
-    });
+    this.revisedInfo$ = this.operatorRoundService.revisedInfo$.pipe(
+      tap((revisedInfo) => {
+        this.revisedInfo = revisedInfo;
+      })
+    );
   }
 
   prepareShiftAndSlot(shiftSlot, shiftDetails) {
@@ -203,7 +215,33 @@ export class ReviseScheduleComponent implements OnInit {
     };
   }
 
-  updateScheduleByDates(event: MatDatepickerInputEvent<Date>) {}
+  findDate(date: Date): number {
+    return this.scheduleByDates
+      ?.map((scheduleByDate) => +scheduleByDate.date)
+      .indexOf(+date);
+  }
+
+  updateScheduleByDates(date: Date) {
+    const index = this.findDate(date);
+    if (index === -1) {
+      this.scheduleByDates = [
+        ...this.scheduleByDates,
+        {
+          date: new Date(
+            localToTimezoneDate(
+              new Date(date),
+              this.plantTimezoneMap[this.roundPlanData.plantId],
+              ''
+            )
+          ),
+          scheduled: false
+        }
+      ];
+    } else {
+      this.scheduleByDates.splice(index, 1);
+    }
+    this.calendar.updateTodaysDate();
+  }
 
   onShiftChange(event) {
     if (event.value.length !== 0) {
@@ -260,14 +298,16 @@ export class ReviseScheduleComponent implements OnInit {
     this.shiftSelect.value = this.allSlots;
   }
 
-  comparingConfig(newConfig) {
+  comparingConfig(newConfig, scheduleByDates) {
     newConfig.shiftDetails = {
       ...this.prepareShiftSlot(this.allSlots)
     };
     let configIndex = 0;
     let configFound = false;
     if (!this.uniqueConfigurations.length) {
-      this.uniqueConfigurations.push(JSON.parse(JSON.stringify(newConfig)));
+      this.uniqueConfigurations.push(
+        cloneDeep({ ...newConfig, scheduleByDates })
+      );
       this.operatorRoundService.setuniqueConfiguration(
         this.uniqueConfigurations
       );
@@ -280,7 +320,9 @@ export class ReviseScheduleComponent implements OnInit {
       }
     });
     if (!configFound) {
-      this.uniqueConfigurations.push(JSON.parse(JSON.stringify(newConfig)));
+      this.uniqueConfigurations.push(
+        cloneDeep({ ...newConfig, scheduleByDates })
+      );
       this.operatorRoundService.setuniqueConfiguration(
         this.uniqueConfigurations
       );
@@ -363,12 +405,14 @@ export class ReviseScheduleComponent implements OnInit {
 
   onRevise() {
     const configPosition = this.comparingConfig(
-      this.reviseScheduleConfigForm.value
+      this.reviseScheduleConfigForm.value,
+      this.scheduleByDates
     );
     const sameConfigAsHeader =
       this.operatorRoundService.compareConfigWithHeader(
         this.reviseScheduleConfig,
-        this.reviseScheduleConfigForm.value
+        this.reviseScheduleConfigForm.value,
+        this.scheduleByDates
       );
     this.operatorRoundService.allPageCheckBoxStatus$.subscribe((pages) => {
       Object.keys(pages).forEach((key) => {

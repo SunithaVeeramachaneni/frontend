@@ -1,7 +1,10 @@
 <div
   class="right"
   [formGroup]="reviseScheduleConfigForm"
-  *ngIf="{ locationListToTask: locationListToTask$ | async }"
+  *ngIf="{
+    locationListToTask: locationListToTask$ | async,
+    revisedInfo: revisedInfo$ | async
+  }"
 >
   <h3 class="heading" translate>reviseSchedule</h3>
 

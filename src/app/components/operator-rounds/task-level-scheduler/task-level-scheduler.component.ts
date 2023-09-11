@@ -124,6 +124,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
   scheduleConfig: RoundPlanScheduleConfiguration;
   authorToEmail: any;
   revisedInfo: any;
+  revisedInfo$: Observable<any>;
   displayNodeLevelConfig = new Set();
   displayTaskLevelConfig = new Map();
   allSlots = [];
@@ -221,48 +222,50 @@ export class TaskLevelSchedulerComponent implements OnInit {
         this.authorToEmail = user.email;
       }
     });
-    this.operatorRoundService.revisedInfo$.subscribe((revisedInfo) => {
-      this.revisedInfo = revisedInfo;
-      this.displayTaskLevelConfig.clear();
-      this.displayNodeLevelConfig.clear();
-      Object.keys(revisedInfo).forEach((nodeId) => {
-        this.displayNodeLevelConfig.add(nodeId);
-      });
-      Object.values(revisedInfo).forEach((config) => {
-        Object.keys(config).forEach((questionId) => {
-          this.displayTaskLevelConfig.set(questionId, config[questionId]);
+    this.revisedInfo$ = this.operatorRoundService.revisedInfo$.pipe(
+      tap((revisedInfo) => {
+        this.revisedInfo = revisedInfo;
+        this.displayTaskLevelConfig.clear();
+        this.displayNodeLevelConfig.clear();
+        Object.keys(revisedInfo).forEach((nodeId) => {
+          this.displayNodeLevelConfig.add(nodeId);
         });
-      });
-
-      const revisedInfoNodes = Object.keys(revisedInfo);
-      Object.keys(this.subForms).forEach((subFormId) => {
-        if (revisedInfoNodes.includes(subFormId.split('_')[1])) {
-          const pages = this.subForms[subFormId].map((page) => {
-            page.complete = false;
-            page.partiallyChecked = false;
-            page.sections.forEach((section) => {
-              section.complete = false;
-              section.partiallyChecked = false;
-            });
-            page.questions.forEach((question) => {
-              question.complete = false;
-            });
-            return page;
+        Object.values(revisedInfo).forEach((config) => {
+          Object.keys(config).forEach((questionId) => {
+            this.displayTaskLevelConfig.set(questionId, config[questionId]);
           });
-          if (this.selectedNodeId === subFormId.split('_')[1]) {
-            this.selectedPages = pages;
+        });
+
+        const revisedInfoNodes = Object.keys(revisedInfo);
+        Object.keys(this.subForms).forEach((subFormId) => {
+          if (revisedInfoNodes.includes(subFormId.split('_')[1])) {
+            const pages = this.subForms[subFormId].map((page) => {
+              page.complete = false;
+              page.partiallyChecked = false;
+              page.sections.forEach((section) => {
+                section.complete = false;
+                section.partiallyChecked = false;
+              });
+              page.questions.forEach((question) => {
+                question.complete = false;
+              });
+              return page;
+            });
+            if (this.selectedNodeId === subFormId.split('_')[1]) {
+              this.selectedPages = pages;
+            }
+            this.operatorRoundService.setCheckBoxStatus({
+              selectedPage: pages,
+              nodeId: subFormId.split('_')[1]
+            });
           }
           this.operatorRoundService.setCheckBoxStatus({
-            selectedPage: pages,
-            nodeId: subFormId.split('_')[1]
+            selectedPage: this.selectedPages,
+            nodeId: this.selectedNodeId
           });
-        }
-        this.operatorRoundService.setCheckBoxStatus({
-          selectedPage: this.selectedPages,
-          nodeId: this.selectedNodeId
         });
-      });
-    });
+      })
+    );
     this.operatorRoundService.uniqueConfiguration$.subscribe(
       (configurations) => {
         this.uniqueConfigurations = configurations;
@@ -378,7 +381,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
       });
       if (isQuestionInConfig) {
         let time = format(new Date(), hourFormat);
-        const { startDate, endDate, shiftDetails } = config;
+        const { startDate, endDate } = config;
         const scheduleByDates =
           config.scheduleType === 'byDate'
             ? this.prepareScheduleByDates(config.scheduleByDates)
@@ -415,7 +418,8 @@ export class TaskLevelSchedulerComponent implements OnInit {
         taskLevelConfig.push({
           ...config,
           startDate: startDateByPlantTimezone,
-          endDate: endDateByPlantTimezone
+          endDate: endDateByPlantTimezone,
+          scheduleByDates
         });
       }
     });

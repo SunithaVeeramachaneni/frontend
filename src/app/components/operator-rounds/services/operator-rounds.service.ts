@@ -854,7 +854,8 @@ export class OperatorRoundsService {
   };
   compareConfigWithHeader = (
     reviseScheduleConfig: RoundPlanScheduleConfiguration,
-    reviseScheduleConfigFormValue: RoundPlanScheduleConfiguration
+    reviseScheduleConfigFormValue: RoundPlanScheduleConfiguration,
+    scheduleByDatesFormValue
   ) => {
     const {
       repeatEvery,
@@ -863,7 +864,8 @@ export class OperatorRoundsService {
       monthlyDaysOfWeek,
       startDate,
       endDate,
-      shiftDetails
+      shiftDetails,
+      scheduleByDates
     } = reviseScheduleConfig;
     const {
       repeatEvery: repeatEveryFormValue,
@@ -872,67 +874,81 @@ export class OperatorRoundsService {
       monthlyDaysOfWeek: monthlyDaysOfWeekFormValue,
       startDate: startDateFormValue,
       endDate: endDateFormValue,
-      shiftDetails: shiftDetailsFormValue
+      shiftDetails: shiftDetailsFormValue,
+      scheduleType: scheduleTypeFormValue
     } = reviseScheduleConfigFormValue;
 
-    const { repeatTypes } = scheduleConfigs;
+    const { repeatTypes, scheduleTypes } = scheduleConfigs;
 
-    switch (repeatEveryFormValue) {
-      case repeatTypes[0]:
-        return isEqual(
-          {
-            repeatEvery,
-            repeatDuration,
-            startDate: format(new Date(startDate), dateFormat4),
-            endDate: format(new Date(endDate), dateFormat4),
-            shiftDetails
-          },
-          {
-            repeatEvery: repeatEveryFormValue,
-            repeatDuration: repeatDurationFormValue,
-            startDate: startDateFormValue,
-            endDate: endDateFormValue,
-            shiftDetails: shiftDetailsFormValue
-          }
-        );
-      case repeatTypes[1]:
-        return isEqual(
-          {
-            repeatEvery,
-            repeatDuration,
-            daysOfWeek,
-            startDate: format(new Date(startDate), dateFormat4),
-            endDate: format(new Date(endDate), dateFormat4),
-            shiftDetails
-          },
-          {
-            repeatEvery: repeatEveryFormValue,
-            repeatDuration: repeatDurationFormValue,
-            daysOfWeek: daysOfWeekFormValue,
-            startDate: startDateFormValue,
-            endDate: endDateFormValue,
-            shiftDetails: shiftDetailsFormValue
-          }
-        );
-      case repeatTypes[2]:
-        return isEqual(
-          {
-            repeatEvery,
-            repeatDuration,
-            monthlyDaysOfWeek,
-            startDate: format(new Date(startDate), dateFormat4),
-            endDate: format(new Date(endDate), dateFormat4),
-            shiftDetails
-          },
-          {
-            repeatEvery: repeatEveryFormValue,
-            repeatDuration: repeatDurationFormValue,
-            monthlyDaysOfWeek: monthlyDaysOfWeekFormValue,
-            startDate: startDateFormValue,
-            endDate: endDateFormValue,
-            shiftDetails: shiftDetailsFormValue
-          }
-        );
+    if (scheduleTypeFormValue === scheduleTypes[0]) {
+      switch (repeatEveryFormValue) {
+        case repeatTypes[0]:
+          return isEqual(
+            {
+              repeatEvery,
+              repeatDuration,
+              startDate: format(new Date(startDate), dateFormat4),
+              endDate: format(new Date(endDate), dateFormat4),
+              shiftDetails
+            },
+            {
+              repeatEvery: repeatEveryFormValue,
+              repeatDuration: repeatDurationFormValue,
+              startDate: startDateFormValue,
+              endDate: endDateFormValue,
+              shiftDetails: shiftDetailsFormValue
+            }
+          );
+        case repeatTypes[1]:
+          return isEqual(
+            {
+              repeatEvery,
+              repeatDuration,
+              daysOfWeek,
+              startDate: format(new Date(startDate), dateFormat4),
+              endDate: format(new Date(endDate), dateFormat4),
+              shiftDetails
+            },
+            {
+              repeatEvery: repeatEveryFormValue,
+              repeatDuration: repeatDurationFormValue,
+              daysOfWeek: daysOfWeekFormValue,
+              startDate: startDateFormValue,
+              endDate: endDateFormValue,
+              shiftDetails: shiftDetailsFormValue
+            }
+          );
+        case repeatTypes[2]:
+          return isEqual(
+            {
+              repeatEvery,
+              repeatDuration,
+              monthlyDaysOfWeek,
+              startDate: format(new Date(startDate), dateFormat4),
+              endDate: format(new Date(endDate), dateFormat4),
+              shiftDetails
+            },
+            {
+              repeatEvery: repeatEveryFormValue,
+              repeatDuration: repeatDurationFormValue,
+              monthlyDaysOfWeek: monthlyDaysOfWeekFormValue,
+              startDate: startDateFormValue,
+              endDate: endDateFormValue,
+              shiftDetails: shiftDetailsFormValue
+            }
+          );
+      }
+    } else if (scheduleTypeFormValue === scheduleTypes[1]) {
+      return isEqual(
+        {
+          scheduleByDates,
+          shiftDetails
+        },
+        {
+          scheduleByDates: scheduleByDatesFormValue,
+          shiftDetails: shiftDetailsFormValue
+        }
+      );
     }
   };
 }

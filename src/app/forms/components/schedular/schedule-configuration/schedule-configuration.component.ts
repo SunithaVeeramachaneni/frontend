@@ -752,7 +752,7 @@ export class ScheduleConfigurationComponent
       schedularConfigFormValue;
     const scheduleByDates =
       schedularConfigFormValue.scheduleType === 'byDate'
-        ? this.prepareScheduleByDates()
+        ? this.scheduleByDates
         : [];
 
     let startDateByPlantTimezone = new Date(
@@ -994,7 +994,16 @@ export class ScheduleConfigurationComponent
     if (index === -1) {
       this.scheduleByDates = [
         ...this.scheduleByDates,
-        { date, scheduled: false }
+        {
+          date: new Date(
+            localToTimezoneDate(
+              new Date(date),
+              this.plantTimezoneMap[this.selectedDetails?.plantId],
+              ''
+            )
+          ),
+          scheduled: false
+        }
       ];
     } else {
       this.scheduleByDates.splice(index, 1);
