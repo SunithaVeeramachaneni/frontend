@@ -47,7 +47,8 @@ import { LoginService } from '../../login/services/login.service';
 import {
   DEFAULT_TEMPLATE_PAGES_STANDALONE,
   DEFAULT_TEMPLATE_PAGES_EMBEDDED,
-  formConfigurationStatus
+  formConfigurationStatus,
+  raceDynamicForms
 } from 'src/app/app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
@@ -182,6 +183,11 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
+    this.store.dispatch(
+      BuilderConfigurationActions.updateModuleName({
+        moduleName: raceDynamicForms
+      })
+    );
   }
 
   add(event: MatChipInputEvent): void {
