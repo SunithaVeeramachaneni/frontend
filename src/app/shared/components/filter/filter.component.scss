@@ -159,6 +159,12 @@ mat-datepicker-toggle.mat-datepicker-toggle.arrow-toggle button {
   max-height: 200px;
 }
 
+.user-items {
+  ::ng-deep .mat-option {
+    height: 4em !important;
+  }
+}
+
 .user-menu-item {
   display: flex;
   flex-direction: row;

@@ -114,7 +114,12 @@
         >
           <mat-form-field appearance="outline" class="mat-field">
             <mat-label id="filterEnterSchedule">Enter Schedule</mat-label>
-            <input [(ngModel)]="item.itemValue" type="number" matInput />
+            <input
+              id="enterScheduleInput"
+              [(ngModel)]="item.itemValue"
+              type="number"
+              matInput
+            />
           </mat-form-field>
         </div>
       </div>
@@ -126,6 +131,7 @@
         <mat-label id="filterDatePickerLabel">{{ item.label }}</mat-label>
         <div class="date-picker-wrap">
           <input
+            id="datePickerInput"
             [(ngModel)]="item.value"
             readonly=""
             matInput
@@ -175,8 +181,8 @@
         appearance="outline"
         class="mat-field"
       >
-        <mat-label>{{ item.label }}</mat-label>
-        <input matInput type="text" [(ngModel)]="item.value" />
+        <mat-label id="inputFieldLabel">{{ item.label }}</mat-label>
+        <input id="fieldInput" matInput type="text" [(ngModel)]="item.value" />
       </mat-form-field>
       <mat-form-field
         *ngIf="item.type === 'assignmentType'"
@@ -255,7 +261,10 @@
               />
             </mat-form-field>
           </span>
-          <div class="scrollable-area m-b-12">
+          <div
+            [ngClass]="{ 'user-items': assigneeTypeControl.value === 'user' }"
+            class="scrollable-area m-b-12"
+          >
             <mat-option
               *ngFor="let item of filteredAssignedToData$ | async"
               [value]="item"

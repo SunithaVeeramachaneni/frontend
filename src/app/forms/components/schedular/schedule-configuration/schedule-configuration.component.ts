@@ -1146,7 +1146,7 @@ export class ScheduleConfigurationComponent
       endDatePicker: new Date(addDays(new Date(), 30)),
       scheduledTill: null,
       assignmentDetails: {
-        type: this.assignTypes[1],
+        type: this.assignTypes[0],
         value: '',
         displayValue: ''
       },

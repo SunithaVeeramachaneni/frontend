@@ -61,9 +61,9 @@ export class AssignedToComponent implements OnInit, OnDestroy {
   filteredData$: Observable<any[]>;
   filteredDataCount: number;
   assignTypes = ['plant', 'userGroup', 'user'];
-  assigneeTypeControl = new FormControl('userGroup');
+  assigneeTypeControl = new FormControl('plant');
   assigneeDetails$ = new BehaviorSubject({} as AssigneeDetails);
-  private _assigneeType = 'userGroup';
+  private _assigneeType = 'plant';
   private _showAssigneeOptions = false;
   private onDestroy$ = new Subject();
   constructor() {}
