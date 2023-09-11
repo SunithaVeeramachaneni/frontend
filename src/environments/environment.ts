@@ -13,6 +13,7 @@ export const environment = {
   rdfApiUrl: 'http://localhost:8008/',
   masterConfigApiUrl: 'http://localhost:8009/',
   operatorRoundsApiUrl: 'http://localhost:8010/',
+  integrationsApiUrl: 'http://localhost:8012/integrationsapi/',
   s3BaseUrl: 'https://innovwi.s3.ap-south-1.amazonaws.com/',
   requestTimeout: 60000 * 15,
   undoRedoOffset: 5,
