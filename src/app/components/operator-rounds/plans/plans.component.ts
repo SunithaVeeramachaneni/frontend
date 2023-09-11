@@ -493,66 +493,67 @@ export class PlansComponent implements OnInit, OnDestroy {
           filterJson = res;
         })
       ),
-      this.operatorRoundsService.fetchAllPlansList$().pipe(
-        tap((plansList) => {
-          const objectKeys = Object.keys(plansList);
-          if (objectKeys.length > 0) {
-            const uniquePlants = plansList.rows
-              .map((item) => {
-                if (item.plant) {
-                  this.plantsIdNameMap[item.plant] = item.plantId;
-                  return item.plant;
-                }
-                return '';
-              })
-              .filter((value, index, self) => self.indexOf(value) === index);
-            this.plants = [...uniquePlants];
+      this.operatorRoundsService.fetchAllPlansList$()
+    ]).pipe(
+      tap(([, , plansList]) => {
+        const objectKeys = Object.keys(plansList);
+        if (objectKeys.length > 0) {
+          const uniquePlants = plansList.rows
+            .map((item) => {
+              if (item.plant) {
+                this.plantsIdNameMap[item.plant] = item.plantId;
+                return item.plant;
+              }
+              return '';
+            })
+            .filter((value, index, self) => self.indexOf(value) === index);
+          this.plants = [...uniquePlants];
 
-            const uniqueAssignTo = plansList.rows
-              ?.filter((item) => item.assignedTo.length)
-              .map((item) => item.assignedTo)
-              .filter((value, index, self) => self.indexOf(value) === index);
+          const uniqueAssignTo = plansList.rows
+            ?.filter((item) => item.assignedTo.length)
+            .map((item) => item.assignedTo)
+            .filter((value, index, self) => self.indexOf(value) === index);
 
-            if (uniqueAssignTo?.length > 0) {
-              uniqueAssignTo?.filter(Boolean).forEach((item) => {
-                if (item && this.userFullNameByEmail[item] !== undefined) {
-                  this.assignedTo = [
-                    ...this.assignedTo,
-                    {
-                      type: 'user',
-                      value: this.userFullNameByEmail[item]
-                    }
-                  ];
-                }
-              });
+          if (uniqueAssignTo?.length > 0) {
+            uniqueAssignTo?.filter(Boolean).forEach((item) => {
+              if (item && this.userFullNameByEmail[item] !== undefined) {
+                this.assignedTo = [
+                  ...this.assignedTo,
+                  {
+                    type: 'user',
+                    value: this.userFullNameByEmail[item]
+                  }
+                ];
+              }
+            });
+          }
+
+          const uniqueSchedules = plansList.rows
+            ?.map((item) => item?.schedule)
+            .filter((value, index, self) => self?.indexOf(value) === index);
+
+          if (uniqueSchedules?.length > 0) {
+            uniqueSchedules?.filter(Boolean).forEach((item) => {
+              if (item && !this.schedules.includes(item)) {
+                this.schedules.push(item);
+              }
+            });
+          }
+          for (const item of filterJson) {
+            if (item.column === 'plant') {
+              item.items = this.plants;
             }
-
-            const uniqueSchedules = plansList.rows
-              ?.map((item) => item?.schedule)
-              .filter((value, index, self) => self?.indexOf(value) === index);
-
-            if (uniqueSchedules?.length > 0) {
-              uniqueSchedules?.filter(Boolean).forEach((item) => {
-                if (item && !this.schedules.includes(item)) {
-                  this.schedules.push(item);
-                }
-              });
+            if (item.column === 'assignedToDisplay') {
+              item.items = this.assignedTo.sort();
             }
-            for (const item of filterJson) {
-              if (item.column === 'plant') {
-                item.items = this.plants;
-              }
-              if (item.column === 'assignedToDisplay') {
-                item.items = this.assignedTo.sort();
-              }
-              if (item.column === 'schedule') {
-                item.items = this.schedules.sort();
-              }
+            if (item.column === 'schedule') {
+              item.items = this.schedules.sort();
             }
           }
-        })
-      )
-    ]).pipe(tap(() => (this.filterJson = filterJson)));
+        }
+        this.filterJson = filterJson;
+      })
+    );
     this.searchForm = new FormControl('');
     this.searchForm.valueChanges
       .pipe(

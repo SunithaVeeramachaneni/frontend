@@ -626,88 +626,85 @@ export class RoundsComponent implements OnInit, OnDestroy {
           }
         })
       ),
-      this.operatorRoundsService.fetchAllRounds$().pipe(
-        tap((formsList) => {
-          this.isLoading$.next(false);
-          const objectKeys = Object.keys(formsList);
-          if (objectKeys.length > 0) {
-            const uniqueAssignTo = formsList
-              ?.filter((item) => item.assignedTo.length)
-              .map((item) => item.assignedTo)
-              .filter((value, index, self) => self.indexOf(value) === index);
+      this.operatorRoundsService.fetchAllRounds$()
+    ]).pipe(
+      tap(([, , formsList]) => {
+        this.isLoading$.next(false);
+        const objectKeys = Object.keys(formsList);
+        if (objectKeys.length > 0) {
+          const uniqueAssignTo = formsList
+            ?.filter((item) => item.assignedTo.length)
+            .map((item) => item.assignedTo)
+            .filter((value, index, self) => self.indexOf(value) === index);
 
-            const uniqueUserGroupsIds = formsList
-              ?.filter((item) => item.userGroupsIds?.length)
-              .map((item) => item.userGroupsIds)
-              .filter((value, index, self) => self.indexOf(value) === index);
+          const uniqueUserGroupsIds = formsList
+            ?.filter((item) => item.userGroupsIds?.length)
+            .map((item) => item.userGroupsIds)
+            .filter((value, index, self) => self.indexOf(value) === index);
 
-            const uniqueSchedules = formsList
-              ?.map((item) => item?.schedule)
-              .filter((value, index, self) => self?.indexOf(value) === index);
+          const uniqueSchedules = formsList
+            ?.map((item) => item?.schedule)
+            .filter((value, index, self) => self?.indexOf(value) === index);
 
-            if (uniqueSchedules?.length > 0) {
-              uniqueSchedules?.filter(Boolean).forEach((item) => {
-                if (item) {
-                  this.schedules.push(item);
-                }
-              });
-            }
-            if (uniqueAssignTo?.length > 0) {
-              uniqueAssignTo?.filter(Boolean).forEach((item) => {
-                if (item && this.userFullNameByEmail[item] !== undefined) {
-                  this.assignedTo = [
-                    ...this.assignedTo,
-                    {
-                      type: 'user',
-                      value: this.userFullNameByEmail[item]
-                    }
-                  ];
-                }
-              });
-            }
-            if (uniqueUserGroupsIds?.length > 0) {
-              uniqueUserGroupsIds?.filter(Boolean).forEach((item) => {
-                if (item && this.userGroupsIdMap[item]?.name !== undefined) {
-                  this.assignedTo = [
-                    ...this.assignedTo,
-                    {
-                      type: 'userGroup',
-                      value: this.userGroupsIdMap[item]
-                    }
-                  ];
-                }
-              });
-            }
-
-            this.plants = formsList
-              .map((item) => {
-                if (item.plant) {
-                  this.plantsIdNameMap[item.plant] = item.plantId;
-                  return item.plant;
-                }
-                return '';
-              })
-              .filter((value, index, self) => self.indexOf(value) === index)
-              .sort();
-
-            for (const item of filterJson) {
-              if (item.column === 'assignedToDisplay') {
-                item.items = this.assignedTo.sort();
-              } else if (item['column'] === 'plant') {
-                item.items = this.plants;
+          if (uniqueSchedules?.length > 0) {
+            uniqueSchedules?.filter(Boolean).forEach((item) => {
+              if (item) {
+                this.schedules.push(item);
               }
-              if (item.column === 'schedule') {
-                item.items = this.schedules.sort();
+            });
+          }
+          if (uniqueAssignTo?.length > 0) {
+            uniqueAssignTo?.filter(Boolean).forEach((item) => {
+              if (item && this.userFullNameByEmail[item] !== undefined) {
+                this.assignedTo = [
+                  ...this.assignedTo,
+                  {
+                    type: 'user',
+                    value: this.userFullNameByEmail[item]
+                  }
+                ];
               }
-              if (item['column'] === 'shiftId') {
-                item.items = Object.values(this.shiftNameMap).sort();
+            });
+          }
+          if (uniqueUserGroupsIds?.length > 0) {
+            uniqueUserGroupsIds?.filter(Boolean).forEach((item) => {
+              if (item && this.userGroupsIdMap[item]?.name !== undefined) {
+                this.assignedTo = [
+                  ...this.assignedTo,
+                  {
+                    type: 'userGroup',
+                    value: this.userGroupsIdMap[item]
+                  }
+                ];
               }
+            });
+          }
+
+          this.plants = formsList
+            .map((item) => {
+              if (item.plant) {
+                this.plantsIdNameMap[item.plant] = item.plantId;
+                return item.plant;
+              }
+              return '';
+            })
+            .filter((value, index, self) => self.indexOf(value) === index)
+            .sort();
+
+          for (const item of filterJson) {
+            if (item.column === 'assignedToDisplay') {
+              item.items = this.assignedTo.sort();
+            } else if (item['column'] === 'plant') {
+              item.items = this.plants;
+            }
+            if (item.column === 'schedule') {
+              item.items = this.schedules.sort();
+            }
+            if (item['column'] === 'shiftId') {
+              item.items = Object.values(this.shiftNameMap).sort();
             }
           }
-        })
-      )
-    ]).pipe(
-      tap(() => {
+        }
         this.filterJson = filterJson;
       })
     );
