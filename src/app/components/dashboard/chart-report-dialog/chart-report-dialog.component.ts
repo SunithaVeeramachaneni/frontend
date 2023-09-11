@@ -96,14 +96,26 @@ export class ChartReportDialog implements OnInit {
       this.selectedReport.report.filtersApplied = [filterObj];
     }
 
+    if (
+      this.selectedReport &&
+      this.selectedReport.report &&
+      this.selectedReport.report.tableDetails &&
+      this.selectedReport.report.tableDetails[0]
+    ) {
+      this.configOptions.allColumns = [
+        ...this.selectedReport?.report?.tableDetails[0]?.columns
+      ];
+    } else {
+      this.configOptions.allColumns = [...this.selectedReport.tableColumns];
+    }
+
     this.reportColumns = [];
-    this.selectedReport.tableColumns?.forEach((col) => {
+    this.configOptions.allColumns?.forEach((col: any) => {
       col.id = col.name;
       col.controlType = 'string';
       col.displayName = col.name?.toUpperCase();
       this.reportColumns = this.reportColumns.concat(col);
     });
-    this.configOptions.allColumns = [...this.selectedReport.tableColumns];
 
     this.fetchReport$.next({ data: 'load' });
     this.fetchReport$.next({} as TableEvent);
