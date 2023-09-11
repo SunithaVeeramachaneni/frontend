@@ -66,44 +66,48 @@ export class SelectQuestionsDialogComponent implements OnInit {
           }
           this.selectedSections.map((section) => {
             const sectionQuestions = page.questions.filter((q) => {
-              if (q.required === false) {
+              if (this.data.isEmbeddedForm || q.required === false) {
                 return this.data.viewMode === 'HIDE'
                   ? q.sectionId === section.id &&
-                      !q.required &&
-                      !mandateQuestion.includes(q.id)
-                  : q.sectionId === section.id && !hideQuestion.includes(q.id);
+                      (this.data.isEmbeddedForm ||
+                        (!q.required && !mandateQuestion.includes(q.id)))
+                  : q.sectionId === section.id &&
+                      (this.data.isEmbeddedForm ||
+                        !hideQuestion.includes(q.id));
               }
             });
 
-            const logics = page.logics.filter(
-              (logic) =>
-                logic.questionId === this.data.questionId &&
-                logic.logicTitle !== this.data.logic.logicTitle
-            );
-            logics.forEach((logic) => {
-              if (this.data.viewMode === 'HIDE') {
-                const mandateQuestions = page.questions.filter((q) => {
-                  if (q.required === false) {
-                    return (
-                      q.sectionId === section.id &&
-                      logic.mandateQuestions.includes(q.id)
-                    );
-                  }
-                });
-                sectionQuestions.push(...mandateQuestions);
-              }
-              if (this.data.viewMode === 'MANDATE') {
-                const hiddenQuestions = page.questions.filter((q) => {
-                  if (q.required === false) {
-                    return (
-                      q.sectionId === section.id &&
-                      logic.hideQuestions.includes(q.id)
-                    );
-                  }
-                });
-                sectionQuestions.push(...hiddenQuestions);
-              }
-            });
+            if (this.data.isEmbeddedForm) {
+              const logics = page.logics.filter(
+                (logic) =>
+                  logic.questionId === this.data.questionId &&
+                  logic.logicTitle !== this.data.logic.logicTitle
+              );
+              logics.forEach((logic) => {
+                if (this.data.viewMode === 'HIDE') {
+                  const mandateQuestions = page.questions.filter((q) => {
+                    if (q.required === false) {
+                      return (
+                        q.sectionId === section.id &&
+                        logic.mandateQuestions.includes(q.id)
+                      );
+                    }
+                  });
+                  sectionQuestions.push(...mandateQuestions);
+                }
+                if (this.data.viewMode === 'MANDATE') {
+                  const hiddenQuestions = page.questions.filter((q) => {
+                    if (q.required === false) {
+                      return (
+                        q.sectionId === section.id &&
+                        logic.hideQuestions.includes(q.id)
+                      );
+                    }
+                  });
+                  sectionQuestions.push(...hiddenQuestions);
+                }
+              });
+            }
             if (!section?.isImported)
               this.sections.push({
                 ...section,
