@@ -317,6 +317,7 @@ export class ScheduleConfigurationComponent
       this.plantService.plantTimeZoneMapping$.subscribe(
         (data) => (this.plantTimezoneMap = data)
       );
+    const initialShiftDetails = this.shiftDetails || shiftDefaultPayload;
     this.schedulerConfigForm = this.fb.group({
       id: '',
       roundPlanId: !this.isFormModule ? this.selectedDetails?.id : '',
@@ -380,7 +381,20 @@ export class ScheduleConfigurationComponent
           Validators.max(this.roundsGeneration.max)
         ]
       ],
-      shiftSlots: this.fb.array([this.addShiftDetails(true)]),
+      shiftSlots: this.fb.array([
+        this.addShiftDetails(false, {
+          null: {
+            startTime: initialShiftDetails?.null[0]?.startTime,
+            endTime: initialShiftDetails?.null[0]?.endTime,
+            payload: [
+              {
+                startTime: initialShiftDetails?.null[0]?.startTime,
+                endTime: initialShiftDetails?.null[0]?.endTime
+              }
+            ]
+          }
+        })
+      ]),
       shiftsSelected: []
     });
 
