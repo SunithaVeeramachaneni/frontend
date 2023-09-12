@@ -76,7 +76,7 @@
     ></app-filter>
   </ng-template>
 </div>
-<ng-container *ngIf="userInfo$ | async">
+<ng-container *ngIf="(userInfo$ | async) && (filterData$ | async)">
   <div
     *ngIf="(rounds$ | async) && (isLoading$ | async) === false"
     class="rounds-list"
@@ -100,7 +100,7 @@
       </div>
     </div>
   </div>
-  <ng-container *ngIf="(userInfo$ | async) && (filterData$ | async)">
+  <ng-container *ngIf="userInfo$ | async">
     <button
       class="hide-mat-menu"
       mat-button
