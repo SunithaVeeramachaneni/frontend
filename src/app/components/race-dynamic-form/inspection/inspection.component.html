@@ -80,7 +80,7 @@
     ></app-filter>
   </ng-template>
 </div>
-<ng-container *ngIf="userInfo$ | async">
+<ng-container *ngIf="(userInfo$ | async) && (filterData$ | async)">
   <div
     *ngIf="(inspections$ | async) && (isLoading$ | async) === false"
     class="inspections-list"

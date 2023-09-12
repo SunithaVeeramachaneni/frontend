@@ -90,7 +90,7 @@
     ></app-filter>
   </ng-template>
 </div>
-<ng-container *ngIf="filterData$ | async">
+<ng-container *ngIf="(userInfo$ | async) && (filterData$ | async)">
   <div
     *ngIf="(filteredRoundPlans$ | async) && (isLoading$ | async) === false"
     class="plans-list"

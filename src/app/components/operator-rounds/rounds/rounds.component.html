@@ -100,7 +100,7 @@
       </div>
     </div>
   </div>
-  <ng-container *ngIf="filterData$ | async">
+  <ng-container *ngIf="(userInfo$ | async) && (filterData$ | async)">
     <button
       class="hide-mat-menu"
       mat-button
