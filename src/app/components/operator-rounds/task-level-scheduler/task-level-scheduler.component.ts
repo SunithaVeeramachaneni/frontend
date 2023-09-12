@@ -152,7 +152,6 @@ export class TaskLevelSchedulerComponent implements OnInit {
       .subscribe((data) => {
         this.authoredData = data;
         this.subForms = JSON.parse(this.authoredData.subForms);
-
         Object.keys(this.subForms).forEach((subFormId) => {
           this.subForms[subFormId].forEach((page) => {
             page.complete = false;
@@ -415,8 +414,43 @@ export class TaskLevelSchedulerComponent implements OnInit {
               ?.timeZoneIdentifier
           ).toISOString();
         }
+
+        const nodeWiseAskQuestionIds = {};
+        const nodeWiseMandateQuestionIds = {};
+        const nodeWiseHideQuestionIds = {};
+        Object.keys(config.nodeWiseQuestionIds).forEach((nodeId) => {
+          config.nodeWiseQuestionIds[nodeId].forEach((questionId) => {
+            this.subForms[`pages_${nodeId}`].forEach((page) => {
+              page.logics.forEach((logic) => {
+                if (logic.questionId === questionId) {
+                  const askQuestionIds = page.questions
+                    .map((question) => {
+                      if (question.sectionId === `AQ_${logic.id}`) {
+                        return question.id;
+                      }
+                    })
+                    .filter((id) => id);
+
+                  if (askQuestionIds.length) {
+                    nodeWiseAskQuestionIds[nodeId] = askQuestionIds;
+                  }
+                  if (logic.action === 'MANDATE') {
+                    nodeWiseMandateQuestionIds[nodeId] = logic.mandateQuestions;
+                  }
+                  if (logic.action === 'HIDE') {
+                    nodeWiseHideQuestionIds[nodeId] = logic.hideQuestions;
+                  }
+                }
+              });
+            });
+          });
+        });
+
         taskLevelConfig.push({
           ...config,
+          nodeWiseAskQuestionIds,
+          nodeWiseMandateQuestionIds,
+          nodeWiseHideQuestionIds,
           startDate: startDateByPlantTimezone,
           endDate: endDateByPlantTimezone,
           scheduleByDates
@@ -424,6 +458,16 @@ export class TaskLevelSchedulerComponent implements OnInit {
       }
     });
     return taskLevelConfig;
+  }
+
+  prepareShiftDetails(shiftDetails) {
+    return Object.keys(shiftDetails).reduce((acc, curr) => {
+      acc[curr] = shiftDetails[curr].map((shiftData) => ({
+        ...shiftData,
+        checked: true
+      }));
+      return acc;
+    }, {});
   }
 
   onSchedule() {
@@ -435,6 +479,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
     delete payloadCopy.shiftsSelected;
     this.scheduleConfig = {
       ...payloadCopy,
+      shiftDetails: this.prepareShiftDetails(payloadCopy.shiftDetails),
       taskLevelConfig: this.prepareTaskLeveConfig(this.revisedInfo)
     };
 

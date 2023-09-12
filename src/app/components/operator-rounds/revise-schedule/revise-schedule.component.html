@@ -3,7 +3,8 @@
   [formGroup]="reviseScheduleConfigForm"
   *ngIf="{
     locationListToTask: locationListToTask$ | async,
-    revisedInfo: revisedInfo$ | async
+    revisedInfo: revisedInfo$ | async,
+    allPageCheckBoxStatus: allPageCheckBoxStatus$ | async
   }"
 >
   <h3 class="heading" translate>reviseSchedule</h3>
@@ -67,7 +68,7 @@
               matInput
               min="1"
               formControlName="repeatDuration"
-              placeholder="_ _"
+              [placeholder]="placeHolder"
             />
           </mat-form-field>
 
@@ -150,7 +151,7 @@
             <input
               matInput
               formControlName="startDate"
-              placeholder="_ _"
+              [placeholder]="placeHolder"
               readonly
             />
             <input
@@ -178,7 +179,7 @@
             <input
               matInput
               formControlName="endDate"
-              placeholder="_ _"
+              [placeholder]="placeHolder"
               readonly
             />
             <input
@@ -260,7 +261,7 @@
             >
               <span class="no-slot-times">
                 <mat-checkbox
-                  [checked]="true"
+                  [checked]="slot.checked"
                   [disabled]="true"
                   class="m-b-20 width-95"
                 >
@@ -273,7 +274,7 @@
             >
               <span class="slot-times">
                 <mat-checkbox
-                  [checked]="true"
+                  [checked]="slot.checked"
                   (change)="checkboxEventSlots($event.checked, slots, slot)"
                   class="m-b-20"
                 >
@@ -289,7 +290,7 @@
           <p>{{ slots?.name }}</p>
           <span class="slot-times" *ngFor="let slot of slots.payload">
             <mat-checkbox
-              [checked]="true"
+              [checked]="slot.checked"
               (change)="checkboxEventSlots($event.checked, slots, slot)"
               class="m-b-20"
             >

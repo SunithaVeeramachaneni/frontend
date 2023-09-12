@@ -29,7 +29,7 @@ import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { tap } from 'rxjs/operators';
 import { cloneDeep, isEqual } from 'lodash-es';
 import { dateFormat4 } from 'src/app/app.constants';
-import { ScheduleByDate } from 'src/app/interfaces';
+import { ScheduleByDate, TaskLevelScheduleSubForm } from 'src/app/interfaces';
 import { Observable } from 'rxjs';
 import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
 
@@ -86,6 +86,9 @@ export class ReviseScheduleComponent implements OnInit {
   revisedInfo = {};
   scheduleByDates: ScheduleByDate[];
   revisedInfo$: Observable<any>;
+  allPageCheckBoxStatus$: Observable<TaskLevelScheduleSubForm>;
+  subForms: TaskLevelScheduleSubForm = {};
+  placeHolder = '_ _';
 
   constructor(
     private fb: FormBuilder,
@@ -93,6 +96,14 @@ export class ReviseScheduleComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.allPageCheckBoxStatus$ =
+      this.operatorRoundService.allPageCheckBoxStatus$.pipe(
+        tap((subForms) => {
+          this.subForms = subForms;
+          this.setCommonConfig(true);
+        })
+      );
+
     this.locationListToTask$ = this.operatorRoundService.checkboxStatus$.pipe(
       tap((data) => {
         const selectedPage = data.selectedPage;
@@ -346,35 +357,82 @@ export class ReviseScheduleComponent implements OnInit {
     }, {});
   }
 
-  setCommonConfig() {
+  setCommonConfig(initial = false) {
     // Common Config for Shifts is Left
     const questionKeys = [];
     if (Object.keys(this.revisedInfo).length === 0) return;
-    this.operatorRoundService.allPageCheckBoxStatus$.subscribe((pages) => {
-      Object.keys(pages).forEach((key) => {
-        pages[key].forEach((page) => {
-          const nodeId = key.split('_')[1];
-          page.questions.forEach((question) => {
-            if (question.complete) {
-              questionKeys.push(question.id);
-            }
-          });
+
+    let nodeId: string;
+    Object.keys(this.subForms).forEach((subFormId) => {
+      this.subForms[subFormId].forEach((page) => {
+        page.questions.forEach((question) => {
+          if (question.complete) {
+            nodeId = subFormId.split('_')[1];
+            questionKeys.push(question.id);
+          }
         });
       });
     });
+
+    if (
+      questionKeys.length === 1 &&
+      this.revisedInfo[nodeId] &&
+      this.revisedInfo[nodeId][questionKeys[0]]
+    ) {
+      const { scheduleByDates, ...taskLevelScheduleConfig } =
+        this.revisedInfo[nodeId][questionKeys[0]];
+      this.reviseScheduleConfigForm.patchValue(taskLevelScheduleConfig);
+      this.allSlots.forEach((allSlot) => {
+        const { payload, ...shiftInfo } = allSlot;
+        payload.forEach((slotInfo) => {
+          if (
+            taskLevelScheduleConfig.shiftDetails[
+              shiftInfo.id ? shiftInfo.id : 'null'
+            ] &&
+            taskLevelScheduleConfig.shiftDetails[
+              shiftInfo.id ? shiftInfo.id : 'null'
+            ].find((selectedSlotInfo) => isEqual(slotInfo, selectedSlotInfo))
+          ) {
+            return slotInfo;
+          }
+          slotInfo.checked = false;
+          return slotInfo;
+        });
+      });
+      console.log(this.allSlots);
+      this.shiftsSelected.patchValue(this.allSlots);
+
+      this.allSlots = this.allSlots.filter(({ payload, ...shiftInfo }) =>
+        payload.some(({ checked }) => checked)
+      );
+      if (this.allSlots.length === 0) {
+        this.allSlots = [
+          {
+            null: { startTime: '12:00 AM', endTime: '11:59 PM' },
+            payload: [{ startTime: '00:00', endTime: '23:59', checked: true }]
+          }
+        ];
+      }
+      this.shiftSelect.value = this.allSlots;
+      return;
+    }
+
+    if (initial) {
+      return;
+    }
+
     const { commonConfig, isQuestionNotIncluded } =
       this.operatorRoundService.findCommonConfigurations(
         this.revisedInfo,
         questionKeys
       );
-    if (isQuestionNotIncluded) {
+    if (questionKeys.length > 1 && isQuestionNotIncluded) {
       this.resetReviseScheduleConfigForm();
       return;
     }
     this.reviseScheduleConfigForm.patchValue({
       repeatDuration: '',
       repeatEvery: '',
-      scheduleType: 'byFrequency',
       ...commonConfig,
       startDate: commonConfig?.startDate
         ? format(new Date(commonConfig?.startDate), dateFormat4)
@@ -414,31 +472,29 @@ export class ReviseScheduleComponent implements OnInit {
         this.reviseScheduleConfigForm.value,
         this.scheduleByDates
       );
-    this.operatorRoundService.allPageCheckBoxStatus$.subscribe((pages) => {
-      Object.keys(pages).forEach((key) => {
-        pages[key].forEach((page) => {
-          const nodeId = key.split('_')[1];
-          for (const question of page.questions) {
-            if (sameConfigAsHeader && question.complete) {
-              if (
-                this.revisedInfo[nodeId] &&
-                this.revisedInfo[nodeId][question.id]
-              ) {
-                delete this.revisedInfo[nodeId][question.id];
-                if (Object.keys(this.revisedInfo[nodeId]).length === 0)
-                  delete this.revisedInfo[nodeId];
-              }
-              continue;
+    Object.keys(this.subForms).forEach((subFormId) => {
+      this.subForms[subFormId].forEach((page) => {
+        const nodeId = subFormId.split('_')[1];
+        for (const question of page.questions) {
+          if (sameConfigAsHeader && question.complete) {
+            if (
+              this.revisedInfo[nodeId] &&
+              this.revisedInfo[nodeId][question.id]
+            ) {
+              delete this.revisedInfo[nodeId][question.id];
+              if (Object.keys(this.revisedInfo[nodeId]).length === 0)
+                delete this.revisedInfo[nodeId];
             }
-            if (question.complete) {
-              if (!this.revisedInfo[nodeId]) this.revisedInfo[nodeId] = {};
-              this.revisedInfo[nodeId][question.id] =
-                this.uniqueConfigurations[configPosition];
-            }
+            continue;
           }
-        });
+          if (question.complete) {
+            if (!this.revisedInfo[nodeId]) this.revisedInfo[nodeId] = {};
+            this.revisedInfo[nodeId][question.id] =
+              this.uniqueConfigurations[configPosition];
+          }
+        }
       });
-      this.operatorRoundService.setRevisedInfo(this.revisedInfo);
     });
+    this.operatorRoundService.setRevisedInfo(this.revisedInfo);
   }
 }
