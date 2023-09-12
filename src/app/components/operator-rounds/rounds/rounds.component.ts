@@ -90,18 +90,31 @@ import { ShiftDateChangeWarningModalComponent } from 'src/app/forms/components/s
 export class RoundsComponent implements OnInit, OnDestroy {
   @ViewChildren(MatMenuTrigger) trigger: QueryList<MatMenuTrigger>;
   @Input() set users$(users$: Observable<UserDetails[]>) {
-    this._users$ = users$.pipe(
-      tap((users) => {
-        this.assigneeDetails = {
-          ...this.assigneeDetails,
-          users
-        };
-        this.assigneeDetailsFiltered = {
-          ...this.assigneeDetails
-        };
-        this.userFullNameByEmail = this.userService.getUsersInfo();
-      })
-    );
+    this._users$ = users$
+      .pipe(
+        tap((users) => {
+          this.assigneeDetails = {
+            ...this.assigneeDetails,
+            users
+          };
+          this.assigneeDetailsFiltered = {
+            ...this.assigneeDetails
+          };
+          this.userFullNameByEmail = this.userService.getUsersInfo();
+        })
+      )
+      .pipe(
+        tap(() => {
+          for (const key in this.userFullNameByEmail) {
+            if (this.userFullNameByEmail.hasOwnProperty(key)) {
+              this.assignedTo.push({
+                type: 'user',
+                value: this.userFullNameByEmail[key]
+              });
+            }
+          }
+        })
+      );
   }
   get users$(): Observable<UserDetails[]> {
     return this._users$;
@@ -118,6 +131,10 @@ export class RoundsComponent implements OnInit, OnDestroy {
         };
         userGroups?.items?.map((userGroup) => {
           this.userGroupsIdMap[userGroup.id] = userGroup;
+          this.assignedTo.push({
+            type: 'userGroup',
+            value: userGroup
+          });
         });
       })
     );
@@ -632,16 +649,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
         this.isLoading$.next(false);
         const objectKeys = Object.keys(formsList);
         if (objectKeys.length > 0) {
-          const uniqueAssignTo = formsList
-            ?.filter((item) => item.assignedTo.length)
-            .map((item) => item.assignedTo)
-            .filter((value, index, self) => self.indexOf(value) === index);
-
-          const uniqueUserGroupsIds = formsList
-            ?.filter((item) => item.userGroupsIds?.length)
-            .map((item) => item.userGroupsIds)
-            .filter((value, index, self) => self.indexOf(value) === index);
-
           const uniqueSchedules = formsList
             ?.map((item) => item?.schedule)
             .filter((value, index, self) => self?.indexOf(value) === index);
@@ -650,32 +657,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
             uniqueSchedules?.filter(Boolean).forEach((item) => {
               if (item) {
                 this.schedules.push(item);
-              }
-            });
-          }
-          if (uniqueAssignTo?.length > 0) {
-            uniqueAssignTo?.filter(Boolean).forEach((item) => {
-              if (item && this.userFullNameByEmail[item] !== undefined) {
-                this.assignedTo = [
-                  ...this.assignedTo,
-                  {
-                    type: 'user',
-                    value: this.userFullNameByEmail[item]
-                  }
-                ];
-              }
-            });
-          }
-          if (uniqueUserGroupsIds?.length > 0) {
-            uniqueUserGroupsIds?.filter(Boolean).forEach((item) => {
-              if (item && this.userGroupsIdMap[item]?.name !== undefined) {
-                this.assignedTo = [
-                  ...this.assignedTo,
-                  {
-                    type: 'userGroup',
-                    value: this.userGroupsIdMap[item]
-                  }
-                ];
               }
             });
           }
