@@ -7,6 +7,7 @@ import {
 import { Router } from '@angular/router';
 import { Step } from 'src/app/interfaces/stepper';
 import { AlertModalComponent } from './alert-modal/alert-modal.component';
+import { OperatorRoundsService } from '../services/operator-rounds.service';
 
 @Component({
   selector: 'app-scheduler-modal',
@@ -28,7 +29,8 @@ export class SchedulerModalComponent implements OnInit {
     private router: Router,
     public dialogRef: MatDialogRef<SchedulerModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private operatorRoundService: OperatorRoundsService
   ) {}
 
   ngOnInit(): void {
@@ -42,6 +44,7 @@ export class SchedulerModalComponent implements OnInit {
     });
     alertDialog.afterClosed().subscribe((res) => {
       if (res) {
+        this.operatorRoundService.setRevisedInfo({});
         this.router.navigate(['operator-rounds/scheduler/0']);
         this.dialogRef.close();
       }

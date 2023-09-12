@@ -916,7 +916,8 @@ export class ScheduleConfigurationComponent
           endDate: endDateByPlantTimezone,
           scheduleEndOn: scheduleEndOnByPlantTimezone,
           scheduleByDates,
-          shiftDetails: this.prepareShiftDetailsPayload(this.shiftDetails)
+          shiftDetails: this.prepareShiftDetailsPayload(this.shiftDetails),
+          isTaskLevel: false
         };
         delete payload.shiftSlots;
         if (this.isFormModule) {

@@ -237,31 +237,32 @@ export class TaskLevelSchedulerComponent implements OnInit {
 
         const revisedInfoNodes = Object.keys(revisedInfo);
         Object.keys(this.subForms).forEach((subFormId) => {
-          if (revisedInfoNodes.includes(subFormId.split('_')[1])) {
-            const pages = this.subForms[subFormId].map((page) => {
-              page.complete = false;
-              page.partiallyChecked = false;
-              page.sections.forEach((section) => {
-                section.complete = false;
-                section.partiallyChecked = false;
-              });
-              page.questions.forEach((question) => {
-                question.complete = false;
-              });
-              return page;
+          // if (revisedInfoNodes.includes(subFormId.split('_')[1])) {
+          const pages = this.subForms[subFormId].map((page) => {
+            page.complete = false;
+            page.partiallyChecked = false;
+            page.sections.forEach((section) => {
+              section.complete = false;
+              section.partiallyChecked = false;
             });
-            if (this.selectedNodeId === subFormId.split('_')[1]) {
-              this.selectedPages = pages;
-            }
-            this.operatorRoundService.setCheckBoxStatus({
-              selectedPage: pages,
-              nodeId: subFormId.split('_')[1]
+            page.questions.forEach((question) => {
+              question.complete = false;
             });
+            return page;
+          });
+          if (this.selectedNodeId === subFormId.split('_')[1]) {
+            this.selectedPages = pages;
           }
           this.operatorRoundService.setCheckBoxStatus({
+            selectedPage: pages,
+            nodeId: subFormId.split('_')[1]
+          });
+          // }
+          /* this.operatorRoundService.setCheckBoxStatus({
             selectedPage: this.selectedPages,
             nodeId: this.selectedNodeId
-          });
+          }); */
+          this.openCloseRightPanelEventHandler(false);
         });
       })
     );
@@ -480,7 +481,8 @@ export class TaskLevelSchedulerComponent implements OnInit {
     this.scheduleConfig = {
       ...payloadCopy,
       shiftDetails: this.prepareShiftDetails(payloadCopy.shiftDetails),
-      taskLevelConfig: this.prepareTaskLeveConfig(this.revisedInfo)
+      taskLevelConfig: this.prepareTaskLeveConfig(this.revisedInfo),
+      isTaskLevel: true
     };
 
     this.scheduleConfig['taskLevelConfig'].filter((config) => {
@@ -489,9 +491,22 @@ export class TaskLevelSchedulerComponent implements OnInit {
     });
     /* console.log(this.scheduleConfig);
     return; */
-    this.schedulerConfigurationService
-      .createRoundPlanScheduleConfiguration$(this.scheduleConfig)
-      .subscribe();
+    if (this.scheduleConfig.id) {
+      this.schedulerConfigurationService
+        .updateRoundPlanScheduleConfiguration$(
+          this.scheduleConfig.id,
+          this.scheduleConfig
+        )
+        .subscribe();
+    } else {
+      this.schedulerConfigurationService
+        .createRoundPlanScheduleConfiguration$(this.scheduleConfig)
+        .subscribe((data) => {
+          if (Object.keys(data).length) {
+            this.payload.id = data.id;
+          }
+        });
+    }
   }
 
   prepareShiftAndSlot(shiftSlot, shiftDetails) {

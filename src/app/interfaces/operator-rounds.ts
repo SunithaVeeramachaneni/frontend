@@ -22,6 +22,7 @@ export interface RoundPlanScheduleConfiguration {
   startDatePicker?: Date;
   scheduleEndOnPicker?: Date;
   taskLevelConfig?: TaskLevelScheduleConfig[];
+  isTaskLevel: boolean;
 }
 
 export interface AssignmentDetail {

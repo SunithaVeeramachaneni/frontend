@@ -743,6 +743,7 @@ export class PlansComponent implements OnInit, OnDestroy {
           } else {
             this.openTaskLevelScheduleConfigHandler(
               { ...row, shifts: activeShifts },
+              {} as RoundPlanScheduleConfiguration,
               true
             );
           }
@@ -867,7 +868,7 @@ export class PlansComponent implements OnInit, OnDestroy {
         roundPlanDetail: this.scheduleRoundPlanDetail,
         hidden: this.hideScheduleConfig,
         moduleName: 'OPERATOR_ROUNDS',
-        isTaskLevel: isTaskLevel,
+        isTaskLevel,
         assigneeDetails: this.assigneeDetails
       }
     });
@@ -890,6 +891,7 @@ export class PlansComponent implements OnInit, OnDestroy {
 
   openTaskLevelScheduleConfigHandler(
     row: RoundPlanDetail,
+    scheduleConfiguration: RoundPlanScheduleConfiguration,
     isTaskLevel: boolean
   ) {
     this.scheduleRoundPlanDetail = { ...row };
@@ -905,8 +907,9 @@ export class PlansComponent implements OnInit, OnDestroy {
         roundPlanDetail: this.scheduleRoundPlanDetail,
         hidden: this.hideScheduleConfig,
         moduleName: 'OPERATOR_ROUNDS',
-        isTaskLevel: isTaskLevel,
-        assigneeDetails: this.assigneeDetails
+        isTaskLevel,
+        assigneeDetails: this.assigneeDetails,
+        scheduleConfiguration
       }
     });
     this.hideScheduleConfig = false;
@@ -1007,10 +1010,18 @@ export class PlansComponent implements OnInit, OnDestroy {
     const activeShifts = this.prepareActiveShifts(data);
     switch (action) {
       case 'schedule':
-        this.openScheduleConfigHandler(
-          { ...data, shifts: activeShifts },
-          false
-        );
+        if (this.roundPlanScheduleConfigurations[data.id].isTaskLevel) {
+          this.openTaskLevelScheduleConfigHandler(
+            { ...data, shifts: activeShifts },
+            this.roundPlanScheduleConfigurations[data.id],
+            true
+          );
+        } else {
+          this.openScheduleConfigHandler(
+            { ...data, shifts: activeShifts },
+            false
+          );
+        }
         break;
       case 'showDetails':
         this.openRoundPlanHandler({ ...data, shifts: activeShifts });

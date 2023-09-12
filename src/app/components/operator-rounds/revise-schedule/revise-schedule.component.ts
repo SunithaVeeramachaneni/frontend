@@ -399,12 +399,10 @@ export class ReviseScheduleComponent implements OnInit {
           return slotInfo;
         });
       });
-      console.log(this.allSlots);
-      this.shiftsSelected.patchValue(this.allSlots);
-
-      this.allSlots = this.allSlots.filter(({ payload, ...shiftInfo }) =>
+      this.allSlots = this.allSlots.filter(({ payload }) =>
         payload.some(({ checked }) => checked)
       );
+      this.shiftsSelected.patchValue(this.allSlots);
       if (this.allSlots.length === 0) {
         this.allSlots = [
           {
@@ -413,7 +411,9 @@ export class ReviseScheduleComponent implements OnInit {
           }
         ];
       }
-      this.shiftSelect.value = this.allSlots;
+      if (this.shiftSelect) {
+        this.shiftSelect.value = this.allSlots;
+      }
       return;
     }
 
