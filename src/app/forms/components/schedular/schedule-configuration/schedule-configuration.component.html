@@ -297,7 +297,7 @@
             <mat-label id="scheduleConfigStartDate" translate
               >startDate</mat-label
             >
-            <input matInput formControlName="startDate" readonly />
+            <input matInput formControlName="startDateDisplay" readonly />
             <input
               matInput
               [matDatepicker]="startDate"
@@ -327,7 +327,7 @@
             *ngIf="schedulerConfigForm.get('scheduleEndType').value === 'after'"
           >
             <mat-label id="scheduleConfigEndDate" translate>endDate</mat-label>
-            <input matInput formControlName="endDate" readonly />
+            <input matInput formControlName="endDateDisplay" readonly />
             <input
               matInput
               [matDatepicker]="endDate"
