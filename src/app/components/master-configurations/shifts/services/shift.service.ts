@@ -53,9 +53,10 @@ export class ShiftService {
         Object.fromEntries(
           Object.entries({
             searchTerm: {
-              contains: queryParams?.searchKey.toLocaleLowerCase()
+              $regex: queryParams?.searchKey?.toLowerCase(),
+              $options: 'i'
             },
-            ...(filter?.isActive && { isActive: { eq: filter.isActive } })
+            ...(filter?.isActive && { isActive: { $eq: filter.isActive } })
           }).filter(([_, v]) => Object.values(v).some((x) => x !== ''))
         )
       );
