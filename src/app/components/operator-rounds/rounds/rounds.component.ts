@@ -105,6 +105,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
       )
       .pipe(
         tap(() => {
+          this.assignedTo = this.assignedTo.filter(
+            (item) => item.type !== 'user'
+          );
           for (const key in this.userFullNameByEmail) {
             if (this.userFullNameByEmail.hasOwnProperty(key)) {
               this.assignedTo.push({
@@ -129,6 +132,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
         this.assigneeDetailsFiltered = {
           ...this.assigneeDetails
         };
+        this.assignedTo = this.assignedTo.filter(
+          (item) => item.type !== 'userGroup'
+        );
         userGroups?.items?.map((userGroup) => {
           this.userGroupsIdMap[userGroup.id] = userGroup;
           this.assignedTo.push({

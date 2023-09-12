@@ -80,9 +80,13 @@
     ></app-filter>
   </ng-template>
 </div>
-<ng-container *ngIf="(userInfo$ | async) && (filterData$ | async)">
+<ng-container *ngIf="userInfo$ | async">
   <div
-    *ngIf="(inspections$ | async) && (isLoading$ | async) === false"
+    *ngIf="
+      (filterData$ | async) &&
+      (inspections$ | async) &&
+      (isLoading$ | async) === false
+    "
     class="inspections-list"
   >
     <cwp-dynamictable
