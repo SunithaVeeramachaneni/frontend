@@ -76,9 +76,13 @@
     ></app-filter>
   </ng-template>
 </div>
-<ng-container *ngIf="(userInfo$ | async) && (filterData$ | async)">
+<ng-container *ngIf="userInfo$ | async">
   <div
-    *ngIf="(rounds$ | async) && (isLoading$ | async) === false"
+    *ngIf="
+      (filterData$ | async) &&
+      (rounds$ | async) &&
+      (isLoading$ | async) === false
+    "
     class="rounds-list"
   >
     <cwp-dynamictable

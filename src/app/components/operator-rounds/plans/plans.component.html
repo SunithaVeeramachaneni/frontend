@@ -90,9 +90,13 @@
     ></app-filter>
   </ng-template>
 </div>
-<ng-container *ngIf="(userInfo$ | async) && (filterData$ | async)">
+<ng-container *ngIf="userInfo$ | async">
   <div
-    *ngIf="(filteredRoundPlans$ | async) && (isLoading$ | async) === false"
+    *ngIf="
+      (filterData$ | async) &&
+      (filteredRoundPlans$ | async) &&
+      (isLoading$ | async) === false
+    "
     class="plans-list"
   >
     <cwp-dynamictable
