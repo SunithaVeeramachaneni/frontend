@@ -153,7 +153,7 @@ export class ScheduleConfigurationComponent
   private onDestroy$ = new Subject();
   private shiftDetails: {
     [key: string]: { startTime: string; endTime: string }[];
-  } = shiftDefaultPayload;
+  } = JSON.parse(JSON.stringify(shiftDefaultPayload));
   private shiftApiResponse: any;
   constructor(
     private fb: FormBuilder,
