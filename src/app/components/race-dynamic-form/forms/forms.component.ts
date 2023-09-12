@@ -259,18 +259,31 @@ export class FormsComponent implements OnInit, OnDestroy {
   allForms = [];
 
   @Input() set users$(users$: Observable<UserDetails[]>) {
-    this._users$ = users$.pipe(
-      tap((users) => {
-        this.assigneeDetails = {
-          ...this.assigneeDetails,
-          users
-        };
-        this.assigneeDetailsFiltered = {
-          ...this.assigneeDetails
-        };
-        this.userFullNameByEmail = this.userService.getUsersInfo();
-      })
-    );
+    this._users$ = users$
+      .pipe(
+        tap((users) => {
+          this.assigneeDetails = {
+            ...this.assigneeDetails,
+            users
+          };
+          this.assigneeDetailsFiltered = {
+            ...this.assigneeDetails
+          };
+          this.userFullNameByEmail = this.userService.getUsersInfo();
+        })
+      )
+      .pipe(
+        tap(() => {
+          for (const key in this.userFullNameByEmail) {
+            if (this.userFullNameByEmail.hasOwnProperty(key)) {
+              this.assignedTo.push({
+                type: 'user',
+                value: this.userFullNameByEmail[key]
+              });
+            }
+          }
+        })
+      );
   }
   get users$(): Observable<UserDetails[]> {
     return this._users$;
@@ -287,6 +300,10 @@ export class FormsComponent implements OnInit, OnDestroy {
         };
         userGroups?.items?.map((userGroup) => {
           this.userGroupsIdMap[userGroup.id] = userGroup;
+          this.assignedTo.push({
+            type: 'userGroup',
+            value: userGroup
+          });
         });
       })
     );
@@ -436,43 +453,6 @@ export class FormsComponent implements OnInit, OnDestroy {
             this.initial.data = this.formattingForms(this.initial.data);
 
             this.skip = this.initial.data.length;
-
-            const uniqueAssignTo = this.initial.data
-              ?.map((item) => item?.assignedToEmail)
-              .filter((value, index, self) => self.indexOf(value) === index);
-
-            if (uniqueAssignTo?.length > 0) {
-              uniqueAssignTo?.filter(Boolean).forEach((item) => {
-                if (item && this.userFullNameByEmail[item] !== undefined) {
-                  this.assignedTo = [
-                    ...this.assignedTo,
-                    {
-                      type: 'user',
-                      value: this.userFullNameByEmail[item]
-                    }
-                  ];
-                }
-              });
-            }
-
-            const uniqueUserGroupsIds = this.initial.data
-              ?.filter((item) => item.userGroupsIds?.length)
-              .map((item) => item.userGroupsIds)
-              .filter((value, index, self) => self.indexOf(value) === index);
-
-            if (uniqueUserGroupsIds?.length > 0) {
-              uniqueUserGroupsIds?.filter(Boolean).forEach((item) => {
-                if (item && this.userGroupsIdMap[item]?.name !== undefined) {
-                  this.assignedTo = [
-                    ...this.assignedTo,
-                    {
-                      type: 'userGroup',
-                      value: this.userGroupsIdMap[item]
-                    }
-                  ];
-                }
-              });
-            }
 
             for (const item of filterJson) {
               if (item.column === 'assignedToDisplay') {
