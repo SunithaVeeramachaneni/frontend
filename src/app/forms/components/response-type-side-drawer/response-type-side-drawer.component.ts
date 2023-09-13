@@ -591,11 +591,17 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
     const attributesArray = this.additionalDetailsForm.get(
       'attributes'
     ) as FormArray;
-    const updatedattributes = attributesArray.value.map((attributesinfo) => ({
-      FIELDLABEL: attributesinfo.label,
-      DEFAULTVALUE: attributesinfo.value,
-      UIFIELDTYPE: 'LF'
-    }));
+    const updatedattributes = attributesArray.value
+      .filter((additionalValueData) => {
+        return !additionalValueData.label && !additionalValueData.value
+          ? false
+          : true;
+      })
+      .map((attributesinfo) => ({
+        FIELDLABEL: attributesinfo.label,
+        DEFAULTVALUE: attributesinfo.value,
+        UIFIELDTYPE: 'LF'
+      }));
     const newTags = [];
     this.tags.forEach((selectedTag) => {
       if (this.originalTags.indexOf(selectedTag) < 0) {
