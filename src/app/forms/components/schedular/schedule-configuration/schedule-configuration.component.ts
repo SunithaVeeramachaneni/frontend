@@ -347,6 +347,11 @@ export class ScheduleConfigurationComponent
         this.plantTimezoneMap[this.selectedDetails?.plantId],
         dateFormat3
       ),
+      startDateDisplay: localToTimezoneDate(
+        new Date(),
+        this.plantTimezoneMap[this.selectedDetails?.plantId],
+        dateFormat3
+      ),
       startDatePicker: new Date(),
       endDate: [
         {
@@ -358,6 +363,11 @@ export class ScheduleConfigurationComponent
           disabled: true
         }
       ],
+      endDateDisplay: localToTimezoneDate(
+        new Date(),
+        this.plantTimezoneMap[this.selectedDetails?.plantId],
+        dateFormat3
+      ),
       endDatePicker: new Date(addDays(new Date(), 30)),
       scheduledTill: null,
       assignmentDetails: this.fb.group({
@@ -689,6 +699,10 @@ export class ScheduleConfigurationComponent
           const startDate = new Date(
             this.schedulerConfigForm.get('startDate').value
           );
+          const current = new Date();
+          startDate.setHours(current.getHours());
+          startDate.setMinutes(current.getMinutes());
+
           this.schedulerConfigForm
             .get('endDate')
             .patchValue(
@@ -702,6 +716,20 @@ export class ScheduleConfigurationComponent
                 dateFormat3
               )
             );
+
+          this.schedulerConfigForm
+            .get('endDateDisplay')
+            .patchValue(
+              format(
+                addDays(
+                  startDate,
+                  days * this.schedulerConfigForm.get('repeatDuration').value -
+                    1
+                ),
+                dateFormat3
+              )
+            );
+
           this.schedulerConfigForm
             .get('endDatePicker')
             .patchValue(
@@ -970,6 +998,12 @@ export class ScheduleConfigurationComponent
           ? format(event.value, dateFormat3)
           : format(event.value, dateFormat4)
     });
+    if (formControlDateField === 'startDate') {
+      this.schedulerConfigForm.patchValue({
+        startDateDisplay: format(event.value, dateFormat3)
+      });
+    }
+
     this.schedulerConfigForm.markAsDirty();
   }
 
@@ -1048,6 +1082,16 @@ export class ScheduleConfigurationComponent
                 )
               )
             };
+            config.endDateDisplay = localToTimezoneDate(
+              new Date(config.endDate),
+              this.plantTimezoneMap[this.selectedDetails?.plantId],
+              dateFormat3
+            );
+            config.startDateDisplay = localToTimezoneDate(
+              new Date(config.startDate),
+              this.plantTimezoneMap[this.selectedDetails?.plantId],
+              dateFormat3
+            );
             this.scheduleByDates = scheduleByDates?.map((scheduleByDate) => ({
               ...scheduleByDate,
               date: new Date(
@@ -1093,6 +1137,11 @@ export class ScheduleConfigurationComponent
         ),
         endDate: localToTimezoneDate(
           addDays(new Date(), 30),
+          this.plantTimezoneMap[this.selectedDetails?.plantId],
+          dateFormat3
+        ),
+        endDateDisplay: localToTimezoneDate(
+          new Date(),
           this.plantTimezoneMap[this.selectedDetails?.plantId],
           dateFormat3
         ),
@@ -1155,6 +1204,8 @@ export class ScheduleConfigurationComponent
       scheduleEndOccurrences: 30,
       scheduleEndOccurrencesText: 'occurrences',
       startDate: format(new Date(), 'd MMMM yyyy'),
+      startDateDisplay: format(new Date(), 'd MMMM yyyy'),
+      endDateDisplay: format(new Date(), 'd MMMM yyyy'),
       startDatePicker: new Date(),
       endDate: format(addDays(new Date(), 30), 'd MMMM yyyy'),
       endDatePicker: new Date(addDays(new Date(), 30)),
@@ -1235,6 +1286,17 @@ export class ScheduleConfigurationComponent
                 )
               )
             };
+            config.endDateDisplay = localToTimezoneDate(
+              new Date(config.endDate),
+              this.plantTimezoneMap[this.selectedDetails?.plantId],
+              dateFormat3
+            );
+            config.startDateDisplay = localToTimezoneDate(
+              new Date(config.startDate),
+              this.plantTimezoneMap[this.selectedDetails?.plantId],
+              dateFormat3
+            );
+
             this.scheduleByDates = scheduleByDates?.map((scheduleByDate) => ({
               ...scheduleByDate,
               date: new Date(
