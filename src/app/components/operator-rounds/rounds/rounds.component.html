@@ -79,8 +79,8 @@
 <ng-container *ngIf="userInfo$ | async">
   <div
     *ngIf="
-      (filterData$ | async) &&
       (rounds$ | async) &&
+      (filterData$ | async) &&
       (isLoading$ | async) === false
     "
     class="rounds-list"

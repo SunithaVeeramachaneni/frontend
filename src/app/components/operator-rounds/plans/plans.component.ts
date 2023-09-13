@@ -959,7 +959,7 @@ export class PlansComponent implements OnInit, OnDestroy {
           if (viewRounds) {
             this.selectTab.emit({
               index: 1,
-              queryParams: { id: this.scheduleRoundPlanDetail.id }
+              queryParams: { id: this.scheduleRoundPlanDetail?.id }
             });
           }
           this.scheduleRoundPlanDetail = null;

@@ -1203,8 +1203,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
 
   selectedAssigneeHandler(selectedAssignee: any) {
     const { assigneeType, user, userGroup } = selectedAssignee;
-    const { assignmentType, roundId, assignedToEmail, ...rest } =
-      this.selectedRoundInfo;
+    const { roundId, assignedToEmail, ...rest } = this.selectedRoundInfo;
+    let assignmentType = this.selectedRoundInfo?.assignmentType || '';
     let previouslyAssignedTo =
       this.selectedRoundInfo.previouslyAssignedTo || '';
 
@@ -1215,7 +1215,13 @@ export class RoundsComponent implements OnInit, OnDestroy {
     }
 
     if (assigneeType === 'userGroup') {
-      userGroupsIds += `${userGroup.id}`;
+      userGroupsIds = `${userGroup.id}`;
+      assignmentType = 'userGroup';
+    }
+
+    if (assigneeType === 'plant') {
+      userGroupsIds = '';
+      assignmentType = 'user';
     }
 
     if (assignedTo !== assignedToEmail) {
