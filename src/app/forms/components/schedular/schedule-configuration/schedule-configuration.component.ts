@@ -72,6 +72,7 @@ import {
   hourFormat
 } from 'src/app/app.constants';
 import { ScheduleConfigurationService } from 'src/app/forms/services/schedule.service';
+import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
 
 export interface ScheduleConfigEvent {
   slideInOut: 'out' | 'in';
@@ -163,6 +164,7 @@ export class ScheduleConfigurationComponent
     private plantService: PlantService,
     private readonly scheduleConfigurationService: ScheduleConfigurationService,
     private dialogRef: MatDialogRef<ScheduleConfigurationComponent>,
+    private operatorRoundService: OperatorRoundsService,
     @Inject(MAT_DIALOG_DATA)
     public data: any
   ) {}
@@ -187,6 +189,7 @@ export class ScheduleConfigurationComponent
     this.shiftsInformation = this.selectedDetails?.shifts;
     this.allShifts = this.shiftsInformation;
     this.initCreatedSlots();
+    this.operatorRoundService.setShiftInformation(this.shiftsInformation);
   }
 
   initCreatedSlots(): void {
@@ -888,6 +891,8 @@ export class ScheduleConfigurationComponent
         } else {
           delete payload.formId;
           delete payload.advanceFormsCount;
+          this.openScheduleSuccessModal('update');
+          this.operatorRoundService.setScheduleLoader(true);
           this.rpscService
             .updateRoundPlanScheduleConfiguration$(id, payload)
             .pipe(
@@ -900,10 +905,11 @@ export class ScheduleConfigurationComponent
                     mode: 'update',
                     actionType: 'scheduleConfig'
                   });
-                  this.openScheduleSuccessModal('update');
+                  this.operatorRoundService.setScheduleLoader(false);
                   this.schedulerConfigForm.markAsPristine();
                 }
                 this.initShiftStat();
+                this.operatorRoundService.setScheduleLoader(false);
                 this.cdrf.detectChanges();
               })
             )
@@ -949,6 +955,8 @@ export class ScheduleConfigurationComponent
         } else {
           delete payload.formId;
           delete payload.advanceFormsCount;
+          this.openScheduleSuccessModal('create');
+          this.operatorRoundService.setScheduleLoader(true);
           this.rpscService
             .createRoundPlanScheduleConfiguration$(payload)
             .pipe(
@@ -961,13 +969,13 @@ export class ScheduleConfigurationComponent
                     mode: 'create',
                     actionType: 'scheduleConfig'
                   });
-                  this.openScheduleSuccessModal('create');
                   this.schedulerConfigForm
                     .get('id')
                     .patchValue(scheduleConfig.id);
                   this.schedulerConfigForm.markAsPristine();
                 }
                 this.initShiftStat();
+                this.operatorRoundService.setScheduleLoader(false);
                 this.cdrf.detectChanges();
               })
             )
@@ -1332,7 +1340,7 @@ export class ScheduleConfigurationComponent
     const dialogRef = this.dialog.open(ScheduleSuccessModalComponent, {
       disableClose: true,
       width: '354px',
-      height: '275px',
+      height: 'max-content',
       backdropClass: 'schedule-success-modal',
       data: {
         name: this.selectedDetails?.name ?? '',

@@ -89,6 +89,8 @@ export class ReviseScheduleComponent implements OnInit {
   allPageCheckBoxStatus$: Observable<TaskLevelScheduleSubForm>;
   subForms: TaskLevelScheduleSubForm = {};
   placeHolder = '_ _';
+  minDate: Date;
+  maxDate: Date;
 
   constructor(
     private fb: FormBuilder,
@@ -147,6 +149,13 @@ export class ReviseScheduleComponent implements OnInit {
     if (this.reviseScheduleConfig) {
       this.resetReviseScheduleConfigForm();
       this.scheduleByDates = this.reviseScheduleConfig.scheduleByDates;
+      const scheduleDate = this.reviseScheduleConfig.scheduleByDates;
+      this.minDate = new Date(
+        Math.min(...scheduleDate.map((item) => item.date))
+      );
+      this.maxDate = new Date(
+        Math.max(...scheduleDate.map((item) => item.date))
+      );
     }
     this.revisedInfo$ = this.operatorRoundService.revisedInfo$.pipe(
       tap((revisedInfo) => {

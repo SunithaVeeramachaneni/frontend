@@ -78,6 +78,7 @@ export interface Filter {
 export interface RowLevelActionEvent {
   action: string;
   data: any;
+  subMenu: any;
 }
 
 export interface CellClickActionEvent {

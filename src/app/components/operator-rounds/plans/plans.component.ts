@@ -802,6 +802,8 @@ export class PlansComponent implements OnInit, OnDestroy {
       menuActions.push({
         title: 'Schedule',
         action: 'schedule',
+        type: 'menu',
+        menuValues: ['Header Level', 'Task Level'],
         condition: {
           operand: this.placeHolder,
           operation: 'isFalsy',
@@ -1006,22 +1008,31 @@ export class PlansComponent implements OnInit, OnDestroy {
   }
 
   rowLevelActionHandler = (event: RowLevelActionEvent) => {
-    const { action, data } = event;
+    const { action, data, subMenu } = event;
     const activeShifts = this.prepareActiveShifts(data);
     switch (action) {
       case 'schedule':
-        if (this.roundPlanScheduleConfigurations[data.id].isTaskLevel) {
+        if (subMenu === 'Task Level') {
           this.openTaskLevelScheduleConfigHandler(
             { ...data, shifts: activeShifts },
             this.roundPlanScheduleConfigurations[data.id],
             true
           );
         } else {
-          this.openScheduleConfigHandler(
-            { ...data, shifts: activeShifts },
-            false
-          );
+          if (this.roundPlanScheduleConfigurations[data.id]?.isTaskLevel) {
+            this.openTaskLevelScheduleConfigHandler(
+              { ...data, shifts: activeShifts },
+              this.roundPlanScheduleConfigurations[data.id],
+              true
+            );
+          } else {
+            this.openScheduleConfigHandler(
+              { ...data, shifts: activeShifts },
+              false
+            );
+          }
         }
+
         break;
       case 'showDetails':
         this.openRoundPlanHandler({ ...data, shifts: activeShifts });

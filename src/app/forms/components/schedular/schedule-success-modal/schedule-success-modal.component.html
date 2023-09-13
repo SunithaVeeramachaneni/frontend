@@ -1,41 +1,52 @@
-<div id="success-container">
-  <mat-icon>
-    <svg-icon
-      id="scheduleSuccessIcon"
-      icon="icon-schedule-success"
-      class="schedule-icon"
-    ></svg-icon>
-  </mat-icon>
-  <p id="scheduleSuccessText" class="color">
-    {{ 'scheduleSuccess' | translate }}
-  </p>
-  <div class="message">
-    <p id="scheduleSuccessName">
-      {{ data?.name }}
+<div *ngIf="{ scheduleLoading: scheduleLoading$ | async } as props">
+  <div class="success-container" *ngIf="props.scheduleLoading">
+    <img class="schedulerGif" src="assets/img/svg/schedulerLoader.gif" />
+    <p id="scheduleSuccessText" class="processColor">
+      {{ 'scheduleInProgress' | translate }}
     </p>
-    <p
-      id="scheduleSuccessMessage"
-      [innerHTML]="'scheduleSuccessMessage' | translate"
-    ></p>
+    <div class="message">
+      <p id="scheduleSuccessName">
+        {{ data?.name }}
+      </p>
+      <p
+        id="scheduleSuccessMessage"
+        [innerHTML]="'scheduleProgressMessage' | translate"
+      ></p>
+    </div>
   </div>
-  <button
-    id="scheduleSuccessRoundBtn"
-    *ngIf="!data?.isFormModule"
-    mat-button
-    translate="viewRounds"
-    (click)="goToList()"
-  ></button>
-  <button
-    id="scheduleSuccessFormsBtn"
-    *ngIf="data?.isFormModule"
-    mat-button
-    translate="viewForms"
-    (click)="goToList()"
-  ></button>
-  <button
-    id="scheduleSuccessCloseBtn"
-    mat-button
-    translate="close"
-    (click)="close()"
-  ></button>
+  <div class="success-container" *ngIf="!props.scheduleLoading">
+    <img class="schedulerGif" src="assets/img/svg/Success animation.gif" />
+    <p id="scheduleSuccessText" class="successColor">
+      {{ 'scheduleSuccess' | translate }}
+    </p>
+    <div class="message">
+      <p id="scheduleSuccessName">
+        {{ data?.name }}
+      </p>
+      <p
+        id="scheduleSuccessMessage"
+        [innerHTML]="'scheduleSuccessMessage' | translate"
+      ></p>
+    </div>
+    <button
+      id="scheduleSuccessRoundBtn"
+      *ngIf="!data?.isFormModule"
+      mat-button
+      translate="viewRounds"
+      (click)="goToList()"
+    ></button>
+    <button
+      id="scheduleSuccessFormsBtn"
+      *ngIf="data?.isFormModule"
+      mat-button
+      translate="viewForms"
+      (click)="goToList()"
+    ></button>
+    <button
+      id="scheduleSuccessCloseBtn"
+      mat-button
+      translate="close"
+      (click)="close()"
+    ></button>
+  </div>
 </div>
