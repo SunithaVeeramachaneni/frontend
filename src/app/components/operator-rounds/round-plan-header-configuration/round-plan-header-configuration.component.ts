@@ -284,7 +284,7 @@ export class RoundPlanHeaderConfigurationComponent
       const additionalDetailsArray =
         this.roundData.formMetadata.additionalDetails;
 
-      const tagsValue = this.roundData.formMetadata.tags;
+      const tagsValue = [...this.roundData.formMetadata.tags];
 
       this.updateAdditionalDetailsArray(additionalDetailsArray);
       this.patchTags(tagsValue);
@@ -294,7 +294,8 @@ export class RoundPlanHeaderConfigurationComponent
   }
 
   patchTags(values: any[]): void {
-    this.tags = values;
+    this.tags = [...values];
+    this.headerDataForm.get('tags').setValue([...this.tags]);
   }
 
   updateAdditionalDetailsArray(values: any[]): void {
@@ -369,6 +370,7 @@ export class RoundPlanHeaderConfigurationComponent
         ? this.filter(this.tagsCtrl.value)
         : this.allTags.slice()
     );
+    this.headerDataForm.get('tags').setValue([...this.tags]);
   }
 
   selected(event: MatAutocompleteSelectedEvent): void {
