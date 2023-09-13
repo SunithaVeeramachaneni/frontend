@@ -1,5 +1,5 @@
 export const escapeRegex = (str: string) =>
-  str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+  str.replace(/[-\/\\^$*+_?.()|[\]{}]/g, '\\$&');
 
 export const generateCopyRegex = (name: string): RegExp => {
   const escapedName = escapeRegex(name);
@@ -15,6 +15,9 @@ export const generateCopyNumber = (currentNumbers: number[]): number => {
   };
   currentNumbers.sort(sorter);
   let isInOrder: boolean;
+  currentNumbers = currentNumbers.filter((value, index, self) => {
+    return self.indexOf(value) === index;
+  });
   if (currentNumbers?.length)
     isInOrder = currentNumbers.every((num, index) => {
       newIndex += 1;
