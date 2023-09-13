@@ -75,6 +75,8 @@ export class RoundPlanHeaderConfigurationComponent
   tagsInput: ElementRef<HTMLInputElement>;
   @ViewChild('valueInput', { static: false }) valueInput: ElementRef;
   @ViewChild('labelInput', { static: false }) labelInput: ElementRef;
+  @ViewChild('roundPlanFileUpload', { static: false })
+  roundPlanFileUpload: ElementRef;
   @ViewChild('auto', { static: false }) matAutocomplete: MatAutocomplete;
   @ViewChild(MatAutocompleteTrigger) auto: MatAutocompleteTrigger;
   @Output() gotoNextStep = new EventEmitter<void>();
@@ -209,8 +211,14 @@ export class RoundPlanHeaderConfigurationComponent
       .pipe(map((data) => (Array.isArray(data) ? data : [])))
       .subscribe((attachments) => {
         attachments?.forEach((att) => {
-          this.filteredMediaType.mediaType.push(att.attachment);
-          this.filteredMediaTypeIds.mediaIds.push(att.id);
+          this.filteredMediaType.mediaType = [
+            ...this.filteredMediaType.mediaType,
+            att.attachment
+          ];
+          this.filteredMediaTypeIds.mediaIds = [
+            ...this.filteredMediaTypeIds.mediaIds,
+            att.id
+          ];
         });
         this.cdrf.detectChanges();
       });
@@ -641,6 +649,7 @@ export class RoundPlanHeaderConfigurationComponent
         }
       };
     }
+    this.clearAttachmentUpload();
   };
 
   async resizeImage(base64result: string): Promise<string> {
@@ -1000,5 +1009,8 @@ export class RoundPlanHeaderConfigurationComponent
     this.operatorRoundsService.pdfMapping$.next([]);
     this.destroy$.next();
     this.destroy$.complete();
+  }
+  clearAttachmentUpload() {
+    this.roundPlanFileUpload.nativeElement.value = '';
   }
 }
