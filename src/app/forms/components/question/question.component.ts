@@ -356,8 +356,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
             this.checkAskQuestionFeatures();
             if (
               current.fieldType === 'INST' &&
-              prevValue !== undefined &&
-              isEqual(prevValue, currValue)
+              !isEqual(prevValue, currValue)
             ) {
               this.isINSTFieldChanged = true;
             } else {
