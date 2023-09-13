@@ -397,7 +397,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
       this.plantService.fetchAllPlants$().pipe(
         tap(
           ({ items: plants }) =>
-            (this.plantsObject = plants.reduce((acc, curr) => {
+            (this.plantsObject = plants?.reduce((acc, curr) => {
               acc[curr.id] = `${curr.plantId} - ${curr.name}`;
               return acc;
             }, {}))
