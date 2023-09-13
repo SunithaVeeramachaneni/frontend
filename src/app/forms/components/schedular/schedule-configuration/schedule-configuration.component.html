@@ -55,7 +55,7 @@
           ></button>
           <button
             *ngIf="isTaskLevel"
-            id="scheduleConfigurationBtn"
+            id="scheduleConfigurationNextBtn"
             class="schedule-button"
             mat-raised-button
             type="submit"
@@ -307,7 +307,7 @@
             <mat-label id="scheduleConfigStartDate" translate
               >startDate</mat-label
             >
-            <input matInput formControlName="startDate" readonly />
+            <input matInput formControlName="startDateDisplay" readonly />
             <input
               matInput
               [matDatepicker]="startDate"
@@ -337,7 +337,7 @@
             *ngIf="schedulerConfigForm.get('scheduleEndType').value === 'after'"
           >
             <mat-label id="scheduleConfigEndDate" translate>endDate</mat-label>
-            <input matInput formControlName="endDate" readonly />
+            <input matInput formControlName="endDateDisplay" readonly />
             <input
               matInput
               [matDatepicker]="endDate"
@@ -457,7 +457,6 @@
                   color="primary"
                   *ngFor="let assignType of assignTypes; let i = index"
                   [value]="assignType"
-                  [disabled]="i !== 0"
                 >
                   {{ assignType | translate }}</mat-radio-button
                 >
@@ -466,8 +465,33 @@
             <mat-form-field
               appearance="outline"
               class="width-100 cursor"
+              *ngIf="
+                schedulerConfigForm?.get('assignmentDetails').value.type ===
+                'plant'
+              "
+            >
+              <mat-label id="scheduleConfigSelect" translate>select</mat-label>
+              <input
+                id="scheduleConfigSelectText"
+                type="text"
+                matInput
+                [value]="selectedDetails?.plant"
+                class="cursor"
+                [disabled]="true"
+              />
+              <mat-icon id="scheduleConfigDropDown" matSuffix class="cursor"
+                >arrow_drop_down</mat-icon
+              >
+            </mat-form-field>
+            <mat-form-field
+              appearance="outline"
+              class="width-100 cursor"
               [matMenuTriggerFor]="menu"
               #menuTrigger="matMenuTrigger"
+              *ngIf="
+                schedulerConfigForm?.get('assignmentDetails').value.type !==
+                'plant'
+              "
             >
               <mat-label id="scheduleConfigSelect" translate>select</mat-label>
               <input
@@ -564,6 +588,9 @@
           </div>
           <mat-menu #menu="matMenu" backdropClass="assign-menu">
             <app-assigned-to
+              [assigneeType]="
+                schedulerConfigForm.get('assignmentDetails').get('type').value
+              "
               [assigneeDetails]="assigneeDetails"
               [dropdownPosition]="dropdownPosition"
               (selectedAssignee)="selectedAssigneeHandler($event)"

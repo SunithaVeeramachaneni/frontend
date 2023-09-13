@@ -125,6 +125,25 @@
                                 Every {{ revisedQuestionData?.repeatDuration }}
                                 {{ revisedQuestionData?.repeatEvery }}
                               </span>
+                              <span
+                                *ngIf="
+                                  revisedQuestionData?.repeatEvery === 'week'
+                                "
+                              >
+                                <span
+                                  *ngFor="
+                                    let dayName of extractedDaysOfWeek;
+                                    let i = index
+                                  "
+                                >
+                                  {{ dayName }}
+                                  <span
+                                    *ngIf="i !== extractedDaysOfWeek.length - 1"
+                                  >
+                                    ,
+                                  </span></span
+                                ></span
+                              >
                             </p>
                             <p
                               *ngIf="
@@ -141,7 +160,18 @@
                             </p>
                             <p>
                               <span class="revised-title">Shifts: </span>
-                              <span class="revised-value"> ShiftA </span>
+                              <span
+                                class="revised-value"
+                                *ngFor="
+                                  let shiftGroup of shiftArray;
+                                  let i = index
+                                "
+                              >
+                                {{ getNameById(shiftGroup.id) }}
+                                <span *ngIf="i !== shiftArray.length - 1"
+                                  >,</span
+                                >
+                              </span>
                             </p>
                             <div class="dis-flex m-l-10">
                               <span class="revised-title">Slots: </span>
@@ -149,12 +179,20 @@
                                 class="revised-slots"
                                 *ngFor="let shiftGroup of shiftArray"
                               >
-                                <p
+                                <span
                                   class="revised-value"
-                                  *ngFor="let shift of shiftGroup?.shifts"
+                                  *ngFor="
+                                    let shift of shiftGroup?.shifts;
+                                    let i = index
+                                  "
                                 >
                                   {{ shift.startTime }} - {{ shift.endTime }}
-                                </p>
+                                  <span
+                                    *ngIf="i !== shiftGroup?.shifts.length - 1"
+                                  >
+                                    ,
+                                  </span>
+                                </span>
                               </div>
                             </div>
                             <div class="dis-flex m-l-10">

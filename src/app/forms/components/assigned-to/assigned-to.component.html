@@ -1,11 +1,31 @@
 <div id="assign-to">
   <mat-card>
     <mat-card-title class="m-0 light-gray dis-flex title">
-      <div id="assignedToHeading" class="heading" translate>selectAssignee</div>
+      <div id="assignedToHeading" class="heading">
+        <span *ngIf="!showAssigneeOptions"
+          ><span *ngIf="assigneeType === 'user'" translate>selectUser</span>
+          <span *ngIf="assigneeType === 'userGroup'" translate
+            >selectUserGroup</span
+          ></span
+        >
+        <span *ngIf="showAssigneeOptions" translate> assignedTo </span>
+      </div>
       <div class="cancel-side-drawer">
         <mat-icon id="assignedToCloseIcon" class="dialog-close">close</mat-icon>
       </div>
     </mat-card-title>
+    <div *ngIf="showAssigneeOptions">
+      <mat-radio-group class="radio-group" [formControl]="assigneeTypeControl">
+        <mat-radio-button
+          color="primary"
+          *ngFor="let assignType of assignTypes"
+          (click)="$event.stopPropagation()"
+          [value]="assignType"
+        >
+          {{ assignType | translate }}</mat-radio-button
+        >
+      </mat-radio-group>
+    </div>
     <mat-card-content (click)="$event.stopPropagation()">
       <span class="custom-form-field-gray-color">
         <mat-form-field appearance="outline" class="search width-100">
@@ -18,44 +38,68 @@
             type="text"
             [placeholder]="'search' | translate"
             autocomplete="off"
-            [formControl]="searchUsers"
+            [formControl]="searchInput"
           />
         </mat-form-field>
       </span>
-      <ng-container *ngFor="let user of filteredUsers$ | async">
-        <div
-          mat-menu-item
-          class="user-menu-item"
-          [ngClass]="{
-            'jsutify-content': isMultiple,
-            'disable-events': isMultiple
-          }"
-          (click)="selectAssignee(user)"
-        >
-          <img
-            id="assignedToProfileImg"
-            [src]="user.profileImage"
-            alt="Profile Image"
-            class="profile-image"
-          />
-          <div class="user-info">
-            <span id="assignedToName" class="name"
-              >{{ user.firstName }} {{ user.lastName }}</span
-            >
-            <span id="assignedToEmail" class="email">{{ user.email }}</span>
+      <ng-container *ngIf="assigneeType === 'user'">
+        <ng-container *ngFor="let user of filteredData$ | async">
+          <div
+            mat-menu-item
+            class="user-menu-item"
+            [ngClass]="{
+              'justify-content': isMultiple,
+              'disable-events': isMultiple
+            }"
+            (click)="selectAssignee(user)"
+          >
+            <img
+              id="assignedToProfileImg"
+              [src]="user.profileImage"
+              alt="Profile Image"
+              class="profile-image"
+            />
+            <div class="user-info">
+              <span id="assignedToName" class="name"
+                >{{ user.firstName }} {{ user.lastName }}</span
+              >
+              <span id="assignedToEmail" class="email">{{ user.email }}</span>
+            </div>
+            <mat-checkbox
+              [checked]="isAssigneeSelected(user.email)"
+              *ngIf="isMultiple"
+              (change)="selectAssignee(user, $event)"
+              (click)="$event.stopPropagation()"
+              [ngClass]="{ 'enable-events': isMultiple }"
+            ></mat-checkbox>
           </div>
-          <mat-checkbox
-            [checked]="isAssigneeSelected(user.email)"
-            *ngIf="isMultiple"
-            (change)="selectAssignee(user, $event)"
-            (click)="$event.stopPropagation()"
-            [ngClass]="{ 'enable-events': isMultiple }"
-          ></mat-checkbox>
-        </div>
+        </ng-container>
+      </ng-container>
+      <ng-container *ngIf="assigneeType === 'userGroup'">
+        <ng-container *ngFor="let userGroup of filteredData$ | async">
+          <div
+            mat-menu-item
+            class="user-group-item"
+            (click)="selectAssignee(userGroup)"
+          >
+            {{ userGroup.name }}
+          </div>
+        </ng-container>
+      </ng-container>
+      <ng-container *ngIf="assigneeType === 'plant'">
+        <ng-container *ngFor="let plant of filteredData$ | async">
+          <div
+            mat-menu-item
+            class="user-group-item"
+            (click)="selectAssignee(plant)"
+          >
+            {{ plant }}
+          </div>
+        </ng-container>
       </ng-container>
       <div
         id="assignedToNoResult"
-        *ngIf="!filteredUsersCount"
+        *ngIf="!filteredDataCount"
         class="no-results"
         translate
       >

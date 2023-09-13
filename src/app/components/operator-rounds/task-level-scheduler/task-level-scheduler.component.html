@@ -73,7 +73,10 @@
                 taskLevelScheduleHeaderConfiguration?.slotDetails[0]?.payload[0]
                   .endTime
               }}
-              ,
+              <span *ngIf="taskLevelScheduleHeaderConfiguration.slotsCount > 1">
+                ,
+              </span>
+
               <span
                 class="more"
                 [matMenuTriggerFor]="menu"
@@ -232,7 +235,7 @@
   <ng-container *ngIf="selectedNode$ | async">
     <div
       [ngClass]="{
-        'width-40': openCloseRightPanel === true,
+        'width-45': openCloseRightPanel === true,
         'width-70': openCloseRightPanel === false,
         'mid-panel-custom-height': payload?.scheduleType === 'byDate'
       }"

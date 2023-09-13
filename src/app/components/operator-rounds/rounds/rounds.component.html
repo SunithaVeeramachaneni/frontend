@@ -78,7 +78,11 @@
 </div>
 <ng-container *ngIf="userInfo$ | async">
   <div
-    *ngIf="(rounds$ | async) && (isLoading$ | async) === false"
+    *ngIf="
+      (filterData$ | async) &&
+      (rounds$ | async) &&
+      (isLoading$ | async) === false
+    "
     class="rounds-list"
   >
     <cwp-dynamictable
@@ -100,7 +104,7 @@
       </div>
     </div>
   </div>
-  <ng-container *ngIf="users$ | async">
+  <ng-container *ngIf="userInfo$ | async">
     <button
       class="hide-mat-menu"
       mat-button
@@ -109,7 +113,8 @@
     ></button>
     <mat-menu #assigneeMenu="matMenu" backdropClass="assign-menu-list">
       <app-assigned-to
-        [assigneeDetails]="assigneeDetails"
+        [showAssigneeOptions]="true"
+        [assigneeDetails]="assigneeDetailsFiltered"
         [dropdownPosition]="assigneePosition"
         (selectedAssignee)="selectedAssigneeHandler($event)"
       ></app-assigned-to>

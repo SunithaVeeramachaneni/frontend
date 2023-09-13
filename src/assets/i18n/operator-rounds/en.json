@@ -192,8 +192,10 @@
   "openActions": "Open Actions",
   "issues": "Issues",
   "actions": "Actions",
-  "scheduleSuccess": "Success",
-  "scheduleSuccessMessage": " has been scheduled successfully",
+  "scheduleInProgress": "Scheduling in progress...",
+  "scheduleProgressMessage": "is currently being scheduled.",
+  "scheduleSuccess": " Scheduled successfully!",
+  "scheduleSuccessMessage": " has been scheduled successfully.",
   "viewRounds": "View Rounds",
   "close": "Close",
   "all": "All ({count})",
@@ -380,5 +382,7 @@
   "additionalDetails": "Additional Details:",
   "attributesHeading": "Attributes",
   "addMoreUpto5": "Add More ( Select Upto 5 )",
+  "selectUser": "Select User",
+  "selectUserGroup": "Select User Group",
   "taskLevel": "Task Level"
 }

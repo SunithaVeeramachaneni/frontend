@@ -2,6 +2,7 @@
 /* eslint-disable no-underscore-dangle */
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
+import { scheduleConfigs } from 'src/app/forms/components/schedular/schedule-configuration/schedule-configuration.constants';
 
 @Component({
   selector: 'app-task-level-task-components',
@@ -36,11 +37,18 @@ export class TaskLevelTaskComponentsComponent implements OnInit {
   partiallyFilledSection = false;
   revisedQuestionData: any;
   shiftArray: any;
+  shiftInformation: any;
+  shortDaysOfWeek = scheduleConfigs.shortDaysOfWeek;
+  extractedDaysOfWeek: string[] = [];
   private _checkboxStatus: any;
   private _selectedPage: any;
   constructor(private operatorRoundService: OperatorRoundsService) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.operatorRoundService.shiftInformation$.subscribe((shiftData) => {
+      this.shiftInformation = shiftData;
+    });
+  }
 
   toggleIsOpenStatePage = (page) => {
     page.isOpen = !page.isOpen;
@@ -135,5 +143,15 @@ export class TaskLevelTaskComponentsComponent implements OnInit {
       id: key,
       shifts: question.shiftDetails[key]
     }));
+    this.extractedDaysOfWeek = question.daysOfWeek.map(
+      (dayNumber) => this.shortDaysOfWeek[dayNumber]
+    );
+  }
+
+  getNameById(idToFind) {
+    const matchingShift = this.shiftInformation.find(
+      (shift) => shift.id === idToFind
+    );
+    return matchingShift ? matchingShift.name : undefined;
   }
 }

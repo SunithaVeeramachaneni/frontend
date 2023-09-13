@@ -206,8 +206,8 @@
         <div class="by-date">
           <mat-calendar
             #calendar
-            [minDate]="this.reviseScheduleConfig.startDate"
-            [maxDate]="this.reviseScheduleConfig.endDate"
+            [minDate]="minDate"
+            [maxDate]="maxDate"
             [dateClass]="dateClass()"
             (selectedChange)="updateScheduleByDates($event)"
           ></mat-calendar>
@@ -235,11 +235,7 @@
               {{ allSlots.length === 4 ? 'more' : 'more' }})
             </span>
           </mat-select-trigger>
-          <mat-option
-            id="taskScheduleConfigShiftsName"
-            [value]="shifts"
-            *ngFor="let shifts of allShifts"
-          >
+          <mat-option [value]="shifts" *ngFor="let shifts of allShifts">
             <div>
               <span>{{ shifts?.name }}</span>
               <p id="scheduleConfigShiftTime" class="shift-time">
@@ -292,7 +288,7 @@
             <mat-checkbox
               [checked]="slot.checked"
               (change)="checkboxEventSlots($event.checked, slots, slot)"
-              class="m-b-20"
+              class="m-b-20 width-41"
             >
               {{ slot?.startTime }} - {{ slot?.endTime }}
             </mat-checkbox>

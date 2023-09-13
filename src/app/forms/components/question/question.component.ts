@@ -42,7 +42,7 @@ import {
 } from 'src/app/forms/state/builder/builder-state.selectors';
 import { Store } from '@ngrx/store';
 import { FormService } from '../../services/form.service';
-import { isEqual } from 'lodash-es';
+import { cloneDeep, isEqual } from 'lodash-es';
 import { BuilderConfigurationActions } from '../../state/actions';
 import { AddLogicActions } from '../../state/actions';
 import { MatMenuTrigger } from '@angular/material/menu';
@@ -55,7 +55,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Base64HelperService } from 'src/app/components/work-instructions/services/base64-helper.service';
 import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
 import { CommonService } from 'src/app/shared/services/common.service';
-
+import { operatorRounds } from 'src/app/app.constants';
 @Component({
   selector: 'app-question',
   templateUrl: './question.component.html',
@@ -165,6 +165,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   fieldTypes: any = [this.fieldType];
   formMetadata: FormMetadata;
   moduleName: string;
+  operatorRounds: string = operatorRounds;
   showAskQuestionFeatures = true;
 
   get rangeDisplayText() {
@@ -355,8 +356,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
             this.checkAskQuestionFeatures();
             if (
               current.fieldType === 'INST' &&
-              prevValue !== undefined &&
-              isEqual(prevValue, currValue)
+              !isEqual(prevValue, currValue)
             ) {
               this.isINSTFieldChanged = true;
             } else {
@@ -897,7 +897,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
   };
 
   sendFileToS3(file, params): void {
-    const { originalValue, isImage, index } = params;
+    const { isImage, index } = params;
+    let { originalValue } = params;
     this.formService
       .uploadToS3$(`${this.moduleName}/${this.formMetadata?.id}`, file)
       .subscribe((event) => {
@@ -908,9 +909,17 @@ export class QuestionComponent implements OnInit, OnDestroy {
           objectURL: event.message.objectURL
         };
         if (isImage) {
-          originalValue.images[index] = value;
+          const images = [...originalValue.images];
+          images[index] = value;
+          originalValue = cloneDeep({
+            ...originalValue,
+            images
+          });
         } else {
-          originalValue.pdf = value;
+          originalValue = cloneDeep({
+            ...originalValue,
+            pdf: value
+          });
         }
         this.instructionsUpdateValue();
         this.questionForm.get('value').setValue(originalValue);
@@ -954,16 +963,21 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
 
   instructionsFileDeleteHandler(index: number) {
-    const originalValue = this.questionForm.get('value').value;
+    let originalValue = this.questionForm.get('value').value;
     if (index < 3) {
       this.formService.deleteFromS3(originalValue.images[index].objectKey);
-      originalValue.images[index] = null;
-      originalValue.images = this.imagesArrayRemoveNullGaps(
-        originalValue.images
-      );
+      const images = [...originalValue.images];
+      images[index] = null;
+      originalValue = cloneDeep({
+        ...originalValue,
+        images: this.imagesArrayRemoveNullGaps(images)
+      });
     } else {
       this.formService.deleteFromS3(originalValue.pdf.objectKey);
-      originalValue.pdf = null;
+      originalValue = cloneDeep({
+        ...originalValue,
+        pdf: null
+      });
     }
     this.questionForm.get('value').setValue(originalValue);
     this.instructionsUpdateValue();

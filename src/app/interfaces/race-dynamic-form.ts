@@ -117,6 +117,8 @@ export interface FormScheduleConfiguration {
   scheduleEndOccurrences: number;
   startDate: string;
   endDate: string;
+  endDateDisplay: string;
+  startDateDisplay: string;
   scheduleByDates: FormScheduleByDate[];
   scheduledTill?: string;
   startDatePicker?: Date;
@@ -154,4 +156,6 @@ export interface InspectionDetail extends Form {
   previouslyAssignedTo: string;
   inspectionDBVersion: number;
   inspectionDetailDBVersion: number;
+  assignmentType?: string;
+  userGroupsIds?: string;
 }

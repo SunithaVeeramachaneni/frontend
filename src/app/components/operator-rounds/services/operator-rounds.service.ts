@@ -45,6 +45,8 @@ export class OperatorRoundsService {
   private revisedInfoSubject = new BehaviorSubject<any>({});
   private allPageCheckBoxStatusSubject = new BehaviorSubject<any>([]);
   private uniqueConfigurationSubject = new BehaviorSubject<any>([]);
+  private shhiftInformationSubject = new BehaviorSubject<any>([]);
+  private scheduleLoaderSubject = new BehaviorSubject<any>(Boolean);
 
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
@@ -57,6 +59,8 @@ export class OperatorRoundsService {
   revisedInfo$ = this.revisedInfoSubject.asObservable();
   uniqueConfiguration$ = this.uniqueConfigurationSubject.asObservable();
   usersInfoByEmail: UsersInfoByEmail;
+  shiftInformation$ = this.shhiftInformationSubject.asObservable();
+  scheduleLoader$ = this.scheduleLoaderSubject.asObservable();
 
   constructor(
     public assetHierarchyUtil: AssetHierarchyUtil,
@@ -85,6 +89,13 @@ export class OperatorRoundsService {
 
   setuniqueConfiguration(configs: any) {
     this.uniqueConfigurationSubject.next(configs);
+  }
+  setShiftInformation(shiftInfo: any) {
+    this.shhiftInformationSubject.next(shiftInfo);
+  }
+
+  setScheduleLoader(isLoading: boolean) {
+    this.scheduleLoaderSubject.next(isLoading);
   }
 
   createTags$ = (
@@ -263,6 +274,11 @@ export class OperatorRoundsService {
         rest.next = '';
       }
       let queryParameters: any = rest;
+      if (queryParameters.assignedToDisplay) {
+        queryParameters.assignedToDisplay = JSON.stringify(
+          queryParameters.assignedToDisplay
+        );
+      }
       if (filterData) {
         queryParameters = { ...rest, plantId: filterData.plant };
       }

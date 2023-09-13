@@ -11,8 +11,10 @@ import { FormMetadata } from 'src/app/interfaces';
 import {
   getFormMetadata,
   getPagesCount,
-  State
+  State,
+  getModuleName
 } from '../../state/builder/builder-state.selectors';
+import { operatorRounds } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-iphone',
@@ -41,6 +43,8 @@ export class IphoneComponent implements OnInit {
     { id: 'iphoneReadingLabel', translate: 'readingLabel' },
     { id: 'iphoneOperator', translate: 'operator' }
   ];
+  moduleName$: Observable<string>;
+  operatorRounds: string = operatorRounds;
 
   constructor(private store: Store<State>) {}
 
@@ -65,6 +69,8 @@ export class IphoneComponent implements OnInit {
       })
     );
     this.getTime();
+
+    this.moduleName$ = this.store.select(getModuleName);
   }
 
   getTime() {

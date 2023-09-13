@@ -430,7 +430,8 @@ export class AddLogicComponent implements OnInit, OnDestroy {
         questionId: this.questionId,
         subFormId: this.selectedNodeId,
         sectionId: this.sectionId,
-        isTemplate: this.isTemplate
+        isTemplate: this.isTemplate,
+        isEmbeddedForm: this.isEmbeddedForm
       },
       panelClass: 'select-questions-dialog'
     });

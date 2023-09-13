@@ -221,7 +221,7 @@
   "saturday": "Saturday",
   "every": "Every",
   "customDates": "Custom Dates",
-  "scheduleSuccess": "Success",
+  "scheduleSuccess": "Scheduled successfully!",
   "scheduleSuccessMessage": " has been scheduled successfully",
   "viewForms": "View Inspections",
   "viewPDFBtn": "View PDF",
@@ -392,5 +392,8 @@
   "additionalDetailsHeading": "Additional Details",
   "additionalDetails": "Additional Details:",
   "attributesHeading": "Attributes",
-  "addMoreUpto5": "Add More ( Select Upto 5 )"
+  "addMoreUpto5": "Add More ( Select Upto 5 )",
+  "userGroup": "User Group",
+  "selectUser": "Select User",
+  "selectUserGroup": "Select User Group"
 }
