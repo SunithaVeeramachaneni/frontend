@@ -593,9 +593,9 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
     ) as FormArray;
     const updatedattributes = attributesArray.value
       .filter((additionalValueData) => {
-        if (additionalValueData.label && additionalValueData.value) {
-          return true;
-        } else false;
+        return !additionalValueData.label && !additionalValueData.value
+          ? false
+          : true;
       })
       .map((attributesinfo) => ({
         FIELDLABEL: attributesinfo.label,
