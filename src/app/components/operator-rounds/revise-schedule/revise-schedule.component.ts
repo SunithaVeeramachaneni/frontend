@@ -367,7 +367,6 @@ export class ReviseScheduleComponent implements OnInit {
   }
 
   prepareShiftSlot(shiftSlotDetail) {
-    // const shiftData = {};
     return shiftSlotDetail.reduce((acc, curr) => {
       acc[curr.id ? curr.id : 'null'] = curr.payload
         .map((pLoad) => {

@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
   MatDialog,
@@ -36,6 +36,9 @@ export class SchedulerModalComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.operatorRoundService.setRevisedInfo({});
+    this.operatorRoundService.setCheckBoxStatus({});
+    this.operatorRoundService.setSelectedNode({});
     this.totalSteps = this.steps.length;
     const uniqueScheduleConfigurations = [];
     const revisedInfo = this.data.scheduleConfiguration.taskLevelConfig
@@ -113,11 +116,7 @@ export class SchedulerModalComponent implements OnInit {
               },
               {}
             );
-            if (acc[nodeId]) {
-              acc[nodeId] = { ...acc[nodeId], ...taskLevelScheduleConfig };
-            } else {
-              acc[nodeId] = taskLevelScheduleConfig;
-            }
+            acc[nodeId] = { ...acc[nodeId], ...taskLevelScheduleConfig };
           }
           return acc;
         }, {})
@@ -136,6 +135,8 @@ export class SchedulerModalComponent implements OnInit {
     alertDialog.afterClosed().subscribe((res) => {
       if (res) {
         this.operatorRoundService.setRevisedInfo({});
+        this.operatorRoundService.setCheckBoxStatus({});
+        this.operatorRoundService.setSelectedNode({});
         this.router.navigate(['operator-rounds/scheduler/0']);
         this.dialogRef.close();
       }

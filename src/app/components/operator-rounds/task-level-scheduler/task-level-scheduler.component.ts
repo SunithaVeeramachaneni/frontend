@@ -37,7 +37,6 @@ import {
   transition,
   trigger
 } from '@angular/animations';
-import { ShiftService } from '../../master-configurations/shifts/services/shift.service';
 import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
 import { zonedTimeToUtc } from 'date-fns-tz';
 
@@ -60,7 +59,6 @@ import { zonedTimeToUtc } from 'date-fns-tz';
           width: '30%'
         })
       ),
-      //transition('* => *', animate(250))
       transition('* => *', animate('0.4s linear'))
     ])
   ]
@@ -129,8 +127,9 @@ export class TaskLevelSchedulerComponent implements OnInit {
   displayTaskLevelConfig = new Map();
   allSlots = [];
   uniqueConfigurations = [];
-
+  uniqueConfiguration$: Observable<any>;
   state = 'closed';
+
   constructor(
     private operatorRoundService: OperatorRoundsService,
     private schedulerConfigurationService: RoundPlanScheduleConfigurationService
@@ -193,23 +192,25 @@ export class TaskLevelSchedulerComponent implements OnInit {
 
     this.selectedNode$ = this.operatorRoundService.selectedNode$.pipe(
       tap((data) => {
-        this.selectedNode = data;
-        Object.keys(this.subForms).forEach((subFormId) => {
-          const assetLocationId = subFormId.split('_')[1];
-          if (assetLocationId === this.selectedNode['id']) {
-            this.selectedPages = this.subForms[subFormId].map((page) => {
-              page.isOpen = true;
-              page.sections.forEach((section) => {
-                section.isOpen = true;
+        if (data && Object.keys(data).length) {
+          this.selectedNode = data;
+          Object.keys(this.subForms).forEach((subFormId) => {
+            const assetLocationId = subFormId.split('_')[1];
+            if (assetLocationId === this.selectedNode['id']) {
+              this.selectedPages = this.subForms[subFormId].map((page) => {
+                page.isOpen = true;
+                page.sections.forEach((section) => {
+                  section.isOpen = true;
+                });
+                page.questions.forEach((question) => {
+                  question.isOpen = true;
+                });
+                return page;
               });
-              page.questions.forEach((question) => {
-                question.isOpen = true;
-              });
-              return page;
-            });
-            this.selectedNodeId = assetLocationId;
-          }
-        });
+              this.selectedNodeId = assetLocationId;
+            }
+          });
+        }
       })
     );
 
@@ -235,9 +236,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
           });
         });
 
-        const revisedInfoNodes = Object.keys(revisedInfo);
         Object.keys(this.subForms).forEach((subFormId) => {
-          // if (revisedInfoNodes.includes(subFormId.split('_')[1])) {
           const pages = this.subForms[subFormId].map((page) => {
             page.complete = false;
             page.partiallyChecked = false;
@@ -261,11 +260,12 @@ export class TaskLevelSchedulerComponent implements OnInit {
         });
       })
     );
-    this.operatorRoundService.uniqueConfiguration$.subscribe(
-      (configurations) => {
-        this.uniqueConfigurations = configurations;
-      }
-    );
+    this.uniqueConfiguration$ =
+      this.operatorRoundService.uniqueConfiguration$.pipe(
+        tap((configurations) => {
+          this.uniqueConfigurations = configurations;
+        })
+      );
   }
 
   filter(value: string): string[] {

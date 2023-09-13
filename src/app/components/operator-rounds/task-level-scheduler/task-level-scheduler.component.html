@@ -1,4 +1,10 @@
-<div class="task-level-schedule-main" *ngIf="revisedInfo$ | async">
+<div
+  class="task-level-schedule-main"
+  *ngIf="{
+    revisedInfo: revisedInfo$ | async,
+    uniqueConfiguration: uniqueConfiguration$ | async
+  }"
+>
   <div
     class="dis-flex form-header"
     *ngIf="taskLevelScheduleHeaderConfiguration"
