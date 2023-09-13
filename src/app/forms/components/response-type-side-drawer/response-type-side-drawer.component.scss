@@ -90,6 +90,52 @@
     padding-left: 0;
   }
 
+  .remove-btn {
+    color: $disabled-color;
+    float: right;
+    cursor: pointer;
+    margin-top: 5px;
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
+  .additional-details-heading {
+    font-size: 1.2rem;
+    border-bottom: 1px solid $border-color;
+    padding: 15px;
+    font-weight: 600;
+    padding-left: 0;
+    margin: 0;
+  }
+
+  .top-bar {
+    padding: 16px 0;
+    .cancel {
+      cursor: pointer;
+      height: 15px;
+      width: 15px;
+    }
+  }
+
+  .remove-btn {
+    color: $disabled-color;
+    float: right;
+    cursor: pointer;
+    margin-top: 5px;
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
+  .additional-details-heading {
+    font-size: 1.2rem;
+    border-bottom: 1px solid $border-color;
+    padding: 15px;
+    font-weight: 600;
+    padding-left: 0;
+  }
+
   .add-response {
     color: $blue-main;
     margin-top: 10px;

@@ -783,6 +783,9 @@ export class RaceDynamicFormService {
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<InspectionDetailResponse> {
     const { fetchType, next, limit: gLimit, ...rawParams } = queryParams;
+    if (rawParams.assignedToDisplay) {
+      rawParams.assignedToDisplay = JSON.stringify(rawParams.assignedToDisplay);
+    }
 
     if (
       ['load', 'search'].includes(fetchType) ||

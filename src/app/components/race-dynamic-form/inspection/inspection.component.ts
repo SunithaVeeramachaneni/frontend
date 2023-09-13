@@ -48,7 +48,8 @@ import {
   RowLevelActionEvent,
   UserDetails,
   AssigneeDetails,
-  ErrorInfo
+  ErrorInfo,
+  UserGroup
 } from 'src/app/interfaces';
 import {
   formConfigurationStatus,
@@ -87,18 +88,68 @@ export class InspectionComponent implements OnInit, OnDestroy {
   @ViewChildren(MatMenuTrigger) trigger: QueryList<MatMenuTrigger>;
   @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
   @Input() set users$(users$: Observable<UserDetails[]>) {
-    this._users$ = users$.pipe(
-      tap((users) => {
-        this.assigneeDetails = { users };
-        this.userFullNameByEmail = this.userService.getUsersInfo();
-      })
-    );
+    this._users$ = users$
+      .pipe(
+        tap((users) => {
+          this.assigneeDetails = {
+            ...this.assigneeDetails,
+            users
+          };
+          this.assigneeDetailsFiltered = {
+            ...this.assigneeDetails
+          };
+          this.userFullNameByEmail = this.userService.getUsersInfo();
+        })
+      )
+      .pipe(
+        tap(() => {
+          this.assignedTo = this.assignedTo.filter(
+            (item) => item.type !== 'user'
+          );
+          for (const key in this.userFullNameByEmail) {
+            if (this.userFullNameByEmail.hasOwnProperty(key)) {
+              this.assignedTo.push({
+                type: 'user',
+                value: this.userFullNameByEmail[key]
+              });
+            }
+          }
+        })
+      );
   }
   get users$(): Observable<UserDetails[]> {
     return this._users$;
   }
+  @Input() set userGroups$(userGroups$: Observable<UserGroup[]>) {
+    this._userGroups$ = userGroups$.pipe(
+      tap((userGroups: any) => {
+        this.assigneeDetails = {
+          ...this.assigneeDetails,
+          userGroups: userGroups.items
+        };
+        this.assigneeDetailsFiltered = {
+          ...this.assigneeDetails
+        };
+        this.assignedTo = this.assignedTo.filter(
+          (item) => item.type !== 'userGroup'
+        );
+        userGroups?.items?.map((userGroup) => {
+          this.userGroupsIdMap[userGroup.id] = userGroup;
+          this.assignedTo.push({
+            type: 'userGroup',
+            value: userGroup
+          });
+        });
+      })
+    );
+  }
+  get userGroups$(): Observable<UserGroup[]> {
+    return this._userGroups$;
+  }
   assigneeDetails: AssigneeDetails;
+  assigneeDetailsFiltered: AssigneeDetails;
   filterJson = [];
+  userGroupsIdMap = {};
   status = [
     'Open',
     'In-Progress',
@@ -118,13 +169,13 @@ export class InspectionComponent implements OnInit, OnDestroy {
   filter = {
     status: '',
     schedule: '',
-    assignedTo: '',
+    assignedToDisplay: '',
     dueDate: '',
     plant: '',
     shiftId: '',
     scheduledAt: ''
   };
-  assignedTo: string[] = [];
+  assignedTo: any[] = [];
   schedules: string[] = [];
   assigneePosition: any;
   partialColumns: Partial<Column>[] = [
@@ -260,7 +311,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
       hasConditionalStyles: true
     },
     {
-      id: 'assignedTo',
+      id: 'assignedToDisplay',
       displayName: 'Assigned To',
       type: 'string',
       controlType: 'dropdown',
@@ -341,6 +392,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   userInfo$: Observable<UserInfo>;
+  filterData$: Observable<any>;
   selectedForm: InspectionDetail;
   selectedFormInfo: InspectionDetail;
   selectedDate = null;
@@ -371,6 +423,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   private _users$: Observable<UserDetails[]>;
+  private _userGroups$: Observable<UserGroup[]>;
   private onDestroy$ = new Subject();
 
   constructor(
@@ -399,8 +452,62 @@ export class InspectionComponent implements OnInit, OnDestroy {
     this.allActiveShifts$ = this.shiftService.fetchAllShifts$();
     this.fetchInspection$.next({} as TableEvent);
     this.searchForm = new FormControl('');
-    this.getFilter();
-    this.getAllInspections();
+    let filterJson = [];
+    this.filterData$ = combineLatest([
+      this.users$,
+      this.raceDynamicFormService.getInspectionFilter().pipe(
+        tap((res) => {
+          filterJson = res;
+          for (const item of filterJson) {
+            if (item.column === 'status') {
+              item.items = this.status;
+            }
+          }
+        })
+      ),
+      this.raceDynamicFormService.fetchAllInspections$()
+    ]).pipe(
+      tap(([, , formsList]) => {
+        this.isLoading$.next(false);
+        const objectKeys = Object.keys(formsList);
+        if (objectKeys.length > 0) {
+          const uniqueSchedules = formsList
+            ?.map((item) => item?.schedule)
+            .filter((value, index, self) => self?.indexOf(value) === index);
+
+          if (uniqueSchedules?.length > 0) {
+            uniqueSchedules?.filter(Boolean).forEach((item) => {
+              if (item) {
+                this.schedules.push(item);
+              }
+            });
+          }
+          this.plants = formsList
+            .map((item) => {
+              if (item.plant) {
+                this.plantsIdNameMap[item.plant] = item.plantId;
+                return item.plant;
+              }
+              return '';
+            })
+            .filter((value, index, self) => self.indexOf(value) === index)
+            .sort();
+
+          for (const item of filterJson) {
+            if (item.column === 'assignedToDisplay') {
+              item.items = this.assignedTo.sort();
+            } else if (item.column === 'plant') {
+              item.items = this.plants;
+            } else if (item.column === 'schedule') {
+              item.items = this.schedules.sort();
+            } else if (item.column === 'shiftId') {
+              item.items = Object.values(this.shiftNameMap).sort();
+            }
+          }
+        }
+        this.filterJson = filterJson;
+      })
+    );
     this.searchForm.valueChanges
       .pipe(
         debounceTime(500),
@@ -453,6 +560,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
       inspectionsOnLoadSearch$,
       onScrollInspections$,
       this.users$,
+      this.userGroups$,
       this.shiftService.fetchAllShifts$().pipe(
         tap((shifts) => {
           shifts?.items?.map((shift) => {
@@ -495,8 +603,17 @@ export class InspectionComponent implements OnInit, OnDestroy {
             assignedTo: inspectionDetail?.assignedTo
               ? this.userService.getUserFullName(inspectionDetail.assignedTo)
               : '',
+            assignedToDisplay: inspectionDetail.assignedTo?.length
+              ? this.userService.getUserFullName(inspectionDetail.assignedTo)
+              : inspectionDetail.userGroupsIds?.length
+              ? this.userGroupsIdMap[
+                  inspectionDetail.userGroupsIds?.split(',')[0]
+                ]?.name
+              : '',
             statusDisplay: inspectionDetail.status.replace('-', ' '),
-            assignedToEmail: inspectionDetail.assignedTo || ''
+            assignedToEmail: inspectionDetail.assignedTo?.length
+              ? inspectionDetail.assignedTo
+              : ''
           }));
         } else {
           this.initial.data = this.initial.data.concat(
@@ -513,8 +630,17 @@ export class InspectionComponent implements OnInit, OnDestroy {
               assignedTo: this.userService.getUserFullName(
                 inspectionDetail.assignedTo
               ),
+              assignedToDisplay: inspectionDetail.assignedTo?.length
+                ? this.userService.getUserFullName(inspectionDetail.assignedTo)
+                : inspectionDetail.userGroupsIds?.length
+                ? this.userGroupsIdMap[
+                    inspectionDetail.userGroupsIds?.split(',')[0]
+                  ]?.name
+                : '',
               statusDisplay: inspectionDetail.status.replace('-', ' '),
-              assignedToEmail: inspectionDetail.assignedTo || ''
+              assignedToEmail: inspectionDetail.assignedTo?.length
+                ? inspectionDetail.assignedTo
+                : ''
             }))
           );
         }
@@ -571,63 +697,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
         })
       );
   }
-  getAllInspections() {
-    this.isLoading$.next(true);
-    this.raceDynamicFormService.fetchAllInspections$().subscribe(
-      (formsList) => {
-        this.isLoading$.next(false);
-        const objectKeys = Object.keys(formsList);
-        if (objectKeys.length > 0) {
-          const uniqueAssignTo = formsList
-            ?.map((item) => item.assignedTo)
-            .filter((value, index, self) => self.indexOf(value) === index);
-
-          if (uniqueAssignTo?.length > 0) {
-            uniqueAssignTo?.filter(Boolean).forEach((item) => {
-              if (item && this.userFullNameByEmail[item] !== undefined) {
-                this.assignedTo.push(this.userFullNameByEmail[item].fullName);
-              }
-            });
-          }
-
-          const uniqueSchedules = formsList
-            ?.map((item) => item?.schedule)
-            .filter((value, index, self) => self?.indexOf(value) === index);
-
-          if (uniqueSchedules?.length > 0) {
-            uniqueSchedules?.filter(Boolean).forEach((item) => {
-              if (item) {
-                this.schedules.push(item);
-              }
-            });
-          }
-          this.plants = formsList
-            .map((item) => {
-              if (item.plant) {
-                this.plantsIdNameMap[item.plant] = item.plantId;
-                return item.plant;
-              }
-              return '';
-            })
-            .filter((value, index, self) => self.indexOf(value) === index)
-            .sort();
-
-          for (const item of this.filterJson) {
-            if (item.column === 'assignedTo') {
-              item.items = this.assignedTo.sort();
-            } else if (item.column === 'plant') {
-              item.items = this.plants;
-            } else if (item.column === 'schedule') {
-              item.items = this.schedules.sort();
-            } else if (item.column === 'shiftId') {
-              item.items = Object.values(this.shiftNameMap).sort();
-            }
-          }
-        }
-      },
-      () => this.isLoading$.next(true)
-    );
-  }
 
   handleTableEvent = (event): void => {
     this.fetchInspection$.next(event);
@@ -643,10 +712,19 @@ export class InspectionComponent implements OnInit, OnDestroy {
     const { columnId, row } = event;
     const pos = document.getElementById(`${row.id}`).getBoundingClientRect();
     switch (columnId) {
-      case 'assignedTo':
+      case 'assignedToDisplay':
         this.assigneePosition = {
           top: `${pos?.top + 17}px`,
           left: `${pos?.left - 15}px`
+        };
+        this.assigneeDetailsFiltered = {
+          users: this.assigneeDetails.users?.filter((user) =>
+            user.plantId?.includes(row.plantId)
+          ),
+          userGroups: this.assigneeDetails.userGroups?.filter((userGroup) =>
+            userGroup.plantId?.includes(row.plantId)
+          ),
+          plants: [row.plant]
         };
         if (row.status !== 'submitted' && row.status !== 'overdue')
           this.trigger.toArray()[0].openMenu();
@@ -820,15 +898,36 @@ export class InspectionComponent implements OnInit, OnDestroy {
       );
   }
 
-  getFilter() {
-    this.raceDynamicFormService.getInspectionFilter().subscribe((res) => {
-      this.filterJson = res;
-      for (const item of this.filterJson) {
-        if (item.column === 'status') {
-          item.items = this.status;
-        }
-      }
+  getFullNameToEmailArray(data: any) {
+    const emailArray = [];
+    data?.forEach((name: any) => {
+      emailArray.push(
+        Object.keys(this.userFullNameByEmail).find(
+          (email) => this.userFullNameByEmail[email].fullName === name
+        )
+      );
     });
+    return emailArray;
+  }
+
+  getUserGroupNameToIdsArray(data: any) {
+    const userGroupIdsArray = [];
+    data?.forEach((name: any) => {
+      userGroupIdsArray.push(
+        Object.keys(this.userGroupsIdMap).find(
+          (id) => this.userGroupsIdMap[id].name === name
+        )
+      );
+    });
+    return userGroupIdsArray;
+  }
+
+  getPlantNameToPlantId(data: any) {
+    const plantIdArray = [];
+    data?.forEach((name: any) => {
+      plantIdArray.push(this.plantsIdNameMap[name]);
+    });
+    return plantIdArray;
   }
 
   applyFilters(data: any): void {
@@ -846,6 +945,29 @@ export class InspectionComponent implements OnInit, OnDestroy {
         this.filter[item.column] = item.value;
       } else if (item.column === 'dueDate' && item.value) {
         this.filter[item.column] = item.value;
+      } else if (item.column === 'assignedToDisplay' && item.value) {
+        if (item.value[0].type === 'user') {
+          this.filter[item.column] = {
+            type: 'user',
+            value: this.getFullNameToEmailArray(
+              item.value.map((user) => user.value.fullName)
+            )
+          };
+        }
+        if (item.value[0].type === 'userGroup') {
+          this.filter[item.column] = {
+            type: 'userGroup',
+            value: this.getUserGroupNameToIdsArray(
+              item.value.map((userGroup) => userGroup.value.name)
+            )
+          };
+        }
+        if (item.value[0].type === 'plant') {
+          this.filter[item.column] = {
+            type: 'plant',
+            value: this.getPlantNameToPlantId(item.value.map((p) => p.plant))
+          };
+        }
       } else if (item.type !== 'date' && item.value) {
         this.filter[item.column] = item.value;
       } else if (item.type === 'date' && item.value) {
@@ -861,7 +983,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
     this.filter = {
       status: '',
       schedule: '',
-      assignedTo: '',
+      assignedToDisplay: '',
       dueDate: '',
       plant: '',
       shiftId: '',
@@ -885,10 +1007,22 @@ export class InspectionComponent implements OnInit, OnDestroy {
     }
   };
 
-  selectedAssigneeHandler(userDetails: UserDetails) {
-    const { email: assignedTo } = userDetails;
-    const { inspectionId, assignedToEmail, ...rest } = this.selectedFormInfo;
+  selectedAssigneeHandler(selectedAssignee: any) {
+    const { assigneeType, user, userGroup } = selectedAssignee;
+    const { assignmentType, inspectionId, assignedToEmail, ...rest } =
+      this.selectedFormInfo;
     let previouslyAssignedTo = this.selectedFormInfo.previouslyAssignedTo || '';
+
+    let assignedTo = '';
+    let userGroupsIds = '';
+    if (assigneeType === 'user') {
+      assignedTo = user.email;
+    }
+
+    if (assigneeType === 'userGroup' || assignmentType === 'userGroup') {
+      userGroupsIds += `${userGroup.id}`;
+    }
+
     if (assignedTo !== assignedToEmail) {
       previouslyAssignedTo += previouslyAssignedTo.length
         ? `,${assignedToEmail}`
@@ -904,17 +1038,29 @@ export class InspectionComponent implements OnInit, OnDestroy {
 
     let { status } = this.selectedFormInfo;
 
-    status =
-      status.toLowerCase() === 'open'
-        ? 'assigned'
-        : status.toLowerCase() === 'partly-open'
-        ? 'in-progress'
-        : status;
+    if (status.toLowerCase() === 'open' && assigneeType === 'user') {
+      status = 'assigned';
+    } else if (
+      status.toLowerCase() === 'partly-open' &&
+      assigneeType === 'user'
+    ) {
+      status = 'in-progress';
+    } else if (status.toLowerCase() === 'assigned' && assigneeType !== 'user') {
+      status = 'open';
+    }
 
     this.raceDynamicFormService
       .updateInspection$(
         inspectionId,
-        { ...rest, inspectionId, assignedTo, previouslyAssignedTo, status },
+        {
+          ...rest,
+          inspectionId,
+          assignedTo,
+          previouslyAssignedTo,
+          assignmentType,
+          userGroupsIds,
+          status
+        },
         'assigned-to'
       )
       .pipe(
@@ -924,10 +1070,19 @@ export class InspectionComponent implements OnInit, OnDestroy {
               if (data.inspectionId === inspectionId) {
                 return {
                   ...data,
-                  assignedTo: this.userService.getUserFullName(assignedTo),
                   inspectionDBVersion: resp.inspectionDBVersion + 1,
                   status,
-                  assignedToEmail: resp.assignedTo || ''
+                  assignedTo: assignedTo?.length
+                    ? this.userService.getUserFullName(assignedTo)
+                    : '',
+                  assignmentType,
+                  userGroupsIds,
+                  assignedToDisplay: assignedTo?.length
+                    ? this.userService.getUserFullName(assignedTo)
+                    : userGroupsIds?.length
+                    ? this.userGroupsIdMap[userGroupsIds.split(',')[0]]?.name
+                    : '',
+                  assignedToEmail: assignedTo?.length ? assignedTo : ''
                 };
               }
               return data;
@@ -955,6 +1110,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
       status,
       locationAndAssetTasksCompleted,
       assignedTo,
+      assignmentType,
+      userGroupsIds,
       ...rest
     } = this.selectedFormInfo;
     if (changedDueDate.getTime() < new Date(scheduledAt).getTime()) {
@@ -1055,7 +1212,9 @@ export class InspectionComponent implements OnInit, OnDestroy {
                 scheduledAt,
                 locationAndAssetTasksCompleted,
                 slotDetails: slot,
-                assignedTo
+                assignedTo,
+                assignmentType,
+                userGroupsIds
               },
               'due-date'
             )
@@ -1077,7 +1236,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
                         inspectionDBVersion: resp.inspectionDBVersion + 1,
                         inspectionDetailDBVersion:
                           resp.inspectionDetailDBVersion + 1,
-                        assignedToEmail: resp.assignedTo
+                        assignedToEmail:
+                          assignmentType === 'user' ? assignedTo : ''
                       };
                     }
                     return data;
@@ -1113,6 +1273,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
       status,
       locationAndAssetTasksCompleted,
       assignedTo,
+      assignmentType,
+      userGroupsIds,
       ...rest
     } = this.selectedFormInfo;
     if (new Date(dueDate).getTime() < changedScheduledAt.getTime()) {
@@ -1216,7 +1378,9 @@ export class InspectionComponent implements OnInit, OnDestroy {
                 assignedTo,
                 slotDetails: slot,
                 scheduledAt: changedScheduledAt,
-                dueDate
+                dueDate,
+                assignmentType,
+                userGroupsIds
               },
               'start-date'
             )
@@ -1237,7 +1401,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
                         inspectionDBVersion: resp.inspectionDBVersion + 1,
                         inspectionDetailDBVersion:
                           resp.inspectionDetailDBVersion + 1,
-                        assignedToEmail: resp.assignedTo
+                        assignedToEmail:
+                          assignmentType === 'user' ? assignedTo : ''
                       };
                     }
                     return data;
@@ -1273,6 +1438,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
       scheduledAt,
       dueDate,
       slotDetails,
+      assignmentType,
+      userGroupsIds,
       status,
       ...rest
     } = this.selectedFormInfo;
@@ -1375,7 +1542,9 @@ export class InspectionComponent implements OnInit, OnDestroy {
               locationAndAssetTasksCompleted,
               assignedTo,
               slotDetails: slot,
-              status: changedStatus
+              status: changedStatus,
+              assignmentType,
+              userGroupsIds
             },
             'shift'
           )
@@ -1404,7 +1573,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
                       inspectionDBVersion: resp.inspectionDBVersion + 1,
                       inspectionDetailDBVersion:
                         resp.inspectionDetailDBVersion + 1,
-                      assignedToEmail: resp.assignedTo
+                      assignedToEmail:
+                        assignmentType === 'user' ? assignedTo : ''
                     };
                   }
                   return data;

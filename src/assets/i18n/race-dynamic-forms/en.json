@@ -392,5 +392,8 @@
   "additionalDetailsHeading": "Additional Details",
   "additionalDetails": "Additional Details:",
   "attributesHeading": "Attributes",
-  "addMoreUpto5": "Add More ( Select Upto 5 )"
+  "addMoreUpto5": "Add More ( Select Upto 5 )",
+  "userGroup": "User Group",
+  "selectUser": "Select User",
+  "selectUserGroup": "Select User Group"
 }
