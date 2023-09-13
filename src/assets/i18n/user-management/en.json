@@ -60,6 +60,7 @@
   "users": "Users",
   "usersPlural": "{count, plural, =0{ User} one{ User} other{ Users}}",
   "deactivateUserWarning": "Do you want to deactivate the user profile of",
+  "deactivateAlert": "Once deactivated, User will not be re-activated again.",
   "deactivateUsersWarning": "Do you want to deactivate the selected",
   "alert": "Alert",
   "cannotBeDeletedText": " cannot be deleted",

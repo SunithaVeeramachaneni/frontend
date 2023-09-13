@@ -37,7 +37,14 @@ import {
   isBefore,
   weeksToDays
 } from 'date-fns';
-import { takeUntil, tap } from 'rxjs/operators';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  pairwise,
+  startWith,
+  takeUntil,
+  tap
+} from 'rxjs/operators';
 import { RoundPlanScheduleConfigurationService } from 'src/app/components/operator-rounds/services/round-plan-schedule-configuration.service';
 import {
   AssigneeDetails,
@@ -70,6 +77,7 @@ import {
   hourFormat
 } from 'src/app/app.constants';
 import { ScheduleConfigurationService } from 'src/app/forms/services/schedule.service';
+import { isEqual } from 'lodash-es';
 
 export interface ScheduleConfigEvent {
   slideInOut: 'out' | 'in';
@@ -145,7 +153,7 @@ export class ScheduleConfigurationComponent
   private onDestroy$ = new Subject();
   private shiftDetails: {
     [key: string]: { startTime: string; endTime: string }[];
-  } = shiftDefaultPayload;
+  } = JSON.parse(JSON.stringify(shiftDefaultPayload));
   private shiftApiResponse: any;
   constructor(
     private fb: FormBuilder,
@@ -259,7 +267,16 @@ export class ScheduleConfigurationComponent
     if (this.data) {
       const { formDetail, roundPlanDetail, moduleName, assigneeDetails } =
         this.data;
-      this.assigneeDetails = assigneeDetails;
+      const plantId =
+        moduleName === 'RDF' ? formDetail.plantId : roundPlanDetail.plantId;
+      this.assigneeDetails = {
+        users: assigneeDetails.users?.filter((user) =>
+          user.plantId?.includes(plantId)
+        ),
+        userGroups: assigneeDetails.userGroups?.filter((userGroup) =>
+          userGroup.plantId?.includes(plantId)
+        )
+      };
       this.moduleName = moduleName;
 
       // If the module name is RDF
@@ -300,6 +317,7 @@ export class ScheduleConfigurationComponent
       this.plantService.plantTimeZoneMapping$.subscribe(
         (data) => (this.plantTimezoneMap = data)
       );
+    const initialShiftDetails = this.shiftDetails || shiftDefaultPayload;
     this.schedulerConfigForm = this.fb.group({
       id: '',
       roundPlanId: !this.isFormModule ? this.selectedDetails?.id : '',
@@ -353,7 +371,7 @@ export class ScheduleConfigurationComponent
       endDatePicker: new Date(addDays(new Date(), 30)),
       scheduledTill: null,
       assignmentDetails: this.fb.group({
-        type: ['User'],
+        type: ['userGroup'],
         value: '',
         displayValue: ''
       }),
@@ -373,9 +391,44 @@ export class ScheduleConfigurationComponent
           Validators.max(this.roundsGeneration.max)
         ]
       ],
-      shiftSlots: this.fb.array([this.addShiftDetails(true)]),
+      shiftSlots: this.fb.array([
+        this.addShiftDetails(false, {
+          null: {
+            startTime: initialShiftDetails?.null[0]?.startTime,
+            endTime: initialShiftDetails?.null[0]?.endTime,
+            payload: [
+              {
+                startTime: initialShiftDetails?.null[0]?.startTime,
+                endTime: initialShiftDetails?.null[0]?.endTime
+              }
+            ]
+          }
+        })
+      ]),
       shiftsSelected: []
     });
+
+    this.schedulerConfigForm
+      .get('assignmentDetails')
+      .valueChanges.pipe(
+        startWith({}),
+        distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
+        pairwise(),
+        tap(([prev, curr]) => {
+          if (!isEqual(prev, curr)) {
+            if (prev.type !== curr.type) {
+              this.schedulerConfigForm.get('assignmentDetails').patchValue({
+                type: curr.type,
+                value: '',
+                displayValue: ''
+              });
+            }
+          }
+        })
+      )
+      .subscribe();
+
     this.schedulerConfigForm
       .get('scheduleEndType')
       .valueChanges.pipe(takeUntil(this.onDestroy$))
@@ -807,6 +860,9 @@ export class ScheduleConfigurationComponent
           this.plantTimezoneMap[this.selectedDetails?.plantId]
             ?.timeZoneIdentifier
         ).toISOString();
+      }
+      if (rest.assignmentDetails.type === 'plant') {
+        rest.assignmentDetails.type = 'user';
       }
       if (id) {
         const payload = {
@@ -1347,11 +1403,19 @@ export class ScheduleConfigurationComponent
     });
   }
 
-  selectedAssigneeHandler({ user }: SelectedAssignee) {
-    const { email: value, firstName, lastName } = user;
-    this.schedulerConfigForm
-      .get('assignmentDetails')
-      .patchValue({ value, displayValue: `${firstName} ${lastName}` });
+  selectedAssigneeHandler(selectedAssignee: any) {
+    if (selectedAssignee.assigneeType === 'user') {
+      const { email: value, firstName, lastName } = selectedAssignee.user;
+      this.schedulerConfigForm
+        .get('assignmentDetails')
+        .patchValue({ value, displayValue: `${firstName} ${lastName}` });
+    }
+    if (selectedAssignee.assigneeType === 'userGroup') {
+      const { id: value, name: displayValue } = selectedAssignee.userGroup;
+      this.schedulerConfigForm
+        .get('assignmentDetails')
+        .patchValue({ value, displayValue });
+    }
     this.schedulerConfigForm.markAsDirty();
     this.menuTrigger.closeMenu();
   }
@@ -1444,7 +1508,19 @@ export class ScheduleConfigurationComponent
               id: foundShift?.id,
               name: foundShift?.name,
               startTime: foundShift?.startTime,
-              endTime: foundShift?.endTime
+              endTime: foundShift?.endTime,
+              payload: [
+                {
+                  startTime:
+                    this.scheduleConfigurationService.convertTo12HourFormat(
+                      foundShift?.startTime
+                    ),
+                  endTime:
+                    this.scheduleConfigurationService.convertTo12HourFormat(
+                      foundShift?.endTime
+                    )
+                }
+              ]
             })
           );
         }
@@ -1465,7 +1541,22 @@ export class ScheduleConfigurationComponent
       this.shiftSlots.clear();
       this.shiftApiResponse = null;
       this.shiftDetails = shiftDefaultPayload;
-      this.shiftSlots.push(this.addShiftDetails(true));
+      if (this.shiftDetails) {
+        this.shiftSlots.push(
+          this.addShiftDetails(false, {
+            null: {
+              startTime: this.shiftDetails?.null[0]?.startTime,
+              endTime: this.shiftDetails?.null[0]?.endTime,
+              payload: [
+                {
+                  startTime: this.shiftDetails?.null[0]?.startTime,
+                  endTime: this.shiftDetails?.null[0]?.endTime
+                }
+              ]
+            }
+          })
+        );
+      }
     }
     this.scheduleConfigurationService.setSlotChanged(true);
   }

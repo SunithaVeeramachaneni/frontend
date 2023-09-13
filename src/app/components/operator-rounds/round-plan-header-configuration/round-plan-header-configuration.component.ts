@@ -109,7 +109,6 @@ export class RoundPlanHeaderConfigurationComponent
   modalIsOpen = false;
   attachment: any;
   formMetadata: FormMetadata;
-  moduleName: string;
   form: FormGroup;
   isOpen = new FormControl(false);
   options: any = [];
@@ -277,7 +276,7 @@ export class RoundPlanHeaderConfigurationComponent
       const additionalDetailsArray =
         this.roundData.formMetadata.additionalDetails;
 
-      const tagsValue = this.roundData.formMetadata.tags;
+      const tagsValue = [...this.roundData.formMetadata.tags];
 
       this.updateAdditionalDetailsArray(additionalDetailsArray);
       this.patchTags(tagsValue);
@@ -287,7 +286,8 @@ export class RoundPlanHeaderConfigurationComponent
   }
 
   patchTags(values: any[]): void {
-    this.tags = values;
+    this.tags = [...values];
+    this.headerDataForm.get('tags').setValue([...this.tags]);
   }
 
   updateAdditionalDetailsArray(values: any[]): void {
@@ -362,6 +362,7 @@ export class RoundPlanHeaderConfigurationComponent
         ? this.filter(this.tagsCtrl.value)
         : this.allTags.slice()
     );
+    this.headerDataForm.get('tags').setValue([...this.tags]);
   }
 
   selected(event: MatAutocompleteSelectedEvent): void {
@@ -438,8 +439,7 @@ export class RoundPlanHeaderConfigurationComponent
             formMetadata: {
               ...this.headerDataForm.value,
               additionalDetails: updatedAdditionalDetails,
-              plant: plant.name,
-              moduleName: 'rdf'
+              plant: plant.name
             },
             formDetailPublishStatus: formConfigurationStatus.draft,
             formSaveStatus: formConfigurationStatus.saving
@@ -472,7 +472,6 @@ export class RoundPlanHeaderConfigurationComponent
               id: this.roundData.formMetadata.id,
               additionalDetails: updatedAdditionalDetails,
               plant: plant.name,
-              moduleName: 'rdf',
               lastModifiedBy: this.loginService.getLoggedInUserName()
             },
             formStatus: this.hasFormChanges
@@ -494,7 +493,6 @@ export class RoundPlanHeaderConfigurationComponent
               id: this.roundData.formMetadata.id,
               additionalDetails: updatedAdditionalDetails,
               plant: plant.name,
-              moduleName: 'rdf',
               lastModifiedBy: this.loginService.getLoggedInUserName()
             },
             formListDynamoDBVersion: this.roundData.formListDynamoDBVersion,

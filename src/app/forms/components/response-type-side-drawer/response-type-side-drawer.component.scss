@@ -11,7 +11,7 @@
   background-color: $white;
   border-left: 1px solid $border-color;
   box-shadow: -15px 0px 17px -7px rgb(0 0 0 / 46%);
-  padding: 0px 20px;
+  padding: 0px 16px;
 
   ::ng-deep .mat-card {
     box-shadow: none !important;
@@ -27,6 +27,62 @@
   }
 
   .mcq-heading {
+    font-size: 1.2rem;
+    border-bottom: 1px solid $border-color;
+    padding: 15px;
+    font-weight: 600;
+    padding-left: 0;
+    margin: 0;
+  }
+
+  .top-bar {
+    padding: 16px 0;
+    .cancel {
+      cursor: pointer;
+      height: 15px;
+      width: 15px;
+    }
+  }
+
+  .remove-btn {
+    color: $disabled-color;
+    float: right;
+    cursor: pointer;
+    margin-top: 5px;
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
+  .additional-details-heading {
+    font-size: 1.2rem;
+    border-bottom: 1px solid $border-color;
+    padding: 15px;
+    font-weight: 600;
+    padding-left: 0;
+    margin: 0;
+  }
+
+  .top-bar {
+    padding: 16px 0;
+    .cancel {
+      cursor: pointer;
+      height: 15px;
+      width: 15px;
+    }
+  }
+
+  .remove-btn {
+    color: $disabled-color;
+    float: right;
+    cursor: pointer;
+    margin-top: 5px;
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
+  .additional-details-heading {
     font-size: 1.2rem;
     border-bottom: 1px solid $border-color;
     padding: 15px;
@@ -152,10 +208,11 @@
   }
 
   .slider-inputs {
-    width: 100px;
+    width: 98%;
     height: 35px;
     border: 1px solid $border-color;
     border-radius: 4px;
+    padding: 5px;
   }
 
   .delete-btn {
@@ -175,18 +232,6 @@
 
   .text-align-end {
     text-align: end;
-  }
-
-  .apply-slider-btn {
-    width: 48%;
-    background-color: $blue-main;
-  }
-
-  .cancel-slider {
-    width: 48%;
-    margin-right: 10px;
-    border: 1px solid $blue-main;
-    color: $blue-main;
   }
 
   .submit-response-btn {
@@ -304,8 +349,8 @@
   bottom: 0;
   left: 0;
   display: flex;
-  padding: 10px;
-  height: 75px;
+  padding: 12px 16px;
+  height: 40px;
   align-items: center;
   width: 94%;
   justify-content: center;
@@ -362,7 +407,6 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin: 0px 15px;
   .limitDivider {
     position: relative;
     margin: 15px 0px;
@@ -376,6 +420,7 @@
         font-weight: 500;
         .inputField {
           width: 80%;
+          padding: 5px;
           height: 25px;
           margin-top: 10px;
           border: 1px solid $gray3;

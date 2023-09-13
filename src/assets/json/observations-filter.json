@@ -14,6 +14,13 @@
     "value": ""
   },
   {
+    "label": "Asset",
+    "items": [],
+    "column": "asset",
+    "type": "select",
+    "value": ""
+  },
+  {
     "label": "Plant",
     "items": [],
     "column": "plant",

@@ -379,10 +379,15 @@
   float: right;
 }
 
-::ng-deep .assign-menu + * .mat-menu-panel {
+::ng-deep ::ng-deep .assign-menu + * .mat-menu-panel {
   position: relative;
   top: 60px;
 }
+
+::ng-deep .mat-menu-panel {
+  max-width: 340px !important;
+}
+
 ::ng-deep .mat-card > :last-child:not(.mat-card-footer),
 .mat-card-content > :last-child:not(.mat-card-footer) {
   margin-bottom: 70px;

@@ -52,7 +52,8 @@ import { State, getFormMetadata } from 'src/app/forms/state';
 import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
 import {
   DEFAULT_PDF_BUILDER_CONFIG,
-  formConfigurationStatus
+  formConfigurationStatus,
+  raceDynamicForms
 } from 'src/app/app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
@@ -181,7 +182,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
       isPublic: [false],
       isArchived: [false],
       formStatus: [formConfigurationStatus.draft],
-      formType: [formConfigurationStatus.standalone],
+      formType: [this.data?.formType],
       tags: [this.tags],
       plantId: ['', Validators.required],
       additionalDetails: this.fb.array([]),
@@ -269,7 +270,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
         {
           name: this.data.formData.name,
           description: this.data.formData.description,
-          formType: this.data.formData.formType,
+          formType: this.data.formType,
           formStatus: this.data.formData.formStatus,
           instructions: this.data.formData.instructions
         },
@@ -424,6 +425,11 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     );
 
     if (this.headerDataForm.valid) {
+      this.store.dispatch(
+        BuilderConfigurationActions.updateModuleName({
+          moduleName: raceDynamicForms
+        })
+      );
       const userName = this.loginService.getLoggedInUserName();
       if (this.formData.formExists === false) {
         this.store.dispatch(

@@ -785,20 +785,20 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
         this.plantTimezoneMap[
           this.issuesActionsDetailViewForm.get('plantId').value
         ],
-        dateFormat2
+        dateTimeFormat2
       );
     }
-    return format(parsedDate, dateFormat2);
+    return format(parsedDate, dateTimeFormat2);
   }
 
   compareDates(dateString: string): string {
-    const parsedDate = parse(dateString, dateFormat2, new Date());
+    const parsedDate = parse(dateString, dateTimeFormat2, new Date());
 
     return isToday(parsedDate)
       ? 'Today'
       : isYesterday(parsedDate)
       ? 'Yesterday'
-      : format(parsedDate, dateFormat2);
+      : format(new Date(parsedDate), dateFormat2);
   }
 
   ngOnDestroy(): void {
