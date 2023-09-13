@@ -1014,12 +1014,12 @@ export class InspectionComponent implements OnInit, OnDestroy {
     let previouslyAssignedTo = this.selectedFormInfo.previouslyAssignedTo || '';
 
     let assignedTo = '';
-    let userGroupsIds = '';
+    let userGroupsIds = this.selectedFormInfo?.userGroupsIds || '';
     if (assigneeType === 'user') {
       assignedTo = user.email;
     }
 
-    if (assigneeType === 'userGroup' || assignmentType === 'userGroup') {
+    if (assigneeType === 'userGroup') {
       userGroupsIds += `${userGroup.id}`;
     }
 

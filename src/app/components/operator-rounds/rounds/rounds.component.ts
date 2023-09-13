@@ -1209,12 +1209,12 @@ export class RoundsComponent implements OnInit, OnDestroy {
       this.selectedRoundInfo.previouslyAssignedTo || '';
 
     let assignedTo = '';
-    let userGroupsIds = '';
+    let userGroupsIds = this.selectedRoundInfo?.userGroupsIds || '';
     if (assigneeType === 'user') {
       assignedTo = user.email;
     }
 
-    if (assigneeType === 'userGroup' || assignmentType === 'userGroup') {
+    if (assigneeType === 'userGroup') {
       userGroupsIds += `${userGroup.id}`;
     }
 
