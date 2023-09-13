@@ -309,31 +309,45 @@ export class ReviseScheduleComponent implements OnInit {
     this.shiftSelect.value = this.allSlots;
   }
 
+  updateConfig(config) {
+    if (config.scheduleType === scheduleConfigs.scheduleEndTypes[0]) {
+      if (config.repeatTypes === scheduleConfigs.repeatTypes[0]) {
+        config.daysOfWeek = [0];
+        config.monthlyDaysOfWeek = [[0], [0], [0], [0], [0]];
+      } else if (config.repeatTypes === scheduleConfigs.repeatTypes[1]) {
+        config.monthlyDaysOfWeek = [[0], [0], [0], [0], [0]];
+      } else {
+        config.daysOfWeek = [0];
+      }
+    } else {
+      config.daysOfWeek = [0];
+      config.monthlyDaysOfWeek = [[0], [0], [0], [0], [0]];
+    }
+  }
+
   comparingConfig(newConfig, scheduleByDates) {
     newConfig.shiftDetails = {
       ...this.prepareShiftSlot(this.allSlots)
     };
+    this.updateConfig(newConfig);
     let configIndex = 0;
     let configFound = false;
+    const currentConfig = cloneDeep({ ...newConfig, scheduleByDates });
     if (!this.uniqueConfigurations.length) {
-      this.uniqueConfigurations.push(
-        cloneDeep({ ...newConfig, scheduleByDates })
-      );
+      this.uniqueConfigurations.push(currentConfig);
       this.operatorRoundService.setuniqueConfiguration(
         this.uniqueConfigurations
       );
       return 0;
     }
     this.uniqueConfigurations.forEach((config, index) => {
-      if (isEqual(newConfig, config)) {
+      if (isEqual(currentConfig, config)) {
         configFound = true;
         configIndex = index;
       }
     });
     if (!configFound) {
-      this.uniqueConfigurations.push(
-        cloneDeep({ ...newConfig, scheduleByDates })
-      );
+      this.uniqueConfigurations.push(cloneDeep(currentConfig));
       this.operatorRoundService.setuniqueConfiguration(
         this.uniqueConfigurations
       );
@@ -451,13 +465,10 @@ export class ReviseScheduleComponent implements OnInit {
       repeatEvery: this.reviseScheduleConfig.repeatEvery,
       daysOfWeek: this.reviseScheduleConfig.daysOfWeek,
       monthlyDaysOfWeek: this.reviseScheduleConfig.monthlyDaysOfWeek,
-      startDate: format(
-        new Date(this.reviseScheduleConfig.startDate),
-        dateFormat4
-      ),
-      startDatePicker: new Date(this.reviseScheduleConfig.startDate),
-      endDate: format(new Date(this.reviseScheduleConfig.endDate), dateFormat4),
-      endDatePicker: new Date(this.reviseScheduleConfig.endDate)
+      startDate: this.reviseScheduleConfig.startDate,
+      startDatePicker: this.reviseScheduleConfig.startDatePicker,
+      endDate: this.reviseScheduleConfig.endDate,
+      endDatePicker: this.reviseScheduleConfig.endDatePicker
     });
   }
 

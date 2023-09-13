@@ -8,6 +8,8 @@ import { Router } from '@angular/router';
 import { Step } from 'src/app/interfaces/stepper';
 import { AlertModalComponent } from './alert-modal/alert-modal.component';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
+import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
+import { dateFormat3, dateFormat4 } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-scheduler-modal',
@@ -35,6 +37,95 @@ export class SchedulerModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.totalSteps = this.steps.length;
+    const uniqueScheduleConfigurations = [];
+    const revisedInfo = this.data.scheduleConfiguration.taskLevelConfig
+      ? this.data.scheduleConfiguration.taskLevelConfig.reduce((acc, curr) => {
+          const {
+            nodeWiseQuestionIds,
+            nodeWiseAskQuestionIds,
+            nodeWiseHideQuestionIds,
+            nodeWiseMandateQuestionIds,
+            _id,
+            scheduledTill,
+            ...taskLevelConfig
+          } = curr;
+          const {
+            startDate,
+            endDate,
+            daysOfWeek,
+            monthlyDaysOfWeek,
+            repeatDuration,
+            repeatEvery,
+            scheduleByDates,
+            scheduleType,
+            shiftDetails
+          } = taskLevelConfig;
+          const formatedStartDate = localToTimezoneDate(
+            new Date(startDate),
+            this.data.plantTimezoneMap[this.data.roundPlanDetail?.plantId],
+            dateFormat4
+          );
+          const formatedEndDate = localToTimezoneDate(
+            new Date(endDate),
+            this.data.plantTimezoneMap[this.data.roundPlanDetail?.plantId],
+            dateFormat4
+          );
+          const startDatePicker = new Date(
+            localToTimezoneDate(
+              new Date(startDate),
+              this.data.plantTimezoneMap[this.data.roundPlanDetail?.plantId],
+              dateFormat3
+            )
+          );
+          const endDatePicker = new Date(
+            localToTimezoneDate(
+              new Date(endDate),
+              this.data.plantTimezoneMap[this.data.roundPlanDetail?.plantId],
+              dateFormat3
+            )
+          );
+          uniqueScheduleConfigurations.push({
+            startDate: formatedStartDate,
+            endDate: formatedEndDate,
+            startDatePicker,
+            endDatePicker,
+            daysOfWeek,
+            monthlyDaysOfWeek,
+            repeatDuration,
+            repeatEvery,
+            scheduleByDates,
+            scheduleType,
+            shiftDetails
+          });
+          for (const [nodeId, questionsIds] of Object.entries(
+            nodeWiseQuestionIds as { [key: string]: string[] }
+          )) {
+            const taskLevelScheduleConfig = questionsIds.reduce(
+              (queAcc, queCurr) => {
+                queAcc[queCurr] = {
+                  ...taskLevelConfig,
+                  startDate: formatedStartDate,
+                  endDate: formatedEndDate,
+                  startDatePicker,
+                  endDatePicker
+                };
+                return queAcc;
+              },
+              {}
+            );
+            if (acc[nodeId]) {
+              acc[nodeId] = { ...acc[nodeId], ...taskLevelScheduleConfig };
+            } else {
+              acc[nodeId] = taskLevelScheduleConfig;
+            }
+          }
+          return acc;
+        }, {})
+      : {};
+    this.operatorRoundService.setuniqueConfiguration(
+      uniqueScheduleConfigurations
+    );
+    this.operatorRoundService.setRevisedInfo(revisedInfo);
   }
 
   goBack() {

@@ -746,52 +746,17 @@ export class ScheduleConfigurationComponent
 
   prepareScheduleConfigurationDetail() {
     const schedularConfigFormValue = this.schedulerConfigForm.getRawValue();
-    const { id, startDate, endDate, scheduleEndOn } = schedularConfigFormValue;
-    let time = format(new Date(), hourFormat);
-    const { startDatePicker, endDatePicker, scheduleEndOnPicker, ...rest } =
+
+    const { startDatePicker, endDatePicker, scheduleType } =
       schedularConfigFormValue;
+
     const scheduleByDates =
-      schedularConfigFormValue.scheduleType === 'byDate'
-        ? this.scheduleByDates
-        : [];
+      scheduleType === 'byDate' ? this.scheduleByDates : [];
 
-    let startDateByPlantTimezone = new Date(
-      `${startDate} ${time}`
-    ).toISOString();
-    let endDateByPlantTimezone = new Date(`${endDate} ${time}`).toISOString();
-    let scheduleEndOnByPlantTimezone = new Date(
-      `${scheduleEndOn} ${time}`
-    ).toISOString();
-
-    if (
-      this.plantTimezoneMap[this.selectedDetails?.plantId]?.timeZoneIdentifier
-    ) {
-      time = localToTimezoneDate(
-        new Date(),
-        this.plantTimezoneMap[this.selectedDetails?.plantId],
-        hourFormat
-      );
-
-      startDateByPlantTimezone = zonedTimeToUtc(
-        format(new Date(startDate), dateFormat5) + ` ${time}`,
-        this.plantTimezoneMap[this.selectedDetails?.plantId]?.timeZoneIdentifier
-      ).toISOString();
-
-      endDateByPlantTimezone = zonedTimeToUtc(
-        format(new Date(endDate), dateFormat5) + ` ${time}`,
-        this.plantTimezoneMap[this.selectedDetails?.plantId]?.timeZoneIdentifier
-      ).toISOString();
-
-      scheduleEndOnByPlantTimezone = zonedTimeToUtc(
-        format(new Date(scheduleEndOn), dateFormat5) + ` ${time}`,
-        this.plantTimezoneMap[this.selectedDetails?.plantId]?.timeZoneIdentifier
-      ).toISOString();
-    }
     this.payload = {
-      ...rest,
-      startDate: startDateByPlantTimezone,
-      endDate: endDateByPlantTimezone,
-      scheduleEndOn: scheduleEndOnByPlantTimezone,
+      ...schedularConfigFormValue,
+      startDate: format(startDatePicker, dateFormat4),
+      endDate: format(endDatePicker, dateFormat4),
       scheduleByDates,
       shiftDetails: this.prepareShiftDetailsPayload(this.shiftDetails)
     };

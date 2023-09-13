@@ -77,8 +77,8 @@ export class TaskLevelSchedulerComponent implements OnInit {
       this.taskLevelScheduleHeaderConfiguration = {
         ...this.taskLevelScheduleHeaderConfiguration,
         assigneeDetails: payload.assignmentDetails.displayValue,
-        headerStartDate: format(new Date(payload.startDate), dateFormat4),
-        headerEndDate: format(new Date(payload.endDate), dateFormat4),
+        headerStartDate: payload.startDate,
+        headerEndDate: payload.endDate,
         headerFrequency:
           payload.scheduleType === 'byDate'
             ? 'Custom Dates'
@@ -257,11 +257,6 @@ export class TaskLevelSchedulerComponent implements OnInit {
             selectedPage: pages,
             nodeId: subFormId.split('_')[1]
           });
-          // }
-          /* this.operatorRoundService.setCheckBoxStatus({
-            selectedPage: this.selectedPages,
-            nodeId: this.selectedNodeId
-          }); */
           this.openCloseRightPanelEventHandler(false);
         });
       })
@@ -366,25 +361,25 @@ export class TaskLevelSchedulerComponent implements OnInit {
     let isQuestionInConfig = false;
     this.uniqueConfigurations.forEach((config) => {
       isQuestionInConfig = false;
-      config['nodeWiseQuestionIds'] = {};
+      const taskConfig = { ...config, nodeWiseQuestionIds: {} };
       Object.keys(revisedInfo).forEach((nodeId) => {
         Object.keys(revisedInfo[nodeId]).forEach((questionId) => {
           const questionConfig = revisedInfo[nodeId][questionId];
           if (isEqual(config, questionConfig)) {
-            if (!config['nodeWiseQuestionIds'][nodeId])
-              config['nodeWiseQuestionIds'][nodeId] = [];
-            config['nodeWiseQuestionIds'][nodeId].push(questionId);
+            if (!taskConfig['nodeWiseQuestionIds'][nodeId])
+              taskConfig['nodeWiseQuestionIds'][nodeId] = [];
+            taskConfig['nodeWiseQuestionIds'][nodeId].push(questionId);
           }
-          if (config['nodeWiseQuestionIds'][nodeId]?.length > 0)
+          if (taskConfig['nodeWiseQuestionIds'][nodeId]?.length > 0)
             isQuestionInConfig = true;
         });
       });
       if (isQuestionInConfig) {
         let time = format(new Date(), hourFormat);
-        const { startDate, endDate } = config;
+        const { startDate, endDate } = taskConfig;
         const scheduleByDates =
-          config.scheduleType === 'byDate'
-            ? this.prepareScheduleByDates(config.scheduleByDates)
+          taskConfig.scheduleType === 'byDate'
+            ? this.prepareScheduleByDates(taskConfig.scheduleByDates)
             : [];
 
         let startDateByPlantTimezone = new Date(
@@ -419,8 +414,8 @@ export class TaskLevelSchedulerComponent implements OnInit {
         const nodeWiseAskQuestionIds = {};
         const nodeWiseMandateQuestionIds = {};
         const nodeWiseHideQuestionIds = {};
-        Object.keys(config.nodeWiseQuestionIds).forEach((nodeId) => {
-          config.nodeWiseQuestionIds[nodeId].forEach((questionId) => {
+        Object.keys(taskConfig.nodeWiseQuestionIds).forEach((nodeId) => {
+          taskConfig.nodeWiseQuestionIds[nodeId].forEach((questionId) => {
             this.subForms[`pages_${nodeId}`].forEach((page) => {
               page.logics.forEach((logic) => {
                 if (logic.questionId === questionId) {
@@ -448,7 +443,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
         });
 
         taskLevelConfig.push({
-          ...config,
+          ...taskConfig,
           nodeWiseAskQuestionIds,
           nodeWiseMandateQuestionIds,
           nodeWiseHideQuestionIds,

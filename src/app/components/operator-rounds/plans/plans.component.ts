@@ -909,7 +909,8 @@ export class PlansComponent implements OnInit, OnDestroy {
         moduleName: 'OPERATOR_ROUNDS',
         isTaskLevel,
         assigneeDetails: this.assigneeDetails,
-        scheduleConfiguration
+        scheduleConfiguration,
+        plantTimezoneMap: this.plantTimezoneMap
       }
     });
     this.hideScheduleConfig = false;
@@ -1010,7 +1011,7 @@ export class PlansComponent implements OnInit, OnDestroy {
     const activeShifts = this.prepareActiveShifts(data);
     switch (action) {
       case 'schedule':
-        if (this.roundPlanScheduleConfigurations[data.id].isTaskLevel) {
+        if (this.roundPlanScheduleConfigurations[data.id]?.isTaskLevel) {
           this.openTaskLevelScheduleConfigHandler(
             { ...data, shifts: activeShifts },
             this.roundPlanScheduleConfigurations[data.id],
