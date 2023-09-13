@@ -580,6 +580,9 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
 
   cancelAdditionalDetails = () => {
     this.tagsCtrl.patchValue('');
+    this.tags = this.tags.filter((tag) => {
+      return this.additionalDetailsForm.value.tags.includes(tag);
+    });
     this.formService.setAdditionalDetailsOpenState({
       isOpen: false,
       questionId: '',
