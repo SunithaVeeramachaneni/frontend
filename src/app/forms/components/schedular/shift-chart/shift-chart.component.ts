@@ -609,8 +609,8 @@ export class ShiftChartComponent implements OnInit, OnChanges {
       ?.split(' ')[1];
     const endTime = this.dataArrays[0]?.endTime?.split(':')[1]?.split(' ')[1];
     return (
-      startTime.toLocaleUpperCase() === TimeType.pm.toLocaleUpperCase() &&
-      endTime.toUpperCase() === TimeType.am.toLocaleUpperCase()
+      startTime.toUpperCase() === TimeType.pm.toUpperCase() &&
+      endTime.toUpperCase() === TimeType.am.toUpperCase()
     );
   }
 }
