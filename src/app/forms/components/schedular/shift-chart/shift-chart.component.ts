@@ -172,6 +172,26 @@ export class ShiftChartComponent implements OnInit, OnChanges {
         (item) => item === matchingTimeSlot
       );
       if (checkIndex) {
+        if (matchingTimeSlot?.isBook === false) {
+          if (matchingTimeSlot?.endTime === this.service.addTime(val, 0, 59)) {
+            this.dataArrays[checkIndex].isBook = true;
+            const endTime = this.dataArrays[checkIndex].endTime;
+            this.dataArrays[checkIndex].endTime = endTime;
+            this.setShiftDetails();
+            return;
+          }
+          if (matchingTimeSlot?.endTime === this.service.addTime(val, 0, 1)) {
+            this.dataArrays[checkIndex].isBook = true;
+            const endTime = this.dataArrays[checkIndex].endTime;
+            this.dataArrays[checkIndex].endTime = this.service.subtractTime(
+              endTime,
+              0,
+              1
+            );
+            this.setShiftDetails();
+            return;
+          }
+        }
         const lastTime = this.dataArrays[checkIndex].endTime;
         const oldIndex = this.dataArrays[checkIndex].index;
         this.dataArrays[checkIndex].index = currentIdx;
