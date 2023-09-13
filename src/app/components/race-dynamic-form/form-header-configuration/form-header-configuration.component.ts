@@ -79,6 +79,8 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   tagsInput: ElementRef<HTMLInputElement>;
   @ViewChild('auto', { static: false }) matAutocomplete: MatAutocomplete;
   @ViewChild(MatAutocompleteTrigger) auto: MatAutocompleteTrigger;
+  @ViewChild('formFileUpload', { static: false })
+  formFileUpload: ElementRef;
   @Output() gotoNextStep = new EventEmitter<void>();
   @Input() data;
   @Input() formData;
@@ -217,8 +219,14 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
       .pipe(map((data) => (Array.isArray(data) ? data : [])))
       .subscribe((attachments) => {
         attachments?.forEach((att) => {
-          this.filteredMediaType.mediaType.push(att.attachment);
-          this.filteredMediaTypeIds.mediaIds.push(att.id);
+          this.filteredMediaType.mediaType = [
+            ...this.filteredMediaType.mediaType,
+            att.attachment
+          ];
+          this.filteredMediaTypeIds.mediaIds = [
+            ...this.filteredMediaTypeIds.mediaIds,
+            att.id
+          ];
         });
         this.cdrf.detectChanges();
       });
@@ -635,6 +643,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
         }
       };
     }
+    this.clearAttachmentUpload();
   };
 
   async resizeImage(base64result: string): Promise<string> {
@@ -995,5 +1004,8 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     this.rdfService.pdfMapping$.next([]);
     this.destroy$.next();
     this.destroy$.complete();
+  }
+  clearAttachmentUpload() {
+    this.formFileUpload.nativeElement.value = '';
   }
 }
