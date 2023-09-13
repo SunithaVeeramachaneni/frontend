@@ -353,7 +353,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
           if (!isEqual(prev, curr)) {
             const { value: prevValue } = prev;
             const { value: currValue } = curr;
-            this.checkAskQuestionFeatures();
             if (
               current.fieldType === 'INST' &&
               !isEqual(prevValue, currValue)
@@ -428,7 +427,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
     this.questionForm.patchValue(this.question, {
       emitEvent: false
     });
-    this.checkAskQuestionFeatures();
     this.rangeDisplayText = '';
     this.additionalDetailsText = '';
   }
