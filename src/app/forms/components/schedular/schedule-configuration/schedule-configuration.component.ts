@@ -417,7 +417,7 @@ export class ScheduleConfigurationComponent
         pairwise(),
         tap(([prev, curr]) => {
           if (!isEqual(prev, curr)) {
-            if (prev.type !== '' && prev.type !== curr.type) {
+            if (prev.type && prev.type !== '' && prev.type !== curr.type) {
               this.schedulerConfigForm.get('assignmentDetails').patchValue({
                 type: curr.type,
                 value: '',
