@@ -690,6 +690,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
             if (item['column'] === 'shiftId') {
               item.items = Object.values(this.shiftNameMap).sort();
             }
+            if (item['column'] === 'dueDate') {
+              item.items = this.selectedDueDate;
+            }
           }
         }
         this.filterJson = filterJson;

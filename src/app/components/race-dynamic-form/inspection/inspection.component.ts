@@ -502,6 +502,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
               item.items = this.schedules.sort();
             } else if (item.column === 'shiftId') {
               item.items = Object.values(this.shiftNameMap).sort();
+            } else if (item.column === 'dueDate') {
+              item.items = this.selectedDueDate;
             }
           }
         }

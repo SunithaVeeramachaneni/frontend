@@ -502,6 +502,9 @@ export class ObservationsService {
         case 'assignedTo':
           item.items = (data?.assignedTo ?? []).sort();
           break;
+        case 'dueDate':
+          item.items = data?.dueDate ?? [];
+          break;
         default:
           break;
       }
