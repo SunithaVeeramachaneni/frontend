@@ -513,9 +513,28 @@ export class ShiftChartComponent implements OnInit, OnChanges {
       const frmArray = this.addForm.get('slotsArray') as FormArray;
       frmArray.clear();
       if (this.shift?.value?.null?.payload) {
+        this.shift.value.null.payload = [];
+        this.shift.value.null.payload = [
+          {
+            startTime: this.shift.value?.null?.startTime,
+            endTime: this.shift.value?.null?.endTime
+          }
+        ];
+
         this.initEditPayloadForSlots(this.shift.value.null.payload);
       }
       if (this.shift?.value?.id) {
+        this.shift.value.payload = [];
+        this.shift.value.payload = [
+          {
+            startTime: this.service.convertTo12HourFormat(
+              this.shift.value?.startTime
+            ),
+            endTime: this.service.convertTo12HourFormat(
+              this.shift.value?.endTime
+            )
+          }
+        ];
         this.initEditPayloadForSlots(this.shift.value.payload);
       }
     }
