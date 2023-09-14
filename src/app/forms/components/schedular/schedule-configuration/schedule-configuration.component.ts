@@ -1103,6 +1103,9 @@ export class ScheduleConfigurationComponent
               )
             }));
             if (config?.shiftDetails) {
+              if (Object.keys(config.shiftDetails)[0] !== 'null') {
+                config['shiftsSelected'] = Object.keys(config.shiftDetails);
+              }
               this.shiftApiResponse = this.prepareShiftDetailsPayload(
                 config?.shiftDetails,
                 '12'
