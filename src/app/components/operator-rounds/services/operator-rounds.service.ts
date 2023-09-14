@@ -97,11 +97,12 @@ export class OperatorRoundsService {
     );
 
   getAdditionalDetails$ = (
+    data,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any[]> =>
     this.appService._getResp(
       environment.operatorRoundsApiUrl,
-      `additional-details`,
+      `additional-details/${data.type}/${data.level}`,
       info
     );
 
@@ -233,6 +234,11 @@ export class OperatorRoundsService {
         rest.next = '';
       }
       let queryParameters: any = rest;
+      if (queryParameters.assignedToDisplay) {
+        queryParameters.assignedToDisplay = JSON.stringify(
+          queryParameters.assignedToDisplay
+        );
+      }
       if (filterData) {
         queryParameters = { ...rest, plantId: filterData.plant };
       }

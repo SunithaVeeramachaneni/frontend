@@ -71,8 +71,8 @@
 
           <button
             mat-menu-item
-            (click)="openFormCreationModal(null)"
             id="createManuallyButton"
+            [matMenuTriggerFor]="createMenu"
           >
             <svg-icon
               id="addManuallyIcon"
@@ -100,6 +100,22 @@
           </button>
         </mat-menu>
 
+        <mat-menu #createMenu="matMenu" id="formTypeCreateMenu">
+          <button
+            id="embeddedCreateButton"
+            mat-menu-item
+            (click)="openFormCreationModal(null, 'Embedded')"
+          >
+            <span id="createEmbeddedSpan" translate="createEmbedded"></span>
+          </button>
+          <button
+            id="standaloneCreateButton"
+            mat-menu-item
+            (click)="openFormCreationModal(null, 'Standalone')"
+          >
+            <span id="createStandaloneSpan" translate="createStandalone"></span>
+          </button>
+        </mat-menu>
         <button
           id="moreButton"
           mat-raised-button

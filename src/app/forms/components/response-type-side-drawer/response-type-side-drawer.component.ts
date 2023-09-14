@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable no-underscore-dangle */
 import {
   Component,
@@ -7,15 +8,26 @@ import {
   Output,
   EventEmitter,
   ChangeDetectorRef,
-  OnDestroy
+  OnDestroy,
+  ViewChild,
+  ElementRef
 } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import {
+  AbstractControl,
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators
+} from '@angular/forms';
 import { isEqual } from 'lodash-es';
-import { Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, merge, of } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
+  map,
   pairwise,
+  startWith,
   takeUntil,
   tap
 } from 'rxjs/operators';
@@ -24,10 +36,23 @@ import {
   Question,
   RangeSelectorState,
   ResponseTypeOpenState,
-  SliderSelectorState
+  SliderSelectorState,
+  AdditionalDetailsState,
+  AdditionalDetails,
+  ValidationError
 } from 'src/app/interfaces';
 import { FormService } from '../../services/form.service';
 import { ToastService } from 'src/app/shared/toast';
+import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
+import { MatChipInputEvent } from '@angular/material/chips';
+import {
+  MatAutocomplete,
+  MatAutocompleteSelectedEvent,
+  MatAutocompleteTrigger
+} from '@angular/material/autocomplete';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
+import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
 
 @Component({
   selector: 'app-response-type-side-drawer',
@@ -36,12 +61,19 @@ import { ToastService } from 'src/app/shared/toast';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
+  @ViewChild('tagsInput', { static: false })
+  tagsInput: ElementRef<HTMLInputElement>;
+  @ViewChild('auto', { static: false }) matAutocomplete: MatAutocomplete;
+  @ViewChild(MatAutocompleteTrigger) auto: MatAutocompleteTrigger;
   @Input() formId;
+  @Input() tagDetailType: string;
+  @Input() attributeDetailType: string;
 
   @Output() setSliderValues: EventEmitter<any> = new EventEmitter<any>();
 
   @Output() responseTypeHandler: EventEmitter<any> = new EventEmitter<any>();
   @Output() rangeSelectionHandler: EventEmitter<any> = new EventEmitter<any>();
+  @Output() setAdditionalDetails: EventEmitter<any> = new EventEmitter<any>();
 
   @Input() set question(question: Question) {
     if (question) {
@@ -54,12 +86,23 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
   sliderOpenState$: Observable<SliderSelectorState>;
   multipleChoiceOpenState$: Observable<ResponseTypeOpenState>;
   rangeSelectorOpenState$: Observable<RangeSelectorState>;
+  additionalDetailsOpenState$: Observable<AdditionalDetailsState>;
+  detailLevelTagsState$: Observable<any>;
+  detailLevelAttributesState$: Observable<any>;
 
   responseId = '';
   respType = '';
+  selectable = true;
+  removable = true;
+  separatorKeysCodes: number[] = [ENTER, COMMA];
+  labelSelected: any;
+  deletedLabel = '';
+  convertedDetail = {};
 
   public responseForm: FormGroup;
   public rangeMetadataForm: FormGroup;
+  public additionalDetailsForm: FormGroup;
+  public sliderOptionsForm: FormGroup;
 
   public isFormNotUpdated = true;
   multipleChoiceOpenState = false;
@@ -81,6 +124,25 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
     increment: 1
   };
 
+  additionalDetailsOpenState: AdditionalDetailsState = {
+    isOpen: false,
+    questionId: '',
+    additionalDetails: {} as AdditionalDetails
+  };
+
+  tagsCtrl: FormControl;
+  filteredTags: Observable<string[]>;
+  tags: string[] = [];
+  allTags: string[] = [];
+  originalTags: string[] = [];
+  attributesIdMap = {};
+  attributes: FormArray;
+  changedValues: any;
+  filteredLabels$: Observable<any>;
+  filteredValues$: Observable<any>;
+  labels: any = {};
+  errors: ValidationError = {};
+
   lowerLimitActions = ['None', 'Warning', 'Alert', 'Note'];
   upperLimitActions = ['None', 'Warning', 'Alert', 'Note'];
   isCreate = true;
@@ -89,12 +151,39 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
 
   constructor(
     private formService: FormService,
+    private rdfService: RaceDynamicFormService,
     private fb: FormBuilder,
     private cdrf: ChangeDetectorRef,
-    private readonly toast: ToastService
+    private readonly toast: ToastService,
+    private operatorRoundService: OperatorRoundsService
   ) {}
 
   ngOnInit(): void {
+    this.tagsCtrl = new FormControl('', [
+      Validators.maxLength(25),
+      WhiteSpaceValidator.whiteSpace,
+      WhiteSpaceValidator.trimWhiteSpace
+    ]);
+    this.detailLevelTagsState$ = this.formService.detailLevelTagsState$;
+    this.detailLevelTagsState$
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe((detailLevelTags) => {
+        const tags = JSON.parse(JSON.stringify(detailLevelTags));
+        if (tags && tags.length) {
+          this.allTags = tags;
+          this.originalTags = JSON.parse(JSON.stringify(tags));
+          this.tagsCtrl.patchValue('');
+          this.cdrf.detectChanges();
+        }
+      });
+
+    this.filteredTags = this.tagsCtrl.valueChanges.pipe(
+      startWith(null),
+      map((tag: string | null) =>
+        tag ? this.filter(tag) : this.allTags.slice()
+      )
+    );
+
     this.responseForm = this.fb.group({
       id: new FormControl(''),
       name: new FormControl(''),
@@ -110,9 +199,26 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
       maxAction: 'None'
     });
 
+    this.additionalDetailsForm = this.fb.group({
+      tags: [],
+      attributes: this.fb.array([])
+    });
+
+    this.patchTags(this.question.additionalDetails?.tags || []);
+    this.retrieveDetails();
+
+    this.sliderOptionsForm = this.fb.group({
+      value: 0,
+      min: 0,
+      max: 100,
+      increment: 1
+    });
+
     this.sliderOpenState$ = this.formService.sliderOpenState$;
     this.multipleChoiceOpenState$ = this.formService.multiChoiceOpenState$;
     this.rangeSelectorOpenState$ = this.formService.rangeSelectorOpenState$;
+    this.additionalDetailsOpenState$ =
+      this.formService.additionalDetailsOpenState$;
 
     this.multipleChoiceOpenState$.subscribe((state) => {
       this.multipleChoiceOpenState = state.isOpen;
@@ -144,11 +250,29 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
       }
     });
 
+    this.additionalDetailsOpenState$.subscribe((state) => {
+      this.additionalDetailsOpenState = state;
+      this.cdrf.detectChanges();
+      if (state.isOpen) {
+        this.additionalDetailsForm.patchValue({
+          ...this.additionalDetailsForm.value,
+          tags: state.additionalDetails?.tags || []
+        });
+        this.updateAttributesArray(
+          this.question.additionalDetails?.attributes || []
+        );
+        this.attributes = this.additionalDetailsForm.get(
+          'attributes'
+        ) as FormArray;
+        this.updateAttributesValueChanges(this.attributes);
+      }
+    });
+
     this.sliderOpenState$.subscribe((state) => {
       this.sliderOpenState = state;
       this.cdrf.detectChanges();
       if (this.question && typeof this.question.value !== 'string') {
-        this.sliderOptions = this.question.value;
+        this.sliderOptionsForm.patchValue(this.question.value);
       }
     });
 
@@ -194,6 +318,139 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
+
+    this.sliderOptionsForm.valueChanges
+      .pipe(
+        pairwise(),
+        debounceTime(500),
+        distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
+        tap(([prev, curr]) => {
+          if (isEqual(prev, curr)) {
+            this.isFormNotUpdated = true;
+          } else {
+            this.isFormNotUpdated = false;
+          }
+          this.cdrf.markForCheck();
+        })
+      )
+      .subscribe();
+
+    this.additionalDetailsForm.valueChanges
+      .pipe(
+        pairwise(),
+        debounceTime(500),
+        distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
+        tap(([prev, curr]) => {
+          if (isEqual(prev, curr)) {
+            this.isFormNotUpdated = true;
+          } else {
+            this.isFormNotUpdated = false;
+          }
+          this.cdrf.markForCheck();
+        })
+      )
+      .subscribe();
+  }
+
+  patchTags(values: any[]): void {
+    this.tags = values;
+  }
+
+  updateAttributesArray(values) {
+    if (Array.isArray(values)) {
+      const formGroups = values?.map((value) =>
+        this.fb.group({
+          label: [
+            value.FIELDLABEL,
+            [
+              Validators.maxLength(25),
+              WhiteSpaceValidator.trimWhiteSpace,
+              WhiteSpaceValidator.whiteSpace
+            ]
+          ],
+          value: [
+            value.DEFAULTVALUE,
+            [
+              Validators.maxLength(40),
+              WhiteSpaceValidator.trimWhiteSpace,
+              WhiteSpaceValidator.whiteSpace
+            ]
+          ]
+        })
+      );
+      const formArray = this.fb.array(formGroups);
+      this.additionalDetailsForm.setControl('attributes', formArray);
+    }
+  }
+
+  add(event: MatChipInputEvent): void {
+    if (!this.processValidationErrorTags()) {
+      const input = event.input;
+      const value = event.value || '';
+
+      if (value.trim()) {
+        this.tags = [...this.tags, value.trim()];
+      }
+
+      if (input) {
+        input.value = '';
+      }
+
+      this.tagsCtrl.patchValue('');
+    }
+  }
+
+  processValidationErrorTags(): boolean {
+    const errors = this.tagsCtrl.errors;
+
+    this.errors.tagsCtrl = null;
+    if (errors) {
+      Object.keys(errors).forEach((messageKey) => {
+        this.errors.tagsCtrl = {
+          name: messageKey,
+          length: errors[messageKey]?.requiredLength
+        };
+      });
+    }
+    return this.errors.tagsCtrl === null ? false : true;
+  }
+
+  openAutoComplete() {
+    this.auto.openPanel();
+  }
+
+  remove(tag: string): void {
+    const idx = this.allTags.indexOf(tag);
+    if (idx < 0) this.allTags.push(tag);
+    const index = this.tags.indexOf(tag);
+
+    if (index >= 0) {
+      this.tags = [...this.tags.slice(0, index), ...this.tags.slice(index + 1)];
+      this.tagsInput.nativeElement.value = '';
+      this.tagsCtrl.patchValue('');
+      this.additionalDetailsForm.patchValue({
+        ...this.additionalDetailsForm.value,
+        tags: this.tags
+      });
+    }
+  }
+
+  selected(event: MatAutocompleteSelectedEvent): void {
+    const index = this.allTags.indexOf(event.option.viewValue);
+
+    if (index >= 0) {
+      this.allTags.splice(index, 1);
+    }
+
+    this.tags = [...this.tags, event.option.viewValue];
+    this.tagsInput.nativeElement.value = '';
+    this.tagsCtrl.patchValue('');
+    this.additionalDetailsForm.patchValue({
+      ...this.additionalDetailsForm.value,
+      tags: this.tags
+    });
   }
 
   get responses(): FormArray {
@@ -255,31 +512,49 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
     this.formService.setMultiChoiceOpenState({ isOpen: false, response: {} });
   };
 
-  applySliderOptions(values) {
-    if (values.min > values.max) {
+  applySliderOptions() {
+    if (this.sliderOptionsForm.value.min >= this.sliderOptionsForm.value.max) {
       this.toast.show({
-        text: 'The upper limit cannot be lower than the lower limit',
+        text: 'The upper limit should be greater than lower limit',
         type: 'warning'
       });
       return;
     }
-    if (values.increment <= 0) {
+    if (this.sliderOptionsForm.value.increment <= 0) {
       this.toast.show({
         text: 'Increment value should be greater than 0',
         type: 'warning'
       });
       return;
     }
-    if ((values.max - values.min) % values.increment !== 0) {
+    if (
+      this.sliderOptionsForm.value.max - this.sliderOptionsForm.value.min <
+      this.sliderOptionsForm.value.increment
+    ) {
+      this.toast.show({
+        text: 'Increment value cannot be greater than range difference',
+        type: 'warning'
+      });
+      return;
+    }
+    if (
+      (this.sliderOptionsForm.value.max - this.sliderOptionsForm.value.min) %
+        this.sliderOptionsForm.value.increment !==
+      0
+    ) {
       this.toast.show({
         text: 'Increment value should divide range difference',
         type: 'warning'
       });
       return;
     }
-    if (values.value < values.min) values.value = values.min;
-    else if (values.value > values.max) values.value = values.max;
-    this.setSliderValues.emit(values);
+    if (this.sliderOptionsForm.value.value < this.sliderOptionsForm.value.min)
+      this.sliderOptionsForm.value.value = this.sliderOptionsForm.value.min;
+    else if (
+      this.sliderOptionsForm.value.value > this.sliderOptionsForm.value.max
+    )
+      this.sliderOptionsForm.value.value = this.sliderOptionsForm.value.max;
+    this.setSliderValues.emit(this.sliderOptionsForm.value);
     this.formService.setsliderOpenState({
       isOpen: false,
       questionId: '',
@@ -300,6 +575,64 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
       isOpen: false,
       questionId: '',
       rangeMetadata: {} as NumberRangeMetadata
+    });
+  };
+
+  cancelAdditionalDetails = () => {
+    this.tagsCtrl.patchValue('');
+    this.tags = this.tags.filter((tag) => {
+      return this.additionalDetailsForm.value.tags.includes(tag);
+    });
+    this.formService.setAdditionalDetailsOpenState({
+      isOpen: false,
+      questionId: '',
+      additionalDetails: {} as AdditionalDetails
+    });
+  };
+
+  submitAdditionalDetails = () => {
+    const attributesArray = this.additionalDetailsForm.get(
+      'attributes'
+    ) as FormArray;
+    const updatedattributes = attributesArray.value
+      .filter((additionalValueData) => {
+        return !additionalValueData.label && !additionalValueData.value
+          ? false
+          : true;
+      })
+      .map((attributesinfo) => ({
+        FIELDLABEL: attributesinfo.label,
+        DEFAULTVALUE: attributesinfo.value,
+        UIFIELDTYPE: 'LF'
+      }));
+    const newTags = [];
+    this.tags.forEach((selectedTag) => {
+      if (this.originalTags.indexOf(selectedTag) < 0) {
+        newTags.push(selectedTag);
+      }
+    });
+    if (newTags.length) {
+      const dataSet = {
+        type: this.tagDetailType,
+        values: newTags
+      };
+      this.formService.setDetailLevelTagsState([...this.allTags, ...newTags]);
+      this.rdfService.createTags$(dataSet).subscribe((response) => {
+        // do nothing
+      });
+      this.additionalDetailsForm.patchValue({
+        tags: this.tags
+      });
+    }
+    this.setAdditionalDetails.emit({
+      ...this.additionalDetailsForm.getRawValue(),
+      attributes: updatedattributes
+    });
+    this.tagsCtrl.patchValue('');
+    this.formService.setAdditionalDetailsOpenState({
+      isOpen: false,
+      questionId: '',
+      additionalDetails: {} as AdditionalDetails
     });
   };
 
@@ -330,6 +663,306 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
 
   getImage(action) {
     return `icon-${action.toLowerCase()}`;
+  }
+
+  filter(value: string): string[] {
+    const filterValue = value.toLowerCase();
+    return this.allTags.filter((tag) =>
+      tag.toLowerCase().includes(filterValue)
+    );
+  }
+
+  processValidationErrors(controlName: string): boolean {
+    const touched = this.additionalDetailsForm.get(controlName).touched;
+    const errors = this.additionalDetailsForm.get(controlName).errors;
+    this.errors[controlName] = null;
+    if (touched && errors) {
+      Object.keys(errors).forEach((messageKey) => {
+        this.errors[controlName] = {
+          name: messageKey,
+          length: errors[messageKey]?.requiredLength
+        };
+      });
+    }
+    return !touched || this.errors[controlName] === null ? false : true;
+  }
+
+  processValidationErrorsAttributes(
+    index: number,
+    controlName: string
+  ): boolean {
+    const touched: boolean = (
+      this.additionalDetailsForm?.get('attributes') as FormArray
+    )
+      .at(index)
+      .get(controlName)?.touched;
+    const errors: ValidationError = (
+      this.additionalDetailsForm?.get('attributes') as FormArray
+    )
+      .at(index)
+      .get(controlName)?.errors;
+    this.errors[controlName] = null;
+    if (touched && errors) {
+      Object.keys(errors)?.forEach((messageKey) => {
+        this.errors[controlName] = {
+          name: messageKey,
+          length: errors[messageKey]?.requiredLength
+        };
+      });
+    }
+    return !touched || this.errors[controlName] === null ? false : true;
+  }
+
+  addAttributes() {
+    this.attributes = this.additionalDetailsForm.get('attributes') as FormArray;
+    this.attributes.push(
+      this.fb.group({
+        label: [
+          '',
+          [
+            Validators.maxLength(25),
+            WhiteSpaceValidator.trimWhiteSpace,
+            WhiteSpaceValidator.whiteSpace
+          ]
+        ],
+        value: [
+          '',
+          [
+            Validators.maxLength(40),
+            WhiteSpaceValidator.trimWhiteSpace,
+            WhiteSpaceValidator.whiteSpace
+          ]
+        ]
+      })
+    );
+
+    if (this.attributes) {
+      this.updateAttributesValueChanges(this.attributes);
+    }
+  }
+
+  updateAttributesValueChanges(attributes) {
+    merge(
+      ...attributes.controls.map((control: AbstractControl, index: number) =>
+        control.valueChanges.pipe(map((value) => ({ rowIndex: index, value })))
+      )
+    ).subscribe((changes: any) => {
+      this.changedValues = changes.value;
+      if (this.changedValues.label) {
+        this.filteredLabels$ = of(
+          Object.keys(this.labels).filter(
+            (label) =>
+              label
+                .toLowerCase()
+                .indexOf(this.changedValues.label.toLowerCase()) === 0
+          )
+        );
+      } else {
+        this.filteredLabels$ = of([]);
+      }
+
+      if (this.changedValues.value && this.labels[this.changedValues.label]) {
+        this.filteredValues$ = of(
+          this.labels[this.changedValues.label]?.filter(
+            (value) =>
+              value
+                .toLowerCase()
+                .indexOf(this.changedValues.value.toLowerCase()) === 0
+          )
+        );
+      } else {
+        this.filteredValues$ = of([]);
+      }
+    });
+  }
+
+  deleteAttributes(index: number) {
+    const add = this.additionalDetailsForm.get('attributes') as FormArray;
+    add.removeAt(index);
+  }
+
+  storeDetails(i) {
+    this.operatorRoundService
+      .createAdditionalDetails$({
+        ...this.changedValues,
+        type: this.attributeDetailType,
+        level: 'detail'
+      })
+      .subscribe((response) => {
+        if (response?.label) {
+          this.toast.show({
+            type: 'success',
+            text: 'Label added successfully'
+          });
+        }
+        const additionalinfoArray = this.additionalDetailsForm.get(
+          'attributes'
+        ) as FormArray;
+        this.labels[response?.label] = response?.values;
+        this.filteredLabels$ = of(Object.keys(this.labels));
+        this.attributesIdMap[response?.label] = response?.id;
+        this.formService.setDetailLevelAttributesState({
+          labels: this.labels,
+          attributesIdMap: this.attributesIdMap
+        });
+        additionalinfoArray.at(i).get('label').setValue(response.label);
+      });
+  }
+
+  storeValueDetails(i) {
+    const currentLabel = this.changedValues.label;
+    const currentValue = this.changedValues.value;
+    if (Object.keys(this.labels).includes(currentLabel)) {
+      if (
+        this.labels[currentLabel].every(
+          (value) => value.toLowerCase() !== currentValue.toLowerCase()
+        )
+      ) {
+        const newValues = [...this.labels[currentLabel], currentValue];
+        this.operatorRoundService
+          .updateValues$({
+            value: newValues,
+            labelId: this.attributesIdMap[currentLabel]
+          })
+          .subscribe(() => {
+            this.toast.show({
+              type: 'success',
+              text: 'Value added successfully'
+            });
+            this.labels[currentLabel] = newValues;
+            this.formService.setDetailLevelAttributesState({
+              labels: this.labels,
+              attributesIdMap: this.attributesIdMap
+            });
+            this.filteredValues$ = of(this.labels[currentLabel]);
+            const additionalinfoArray = this.additionalDetailsForm.get(
+              'attributes'
+            ) as FormArray;
+            additionalinfoArray.at(i).get('value').setValue(currentValue);
+          });
+      } else {
+        this.toast.show({
+          type: 'warning',
+          text: 'Value already exists'
+        });
+      }
+    } else {
+      this.toast.show({
+        type: 'warning',
+        text: 'Label does not exist'
+      });
+    }
+  }
+
+  retrieveDetails() {
+    this.detailLevelAttributesState$ =
+      this.formService.detailLevelAttributesState$;
+    this.detailLevelAttributesState$
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe((detailLevelAttributes) => {
+        this.labels = detailLevelAttributes.labels;
+        this.attributesIdMap = detailLevelAttributes.attributesIdMap;
+      });
+  }
+
+  valueOptionClick(index) {
+    this.labelSelected =
+      this.additionalDetailsForm.get('attributes').value[index].label;
+    if (
+      this.additionalDetailsForm.get('attributes').value[index].value &&
+      this.labelSelected &&
+      this.labels[this.labelSelected]
+    ) {
+      this.filteredValues$ = of(
+        this.labels[
+          this.additionalDetailsForm.get('attributes').value[index].label
+        ].filter((data) =>
+          data.includes(
+            this.additionalDetailsForm.get('attributes').value[index].value
+          )
+        )
+      );
+    } else {
+      this.filteredValues$ = of([]);
+    }
+  }
+
+  labelOptionClick(index) {
+    const labelSelectedData =
+      this.additionalDetailsForm.get('attributes').value[index].label;
+    if (labelSelectedData) {
+      this.filteredLabels$ = of(
+        Object.keys(this.labels).filter((data) =>
+          data.includes(labelSelectedData)
+        )
+      );
+    } else {
+      this.filteredLabels$ = of([]);
+    }
+  }
+
+  removeLabel(label, i) {
+    const documentId = this.attributesIdMap[label];
+    this.operatorRoundService.removeLabel$(documentId).subscribe(() => {
+      delete this.labels[label];
+      delete this.attributesIdMap[label];
+      this.formService.setDetailLevelAttributesState({
+        labels: this.labels,
+        attributesIdMap: this.attributesIdMap
+      });
+      this.toast.show({
+        type: 'success',
+        text: 'Label deleted Successfully'
+      });
+      this.deletedLabel = label;
+      const additionalinfoArray = this.additionalDetailsForm.get(
+        'attributes'
+      ) as FormArray;
+      additionalinfoArray.at(i).get('label').setValue('');
+      additionalinfoArray.controls.forEach((control, index) => {
+        if (control.value.label === label) {
+          control.get('label').setValue('');
+          control.get('value').setValue('');
+        }
+      });
+    });
+  }
+  removeValue(deleteValue, i) {
+    const currentLabel = this.changedValues.label;
+    const newValue = this.labels[this.changedValues.label].filter(
+      (value) => value !== deleteValue
+    );
+    this.operatorRoundService
+      .deleteAdditionalDetailsValue$({
+        value: newValue,
+        labelId: this.attributesIdMap[this.changedValues.label]
+      })
+      .subscribe(() => {
+        this.labels[this.changedValues.label] = newValue;
+        this.formService.setDetailLevelAttributesState({
+          labels: this.labels,
+          attributesIdMap: this.attributesIdMap
+        });
+        this.toast.show({
+          type: 'success',
+          text: 'Value deleted Successfully'
+        });
+        const additionalinfoArray = this.additionalDetailsForm.get(
+          'attributes'
+        ) as FormArray;
+        additionalinfoArray.at(i).get('value').setValue('');
+        additionalinfoArray.controls.forEach((control, index) => {
+          if (
+            control.value.value === deleteValue &&
+            control.value.label === currentLabel
+          ) {
+            control.get('value').setValue('');
+          }
+        });
+      });
+  }
+  getAttributeList() {
+    return (this.additionalDetailsForm.get('attributes') as FormArray).controls;
   }
 
   ngOnDestroy(): void {

@@ -171,7 +171,8 @@ export class UsersService {
           profileImage: this.getImageSrc(
             Buffer.from(user.profileImage).toString()
           ),
-          isActive: user.isActive
+          isActive: user.isActive,
+          plantId: user.plantId
         }))
       ),
       tap((users) => this.setUsers(users)),
@@ -182,7 +183,9 @@ export class UsersService {
     this.usersInfoByEmail = users.reduce((acc, curr) => {
       acc[curr.email] = {
         fullName: `${curr.firstName} ${curr.lastName}`,
-        isActive: curr.isActive
+        isActive: curr.isActive,
+        profileImage: curr.profileImage,
+        email: curr.email
       };
       return acc;
     }, {});

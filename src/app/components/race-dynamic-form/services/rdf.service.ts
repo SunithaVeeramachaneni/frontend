@@ -134,6 +134,17 @@ export class RaceDynamicFormService {
       `datasets/${datasetType}`,
       info
     );
+
+  getAdditionalDetails$ = (
+    data,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any[]> =>
+    this.appService._getResp(
+      environment.operatorRoundsApiUrl,
+      `additional-details/${data.type}/${data.level}`,
+      info
+    );
+
   getDataSetsByFormId$ = (
     datasetType: string,
     formId: string,
@@ -572,10 +583,8 @@ export class RaceDynamicFormService {
     };
   }
 
-  fetchAllFormListNames$() {
-    return this.appService
-      ._getResp(environment.rdfApiUrl, 'forms/name')
-      .pipe(map((res) => res.items));
+  fetchAllFormListNames$(formName) {
+    return this.appService._getResp(environment.rdfApiUrl, `forms/${formName}`);
   }
 
   fetchAllFormsList$() {
@@ -772,6 +781,9 @@ export class RaceDynamicFormService {
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<InspectionDetailResponse> {
     const { fetchType, next, limit: gLimit, ...rawParams } = queryParams;
+    if (rawParams.assignedToDisplay) {
+      rawParams.assignedToDisplay = JSON.stringify(rawParams.assignedToDisplay);
+    }
 
     if (
       ['load', 'search'].includes(fetchType) ||

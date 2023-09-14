@@ -1,4 +1,5 @@
 import { UserDetails } from './user';
+import { UserGroup } from './userGroup';
 
 export interface RoundPlanScheduleConfiguration {
   shiftDetails: { [x: string]: { startTime: string; endTime: string }[] };
@@ -15,6 +16,8 @@ export interface RoundPlanScheduleConfiguration {
   scheduleEndOccurrences: number;
   startDate: string;
   endDate: string;
+  startDateDisplay: any;
+  endDateDisplay: any;
   scheduleByDates: ScheduleByDate[];
   scheduledTill?: string;
   assignmentDetails: AssignmentDetail;
@@ -83,6 +86,8 @@ export interface RoundPlanDetail extends RoundPlan {
   rounds: number;
   plantId?: string;
   plant?: string;
+  assignedTo?: string;
+  userGroupsIds?: string;
   shifts: [];
 }
 
@@ -109,6 +114,8 @@ export interface RoundDetail extends RoundPlan {
   previouslyAssignedTo: string;
   roundDBVersion: number;
   roundDetailDBVersion: number;
+  assignmentType?: string;
+  userGroupsIds?: string;
 }
 
 export interface RoundPlanDetailResponse {
@@ -173,6 +180,8 @@ export interface SelectTab {
 
 export interface AssigneeDetails {
   users: UserDetails[];
+  userGroups?: UserGroup[];
+  plants?: any[];
 }
 
 export interface IssueOrAction {
@@ -212,6 +221,8 @@ export interface UpdateIssueOrActionEvent {
 }
 
 export interface SelectedAssignee {
+  assigneeType: string;
   user: UserDetails;
+  userGroup: UserGroup;
   checked: boolean;
 }
