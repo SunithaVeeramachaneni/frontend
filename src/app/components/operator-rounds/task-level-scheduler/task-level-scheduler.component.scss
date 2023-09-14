@@ -116,6 +116,18 @@
   }
 }
 
+.nodeContent {
+  cursor: pointer;
+  display: flex;
+  justify-content: flex-start;
+  width: inherit;
+}
+
+img {
+  max-width: 40px;
+  max-height: 40px;
+}
+
 .description {
   display: flex;
   flex-direction: column;
@@ -146,6 +158,8 @@
   height: 65px;
   padding-top: 20px;
   padding-bottom: 20px;
+  padding-left: 20px !important;
+  padding-right: 20px !important;
 }
 
 .closeIcon {
