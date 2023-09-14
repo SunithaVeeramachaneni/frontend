@@ -97,6 +97,29 @@ export class ShiftChartComponent implements OnInit, OnChanges {
         const isBookIndex = this.dataArrays.findIndex(
           (e) => e.isBook === false
         );
+        if (
+          checkIsBook[0].startTime === this.service.addLeadingZero(val) &&
+          checkIsBook[0].index > 1
+        ) {
+          this.dataArrays[isBookIndex].startTime = this.service.addTime(
+            val,
+            1,
+            0
+          );
+          this.dataArrays[isBookIndex].index = checkSlot[0].index - 1;
+          this.dataArrays[isBookIndex].isBook = false;
+          const obj1 = {
+            index: 1,
+            startTime: val,
+            endTime: this.service.addTime(val, 0, 59),
+            isBook: true
+          };
+          this.dataArrays.push(obj1);
+          this.dataArrays = this.service.sortArray(this.dataArrays, this.slots);
+          this.slotsArray.push(this.createItemFormGroup());
+          this.setShiftDetails();
+          return;
+        }
         this.dataArrays[isBookIndex].isBook = true;
         this.setShiftDetails();
         return;
