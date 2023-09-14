@@ -59,6 +59,8 @@
   "cautionTag": "Caution",
   "dangerTag": "Danger",
   "range": "Range:",
+  "reviseFrequency": "Revised Frequency",
+  "revisedDate": "Revised Date",
   "multiLabel": "Allow more than one selection",
   "responseHeading": "Responses",
   "chooseResponses": "Choose Responses",

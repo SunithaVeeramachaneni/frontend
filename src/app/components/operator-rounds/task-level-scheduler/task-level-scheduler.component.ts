@@ -6,8 +6,14 @@ import {
   Component,
   Input,
   OnInit,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  Inject
 } from '@angular/core';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogRef
+} from '@angular/material/dialog';
 
 import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
@@ -39,6 +45,9 @@ import {
 } from '@angular/animations';
 import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
 import { zonedTimeToUtc } from 'date-fns-tz';
+import { ScheduleSuccessModalComponent } from 'src/app/forms/components/schedular/schedule-success-modal/schedule-success-modal.component';
+import { ScheduleConfigurationService } from 'src/app/forms/services/schedule.service';
+import { ScheduleConfigurationComponent } from 'src/app/forms/components/schedular/schedule-configuration/schedule-configuration.component';
 
 @Component({
   selector: 'app-task-level-scheduler',
@@ -112,6 +121,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
   selectedPages: any = [];
   selectedNodeId: any;
   mode = 'scheduler';
+  isFormModule = false;
   isPreviewActive = false;
   checkboxStatus = { status: false };
   nodeIdToNodeName = {};
@@ -132,7 +142,11 @@ export class TaskLevelSchedulerComponent implements OnInit {
 
   constructor(
     private operatorRoundService: OperatorRoundsService,
-    private schedulerConfigurationService: RoundPlanScheduleConfigurationService
+    private schedulerConfigurationService: RoundPlanScheduleConfigurationService,
+    private dialog: MatDialog,
+    private readonly scheduleConfigurationService: ScheduleConfigurationService,
+    private dialogRef: MatDialogRef<ScheduleConfigurationComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
 
   ngOnInit(): void {
@@ -366,6 +380,45 @@ export class TaskLevelSchedulerComponent implements OnInit {
     });
   }
 
+  openScheduleSuccessModal(dialogMode: 'create' | 'update') {
+    const dialogRef = this.dialog.open(ScheduleSuccessModalComponent, {
+      disableClose: true,
+      width: '354px',
+      height: 'max-content',
+      backdropClass: 'schedule-success-modal',
+      data: {
+        name: this.roundPlanData?.roundPlanDetail?.name ?? '',
+        mode: dialogMode,
+        isFormModule: this.isFormModule
+      }
+    });
+    dialogRef.afterClosed().subscribe((data) => {
+      if (data) {
+        if (data?.redirect) {
+          if (this.isFormModule) {
+            this.scheduleConfigurationService.scheduleConfigEvent.next({
+              slideInOut: 'out',
+              viewForms: true,
+              actionType: 'scheduleConfigEvent'
+            });
+          } else {
+            this.scheduleConfigurationService.scheduleConfigEvent.next({
+              slideInOut: 'out',
+              viewRounds: true,
+              actionType: 'scheduleConfigEvent'
+            });
+          }
+        } else {
+          this.scheduleConfigurationService.scheduleConfigEvent.next({
+            slideInOut: 'out',
+            mode: data?.mode,
+            actionType: 'scheduleConfigEvent'
+          });
+        }
+      }
+    });
+  }
+
   prepareTaskLeveConfig(revisedInfo) {
     const taskLevelConfig = [];
     let isQuestionInConfig = false;
@@ -502,20 +555,43 @@ export class TaskLevelSchedulerComponent implements OnInit {
     /* console.log(this.scheduleConfig);
     return; */
     if (this.scheduleConfig.id) {
+      this.openScheduleSuccessModal('update');
       this.schedulerConfigurationService
         .updateRoundPlanScheduleConfiguration$(
           this.scheduleConfig.id,
           this.scheduleConfig
         )
+        .pipe(
+          tap((scheduleConfig) => {
+            if (scheduleConfig && Object.keys(scheduleConfig)?.length) {
+              this.dialogRef.close({
+                roundPlanScheduleConfiguration: scheduleConfig,
+                mode: 'update',
+                actionType: 'scheduleConfig'
+              });
+            }
+            this.operatorRoundService.setScheduleLoader(false);
+          })
+        )
         .subscribe();
     } else {
+      this.openScheduleSuccessModal('create');
       this.schedulerConfigurationService
         .createRoundPlanScheduleConfiguration$(this.scheduleConfig)
-        .subscribe((data) => {
-          if (Object.keys(data).length) {
-            this.payload.id = data.id;
-          }
-        });
+        .pipe(
+          tap((scheduleConfig) => {
+            if (scheduleConfig && Object.keys(scheduleConfig).length) {
+              this.payload.id = scheduleConfig.id;
+              this.dialogRef.close({
+                roundPlanScheduleConfiguration: scheduleConfig,
+                mode: 'create',
+                actionType: 'scheduleConfig'
+              });
+            }
+            this.operatorRoundService.setScheduleLoader(false);
+          })
+        )
+        .subscribe();
     }
   }
 
