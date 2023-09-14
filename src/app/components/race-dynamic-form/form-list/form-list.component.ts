@@ -304,7 +304,7 @@ export class FormListComponent implements OnInit, OnDestroy {
       return;
     }
     combineLatest([
-      this.raceDynamicFormService.fetchAllFormListNames$(),
+      this.raceDynamicFormService.fetchAllFormListNames$(form.name),
       this.raceDynamicFormService.getAuthoredFormDetailByFormId$(form.id)
     ])
       .pipe(
