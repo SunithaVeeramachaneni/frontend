@@ -91,7 +91,7 @@ export class AssignedToComponent implements OnInit, OnDestroy {
         search = search.toLowerCase();
         if (this.assigneeType === 'user') {
           return (
-            assigneeDetails.users?.filter(
+            assigneeDetails?.users?.filter(
               (user) =>
                 user.isActive &&
                 (user.firstName.toLowerCase().indexOf(search) !== -1 ||
@@ -101,14 +101,14 @@ export class AssignedToComponent implements OnInit, OnDestroy {
         }
         if (this.assigneeType === 'userGroup') {
           return (
-            assigneeDetails.userGroups?.filter(
+            assigneeDetails?.userGroups?.filter(
               (userGroup: any) => userGroup.searchTerm.indexOf(search) !== -1
             ) || []
           );
         }
         if (this.assigneeType === 'plant') {
           return (
-            assigneeDetails.plants?.filter(
+            assigneeDetails?.plants?.filter(
               (plant: any) => plant.indexOf(search) !== -1
             ) || []
           );

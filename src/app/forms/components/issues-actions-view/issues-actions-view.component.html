@@ -683,6 +683,7 @@
 
           <mat-menu #menu="matMenu" backdropClass="assign-menu">
             <app-assigned-to
+              [assigneeType]="'user'"
               [assigneeDetails]="assigneeDetails"
               [isMultiple]="true"
               [assignedTo]="issuesActionsDetailViewForm.get('assignedTo').value"

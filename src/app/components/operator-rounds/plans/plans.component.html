@@ -93,8 +93,8 @@
 <ng-container *ngIf="userInfo$ | async">
   <div
     *ngIf="
-      (filterData$ | async) &&
       (filteredRoundPlans$ | async) &&
+      (filterData$ | async) &&
       (isLoading$ | async) === false
     "
     class="plans-list"
