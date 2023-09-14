@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/dot-notation */
 /* eslint-disable no-underscore-dangle */
 import {
   ChangeDetectionStrategy,
@@ -350,7 +351,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
   inspectionId = '';
   plantTimezoneMap = {};
   selectedStartDate;
-  selectedDueDate;
+  selectedDueDate = null;
   plants = [];
   plantsIdNameMap = {};
   openMenuStateDueDate = false;
@@ -826,6 +827,9 @@ export class InspectionComponent implements OnInit, OnDestroy {
       for (const item of this.filterJson) {
         if (item.column === 'status') {
           item.items = this.status;
+        }
+        if (item['column'] === 'dueDate') {
+          item.items = this.selectedDueDate;
         }
       }
     });

@@ -499,6 +499,9 @@ export class ObservationsService {
         case 'assignedTo':
           item.items = data?.assignedTo ?? [];
           break;
+        case 'dueDate':
+          item.items = data?.dueDate ?? [];
+          break;
         default:
           break;
       }

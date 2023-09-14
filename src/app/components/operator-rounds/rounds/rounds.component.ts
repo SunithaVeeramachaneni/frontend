@@ -1016,6 +1016,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
         if (item['column'] === 'status') {
           item.items = this.status;
         }
+        if (item['column'] === 'dueDate') {
+          item.items = this.selectedDueDate;
+        }
       }
     });
   }
