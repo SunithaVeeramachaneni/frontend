@@ -83,8 +83,8 @@
 <ng-container *ngIf="userInfo$ | async">
   <div
     *ngIf="
-      (filterData$ | async) &&
       (inspections$ | async) &&
+      (filterData$ | async) &&
       (isLoading$ | async) === false
     "
     class="inspections-list"

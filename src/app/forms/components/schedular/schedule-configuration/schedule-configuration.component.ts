@@ -371,7 +371,7 @@ export class ScheduleConfigurationComponent
       endDatePicker: new Date(addDays(new Date(), 30)),
       scheduledTill: null,
       assignmentDetails: this.fb.group({
-        type: ['userGroup'],
+        type: ['plant'],
         value: '',
         displayValue: ''
       }),
@@ -417,7 +417,7 @@ export class ScheduleConfigurationComponent
         pairwise(),
         tap(([prev, curr]) => {
           if (!isEqual(prev, curr)) {
-            if (prev.type !== curr.type) {
+            if (prev.type && prev.type !== '' && prev.type !== curr.type) {
               this.schedulerConfigForm.get('assignmentDetails').patchValue({
                 type: curr.type,
                 value: '',
@@ -946,11 +946,11 @@ export class ScheduleConfigurationComponent
                     mode: 'create',
                     actionType: 'scheduleConfig'
                   });
-                  this.openScheduleSuccessModal('create');
                   this.schedulerConfigForm
                     .get('id')
                     .patchValue(scheduleConfig.id);
                   this.schedulerConfigForm.markAsPristine();
+                  this.openScheduleSuccessModal('create');
                 }
                 this.initShiftStat();
                 this.cdrf.detectChanges();
@@ -972,11 +972,11 @@ export class ScheduleConfigurationComponent
                     mode: 'create',
                     actionType: 'scheduleConfig'
                   });
-                  this.openScheduleSuccessModal('create');
                   this.schedulerConfigForm
                     .get('id')
                     .patchValue(scheduleConfig.id);
                   this.schedulerConfigForm.markAsPristine();
+                  this.openScheduleSuccessModal('create');
                 }
                 this.initShiftStat();
                 this.cdrf.detectChanges();
