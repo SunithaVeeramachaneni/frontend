@@ -48,6 +48,7 @@ import { zonedTimeToUtc } from 'date-fns-tz';
 import { ScheduleSuccessModalComponent } from 'src/app/forms/components/schedular/schedule-success-modal/schedule-success-modal.component';
 import { ScheduleConfigurationService } from 'src/app/forms/services/schedule.service';
 import { ScheduleConfigurationComponent } from 'src/app/forms/components/schedular/schedule-configuration/schedule-configuration.component';
+import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
 
 @Component({
   selector: 'app-task-level-scheduler',
@@ -146,7 +147,9 @@ export class TaskLevelSchedulerComponent implements OnInit {
     private dialog: MatDialog,
     private readonly scheduleConfigurationService: ScheduleConfigurationService,
     private dialogRef: MatDialogRef<ScheduleConfigurationComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private assetHierarchyUtil: AssetHierarchyUtil,
+    private operatorRoundsService: OperatorRoundsService
   ) {}
 
   ngOnInit(): void {
@@ -267,7 +270,11 @@ export class TaskLevelSchedulerComponent implements OnInit {
       return [];
     }
     const filteredValue = value.toLowerCase();
-    const flatHierarchy = JSON.parse(this.authoredData.flatHierarchy);
+    const hierarchyClone = JSON.parse(this.authoredData.flatHierarchy);
+    const flatHierarchy = this.assetHierarchyUtil.convertHierarchyToFlatList(
+      hierarchyClone,
+      0
+    );
     this.filteredList = flatHierarchy.filter(
       (option) =>
         option.name.toLowerCase().includes(filteredValue) ||
@@ -302,7 +309,21 @@ export class TaskLevelSchedulerComponent implements OnInit {
     });
   }
 
-  searchResultSelected(event) {}
+  searchResultSelected(event) {
+    const node = event.option.value;
+    const el = document.getElementById(`node-${node.id}`);
+    el.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+      inline: 'nearest'
+    });
+    if (node) {
+      setTimeout(() => {
+        this.searchHierarchyKey.patchValue(node.name);
+      }, 0);
+      this.operatorRoundsService.setSelectedNode(node);
+    }
+  }
 
   getSearchMatchesLabel() {
     return `${this.filteredList.length} Search matches`;
