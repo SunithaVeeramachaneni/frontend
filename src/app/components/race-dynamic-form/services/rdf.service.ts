@@ -584,7 +584,10 @@ export class RaceDynamicFormService {
   }
 
   fetchAllFormListNames$(formName) {
-    return this.appService._getResp(environment.rdfApiUrl, `forms/${formName}`);
+    return this.appService._getResp(
+      environment.rdfApiUrl,
+      `forms/copy/${formName}`
+    );
   }
 
   fetchAllFormsList$() {
