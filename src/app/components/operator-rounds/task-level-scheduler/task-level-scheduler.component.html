@@ -270,6 +270,9 @@
         [reviseSchedule]="payload"
         [uniqueConfigurations]="uniqueConfigurations"
         (openCloseRightPanelEvent)="openCloseRightPanelEventHandler($event)"
+        (resetTaskLevelConfigurationSelectionsEvenet)="
+          resetTaskLevelConfigurationSelectionsHandler($event)
+        "
       >
       </app-revise-schedule>
     </div>

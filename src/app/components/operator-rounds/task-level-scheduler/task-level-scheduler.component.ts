@@ -236,28 +236,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
           });
         });
 
-        Object.keys(this.subForms).forEach((subFormId) => {
-          const pages = this.subForms[subFormId].map((page) => {
-            page.complete = false;
-            page.partiallyChecked = false;
-            page.sections.forEach((section) => {
-              section.complete = false;
-              section.partiallyChecked = false;
-            });
-            page.questions.forEach((question) => {
-              question.complete = false;
-            });
-            return page;
-          });
-          if (this.selectedNodeId === subFormId.split('_')[1]) {
-            this.selectedPages = pages;
-          }
-          this.operatorRoundService.setCheckBoxStatus({
-            selectedPage: pages,
-            nodeId: subFormId.split('_')[1]
-          });
-          this.openCloseRightPanelEventHandler(false);
-        });
+        this.resetTaskLevelConfigurationSelections();
       })
     );
     this.uniqueConfiguration$ =
@@ -282,6 +261,31 @@ export class TaskLevelSchedulerComponent implements OnInit {
         option.nodeId.toLowerCase().includes(filteredValue)
     );
     return this.filteredList;
+  }
+
+  resetTaskLevelConfigurationSelections() {
+    Object.keys(this.subForms).forEach((subFormId) => {
+      const pages = this.subForms[subFormId].map((page) => {
+        page.complete = false;
+        page.partiallyChecked = false;
+        page.sections.forEach((section) => {
+          section.complete = false;
+          section.partiallyChecked = false;
+        });
+        page.questions.forEach((question) => {
+          question.complete = false;
+        });
+        return page;
+      });
+      if (this.selectedNodeId === subFormId.split('_')[1]) {
+        this.selectedPages = pages;
+      }
+      this.operatorRoundService.setCheckBoxStatus({
+        selectedPage: pages,
+        nodeId: subFormId.split('_')[1]
+      });
+      this.openCloseRightPanelEventHandler(false);
+    });
   }
 
   searchResultSelected(event) {}
@@ -328,6 +332,12 @@ export class TaskLevelSchedulerComponent implements OnInit {
       : (this.state = 'closed');
   }
 
+  resetTaskLevelConfigurationSelectionsHandler(reset: boolean) {
+    if (reset) {
+      this.resetTaskLevelConfigurationSelections();
+    }
+  }
+
   countOfSlots(slots) {
     let count = 0;
     slots.forEach((slot) => {
@@ -365,7 +375,12 @@ export class TaskLevelSchedulerComponent implements OnInit {
       Object.keys(revisedInfo).forEach((nodeId) => {
         Object.keys(revisedInfo[nodeId]).forEach((questionId) => {
           const questionConfig = revisedInfo[nodeId][questionId];
-          if (isEqual(config, questionConfig)) {
+          if (
+            this.operatorRoundService.comapreConfigurations(
+              config,
+              questionConfig
+            )
+          ) {
             if (!taskConfig['nodeWiseQuestionIds'][nodeId])
               taskConfig['nodeWiseQuestionIds'][nodeId] = [];
             taskConfig['nodeWiseQuestionIds'][nodeId].push(questionId);

@@ -967,4 +967,56 @@ export class OperatorRoundsService {
       );
     }
   };
+
+  comapreConfigurations(config1, config2) {
+    if (config1.scheduleType === scheduleConfigs.scheduleEndTypes[0]) {
+      if (config1.repeatTypes === scheduleConfigs.repeatTypes[0]) {
+        const {
+          daysOfWeek,
+          monthlyDaysOfWeek,
+          scheduleByDates,
+          ...restConfig1
+        } = config1;
+        const {
+          daysOfWeek: daysOfWeek2,
+          monthlyDaysOfWeek: monthlyDaysOfWeek2,
+          scheduleByDates: scheduleByDates2,
+          ...restConfig2
+        } = config2;
+        return isEqual(restConfig1, restConfig2);
+      } else if (config1.repeatTypes === scheduleConfigs.repeatTypes[1]) {
+        const { monthlyDaysOfWeek, scheduleByDates, ...restConfig1 } = config1;
+        const {
+          monthlyDaysOfWeek: monthlyDaysOfWeek2,
+          scheduleByDates: scheduleByDates2,
+          ...restConfig2
+        } = config2;
+        return isEqual(restConfig1, restConfig2);
+      } else {
+        const { daysOfWeek, scheduleByDates, ...restConfig1 } = config1;
+        const {
+          daysOfWeek: daysOfWeek2,
+          scheduleByDates: scheduleByDates2,
+          ...restConfig2
+        } = config2;
+        return isEqual(restConfig1, restConfig2);
+      }
+    } else {
+      const {
+        daysOfWeek,
+        monthlyDaysOfWeek,
+        repeatDuration,
+        repeatEvery,
+        ...restConfig1
+      } = config1;
+      const {
+        daysOfWeek: daysOfWeek2,
+        monthlyDaysOfWeek: monthlyDaysOfWeek2,
+        repeatDuration: repeatDuration2,
+        repeatEvery: repeatEvery2,
+        ...restConfig2
+      } = config2;
+      return isEqual(restConfig1, restConfig2);
+    }
+  }
 }

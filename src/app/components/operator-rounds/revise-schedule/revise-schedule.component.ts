@@ -43,6 +43,8 @@ export class ReviseScheduleComponent implements OnInit {
   @ViewChild('shiftSelect') shiftSelect: MatSelect;
   @ViewChild(MatCalendar) calendar: MatCalendar<Date>;
   @Output() openCloseRightPanelEvent = new EventEmitter<boolean>();
+  @Output() resetTaskLevelConfigurationSelectionsEvenet =
+    new EventEmitter<boolean>();
   @Input() roundPlanData: any;
   @Input() plantTimezoneMap: any;
   @Input() set nodeIdToNodeName(nodeIdToNodeName: any) {
@@ -284,6 +286,7 @@ export class ReviseScheduleComponent implements OnInit {
 
   cancel() {
     this.openCloseRightPanelEvent.emit(false);
+    this.resetTaskLevelConfigurationSelectionsEvenet.emit(true);
   }
 
   compareFn(o1: any, o2: any) {
@@ -318,27 +321,10 @@ export class ReviseScheduleComponent implements OnInit {
     this.shiftSelect.value = this.allSlots;
   }
 
-  updateConfig(config) {
-    if (config.scheduleType === scheduleConfigs.scheduleEndTypes[0]) {
-      if (config.repeatTypes === scheduleConfigs.repeatTypes[0]) {
-        config.daysOfWeek = [0];
-        config.monthlyDaysOfWeek = [[0], [0], [0], [0], [0]];
-      } else if (config.repeatTypes === scheduleConfigs.repeatTypes[1]) {
-        config.monthlyDaysOfWeek = [[0], [0], [0], [0], [0]];
-      } else {
-        config.daysOfWeek = [0];
-      }
-    } else {
-      config.daysOfWeek = [0];
-      config.monthlyDaysOfWeek = [[0], [0], [0], [0], [0]];
-    }
-  }
-
   comparingConfig(newConfig, scheduleByDates) {
     newConfig.shiftDetails = {
       ...this.prepareShiftSlot(this.allSlots)
     };
-    this.updateConfig(newConfig);
     let configIndex = 0;
     let configFound = false;
     const currentConfig = cloneDeep({ ...newConfig, scheduleByDates });
@@ -350,7 +336,9 @@ export class ReviseScheduleComponent implements OnInit {
       return 0;
     }
     this.uniqueConfigurations.forEach((config, index) => {
-      if (isEqual(currentConfig, config)) {
+      if (
+        this.operatorRoundService.comapreConfigurations(currentConfig, config)
+      ) {
         configFound = true;
         configIndex = index;
       }
