@@ -248,7 +248,7 @@
       class="mid-panel"
       *ngIf="selectedNode; else loadingSelectedNode"
     >
-      <div *ngIf="selectedPages === undefined" class="select-locations-assets">
+      <div *ngIf="selectedNode.length === 0" class="select-locations-assets">
         <p class="m-0" translate>nullSelectedLocationAssetFirst</p>
         <p translate>nullSelectedLocationAssetSecond</p>
       </div>

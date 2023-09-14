@@ -65,7 +65,7 @@ import { ScheduleConfigurationComponent } from 'src/app/forms/components/schedul
       state(
         'open',
         style({
-          width: '30%'
+          width: '25%'
         })
       ),
       transition('* => *', animate('0.4s linear'))
