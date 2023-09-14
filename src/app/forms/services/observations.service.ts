@@ -417,7 +417,7 @@ export class ObservationsService {
         list.forEach((email) => {
           if (email) {
             const foundName = this.userService.getUserFullName(email);
-            if (foundName) {
+            if (foundName && !emailToDisplay.includes(foundName)) {
               emailToDisplay.push(foundName);
             }
           }
