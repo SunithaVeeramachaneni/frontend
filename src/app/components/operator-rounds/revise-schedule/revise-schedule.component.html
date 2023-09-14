@@ -62,7 +62,10 @@
           <p id="taskScheduleConfigurationRepeatEvery" class="f-w-400">
             {{ 'repeatEvery' | translate }}
           </p>
-          <mat-form-field appearance="fill" class="task-repeat-num m-l-20">
+          <mat-form-field
+            appearance="fill"
+            class="task-repeat-num m-l-20 m-r-10"
+          >
             <input
               type="number"
               matInput
@@ -117,7 +120,7 @@
               <div
                 id="scheduleConfigurationWeekOfMonth"
                 class="row-title"
-                class="m-r-40"
+                class="m-r-10"
                 [ngClass]="{ 'm-r-36': i === 1 }"
               >
                 {{ weekOfMonth }}
