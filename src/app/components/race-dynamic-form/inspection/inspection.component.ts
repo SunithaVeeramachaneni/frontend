@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/dot-notation */
 /* eslint-disable no-underscore-dangle */
 import {
   ChangeDetectionStrategy,
@@ -403,7 +402,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
   inspectionId = '';
   plantTimezoneMap = {};
   selectedStartDate;
-  selectedDueDate = null;
+  selectedDueDate;
   plants = [];
   plantsIdNameMap = {};
   openMenuStateDueDate = false;
@@ -503,6 +502,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
               item.items = this.schedules.sort();
             } else if (item.column === 'shiftId') {
               item.items = Object.values(this.shiftNameMap).sort();
+            } else if (item.column === 'dueDate') {
+              item.items = this.selectedDueDate;
             }
           }
         }
@@ -897,20 +898,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
           });
         }
       );
-  }
-
-  getFilter() {
-    this.raceDynamicFormService.getInspectionFilter().subscribe((res) => {
-      this.filterJson = res;
-      for (const item of this.filterJson) {
-        if (item.column === 'status') {
-          item.items = this.status;
-        }
-        if (item['column'] === 'dueDate') {
-          item.items = this.selectedDueDate;
-        }
-      }
-    });
   }
 
   getFullNameToEmailArray(data: any) {

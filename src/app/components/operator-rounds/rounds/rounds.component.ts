@@ -690,6 +690,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
             if (item['column'] === 'shiftId') {
               item.items = Object.values(this.shiftNameMap).sort();
             }
+            if (item['column'] === 'dueDate') {
+              item.items = this.selectedDueDate;
+            }
           }
         }
         this.filterJson = filterJson;
@@ -1086,80 +1089,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
           });
         }
       );
-  }
-
-  getAllOperatorRounds() {
-    this.isLoading$.next(true);
-    this.operatorRoundsService.fetchAllRounds$().subscribe(
-      (formsList) => {
-        this.isLoading$.next(false);
-        const objectKeys = Object.keys(formsList);
-        if (objectKeys.length > 0) {
-          const uniqueAssignTo = formsList
-            ?.map((item) => item.assignedTo)
-            .filter((value, index, self) => self.indexOf(value) === index);
-
-          const uniqueSchedules = formsList
-            ?.map((item) => item?.schedule)
-            .filter((value, index, self) => self?.indexOf(value) === index);
-
-          if (uniqueSchedules?.length > 0) {
-            uniqueSchedules?.filter(Boolean).forEach((item) => {
-              if (item) {
-                this.schedules.push(item);
-              }
-            });
-          }
-          if (uniqueAssignTo?.length > 0) {
-            uniqueAssignTo?.filter(Boolean).forEach((item) => {
-              if (item && this.userFullNameByEmail[item] !== undefined) {
-                this.assignedTo.push(this.userFullNameByEmail[item].fullName);
-              }
-            });
-          }
-
-          const uniquePlants = formsList
-            .map((item) => {
-              if (item.plant) {
-                this.plantsIdNameMap[item.plant] = item.plantId;
-                return item.plant;
-              }
-              return '';
-            })
-            .filter((value, index, self) => self.indexOf(value) === index);
-          this.plants = [...uniquePlants];
-
-          for (const item of this.filterJson) {
-            if (item.column === 'assignedTo') {
-              item.items = this.assignedTo;
-            } else if (item['column'] === 'plant') {
-              item.items = this.plants;
-            }
-            if (item.column === 'schedule') {
-              item.items = this.schedules;
-            }
-            if (item['column'] === 'shiftId') {
-              item.items = Object.values(this.shiftNameMap);
-            }
-          }
-        }
-      },
-      () => this.isLoading$.next(false)
-    );
-  }
-
-  getFilter() {
-    this.operatorRoundsService.getRoundFilter().subscribe((res) => {
-      this.filterJson = res;
-      for (const item of this.filterJson) {
-        if (item['column'] === 'status') {
-          item.items = this.status;
-        }
-        if (item['column'] === 'dueDate') {
-          item.items = this.selectedDueDate;
-        }
-      }
-    });
   }
 
   getFullNameToEmailArray(data: any) {
