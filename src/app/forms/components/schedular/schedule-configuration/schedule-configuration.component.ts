@@ -865,12 +865,20 @@ export class ScheduleConfigurationComponent
         rest.assignmentDetails.type = 'user';
       }
       if (id) {
+        const dates =
+          schedularConfigFormValue.scheduleType === 'byDate'
+            ? scheduleByDates.map((s) => ({
+                ...s,
+                scheduled: false
+              }))
+            : [];
         const payload = {
           ...rest,
           startDate: startDateByPlantTimezone,
           endDate: endDateByPlantTimezone,
           scheduleEndOn: scheduleEndOnByPlantTimezone,
-          scheduleByDates,
+          scheduleByDates: dates,
+          scheduledTill: null,
           shiftDetails: this.prepareShiftDetailsPayload(this.shiftDetails)
         };
         delete payload.shiftSlots;
