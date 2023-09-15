@@ -144,6 +144,24 @@ export class ShiftChartComponent implements OnInit, OnChanges {
         this.setShiftDetails();
         return;
       }
+      if (val === checkSlot[0].startTime) {
+        const combineSlot = {
+          index: 1,
+          startTime: val,
+          endTime: this.service.addTime(val, 0, 59),
+          isBook: true
+        };
+        const checkIndex = this.dataArrays.findIndex(
+          (item) => item === checkSlot[0]
+        );
+        this.dataArrays[checkIndex].index =
+          this.dataArrays[checkIndex].index - 1;
+        this.dataArrays[checkIndex].startTime = this.service.addTime(val, 1, 0);
+        this.dataArrays.push(combineSlot);
+        this.slotsArray.push(this.createItemFormGroup());
+        this.dataArrays = this.service.sortArray(this.dataArrays, this.slots);
+        this.setShiftDetails();
+      }
       this.setShiftDetails();
       return;
     }
@@ -156,6 +174,12 @@ export class ShiftChartComponent implements OnInit, OnChanges {
           endTime: string;
           isBook: boolean;
         };
+        const matchingTimeSlotAM = this.dataArrays.find((timeSlot) =>
+          this.service.isTimeInRange(timeSlot, val)
+        );
+        const checkIndex = this.dataArrays.findIndex(
+          (item) => item === matchingTimeSlotAM
+        );
         const checkSlotValue = this.slots.findIndex((item) => item === val);
         if (this.dataArrays.filter((e) => e.startTime === val).length) {
           const findIndx = this.dataArrays.findIndex(
@@ -180,19 +204,30 @@ export class ShiftChartComponent implements OnInit, OnChanges {
           this.setShiftDetails();
           return;
         }
-
-        const lastTime = this.dataArrays[0].endTime;
-        const oldIndex = this.dataArrays[0].index;
-        this.dataArrays[0].index = checkSlotValue;
-        this.dataArrays[0].endTime = this.service.subtractTime(val, 0, 1);
+        const lastTime = this.dataArrays[checkIndex].endTime;
+        const oldIndex = this.dataArrays[checkIndex].index;
+        this.dataArrays[checkIndex].endTime = this.service.subtractTime(
+          val,
+          0,
+          1
+        );
         obj = {
           index: Math.abs(oldIndex - checkSlotValue),
           startTime: this.service.subtractTime(val, 0, 0),
           endTime: lastTime,
           isBook: true
         };
+        const getTimeDiff = this.service.getTimeDifference(
+          obj.startTime,
+          this.service.addTime(obj.endTime, 0, 1)
+        );
+        obj.index = getTimeDiff;
+        this.dataArrays[checkIndex].index = Math.abs(oldIndex - getTimeDiff);
+
         this.dataArrays.push(obj);
         this.slotsArray.push(this.createItemFormGroup());
+        this.dataArrays = this.service.sortArray(this.dataArrays, this.slots);
+
         this.setShiftDetails();
         return;
       }
@@ -210,7 +245,7 @@ export class ShiftChartComponent implements OnInit, OnChanges {
       const checkIndex = this.dataArrays.findIndex(
         (item) => item === matchingTimeSlot
       );
-      if (checkIndex) {
+      if (checkIndex !== undefined) {
         if (matchingTimeSlot?.isBook === false) {
           if (matchingTimeSlot?.endTime === this.service.addTime(val, 0, 59)) {
             this.dataArrays[checkIndex].isBook = true;
@@ -230,20 +265,79 @@ export class ShiftChartComponent implements OnInit, OnChanges {
             this.setShiftDetails();
             return;
           }
+        } else {
+          if (matchingTimeSlot?.endTime === this.service.addTime(val, 0, 59)) {
+            const lastObjIndex = this.dataArrays[checkIndex].index;
+
+            const obj1 = {
+              index: 1,
+              startTime: val,
+              endTime: this.service.addTime(val, 0, 59),
+              isBook: true
+            };
+
+            this.dataArrays[checkIndex].isBook = true;
+
+            this.dataArrays[checkIndex].index = lastObjIndex - obj1?.index;
+            const endTime = this.dataArrays[checkIndex].endTime;
+            this.dataArrays[checkIndex].endTime = this.service.subtractTime(
+              val,
+              0,
+              1
+            );
+            this.dataArrays.push(obj1);
+            this.slotsArray.push(this.createItemFormGroup());
+            this.dataArrays = this.service.sortArray(
+              this.dataArrays,
+              this.slots
+            );
+            this.setShiftDetails();
+            return;
+          }
+          if (matchingTimeSlot?.endTime === this.service.addTime(val, 0, 1)) {
+            this.dataArrays[checkIndex].isBook = true;
+            const endTime = this.dataArrays[checkIndex].endTime;
+            this.dataArrays[checkIndex].endTime = this.service.subtractTime(
+              endTime,
+              0,
+              1
+            );
+            this.setShiftDetails();
+            return;
+          }
         }
+        const matchingTimeSlotclone = JSON.parse(
+          JSON.stringify(matchingTimeSlot)
+        );
+
         const lastTime = this.dataArrays[checkIndex].endTime;
         const oldIndex = this.dataArrays[checkIndex].index;
         this.dataArrays[checkIndex].index = currentIdx;
+        this.dataArrays[checkIndex].isBook = true;
         this.dataArrays[checkIndex].endTime = this.service.subtractTime(
           val,
           0,
           1
         );
+        if (matchingTimeSlotclone.isBook) {
+          const objTrue = {
+            index: Math.abs(oldIndex - currentIdx),
+            startTime: this.service.subtractTime(val, 0, 0),
+            endTime: lastTime,
+            isBook: true
+          };
+
+          this.dataArrays.push(objTrue);
+          this.slotsArray.push(this.createItemFormGroup());
+          this.dataArrays = this.service.sortArray(this.dataArrays, this.slots);
+          this.setShiftDetails();
+          return;
+        }
         const obj = {
           index: Math.abs(oldIndex - currentIdx),
           startTime: this.service.subtractTime(val, 0, 0),
           endTime: lastTime,
-          isBook: true
+          isBook: false
         };
         this.dataArrays.push(obj);
         this.slotsArray.push(this.createItemFormGroup());
@@ -686,9 +780,11 @@ export class ShiftChartComponent implements OnInit, OnChanges {
       ?.split(':')[1]
       ?.split(' ')[1];
     const endTime = this.dataArrays[0]?.endTime?.split(':')[1]?.split(' ')[1];
+    const isBookStatus = this.dataArrays[0].isBook;
     return (
       startTime.toUpperCase() === TimeType.pm.toUpperCase() &&
-      endTime.toUpperCase() === TimeType.am.toUpperCase()
+      endTime.toUpperCase() === TimeType.am.toUpperCase() &&
+      isBookStatus
     );
   }
 }
