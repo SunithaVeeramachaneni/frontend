@@ -330,7 +330,13 @@ export class ScheduleConfigurationComponent
         dateFormat3
       ),
 
-      startDatePicker: new Date(),
+      startDatePicker: new Date(
+        localToTimezoneDate(
+          new Date(),
+          this.plantTimezoneMap[this.selectedDetails?.plantId],
+          dateFormat3
+        )
+      ),
       endDate: [
         {
           value: localToTimezoneDate(
