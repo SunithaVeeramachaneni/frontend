@@ -76,7 +76,7 @@ export class AssignedToComponent implements OnInit, OnDestroy {
       .pipe(
         takeUntil(this.onDestroy$),
         debounceTime(100),
-        delay(1000),
+        delay(800),
         tap((assignee: any) => {
           if (assignee.user) {
             this.selectedAssignee.emit(assignee);
