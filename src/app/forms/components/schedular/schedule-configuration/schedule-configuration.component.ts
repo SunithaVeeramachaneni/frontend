@@ -809,12 +809,20 @@ export class ScheduleConfigurationComponent
         ).toISOString();
       }
       if (id) {
+        const dates =
+          schedularConfigFormValue.scheduleType === 'byDate'
+            ? scheduleByDates.map((s) => ({
+                ...s,
+                scheduled: false
+              }))
+            : [];
         const payload = {
           ...rest,
           startDate: startDateByPlantTimezone,
           endDate: endDateByPlantTimezone,
           scheduleEndOn: scheduleEndOnByPlantTimezone,
-          scheduleByDates,
+          scheduleByDates: dates,
+          scheduledTill: null,
           shiftDetails: this.prepareShiftDetailsPayload(this.shiftDetails)
         };
         delete payload.shiftSlots;
