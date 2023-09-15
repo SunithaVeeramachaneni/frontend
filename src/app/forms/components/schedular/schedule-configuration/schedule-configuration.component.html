@@ -138,6 +138,7 @@
             color="primary"
             *ngFor="let scheduleType of scheduleTypes"
             [value]="scheduleType"
+            (change)="onChangeScheduleType()"
           >
             {{ scheduleType | translate }}</mat-radio-button
           >

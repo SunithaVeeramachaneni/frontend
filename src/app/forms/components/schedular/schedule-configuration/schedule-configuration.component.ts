@@ -1050,6 +1050,9 @@ export class ScheduleConfigurationComponent
                 config?.shiftDetails,
                 '12'
               );
+              if (Object.keys(config.shiftDetails)[0] !== 'null') {
+                config['shiftsSelected'] = Object.keys(config.shiftDetails);
+              }
               this.shiftDetails = {};
               delete config?.shiftDetails;
               this.initCreatedSlots();
@@ -1484,6 +1487,9 @@ export class ScheduleConfigurationComponent
     this.scheduleConfigurationService.setInitialSlotChanged();
   }
 
+  onChangeScheduleType() {
+    this.schedulerConfigForm.get('advanceRoundsCount').setValue(0);
+  }
   private prepareShiftDetailsPayload(shiftDetails, type: '24' | '12' = '24') {
     const payload = {};
     if (!shiftDetails) {
