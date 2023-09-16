@@ -300,6 +300,7 @@ export class ScheduleConfigurationComponent
       this.plantService.plantTimeZoneMapping$.subscribe(
         (data) => (this.plantTimezoneMap = data)
       );
+    const initialShiftDetails = this.shiftDetails || shiftDefaultPayload;
     this.schedulerConfigForm = this.fb.group({
       id: '',
       roundPlanId: !this.isFormModule ? this.selectedDetails?.id : '',
@@ -377,7 +378,20 @@ export class ScheduleConfigurationComponent
           Validators.max(this.roundsGeneration.max)
         ]
       ],
-      shiftSlots: this.fb.array([this.addShiftDetails(true)]),
+      shiftSlots: this.fb.array([
+        this.addShiftDetails(false, {
+          null: {
+            startTime: initialShiftDetails?.null[0]?.startTime,
+            endTime: initialShiftDetails?.null[0]?.endTime,
+            payload: [
+              {
+                startTime: initialShiftDetails?.null[0]?.startTime,
+                endTime: initialShiftDetails?.null[0]?.endTime
+              }
+            ]
+          }
+        })
+      ]),
       shiftsSelected: []
     });
     this.schedulerConfigForm
@@ -1429,7 +1443,19 @@ export class ScheduleConfigurationComponent
               id: foundShift?.id,
               name: foundShift?.name,
               startTime: foundShift?.startTime,
-              endTime: foundShift?.endTime
+              endTime: foundShift?.endTime,
+              payload: [
+                {
+                  startTime:
+                    this.scheduleConfigurationService.convertTo12HourFormat(
+                      foundShift?.startTime
+                    ),
+                  endTime:
+                    this.scheduleConfigurationService.convertTo12HourFormat(
+                      foundShift?.endTime
+                    )
+                }
+              ]
             })
           );
         }
@@ -1450,7 +1476,22 @@ export class ScheduleConfigurationComponent
       this.shiftSlots.clear();
       this.shiftApiResponse = null;
       this.shiftDetails = shiftDefaultPayload;
-      this.shiftSlots.push(this.addShiftDetails(true));
+      if (this.shiftDetails) {
+        this.shiftSlots.push(
+          this.addShiftDetails(false, {
+            null: {
+              startTime: this.shiftDetails?.null[0]?.startTime,
+              endTime: this.shiftDetails?.null[0]?.endTime,
+              payload: [
+                {
+                  startTime: this.shiftDetails?.null[0]?.startTime,
+                  endTime: this.shiftDetails?.null[0]?.endTime
+                }
+              ]
+            }
+          })
+        );
+      }
     }
     this.scheduleConfigurationService.setSlotChanged(true);
   }
