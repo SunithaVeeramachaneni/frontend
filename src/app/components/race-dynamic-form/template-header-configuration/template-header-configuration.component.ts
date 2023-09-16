@@ -339,6 +339,7 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
         this.rdfService
           .createTemplate$({
             ...this.headerDataForm.value,
+            tags: this.tags,
             additionalDetails: updatedAdditionalDetails,
             author: userEmail,
             formLogo: 'assets/rdf-forms-icons/formlogo.svg'
@@ -368,6 +369,7 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
             formMetadata: {
               ...this.headerDataForm.value,
               id: this.templateData.formMetadata.id,
+              tags: this.tags,
               additionalDetails: updatedAdditionalDetails
             },
             formStatus: this.hasFormChanges
@@ -389,6 +391,7 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
             formMetadata: {
               ...this.headerDataForm.value,
               id: this.templateData.formMetadata.id,
+              tags: this.tags,
               additionalDetails: updatedAdditionalDetails
             }
           })

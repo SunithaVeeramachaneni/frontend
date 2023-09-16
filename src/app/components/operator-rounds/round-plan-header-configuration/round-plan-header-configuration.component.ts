@@ -437,6 +437,7 @@ export class RoundPlanHeaderConfigurationComponent
           BuilderConfigurationActions.addFormMetadata({
             formMetadata: {
               ...this.headerDataForm.value,
+              tags: this.tags,
               additionalDetails: updatedAdditionalDetails,
               plant: plant.name,
               moduleName: 'rdf'
@@ -455,6 +456,7 @@ export class RoundPlanHeaderConfigurationComponent
           RoundPlanConfigurationActions.createRoundPlan({
             formMetadata: {
               ...this.headerDataForm.value,
+              tags: this.tags,
               additionalDetails: updatedAdditionalDetails,
               pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG,
               author: userName,
@@ -470,6 +472,7 @@ export class RoundPlanHeaderConfigurationComponent
             formMetadata: {
               ...this.headerDataForm.value,
               id: this.roundData.formMetadata.id,
+              tags: this.tags,
               additionalDetails: updatedAdditionalDetails,
               plant: plant.name,
               moduleName: 'rdf',
@@ -491,6 +494,7 @@ export class RoundPlanHeaderConfigurationComponent
           RoundPlanConfigurationActions.updateRoundPlan({
             formMetadata: {
               ...this.headerDataForm.value,
+              tags: this.tags,
               id: this.roundData.formMetadata.id,
               additionalDetails: updatedAdditionalDetails,
               plant: plant.name,

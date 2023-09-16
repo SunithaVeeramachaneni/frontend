@@ -430,6 +430,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
           BuilderConfigurationActions.addFormMetadata({
             formMetadata: {
               ...this.headerDataForm.value,
+              tags: this.tags,
               additionalDetails: updatedAdditionalDetails,
               plant: plant.name
             },
@@ -446,6 +447,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
           BuilderConfigurationActions.createForm({
             formMetadata: {
               ...this.headerDataForm.value,
+              tags: this.tags,
               additionalDetails: updatedAdditionalDetails,
               pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG,
               author: userName,
@@ -459,6 +461,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
           BuilderConfigurationActions.updateFormMetadata({
             formMetadata: {
               ...this.headerDataForm.value,
+              tags: this.tags,
               id: this.formData.formMetadata.id,
               additionalDetails: updatedAdditionalDetails,
               plant: plant?.name
@@ -479,6 +482,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
           BuilderConfigurationActions.updateForm({
             formMetadata: {
               ...this.headerDataForm.value,
+              tags: this.tags,
               id: this.formData.formMetadata.id,
               additionalDetails: updatedAdditionalDetails,
               pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG
