@@ -57,7 +57,7 @@ import {
   statusColors,
   dateTimeFormat4,
   dateTimeFormat5,
-  graphQLDefaultLimit
+  graphQLThousandLimit
 } from 'src/app/app.constants';
 import { LoginService } from '../../login/services/login.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -331,7 +331,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
   skip = 0;
   plantMapSubscription: Subscription;
   allActiveShifts$: Observable<any>;
-  limit = graphQLDefaultLimit;
+  limit = graphQLThousandLimit;
   searchForm: FormControl;
   isPopoverOpen = false;
   inspectionsCount = 0;

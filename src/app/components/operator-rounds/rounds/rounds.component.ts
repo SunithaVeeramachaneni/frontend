@@ -61,7 +61,7 @@ import {
   dateTimeFormat5,
   dateFormat6,
   timeFormat,
-  graphQLDefaultLimit
+  graphQLThousandLimit
 } from 'src/app/app.constants';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
 import { LoginService } from '../../login/services/login.service';
@@ -524,7 +524,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   skip = 0;
   plantMapSubscription: Subscription;
-  limit = graphQLDefaultLimit;
+  limit = graphQLThousandLimit;
   searchForm: FormControl;
   isPopoverOpen = false;
   roundsCount = 0;
