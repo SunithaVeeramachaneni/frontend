@@ -352,7 +352,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     const index = this.tags.indexOf(tag);
 
     if (index >= 0) {
-      this.tags.splice(index, 1);
+      this.tags = [...this.tags.slice(0, index), ...this.tags.slice(index + 1)];
     }
     this.filteredTags = of(
       this.tagsCtrl.value
