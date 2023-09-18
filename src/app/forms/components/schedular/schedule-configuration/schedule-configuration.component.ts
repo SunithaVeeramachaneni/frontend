@@ -163,6 +163,7 @@ export class ScheduleConfigurationComponent
     [key: string]: { startTime: string; endTime: string }[];
   } = JSON.parse(JSON.stringify(shiftDefaultPayload));
   private shiftApiResponse: any;
+
   constructor(
     private fb: FormBuilder,
     private rpscService: RoundPlanScheduleConfigurationService,
@@ -831,7 +832,7 @@ export class ScheduleConfigurationComponent
   prepareScheduleConfigurationDetail() {
     const schedularConfigFormValue = this.schedulerConfigForm.getRawValue();
 
-    const { startDatePicker, endDatePicker, scheduleType } =
+    const { startDate, endDate, startDatePicker, endDatePicker, scheduleType } =
       schedularConfigFormValue;
 
     const scheduleByDates =
@@ -846,7 +847,14 @@ export class ScheduleConfigurationComponent
     };
     this.payloadEmitter.emit({
       payload: this.payload,
-      plantTimezoneMap: this.plantTimezoneMap
+      plantTimezoneMap: this.plantTimezoneMap,
+      scheduleConfig: {
+        startDate,
+        shiftDetails: this.payload.shiftDetails,
+        scheduleType,
+        scheduleByDates,
+        endDate
+      }
     });
     this.gotoNextStep.emit();
   }
@@ -917,6 +925,8 @@ export class ScheduleConfigurationComponent
         if (this.isFormModule) {
           delete payload.roundPlanId;
           delete payload.advanceRoundsCount;
+          this.openScheduleSuccessModal('update');
+          this.operatorRoundService.setScheduleLoader(true);
           this.formScheduleConfigurationService
             .updateFormScheduleConfiguration$(id, payload)
             .pipe(
@@ -924,7 +934,6 @@ export class ScheduleConfigurationComponent
                 this.disableSchedule = false;
                 if (scheduleConfig && Object.keys(scheduleConfig)?.length) {
                   // Close popup and pass data through it
-                  this.openScheduleSuccessModal('update');
                   this.dialogRef.close({
                     formsScheduleConfiguration: scheduleConfig,
                     mode: 'update',
@@ -933,6 +942,7 @@ export class ScheduleConfigurationComponent
                   this.schedulerConfigForm.markAsPristine();
                 }
                 this.initShiftStat();
+                this.operatorRoundService.setScheduleLoader(false);
                 this.cdrf.detectChanges();
               })
             )
@@ -954,7 +964,6 @@ export class ScheduleConfigurationComponent
                     mode: 'update',
                     actionType: 'scheduleConfig'
                   });
-                  this.operatorRoundService.setScheduleLoader(false);
                   this.schedulerConfigForm.markAsPristine();
                 }
                 this.initShiftStat();
@@ -978,6 +987,8 @@ export class ScheduleConfigurationComponent
         if (this.isFormModule) {
           delete payload.roundPlanId;
           delete payload.advanceRoundsCount;
+          this.openScheduleSuccessModal('create');
+          this.operatorRoundService.setScheduleLoader(true);
           this.formScheduleConfigurationService
             .createFormScheduleConfiguration$(payload)
             .pipe(
@@ -990,12 +1001,12 @@ export class ScheduleConfigurationComponent
                     mode: 'create',
                     actionType: 'scheduleConfig'
                   });
-                  this.openScheduleSuccessModal('create');
                   this.schedulerConfigForm
                     .get('id')
                     .patchValue(scheduleConfig.id);
                   this.schedulerConfigForm.markAsPristine();
                 }
+                this.operatorRoundService.setScheduleLoader(false);
                 this.initShiftStat();
                 this.cdrf.detectChanges();
               })

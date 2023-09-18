@@ -1,13 +1,21 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable no-underscore-dangle */
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  ChangeDetectionStrategy
+} from '@angular/core';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { scheduleConfigs } from 'src/app/forms/components/schedular/schedule-configuration/schedule-configuration.constants';
 
 @Component({
   selector: 'app-task-level-task-components',
   templateUrl: './task-level-task-components.component.html',
-  styleUrls: ['./task-level-task-components.component.scss']
+  styleUrls: ['./task-level-task-components.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TaskLevelTaskComponentsComponent implements OnInit {
   @Input() selectedNodeId: any;

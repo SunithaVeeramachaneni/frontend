@@ -162,8 +162,8 @@
               [matDatepicker]="startDate"
               formControlName="startDatePicker"
               (dateChange)="updateDate($event, 'startDate')"
-              [min]="this.reviseScheduleConfig.startDate"
-              [max]="this.reviseScheduleConfig.endDate"
+              [min]="this.reviseScheduleConfig.startDatePicker"
+              [max]="this.reviseScheduleConfig.endDatePicker"
               hidden
             />
             <mat-datepicker-toggle matIconSuffix [for]="startDate">
@@ -190,8 +190,8 @@
               [matDatepicker]="endDate"
               formControlName="endDatePicker"
               (dateChange)="updateDate($event, 'endDate')"
-              [min]="this.reviseScheduleConfig.startDate"
-              [max]="this.reviseScheduleConfig.endDate"
+              [min]="this.reviseScheduleConfig.startDatePicker"
+              [max]="this.reviseScheduleConfig.endDatePicker"
               hidden
             />
             <mat-datepicker-toggle matIconSuffix [for]="endDate">
@@ -211,7 +211,8 @@
             #calendar
             [minDate]="minDate"
             [maxDate]="maxDate"
-            [dateClass]="dateClass()"
+            [dateClass]="dateClass"
+            [dateFilter]="dateFilter"
             (selectedChange)="updateScheduleByDates($event)"
           ></mat-calendar>
         </div>
@@ -316,6 +317,12 @@
       class="revise-btn"
       translate="reviseBtn"
       (click)="onRevise()"
+      [disabled]="
+        reviseScheduleConfigForm.pristine ||
+        reviseScheduleConfigForm.invalid ||
+        (reviseScheduleConfigForm.get('scheduleType').value === 'byDate' &&
+          taskLevelScheduleByDates.length === 0)
+      "
     ></button>
   </div>
 </div>

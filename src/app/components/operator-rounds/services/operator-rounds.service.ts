@@ -26,13 +26,12 @@ import {
 import {
   formConfigurationStatus,
   dateFormat2,
-  dateFormat4,
   graphQLDefaultMaxLimit
 } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { isJson } from '../../race-dynamic-form/utils/utils';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
-import { cloneDeep, isEmpty, omitBy, isEqual } from 'lodash-es';
+import { cloneDeep, isEmpty, omitBy, isEqual, sortBy } from 'lodash-es';
 import { scheduleConfigs } from 'src/app/forms/components/schedular/schedule-configuration/schedule-configuration.constants';
 
 @Injectable({
@@ -45,8 +44,9 @@ export class OperatorRoundsService {
   private revisedInfoSubject = new BehaviorSubject<any>({});
   private allPageCheckBoxStatusSubject = new BehaviorSubject<any>([]);
   private uniqueConfigurationSubject = new BehaviorSubject<any>([]);
-  private shhiftInformationSubject = new BehaviorSubject<any>([]);
-  private scheduleLoaderSubject = new BehaviorSubject<any>(Boolean);
+  private shiftInformationSubject = new BehaviorSubject<any>([]);
+  private scheduleLoaderSubject = new BehaviorSubject<boolean>(false);
+  private isRevisedSubject = new BehaviorSubject<boolean>(false);
 
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
@@ -59,8 +59,9 @@ export class OperatorRoundsService {
   revisedInfo$ = this.revisedInfoSubject.asObservable();
   uniqueConfiguration$ = this.uniqueConfigurationSubject.asObservable();
   usersInfoByEmail: UsersInfoByEmail;
-  shiftInformation$ = this.shhiftInformationSubject.asObservable();
+  shiftInformation$ = this.shiftInformationSubject.asObservable();
   scheduleLoader$ = this.scheduleLoaderSubject.asObservable();
+  isRevised$ = this.isRevisedSubject.asObservable();
 
   constructor(
     public assetHierarchyUtil: AssetHierarchyUtil,
@@ -91,11 +92,15 @@ export class OperatorRoundsService {
     this.uniqueConfigurationSubject.next(configs);
   }
   setShiftInformation(shiftInfo: any) {
-    this.shhiftInformationSubject.next(shiftInfo);
+    this.shiftInformationSubject.next(shiftInfo);
   }
 
   setScheduleLoader(isLoading: boolean) {
     this.scheduleLoaderSubject.next(isLoading);
+  }
+
+  setIsRevised(isRevised: boolean) {
+    this.isRevisedSubject.next(isRevised);
   }
 
   createTags$ = (
@@ -868,6 +873,7 @@ export class OperatorRoundsService {
 
     return { commonConfig, isQuestionNotIncluded: false };
   };
+
   compareConfigWithHeader = (
     reviseScheduleConfig: RoundPlanScheduleConfiguration,
     reviseScheduleConfigFormValue: RoundPlanScheduleConfiguration,
@@ -903,8 +909,8 @@ export class OperatorRoundsService {
             {
               repeatEvery,
               repeatDuration,
-              startDate: format(new Date(startDate), dateFormat4),
-              endDate: format(new Date(endDate), dateFormat4),
+              startDate,
+              endDate,
               shiftDetails
             },
             {
@@ -920,15 +926,15 @@ export class OperatorRoundsService {
             {
               repeatEvery,
               repeatDuration,
-              daysOfWeek,
-              startDate: format(new Date(startDate), dateFormat4),
-              endDate: format(new Date(endDate), dateFormat4),
+              daysOfWeek: sortBy(daysOfWeek),
+              startDate,
+              endDate,
               shiftDetails
             },
             {
               repeatEvery: repeatEveryFormValue,
               repeatDuration: repeatDurationFormValue,
-              daysOfWeek: daysOfWeekFormValue,
+              daysOfWeek: sortBy(daysOfWeekFormValue),
               startDate: startDateFormValue,
               endDate: endDateFormValue,
               shiftDetails: shiftDetailsFormValue
@@ -939,15 +945,19 @@ export class OperatorRoundsService {
             {
               repeatEvery,
               repeatDuration,
-              monthlyDaysOfWeek,
-              startDate: format(new Date(startDate), dateFormat4),
-              endDate: format(new Date(endDate), dateFormat4),
+              monthlyDaysOfWeek: sortBy(monthlyDaysOfWeek, [
+                (o) => sortBy(o)
+              ]).map((mDaysOfWeek) => sortBy(mDaysOfWeek)),
+              startDate,
+              endDate,
               shiftDetails
             },
             {
               repeatEvery: repeatEveryFormValue,
               repeatDuration: repeatDurationFormValue,
-              monthlyDaysOfWeek: monthlyDaysOfWeekFormValue,
+              monthlyDaysOfWeek: sortBy(monthlyDaysOfWeekFormValue, [
+                (o) => sortBy(o)
+              ]).map((mDaysOfWeek) => sortBy(mDaysOfWeek)),
               startDate: startDateFormValue,
               endDate: endDateFormValue,
               shiftDetails: shiftDetailsFormValue
@@ -957,20 +967,23 @@ export class OperatorRoundsService {
     } else if (scheduleTypeFormValue === scheduleTypes[1]) {
       return isEqual(
         {
-          scheduleByDates,
+          scheduleByDates: sortBy(scheduleByDates, [(o) => o.date]),
           shiftDetails
         },
         {
-          scheduleByDates: scheduleByDatesFormValue,
+          scheduleByDates: sortBy(scheduleByDatesFormValue, [(o) => o.date]),
           shiftDetails: shiftDetailsFormValue
         }
       );
     }
   };
 
-  comapreConfigurations(config1, config2) {
-    if (config1.scheduleType === scheduleConfigs.scheduleEndTypes[0]) {
-      if (config1.repeatTypes === scheduleConfigs.repeatTypes[0]) {
+  comapreConfigurations(configuration1, configuration2) {
+    const config1 = cloneDeep(configuration1);
+    const config2 = cloneDeep(configuration2);
+
+    if (config1.scheduleType === scheduleConfigs.scheduleTypes[0]) {
+      if (config1.repeatEvery === scheduleConfigs.repeatTypes[0]) {
         const {
           daysOfWeek,
           monthlyDaysOfWeek,
@@ -984,22 +997,50 @@ export class OperatorRoundsService {
           ...restConfig2
         } = config2;
         return isEqual(restConfig1, restConfig2);
-      } else if (config1.repeatTypes === scheduleConfigs.repeatTypes[1]) {
-        const { monthlyDaysOfWeek, scheduleByDates, ...restConfig1 } = config1;
+      } else if (config1.repeatEvery === scheduleConfigs.repeatTypes[1]) {
         const {
+          daysOfWeek,
+          monthlyDaysOfWeek,
+          scheduleByDates,
+          ...restConfig1
+        } = config1;
+        const {
+          daysOfWeek: daysOfWeek2,
           monthlyDaysOfWeek: monthlyDaysOfWeek2,
           scheduleByDates: scheduleByDates2,
           ...restConfig2
         } = config2;
-        return isEqual(restConfig1, restConfig2);
+        return isEqual(
+          { ...restConfig1, daysOfWeek: sortBy(daysOfWeek) },
+          { ...restConfig2, daysOfWeek: sortBy(daysOfWeek2) }
+        );
       } else {
-        const { daysOfWeek, scheduleByDates, ...restConfig1 } = config1;
+        const {
+          daysOfWeek,
+          monthlyDaysOfWeek,
+          scheduleByDates,
+          ...restConfig1
+        } = config1;
         const {
           daysOfWeek: daysOfWeek2,
+          monthlyDaysOfWeek: monthlyDaysOfWeek2,
           scheduleByDates: scheduleByDates2,
           ...restConfig2
         } = config2;
-        return isEqual(restConfig1, restConfig2);
+        return isEqual(
+          {
+            ...restConfig1,
+            monthlyDaysOfWeek: sortBy(monthlyDaysOfWeek, [
+              (o) => sortBy(o)
+            ]).map((mDaysOfWeek) => sortBy(mDaysOfWeek))
+          },
+          {
+            ...restConfig2,
+            monthlyDaysOfWeek: sortBy(monthlyDaysOfWeek2, [
+              (o) => sortBy(o)
+            ]).map((mDaysOfWeek) => sortBy(mDaysOfWeek))
+          }
+        );
       }
     } else {
       const {
@@ -1007,6 +1048,7 @@ export class OperatorRoundsService {
         monthlyDaysOfWeek,
         repeatDuration,
         repeatEvery,
+        scheduleByDates,
         ...restConfig1
       } = config1;
       const {
@@ -1014,9 +1056,19 @@ export class OperatorRoundsService {
         monthlyDaysOfWeek: monthlyDaysOfWeek2,
         repeatDuration: repeatDuration2,
         repeatEvery: repeatEvery2,
+        scheduleByDates: scheduleByDates2,
         ...restConfig2
       } = config2;
-      return isEqual(restConfig1, restConfig2);
+      return isEqual(
+        {
+          ...restConfig1,
+          scheduleByDates: sortBy(scheduleByDates, [(o) => o.date])
+        },
+        {
+          ...restConfig2,
+          scheduleByDates: sortBy(scheduleByDates2, [(o) => o.date])
+        }
+      );
     }
   }
 }

@@ -8,13 +8,13 @@ import {
   OnInit,
   Output,
   Input,
-  ViewChild
+  ViewChild,
+  OnDestroy
 } from '@angular/core';
 import { MatSelect } from '@angular/material/select';
 import { scheduleConfigs } from '../../../forms/components/schedular/schedule-configuration/schedule-configuration.constants';
 import {
   MatCalendar,
-  MatCalendarCellCssClasses,
   MatDatepickerInputEvent
 } from '@angular/material/datepicker';
 import {
@@ -26,11 +26,11 @@ import {
 } from '@angular/forms';
 import { format } from 'date-fns';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
-import { tap } from 'rxjs/operators';
+import { takeUntil, tap } from 'rxjs/operators';
 import { cloneDeep, isEqual } from 'lodash-es';
 import { dateFormat4 } from 'src/app/app.constants';
 import { ScheduleByDate, TaskLevelScheduleSubForm } from 'src/app/interfaces';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
 
 @Component({
@@ -39,7 +39,7 @@ import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
   styleUrls: ['./revise-schedule.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ReviseScheduleComponent implements OnInit {
+export class ReviseScheduleComponent implements OnInit, OnDestroy {
   @ViewChild('shiftSelect') shiftSelect: MatSelect;
   @ViewChild(MatCalendar) calendar: MatCalendar<Date>;
   @Output() openCloseRightPanelEvent = new EventEmitter<boolean>();
@@ -86,13 +86,14 @@ export class ReviseScheduleComponent implements OnInit {
   scheduleConfig: any;
   configurations = [];
   revisedInfo = {};
-  scheduleByDates: ScheduleByDate[];
+  taskLevelScheduleByDates: ScheduleByDate[];
   revisedInfo$: Observable<any>;
   allPageCheckBoxStatus$: Observable<TaskLevelScheduleSubForm>;
   subForms: TaskLevelScheduleSubForm = {};
   placeHolder = '_ _';
   minDate: Date;
   maxDate: Date;
+  private onDestroy$ = new Subject();
 
   constructor(
     private fb: FormBuilder,
@@ -110,7 +111,7 @@ export class ReviseScheduleComponent implements OnInit {
 
     this.locationListToTask$ = this.operatorRoundService.checkboxStatus$.pipe(
       tap((data) => {
-        const selectedPage = data.selectedPage;
+        const selectedPage = data.selectedPage || [];
         const nodeId = data.nodeId;
         if (!this.locationIdToTaskcount.has(nodeId)) {
           this.locationIdToTaskcount.set(nodeId, '0');
@@ -150,7 +151,9 @@ export class ReviseScheduleComponent implements OnInit {
 
     if (this.reviseScheduleConfig) {
       this.resetReviseScheduleConfigForm();
-      this.scheduleByDates = this.reviseScheduleConfig.scheduleByDates;
+      this.taskLevelScheduleByDates = cloneDeep(
+        this.reviseScheduleConfig.scheduleByDates
+      );
       const scheduleDate = this.reviseScheduleConfig.scheduleByDates;
       this.minDate = new Date(
         Math.min(...scheduleDate.map((item) => item.date))
@@ -164,6 +167,26 @@ export class ReviseScheduleComponent implements OnInit {
         this.revisedInfo = revisedInfo;
       })
     );
+
+    this.reviseScheduleConfigForm
+      .get('repeatEvery')
+      .valueChanges.pipe(takeUntil(this.onDestroy$))
+      .subscribe((repeatEvery) => {
+        switch (repeatEvery) {
+          case 'week':
+            this.reviseScheduleConfigForm.patchValue({
+              daysOfWeek: this.reviseScheduleConfig.daysOfWeek
+            });
+            break;
+          case 'month':
+            this.reviseScheduleConfigForm.patchValue({
+              monthlyDaysOfWeek: this.reviseScheduleConfig.monthlyDaysOfWeek
+            });
+            break;
+          default:
+          // do nothing
+        }
+      });
   }
 
   prepareShiftAndSlot(shiftSlot, shiftDetails) {
@@ -221,24 +244,20 @@ export class ReviseScheduleComponent implements OnInit {
     }
   }
 
-  dateClass() {
-    return (date: Date): MatCalendarCellCssClasses => {
-      const highlightDate = this.reviseScheduleConfig?.scheduleByDates
-        .map((strDate) => new Date(strDate.date))
-        .some(
-          (d) =>
-            d.getDate() === date.getDate() &&
-            d.getMonth() === date.getMonth() &&
-            d.getFullYear() === date.getFullYear()
-        );
-      if (highlightDate) {
-        return ['selected'];
-      }
-    };
-  }
+  dateClass = (date: Date) => {
+    if (this.findDate(date) !== -1) {
+      return ['selected'];
+    }
+    return [];
+  };
+
+  dateFilter = (date: Date) =>
+    this.reviseScheduleConfig.scheduleByDates.some(
+      ({ date: sDate }) => +sDate === +date
+    );
 
   findDate(date: Date): number {
-    return this.scheduleByDates
+    return this.taskLevelScheduleByDates
       ?.map((scheduleByDate) => +scheduleByDate.date)
       .indexOf(+date);
   }
@@ -246,8 +265,8 @@ export class ReviseScheduleComponent implements OnInit {
   updateScheduleByDates(date: Date) {
     const index = this.findDate(date);
     if (index === -1) {
-      this.scheduleByDates = [
-        ...this.scheduleByDates,
+      this.taskLevelScheduleByDates = [
+        ...this.taskLevelScheduleByDates,
         {
           date: new Date(
             localToTimezoneDate(
@@ -260,8 +279,9 @@ export class ReviseScheduleComponent implements OnInit {
         }
       ];
     } else {
-      this.scheduleByDates.splice(index, 1);
+      this.taskLevelScheduleByDates.splice(index, 1);
     }
+    this.reviseScheduleConfigForm.markAsDirty();
     this.calendar.updateTodaysDate();
   }
 
@@ -319,6 +339,7 @@ export class ReviseScheduleComponent implements OnInit {
       ];
     }
     this.shiftSelect.value = this.allSlots;
+    this.reviseScheduleConfigForm.markAsDirty();
   }
 
   comparingConfig(newConfig, scheduleByDates) {
@@ -344,7 +365,7 @@ export class ReviseScheduleComponent implements OnInit {
       }
     });
     if (!configFound) {
-      this.uniqueConfigurations.push(cloneDeep(currentConfig));
+      this.uniqueConfigurations.push(currentConfig);
       this.operatorRoundService.setuniqueConfiguration(
         this.uniqueConfigurations
       );
@@ -392,6 +413,7 @@ export class ReviseScheduleComponent implements OnInit {
       const { scheduleByDates, ...taskLevelScheduleConfig } =
         this.revisedInfo[nodeId][questionKeys[0]];
       this.reviseScheduleConfigForm.patchValue(taskLevelScheduleConfig);
+      this.taskLevelScheduleByDates = scheduleByDates;
       this.allSlots.forEach((allSlot) => {
         const { payload, ...shiftInfo } = allSlot;
         payload.forEach((slotInfo) => {
@@ -443,15 +465,7 @@ export class ReviseScheduleComponent implements OnInit {
     this.reviseScheduleConfigForm.patchValue({
       repeatDuration: '',
       repeatEvery: '',
-      ...commonConfig,
-      startDate: commonConfig?.startDate
-        ? format(new Date(commonConfig?.startDate), dateFormat4)
-        : '',
-      startDatePicker: new Date(commonConfig?.startDate),
-      endDate: commonConfig?.endDate
-        ? format(new Date(commonConfig?.endDate), dateFormat4)
-        : '',
-      endDatePicker: new Date(commonConfig?.endDate)
+      ...commonConfig
     });
   }
   resetReviseScheduleConfigForm() {
@@ -471,13 +485,13 @@ export class ReviseScheduleComponent implements OnInit {
   onRevise() {
     const configPosition = this.comparingConfig(
       this.reviseScheduleConfigForm.value,
-      this.scheduleByDates
+      this.taskLevelScheduleByDates
     );
     const sameConfigAsHeader =
       this.operatorRoundService.compareConfigWithHeader(
         this.reviseScheduleConfig,
         this.reviseScheduleConfigForm.value,
-        this.scheduleByDates
+        this.taskLevelScheduleByDates
       );
     Object.keys(this.subForms).forEach((subFormId) => {
       this.subForms[subFormId].forEach((page) => {
@@ -502,6 +516,12 @@ export class ReviseScheduleComponent implements OnInit {
         }
       });
     });
+    this.operatorRoundService.setIsRevised(true);
     this.operatorRoundService.setRevisedInfo(this.revisedInfo);
+  }
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 }

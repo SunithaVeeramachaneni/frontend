@@ -18,7 +18,6 @@ import {
 import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import {
-  dateFormat4,
   dateFormat5,
   dateTimeFormat3,
   hourFormat
@@ -33,7 +32,7 @@ import { OperatorRoundsService } from '../services/operator-rounds.service';
 
 import { tap } from 'rxjs/operators';
 import { format } from 'date-fns';
-import { cloneDeep, isEqual } from 'lodash-es';
+import { cloneDeep } from 'lodash-es';
 import { RoundPlanScheduleConfigurationService } from '../services/round-plan-schedule-configuration.service';
 import { RoundPlanScheduleConfiguration } from 'src/app/interfaces/operator-rounds';
 import {
@@ -341,7 +340,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
     Object.keys(this.subForms).forEach((subFormId) => {
       const assetLocationId = subFormId.split('_')[1];
       if (assetLocationId === nodeId) {
-        this.selectedPages.forEach((page) => {
+        this.selectedPages = this.selectedPages.map((page) => {
           page.complete = checkboxStatus;
           page.partiallyChecked = false;
           page.sections.forEach((section) => {
@@ -351,6 +350,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
           page.questions.forEach((question) => {
             question.complete = checkboxStatus;
           });
+          return page;
         });
       }
     });
@@ -577,6 +577,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
     return; */
     if (this.scheduleConfig.id) {
       this.openScheduleSuccessModal('update');
+      this.operatorRoundService.setScheduleLoader(true);
       this.schedulerConfigurationService
         .updateRoundPlanScheduleConfiguration$(
           this.scheduleConfig.id,
@@ -597,6 +598,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
         .subscribe();
     } else {
       this.openScheduleSuccessModal('create');
+      this.operatorRoundService.setScheduleLoader(true);
       this.schedulerConfigurationService
         .createRoundPlanScheduleConfiguration$(this.scheduleConfig)
         .pipe(

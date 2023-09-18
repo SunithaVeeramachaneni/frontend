@@ -1,3 +1,6 @@
+<ng-container
+  *ngIf="{ isRevised: isRevised$ | async, revisedInfo: revisedInfo$ | async }"
+></ng-container>
 <app-dynamic-stepper
   [moduleName]="'Scheduler'"
   [steps]="steps"
