@@ -33,7 +33,7 @@ const {
   dashboard,
   myDashboard,
   reports,
-  oprReports,
+  // oprReports,
   spareParts,
   maintenance,
   workInstructions,
@@ -206,11 +206,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       permission: operatorRoundPlans.permission,
       disable: false,
       subPages: [
-        {
-          title: oprReports.title,
-          url: oprReports.url,
-          permission: oprReports.permission
-        },
+        // {
+        //   title: oprReports.title,
+        //   url: oprReports.url,
+        //   permission: oprReports.permission
+        // },
         {
           title: myRoundPlans.title,
           url: myRoundPlans.url,

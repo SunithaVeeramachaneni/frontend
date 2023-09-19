@@ -520,7 +520,7 @@ export class RoundPlanHeaderConfigurationComponent
 
   onCancel(): void {
     this.dialogRef.close();
-    this.router.navigate(['/operator-rounds/round-plans']);
+    this.router.navigate(['/operator-rounds']);
   }
 
   resetPlantSearchFilter = () => {

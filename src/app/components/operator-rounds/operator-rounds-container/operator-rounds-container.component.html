@@ -1,5 +1,4 @@
 <div *ngIf="currentRouteUrl$ | async as currentRouteUrl">
-  <app-round-plan-list></app-round-plan-list>
   <ng-container *ngIf="currentRouteUrl === routingUrls.operatorRoundPlans.url">
     <!-- <div class="dis-flex container-padding">
       <button class="widgets" (click)="openRoundPlanCreationModal()">
