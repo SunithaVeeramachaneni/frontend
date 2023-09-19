@@ -55,6 +55,12 @@ export class ReviseScheduleComponent implements OnInit, OnDestroy {
   }
   @Input() set reviseSchedule(reviseSchedule: any) {
     if (reviseSchedule) {
+      if (
+        this.reviseScheduleConfig &&
+        reviseSchedule.scheduleType !== this.reviseScheduleConfig.scheduleType
+      ) {
+        this.cancel();
+      }
       this.reviseScheduleConfig = reviseSchedule;
       this.shiftsSelected.patchValue(this.reviseScheduleConfig.shiftSlots);
       this.allSlots = this.prepareShiftAndSlot(
@@ -105,7 +111,7 @@ export class ReviseScheduleComponent implements OnInit, OnDestroy {
       this.operatorRoundService.allPageCheckBoxStatus$.pipe(
         tap((subForms) => {
           this.subForms = subForms;
-          this.setCommonConfig(true);
+          this.setCommonConfig();
         })
       );
 
@@ -216,6 +222,17 @@ export class ReviseScheduleComponent implements OnInit, OnDestroy {
             .patchValue(this.reviseScheduleConfig.monthlyDaysOfWeek);
         }
       });
+  }
+
+  getMontlyDaysOfWeekCount(monthlyDaysOfWeek) {
+    const monthlyDaysOfWeekCount = monthlyDaysOfWeek.reduce(
+      (acc: number, curr: number[]) => {
+        acc += curr?.length;
+        return acc;
+      },
+      0
+    );
+    return monthlyDaysOfWeekCount;
   }
 
   prepareShiftAndSlot(shiftSlot, shiftDetails) {
@@ -440,15 +457,22 @@ export class ReviseScheduleComponent implements OnInit, OnDestroy {
 
         if (isEqual(this.allSlots, this.getDefaultSlots())) {
           this.allSlots.forEach((slot) => {
-            slot[shiftInfo.id ? shiftInfo.id : 'null'].payload =
-              shiftDetails[shiftInfo.id ? shiftInfo.id : 'null'];
-            slot.payload = shiftDetails[shiftInfo.id ? shiftInfo.id : 'null'];
-            /* shiftDetails[shiftInfo.id ? shiftInfo.id : 'null']?.forEach(
-              (slotInfo) => {
-                slot[shiftInfo.id ? shiftInfo.id : 'null']?.payload =
-                  shiftDetails[shiftInfo.id ? shiftInfo.id : 'null'];
-              }
-            ); */
+            if (shiftDetails[shiftInfo.id ? shiftInfo.id : 'null']) {
+              slot[shiftInfo.id ? shiftInfo.id : 'null'].payload =
+                shiftDetails[shiftInfo.id ? shiftInfo.id : 'null'];
+              slot.payload = shiftDetails[shiftInfo.id ? shiftInfo.id : 'null'];
+            } else {
+              const [shiftId] = Object.keys(shiftDetails);
+              const { id, name, startTime, endTime } = this.allShifts.find(
+                (shift) => shift.id === shiftId
+              );
+              slot.id = id;
+              slot.name = name;
+              slot.startTime = startTime;
+              slot.endTime = endTime;
+              slot.payload = shiftDetails[shiftId];
+              delete slot[shiftInfo.id ? shiftInfo.id : 'null'];
+            }
           });
         } else {
           slotInfo.checked = shiftDetails[
@@ -476,8 +500,7 @@ export class ReviseScheduleComponent implements OnInit, OnDestroy {
     }
   }
 
-  setCommonConfig(initial = false) {
-    // Common Config for Shifts is Left
+  setCommonConfig() {
     const questionKeys = [];
     if (Object.keys(this.revisedInfo).length === 0) return;
 
@@ -493,34 +516,10 @@ export class ReviseScheduleComponent implements OnInit, OnDestroy {
       });
     });
 
-    /* if (
-      questionKeys.length === 1 &&
-      this.revisedInfo[nodeId] &&
-      this.revisedInfo[nodeId][questionKeys[0]]
-    ) {
-      const { scheduleByDates, ...taskLevelScheduleConfig } =
-        this.revisedInfo[nodeId][questionKeys[0]];
-      this.reviseScheduleConfigForm.patchValue(taskLevelScheduleConfig);
-      this.taskLevelScheduleByDates = scheduleByDates;
-      this.setShiftAndSlotDetails(taskLevelScheduleConfig.shiftDetails);
-      return;
-    }
-
-    if (initial) {
-      return;
-    } */
-
-    const { commonConfig, isQuestionNotIncluded } =
-      this.operatorRoundService.findCommonConfigurations(
-        this.revisedInfo,
-        questionKeys
-      );
-    /* if (questionKeys.length && isQuestionNotIncluded) {
-      this.resetReviseScheduleConfigForm();
-      this.taskLevelScheduleByDates = this.reviseScheduleConfig.scheduleByDates;
-      this.setShiftAndSlotDetails(this.reviseScheduleConfig.shiftDetails);
-      return;
-    } */
+    const { commonConfig } = this.operatorRoundService.findCommonConfigurations(
+      this.revisedInfo,
+      questionKeys
+    );
 
     if (!Object.keys(commonConfig).length) {
       return;
@@ -543,6 +542,7 @@ export class ReviseScheduleComponent implements OnInit, OnDestroy {
       { emitEvent: false }
     );
     this.taskLevelScheduleByDates = commonConfig.scheduleByDates;
+    this.calendar.updateTodaysDate();
     this.setShiftAndSlotDetails(commonConfig.shiftDetails);
   }
 

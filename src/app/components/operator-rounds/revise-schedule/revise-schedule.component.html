@@ -323,6 +323,10 @@
       [disabled]="
         reviseScheduleConfigForm.pristine ||
         reviseScheduleConfigForm.invalid ||
+        reviseScheduleConfigForm.get('daysOfWeek').value.length === 0 ||
+        getMontlyDaysOfWeekCount(
+          reviseScheduleConfigForm.get('monthlyDaysOfWeek').value
+        ) === 0 ||
         (reviseScheduleConfigForm.get('scheduleType').value === 'byDate' &&
           taskLevelScheduleByDates.length === 0)
       "
