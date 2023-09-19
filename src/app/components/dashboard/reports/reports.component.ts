@@ -86,6 +86,7 @@ export class ReportsComponent implements OnInit {
     groupLevelColors: []
   };
   dataSource: MatTableDataSource<any>;
+  ghostLoading = new Array(11).fill(0).map((v, i) => i);
   skip = 0;
   limit = defaultLimit;
   debouncedSearchReports = debounce(() => this.fetchReports(), 1);
