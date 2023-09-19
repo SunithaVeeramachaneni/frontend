@@ -255,8 +255,9 @@
   .actions-footer {
     display: flex;
     justify-content: center;
-    position: relative;
-    top: 142px;
+    position: absolute;
+    bottom: 10px;
+    width: 94%;
   }
 
   .tags-heading {

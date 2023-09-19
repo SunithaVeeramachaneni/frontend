@@ -502,6 +502,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
               item.items = this.schedules.sort();
             } else if (item.column === 'shiftId') {
               item.items = Object.values(this.shiftNameMap).sort();
+            } else if (item.column === 'dueDate') {
+              item.items = this.selectedDueDate;
             }
           }
         }
@@ -1009,18 +1011,23 @@ export class InspectionComponent implements OnInit, OnDestroy {
 
   selectedAssigneeHandler(selectedAssignee: any) {
     const { assigneeType, user, userGroup } = selectedAssignee;
-    const { assignmentType, inspectionId, assignedToEmail, ...rest } =
-      this.selectedFormInfo;
+    const { inspectionId, assignedToEmail, ...rest } = this.selectedFormInfo;
     let previouslyAssignedTo = this.selectedFormInfo.previouslyAssignedTo || '';
-
+    let assignmentType = this.selectedFormInfo?.assignmentType || '';
     let assignedTo = '';
-    let userGroupsIds = '';
+    let userGroupsIds = this.selectedFormInfo?.userGroupsIds || '';
     if (assigneeType === 'user') {
       assignedTo = user.email;
     }
 
-    if (assigneeType === 'userGroup' || assignmentType === 'userGroup') {
-      userGroupsIds += `${userGroup.id}`;
+    if (assigneeType === 'userGroup') {
+      userGroupsIds = `${userGroup.id}`;
+      assignmentType = 'userGroup';
+    }
+
+    if (assigneeType === 'plant') {
+      userGroupsIds = '';
+      assignmentType = 'user';
     }
 
     if (assignedTo !== assignedToEmail) {

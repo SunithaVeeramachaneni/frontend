@@ -388,7 +388,7 @@ export class ScheduleConfigurationComponent
       endDatePicker: new Date(addDays(new Date(), 30)),
       scheduledTill: null,
       assignmentDetails: this.fb.group({
-        type: ['userGroup'],
+        type: ['plant'],
         value: '',
         displayValue: ''
       }),
@@ -434,7 +434,7 @@ export class ScheduleConfigurationComponent
         pairwise(),
         tap(([prev, curr]) => {
           if (!isEqual(prev, curr)) {
-            if (prev.type !== curr.type) {
+            if (prev.type && prev.type !== '' && prev.type !== curr.type) {
               this.schedulerConfigForm.get('assignmentDetails').patchValue({
                 type: curr.type,
                 value: '',
@@ -1005,6 +1005,7 @@ export class ScheduleConfigurationComponent
                     .get('id')
                     .patchValue(scheduleConfig.id);
                   this.schedulerConfigForm.markAsPristine();
+                  this.openScheduleSuccessModal('create');
                 }
                 this.operatorRoundService.setScheduleLoader(false);
                 this.initShiftStat();
@@ -1033,6 +1034,7 @@ export class ScheduleConfigurationComponent
                     .get('id')
                     .patchValue(scheduleConfig.id);
                   this.schedulerConfigForm.markAsPristine();
+                  this.openScheduleSuccessModal('create');
                 }
                 this.initShiftStat();
                 this.operatorRoundService.setScheduleLoader(false);
@@ -1169,6 +1171,9 @@ export class ScheduleConfigurationComponent
               )
             }));
             if (config?.shiftDetails) {
+              if (Object.keys(config.shiftDetails)[0] !== 'null') {
+                config['shiftsSelected'] = Object.keys(config.shiftDetails);
+              }
               this.shiftApiResponse = this.prepareShiftDetailsPayload(
                 config?.shiftDetails,
                 '12'

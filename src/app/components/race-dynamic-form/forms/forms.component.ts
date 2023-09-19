@@ -780,7 +780,7 @@ export class FormsComponent implements OnInit, OnDestroy {
           if (viewForms) {
             this.selectTab.emit({
               index: 1,
-              queryParams: { id: this.scheduleFormDetail.id }
+              queryParams: { id: this.scheduleFormDetail?.id }
             });
           }
           this.scheduleFormDetail = null;
