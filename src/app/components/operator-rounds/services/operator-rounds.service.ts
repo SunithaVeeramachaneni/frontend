@@ -853,7 +853,7 @@ export class OperatorRoundsService {
     }
 
     if (configurations.length === 0) {
-      return { commonConfig: {}, isQuestionNotIncluded: true };
+      return { commonConfig: {} };
     }
 
     commonConfig = { ...configurations[0] };
@@ -901,6 +901,12 @@ export class OperatorRoundsService {
               }
               commonConfig[key] = shiftDetails;
               break;
+            case 'scheduleByDates':
+              commonConfig[key] = commonConfig[key].filter((dayInfo) => {
+                const curr = currentConfig[key].map((d) => +d.date);
+                return curr.includes(+dayInfo.date);
+              });
+              break;
             default:
               delete commonConfig[key];
           }
@@ -908,7 +914,7 @@ export class OperatorRoundsService {
       }
     }
 
-    return { commonConfig, isQuestionNotIncluded: false };
+    return { commonConfig };
   };
 
   compareConfigWithHeader = (
