@@ -18,6 +18,7 @@ import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { RoundPlanScheduleConfiguration } from 'src/app/interfaces';
 import { cloneDeep, isEqual } from 'lodash-es';
+import { ConfirmModalPopupComponent } from '../../race-dynamic-form/confirm-modal-popup/confirm-modal-popup/confirm-modal-popup.component';
 
 @Component({
   selector: 'app-scheduler-modal',
@@ -209,9 +210,18 @@ export class SchedulerModalComponent implements OnInit {
       this.isHeaderLevelConfigChanged &&
       Object.keys(this.revisedInfo).length
     ) {
-      const alertDialog = this.dialog.open(AlertModalComponent, {
-        height: '142px',
-        width: '400px'
+      const alertDialog = this.dialog.open(ConfirmModalPopupComponent, {
+        maxHeight: 'max-content',
+        maxWidth: 'max-content',
+        data: {
+          popupTexts: {
+            primaryBtnTaskText: 'Cancel',
+            secondaryBtnText: 'Continue to Header Step',
+            title: 'Alert',
+            subtitle: 'taskLevelAlert',
+            note: 'taskLevelNote'
+          }
+        }
       });
       alertDialog.afterClosed().subscribe((res) => {
         if (res) {

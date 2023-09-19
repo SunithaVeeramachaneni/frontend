@@ -139,6 +139,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
   uniqueConfigurations = [];
   uniqueConfiguration$: Observable<any>;
   state = 'closed';
+  isThirdPanelOpen: boolean;
 
   constructor(
     private operatorRoundService: OperatorRoundsService,
@@ -362,9 +363,14 @@ export class TaskLevelSchedulerComponent implements OnInit {
 
   openCloseRightPanelEventHandler(event) {
     this.openCloseRightPanel = event;
-    this.openCloseRightPanel === true
-      ? (this.state = 'open')
-      : (this.state = 'closed');
+    console.log(this.openCloseRightPanel);
+    if (this.openCloseRightPanel === true) {
+      this.state = 'open';
+      this.isThirdPanelOpen = true;
+    } else {
+      this.state = 'closed';
+      this.isThirdPanelOpen = false;
+    }
   }
 
   resetTaskLevelConfigurationSelectionsHandler(reset: boolean) {
