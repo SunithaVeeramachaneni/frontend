@@ -940,9 +940,9 @@ export class ScheduleConfigurationComponent
                     actionType: 'scheduleConfig'
                   });
                   this.schedulerConfigForm.markAsPristine();
+                  this.operatorRoundService.setScheduleLoader(false);
                 }
                 this.initShiftStat();
-                this.operatorRoundService.setScheduleLoader(false);
                 this.cdrf.detectChanges();
               })
             )
@@ -965,9 +965,9 @@ export class ScheduleConfigurationComponent
                     actionType: 'scheduleConfig'
                   });
                   this.schedulerConfigForm.markAsPristine();
+                  this.operatorRoundService.setScheduleLoader(false);
                 }
                 this.initShiftStat();
-                this.operatorRoundService.setScheduleLoader(false);
                 this.cdrf.detectChanges();
               })
             )
@@ -1005,8 +1005,8 @@ export class ScheduleConfigurationComponent
                     .get('id')
                     .patchValue(scheduleConfig.id);
                   this.schedulerConfigForm.markAsPristine();
+                  this.operatorRoundService.setScheduleLoader(false);
                 }
-                this.operatorRoundService.setScheduleLoader(false);
                 this.initShiftStat();
                 this.cdrf.detectChanges();
               })
@@ -1033,9 +1033,9 @@ export class ScheduleConfigurationComponent
                     .get('id')
                     .patchValue(scheduleConfig.id);
                   this.schedulerConfigForm.markAsPristine();
+                  this.operatorRoundService.setScheduleLoader(false);
                 }
                 this.initShiftStat();
-                this.operatorRoundService.setScheduleLoader(false);
                 this.cdrf.detectChanges();
               })
             )

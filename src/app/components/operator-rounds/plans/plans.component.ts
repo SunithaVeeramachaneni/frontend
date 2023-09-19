@@ -973,7 +973,16 @@ export class PlansComponent implements OnInit, OnDestroy {
     this.closeRoundPlanHandler();
     this.scheduleConfigState = 'in';
     this.zIndexScheduleDelay = 400;
-    dialogRef.afterClosed().subscribe((data) => {});
+    dialogRef.afterClosed().subscribe((data) => {
+      if (data?.actionType === 'scheduleConfig') {
+        delete data?.actionType;
+        this.scheduleConfigHandler(data);
+      }
+      if (data?.actionType === 'scheduleConfigEvent') {
+        delete data?.actionType;
+        this.scheduleConfigEventHandler(data);
+      }
+    });
   }
 
   scheduleConfigEventHandler(event: ScheduleConfigEvent) {

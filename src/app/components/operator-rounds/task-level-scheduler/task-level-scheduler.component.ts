@@ -139,17 +139,16 @@ export class TaskLevelSchedulerComponent implements OnInit {
   uniqueConfigurations = [];
   uniqueConfiguration$: Observable<any>;
   state = 'closed';
-  isThirdPanelOpen: boolean;
+  isThirdPanelOpen = false;
 
   constructor(
-    private operatorRoundService: OperatorRoundsService,
+    private operatorRoundsService: OperatorRoundsService,
     private schedulerConfigurationService: RoundPlanScheduleConfigurationService,
     private dialog: MatDialog,
     private readonly scheduleConfigurationService: ScheduleConfigurationService,
     private dialogRef: MatDialogRef<ScheduleConfigurationComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private assetHierarchyUtil: AssetHierarchyUtil,
-    private operatorRoundsService: OperatorRoundsService
+    private assetHierarchyUtil: AssetHierarchyUtil
   ) {}
 
   ngOnInit(): void {
@@ -160,7 +159,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
       description
     };
 
-    this.operatorRoundService
+    this.operatorRoundsService
       .getAuthoredFormDetailByFormId$(
         this.roundPlanData.roundPlanDetail.id,
         'Published'
@@ -183,7 +182,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
             });
           });
         });
-        this.operatorRoundService.setAllPageCheckBoxStatus(this.subForms);
+        this.operatorRoundsService.setAllPageCheckBoxStatus(this.subForms);
         this.flatHierarchy = JSON.parse(this.authoredData.flatHierarchy);
         this.flatHierarchy.forEach((node) => {
           this.nodeIdToNodeName[node.id] = node.name;
@@ -207,7 +206,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
       map((value) => this.filter(value.trim() || ''))
     );
 
-    this.selectedNode$ = this.operatorRoundService.selectedNode$.pipe(
+    this.selectedNode$ = this.operatorRoundsService.selectedNode$.pipe(
       tap((data) => {
         if (data && Object.keys(data).length) {
           this.selectedNode = data;
@@ -239,7 +238,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
         this.authorToEmail = user.email;
       }
     });
-    this.revisedInfo$ = this.operatorRoundService.revisedInfo$.pipe(
+    this.revisedInfo$ = this.operatorRoundsService.revisedInfo$.pipe(
       tap((revisedInfo) => {
         this.revisedInfo = revisedInfo;
         this.displayTaskLevelConfig.clear();
@@ -257,7 +256,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
       })
     );
     this.uniqueConfiguration$ =
-      this.operatorRoundService.uniqueConfiguration$.pipe(
+      this.operatorRoundsService.uniqueConfiguration$.pipe(
         tap((configurations) => {
           this.uniqueConfigurations = configurations;
         })
@@ -301,7 +300,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
       if (this.selectedNodeId === subFormId.split('_')[1]) {
         this.selectedPages = pages;
       }
-      this.operatorRoundService.setCheckBoxStatus({
+      this.operatorRoundsService.setCheckBoxStatus({
         selectedPage: pages,
         nodeId: subFormId.split('_')[1]
       });
@@ -355,7 +354,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
         });
       }
     });
-    this.operatorRoundService.setCheckBoxStatus({
+    this.operatorRoundsService.setCheckBoxStatus({
       selectedPage: this.selectedPages,
       nodeId: this.selectedNodeId
     });
@@ -363,13 +362,11 @@ export class TaskLevelSchedulerComponent implements OnInit {
 
   openCloseRightPanelEventHandler(event) {
     this.openCloseRightPanel = event;
-    console.log(this.openCloseRightPanel);
+    this.isThirdPanelOpen = event;
     if (this.openCloseRightPanel === true) {
       this.state = 'open';
-      this.isThirdPanelOpen = true;
     } else {
       this.state = 'closed';
-      this.isThirdPanelOpen = false;
     }
   }
 
@@ -422,19 +419,11 @@ export class TaskLevelSchedulerComponent implements OnInit {
     dialogRef.afterClosed().subscribe((data) => {
       if (data) {
         if (data?.redirect) {
-          if (this.isFormModule) {
-            this.scheduleConfigurationService.scheduleConfigEvent.next({
-              slideInOut: 'out',
-              viewForms: true,
-              actionType: 'scheduleConfigEvent'
-            });
-          } else {
-            this.scheduleConfigurationService.scheduleConfigEvent.next({
-              slideInOut: 'out',
-              viewRounds: true,
-              actionType: 'scheduleConfigEvent'
-            });
-          }
+          this.scheduleConfigurationService.scheduleConfigEvent.next({
+            slideInOut: 'out',
+            viewRounds: true,
+            actionType: 'scheduleConfigEvent'
+          });
         } else {
           this.scheduleConfigurationService.scheduleConfigEvent.next({
             slideInOut: 'out',
@@ -456,7 +445,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
         Object.keys(revisedInfo[nodeId]).forEach((questionId) => {
           const questionConfig = revisedInfo[nodeId][questionId];
           if (
-            this.operatorRoundService.comapreConfigurations(
+            this.operatorRoundsService.comapreConfigurations(
               config,
               questionConfig
             )
@@ -583,7 +572,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
     return; */
     if (this.scheduleConfig.id) {
       this.openScheduleSuccessModal('update');
-      this.operatorRoundService.setScheduleLoader(true);
+      this.operatorRoundsService.setScheduleLoader(true);
       this.schedulerConfigurationService
         .updateRoundPlanScheduleConfiguration$(
           this.scheduleConfig.id,
@@ -597,27 +586,27 @@ export class TaskLevelSchedulerComponent implements OnInit {
                 mode: 'update',
                 actionType: 'scheduleConfig'
               });
+              this.operatorRoundsService.setScheduleLoader(false);
             }
-            this.operatorRoundService.setScheduleLoader(false);
           })
         )
         .subscribe();
     } else {
       this.openScheduleSuccessModal('create');
-      this.operatorRoundService.setScheduleLoader(true);
+      this.operatorRoundsService.setScheduleLoader(true);
       this.schedulerConfigurationService
         .createRoundPlanScheduleConfiguration$(this.scheduleConfig)
         .pipe(
           tap((scheduleConfig) => {
             if (scheduleConfig && Object.keys(scheduleConfig).length) {
-              this.payload.id = scheduleConfig.id;
               this.dialogRef.close({
                 roundPlanScheduleConfiguration: scheduleConfig,
                 mode: 'create',
                 actionType: 'scheduleConfig'
               });
+              this.payload.id = scheduleConfig.id;
+              this.operatorRoundsService.setScheduleLoader(false);
             }
-            this.operatorRoundService.setScheduleLoader(false);
           })
         )
         .subscribe();

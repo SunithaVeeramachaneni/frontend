@@ -224,7 +224,7 @@ export class SchedulerModalComponent implements OnInit {
         }
       });
       alertDialog.afterClosed().subscribe((res) => {
-        if (res) {
+        if (res !== 'primary') {
           this.scheduleConfig = cloneDeep(this.currentScheduleConfig);
           this.operatorRoundService.setRevisedInfo({});
           this.currentStep++;

@@ -119,6 +119,7 @@ export class OperatorRoundsService {
       details,
       info
     );
+
   updateValues$ = (
     details: any,
     info: ErrorInfo = {} as ErrorInfo

@@ -1,4 +1,8 @@
-<div *ngIf="{ scheduleLoading: scheduleLoading$ | async } as props">
+<div
+  *ngIf="{
+    scheduleLoading: scheduleLoading$ | async
+  } as props"
+>
   <div class="success-container" *ngIf="props.scheduleLoading">
     <img class="schedulerGif" src="assets/img/svg/schedulerLoader.gif" />
     <p id="scheduleSuccessText" class="processColor">
