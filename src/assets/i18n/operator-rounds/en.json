@@ -342,6 +342,7 @@
   "add": "Add",
   "timeZone": "Plant Timezone",
   "alert": "Alert",
+  "alertWarning": "Are you sure you want to exit? All your work will be lost.",
   "warning": "Changes in Shift will update the round schedule Start Date/Time,Due Date/Time and Status. Do you want to proceed?",
   "shift": "Shift",
   "invalidSlotTime": "Slot we selected is out of Shift hours",

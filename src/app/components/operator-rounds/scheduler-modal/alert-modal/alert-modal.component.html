@@ -1,7 +1,7 @@
 <div class="alert-modal">
-  <h1 mat-dialog-title class="title">Alert</h1>
+  <h1 mat-dialog-title class="title">{{ 'alert' | translate }}</h1>
   <div mat-dialog-content>
-    Are you sure you want to exit? All your work will be lost.
+    {{ 'alertWarning' | translate }}
   </div>
   <div mat-dialog-actions>
     <button mat-button (click)="close()" color="primary">Cancel</button>
