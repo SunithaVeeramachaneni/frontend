@@ -144,7 +144,30 @@ export class ShiftChartComponent implements OnInit, OnChanges {
         this.setShiftDetails();
         return;
       }
+      //shift Slots
       if (val === checkSlot[0].startTime) {
+        const combineSlot = {
+          index: 1,
+          startTime: val,
+          endTime: this.service.addTime(val, 0, 59),
+          isBook: true
+        };
+        const checkIndex = this.dataArrays.findIndex(
+          (item) => item === checkSlot[0]
+        );
+        this.dataArrays[checkIndex].index =
+          this.dataArrays[checkIndex].index - 1;
+        this.dataArrays[checkIndex].startTime = this.service.addTime(val, 1, 0);
+        this.dataArrays.push(combineSlot);
+        this.slotsArray.push(this.createItemFormGroup());
+        this.dataArrays = this.service.sortArray(this.dataArrays, this.slots);
+        this.setShiftDetails();
+      }
+      //Defualt Slots
+      if (
+        this.service.addLeadingZero(val) === checkSlot[0].startTime &&
+        this.shift.value.null
+      ) {
         const combineSlot = {
           index: 1,
           startTime: val,
@@ -447,6 +470,14 @@ export class ShiftChartComponent implements OnInit, OnChanges {
             (e) => e.startTime === val
           );
           const myObj = this.dataArrays.filter((e) => e.startTime === val)[0];
+          if (
+            this.service.addTime(myObj.startTime, 1, 0) ===
+              this.service.addTime(myObj.endTime, 0, 1) &&
+            myObj.index === 1
+          ) {
+            this.setShiftDetails();
+            return;
+          }
           // eslint-disable-next-line @typescript-eslint/no-unused-expressions
           obj = {
             index: 1,
