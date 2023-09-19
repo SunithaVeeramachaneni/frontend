@@ -136,8 +136,11 @@ export class ReviseScheduleComponent implements OnInit, OnDestroy {
         else this.locationIdToTaskcount.set(nodeId, taskCount.toString());
         this.locationIdToTaskcountArr = Array.from(this.locationIdToTaskcount);
 
-        if (this.locationIdToTaskcountArr.length === 0)
+        if (this.locationIdToTaskcountArr.length === 0) {
           this.openCloseRightPanelEvent.emit(false);
+        } else {
+          this.openCloseRightPanelEvent.emit(true);
+        }
         this.setCommonConfig();
       })
     );
@@ -542,7 +545,12 @@ export class ReviseScheduleComponent implements OnInit, OnDestroy {
       { emitEvent: false }
     );
     this.taskLevelScheduleByDates = commonConfig.scheduleByDates;
-    this.calendar.updateTodaysDate();
+    if (
+      this.reviseScheduleConfig.scheduleType ===
+      scheduleConfigs.scheduleTypes[1]
+    ) {
+      this.calendar.updateTodaysDate();
+    }
     this.setShiftAndSlotDetails(commonConfig.shiftDetails);
   }
 
