@@ -48,6 +48,7 @@ import { ScheduleSuccessModalComponent } from 'src/app/forms/components/schedula
 import { ScheduleConfigurationService } from 'src/app/forms/services/schedule.service';
 import { ScheduleConfigurationComponent } from 'src/app/forms/components/schedular/schedule-configuration/schedule-configuration.component';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
+import { scheduleConfigs } from 'src/app/forms/components/schedular/schedule-configuration/schedule-configuration.constants';
 
 @Component({
   selector: 'app-task-level-scheduler',
@@ -87,7 +88,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
         headerStartDate: payload.startDate,
         headerEndDate: payload.endDate,
         headerFrequency:
-          payload.scheduleType === 'byDate'
+          payload.scheduleType === scheduleConfigs.scheduleTypes[1]
             ? 'Custom Dates'
             : `Every ${payload.repeatDuration} ${payload.repeatEvery}`,
         shiftDetails: this.allSlots,
@@ -140,6 +141,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
   uniqueConfiguration$: Observable<any>;
   state = 'closed';
   isThirdPanelOpen = false;
+  readonly scheduleConfigs = scheduleConfigs;
 
   constructor(
     private operatorRoundsService: OperatorRoundsService,
@@ -462,7 +464,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
         let time = format(new Date(), hourFormat);
         const { startDate, endDate } = taskConfig;
         const scheduleByDates =
-          taskConfig.scheduleType === 'byDate'
+          taskConfig.scheduleType === scheduleConfigs.scheduleTypes[1]
             ? this.prepareScheduleByDates(taskConfig.scheduleByDates)
             : [];
 
@@ -568,8 +570,6 @@ export class TaskLevelSchedulerComponent implements OnInit {
       if (Object.keys(config.nodeWiseQuestionIds).length === 0) return false;
       return true;
     });
-    /* console.log(this.scheduleConfig);
-    return; */
     if (this.scheduleConfig.id) {
       this.openScheduleSuccessModal('update');
       this.operatorRoundsService.setScheduleLoader(true);
