@@ -40,7 +40,6 @@ import {
   weeksToDays
 } from 'date-fns';
 import {
-  debounceTime,
   distinctUntilChanged,
   pairwise,
   startWith,
@@ -54,7 +53,6 @@ import {
   RoundPlanScheduleConfiguration,
   RoundPlanScheduleConfigurationObj,
   ScheduleByDate,
-  SelectedAssignee,
   ValidationError
 } from 'src/app/interfaces';
 import { ScheduleSuccessModalComponent } from '../schedule-success-modal/schedule-success-modal.component';

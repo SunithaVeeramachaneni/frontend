@@ -77,8 +77,6 @@ import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
 import { ShiftService } from '../../master-configurations/shifts/services/shift.service';
 import { ScheduleConfigurationService } from 'src/app/forms/services/schedule.service';
 import { MatDialog } from '@angular/material/dialog';
-import { graphQLDefaultMaxLimit } from 'src/app/app.constants';
-// import { TaskLevelSchedulerComponent } from '../task-level-scheduler/task-level-scheduler.component';
 
 @Component({
   selector: 'app-plans',

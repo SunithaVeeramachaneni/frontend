@@ -99,6 +99,7 @@ export class ReviseScheduleComponent implements OnInit, OnDestroy {
   placeholder = '_ _';
   minDate: Date;
   maxDate: Date;
+  readonly scheduleConfigs = scheduleConfigs;
   private onDestroy$ = new Subject();
 
   constructor(
