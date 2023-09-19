@@ -97,11 +97,50 @@ export class ShiftChartComponent implements OnInit, OnChanges {
         const isBookIndex = this.dataArrays.findIndex(
           (e) => e.isBook === false
         );
+        if (
+          checkIsBook[0].startTime === this.service.addLeadingZero(val) &&
+          checkIsBook[0].index > 1
+        ) {
+          this.dataArrays[isBookIndex].startTime = this.service.addTime(
+            val,
+            1,
+            0
+          );
+          this.dataArrays[isBookIndex].index = checkSlot[0].index - 1;
+          this.dataArrays[isBookIndex].isBook = false;
+          const obj1 = {
+            index: 1,
+            startTime: val,
+            endTime: this.service.addTime(val, 0, 59),
+            isBook: true
+          };
+          this.dataArrays.push(obj1);
+          this.dataArrays = this.service.sortArray(this.dataArrays, this.slots);
+          this.slotsArray.push(this.createItemFormGroup());
+          this.setShiftDetails();
+          return;
+        }
         this.dataArrays[isBookIndex].isBook = true;
         this.setShiftDetails();
         return;
       }
       if (checkSlot[0].index === 1 || checkSlot[0].index === 0) {
+        this.setShiftDetails();
+        return;
+      }
+      //For First Slot Create
+      if (idx === 0) {
+        const firstSlot = {
+          index: 1,
+          startTime: val,
+          endTime: this.service.addTime(val, 0, 59),
+          isBook: true
+        };
+        this.dataArrays[0].index = this.dataArrays[0].index - 1;
+        this.dataArrays[0].startTime = this.service.addTime(val, 1, 0);
+        this.dataArrays.push(firstSlot);
+        this.slotsArray.push(this.createItemFormGroup());
+        this.dataArrays = this.service.sortArray(this.dataArrays, this.slots);
         this.setShiftDetails();
         return;
       }
@@ -513,9 +552,28 @@ export class ShiftChartComponent implements OnInit, OnChanges {
       const frmArray = this.addForm.get('slotsArray') as FormArray;
       frmArray.clear();
       if (this.shift?.value?.null?.payload) {
+        this.shift.value.null.payload = [];
+        this.shift.value.null.payload = [
+          {
+            startTime: this.shift.value?.null?.startTime,
+            endTime: this.shift.value?.null?.endTime
+          }
+        ];
+
         this.initEditPayloadForSlots(this.shift.value.null.payload);
       }
       if (this.shift?.value?.id) {
+        this.shift.value.payload = [];
+        this.shift.value.payload = [
+          {
+            startTime: this.service.convertTo12HourFormat(
+              this.shift.value?.startTime
+            ),
+            endTime: this.service.convertTo12HourFormat(
+              this.shift.value?.endTime
+            )
+          }
+        ];
         this.initEditPayloadForSlots(this.shift.value.payload);
       }
     }
@@ -628,9 +686,11 @@ export class ShiftChartComponent implements OnInit, OnChanges {
       ?.split(':')[1]
       ?.split(' ')[1];
     const endTime = this.dataArrays[0]?.endTime?.split(':')[1]?.split(' ')[1];
+    const isBookStatus = this.dataArrays[0].isBook;
     return (
       startTime.toUpperCase() === TimeType.pm.toUpperCase() &&
-      endTime.toUpperCase() === TimeType.am.toUpperCase()
+      endTime.toUpperCase() === TimeType.am.toUpperCase() &&
+      isBookStatus
     );
   }
 }

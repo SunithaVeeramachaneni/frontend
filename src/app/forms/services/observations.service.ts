@@ -417,7 +417,7 @@ export class ObservationsService {
         list.forEach((email) => {
           if (email) {
             const foundName = this.userService.getUserFullName(email);
-            if (foundName) {
+            if (foundName && !emailToDisplay.includes(foundName)) {
               emailToDisplay.push(foundName);
             }
           }
@@ -501,6 +501,9 @@ export class ObservationsService {
           break;
         case 'assignedTo':
           item.items = (data?.assignedTo ?? []).sort();
+          break;
+        case 'dueDate':
+          item.items = data?.dueDate ?? [];
           break;
         default:
           break;
