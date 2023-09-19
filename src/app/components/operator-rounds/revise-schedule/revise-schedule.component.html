@@ -71,12 +71,15 @@
               matInput
               min="1"
               formControlName="repeatDuration"
-              [placeholder]="placeHolder"
+              [placeholder]="placeholder"
             />
           </mat-form-field>
 
           <mat-form-field appearance="fill" class="task-repeat-day">
-            <mat-select formControlName="repeatEvery">
+            <mat-select
+              formControlName="repeatEvery"
+              [placeholder]="placeholder"
+            >
               <mat-option
                 *ngFor="let repeatEvery of repeatTypes"
                 [value]="repeatEvery"
@@ -154,7 +157,7 @@
             <input
               matInput
               formControlName="startDate"
-              [placeholder]="placeHolder"
+              [placeholder]="placeholder"
               readonly
             />
             <input
@@ -182,7 +185,7 @@
             <input
               matInput
               formControlName="endDate"
-              [placeholder]="placeHolder"
+              [placeholder]="placeholder"
               readonly
             />
             <input
