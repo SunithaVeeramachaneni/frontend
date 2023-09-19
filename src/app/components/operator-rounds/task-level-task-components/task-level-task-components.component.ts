@@ -21,6 +21,7 @@ export class TaskLevelTaskComponentsComponent implements OnInit {
   @Input() selectedNodeId: any;
   @Input() selectedNode: any;
   @Input() displayTaskLevelConfig: any;
+  @Input() isThirdPanelOpen: boolean;
   @Input() set selectedPage(selectedPage: any) {
     if (selectedPage) {
       this._selectedPage = selectedPage;
@@ -37,7 +38,7 @@ export class TaskLevelTaskComponentsComponent implements OnInit {
   get checkboxStatus() {
     return this._checkboxStatus;
   }
-  @Output() isOpenThirdPanel: EventEmitter<any> = new EventEmitter();
+  @Output() isOpenThirdPanel: EventEmitter<boolean> = new EventEmitter();
   @Output() pageDataToThirdPanel: EventEmitter<any> = new EventEmitter();
   questionToSection = new Map<number, any[]>();
   questionToSectionId: Map<number, any[]> = new Map();

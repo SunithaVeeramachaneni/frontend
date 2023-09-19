@@ -92,8 +92,8 @@
                       </div>
                       <div
                         [ngClass]="{
-                          'revised-content': question.complete === false,
-                          'revised-content-width': question.complete === true
+                          'revised-content': isThirdPanelOpen === false,
+                          'revised-content-width': isThirdPanelOpen === true
                         }"
                       >
                         <div
@@ -153,9 +153,8 @@
                               <span class="revised-title" translate>
                                 Revised Dates:
                               </span>
-                              <span class="revised-value">
-                                Every {{ revisedQuestionData?.repeatDuration }}
-                                {{ revisedQuestionData?.repeatEvery }}
+                              <span class="revised-value" translate>
+                                Custom Dates
                               </span>
                             </p>
                             <p>
@@ -180,7 +179,7 @@
                                 >Slots:
                               </span>
                               <div
-                                class="revised-slots"
+                                class="revised-slots m-r-10"
                                 *ngFor="let shiftGroup of shiftArray"
                               >
                                 <span

@@ -1005,7 +1005,6 @@ export class ScheduleConfigurationComponent
                     .get('id')
                     .patchValue(scheduleConfig.id);
                   this.schedulerConfigForm.markAsPristine();
-                  this.openScheduleSuccessModal('create');
                 }
                 this.operatorRoundService.setScheduleLoader(false);
                 this.initShiftStat();
@@ -1034,7 +1033,6 @@ export class ScheduleConfigurationComponent
                     .get('id')
                     .patchValue(scheduleConfig.id);
                   this.schedulerConfigForm.markAsPristine();
-                  this.openScheduleSuccessModal('create');
                 }
                 this.initShiftStat();
                 this.operatorRoundService.setScheduleLoader(false);

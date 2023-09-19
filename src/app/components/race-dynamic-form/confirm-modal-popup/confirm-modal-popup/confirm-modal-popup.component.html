@@ -9,6 +9,14 @@
   >
     {{ data.popupTexts.subtitle | translate }}
   </p>
+  <p
+    id="confirm-popup-subtitle"
+    class="notes subtitle"
+    *ngIf="data.popupTexts.note"
+  >
+    <span *ngIf="data.popupTexts.note" class="noteText" translate> Note: </span>
+    {{ data.popupTexts.note | translate }}
+  </p>
 
   <button
     mat-raised-button
@@ -18,6 +26,16 @@
     *ngIf="data.popupTexts.primaryBtnText"
   >
     {{ data.popupTexts.primaryBtnText | translate }}
+  </button>
+
+  <button
+    mat-raised-button
+    id="confirm-popup-primary-btn"
+    class="task-btn"
+    (click)="onPositiveAction()"
+    *ngIf="data.popupTexts.primaryBtnTaskText"
+  >
+    {{ data.popupTexts.primaryBtnTaskText | translate }}
   </button>
   <button
     mat-button
