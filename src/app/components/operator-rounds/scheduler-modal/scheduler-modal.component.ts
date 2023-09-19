@@ -55,6 +55,37 @@ export class SchedulerModalComponent implements OnInit {
     this.operatorRoundService.setSelectedNode({});
     this.operatorRoundService.setIsRevised(false);
     this.totalSteps = this.steps.length;
+
+    if (Object.keys(this.data.scheduleConfiguration).length) {
+      const {
+        scheduleType: headerScheduleType,
+        shiftDetails: headerShiftDetails,
+        scheduleByDates: headerScheduleByDates,
+        startDate: headerStartDate,
+        endDate: headerEndDate
+      } = this.data.scheduleConfiguration;
+      this.scheduleConfig = {
+        startDate: localToTimezoneDate(
+          new Date(headerStartDate),
+          this.data.plantTimezoneMap[this.data.roundPlanDetail?.plantId],
+          dateFormat3
+        ),
+        shiftDetails: Object.keys(headerShiftDetails).reduce((acc, curr) => {
+          acc[curr] = headerShiftDetails[curr].map((slotInfo) => {
+            const { checked, ...slot } = slotInfo;
+            return slot;
+          });
+          return acc;
+        }, {}),
+        scheduleType: headerScheduleType,
+        scheduleByDates: headerScheduleByDates,
+        endDate: localToTimezoneDate(
+          new Date(headerEndDate),
+          this.data.plantTimezoneMap[this.data.roundPlanDetail?.plantId],
+          dateFormat3
+        )
+      } as RoundPlanScheduleConfiguration;
+    }
     const uniqueScheduleConfigurations = [];
     const revisedInfo = this.data.scheduleConfiguration.taskLevelConfig
       ? this.data.scheduleConfiguration.taskLevelConfig.reduce((acc, curr) => {

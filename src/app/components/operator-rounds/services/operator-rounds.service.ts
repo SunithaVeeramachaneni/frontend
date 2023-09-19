@@ -866,7 +866,44 @@ export class OperatorRoundsService {
           !currentConfig.hasOwnProperty(key) ||
           !isEqual(commonConfig[key], currentConfig[key])
         ) {
-          delete commonConfig[key];
+          switch (key) {
+            case 'daysOfWeek':
+              const daysOfWeek = commonConfig[key].filter((dayOfWeek) =>
+                currentConfig[key].includes(dayOfWeek)
+              );
+              commonConfig[key] = daysOfWeek;
+              break;
+            case 'monthlyDaysOfWeek':
+              const monthlyDaysOfWeek = commonConfig[key].map(
+                (mDaysOfWeek, index) =>
+                  mDaysOfWeek.filter((dayOfWeek) =>
+                    currentConfig[key][index].includes(dayOfWeek)
+                  )
+              );
+              commonConfig[key] = monthlyDaysOfWeek;
+              break;
+            case 'shiftDetails':
+              const shiftDetails = {};
+              for (const shiftId of Object.keys(commonConfig[key])) {
+                shiftDetails[shiftId] = commonConfig[key][shiftId].map(
+                  (slot) => {
+                    if (
+                      currentConfig[key][shiftId]?.some(
+                        (currSlot) => slot.checked && isEqual(currSlot, slot)
+                      )
+                    ) {
+                      return slot;
+                    } else {
+                      return { ...slot, checked: false };
+                    }
+                  }
+                );
+              }
+              commonConfig[key] = shiftDetails;
+              break;
+            default:
+              delete commonConfig[key];
+          }
         }
       }
     }

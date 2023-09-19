@@ -90,7 +90,7 @@ export class ReviseScheduleComponent implements OnInit, OnDestroy {
   revisedInfo$: Observable<any>;
   allPageCheckBoxStatus$: Observable<TaskLevelScheduleSubForm>;
   subForms: TaskLevelScheduleSubForm = {};
-  placeHolder = '_ _';
+  placeholder = '_ _';
   minDate: Date;
   maxDate: Date;
   private onDestroy$ = new Subject();
@@ -185,6 +185,35 @@ export class ReviseScheduleComponent implements OnInit, OnDestroy {
             break;
           default:
           // do nothing
+        }
+      });
+
+    this.reviseScheduleConfigForm
+      .get('daysOfWeek')
+      .valueChanges.pipe(takeUntil(this.onDestroy$))
+      .subscribe((daysOfWeek) => {
+        if (daysOfWeek?.length === 0) {
+          this.reviseScheduleConfigForm
+            .get('daysOfWeek')
+            .patchValue(this.reviseScheduleConfig.daysOfWeek);
+        }
+      });
+
+    this.reviseScheduleConfigForm
+      .get('monthlyDaysOfWeek')
+      .valueChanges.pipe(takeUntil(this.onDestroy$))
+      .subscribe((monthlyDaysOfWeek) => {
+        const monthlyDaysOfWeekCount = monthlyDaysOfWeek.reduce(
+          (acc: number, curr: number[]) => {
+            acc += curr?.length;
+            return acc;
+          },
+          0
+        );
+        if (monthlyDaysOfWeekCount === 0) {
+          this.reviseScheduleConfigForm
+            .get('monthlyDaysOfWeek')
+            .patchValue(this.reviseScheduleConfig.monthlyDaysOfWeek);
         }
       });
   }
@@ -388,6 +417,65 @@ export class ReviseScheduleComponent implements OnInit, OnDestroy {
     }, {});
   }
 
+  getDefaultSlots() {
+    return [
+      {
+        null: { startTime: '12:00 AM', endTime: '11:59 PM' },
+        payload: [{ startTime: '00:00', endTime: '23:59', checked: true }]
+      }
+    ];
+  }
+
+  setShiftAndSlotDetails(shiftDetails) {
+    this.allSlots.forEach((allSlot) => {
+      const { payload, ...shiftInfo } = allSlot;
+      payload.forEach((slotInfo) => {
+        if (
+          shiftDetails[shiftInfo.id ? shiftInfo.id : 'null']?.find(
+            (selectedSlotInfo) => isEqual(slotInfo, selectedSlotInfo)
+          )
+        ) {
+          return slotInfo;
+        }
+
+        if (isEqual(this.allSlots, this.getDefaultSlots())) {
+          this.allSlots.forEach((slot) => {
+            slot[shiftInfo.id ? shiftInfo.id : 'null'].payload =
+              shiftDetails[shiftInfo.id ? shiftInfo.id : 'null'];
+            slot.payload = shiftDetails[shiftInfo.id ? shiftInfo.id : 'null'];
+            /* shiftDetails[shiftInfo.id ? shiftInfo.id : 'null']?.forEach(
+              (slotInfo) => {
+                slot[shiftInfo.id ? shiftInfo.id : 'null']?.payload =
+                  shiftDetails[shiftInfo.id ? shiftInfo.id : 'null'];
+              }
+            ); */
+          });
+        } else {
+          slotInfo.checked = shiftDetails[
+            shiftInfo.id ? shiftInfo.id : 'null'
+          ]?.some(
+            (slotInfo2) =>
+              slotInfo2.checked &&
+              isEqual(slotInfo2.startTime, slotInfo.startTime) &&
+              isEqual(slotInfo2.endTime, slotInfo.endTime)
+          )
+            ? true
+            : false;
+        }
+      });
+    });
+    this.allSlots = this.allSlots.filter(({ payload }) =>
+      payload.some(({ checked }) => checked)
+    );
+    this.shiftsSelected.patchValue(this.allSlots);
+    if (this.allSlots.length === 0) {
+      this.allSlots = this.getDefaultSlots();
+    }
+    if (this.shiftSelect) {
+      this.shiftSelect.value = this.allSlots;
+    }
+  }
+
   setCommonConfig(initial = false) {
     // Common Config for Shifts is Left
     const questionKeys = [];
@@ -405,7 +493,7 @@ export class ReviseScheduleComponent implements OnInit, OnDestroy {
       });
     });
 
-    if (
+    /* if (
       questionKeys.length === 1 &&
       this.revisedInfo[nodeId] &&
       this.revisedInfo[nodeId][questionKeys[0]]
@@ -414,60 +502,50 @@ export class ReviseScheduleComponent implements OnInit, OnDestroy {
         this.revisedInfo[nodeId][questionKeys[0]];
       this.reviseScheduleConfigForm.patchValue(taskLevelScheduleConfig);
       this.taskLevelScheduleByDates = scheduleByDates;
-      this.allSlots.forEach((allSlot) => {
-        const { payload, ...shiftInfo } = allSlot;
-        payload.forEach((slotInfo) => {
-          if (
-            taskLevelScheduleConfig.shiftDetails[
-              shiftInfo.id ? shiftInfo.id : 'null'
-            ] &&
-            taskLevelScheduleConfig.shiftDetails[
-              shiftInfo.id ? shiftInfo.id : 'null'
-            ].find((selectedSlotInfo) => isEqual(slotInfo, selectedSlotInfo))
-          ) {
-            return slotInfo;
-          }
-          slotInfo.checked = false;
-          return slotInfo;
-        });
-      });
-      this.allSlots = this.allSlots.filter(({ payload }) =>
-        payload.some(({ checked }) => checked)
-      );
-      this.shiftsSelected.patchValue(this.allSlots);
-      if (this.allSlots.length === 0) {
-        this.allSlots = [
-          {
-            null: { startTime: '12:00 AM', endTime: '11:59 PM' },
-            payload: [{ startTime: '00:00', endTime: '23:59', checked: true }]
-          }
-        ];
-      }
-      if (this.shiftSelect) {
-        this.shiftSelect.value = this.allSlots;
-      }
+      this.setShiftAndSlotDetails(taskLevelScheduleConfig.shiftDetails);
       return;
     }
 
     if (initial) {
       return;
-    }
+    } */
 
     const { commonConfig, isQuestionNotIncluded } =
       this.operatorRoundService.findCommonConfigurations(
         this.revisedInfo,
         questionKeys
       );
-    if (questionKeys.length > 1 && isQuestionNotIncluded) {
+    /* if (questionKeys.length && isQuestionNotIncluded) {
       this.resetReviseScheduleConfigForm();
+      this.taskLevelScheduleByDates = this.reviseScheduleConfig.scheduleByDates;
+      this.setShiftAndSlotDetails(this.reviseScheduleConfig.shiftDetails);
+      return;
+    } */
+
+    if (!Object.keys(commonConfig).length) {
       return;
     }
-    this.reviseScheduleConfigForm.patchValue({
-      repeatDuration: '',
-      repeatEvery: '',
-      ...commonConfig
-    });
+
+    this.reviseScheduleConfigForm.patchValue(
+      {
+        repeatDuration: '',
+        repeatEvery: '',
+        ...commonConfig,
+        startDate: commonConfig.startDate ? commonConfig.startDate : '',
+        startDatePicker: commonConfig.startDatePicker
+          ? commonConfig.startDatePicker
+          : this.reviseScheduleConfig.startDatePicker,
+        endDate: commonConfig.endDate ? commonConfig.endDate : '',
+        endDatePicker: commonConfig.endDatePicker
+          ? commonConfig.endDatePicker
+          : this.reviseScheduleConfig.endDatePicker
+      },
+      { emitEvent: false }
+    );
+    this.taskLevelScheduleByDates = commonConfig.scheduleByDates;
+    this.setShiftAndSlotDetails(commonConfig.shiftDetails);
   }
+
   resetReviseScheduleConfigForm() {
     this.reviseScheduleConfigForm.patchValue({
       scheduleType: this.reviseScheduleConfig.scheduleType,
