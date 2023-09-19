@@ -132,7 +132,7 @@ export class ShiftChartComponent implements OnInit, OnChanges {
       if (idx === 0) {
         const firstSlot = {
           index: 1,
-          startTime: val,
+          startTime: this.service.addLeadingZero(val),
           endTime: this.service.addTime(val, 0, 59),
           isBook: true
         };
@@ -143,9 +143,33 @@ export class ShiftChartComponent implements OnInit, OnChanges {
         this.dataArrays = this.service.sortArray(this.dataArrays, this.slots);
         this.setShiftDetails();
         return;
+      } else {
+        let index = this.dataArrays.length - 1;
+        const slot = {
+          index: 1,
+          startTime: this.service.addLeadingZero(val),
+          endTime: this.service.addTime(val, 0, 59),
+          isBook: true
+        };
+        this.dataArrays[index].index -= 1;
+        if (!this.checkSlotAlreadyPresent(slot)) {
+          const existingIndex = this.checkSlotStartAlreadyPresent(slot);
+          if (existingIndex !== -1) {
+            this.dataArrays[index].index += 1;
+            this.dataArrays[existingIndex].index -= 1;
+            this.dataArrays[existingIndex].startTime = this.service.addTime(
+              val,
+              1,
+              0
+            );
+          }
+          this.dataArrays.push(slot);
+        }
+        this.slotsArray.push(this.createItemFormGroup());
+        this.dataArrays = this.service.sortArray(this.dataArrays, this.slots);
+        this.setShiftDetails();
+        return;
       }
-      this.setShiftDetails();
-      return;
     }
     // If start time is PM and end time is AM
     if (this.isTimeStartsWithPMEndsWithAM()) {
@@ -692,5 +716,24 @@ export class ShiftChartComponent implements OnInit, OnChanges {
       endTime.toUpperCase() === TimeType.am.toUpperCase() &&
       isBookStatus
     );
+  }
+
+  private checkSlotAlreadyPresent(slot: any): boolean {
+    const { startTime, endTime } = slot;
+
+    const slotsArray = this.dataArrays.filter(
+      (s) => s.startTime === startTime && s.endTime === endTime
+    );
+
+    return slotsArray?.length > 0;
+  }
+
+  private checkSlotStartAlreadyPresent(slot: any): number {
+    const { startTime } = slot;
+    const index = this.dataArrays.findIndex(
+      (s) => s.startTime === this.service.addLeadingZero(startTime)
+    );
+
+    return index;
   }
 }
