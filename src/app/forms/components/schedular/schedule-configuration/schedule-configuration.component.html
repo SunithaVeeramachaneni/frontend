@@ -1,7 +1,7 @@
 <div id="scheduler-customizer">
   <mat-card class="bg-white">
     <mat-card-title class="m-0 light-gray">
-      <span>
+      <span *ngIf="!isTaskLevel">
         <span class="cancel-side-drawer" (click)="cancel()">
           <mat-icon id="scheduleConfigurationCloseIcon" class="dialog-close"
             >close</mat-icon
@@ -38,6 +38,7 @@
         </div>
         <div class="mt-12">
           <button
+            *ngIf="!isTaskLevel"
             id="scheduleConfigurationBtn"
             class="schedule-button"
             mat-raised-button
@@ -51,6 +52,15 @@
             (click)="scheduleConfiguration()"
             type="submit"
             translate="schedule"
+          ></button>
+          <button
+            *ngIf="isTaskLevel"
+            id="scheduleConfigurationNextBtn"
+            class="schedule-button"
+            mat-raised-button
+            type="submit"
+            translate="next"
+            (click)="headerLevelScheduling()"
           ></button>
         </div>
       </div>

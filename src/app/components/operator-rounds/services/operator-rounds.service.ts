@@ -20,7 +20,8 @@ import {
   RoundDetail,
   RoundPlanQueryParam,
   UsersInfoByEmail,
-  Count
+  Count,
+  RoundPlanScheduleConfiguration
 } from '../../../interfaces';
 import {
   formConfigurationStatus,
@@ -30,7 +31,8 @@ import {
 import { ToastService } from 'src/app/shared/toast';
 import { isJson } from '../../race-dynamic-form/utils/utils';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
-import { cloneDeep, isEmpty, omitBy } from 'lodash-es';
+import { cloneDeep, isEmpty, omitBy, isEqual, sortBy } from 'lodash-es';
+import { scheduleConfigs } from 'src/app/forms/components/schedular/schedule-configuration/schedule-configuration.constants';
 
 @Injectable({
   providedIn: 'root'
@@ -38,6 +40,13 @@ import { cloneDeep, isEmpty, omitBy } from 'lodash-es';
 export class OperatorRoundsService {
   private selectedNodeSubject = new BehaviorSubject<any>({});
   private hierarchyModeSubject = new BehaviorSubject<any>('asset_hierarchy');
+  private checkBoxStatusSubject = new BehaviorSubject<any>({});
+  private revisedInfoSubject = new BehaviorSubject<any>({});
+  private allPageCheckBoxStatusSubject = new BehaviorSubject<any>([]);
+  private uniqueConfigurationSubject = new BehaviorSubject<any>([]);
+  private shiftInformationSubject = new BehaviorSubject<any>([]);
+  private scheduleLoaderSubject = new BehaviorSubject<boolean>(false);
+  private isRevisedSubject = new BehaviorSubject<boolean>(false);
 
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
@@ -45,7 +54,15 @@ export class OperatorRoundsService {
   pdfMapping$ = new BehaviorSubject<any>({});
   selectedNode$ = this.selectedNodeSubject.asObservable();
   hierarchyMode$ = this.hierarchyModeSubject.asObservable();
+  checkboxStatus$ = this.checkBoxStatusSubject.asObservable();
+  allPageCheckBoxStatus$ = this.allPageCheckBoxStatusSubject.asObservable();
+  revisedInfo$ = this.revisedInfoSubject.asObservable();
+  uniqueConfiguration$ = this.uniqueConfigurationSubject.asObservable();
   usersInfoByEmail: UsersInfoByEmail;
+  shiftInformation$ = this.shiftInformationSubject.asObservable();
+  scheduleLoader$ = this.scheduleLoaderSubject.asObservable();
+  isRevised$ = this.isRevisedSubject.asObservable();
+
   constructor(
     public assetHierarchyUtil: AssetHierarchyUtil,
     private toastService: ToastService,
@@ -58,6 +75,34 @@ export class OperatorRoundsService {
   setHierarchyMode(mode: string) {
     this.hierarchyModeSubject.next(mode);
   }
+
+  setRevisedInfo(info: any) {
+    this.revisedInfoSubject.next(info);
+  }
+
+  setCheckBoxStatus(node: any) {
+    this.checkBoxStatusSubject.next(node);
+  }
+
+  setAllPageCheckBoxStatus(page: any) {
+    this.allPageCheckBoxStatusSubject.next(page);
+  }
+
+  setuniqueConfiguration(configs: any) {
+    this.uniqueConfigurationSubject.next(configs);
+  }
+  setShiftInformation(shiftInfo: any) {
+    this.shiftInformationSubject.next(shiftInfo);
+  }
+
+  setScheduleLoader(isLoading: boolean) {
+    this.scheduleLoaderSubject.next(isLoading);
+  }
+
+  setIsRevised(isRevised: boolean) {
+    this.isRevisedSubject.next(isRevised);
+  }
+
   createTags$ = (
     tags: any,
     info: ErrorInfo = {} as ErrorInfo
@@ -74,6 +119,7 @@ export class OperatorRoundsService {
       details,
       info
     );
+
   updateValues$ = (
     details: any,
     info: ErrorInfo = {} as ErrorInfo
@@ -794,4 +840,279 @@ export class OperatorRoundsService {
       {},
       'arraybuffer'
     );
+
+  findCommonConfigurations = (revisedInfoConfigs, questionIds) => {
+    const configurations = [];
+    let commonConfig: any = {};
+
+    for (const a of Object.values(revisedInfoConfigs)) {
+      for (const b of Object.keys(a)) {
+        if (questionIds.includes(b)) {
+          configurations.push(a[b]);
+        }
+      }
+    }
+
+    if (configurations.length === 0) {
+      return { commonConfig: {} };
+    }
+
+    commonConfig = { ...configurations[0] };
+
+    for (let i = 1; i < configurations.length; i++) {
+      const currentConfig = configurations[i];
+
+      for (const key of Object.keys(commonConfig)) {
+        if (
+          !currentConfig.hasOwnProperty(key) ||
+          !isEqual(commonConfig[key], currentConfig[key])
+        ) {
+          switch (key) {
+            case 'daysOfWeek':
+              const daysOfWeek = commonConfig[key].filter((dayOfWeek) =>
+                currentConfig[key].includes(dayOfWeek)
+              );
+              commonConfig[key] = daysOfWeek;
+              break;
+            case 'monthlyDaysOfWeek':
+              const monthlyDaysOfWeek = commonConfig[key].map(
+                (mDaysOfWeek, index) =>
+                  mDaysOfWeek.filter((dayOfWeek) =>
+                    currentConfig[key][index].includes(dayOfWeek)
+                  )
+              );
+              commonConfig[key] = monthlyDaysOfWeek;
+              break;
+            case 'shiftDetails':
+              const shiftDetails = {};
+              for (const shiftId of Object.keys(commonConfig[key])) {
+                shiftDetails[shiftId] = commonConfig[key][shiftId].map(
+                  (slot) => {
+                    if (
+                      currentConfig[key][shiftId]?.some(
+                        (currSlot) => slot.checked && isEqual(currSlot, slot)
+                      )
+                    ) {
+                      return slot;
+                    } else {
+                      return { ...slot, checked: false };
+                    }
+                  }
+                );
+              }
+              commonConfig[key] = shiftDetails;
+              break;
+            case 'scheduleByDates':
+              commonConfig[key] = commonConfig[key].filter((dayInfo) => {
+                const curr = currentConfig[key].map((d) => +d.date);
+                return curr.includes(+dayInfo.date);
+              });
+              break;
+            default:
+              delete commonConfig[key];
+          }
+        }
+      }
+    }
+
+    return { commonConfig };
+  };
+
+  compareConfigWithHeader = (
+    reviseScheduleConfig: RoundPlanScheduleConfiguration,
+    reviseScheduleConfigFormValue: RoundPlanScheduleConfiguration,
+    scheduleByDatesFormValue
+  ) => {
+    const {
+      repeatEvery,
+      repeatDuration,
+      daysOfWeek,
+      monthlyDaysOfWeek,
+      startDate,
+      endDate,
+      shiftDetails,
+      scheduleByDates
+    } = reviseScheduleConfig;
+    const {
+      repeatEvery: repeatEveryFormValue,
+      repeatDuration: repeatDurationFormValue,
+      daysOfWeek: daysOfWeekFormValue,
+      monthlyDaysOfWeek: monthlyDaysOfWeekFormValue,
+      startDate: startDateFormValue,
+      endDate: endDateFormValue,
+      shiftDetails: shiftDetailsFormValue,
+      scheduleType: scheduleTypeFormValue
+    } = reviseScheduleConfigFormValue;
+
+    const { repeatTypes, scheduleTypes } = scheduleConfigs;
+
+    if (scheduleTypeFormValue === scheduleTypes[0]) {
+      switch (repeatEveryFormValue) {
+        case repeatTypes[0]:
+          return isEqual(
+            {
+              repeatEvery,
+              repeatDuration,
+              startDate,
+              endDate,
+              shiftDetails
+            },
+            {
+              repeatEvery: repeatEveryFormValue,
+              repeatDuration: repeatDurationFormValue,
+              startDate: startDateFormValue,
+              endDate: endDateFormValue,
+              shiftDetails: shiftDetailsFormValue
+            }
+          );
+        case repeatTypes[1]:
+          return isEqual(
+            {
+              repeatEvery,
+              repeatDuration,
+              daysOfWeek: sortBy(daysOfWeek),
+              startDate,
+              endDate,
+              shiftDetails
+            },
+            {
+              repeatEvery: repeatEveryFormValue,
+              repeatDuration: repeatDurationFormValue,
+              daysOfWeek: sortBy(daysOfWeekFormValue),
+              startDate: startDateFormValue,
+              endDate: endDateFormValue,
+              shiftDetails: shiftDetailsFormValue
+            }
+          );
+        case repeatTypes[2]:
+          return isEqual(
+            {
+              repeatEvery,
+              repeatDuration,
+              monthlyDaysOfWeek: sortBy(monthlyDaysOfWeek, [
+                (o) => sortBy(o)
+              ]).map((mDaysOfWeek) => sortBy(mDaysOfWeek)),
+              startDate,
+              endDate,
+              shiftDetails
+            },
+            {
+              repeatEvery: repeatEveryFormValue,
+              repeatDuration: repeatDurationFormValue,
+              monthlyDaysOfWeek: sortBy(monthlyDaysOfWeekFormValue, [
+                (o) => sortBy(o)
+              ]).map((mDaysOfWeek) => sortBy(mDaysOfWeek)),
+              startDate: startDateFormValue,
+              endDate: endDateFormValue,
+              shiftDetails: shiftDetailsFormValue
+            }
+          );
+      }
+    } else if (scheduleTypeFormValue === scheduleTypes[1]) {
+      return isEqual(
+        {
+          scheduleByDates: sortBy(scheduleByDates, [(o) => o.date]),
+          shiftDetails
+        },
+        {
+          scheduleByDates: sortBy(scheduleByDatesFormValue, [(o) => o.date]),
+          shiftDetails: shiftDetailsFormValue
+        }
+      );
+    }
+  };
+
+  comapreConfigurations(configuration1, configuration2) {
+    const config1 = cloneDeep(configuration1);
+    const config2 = cloneDeep(configuration2);
+
+    if (config1.scheduleType === scheduleConfigs.scheduleTypes[0]) {
+      if (config1.repeatEvery === scheduleConfigs.repeatTypes[0]) {
+        const {
+          daysOfWeek,
+          monthlyDaysOfWeek,
+          scheduleByDates,
+          ...restConfig1
+        } = config1;
+        const {
+          daysOfWeek: daysOfWeek2,
+          monthlyDaysOfWeek: monthlyDaysOfWeek2,
+          scheduleByDates: scheduleByDates2,
+          ...restConfig2
+        } = config2;
+        return isEqual(restConfig1, restConfig2);
+      } else if (config1.repeatEvery === scheduleConfigs.repeatTypes[1]) {
+        const {
+          daysOfWeek,
+          monthlyDaysOfWeek,
+          scheduleByDates,
+          ...restConfig1
+        } = config1;
+        const {
+          daysOfWeek: daysOfWeek2,
+          monthlyDaysOfWeek: monthlyDaysOfWeek2,
+          scheduleByDates: scheduleByDates2,
+          ...restConfig2
+        } = config2;
+        return isEqual(
+          { ...restConfig1, daysOfWeek: sortBy(daysOfWeek) },
+          { ...restConfig2, daysOfWeek: sortBy(daysOfWeek2) }
+        );
+      } else {
+        const {
+          daysOfWeek,
+          monthlyDaysOfWeek,
+          scheduleByDates,
+          ...restConfig1
+        } = config1;
+        const {
+          daysOfWeek: daysOfWeek2,
+          monthlyDaysOfWeek: monthlyDaysOfWeek2,
+          scheduleByDates: scheduleByDates2,
+          ...restConfig2
+        } = config2;
+        return isEqual(
+          {
+            ...restConfig1,
+            monthlyDaysOfWeek: sortBy(monthlyDaysOfWeek, [
+              (o) => sortBy(o)
+            ]).map((mDaysOfWeek) => sortBy(mDaysOfWeek))
+          },
+          {
+            ...restConfig2,
+            monthlyDaysOfWeek: sortBy(monthlyDaysOfWeek2, [
+              (o) => sortBy(o)
+            ]).map((mDaysOfWeek) => sortBy(mDaysOfWeek))
+          }
+        );
+      }
+    } else {
+      const {
+        daysOfWeek,
+        monthlyDaysOfWeek,
+        repeatDuration,
+        repeatEvery,
+        scheduleByDates,
+        ...restConfig1
+      } = config1;
+      const {
+        daysOfWeek: daysOfWeek2,
+        monthlyDaysOfWeek: monthlyDaysOfWeek2,
+        repeatDuration: repeatDuration2,
+        repeatEvery: repeatEvery2,
+        scheduleByDates: scheduleByDates2,
+        ...restConfig2
+      } = config2;
+      return isEqual(
+        {
+          ...restConfig1,
+          scheduleByDates: sortBy(scheduleByDates, [(o) => o.date])
+        },
+        {
+          ...restConfig2,
+          scheduleByDates: sortBy(scheduleByDates2, [(o) => o.date])
+        }
+      );
+    }
+  }
 }

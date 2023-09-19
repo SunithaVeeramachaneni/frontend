@@ -71,6 +71,7 @@ import {
   ScheduleConfigEvent,
   ScheduleConfigurationComponent
 } from 'src/app/forms/components/schedular/schedule-configuration/schedule-configuration.component';
+import { SchedulerModalComponent } from '../scheduler-modal/scheduler-modal.component';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
 import { ShiftService } from '../../master-configurations/shifts/services/shift.service';
@@ -304,8 +305,11 @@ export class PlansComponent implements OnInit, OnDestroy {
       id: 'schedule',
       displayName: 'Schedule',
       type: 'string',
-      controlType: 'button',
-      controlValue: 'Schedule',
+      controlType: 'menu',
+      controlValue: {
+        buttonName: 'Schedule',
+        menuButtonNames: ['Header Level', 'Task Level']
+      },
       order: 7,
       hasSubtitle: false,
       showMenuOptions: false,
@@ -778,12 +782,23 @@ export class PlansComponent implements OnInit, OnDestroy {
   }
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
-    const { columnId, row } = event;
+    const { columnId, row, option } = event;
     const activeShifts = this.prepareActiveShifts(row);
     switch (columnId) {
       case 'schedule':
         if (!row.schedule) {
-          this.openScheduleConfigHandler({ ...row, shifts: activeShifts });
+          if (option === 'Header Level') {
+            this.openScheduleConfigHandler(
+              { ...row, shifts: activeShifts },
+              false
+            );
+          } else {
+            this.openTaskLevelScheduleConfigHandler(
+              { ...row, shifts: activeShifts },
+              {} as RoundPlanScheduleConfiguration,
+              true
+            );
+          }
         } else {
           this.openRoundPlanHandler({ ...row, shifts: activeShifts });
         }
@@ -839,6 +854,8 @@ export class PlansComponent implements OnInit, OnDestroy {
       menuActions.push({
         title: 'Schedule',
         action: 'schedule',
+        type: 'menu',
+        menuValues: ['Header Level', 'Task Level'],
         condition: {
           operand: this.placeHolder,
           operation: 'isFalsy',
@@ -891,7 +908,7 @@ export class PlansComponent implements OnInit, OnDestroy {
     this.router.navigate([`/operator-rounds/edit/${this.roundPlanDetail.id}`]);
   }
 
-  openScheduleConfigHandler(row: RoundPlanDetail) {
+  openScheduleConfigHandler(row: RoundPlanDetail, isTaskLevel: boolean) {
     this.scheduleRoundPlanDetail = { ...row };
     const dialogRef = this.dialog.open(ScheduleConfigurationComponent, {
       disableClose: true,
@@ -905,6 +922,7 @@ export class PlansComponent implements OnInit, OnDestroy {
         roundPlanDetail: this.scheduleRoundPlanDetail,
         hidden: this.hideScheduleConfig,
         moduleName: 'OPERATOR_ROUNDS',
+        isTaskLevel,
         assigneeDetails: this.assigneeDetails
       }
     });
@@ -913,6 +931,46 @@ export class PlansComponent implements OnInit, OnDestroy {
     this.scheduleConfigState = 'in';
     this.zIndexScheduleDelay = 400;
 
+    dialogRef.afterClosed().subscribe((data) => {
+      if (data?.actionType === 'scheduleConfig') {
+        delete data?.actionType;
+        this.scheduleConfigHandler(data);
+      }
+      if (data?.actionType === 'scheduleConfigEvent') {
+        delete data?.actionType;
+        this.scheduleConfigEventHandler(data);
+      }
+    });
+  }
+
+  openTaskLevelScheduleConfigHandler(
+    row: RoundPlanDetail,
+    scheduleConfiguration: RoundPlanScheduleConfiguration,
+    isTaskLevel: boolean
+  ) {
+    this.scheduleRoundPlanDetail = { ...row };
+    const dialogRef = this.dialog.open(SchedulerModalComponent, {
+      disableClose: true,
+      backdropClass: 'schedule-configuration-modal',
+      maxWidth: '100vw',
+      maxHeight: '100vh',
+      height: '100%',
+      width: '100%',
+      panelClass: 'full-screen-modal',
+      data: {
+        roundPlanDetail: this.scheduleRoundPlanDetail,
+        hidden: this.hideScheduleConfig,
+        moduleName: 'OPERATOR_ROUNDS',
+        isTaskLevel,
+        assigneeDetails: this.assigneeDetails,
+        scheduleConfiguration,
+        plantTimezoneMap: this.plantTimezoneMap
+      }
+    });
+    this.hideScheduleConfig = false;
+    this.closeRoundPlanHandler();
+    this.scheduleConfigState = 'in';
+    this.zIndexScheduleDelay = 400;
     dialogRef.afterClosed().subscribe((data) => {
       if (data?.actionType === 'scheduleConfig') {
         delete data?.actionType;
@@ -1017,11 +1075,31 @@ export class PlansComponent implements OnInit, OnDestroy {
   }
 
   rowLevelActionHandler = (event: RowLevelActionEvent) => {
-    const { action, data } = event;
+    const { action, data, subMenu } = event;
     const activeShifts = this.prepareActiveShifts(data);
     switch (action) {
       case 'schedule':
-        this.openScheduleConfigHandler({ ...data, shifts: activeShifts });
+        if (subMenu === 'Task Level') {
+          this.openTaskLevelScheduleConfigHandler(
+            { ...data, shifts: activeShifts },
+            this.roundPlanScheduleConfigurations[data.id],
+            true
+          );
+        } else {
+          if (this.roundPlanScheduleConfigurations[data.id]?.isTaskLevel) {
+            this.openTaskLevelScheduleConfigHandler(
+              { ...data, shifts: activeShifts },
+              this.roundPlanScheduleConfigurations[data.id],
+              true
+            );
+          } else {
+            this.openScheduleConfigHandler(
+              { ...data, shifts: activeShifts },
+              false
+            );
+          }
+        }
+
         break;
       case 'showDetails':
         this.openRoundPlanHandler({ ...data, shifts: activeShifts });

@@ -1,0 +1,291 @@
+<div
+  class="task-level-schedule-main"
+  *ngIf="{
+    revisedInfo: revisedInfo$ | async,
+    uniqueConfiguration: uniqueConfiguration$ | async
+  }"
+>
+  <div
+    class="dis-flex form-header"
+    *ngIf="taskLevelScheduleHeaderConfiguration"
+  >
+    <div class="dis-flex width-45">
+      <svg-icon
+        id="roundPlanDetailIcon"
+        icon="icon-round-plans-icon"
+        class="plans-icon"
+      ></svg-icon>
+      <div class="width-90">
+        <a class="dis-inline">
+          <span class="form_title_input">
+            {{ taskLevelScheduleHeaderConfiguration.name }}
+          </span>
+        </a>
+        <br />
+        <div class="dis-flex center">
+          <a class="width-60">
+            <span class="form_description_input">
+              {{ taskLevelScheduleHeaderConfiguration.description }}
+            </span>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="header-level">
+      <div class="row1">
+        <span
+          class="txt"
+          *ngIf="payload?.scheduleType === scheduleConfigs.scheduleTypes[1]"
+        >
+          {{ 'headerDates' | translate }} :
+        </span>
+        <span
+          class="txt"
+          *ngIf="payload?.scheduleType !== scheduleConfigs.scheduleTypes[1]"
+        >
+          {{ 'headerFrequency' | translate }} :
+        </span>
+
+        <span>
+          {{ taskLevelScheduleHeaderConfiguration.headerFrequency }}
+        </span>
+      </div>
+      <div class="row2">
+        <div>
+          <span class="txt">{{ 'shift' | translate }}: </span>
+          <span
+            *ngFor="
+              let shift of taskLevelScheduleHeaderConfiguration.shiftDetails;
+              let i = index
+            "
+          >
+            {{ shift.name ? shift.name : '--' }}
+            <span
+              *ngIf="
+                i !==
+                taskLevelScheduleHeaderConfiguration.shiftDetails.length - 1
+              "
+            >
+              ,
+            </span>
+          </span>
+        </div>
+        <div>
+          <span class="txt">{{ 'slots' | translate }}: </span>
+          <ng-container
+            *ngIf="taskLevelScheduleHeaderConfiguration.slotDetails"
+          >
+            <span>
+              {{
+                taskLevelScheduleHeaderConfiguration.slotDetails[0]?.payload[0]
+                  .startTime
+              }}
+              -
+              {{
+                taskLevelScheduleHeaderConfiguration?.slotDetails[0]?.payload[0]
+                  .endTime
+              }}
+              <span *ngIf="taskLevelScheduleHeaderConfiguration.slotsCount > 1">
+                ,
+              </span>
+
+              <span
+                class="more"
+                [matMenuTriggerFor]="menu"
+                *ngIf="taskLevelScheduleHeaderConfiguration.slotsCount > 1"
+              >
+                +{{ taskLevelScheduleHeaderConfiguration.slotsCount - 1 }}
+                more
+              </span>
+
+              <mat-menu #menu="matMenu" backdropClass="more-slots-menu">
+                <div
+                  *ngFor="
+                    let slot of taskLevelScheduleHeaderConfiguration.slotDetails
+                  "
+                  class="menu-slot"
+                >
+                  <span>{{ slot.name }}</span>
+                  <p *ngFor="let payload of slot.payload">
+                    {{ payload.startTime }} - {{ payload.endTime }}
+                  </p>
+                </div>
+              </mat-menu>
+            </span>
+          </ng-container>
+        </div>
+        <div *ngIf="payload?.scheduleType !== scheduleConfigs.scheduleTypes[1]">
+          <span class="txt">{{ 'starts' | translate }} : </span>
+          <span>
+            {{ taskLevelScheduleHeaderConfiguration?.headerStartDate }}
+          </span>
+          &nbsp;
+          <span class="txt">{{ 'ends' | translate }} : </span>
+          <span>
+            {{ taskLevelScheduleHeaderConfiguration?.headerEndDate }}
+          </span>
+        </div>
+        <div>
+          <span class="txt">{{ 'assigneeDetails' | translate }} : </span>
+          <span>
+            {{
+              taskLevelScheduleHeaderConfiguration?.assigneeDetails
+                ? taskLevelScheduleHeaderConfiguration?.assigneeDetails
+                : '--'
+            }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="dis-flex width-45 justify-content-end">
+      <button
+        id="SchedulingBtn"
+        mat-stroked-button
+        class="schedule-btn"
+        (click)="onSchedule()"
+      >
+        <span>
+          <span translate="schedule"></span>
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="dis-flex form">
+  <div class="asset-location-search width-30">
+    <span class="custom-form-field-gray-color search">
+      <mat-form-field appearance="outline" class="searchField">
+        <mat-icon
+          id="hierarchyContainerSearchIcon"
+          matPrefix
+          class="searchIcon"
+        >
+          search
+        </mat-icon>
+        <input
+          id="hierarchyContainerSearchText"
+          matInput
+          type="text"
+          [placeholder]="'search' | translate"
+          autocomplete="off"
+          [matAutocomplete]="auto"
+          [formControl]="searchHierarchyKey"
+        />
+        <mat-autocomplete
+          autoActiveFirstOption
+          #auto="matAutocomplete"
+          (optionSelected)="searchResultSelected($event)"
+        >
+          <mat-optgroup [label]="getSearchMatchesLabel()">
+            <mat-option
+              *ngFor="let option of filteredOptions$ | async"
+              [value]="option"
+              class="searchResultOption"
+            >
+              <div class="nodeContent">
+                <img [src]="option.image" />
+                <div class="description">
+                  <span id="hierarchyContainerName" class="title">{{
+                    option.name
+                  }}</span>
+                  <span id="hierarchyContainerType" class="subTitle">
+                    {{
+                      'nodeSubTitle'
+                        | translate
+                          : {
+                              nodeType: option.type | titlecase,
+                              nodeId: option.nodeId
+                            }
+                    }}
+                  </span>
+                </div>
+              </div>
+            </mat-option>
+          </mat-optgroup>
+        </mat-autocomplete>
+
+        <svg-icon
+          id="hierarchyContainerCloseIcon"
+          icon="icon-close"
+          matSuffix
+          *ngIf="searchHierarchyKey.value.length"
+          class="closeIcon"
+          (click)="clearSearchResults()"
+        ></svg-icon>
+      </mat-form-field>
+    </span>
+
+    <div
+      class="hierarchy"
+      [ngClass]="{
+        'custom-height':
+          payload?.scheduleType === scheduleConfigs.scheduleTypes[1]
+      }"
+    >
+      <div *ngIf="!flatHierarchy?.length" class="emptySearchResult">
+        <span id="hierarchyContainerLocationFound">
+          {{
+            'noAssetsOrLocationsFound'
+              | translate : { searchKey: searchHierarchyKey.value }
+          }}
+        </span>
+      </div>
+      <div class="locations-assets">
+        <span translate>locationsAssets</span>
+        <span class="float-right" translate>frequency</span>
+      </div>
+      <app-node
+        [node]="node"
+        [hierarchyMode]="mode"
+        [isRevised]="displayNodeLevelConfig.has(node.id)"
+        (checkevent)="toggleCheckboxEvent($event)"
+        *ngFor="let node of flatHierarchy"
+      ></app-node>
+    </div>
+  </div>
+  <ng-container *ngIf="selectedNode$ | async">
+    <div
+      [ngClass]="{
+        'width-45': openCloseRightPanel === true,
+        'width-70': openCloseRightPanel === false,
+        'mid-panel-custom-height':
+          payload?.scheduleType === scheduleConfigs.scheduleTypes[1]
+      }"
+      class="mid-panel"
+      *ngIf="selectedNode; else loadingSelectedNode"
+    >
+      <div *ngIf="selectedNode.length === 0" class="select-locations-assets">
+        <p class="m-0" translate>nullSelectedLocationAssetFirst</p>
+        <p translate>nullSelectedLocationAssetSecond</p>
+      </div>
+      <app-task-level-task-components
+        [selectedPage]="selectedPages"
+        [selectedNodeId]="selectedNodeId"
+        [selectedNode]="selectedNode"
+        [displayTaskLevelConfig]="displayTaskLevelConfig"
+        [isThirdPanelOpen]="isThirdPanelOpen"
+        (isOpenThirdPanel)="openCloseRightPanelEventHandler($event)"
+      ></app-task-level-task-components>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="openCloseRightPanel">
+    <div [@widthGrow]="state" class="right-panel">
+      <app-revise-schedule
+        [roundPlanData]="roundPlanData"
+        [plantTimezoneMap]="plantTimezoneMap"
+        [nodeIdToNodeName]="nodeIdToNodeName"
+        [reviseSchedule]="payload"
+        [uniqueConfigurations]="uniqueConfigurations"
+        (openCloseRightPanelEvent)="openCloseRightPanelEventHandler($event)"
+        (resetTaskLevelConfigurationSelectionsEvenet)="
+          resetTaskLevelConfigurationSelectionsHandler($event)
+        "
+      >
+      </app-revise-schedule>
+    </div>
+  </ng-container>
+
+  <ng-template #loadingSelectedNode> </ng-template>
+</div>

@@ -11,6 +11,8 @@ export const scheduleConfigs = Object.freeze({
     'friday',
     'saturday'
   ],
+
+  shortDaysOfWeek: ['Sun', 'Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat'],
   weeksOfMonth: ['1st Week', '2nd Week', '3rd Week', '4th Week', '5th Week'],
   assignTypes: ['plant', 'userGroup', 'user']
 });

@@ -1,0 +1,10 @@
+<div class="alert-modal">
+  <h1 mat-dialog-title class="title">{{ 'alert' | translate }}</h1>
+  <div mat-dialog-content>
+    {{ 'alertWarning' | translate }}
+  </div>
+  <div mat-dialog-actions>
+    <button mat-button (click)="close()" color="primary">Cancel</button>
+    <button mat-flat-button (click)="yes()" color="warn">Yes</button>
+  </div>
+</div>

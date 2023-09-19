@@ -24,6 +24,8 @@ export interface RoundPlanScheduleConfiguration {
   advanceRoundsCount: number;
   startDatePicker?: Date;
   scheduleEndOnPicker?: Date;
+  taskLevelConfig?: TaskLevelScheduleConfig[];
+  isTaskLevel: boolean;
 }
 
 export interface AssignmentDetail {
@@ -225,4 +227,17 @@ export interface SelectedAssignee {
   user: UserDetails;
   userGroup: UserGroup;
   checked: boolean;
+}
+
+export interface TaskLevelScheduleConfig {
+  nodeWiseQuestionIds: { [x: string]: [string] };
+  repeatDuration: number;
+  repeatEvery: string;
+  daysOfWeek: number[];
+  monthlyDaysOfWeek: MonthlyDaysOfWeek[];
+  startDate: string;
+  endDate: string;
+  scheduleByDates: ScheduleByDate[];
+  scheduledTill?: string;
+  shiftDetails: { [x: string]: { startTime: string; endTime: string }[] };
 }

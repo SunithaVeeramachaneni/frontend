@@ -1,5 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Observable } from 'rxjs';
+import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
 
 @Component({
   selector: 'app-schedule-success-modal',
@@ -7,8 +9,10 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
   styleUrls: ['./schedule-success-modal.component.scss']
 })
 export class ScheduleSuccessModalComponent implements OnInit {
+  scheduleLoading$: Observable<boolean>;
   constructor(
     private dialogRef: MatDialogRef<ScheduleSuccessModalComponent>,
+    private operatorRoundService: OperatorRoundsService,
     @Inject(MAT_DIALOG_DATA)
     public data: {
       name: string;
@@ -17,7 +21,9 @@ export class ScheduleSuccessModalComponent implements OnInit {
     }
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.scheduleLoading$ = this.operatorRoundService.scheduleLoader$;
+  }
 
   goToList() {
     this.dialogRef.close({

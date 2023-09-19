@@ -8,7 +8,9 @@ import {
   OnChanges,
   SimpleChanges,
   OnDestroy,
-  Inject
+  Inject,
+  Output,
+  EventEmitter
 } from '@angular/core';
 import {
   FormArray,
@@ -38,7 +40,6 @@ import {
   weeksToDays
 } from 'date-fns';
 import {
-  debounceTime,
   distinctUntilChanged,
   pairwise,
   startWith,
@@ -52,7 +53,6 @@ import {
   RoundPlanScheduleConfiguration,
   RoundPlanScheduleConfigurationObj,
   ScheduleByDate,
-  SelectedAssignee,
   ValidationError
 } from 'src/app/interfaces';
 import { ScheduleSuccessModalComponent } from '../schedule-success-modal/schedule-success-modal.component';
@@ -62,7 +62,7 @@ import {
   scheduleConfigs,
   shiftDefaultPayload
 } from './schedule-configuration.constants';
-import { Subject, Subscription } from 'rxjs';
+import { BehaviorSubject, Subject, Subscription } from 'rxjs';
 import { PlantService } from 'src/app/components/master-configurations/plants/services/plant.service';
 import {
   getDayTz,
@@ -78,6 +78,7 @@ import {
 } from 'src/app/app.constants';
 import { ScheduleConfigurationService } from 'src/app/forms/services/schedule.service';
 import { isEqual } from 'lodash-es';
+import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
 
 export interface ScheduleConfigEvent {
   slideInOut: 'out' | 'in';
@@ -116,6 +117,9 @@ export class ScheduleConfigurationComponent
 {
   @ViewChild('menuTrigger', { static: false }) menuTrigger: MatMenuTrigger;
   @ViewChild(MatCalendar) calendar: MatCalendar<Date>;
+  @Output() gotoNextStep = new EventEmitter<void>();
+  @Output() payloadEmitter = new EventEmitter<any>();
+  payloadSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
   assigneeDetails: AssigneeDetails;
   moduleName: 'OPERATOR_ROUNDS' | 'RDF';
   plantMapSubscription: Subscription;
@@ -149,12 +153,15 @@ export class ScheduleConfigurationComponent
   plantTimezoneMap: any = {};
   placeHolder = '_ _';
   selectedShifts = [];
+  isTaskLevel: any;
+  payload: any = {};
   selectedShift: any;
   private onDestroy$ = new Subject();
   private shiftDetails: {
     [key: string]: { startTime: string; endTime: string }[];
   } = JSON.parse(JSON.stringify(shiftDefaultPayload));
   private shiftApiResponse: any;
+
   constructor(
     private fb: FormBuilder,
     private rpscService: RoundPlanScheduleConfigurationService,
@@ -164,6 +171,7 @@ export class ScheduleConfigurationComponent
     private plantService: PlantService,
     private readonly scheduleConfigurationService: ScheduleConfigurationService,
     private dialogRef: MatDialogRef<ScheduleConfigurationComponent>,
+    private operatorRoundService: OperatorRoundsService,
     @Inject(MAT_DIALOG_DATA)
     public data: any
   ) {}
@@ -188,6 +196,7 @@ export class ScheduleConfigurationComponent
     this.shiftsInformation = this.selectedDetails?.shifts;
     this.allShifts = this.shiftsInformation;
     this.initCreatedSlots();
+    this.operatorRoundService.setShiftInformation(this.shiftsInformation);
   }
 
   initCreatedSlots(): void {
@@ -265,8 +274,13 @@ export class ScheduleConfigurationComponent
     });
 
     if (this.data) {
-      const { formDetail, roundPlanDetail, moduleName, assigneeDetails } =
-        this.data;
+      const {
+        formDetail,
+        roundPlanDetail,
+        moduleName,
+        isTaskLevel,
+        assigneeDetails
+      } = this.data;
       const plantId =
         moduleName === 'RDF' ? formDetail.plantId : roundPlanDetail.plantId;
       this.assigneeDetails = {
@@ -278,6 +292,7 @@ export class ScheduleConfigurationComponent
         )
       };
       this.moduleName = moduleName;
+      this.isTaskLevel = isTaskLevel;
 
       // If the module name is RDF
       if (formDetail && moduleName === 'RDF') {
@@ -812,9 +827,40 @@ export class ScheduleConfigurationComponent
     this.shiftSlots.push(this.addShiftDetails(true));
   }
 
+  prepareScheduleConfigurationDetail() {
+    const schedularConfigFormValue = this.schedulerConfigForm.getRawValue();
+
+    const { startDate, endDate, startDatePicker, endDatePicker, scheduleType } =
+      schedularConfigFormValue;
+
+    const scheduleByDates =
+      scheduleType === 'byDate' ? this.scheduleByDates : [];
+
+    this.payload = {
+      ...schedularConfigFormValue,
+      startDate: format(startDatePicker, dateFormat4),
+      endDate: format(endDatePicker, dateFormat4),
+      scheduleByDates,
+      shiftDetails: this.prepareShiftDetailsPayload(this.shiftDetails)
+    };
+    this.payloadEmitter.emit({
+      payload: this.payload,
+      plantTimezoneMap: this.plantTimezoneMap,
+      scheduleConfig: {
+        startDate,
+        shiftDetails: this.payload.shiftDetails,
+        scheduleType,
+        scheduleByDates,
+        endDate
+      }
+    });
+    this.gotoNextStep.emit();
+  }
+
   scheduleConfiguration() {
     if (this.schedulerConfigForm.valid && this.schedulerConfigForm.dirty) {
       this.disableSchedule = true;
+
       const schedularConfigFormValue = this.schedulerConfigForm.getRawValue();
       const { id, startDate, endDate, scheduleEndOn } =
         schedularConfigFormValue;
@@ -877,6 +923,8 @@ export class ScheduleConfigurationComponent
         if (this.isFormModule) {
           delete payload.roundPlanId;
           delete payload.advanceRoundsCount;
+          this.openScheduleSuccessModal('update');
+          this.operatorRoundService.setScheduleLoader(true);
           this.formScheduleConfigurationService
             .updateFormScheduleConfiguration$(id, payload)
             .pipe(
@@ -884,13 +932,13 @@ export class ScheduleConfigurationComponent
                 this.disableSchedule = false;
                 if (scheduleConfig && Object.keys(scheduleConfig)?.length) {
                   // Close popup and pass data through it
-                  this.openScheduleSuccessModal('update');
                   this.dialogRef.close({
                     formsScheduleConfiguration: scheduleConfig,
                     mode: 'update',
                     actionType: 'scheduleConfig'
                   });
                   this.schedulerConfigForm.markAsPristine();
+                  this.operatorRoundService.setScheduleLoader(false);
                 }
                 this.initShiftStat();
                 this.cdrf.detectChanges();
@@ -900,6 +948,8 @@ export class ScheduleConfigurationComponent
         } else {
           delete payload.formId;
           delete payload.advanceFormsCount;
+          this.openScheduleSuccessModal('update');
+          this.operatorRoundService.setScheduleLoader(true);
           this.rpscService
             .updateRoundPlanScheduleConfiguration$(id, payload)
             .pipe(
@@ -912,8 +962,8 @@ export class ScheduleConfigurationComponent
                     mode: 'update',
                     actionType: 'scheduleConfig'
                   });
-                  this.openScheduleSuccessModal('update');
                   this.schedulerConfigForm.markAsPristine();
+                  this.operatorRoundService.setScheduleLoader(false);
                 }
                 this.initShiftStat();
                 this.cdrf.detectChanges();
@@ -928,12 +978,15 @@ export class ScheduleConfigurationComponent
           endDate: endDateByPlantTimezone,
           scheduleEndOn: scheduleEndOnByPlantTimezone,
           scheduleByDates,
-          shiftDetails: this.prepareShiftDetailsPayload(this.shiftDetails)
+          shiftDetails: this.prepareShiftDetailsPayload(this.shiftDetails),
+          isTaskLevel: false
         };
         delete payload.shiftSlots;
         if (this.isFormModule) {
           delete payload.roundPlanId;
           delete payload.advanceRoundsCount;
+          this.openScheduleSuccessModal('create');
+          this.operatorRoundService.setScheduleLoader(true);
           this.formScheduleConfigurationService
             .createFormScheduleConfiguration$(payload)
             .pipe(
@@ -950,7 +1003,7 @@ export class ScheduleConfigurationComponent
                     .get('id')
                     .patchValue(scheduleConfig.id);
                   this.schedulerConfigForm.markAsPristine();
-                  this.openScheduleSuccessModal('create');
+                  this.operatorRoundService.setScheduleLoader(false);
                 }
                 this.initShiftStat();
                 this.cdrf.detectChanges();
@@ -960,6 +1013,8 @@ export class ScheduleConfigurationComponent
         } else {
           delete payload.formId;
           delete payload.advanceFormsCount;
+          this.openScheduleSuccessModal('create');
+          this.operatorRoundService.setScheduleLoader(true);
           this.rpscService
             .createRoundPlanScheduleConfiguration$(payload)
             .pipe(
@@ -976,7 +1031,7 @@ export class ScheduleConfigurationComponent
                     .get('id')
                     .patchValue(scheduleConfig.id);
                   this.schedulerConfigForm.markAsPristine();
-                  this.openScheduleSuccessModal('create');
+                  this.operatorRoundService.setScheduleLoader(false);
                 }
                 this.initShiftStat();
                 this.cdrf.detectChanges();
@@ -1012,7 +1067,16 @@ export class ScheduleConfigurationComponent
     if (index === -1) {
       this.scheduleByDates = [
         ...this.scheduleByDates,
-        { date, scheduled: false }
+        {
+          date: new Date(
+            localToTimezoneDate(
+              new Date(date),
+              this.plantTimezoneMap[this.selectedDetails?.plantId],
+              ''
+            )
+          ),
+          scheduled: false
+        }
       ];
     } else {
       this.scheduleByDates.splice(index, 1);
@@ -1371,7 +1435,7 @@ export class ScheduleConfigurationComponent
     const dialogRef = this.dialog.open(ScheduleSuccessModalComponent, {
       disableClose: true,
       width: '354px',
-      height: '275px',
+      height: 'max-content',
       backdropClass: 'schedule-success-modal',
       data: {
         name: this.selectedDetails?.name ?? '',
@@ -1585,6 +1649,10 @@ export class ScheduleConfigurationComponent
         .join(', ');
     }
     return '';
+  }
+
+  headerLevelScheduling() {
+    this.prepareScheduleConfigurationDetail();
   }
 
   ngOnDestroy(): void {

@@ -23,6 +23,7 @@ export class DynamicStepperComponent implements OnInit, OnChanges {
   @Input() steps: Step[];
   @Input() currentStep = 0;
   @Input() showGoBack?: boolean;
+  @Input() moduleName: string;
   @Output() goBack = new EventEmitter<void>();
   @Output() gotoNextStep = new EventEmitter<void>();
   @Output() gotoPreviousStep = new EventEmitter<void>();

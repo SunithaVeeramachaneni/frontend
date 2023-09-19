@@ -34,6 +34,17 @@ export interface Page {
   logics: any[];
 }
 
+export interface TaskLevelSchedulePage extends Page {
+  complete: boolean;
+  partiallyChecked: boolean;
+  sections: TaskLevelScheduleSection[];
+  questions: TaskLevelScheduleQuestion[];
+}
+
+export interface TaskLevelScheduleSubForm {
+  [key: string]: TaskLevelSchedulePage[];
+}
+
 export interface Section {
   id: string;
   name: string;
@@ -48,6 +59,11 @@ export interface Section {
   updatedAt?: string;
   createdBy?: string;
   updatedBy?: string;
+}
+
+export interface TaskLevelScheduleSection extends Section {
+  complete: boolean;
+  partiallyChecked: boolean;
 }
 
 export interface Question {
@@ -73,6 +89,10 @@ export interface Question {
   updatedAt?: string;
   createdBy?: string;
   updatedBy?: string;
+}
+
+export interface TaskLevelScheduleQuestion extends Question {
+  complete: boolean;
 }
 
 export interface SectionQuestions {

@@ -1,0 +1,179 @@
+@import '../../../../scss/colors.scss';
+
+.task-level-tasks {
+  margin: 0 14px;
+
+  .task-title-div {
+    margin: 14px 12px 0px 12px;
+  }
+
+  .task-title {
+    font-size: 120%;
+    font-weight: 500;
+  }
+
+  .page-header {
+    background: $white;
+    border-radius: 10px 10px 0px 0px;
+    margin-top: 12px;
+    padding: 7px;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-style: solid;
+    border-color: $border-color;
+
+    .page-arrow {
+      cursor: pointer;
+      position: relative;
+      top: 3px;
+      left: 5px;
+      margin-right: 7px;
+      color: $black;
+    }
+
+    .page-checkbox {
+      position: relative;
+      top: -6px;
+    }
+
+    .form_page_name_input {
+      font-size: 110%;
+      font-weight: 500;
+      color: $black;
+      position: relative;
+      top: -5px;
+      margin-left: 10px;
+    }
+  }
+
+  .section-content {
+    border-top-width: 0px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-style: solid;
+    border-color: $border-color;
+    background: $gray2;
+    border-radius: 0px 0px 10px 10px;
+    padding-bottom: 10px;
+  }
+
+  .section-margin {
+    margin: 0 15px 3px 15px;
+  }
+
+  .section-header {
+    background: $blue-head;
+    border-radius: 7px 7px 0px 0px;
+    margin-top: 12px;
+    padding: 5px 7px 12px 11px;
+
+    .section-arrow {
+      cursor: pointer;
+      position: relative;
+      top: 7px;
+      margin-right: 10px;
+      color: $white;
+    }
+
+    .section-checkbox {
+      position: relative;
+      top: -2px;
+      ::ng-deep .mat-checkbox-frame {
+        border-color: $white;
+      }
+    }
+
+    .form_section_name_input {
+      font-size: 110%;
+      font-weight: 500;
+      color: $white;
+      margin-left: 10px;
+    }
+  }
+
+  .questions-content {
+    background: $white;
+    border-bottom-left-radius: 7px;
+    border-bottom-right-radius: 7px;
+    position: relative;
+  }
+
+  .questions-div {
+    padding: 15px 10px 10px 45px;
+    border-bottom: 1px solid $border-color;
+  }
+
+  .highlight {
+    background-color: #dbe6ff;
+  }
+
+  .task-question {
+    margin-left: 10px;
+    margin-top: 1px;
+  }
+}
+
+.revised-state {
+  color: $blue-main;
+  cursor: pointer;
+}
+
+.revised-hover-container:hover {
+  background-color: $gray;
+}
+
+.status-div {
+  display: grid;
+}
+
+.status {
+  text-align: right;
+  margin: 0 15px 0 0;
+}
+
+.show-revised-content {
+  display: block;
+  height: 0;
+  overflow: hidden;
+  transition: height 0.5s linear;
+  background: $gray;
+  color: $black;
+
+  p {
+    margin: 10px;
+  }
+
+  .revised-title {
+    font-size: 120%;
+    font-weight: 500;
+  }
+
+  .revised-slots {
+    p {
+      margin: 0 0 5px 5px;
+    }
+  }
+
+  .revised-value {
+    font-size: 110%;
+  }
+
+  .shift-time {
+    display: flex;
+  }
+}
+
+.revised-hover-me:hover .show-revised-content {
+  height: 100%;
+}
+
+.revised-content {
+  width: 30%;
+}
+
+.revised-content-width {
+  width: 100%;
+}
