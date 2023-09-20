@@ -447,10 +447,6 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
     this.tags = [...this.tags, event.option.viewValue];
     this.tagsInput.nativeElement.value = '';
     this.tagsCtrl.patchValue('');
-    this.additionalDetailsForm.patchValue({
-      ...this.additionalDetailsForm.value,
-      tags: this.tags
-    });
   }
 
   get responses(): FormArray {
@@ -620,10 +616,10 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
       this.rdfService.createTags$(dataSet).subscribe((response) => {
         // do nothing
       });
-      this.additionalDetailsForm.patchValue({
-        tags: this.tags
-      });
     }
+    this.additionalDetailsForm.patchValue({
+      tags: this.tags
+    });
     this.setAdditionalDetails.emit({
       ...this.additionalDetailsForm.getRawValue(),
       attributes: updatedattributes
