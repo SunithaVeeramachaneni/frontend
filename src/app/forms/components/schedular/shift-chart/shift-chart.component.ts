@@ -395,6 +395,19 @@ export class ShiftChartComponent implements OnInit, OnChanges {
       // 2.1 It will run when the slot is removed from the data
       if (matchObject.isBook === false) {
         if (matchObject?.endTime === this.service.addTime(val, 0, 59)) {
+          if (this.dataArrays[indexOfMatchObject - 1].isBook === false) {
+            this.dataArrays[indexOfMatchObject].isBook = true;
+            this.dataArrays[indexOfMatchObject].index =
+              this.dataArrays[indexOfMatchObject]?.index +
+              this.dataArrays[indexOfMatchObject - 1]?.index;
+            this.dataArrays[indexOfMatchObject].startTime =
+              this.dataArrays[indexOfMatchObject - 1].startTime;
+            this.dataArrays.splice(indexOfMatchObject - 1, 1);
+            this.slotsArray.removeAt(indexOfMatchObject - 1);
+            this.setShiftDetails();
+            return;
+          }
+
           this.dataArrays[indexOfMatchObject].isBook = true;
           const endTime = this.dataArrays[indexOfMatchObject].endTime;
           this.dataArrays[indexOfMatchObject].endTime = endTime;
@@ -613,7 +626,18 @@ export class ShiftChartComponent implements OnInit, OnChanges {
         this.slots[this.slots.length - 1],
         this.slots
       );
-
+      const lastElement = this.dataArrays[this.dataArrays.length - 1];
+      if (lastElement?.isBook === false) {
+        const lastSlotIndex = this.dataArrays.findIndex(
+          (item) => item === lastElement
+        );
+        this.dataArrays[lastSlotIndex].index =
+          this.dataArrays[lastSlotIndex]?.index + obj?.index;
+        this.dataArrays[lastSlotIndex].isBook = true;
+        this.dataArrays[lastSlotIndex].endTime = obj?.endTime;
+        this.setShiftDetails();
+        return;
+      }
       this.dataArrays.push(obj);
       this.slotsArray.push(this.createItemFormGroup());
       this.dataArrays = this.service.sortArray(this.dataArrays, this.slots);
