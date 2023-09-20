@@ -143,6 +143,7 @@
         id="SchedulingBtn"
         mat-stroked-button
         class="schedule-btn"
+        [disabled]="disableSchedule"
         (click)="onSchedule()"
       >
         <span>

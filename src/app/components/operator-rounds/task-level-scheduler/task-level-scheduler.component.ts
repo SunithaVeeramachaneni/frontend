@@ -141,6 +141,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
   uniqueConfiguration$: Observable<any>;
   state = 'closed';
   isThirdPanelOpen = false;
+  disableSchedule = false;
   readonly scheduleConfigs = scheduleConfigs;
 
   constructor(
@@ -570,7 +571,9 @@ export class TaskLevelSchedulerComponent implements OnInit {
       if (Object.keys(config.nodeWiseQuestionIds).length === 0) return false;
       return true;
     });
+
     if (this.scheduleConfig.id) {
+      this.disableSchedule = true;
       this.openScheduleSuccessModal('update');
       this.operatorRoundsService.setScheduleLoader(true);
       this.schedulerConfigurationService
@@ -580,6 +583,7 @@ export class TaskLevelSchedulerComponent implements OnInit {
         )
         .pipe(
           tap((scheduleConfig) => {
+            this.disableSchedule = false;
             if (scheduleConfig && Object.keys(scheduleConfig)?.length) {
               this.dialogRef.close({
                 roundPlanScheduleConfiguration: scheduleConfig,
@@ -592,12 +596,14 @@ export class TaskLevelSchedulerComponent implements OnInit {
         )
         .subscribe();
     } else {
+      this.disableSchedule = true;
       this.openScheduleSuccessModal('create');
       this.operatorRoundsService.setScheduleLoader(true);
       this.schedulerConfigurationService
         .createRoundPlanScheduleConfiguration$(this.scheduleConfig)
         .pipe(
           tap((scheduleConfig) => {
+            this.disableSchedule = false;
             if (scheduleConfig && Object.keys(scheduleConfig).length) {
               this.dialogRef.close({
                 roundPlanScheduleConfiguration: scheduleConfig,
