@@ -146,6 +146,8 @@ export class ReportConfigurationComponent implements OnInit {
   reportTitleUpdate = new Subject();
   disabledSaveButton = false;
   moduleName = 'dashboard';
+  ghostLoading = new Array(20).fill(0).map((v, i) => i);
+  ghostLoadingChart = new Array(8).fill(0).map((v, i) => i);
 
   constructor(
     private cdrf: ChangeDetectorRef,

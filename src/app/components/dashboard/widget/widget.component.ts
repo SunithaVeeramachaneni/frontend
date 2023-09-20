@@ -103,6 +103,7 @@ export class WidgetComponent implements OnInit {
   limit = defaultLimit;
   countType: string;
   countField: string;
+  ghostLoading = new Array(11).fill(0).map((v, i) => i);
   public _height: number;
   public _width: number;
   private _widget: Widget;

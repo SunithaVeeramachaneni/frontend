@@ -163,6 +163,7 @@ export class ConnectionIntegrationsComponent implements OnInit, OnChanges {
   integrations$: Observable<any>;
   skip = 0;
   limit = defaultLimit;
+  ghostLoading = new Array(4).fill(0).map((v, i) => i);
   fetchIntegrations$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   readonly permissions = permissions;

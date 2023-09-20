@@ -54,6 +54,7 @@ export class EmailDialogComponent implements OnInit {
   selectedUsers = [];
 
   allUsers = [];
+  ghostLoading = new Array(4).fill(0).map((v, i) => i);
 
   constructor(
     private dialogRef: MatDialogRef<any>,

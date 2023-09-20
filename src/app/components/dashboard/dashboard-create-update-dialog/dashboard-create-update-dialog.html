@@ -1,23 +1,28 @@
 <div class="dashboard-create-update-dialog">
   <div class="dialog-head" disableClose="true">
     <span class="dialog-title">
-      {{dialogData.dialogMode ==='CREATE' ? "Create " :"Update "}} Dashboard
+      {{dialogData.dialogMode ==='CREATE' ? "Create " :"Update "}}
+      <span translate>dashboards</span>
     </span>
     <span class="dialog-close-btn" (click)="onNoClick()">
       <mat-icon class="dialog-close">close</mat-icon>
     </span>
   </div>
   <div mat-dialog-content class="dialog-content" [formGroup]="dashboardForm">
-    <mat-form-field appearance="outline" class="width-100 custom-form-field-white-color">
+    <mat-form-field
+      appearance="outline"
+      class="width-100 custom-form-field-white-color"
+    >
       <mat-label translate>dashboardTitle</mat-label>
       <input matInput type="text" formControlName="dashboardName" />
     </mat-form-field>
-    <mat-form-field appearance="outline" class="width-100 custom-form-field-white-color">
+    <mat-form-field
+      appearance="outline"
+      class="width-100 custom-form-field-white-color"
+    >
       <mat-label translate>dashboardModule</mat-label>
       <mat-select formControlName="moduleName">
-        <mat-option [value]="">
-          Dashboard
-        </mat-option>
+        <mat-option [value]=""><span translate>dashboards</span></mat-option>
         <mat-option *ngFor="let module of modules" [value]="module.id">
           {{module.name}}
         </mat-option>
@@ -28,14 +33,29 @@
       {{ errors.dashboardName.name | translate : { name: 'dashboardTitle' |
       translate, length: errors.dashboardName.length } }}
     </mat-error>
-    <mat-checkbox class="width-100" [(ngModel)]="isDefault" [ngModelOptions]="{standalone: true}"
-      disabled="{{dialogData.dialogMode ==='EDIT' && dialogData.data.isDefault}}">
+    <mat-checkbox
+      class="width-100"
+      [(ngModel)]="isDefault"
+      [ngModelOptions]="{standalone: true}"
+      disabled="{{dialogData.dialogMode ==='EDIT' && dialogData.data.isDefault}}"
+    >
       Set to Default
     </mat-checkbox>
   </div>
   <div mat-dialog-actions class="dialog-footer">
-    <button mat-button color="primary" (click)="onNoClick()" translate="cancel"></button>
-    <button mat-raised-button color="primary" (click)="createDashboard($event)" class="create-dashboard-btn"
-      translate="done" [disabled]="dashboardForm.invalid"></button>
+    <button
+      mat-button
+      color="primary"
+      (click)="onNoClick()"
+      translate="cancel"
+    ></button>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="createDashboard($event)"
+      class="create-dashboard-btn"
+      translate="done"
+      [disabled]="dashboardForm.invalid"
+    ></button>
   </div>
 </div>

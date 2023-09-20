@@ -34,11 +34,17 @@
   "destAttrHeading": "Destination Data Attribute",
   "saveIntegrationTxt": "Save Integration",
   "integrationsTxt": "Integrations",
-  "addIntegrationBtn": "Add Integration",
+  "addIntegration": "Add Integration",
+  "editIntegration": "Edit Integration",
   "connectionsTxt": "Connections",
   "emptyConnectionsListTxt": "You have not added any Connection yet. <br />Start Creating one",
-  "addConnectionBtn": "Add Connection",
+  "addConnection": "Add Connection",
   "viewDetail": "View Details",
   "editConnection": "Edit Connection",
-  "deleteConnection": "Delete Connection"
+  "deleteConnection": "Delete Connection",
+  "saveConnection": "Save Connection",
+  "updateConnection": "Update Connection",
+  "timePeriod": "Time Period: ",
+  "close": "Close",
+  "select": "Select"
 }

@@ -8,14 +8,23 @@
             <mat-button-toggle-group
               [formControl]="selectedReportSegmentControl"
             >
-              <mat-button-toggle value="recent" class="toogle-btn-text">
-                Recent
+              <mat-button-toggle
+                value="recent"
+                class="toogle-btn-text"
+                translate="recent"
+              >
               </mat-button-toggle>
-              <mat-button-toggle value="favorite" class="toogle-btn-text">
-                Favorite
+              <mat-button-toggle
+                value="favorite"
+                class="toogle-btn-text"
+                translate="favorite"
+              >
               </mat-button-toggle>
-              <mat-button-toggle value="all" class="toogle-btn-text">
-                All
+              <mat-button-toggle
+                value="all"
+                class="toogle-btn-text"
+                translate="all"
+              >
               </mat-button-toggle>
             </mat-button-toggle-group>
             <span
@@ -92,4 +101,6 @@
     </div>
   </div>
 </ng-template>
-<ng-template #loadingReportsCount>Loading Reports Count...</ng-template>
+<ng-template #loadingReportsCount
+  ><span translate="loadingReportsCount"></span
+></ng-template>

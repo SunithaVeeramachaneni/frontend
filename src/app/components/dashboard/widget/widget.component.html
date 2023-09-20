@@ -1,113 +1,153 @@
 <div class="chart-wrapper" *ngIf="!widget.isTable">
-  <ng-container *ngIf="
+  <ng-container
+    *ngIf="
       chartConfig && chartConfig.countFieldName && chartConfig.datasetFieldName;
       else displayWidgetWarning
-    ">
+    "
+  >
     <ng-container *ngIf="chartData$ | async as data; else loadingChartData">
-      <ng-container *ngIf="
+      <ng-container
+        *ngIf="
           chartConfig.type === 'bar' &&
           chartConfig.indexAxis === 'x' &&
           chartConfig.isStacked !== true
-        ">
-        <app-bar-chart [chartConfig]="chartConfig" [chartData]="data" (chartClickEvent)="onChartClickHandle($event)"
-          [hasCustomColorScheme]="hasCustomColorScheme"></app-bar-chart>
+        "
+      >
+        <app-bar-chart
+          [chartConfig]="chartConfig"
+          [chartData]="data"
+          (chartClickEvent)="onChartClickHandle($event)"
+          [hasCustomColorScheme]="hasCustomColorScheme"
+        ></app-bar-chart>
       </ng-container>
 
-      <ng-container *ngIf="
+      <ng-container
+        *ngIf="
           chartConfig.type === 'bar' &&
           chartConfig.indexAxis === 'y' &&
           chartConfig.isStacked !== true
-        ">
-        <app-column-chart [chartConfig]="chartConfig" [chartData]="data" (chartClickEvent)="onChartClickHandle($event)"
-          [hasCustomColorScheme]="hasCustomColorScheme"></app-column-chart>
+        "
+      >
+        <app-column-chart
+          [chartConfig]="chartConfig"
+          [chartData]="data"
+          (chartClickEvent)="onChartClickHandle($event)"
+          [hasCustomColorScheme]="hasCustomColorScheme"
+        ></app-column-chart>
       </ng-container>
 
-      <ng-container *ngIf="
+      <ng-container
+        *ngIf="
           chartConfig.type === 'bar' &&
           chartConfig.indexAxis === 'x' &&
           chartConfig.isStacked === true
-        ">
-        <app-vertical-stacked-chart [chartConfig]="chartConfig" [chartData]="data"
+        "
+      >
+        <app-vertical-stacked-chart
+          [chartConfig]="chartConfig"
+          [chartData]="data"
           (chartClickEvent)="onChartClickHandle($event)"
-          [hasCustomColorScheme]="hasCustomColorScheme"></app-vertical-stacked-chart>
+          [hasCustomColorScheme]="hasCustomColorScheme"
+        ></app-vertical-stacked-chart>
       </ng-container>
 
-      <ng-container *ngIf="
+      <ng-container
+        *ngIf="
           chartConfig.type === 'bar' &&
           chartConfig.indexAxis === 'y' &&
           chartConfig.isStacked === true
-        ">
-        <app-horizontal-stacked-chart [chartConfig]="chartConfig" [chartData]="data"
+        "
+      >
+        <app-horizontal-stacked-chart
+          [chartConfig]="chartConfig"
+          [chartData]="data"
           (chartClickEvent)="onChartClickHandle($event)"
-          [hasCustomColorScheme]="hasCustomColorScheme"></app-horizontal-stacked-chart>
+          [hasCustomColorScheme]="hasCustomColorScheme"
+        ></app-horizontal-stacked-chart>
       </ng-container>
       <ng-container *ngIf="chartConfig.type === 'multiline'">
-        <app-multi-line-chart [chartConfig]="chartConfig" [chartData]="data"
-          (chartClickEvent)="onChartClickHandle($event)" [hasCustomColorScheme]="hasCustomColorScheme">
+        <app-multi-line-chart
+          [chartConfig]="chartConfig"
+          [chartData]="data"
+          (chartClickEvent)="onChartClickHandle($event)"
+          [hasCustomColorScheme]="hasCustomColorScheme"
+        >
         </app-multi-line-chart>
       </ng-container>
 
       <ng-container *ngIf="chartConfig.type === 'line'">
-        <app-line-chart [chartConfig]="chartConfig" [chartData]="data" (chartClickEvent)="onChartClickHandle($event)"
-          [hasCustomColorScheme]="hasCustomColorScheme"></app-line-chart>
+        <app-line-chart
+          [chartConfig]="chartConfig"
+          [chartData]="data"
+          (chartClickEvent)="onChartClickHandle($event)"
+          [hasCustomColorScheme]="hasCustomColorScheme"
+        ></app-line-chart>
       </ng-container>
 
       <ng-container *ngIf="chartConfig.type === 'area'">
-        <app-area-chart [chartConfig]="chartConfig" [chartData]="data" (chartClickEvent)="onChartClickHandle($event)"
-          [hasCustomColorScheme]="hasCustomColorScheme"></app-area-chart>
+        <app-area-chart
+          [chartConfig]="chartConfig"
+          [chartData]="data"
+          (chartClickEvent)="onChartClickHandle($event)"
+          [hasCustomColorScheme]="hasCustomColorScheme"
+        ></app-area-chart>
       </ng-container>
 
       <ng-container *ngIf="chartConfig.type === 'pie'">
-        <app-pie-chart [chartConfig]="chartConfig" [chartData]="data" [width]="_width" [height]="_height"
-          (chartClickEvent)="onChartClickHandle($event)" [hasCustomColorScheme]="hasCustomColorScheme"></app-pie-chart>
+        <app-pie-chart
+          [chartConfig]="chartConfig"
+          [chartData]="data"
+          [width]="_width"
+          [height]="_height"
+          (chartClickEvent)="onChartClickHandle($event)"
+          [hasCustomColorScheme]="hasCustomColorScheme"
+        ></app-pie-chart>
       </ng-container>
 
       <ng-container *ngIf="chartConfig.type === 'doughnut'">
-        <app-donut-chart [chartConfig]="chartConfig" [chartData]="data" [width]="_width" [height]="_height"
+        <app-donut-chart
+          [chartConfig]="chartConfig"
+          [chartData]="data"
+          [width]="_width"
+          [height]="_height"
           (chartClickEvent)="onChartClickHandle($event)"
-          [hasCustomColorScheme]="hasCustomColorScheme"></app-donut-chart>
+          [hasCustomColorScheme]="hasCustomColorScheme"
+        ></app-donut-chart>
       </ng-container>
     </ng-container>
   </ng-container>
 </div>
 <div class="table-wrapper" *ngIf="widget.isTable">
   <ng-container *ngIf="reportDetails$ | async; else loadingReportDetails">
-    <cwp-dynamictable [dataSource]="dataSource" [configOptions]="configOptions"
-      (fetchDataCallback)="tableEventHandler($event)"></cwp-dynamictable>
+    <cwp-dynamictable
+      [dataSource]="dataSource"
+      [configOptions]="configOptions"
+      (fetchDataCallback)="tableEventHandler($event)"
+    ></cwp-dynamictable>
   </ng-container>
 </div>
 <ng-template #displayWidgetWarning>
   <div class="warning-message">
     {{ 'widgetWarningMessage' | translate }}
-    <button mat-stroked-button color="primary" matTooltip="Edit" class="edit-button" translate="edit"
-      (click)="editWidget(widget)"></button>
+    <button
+      mat-stroked-button
+      color="primary"
+      matTooltip="Edit"
+      class="edit-button"
+      translate="edit"
+      (click)="editWidget(widget)"
+    ></button>
   </div>
 </ng-template>
 <ng-template #loadingChartData>
   <div class="p-15">
-    <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+    <div *ngFor="let number of ghostLoading">
+      <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+    </div>
   </div>
 </ng-template>
 <ng-template #loadingReportDetails>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+  <div *ngFor="let number of ghostLoading">
+    <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+  </div>
 </ng-template>

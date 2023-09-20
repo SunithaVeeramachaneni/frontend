@@ -4,7 +4,9 @@
   "reset": "Reset",
   "dashboards": "Dashboard",
   "recents": "Recents",
+  "recent": "Recent",
   "favorites": "Favorites",
+  "favorite": "Favorite",
   "all": "All",
   "recentWidgets": "Recent Widgets",
   "favoriteWidgets": "Favorites",
@@ -67,6 +69,7 @@
   "title": "Title",
   "saveReportAs": "Save Report As",
   "stackBy": "Stack By",
+  "saveAs": "Save As",
   "copy": "Copy",
   "errorDeletingText": "Error Deleting Dashboard",
   "cannotDeleteText": "Selected dashboard is marked as default, change the default dashboard and delete it",
@@ -87,5 +90,8 @@
   "plantTxt": "Plant: ",
   "shiftsTxt": "Shifts:",
   "customColorCodesJSON": "Enter Custom Color Codes in JSON",
-  "invalidJSON": "Invalid Input(JSON)"
+  "invalidJSON": "Invalid Input(JSON)",
+  "loadingReportsCount": "Loading Reports Count...",
+  "loadingFilterOptions": "Loading Filter Options...",
+  "selectReportTxt": "Select a report to start creating a widget"
 }
