@@ -57,13 +57,17 @@ export class SchedulerModalComponent implements OnInit {
     this.operatorRoundService.setIsRevised(false);
     this.totalSteps = this.steps.length;
 
-    if (Object.keys(this.data.scheduleConfiguration).length) {
+    if (
+      this.data.scheduleConfiguration &&
+      Object.keys(this.data.scheduleConfiguration).length
+    ) {
       const {
         scheduleType: headerScheduleType,
         shiftDetails: headerShiftDetails,
         scheduleByDates: headerScheduleByDates,
         startDate: headerStartDate,
-        endDate: headerEndDate
+        endDate: headerEndDate,
+        scheduleEndOn: headerScheduleEndOn
       } = this.data.scheduleConfiguration;
       this.scheduleConfig = {
         startDate: localToTimezoneDate(
@@ -84,6 +88,11 @@ export class SchedulerModalComponent implements OnInit {
           new Date(headerEndDate),
           this.data.plantTimezoneMap[this.data.roundPlanDetail?.plantId],
           dateFormat3
+        ),
+        scheduleEndOn: localToTimezoneDate(
+          new Date(headerScheduleEndOn),
+          this.data.plantTimezoneMap[this.data.roundPlanDetail?.plantId],
+          dateFormat4
         )
       } as RoundPlanScheduleConfiguration;
     }
@@ -216,7 +225,7 @@ export class SchedulerModalComponent implements OnInit {
         data: {
           popupTexts: {
             primaryBtnTaskText: 'Cancel',
-            secondaryBtnText: 'Continue to Header Step',
+            secondaryBtnText: 'Continue to Task Step',
             title: 'Alert',
             subtitle: 'taskLevelAlert',
             note: 'taskLevelNote'
@@ -244,15 +253,26 @@ export class SchedulerModalComponent implements OnInit {
     this.payload = payload;
     this.plantTimezoneMap = plantTimezoneMap;
 
+    const config = {
+      ...scheduleConfig,
+      shiftDetails: Object.keys(scheduleConfig.shiftDetails).reduce(
+        (acc, curr) => {
+          acc[curr] = scheduleConfig.shiftDetails[curr].map((slotInfo) => {
+            const { checked, ...slot } = slotInfo;
+            return slot;
+          });
+          return acc;
+        },
+        {}
+      )
+    };
+
     if (!this.scheduleConfig) {
-      this.scheduleConfig = scheduleConfig;
+      this.scheduleConfig = config;
     } else {
-      this.isHeaderLevelConfigChanged = !isEqual(
-        scheduleConfig,
-        this.scheduleConfig
-      );
+      this.isHeaderLevelConfigChanged = !isEqual(config, this.scheduleConfig);
       if (this.isHeaderLevelConfigChanged) {
-        this.currentScheduleConfig = scheduleConfig;
+        this.currentScheduleConfig = config;
       }
     }
   }

@@ -371,7 +371,7 @@ export class ScheduleConfigurationComponent
       endDate: [
         {
           value: localToTimezoneDate(
-            addDays(new Date(), 30),
+            addDays(new Date(), 29),
             this.plantTimezoneMap[this.selectedDetails?.plantId],
             dateFormat3
           ),
@@ -379,11 +379,11 @@ export class ScheduleConfigurationComponent
         }
       ],
       endDateDisplay: localToTimezoneDate(
-        new Date(),
+        addDays(new Date(), 29),
         this.plantTimezoneMap[this.selectedDetails?.plantId],
         dateFormat3
       ),
-      endDatePicker: new Date(addDays(new Date(), 30)),
+      endDatePicker: new Date(addDays(new Date(), 29)),
       scheduledTill: null,
       assignmentDetails: this.fb.group({
         type: ['plant'],
@@ -830,16 +830,33 @@ export class ScheduleConfigurationComponent
   prepareScheduleConfigurationDetail() {
     const schedularConfigFormValue = this.schedulerConfigForm.getRawValue();
 
-    const { startDate, endDate, startDatePicker, endDatePicker, scheduleType } =
-      schedularConfigFormValue;
+    const {
+      startDate,
+      endDate,
+      scheduleEndOn,
+      startDatePicker,
+      endDatePicker,
+      scheduleEndOnPicker,
+      scheduleType,
+      scheduleEndType
+    } = schedularConfigFormValue;
 
     const scheduleByDates =
       scheduleType === 'byDate' ? this.scheduleByDates : [];
 
+    const formatedEndDate =
+      scheduleEndType === scheduleConfigs.scheduleEndTypes[0]
+        ? format(scheduleEndOnPicker, dateFormat4)
+        : format(endDatePicker, dateFormat4);
+
     this.payload = {
       ...schedularConfigFormValue,
       startDate: format(startDatePicker, dateFormat4),
-      endDate: format(endDatePicker, dateFormat4),
+      endDate: formatedEndDate,
+      endDatePicker:
+        scheduleEndType === scheduleConfigs.scheduleEndTypes[0]
+          ? scheduleEndOnPicker
+          : endDatePicker,
       scheduleByDates,
       shiftDetails: this.prepareShiftDetailsPayload(this.shiftDetails)
     };
@@ -851,7 +868,8 @@ export class ScheduleConfigurationComponent
         shiftDetails: this.payload.shiftDetails,
         scheduleType,
         scheduleByDates,
-        endDate
+        endDate,
+        scheduleEndOn
       }
     });
     this.gotoNextStep.emit();
@@ -1203,12 +1221,12 @@ export class ScheduleConfigurationComponent
           dateFormat3
         ),
         endDate: localToTimezoneDate(
-          addDays(new Date(), 30),
+          addDays(new Date(), 29),
           this.plantTimezoneMap[this.selectedDetails?.plantId],
           dateFormat3
         ),
         endDateDisplay: localToTimezoneDate(
-          new Date(),
+          addDays(new Date(), 29),
           this.plantTimezoneMap[this.selectedDetails?.plantId],
           dateFormat3
         ),
@@ -1232,7 +1250,7 @@ export class ScheduleConfigurationComponent
         ),
         endDatePicker: new Date(
           localToTimezoneDate(
-            addDays(new Date(), 30),
+            addDays(new Date(), 29),
             this.plantTimezoneMap[this.selectedDetails?.plantId],
             dateFormat3
           )
@@ -1248,11 +1266,11 @@ export class ScheduleConfigurationComponent
     } else {
       return {
         startDate: format(new Date(), dateFormat3),
-        endDate: format(addDays(new Date(), 30), dateFormat3),
+        endDate: format(addDays(new Date(), 29), dateFormat3),
         scheduleEndOn: format(addDays(new Date(), 29), dateFormat4),
         daysOfWeek: [getDay(new Date())],
         startDatePicker: new Date(),
-        endDatePicker: addDays(new Date(), 30),
+        endDatePicker: addDays(new Date(), 29),
         scheduleEndOnPicker: addDays(new Date(), 29)
       };
     }
@@ -1274,8 +1292,8 @@ export class ScheduleConfigurationComponent
       startDateDisplay: format(new Date(), 'd MMMM yyyy'),
       endDateDisplay: format(new Date(), 'd MMMM yyyy'),
       startDatePicker: new Date(),
-      endDate: format(addDays(new Date(), 30), 'd MMMM yyyy'),
-      endDatePicker: new Date(addDays(new Date(), 30)),
+      endDate: format(addDays(new Date(), 29), 'd MMMM yyyy'),
+      endDatePicker: new Date(addDays(new Date(), 29)),
       scheduledTill: null,
       assignmentDetails: {
         type: this.assignTypes[0],
@@ -1288,7 +1306,6 @@ export class ScheduleConfigurationComponent
       shiftSlots: [],
       ...this.getDefaultSchedulerConfigDates()
     });
-
     this.schedulerConfigForm.markAsDirty();
   }
 

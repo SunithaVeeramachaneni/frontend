@@ -57,7 +57,7 @@ export class ReviseScheduleComponent implements OnInit, OnDestroy {
     if (reviseSchedule) {
       if (
         this.reviseScheduleConfig &&
-        reviseSchedule.scheduleType !== this.reviseScheduleConfig.scheduleType
+        !isEqual(reviseSchedule, this.reviseScheduleConfig)
       ) {
         this.cancel();
       }
