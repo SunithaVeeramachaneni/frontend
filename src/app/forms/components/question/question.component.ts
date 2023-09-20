@@ -919,8 +919,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
             pdf: value
           });
         }
-        this.instructionsUpdateValue();
         this.questionForm.get('value').setValue(originalValue);
+        this.instructionsUpdateValue();
       });
   }
 
