@@ -616,10 +616,10 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
       this.rdfService.createTags$(dataSet).subscribe((response) => {
         // do nothing
       });
-      this.additionalDetailsForm.patchValue({
-        tags: this.tags
-      });
     }
+    this.additionalDetailsForm.patchValue({
+      tags: this.tags
+    });
     this.setAdditionalDetails.emit({
       ...this.additionalDetailsForm.getRawValue(),
       attributes: updatedattributes
