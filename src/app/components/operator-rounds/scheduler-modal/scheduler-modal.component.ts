@@ -225,7 +225,7 @@ export class SchedulerModalComponent implements OnInit {
         data: {
           popupTexts: {
             primaryBtnTaskText: 'Cancel',
-            secondaryBtnText: 'Continue to Header Step',
+            secondaryBtnText: 'Continue to Task Step',
             title: 'Alert',
             subtitle: 'taskLevelAlert',
             note: 'taskLevelNote'
