@@ -114,6 +114,11 @@
     align-items: center;
     line-height: 29px;
   }
+
+  .schedule-btn:disabled {
+    background-color: $gray2-bg;
+    color: $gray7;
+  }
 }
 
 .nodeContent {

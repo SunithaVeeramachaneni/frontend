@@ -49,6 +49,8 @@ import { ScheduleConfigurationService } from 'src/app/forms/services/schedule.se
 import { ScheduleConfigurationComponent } from 'src/app/forms/components/schedular/schedule-configuration/schedule-configuration.component';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
 import { scheduleConfigs } from 'src/app/forms/components/schedular/schedule-configuration/schedule-configuration.constants';
+import { ErrorInfo } from 'src/app/interfaces';
+import { ErrorHandlerService } from 'src/app/shared/error-handler/error-handler.service';
 
 @Component({
   selector: 'app-task-level-scheduler',
@@ -151,7 +153,8 @@ export class TaskLevelSchedulerComponent implements OnInit {
     private readonly scheduleConfigurationService: ScheduleConfigurationService,
     private dialogRef: MatDialogRef<ScheduleConfigurationComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private assetHierarchyUtil: AssetHierarchyUtil
+    private assetHierarchyUtil: AssetHierarchyUtil,
+    private errorHandlerService: ErrorHandlerService
   ) {}
 
   ngOnInit(): void {
@@ -572,14 +575,20 @@ export class TaskLevelSchedulerComponent implements OnInit {
       return true;
     });
 
+    const info: ErrorInfo = {
+      displayToast: false,
+      failureResponse: 'throwError'
+    };
+
     if (this.scheduleConfig.id) {
       this.disableSchedule = true;
       this.openScheduleSuccessModal('update');
-      this.operatorRoundsService.setScheduleLoader(true);
+      this.operatorRoundsService.setScheduleStatus('loading');
       this.schedulerConfigurationService
         .updateRoundPlanScheduleConfiguration$(
           this.scheduleConfig.id,
-          this.scheduleConfig
+          this.scheduleConfig,
+          info
         )
         .pipe(
           tap((scheduleConfig) => {
@@ -590,17 +599,29 @@ export class TaskLevelSchedulerComponent implements OnInit {
                 mode: 'update',
                 actionType: 'scheduleConfig'
               });
-              this.operatorRoundsService.setScheduleLoader(false);
+              this.operatorRoundsService.setScheduleStatus('scheduled');
             }
           })
         )
-        .subscribe();
+        .subscribe({
+          error: (error) => {
+            this.operatorRoundsService.setScheduleError(
+              this.errorHandlerService.getErrorMessage(error)
+            );
+            this.operatorRoundsService.setScheduleStatus('failed');
+            this.dialogRef.close({
+              roundPlanScheduleConfiguration: this.scheduleConfig,
+              mode: 'update',
+              actionType: 'scheduleFailure'
+            });
+          }
+        });
     } else {
       this.disableSchedule = true;
       this.openScheduleSuccessModal('create');
-      this.operatorRoundsService.setScheduleLoader(true);
+      this.operatorRoundsService.setScheduleStatus('loading');
       this.schedulerConfigurationService
-        .createRoundPlanScheduleConfiguration$(this.scheduleConfig)
+        .createRoundPlanScheduleConfiguration$(this.scheduleConfig, info)
         .pipe(
           tap((scheduleConfig) => {
             this.disableSchedule = false;
@@ -611,11 +632,23 @@ export class TaskLevelSchedulerComponent implements OnInit {
                 actionType: 'scheduleConfig'
               });
               this.payload.id = scheduleConfig.id;
-              this.operatorRoundsService.setScheduleLoader(false);
+              this.operatorRoundsService.setScheduleStatus('scheduled');
             }
           })
         )
-        .subscribe();
+        .subscribe({
+          error: (error) => {
+            this.operatorRoundsService.setScheduleError(
+              this.errorHandlerService.getErrorMessage(error)
+            );
+            this.operatorRoundsService.setScheduleStatus('failed');
+            this.dialogRef.close({
+              roundPlanScheduleConfiguration: this.scheduleConfig,
+              mode: 'create',
+              actionType: 'scheduleFailure'
+            });
+          }
+        });
     }
   }
 

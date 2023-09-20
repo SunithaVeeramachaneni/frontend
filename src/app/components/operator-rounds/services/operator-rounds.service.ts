@@ -45,8 +45,11 @@ export class OperatorRoundsService {
   private allPageCheckBoxStatusSubject = new BehaviorSubject<any>([]);
   private uniqueConfigurationSubject = new BehaviorSubject<any>([]);
   private shiftInformationSubject = new BehaviorSubject<any>([]);
-  private scheduleLoaderSubject = new BehaviorSubject<boolean>(false);
+  private scheduleStatusSubject = new BehaviorSubject<
+    'loading' | 'scheduled' | 'failed' | null
+  >(null);
   private isRevisedSubject = new BehaviorSubject<boolean>(false);
+  private scheduleErrorSubject = new BehaviorSubject<string>('');
 
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
@@ -60,8 +63,9 @@ export class OperatorRoundsService {
   uniqueConfiguration$ = this.uniqueConfigurationSubject.asObservable();
   usersInfoByEmail: UsersInfoByEmail;
   shiftInformation$ = this.shiftInformationSubject.asObservable();
-  scheduleLoader$ = this.scheduleLoaderSubject.asObservable();
+  scheduleStatus$ = this.scheduleStatusSubject.asObservable();
   isRevised$ = this.isRevisedSubject.asObservable();
+  scheduleError$ = this.scheduleErrorSubject.asObservable();
 
   constructor(
     public assetHierarchyUtil: AssetHierarchyUtil,
@@ -95,12 +99,16 @@ export class OperatorRoundsService {
     this.shiftInformationSubject.next(shiftInfo);
   }
 
-  setScheduleLoader(isLoading: boolean) {
-    this.scheduleLoaderSubject.next(isLoading);
+  setScheduleStatus(status: 'loading' | 'scheduled' | 'failed' | null) {
+    this.scheduleStatusSubject.next(status);
   }
 
   setIsRevised(isRevised: boolean) {
     this.isRevisedSubject.next(isRevised);
+  }
+
+  setScheduleError(message: string) {
+    this.scheduleErrorSubject.next(message);
   }
 
   createTags$ = (

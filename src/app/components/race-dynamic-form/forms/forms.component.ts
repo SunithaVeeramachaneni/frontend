@@ -49,7 +49,8 @@ import {
   FormScheduleConfiguration,
   AssigneeDetails,
   UserDetails,
-  UserGroup
+  UserGroup,
+  ErrorInfo
 } from 'src/app/interfaces';
 import {
   dateFormat,
@@ -746,6 +747,25 @@ export class FormsComponent implements OnInit, OnDestroy {
       if (data?.actionType === 'scheduleConfigEvent') {
         delete data?.actionType;
         this.scheduleConfigEventHandler(data);
+      }
+      if (data?.actionType === 'scheduleFailure') {
+        delete data?.actionType;
+        if (data.mode === 'create') {
+          const info: ErrorInfo = { displayToast: false, failureResponse: {} };
+          this.formScheduleConfigurationService
+            .fetchFormScheduleConfigurationByFormId$(
+              data.formsScheduleConfiguration.formId,
+              info
+            )
+            .subscribe((resp) => {
+              if (Object.keys(resp).length) {
+                data.formsScheduleConfiguration.id = resp.id;
+                this.scheduleConfigHandler(data);
+              }
+            });
+        } else {
+          this.scheduleConfigHandler(data);
+        }
       }
     });
   }
