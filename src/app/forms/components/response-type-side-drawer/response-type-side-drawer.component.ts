@@ -447,10 +447,6 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
     this.tags = [...this.tags, event.option.viewValue];
     this.tagsInput.nativeElement.value = '';
     this.tagsCtrl.patchValue('');
-    this.additionalDetailsForm.patchValue({
-      ...this.additionalDetailsForm.value,
-      tags: this.tags
-    });
   }
 
   get responses(): FormArray {
