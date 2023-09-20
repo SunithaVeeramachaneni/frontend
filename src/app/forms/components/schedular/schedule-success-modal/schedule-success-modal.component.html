@@ -1,9 +1,10 @@
 <div
   *ngIf="{
-    scheduleLoading: scheduleLoading$ | async
+    scheduleStatus: scheduleStatus$ | async,
+    scheduleError: scheduleError$ | async
   } as props"
 >
-  <div class="success-container" *ngIf="props.scheduleLoading">
+  <div class="success-container" *ngIf="props.scheduleStatus === 'loading'">
     <img class="schedulerGif" src="assets/img/svg/schedulerLoader.gif" />
     <p id="scheduleSuccessText" class="processColor">
       {{ 'scheduleInProgress' | translate }}
@@ -18,7 +19,7 @@
       ></p>
     </div>
   </div>
-  <div class="success-container" *ngIf="!props.scheduleLoading">
+  <div class="success-container" *ngIf="props.scheduleStatus === 'scheduled'">
     <img class="schedulerGif" src="assets/img/svg/success-schedule.jpg" />
     <p id="scheduleSuccessText" class="successColor">
       {{ 'scheduleSuccess' | translate }}
@@ -46,6 +47,18 @@
       translate="viewForms"
       (click)="goToList()"
     ></button>
+    <button
+      id="scheduleSuccessCloseBtn"
+      mat-button
+      translate="close"
+      (click)="close()"
+    ></button>
+  </div>
+  <div class="success-container" *ngIf="props.scheduleStatus === 'failed'">
+    <img class="schedulerGif" src="assets/img/svg/scheduler-failure.png" />
+    <p id="scheduleFailureText" class="failureColor">
+      {{ errorMessage }}
+    </p>
     <button
       id="scheduleSuccessCloseBtn"
       mat-button

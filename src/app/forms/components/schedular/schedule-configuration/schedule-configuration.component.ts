@@ -49,6 +49,7 @@ import {
 import { RoundPlanScheduleConfigurationService } from 'src/app/components/operator-rounds/services/round-plan-schedule-configuration.service';
 import {
   AssigneeDetails,
+  ErrorInfo,
   FormScheduleConfiguration,
   RoundPlanScheduleConfiguration,
   RoundPlanScheduleConfigurationObj,
@@ -79,6 +80,7 @@ import {
 import { ScheduleConfigurationService } from 'src/app/forms/services/schedule.service';
 import { isEqual } from 'lodash-es';
 import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
+import { ErrorHandlerService } from 'src/app/shared/error-handler/error-handler.service';
 
 export interface ScheduleConfigEvent {
   slideInOut: 'out' | 'in';
@@ -133,7 +135,7 @@ export class ScheduleConfigurationComponent
   startDatePickerMinDate: Date;
   scheduleEndOnPickerMinDate: Date;
   scheduleByDates: ScheduleByDate[];
-  disableSchedule = false;
+  disableSchedule = true;
   roundPlanScheduleConfigurations: RoundPlanScheduleConfigurationObj[];
   isFormModule = false;
   formName = '';
@@ -173,7 +175,8 @@ export class ScheduleConfigurationComponent
     private dialogRef: MatDialogRef<ScheduleConfigurationComponent>,
     private operatorRoundService: OperatorRoundsService,
     @Inject(MAT_DIALOG_DATA)
-    public data: any
+    public data: any,
+    private errorHandlerService: ErrorHandlerService
   ) {}
 
   initDetails(): void {
@@ -928,6 +931,11 @@ export class ScheduleConfigurationComponent
       if (rest.assignmentDetails.type === 'plant') {
         rest.assignmentDetails.type = 'user';
       }
+      const info: ErrorInfo = {
+        displayToast: false,
+        failureResponse: 'throwError'
+      };
+
       if (id) {
         const payload = {
           ...rest,
@@ -942,7 +950,7 @@ export class ScheduleConfigurationComponent
           delete payload.roundPlanId;
           delete payload.advanceRoundsCount;
           this.openScheduleSuccessModal('update');
-          this.operatorRoundService.setScheduleLoader(true);
+          this.operatorRoundService.setScheduleStatus('loading');
           this.formScheduleConfigurationService
             .updateFormScheduleConfiguration$(id, payload)
             .pipe(
@@ -956,18 +964,30 @@ export class ScheduleConfigurationComponent
                     actionType: 'scheduleConfig'
                   });
                   this.schedulerConfigForm.markAsPristine();
-                  this.operatorRoundService.setScheduleLoader(false);
+                  this.operatorRoundService.setScheduleStatus('scheduled');
                 }
                 this.initShiftStat();
                 this.cdrf.detectChanges();
               })
             )
-            .subscribe();
+            .subscribe({
+              error: (error) => {
+                this.operatorRoundService.setScheduleError(
+                  this.errorHandlerService.getErrorMessage(error)
+                );
+                this.operatorRoundService.setScheduleStatus('failed');
+                this.dialogRef.close({
+                  formsScheduleConfiguration: payload,
+                  mode: 'update',
+                  actionType: 'scheduleFailure'
+                });
+              }
+            });
         } else {
           delete payload.formId;
           delete payload.advanceFormsCount;
           this.openScheduleSuccessModal('update');
-          this.operatorRoundService.setScheduleLoader(true);
+          this.operatorRoundService.setScheduleStatus('loading');
           this.rpscService
             .updateRoundPlanScheduleConfiguration$(id, payload)
             .pipe(
@@ -981,13 +1001,25 @@ export class ScheduleConfigurationComponent
                     actionType: 'scheduleConfig'
                   });
                   this.schedulerConfigForm.markAsPristine();
-                  this.operatorRoundService.setScheduleLoader(false);
+                  this.operatorRoundService.setScheduleStatus('scheduled');
                 }
                 this.initShiftStat();
                 this.cdrf.detectChanges();
               })
             )
-            .subscribe();
+            .subscribe({
+              error: (error) => {
+                this.operatorRoundService.setScheduleError(
+                  this.errorHandlerService.getErrorMessage(error)
+                );
+                this.operatorRoundService.setScheduleStatus('failed');
+                this.dialogRef.close({
+                  roundPlanScheduleConfiguration: payload,
+                  mode: 'update',
+                  actionType: 'scheduleFailure'
+                });
+              }
+            });
         }
       } else {
         const payload = {
@@ -1004,7 +1036,7 @@ export class ScheduleConfigurationComponent
           delete payload.roundPlanId;
           delete payload.advanceRoundsCount;
           this.openScheduleSuccessModal('create');
-          this.operatorRoundService.setScheduleLoader(true);
+          this.operatorRoundService.setScheduleStatus('loading');
           this.formScheduleConfigurationService
             .createFormScheduleConfiguration$(payload)
             .pipe(
@@ -1021,18 +1053,30 @@ export class ScheduleConfigurationComponent
                     .get('id')
                     .patchValue(scheduleConfig.id);
                   this.schedulerConfigForm.markAsPristine();
-                  this.operatorRoundService.setScheduleLoader(false);
+                  this.operatorRoundService.setScheduleStatus('scheduled');
                 }
                 this.initShiftStat();
                 this.cdrf.detectChanges();
               })
             )
-            .subscribe();
+            .subscribe({
+              error: (error) => {
+                this.operatorRoundService.setScheduleError(
+                  this.errorHandlerService.getErrorMessage(error)
+                );
+                this.operatorRoundService.setScheduleStatus('failed');
+                this.dialogRef.close({
+                  formsScheduleConfiguration: payload,
+                  mode: 'create',
+                  actionType: 'scheduleFailure'
+                });
+              }
+            });
         } else {
           delete payload.formId;
           delete payload.advanceFormsCount;
           this.openScheduleSuccessModal('create');
-          this.operatorRoundService.setScheduleLoader(true);
+          this.operatorRoundService.setScheduleStatus('loading');
           this.rpscService
             .createRoundPlanScheduleConfiguration$(payload)
             .pipe(
@@ -1049,13 +1093,25 @@ export class ScheduleConfigurationComponent
                     .get('id')
                     .patchValue(scheduleConfig.id);
                   this.schedulerConfigForm.markAsPristine();
-                  this.operatorRoundService.setScheduleLoader(false);
+                  this.operatorRoundService.setScheduleStatus('scheduled');
                 }
                 this.initShiftStat();
                 this.cdrf.detectChanges();
               })
             )
-            .subscribe();
+            .subscribe({
+              error: (error) => {
+                this.operatorRoundService.setScheduleError(
+                  this.errorHandlerService.getErrorMessage(error)
+                );
+                this.operatorRoundService.setScheduleStatus('failed');
+                this.dialogRef.close({
+                  roundPlanScheduleConfiguration: payload,
+                  mode: 'create',
+                  actionType: 'scheduleFailure'
+                });
+              }
+            });
         }
       }
     }

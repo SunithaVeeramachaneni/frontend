@@ -50,7 +50,8 @@ import {
   SelectTab,
   UserDetails,
   AssigneeDetails,
-  UserGroup
+  UserGroup,
+  ErrorInfo
 } from 'src/app/interfaces';
 import {
   dateFormat,
@@ -940,6 +941,25 @@ export class PlansComponent implements OnInit, OnDestroy {
         delete data?.actionType;
         this.scheduleConfigEventHandler(data);
       }
+      if (data?.actionType === 'scheduleFailure') {
+        delete data?.actionType;
+        if (data.mode === 'create') {
+          const info: ErrorInfo = { displayToast: false, failureResponse: {} };
+          this.rpscService
+            .fetchRoundPlanScheduleConfigurationByRoundPlanId$(
+              data.roundPlanScheduleConfiguration.roundPlanId,
+              info
+            )
+            .subscribe((resp) => {
+              if (Object.keys(resp).length) {
+                data.roundPlanScheduleConfiguration.id = resp.id;
+                this.scheduleConfigHandler(data);
+              }
+            });
+        } else {
+          this.scheduleConfigHandler(data);
+        }
+      }
     });
   }
 
@@ -979,6 +999,25 @@ export class PlansComponent implements OnInit, OnDestroy {
       if (data?.actionType === 'scheduleConfigEvent') {
         delete data?.actionType;
         this.scheduleConfigEventHandler(data);
+      }
+      if (data?.actionType === 'scheduleFailure') {
+        delete data?.actionType;
+        if (data.mode === 'create') {
+          const info: ErrorInfo = { displayToast: false, failureResponse: {} };
+          this.rpscService
+            .fetchRoundPlanScheduleConfigurationByRoundPlanId$(
+              data.roundPlanScheduleConfiguration.roundPlanId,
+              info
+            )
+            .subscribe((resp) => {
+              if (Object.keys(resp).length) {
+                data.roundPlanScheduleConfiguration.id = resp.id;
+                this.scheduleConfigHandler(data);
+              }
+            });
+        } else {
+          this.scheduleConfigHandler(data);
+        }
       }
     });
   }
