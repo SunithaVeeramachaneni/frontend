@@ -40,7 +40,7 @@ export class AppService {
     `${
       apiUrl.indexOf('http://localhost') !== -1
         ? `${apiUrl}`
-        : `${this.document.location.origin}${apiUrl}`
+        : `https://cbotademo.innovapptive.com${apiUrl}`
     }${urlString}`;
 
   _getResp(
@@ -118,6 +118,27 @@ export class AppService {
     return this.http.post<any>(url, data, {
       ...httpOptions,
       responseType: 'blob' as 'json'
+    });
+  }
+
+  downloadWithPost(
+    apiUrl: string,
+    urlString: string,
+    info: ErrorInfo = {} as ErrorInfo,
+    data: any = {},
+    customResponseType: string = '',
+    customHeaders: any = {}
+  ): Observable<any> {
+    const url = this.prepareUrl(apiUrl, urlString);
+    const { displayToast = true, failureResponse = {} } = info;
+    const httpOptions = this.getHttpOptions({
+      displayToast,
+      failureResponse,
+      ...customHeaders
+    });
+    return this.http.post<any>(url, data, {
+      ...httpOptions,
+      responseType: customResponseType as 'json'
     });
   }
 

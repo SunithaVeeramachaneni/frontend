@@ -122,6 +122,13 @@
                   </app-horizontal-stacked-chart>
                 </ng-container>
 
+                <ng-container *ngIf="chartVarient === 'multiline'">
+                  <app-multi-line-chart
+                    [chartConfig]="chartConfig"
+                    [chartData]="data"
+                  >
+                  </app-multi-line-chart>
+                </ng-container>
                 <ng-container *ngIf="chartVarient === 'stacked_bar_x'">
                   <app-vertical-stacked-chart
                     [chartConfig]="chartConfig"
@@ -176,12 +183,14 @@
         </ng-container>
       </div>
     </div>
-    <p *ngIf="!selectedReport" class="select-report-text">
-      Select a report to start creating a widget
-    </p>
+    <p
+      *ngIf="!selectedReport"
+      class="select-report-text"
+      translate="selectReportTxt"
+    ></p>
   </mat-dialog-content>
   <mat-dialog-actions align="end">
-    <button mat-button mat-dialog-close>Close</button>
+    <button mat-button mat-dialog-close translate="close"></button>
     <button
       mat-raised-button
       class="widget-save-btn"
@@ -194,11 +203,12 @@
       "
       *appCheckUserHasPermission="[
         permissions.createDashboard,
-        permissions.updateDashboard
+        permissions.updateDashboard,
+        permissions.createOPRDashboard,
+        permissions.updateOPRDashboard
       ]"
-    >
-      Save
-    </button>
+      translate="save"
+    ></button>
   </mat-dialog-actions>
 </div>
 <ng-template #displayWidgetWarning>
@@ -210,29 +220,16 @@
   <ngx-shimmer-loading [width]="'100%'" [height]="'30px'"></ngx-shimmer-loading>
 </ng-template>
 <ng-template #loadingChartData>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+  <div *ngFor="let number of ghostLoading">
+    <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+  </div>
 </ng-template>
 <ng-template #loadingReportDetails>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+  <div *ngFor="let number of ghostLoading">
+    <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+  </div>
 </ng-template>
-<ng-template #loadingFilterOptions>Loading Filter Options...</ng-template>
+<ng-template
+  #loadingFilterOptions
+  translate="loadingFilterOptions"
+></ng-template>

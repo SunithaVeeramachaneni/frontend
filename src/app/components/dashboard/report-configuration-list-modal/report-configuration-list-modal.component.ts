@@ -1,5 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { Router } from '@angular/router';
+
 import { combineLatest, Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { ReportCategory } from 'src/app/interfaces';
@@ -19,8 +21,9 @@ export class ReportConfigurationListModalComponent implements OnInit {
   searchReport$: Observable<string>;
   selectedIndex = 0;
   filteredReportCategories$: Observable<ReportCategory[]>;
+  ghostLoading = new Array(3).fill(0).map((v, i) => i);
 
-  constructor(private reportService: ReportService) {}
+  constructor(private reportService: ReportService, private router: Router) {}
 
   ngOnInit() {
     this.searchObject = new FormControl('');
@@ -59,6 +62,8 @@ export class ReportConfigurationListModalComponent implements OnInit {
   }
 
   updateReportDefinitionName(subCategory: string) {
+    const moduleName = `operator-rounds`;
+    this.router.navigate([`${moduleName}/addreport`]);
     this.reportService.updateReportDefinitionName(subCategory);
   }
 }

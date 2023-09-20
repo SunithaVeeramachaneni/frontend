@@ -4,7 +4,9 @@ import {
   Component,
   OnInit,
   Input,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  EventEmitter,
+  Output
 } from '@angular/core';
 
 @Component({
@@ -14,8 +16,18 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BarChartComponent implements OnInit {
+  @Input() hasCustomColorScheme;
+  @Output() chartClickEvent: EventEmitter<any> = new EventEmitter<any>();
+
   @Input() set chartConfig(chartConfig) {
     this.chartConfigurations = chartConfig;
+    if (chartConfig.customColors) {
+      try {
+        this.colorsByStatus = JSON.parse(chartConfig.customColors);
+      } catch (err) {
+        this.colorsByStatus = {};
+      }
+    }
     if (chartConfig.renderChart) {
       this.prepareChartDetails();
     }
@@ -31,6 +43,7 @@ export class BarChartComponent implements OnInit {
     return this._chartData;
   }
 
+  colorsByStatus: any = {};
   chartOptions: any = {
     title: {
       text: ''
@@ -136,7 +149,17 @@ export class BarChartComponent implements OnInit {
 
   constructor(private datePipe: DatePipe) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if (this.hasCustomColorScheme && Object.keys(this.colorsByStatus).length) {
+      this.chartOptions.series.itemStyle = {
+        color: (param: any) => this.colorsByStatus[param.name]
+      };
+    }
+  }
+
+  onChartClickHandler(event) {
+    this.chartClickEvent.emit(event);
+  }
 
   prepareChartDetails = () => {
     if (this.chartData && this.chartConfig) {

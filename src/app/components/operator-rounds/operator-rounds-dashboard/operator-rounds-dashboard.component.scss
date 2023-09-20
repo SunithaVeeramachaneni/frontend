@@ -1,0 +1,291 @@
+@import '../../../../scss/colors.scss';
+
+.new-widget-btn {
+  font-style: normal;
+  font-weight: 500;
+  font-size: 100%;
+  letter-spacing: 0.15px;
+  color: $white;
+  border: 1px solid $blue-main;
+  border-radius: 4px;
+  background-color: $blue-main;
+  padding: 10px 14px;
+  float: right;
+  cursor: pointer;
+}
+.widgets {
+  width: 300px;
+  background: $white;
+  border: 1px solid $border-color;
+  border-radius: 5px;
+  padding: 15px 0;
+  text-align: center;
+  margin: 0 10px;
+
+  .widgets-title {
+    letter-spacing: 0.25px;
+    color: $text-color;
+    font-size: 120%;
+    margin-left: 12px;
+    position: relative;
+    top: -5px;
+  }
+}
+
+.widgets:disabled {
+  cursor: auto;
+  background-color: $gray2-bg;
+  color: $gray7;
+  filter: grayscale(1);
+  opacity: 0.7;
+}
+
+.container-padding {
+  justify-content: center;
+}
+
+.add-form-icon {
+  width: 22px;
+  height: 22px;
+}
+
+.import-excel-icon {
+  width: 25px;
+  height: 25px;
+}
+
+.widget-more-icon {
+  float: right;
+  text-align: right;
+}
+
+.widget-header {
+  padding: 0 15px 0 15px;
+  margin-top: 10px;
+  justify-content: space-between;
+}
+
+.widget-title {
+  max-width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 100%;
+  line-height: 32px;
+}
+
+.widget-body {
+  padding: 0 15px 0 15px;
+  height: 85%;
+}
+
+.gridster-item-content {
+  height: 100%;
+}
+
+#gridster-container {
+  height: 82vh;
+  min-height: 80vh;
+}
+
+::ng-deep #gridster-container gridster .gridster-column {
+  border-left: none;
+  border-right: 10px solid $white;
+  box-sizing: initial;
+  background-color: $white;
+}
+
+::ng-deep #gridster-container gridster .gridster-row {
+  border-top: none;
+  border-bottom: 10px solid $white;
+  box-sizing: initial;
+}
+
+::ng-deep #gridster-container gridster {
+  border-bottom: 5px solid $white;
+  background-color: $white;
+}
+
+::ng-deep gridster-item {
+  box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.09);
+}
+.toggle-btns {
+  display: flex;
+  align-items: center;
+}
+
+.toggle-btns {
+  ::ng-deep .mat-button-toggle-group {
+    height: 32px;
+  }
+}
+.dashboard-container {
+  background: $white;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075), 0 2px 2px rgba(0, 0, 0, 0.075),
+    0 4px 4px rgba(0, 0, 0, 0.075), 0 8px 8px rgba(0, 0, 0, 0.075),
+    0 16px 16px rgba(0, 0, 0, 0.075);
+  width: 100%;
+  border-radius: 4px 0px 0px 0px;
+  height: 87vh;
+}
+.dashboard-filters {
+  background: $white;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.searchable-input {
+  border: 1px solid $border-color;
+  padding: 5px;
+  border-radius: 4px;
+  margin: 10px 10px 10px 12px;
+}
+.scrollable-area {
+  max-height: 200px;
+  overflow: auto;
+}
+.outline-input-field {
+  margin-left: 5px;
+}
+
+::ng-deep .date-segment .mat-button-toggle-group {
+  height: 34px;
+  align-items: center;
+  border: 1px solid $white2;
+}
+
+::ng-deep
+  .date-segment
+  .mat-button-toggle-appearance-standard
+  .mat-button-toggle-label-content {
+  padding: 0 12px;
+  font-size: 95%;
+}
+
+.date-segment {
+  display: flex;
+  align-items: center;
+}
+
+::ng-deep .mat-datepicker-content {
+  display: block;
+  border-radius: 4px;
+  position: relative;
+  left: -295px;
+}
+
+.date-range-form-field {
+  visibility: hidden;
+  width: 0;
+}
+.filter-field {
+  margin: 0px 5px;
+}
+
+mat-progress-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+}
+
+.overlay {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  position: absolute;
+  z-index: 2;
+  backdrop-filter: blur(0.8px);
+}
+.selected {
+  font-weight: 500;
+  color: black;
+}
+.report-button {
+  background: rgba(61, 90, 254, 0.08);
+  min-width: auto;
+  margin: 0px 3px;
+  border: none;
+  padding: 0px 10px;
+  height: 40px;
+  width: 45px;
+  .icon {
+    margin-top: -5px;
+    color: $gray;
+  }
+}
+.active {
+  color: $blue-main !important;
+}
+.save-btn-toggle {
+  height: 35px;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+  top: -1px;
+}
+
+.save-button {
+  background: $blue-main;
+  color: $white;
+  cursor: pointer;
+  min-width: auto;
+  border: none;
+}
+
+.save-button-arrow {
+  width: 30px;
+  background: $blue-main;
+  color: $white;
+  cursor: pointer;
+}
+
+.dropdown-arrow {
+  position: relative;
+  right: 8px;
+}
+.dropdown-icon {
+  position: relative;
+  top: 4px;
+  right: 4px;
+  width: 14px !important;
+  height: 16px !important;
+}
+::ng-deep {
+  .mat-menu-panel.emailContainer {
+    max-width: 600px;
+  }
+}
+
+.user-chip-list {
+  width: 100%;
+}
+.user-input {
+  height: 35px;
+}
+
+.t-minus4 {
+  top: -4px;
+}
+.more-icon {
+  position: relative;
+  left: 10px;
+  background: none;
+  border: none;
+  z-index: 10;
+  .more-icon-no-color {
+    color: #757575;
+  }
+  ::ng-deep svg {
+    width: 17px !important;
+    height: 17px !important;
+  }
+}
+.more-icon-all {
+  margin-top: 18px;
+}

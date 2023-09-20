@@ -5,7 +5,9 @@ import {
   OnInit,
   OnChanges,
   Input,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  EventEmitter,
+  Output
 } from '@angular/core';
 import { EChartsOption } from 'echarts';
 
@@ -16,8 +18,18 @@ import { EChartsOption } from 'echarts';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PieChartComponent implements OnInit, OnChanges {
+  @Input() hasCustomColorScheme;
+  @Output() chartClickEvent: EventEmitter<any> = new EventEmitter<any>();
+
   @Input() set chartConfig(chartConfig) {
     this.chartConfigurations = chartConfig;
+    if (chartConfig.customColors) {
+      try {
+        this.colorsByStatus = JSON.parse(chartConfig.customColors);
+      } catch (err) {
+        this.colorsByStatus = {};
+      }
+    }
     if (chartConfig.renderChart) {
       this.prepareChartDetails();
     }
@@ -36,6 +48,7 @@ export class PieChartComponent implements OnInit, OnChanges {
   @Input() width;
   @Input() height;
 
+  colorsByStatus: any = {};
   chartOptions: any = {
     title: {
       text: ''
@@ -95,7 +108,17 @@ export class PieChartComponent implements OnInit, OnChanges {
 
   constructor(private datePipe: DatePipe) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if (this.hasCustomColorScheme && Object.keys(this.colorsByStatus).length) {
+      this.chartOptions.series.itemStyle = {
+        color: (param: any) => this.colorsByStatus[param.name]
+      };
+    }
+  }
+
+  onChartClickHandler(event) {
+    this.chartClickEvent.emit(event);
+  }
 
   prepareChartDetails = () => {
     if (this.chartData && this.chartConfig) {

@@ -1,0 +1,59 @@
+@import '../../../../scss/colors.scss';
+
+.dialog-container {
+  padding: 10px;
+  .dialog-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid $border-color;
+    .close-icon {
+      cursor: pointer;
+      padding: 10px;
+    }
+    .heading {
+      font-size: 150%;
+      font-weight: 500;
+    }
+  }
+  .dialog-body {
+    height: 475px;
+    margin: 0px;
+    max-height: fit-content !important;
+    border-bottom: 1px solid $border-color;
+    .form-field {
+      padding: 10px 0px;
+    }
+  }
+  .dialog-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .success-msg {
+      color: $green3;
+      display: flex;
+      align-items: center;
+      margin-left: 5px;
+    }
+    .failure-msg {
+      color: $red-main;
+      display: flex;
+      align-items: center;
+      margin-left: 5px;
+    }
+  }
+}
+.test-conn-spinner {
+  display: inherit !important;
+  margin-left: 10px !important;
+  padding: 5px !important;
+}
+.test-conn-btn-inprogress {
+  display: flex;
+  width: 150px;
+  align-items: center;
+}
+.submit-btn {
+  background: $blue-head;
+  color: $white;
+}

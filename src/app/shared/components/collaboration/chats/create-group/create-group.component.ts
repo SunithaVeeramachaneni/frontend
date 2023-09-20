@@ -54,6 +54,7 @@ export class CreateGroupComponent implements OnInit {
   groupName = '';
   groupCreationInProgress = false;
   newUsersAddedToGroup = false;
+  ghostLoading = new Array(10).fill(0).map((v, i) => i);
 
   constructor(
     private peopleService: PeopleService,

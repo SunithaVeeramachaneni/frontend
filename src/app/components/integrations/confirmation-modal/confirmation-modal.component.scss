@@ -1,0 +1,42 @@
+@import '../../../../scss/colors.scss';
+
+.confirmationDialog {
+  padding: 20px 20px;
+  .dialogFooter {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: 30px;
+  }
+}
+
+.heading {
+  color: $gray-bg;
+  font-size: 110%;
+  font-weight: 600;
+  margin: 0;
+}
+
+.message {
+  font-weight: 400;
+  color: $light-gray;
+}
+
+.yes-btn {
+  background: $red-main;
+  height: 34px;
+  border-radius: 4px;
+  color: $white;
+  float: right;
+  border: none;
+}
+
+.no-btn {
+  color: $blue-main;
+  background: $white;
+  border-radius: 4px;
+  float: right;
+  border: none;
+  margin: 0px 5px;
+}

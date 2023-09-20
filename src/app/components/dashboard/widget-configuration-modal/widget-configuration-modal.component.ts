@@ -119,6 +119,7 @@ export class WidgetConfigurationModalComponent implements OnInit {
   countField: string;
   setSearchReport$ = new Subject<boolean>();
   updateWidget$: Observable<boolean>;
+  ghostLoading = new Array(11).fill(0).map((v, i) => i);
   readonly permissions = permissions;
   errors: ValidationError = {};
 
@@ -483,6 +484,14 @@ export class WidgetConfigurationModalComponent implements OnInit {
         this.chartConfig = {
           ...this.chartConfig,
           showLegends: value,
+          renderChart: !this.isFetchingChartData
+        };
+        break;
+      case 'customColors':
+        this.selectedReport.chartDetails.customColors = value;
+        this.chartConfig = {
+          ...this.chartConfig,
+          customColors: value,
           renderChart: !this.isFetchingChartData
         };
         break;

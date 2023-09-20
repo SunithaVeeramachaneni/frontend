@@ -38,6 +38,7 @@ export class FavoritesComponent implements OnInit {
   readonly routingUrls = routingUrls;
   readonly permissions = permissions;
   routeWithSearch: string;
+  ghostLoading = new Array(16).fill(0).map((v, i) => i);
 
   @ViewChild('filteredResults', { static: false }) set favorites(
     favorites: DummyComponent

@@ -1,0 +1,434 @@
+@import '../../../../scss/colors.scss';
+
+.integrations-container {
+  background-color: $white;
+  position: relative;
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: 800;
+    padding: 5px;
+    border-bottom: 1px solid $border-color;
+    .page-title {
+      font-style: normal;
+      font-weight: 500;
+      font-size: 110%;
+      color: $black;
+      line-height: 42px;
+      text-overflow: ellipsis;
+      width: 100%;
+      display: block;
+      white-space: nowrap;
+      overflow: hidden;
+      width: 100%;
+      padding: 0px 10px;
+      margin-bottom: 1px;
+    }
+    .page-content {
+      height: 75vh;
+      width: 100%;
+      border-top: 1px solid $border-bottom;
+    }
+  }
+}
+.w-100 {
+  width: 100%;
+}
+
+.form-toolbar {
+  height: 65px;
+  background-color: $white;
+  border-bottom: 1px solid $border-color;
+
+  .back-btn {
+    border: none;
+    background-color: transparent;
+
+    .back-btn-text {
+      font-weight: 700;
+      font-size: 120%;
+      letter-spacing: 0.15px;
+      color: $text-color;
+      margin-left: 10px;
+      position: relative;
+      top: -2px;
+    }
+
+    .back-arrow {
+      height: 15px;
+      width: 15px;
+      position: relative;
+      top: 1px;
+    }
+  }
+}
+
+.step-container {
+  width: 600px;
+  border-radius: 5px;
+  margin: 15px auto;
+  padding: 25px 50px;
+  background-color: $white;
+  box-shadow: 0px 0px 1px $gray-shadow;
+  overflow-y: auto;
+  max-height: calc(100vh - 150px);
+  .integrationHead {
+    width: 50%;
+    margin: 15px;
+    padding: 15px;
+    height: -webkit-fill-available;
+    background: $white;
+    border-radius: 10px;
+    border: 1px solid $border-color;
+    overflow-y: auto;
+  }
+}
+.integration-points {
+  border: 1px solid $gray-bg1;
+  border-radius: 5px;
+  max-height: 200px;
+  overflow-y: auto;
+  margin-top: 5px;
+}
+.dis-flex {
+  display: flex;
+}
+.formtype-style {
+  border: 2px solid $gray;
+  border-radius: 12px;
+  padding: 5px;
+  margin: 5px;
+  width: 50%;
+  display: flex;
+  align-items: center;
+}
+.radio-btns {
+  position: relative;
+  left: 7px;
+}
+::ng-deep
+  .mat-radio-button.mat-accent.mat-radio-checked
+  .mat-radio-outer-circle {
+  border-color: $blue-main;
+}
+
+::ng-deep .mat-radio-button.mat-accent .mat-radio-inner-circle {
+  background-color: $blue-main;
+}
+
+::ng-deep .mat-ripple-element {
+  display: none !important;
+}
+
+::ng-deep .mat-radio-button.mat-radio-disabled .mat-radio-outer-circle {
+  border-color: $disabled-color !important;
+}
+
+::ng-deep .mat-radio-button.mat-radio-disabled .mat-radio-inner-circle {
+  background-color: $disabled-color !important;
+}
+
+.radio-btn-text {
+  font-weight: 500;
+  font-size: 110%;
+  color: $black;
+  position: relative;
+  left: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.verify-icon {
+  height: 15px;
+  width: 15px;
+  margin-left: 5px;
+}
+
+.radio-sub-text {
+  font-weight: 400;
+  font-size: 90%;
+  color: $text-color;
+  opacity: 0.8;
+  margin: 3px 0px 5px 10px;
+}
+.connector-radio-sub-text {
+  font-weight: 400;
+  font-size: 90%;
+  opacity: 0.8;
+  margin: 3px 0px 5px 10px;
+  color: $light-gray;
+}
+
+.buttons {
+  padding: 5px 0px;
+  margin-right: 43px;
+  width: 100%;
+  display: flex;
+  border-bottom: 1px solid $border-color;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.next-btn {
+  height: 35px;
+  font-weight: normal;
+  line-height: normal;
+}
+
+.skip-btn {
+  float: right;
+  color: $blue-main;
+  height: 35px;
+  font-weight: normal;
+  line-height: normal;
+  border: 1px solid $blue-main;
+}
+.horizontal-line {
+  border: 1px solid $border-color;
+  margin: 20px 0;
+}
+.form-name-description {
+  font-weight: 700;
+  color: $blue-head;
+  font-size: 120%;
+}
+.margin-l-r-10 {
+  margin: 0px 10px;
+}
+.w-30 {
+  width: 30% !important;
+}
+.w-394 {
+  width: 394px;
+}
+.flex-wrap {
+  flex-wrap: wrap;
+}
+.connector-container {
+}
+.inactive-connector {
+  background: $gray;
+  cursor: not-allowed;
+}
+.active-connector {
+  cursor: pointer;
+}
+.selected-connector {
+  background: $lavendar;
+}
+.radio-container {
+  display: flex;
+  align-items: center;
+}
+.radio-label {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 5px 0px;
+}
+.connector-icon {
+  width: 45px;
+  height: 45px;
+  margin-left: 10px;
+}
+.integration-point {
+  cursor: pointer;
+  &:hover {
+    background: $issue-border;
+  }
+}
+.select-check {
+  width: 30px;
+  height: 30px;
+  margin-right: 5px;
+}
+.ip-head {
+  display: flex;
+  flex-direction: column;
+  .ip-title {
+    font-weight: 500;
+  }
+  .ip-desc {
+    color: $gray3;
+  }
+}
+.attribute-list {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+.w-50 {
+  width: 50%;
+}
+.w-35 {
+  width: 35%;
+}
+.w-85 {
+  width: 85%;
+}
+
+.mapping-head {
+  padding: 10px;
+  font-size: 120%;
+  font-weight: 500;
+  width: 50%;
+}
+
+.p-l-r-10 {
+  padding: 10px;
+}
+.heading {
+  font-weight: 500;
+  font-size: 110%;
+  color: $black;
+}
+.w-45 {
+  width: 45%;
+}
+.m-r-0 {
+  margin-right: 0px;
+}
+
+.m-l-0 {
+  margin-left: 0px;
+}
+.basic-info {
+  background: $attachment-bg !important;
+  padding: 10px;
+}
+.connectors-container {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  height: 80vh;
+}
+.w-800px {
+  width: 1000px;
+}
+.w-65 {
+  width: 65%;
+}
+.connector-step {
+  padding: 0px !important;
+}
+.connector-head-left {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0px;
+  border-bottom: 1px solid $border-color;
+  padding: 5px 15px;
+}
+.connectorMeta {
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  .connector-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0px;
+    border-bottom: 1px solid $border-color;
+  }
+  .connector-body {
+    height: 600px;
+    width: 100%;
+  }
+}
+.connector-formtype-style {
+  border: 1px solid $gray;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  &:hover {
+    background: $gray6;
+  }
+}
+.connector-left {
+  background: $white2;
+  border-right: 1px solid $border-color;
+  height: 100%;
+  overflow-y: auto;
+}
+.noConnector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 450px;
+  color: $gray3;
+  font-size: large;
+}
+.test-connection-btn {
+  margin: 5px !important;
+}
+.p-10 {
+  padding: 10px;
+}
+.tab-content {
+  height: 64vh;
+  overflow-y: scroll;
+}
+.shadow {
+  width: 100px;
+  margin: 0 auto;
+  height: 100px;
+  background-color: $white1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 40px;
+  &.top {
+    box-shadow: 0px -15px 10px -15px $gray-shadow;
+  }
+  &.bottom {
+    box-shadow: 0px 15px 10px -15px $gray-shadow;
+  }
+  &.left {
+    box-shadow: -15px 0px 10px -15px $gray-shadow;
+  }
+  &.right {
+    box-shadow: 15px 0px 10px -15px $gray-shadow;
+  }
+}
+.test-connect {
+  display: flex;
+  justify-content: flex-end;
+}
+.apiAuthTypeField {
+  margin: 15px 0px;
+  .label {
+    font-size: 10pt;
+    font-weight: 500;
+  }
+  .apiAuthType {
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+.connector-head {
+  font-weight: 500;
+  font-size: 14pt;
+  color: $black;
+  margin: 15px 5px 0px 0px;
+  padding: 10px;
+}
+.emptyContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 90%;
+  height: 90%;
+  color: $gray1;
+  font-weight: 400;
+}
+.text-align-center {
+  text-align: center;
+}
+.color-red {
+  color: $red-main;
+}
