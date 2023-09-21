@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   Inject,
   OnInit
@@ -129,7 +130,8 @@ export class WidgetConfigurationModalComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA)
     public data: WidgetConfigurationModalData,
     private fb: FormBuilder,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private cdrf: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -493,6 +495,7 @@ export class WidgetConfigurationModalComponent implements OnInit {
           customColors: value,
           renderChart: !this.isFetchingChartData
         };
+        this.cdrf.detectChanges();
         break;
 
       default:

@@ -7,7 +7,8 @@ import {
   Input,
   ChangeDetectionStrategy,
   EventEmitter,
-  Output
+  Output,
+  SimpleChanges
 } from '@angular/core';
 import { EChartsOption } from 'echarts';
 
@@ -24,12 +25,11 @@ export class PieChartComponent implements OnInit, OnChanges {
   @Input() set chartConfig(chartConfig) {
     this.chartConfigurations = chartConfig;
     if (chartConfig.customColors) {
-      try {
-        this.colorsByStatus = JSON.parse(chartConfig.customColors);
-      } catch (err) {
-        this.colorsByStatus = {};
-      }
+      this.colorsByStatus = chartConfig.customColors;
+    } else {
+      this.colorsByStatus = {};
     }
+
     if (chartConfig.renderChart) {
       this.prepareChartDetails();
     }
@@ -108,13 +108,7 @@ export class PieChartComponent implements OnInit, OnChanges {
 
   constructor(private datePipe: DatePipe) {}
 
-  ngOnInit(): void {
-    if (this.hasCustomColorScheme && Object.keys(this.colorsByStatus).length) {
-      this.chartOptions.series.itemStyle = {
-        color: (param: any) => this.colorsByStatus[param.name]
-      };
-    }
-  }
+  ngOnInit(): void {}
 
   onChartClickHandler(event) {
     this.chartClickEvent.emit(event);
@@ -135,7 +129,14 @@ export class PieChartComponent implements OnInit, OnChanges {
       const newOptions = { ...this.chartOptions };
       this.chartTitle = title;
       this.chartType = type;
-      newOptions.series.label.show = showValues;
+      if (
+        newOptions.series &&
+        newOptions.series.label &&
+        newOptions.series.label
+      ) {
+        newOptions.series.label.show = showValues;
+      }
+
       newOptions.legend.show = showLegends;
       this.countField = countFields.find((countField) => countField.visible);
       this.datasetField = datasetFields.find(
@@ -145,7 +146,19 @@ export class PieChartComponent implements OnInit, OnChanges {
       this.preparedChartData = this.prepareChartData();
       newOptions.series.data = this.preparedChartData.data;
       newOptions.legend.data = this.preparedChartData.labels;
+
+      if (!Array.isArray(newOptions.series)) {
+        newOptions.series = [newOptions.series];
+      } else {
+        newOptions.series = [...newOptions.series];
+      }
+
       this.chartOptions = newOptions;
+      this.chartOptions.series.forEach((series) => {
+        series.itemStyle = {
+          color: (param: any) => this.colorsByStatus[param.name]
+        };
+      });
     }
   };
 
@@ -183,7 +196,15 @@ export class PieChartComponent implements OnInit, OnChanges {
     };
   };
 
-  ngOnChanges() {
+  ngOnChanges(changes: SimpleChanges) {
+    if (!changes.firstChange && changes.chartConfig) {
+      const currValue = changes.chartConfig.currentValue;
+      if (currValue.customColors) {
+        this.colorsByStatus = currValue.customColors;
+      } else {
+        this.colorsByStatus = {};
+      }
+    }
     let newOption: EChartsOption = {
       ...this.chartOptions
     };
@@ -214,5 +235,12 @@ export class PieChartComponent implements OnInit, OnChanges {
     }
 
     this.chartOptions = newOption;
+
+
+    this.chartOptions.series.forEach((series) => {
+      series.itemStyle = {
+        color: (param: any) => this.colorsByStatus[param.name]
+      };
+    });
   }
 }

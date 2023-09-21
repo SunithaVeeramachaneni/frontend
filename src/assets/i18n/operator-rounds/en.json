@@ -434,6 +434,8 @@
   "additionalDetails": "Additional Details:",
   "attributesHeading": "Attributes",
   "addMoreUpto5": "Add More ( Select Upto 5 )",
-  "customColorCodesJSON": "Enter Custom Color Codes in JSON",
-  "invalidJSON": "Invalid Input(JSON)"
+  "colorSelection": "Colour Selection",
+  "invalidJSON": "Invalid Input(JSON)",
+  "fillTxt": "Fill",
+  "legendTxt": "Legends"
 }

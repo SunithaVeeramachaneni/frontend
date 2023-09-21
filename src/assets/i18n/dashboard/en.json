@@ -86,6 +86,8 @@
   "noReportObjectsFound": "No Report Objects Found",
   "plantTxt": "Plant: ",
   "shiftsTxt": "Shifts:",
-  "customColorCodesJSON": "Enter Custom Color Codes in JSON",
-  "invalidJSON": "Invalid Input(JSON)"
+  "colorSelection": "Colour Selection",
+  "invalidJSON": "Invalid Input(JSON)",
+  "fillTxt": "Fill",
+  "legendTxt": "Legends"
 }

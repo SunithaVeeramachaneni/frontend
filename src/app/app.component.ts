@@ -34,6 +34,7 @@ const {
   myDashboard,
   reports,
   oprReports,
+  oprDashboard,
   spareParts,
   maintenance,
   workInstructions,
@@ -206,6 +207,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       permission: operatorRoundPlans.permission,
       disable: false,
       subPages: [
+        {
+          title: oprDashboard.title,
+          url: oprDashboard.url,
+          permission: oprDashboard.permission
+        },
         {
           title: oprReports.title,
           url: oprReports.url,
