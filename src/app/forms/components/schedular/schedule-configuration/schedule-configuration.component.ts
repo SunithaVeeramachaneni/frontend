@@ -135,7 +135,7 @@ export class ScheduleConfigurationComponent
   startDatePickerMinDate: Date;
   scheduleEndOnPickerMinDate: Date;
   scheduleByDates: ScheduleByDate[];
-  disableSchedule = true;
+  disableSchedule = false;
   roundPlanScheduleConfigurations: RoundPlanScheduleConfigurationObj[];
   isFormModule = false;
   formName = '';
@@ -852,6 +852,11 @@ export class ScheduleConfigurationComponent
         ? format(scheduleEndOnPicker, dateFormat4)
         : format(endDatePicker, dateFormat4);
 
+    const formatedEndDate2 =
+      scheduleEndType === scheduleConfigs.scheduleEndTypes[0]
+        ? format(scheduleEndOnPicker, dateFormat3)
+        : format(endDatePicker, dateFormat3);
+
     this.payload = {
       ...schedularConfigFormValue,
       startDate: format(startDatePicker, dateFormat4),
@@ -870,8 +875,10 @@ export class ScheduleConfigurationComponent
         startDate,
         shiftDetails: this.payload.shiftDetails,
         scheduleType,
-        scheduleByDates,
-        endDate,
+        scheduleByDates: scheduleByDates.map((scheduleByDate) => ({
+          date: scheduleByDate.date
+        })),
+        endDate: formatedEndDate2,
         scheduleEndOn
       }
     });

@@ -23,6 +23,7 @@ import { tap } from 'rxjs/operators';
 import { RoundPlanScheduleConfiguration } from 'src/app/interfaces';
 import { cloneDeep, isEqual } from 'lodash-es';
 import { ConfirmModalPopupComponent } from '../../race-dynamic-form/confirm-modal-popup/confirm-modal-popup/confirm-modal-popup.component';
+import { scheduleConfigs } from 'src/app/forms/components/schedular/schedule-configuration/schedule-configuration.constants';
 
 @Component({
   selector: 'app-scheduler-modal',
@@ -71,8 +72,15 @@ export class SchedulerModalComponent implements OnInit {
         scheduleByDates: headerScheduleByDates,
         startDate: headerStartDate,
         endDate: headerEndDate,
-        scheduleEndOn: headerScheduleEndOn
+        scheduleEndOn: headerScheduleEndOn,
+        scheduleEndType
       } = this.data.scheduleConfiguration;
+
+      const formatedEndDate =
+        scheduleEndType === scheduleConfigs.scheduleEndTypes[0]
+          ? headerScheduleEndOn
+          : headerEndDate;
+
       this.scheduleConfig = {
         startDate: localToTimezoneDate(
           new Date(headerStartDate),
@@ -88,17 +96,16 @@ export class SchedulerModalComponent implements OnInit {
         }, {}),
         scheduleType: headerScheduleType,
         scheduleByDates: headerScheduleByDates.map((scheduleByDate) => ({
-          ...scheduleByDate,
           date: new Date(
             localToTimezoneDate(
               new Date(scheduleByDate.date),
-              this.plantTimezoneMap[this.data.roundPlanDetail?.plantId],
+              this.data.plantTimezoneMap[this.data.roundPlanDetail?.plantId],
               dateTimeFormat3
             )
           )
         })),
         endDate: localToTimezoneDate(
-          new Date(headerEndDate),
+          new Date(formatedEndDate),
           this.data.plantTimezoneMap[this.data.roundPlanDetail?.plantId],
           dateFormat3
         ),
