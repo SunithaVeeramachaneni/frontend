@@ -628,7 +628,8 @@ export class OperatorRoundsService {
     const rows = rounds
       .sort(
         (a, b) =>
-          new Date(a?.dueDate).getTime() - new Date(b?.dueDate).getTime()
+          new Date(b?.createdAt).getTime() -
+          new Date(a?.createdAt).getTime()
       )
       .map((p) => ({
         ...p,
