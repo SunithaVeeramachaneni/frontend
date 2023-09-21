@@ -33,6 +33,7 @@ const {
   dashboard,
   myDashboard,
   reports,
+  // oprReports,
   spareParts,
   maintenance,
   workInstructions,
@@ -48,6 +49,7 @@ const {
   userGroups,
   inActiveUsers,
   tenantManagement,
+  integrationManagement,
   raceDynamicForms,
   myForms,
   formsTemplates,
@@ -101,6 +103,15 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       imageName: 'tenant-management',
       showSubMenu: false,
       permission: tenantManagement.permission,
+      subPages: null,
+      disable: false
+    },
+    {
+      title: integrationManagement.title,
+      url: integrationManagement.url,
+      imageName: 'integrations',
+      showSubMenu: false,
+      permission: integrationManagement.permission,
       subPages: null,
       disable: false
     },
@@ -195,6 +206,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       permission: operatorRoundPlans.permission,
       disable: false,
       subPages: [
+        // {
+        //   title: oprReports.title,
+        //   url: oprReports.url,
+        //   permission: oprReports.permission
+        // },
         {
           title: myRoundPlans.title,
           url: myRoundPlans.url,

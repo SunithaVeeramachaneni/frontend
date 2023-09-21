@@ -789,4 +789,32 @@ export class OperatorRoundsService {
       {},
       'arraybuffer'
     );
+
+  generateDashboardPDF$ = (
+    formData: FormData,
+    customHeaders: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<Blob> =>
+    this.appService.downloadWithPost(
+      environment.operatorRoundsApiUrl,
+      `dashboard/pdf`,
+      info,
+      formData,
+      'blob',
+      customHeaders
+    );
+
+  sendDashboardAsEmail$ = (
+    formData: FormData,
+    customHeaders: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<Blob> =>
+    this.appService.downloadWithPost(
+      environment.operatorRoundsApiUrl,
+      `dashboard/email`,
+      info,
+      formData,
+      'blob',
+      customHeaders
+    );
 }

@@ -116,6 +116,7 @@ export class TenantsComponent implements OnInit {
   limit = defaultLimit;
   deactivate = false;
   deactivateCount = false;
+  ghostLoading = new Array(17).fill(0).map((v, i) => i);
   userInfo$: Observable<UserInfo>;
   readonly perms = perms;
   searchForm: FormGroup;

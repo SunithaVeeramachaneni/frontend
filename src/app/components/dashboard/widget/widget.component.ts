@@ -23,6 +23,9 @@ import {
   WidgetAction
 } from 'src/app/interfaces';
 import { ReportConfigurationService } from '../services/report-configuration.service';
+import { MatDialog } from '@angular/material/dialog';
+import { ChartReportDialog } from '../chart-report-dialog/chart-report-dialog.component';
+import { DateUtilService } from 'src/app/shared/utils/dateUtils';
 
 @Component({
   selector: 'app-widget',
@@ -31,6 +34,7 @@ import { ReportConfigurationService } from '../services/report-configuration.ser
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WidgetComponent implements OnInit {
+  @Input() hasCustomColorScheme;
   @Input() set widget(widget: Widget) {
     this._widget = widget ? widget : ({} as Widget);
     if (Object.keys(this.widget).length) {
@@ -59,6 +63,14 @@ export class WidgetComponent implements OnInit {
   get width(): number {
     return this._width;
   }
+
+  @Input() set filters(_filters) {
+    this._filters = _filters;
+  }
+  get filters(): any {
+    return this._filters;
+  }
+
   @Output() widgetAction: EventEmitter<WidgetAction> =
     new EventEmitter<WidgetAction>();
   chartConfig: AppChartConfig;
@@ -91,13 +103,72 @@ export class WidgetComponent implements OnInit {
   limit = defaultLimit;
   countType: string;
   countField: string;
+  ghostLoading = new Array(11).fill(0).map((v, i) => i);
   public _height: number;
   public _width: number;
   private _widget: Widget;
+  private _filters: any;
 
-  constructor(private reportConfigService: ReportConfigurationService) {}
+  constructor(
+    private reportConfigService: ReportConfigurationService,
+    private dialog: MatDialog,
+    private readonly dateUtilService: DateUtilService
+  ) {}
 
   ngOnInit(): void {
+    const filtersApplied = [];
+    if (this.filters) {
+      if (this.filters?.plantId && this.filters?.plantId.length) {
+        const plantFilter = {
+          column: 'plantId',
+          type: 'string',
+          filters: [
+            {
+              operation: 'equals',
+              operand: this.filters.plantId
+            }
+          ]
+        };
+        filtersApplied.push(plantFilter);
+      }
+      if (this.filters?.shiftId && this.filters?.shiftId.length) {
+        const shiftFilter = {
+          column: 'shiftId',
+          type: 'string',
+          filters: [
+            {
+              operation: 'equals',
+              operand: this.filters.shiftId
+            }
+          ]
+        };
+        filtersApplied.push(shiftFilter);
+      }
+
+      const startAndEndDate = this.dateUtilService.getStartAndEndDates(
+        this.filters?.timePeriod,
+        this.filters?.startDate,
+        this.filters?.endDate
+      );
+      filtersApplied.push({
+        column: 'updatedOn',
+        type: 'daterange',
+        filters: [
+          {
+            operation: 'custom',
+            operand: {
+              startDate: startAndEndDate.startDate,
+              endDate: startAndEndDate.endDate
+            }
+          }
+        ]
+      });
+    }
+
+    this.report.filtersApplied = [
+      ...this.report.filtersApplied,
+      ...filtersApplied
+    ];
     this.chartData$ = this.reportConfigService.getGroupByCountDetails$(
       this.report,
       {
@@ -134,6 +205,26 @@ export class WidgetComponent implements OnInit {
       })
     );
   }
+
+  onChartClickHandle = (event: any) => {
+    let filters = {};
+    if (this.filters) {
+      filters = { ...this.filters };
+    }
+    const dialogRef = this.dialog.open(ChartReportDialog, {
+      disableClose: true,
+      width: '80%',
+      height: '95%',
+      data: {
+        chartData: event.data,
+        widgetData: this.widget,
+        filters
+      }
+    });
+    dialogRef.afterClosed().subscribe(() => {
+      //
+    });
+  };
 
   prepareWidgetData = () => {
     const {

@@ -58,6 +58,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     isDefault: false,
     createdBy: 'dummy'
   } as Dashboard;
+  ghostLoading = new Array(20).fill(0).map((v, i) => i);
   readonly permissions = permissions;
 
   private dashboardSelectionChangedSubscription: Subscription;
@@ -239,26 +240,40 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     const dialogRef = this.dialog.open(CreateUpdateDashboardDialogComponent, {
       disableClose: true,
       width: '400px',
-      height: '250px',
+      height: '350px',
       data: { dialogMode, data: dashboard }
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (dialogMode === 'CREATE') {
         if (result && result.name && result.name.length) {
-          this.createDashboard(result.name, result.isDefault);
+          this.createDashboard(
+            result.name,
+            result.moduleName,
+            result.isDefault
+          );
         }
       } else {
         if (result && result.name && result.name.length) {
-          this.updateDashboard(result.name, result.isDefault, dashboard);
+          this.updateDashboard(
+            result.name,
+            result.moduleName,
+            result.isDefault,
+            dashboard
+          );
         }
       }
     });
   }
 
-  createDashboard(name: string, isDefault: boolean = false) {
+  createDashboard(
+    name: string,
+    moduleName: string,
+    isDefault: boolean = false
+  ) {
     this.dashboardService
       .createDashboard$({
         name,
+        moduleName,
         isDefault,
         createdBy: this.loginService.getLoggedInUserName()
       })
@@ -286,10 +301,11 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
   updateDashboard(
     name: string,
+    moduleName: string,
     isDefault: boolean = false,
     dashboard: Dashboard
   ) {
-    dashboard = { ...dashboard, name, isDefault };
+    dashboard = { ...dashboard, name, isDefault, moduleName };
     this.dashboardService
       .updateDashboard$(dashboard.id, dashboard)
       .subscribe((response) => {

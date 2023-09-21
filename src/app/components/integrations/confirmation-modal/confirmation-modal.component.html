@@ -1,0 +1,9 @@
+<div class="confirmationDialog">
+  <p id="confirmationHeading" class="heading">{{data.heading}}</p>
+  <p id="confirmationMessage" class="message">{{data.message}}</p>
+  <div class="dialogFooter">
+    <button id="confirmNoBtn" mat-dialog-close mat-button class="no-btn" translate="confirmNoBtn"></button>
+    <button id="confirmYesBtn" mat-raised-button class="yes-btn" translate="confirmYesBtn" (click)="confirm()"></button>
+  </div>
+
+</div>

@@ -62,41 +62,9 @@
   <div class="p-0-20">
     <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
     </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
+    <div *ngFor="let number of ghostLoading">
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+    </div>
   </div>
 </ng-template>

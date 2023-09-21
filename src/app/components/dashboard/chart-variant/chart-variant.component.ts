@@ -58,6 +58,7 @@ export class ChartVariantComponent implements OnInit, OnDestroy {
     datasetFieldName: [''],
     countFieldName: [''],
     stackFieldName: [''],
+    customColors: [''],
     chartVarient: new FormControl(''),
     showValues: new FormControl(false),
     showLegends: new FormControl(false)
@@ -75,7 +76,8 @@ export class ChartVariantComponent implements OnInit, OnDestroy {
         indexAxis,
         title: chartTitle,
         showValues,
-        showLegends
+        showLegends,
+        customColors
       } = {},
       groupBy
     } = this.report;
@@ -95,7 +97,8 @@ export class ChartVariantComponent implements OnInit, OnDestroy {
       countFieldName,
       stackFieldName,
       showValues,
-      showLegends
+      showLegends,
+      customColors
     });
     this.setAxisNames();
 
@@ -134,6 +137,18 @@ export class ChartVariantComponent implements OnInit, OnDestroy {
         tap((value) => {
           this.chartVarientChanges.emit({
             type: 'showLegends',
+            value
+          });
+        })
+      )
+      .subscribe();
+    this.f.customColors.valueChanges
+      .pipe(
+        distinctUntilChanged(),
+        takeUntil(this.destroy$),
+        tap((value) => {
+          this.chartVarientChanges.emit({
+            type: 'customColors',
             value
           });
         })
@@ -210,7 +225,6 @@ export class ChartVariantComponent implements OnInit, OnDestroy {
     });
     this.setAxisNames();
   };
-
 
   setAxisNames = () => {
     this.isStacked = false;

@@ -63,6 +63,7 @@ export class CategoryWiseInstructionsComponent
   }>;
   authors$: Observable<string[]>;
   routeUrl: string;
+  ghostLoading = new Array(16).fill(0).map((v, i) => i);
   readonly permissions = permissions;
 
   @ViewChild('publishedFilteredResults', { static: false }) set published(

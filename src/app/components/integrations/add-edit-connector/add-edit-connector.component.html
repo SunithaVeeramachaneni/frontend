@@ -1,0 +1,256 @@
+<div [formGroup]="connectionForm" class="dialog-container">
+  <div class="dialog-head">
+    <span class="heading" *ngIf="data.mode !== 'view'">
+      <span *ngIf="data.mode === 'create'" translate="addConnection"></span>
+      <span *ngIf="data.mode !== 'create'" translate="editConnection"></span>
+    </span>
+    <span class="heading" *ngIf="data.mode === 'view'">
+      {{ 'viewConnection' | translate }}
+    </span>
+    <mat-icon mat-dialog-close class="close-icon">close</mat-icon>
+  </div>
+  <div mat-dialog-content class="dialog-body">
+    <div>
+      <mat-form-field appearance="outline" class="width-100 form-field">
+        <mat-label translate="selectConnector"></mat-label>
+        <mat-select
+          formControlName="connector"
+          (selectionChange)="connectorChanged($event)"
+        >
+          <mat-option [value]=""> <span translate="select"></span> </mat-option>
+          <mat-option
+            *ngFor="let connector of connectorOptions"
+            [value]="connector.id"
+            class="select-option-container"
+          >
+            {{ connector.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="width-100 form-field">
+        <mat-label translate="connectionAlias"></mat-label>
+        <input
+          type="text"
+          matInput
+          [placeholder]="'Connection Alias'"
+          formControlName="connectorAlias"
+        />
+      </mat-form-field>
+    </div>
+    <ng-container [ngSwitch]="connectionForm.value.connector">
+      <ng-container
+        *ngSwitchCase="'odbc'"
+        [ngTemplateOutlet]="odbcTemplate"
+      ></ng-container>
+      <ng-container
+        *ngSwitchCase="'email'"
+        [ngTemplateOutlet]="emailTemplate"
+      ></ng-container>
+      <ng-container
+        *ngSwitchCase="!connectionForm.value.connector.length"
+        [ngTemplateOutlet]="emptyTemplate"
+      ></ng-container>
+    </ng-container>
+    <ng-template #odbcTemplate>
+      <div formGroupName="connectorMeta">
+        <mat-form-field appearance="outline" class="width-100 form-field">
+          <mat-label translate="dbHostName"></mat-label>
+          <input
+            type="text"
+            matInput
+            [placeholder]="'Hostname'"
+            formControlName="hostname"
+          />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="width-100 form-field">
+          <mat-label translate="username"></mat-label>
+          <input
+            type="text"
+            matInput
+            [placeholder]="'DB Username'"
+            formControlName="username"
+          />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="width-100 form-field">
+          <mat-label translate="password"></mat-label>
+          <input
+            [type]="hidePasswordODBC ? 'password' : 'text'"
+            matInput
+            [placeholder]="'DB Password'"
+            formControlName="password"
+          />
+          <button
+            type="button"
+            mat-icon-button
+            matSuffix
+            (click)="hidePasswordODBC = !hidePasswordODBC"
+            [attr.aria-label]="'Hide password ODBC'"
+            [attr.aria-pressed]="hidePasswordODBC"
+          >
+            <mat-icon>
+              {{ hidePasswordODBC ? 'visibility_off' : 'visibility' }}
+            </mat-icon>
+          </button>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="width-100 form-field">
+          <mat-label translate="databaseName"></mat-label>
+          <input
+            type="text"
+            matInput
+            [placeholder]="'Database Name'"
+            formControlName="database"
+          />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="width-100 form-field">
+          <mat-label translate="databasePort"></mat-label>
+          <input
+            type="number"
+            matInput
+            [placeholder]="'Database PORT'"
+            formControlName="port"
+          />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="width-100 form-field">
+          <mat-label translate="databaseDialect"></mat-label>
+          <mat-select formControlName="dialect">
+            <mat-option
+              *ngFor="let dialectType of dialectTypes"
+              [value]="dialectType.value"
+            >
+              {{ dialectType.type }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </ng-template>
+    <ng-template #emailTemplate>
+      <div formGroupName="connectorMeta">
+        <mat-form-field appearance="outline" class="width-100">
+          <mat-label translate="smtpHost"></mat-label>
+          <input
+            type="text"
+            matInput
+            [placeholder]="'SMTP Hostname'"
+            formControlName="hostname"
+          />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="width-100">
+          <mat-label translate="smtpPort"></mat-label>
+          <input
+            type="number"
+            matInput
+            [placeholder]="'SMTP Port'"
+            formControlName="port"
+          />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="width-100">
+          <mat-label translate="smtpUsername"></mat-label>
+          <input
+            type="text"
+            matInput
+            [placeholder]="'SMTP Username'"
+            formControlName="username"
+          />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="width-100">
+          <mat-label translate="smtpPassword"></mat-label>
+          <input
+            [type]="hidePasswordSMTP ? 'password' : 'text'"
+            matInput
+            [placeholder]="'SMTP Password'"
+            formControlName="password"
+          />
+          <button
+            type="button"
+            mat-icon-button
+            matSuffix
+            (click)="hidePasswordSMTP = !hidePasswordSMTP"
+            [attr.aria-label]="'Hide password ERPS'"
+            [attr.aria-pressed]="hidePasswordSMTP"
+          >
+            <mat-icon>
+              {{ hidePasswordSMTP ? 'visibility_off' : 'visibility' }}
+            </mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
+    </ng-template>
+    <ng-template #emptyTemplate>
+      <div class="w-65 connectorMeta noConnector">
+        {{ 'selectConnectorToConfigure' | translate }}
+      </div>
+    </ng-template>
+  </div>
+  <div mat-dialog-actions class="dialog-footer" *ngIf="data.mode !== 'view'">
+    <div class="dis-flex">
+      <button
+        mat-stroked-button
+        color="primary"
+        [disabled]="!connectionForm.valid || connectionForm.pristine"
+        (click)="testConnection()"
+        [ngClass]="{ 'test-conn-btn-inprogress': isTestConnectionInProgress }"
+      >
+        <span>
+          {{ 'testConnectionTxt' | translate }}
+          <mat-progress-spinner
+            [mode]="'indeterminate'"
+            [diameter]="25"
+            class="test-conn-spinner"
+            *ngIf="isTestConnectionInProgress"
+          ></mat-progress-spinner>
+        </span>
+      </button>
+      <span
+        class="success-msg"
+        *ngIf="isConnectionTested && isConnectionSuccessful"
+      >
+        <mat-icon>check_circle</mat-icon
+        >{{ 'connectionSuccessTxt' | translate }}</span
+      >
+      <span
+        class="failure-msg"
+        *ngIf="isConnectionTested && !isConnectionSuccessful"
+      >
+        <mat-icon>error</mat-icon>{{ 'connectionFailTxt' | translate }}</span
+      >
+    </div>
+    <div class="dis-flex">
+      <button
+        mat-button
+        mat-dialog-close
+        color="primary"
+        translate="close"
+      ></button>
+      <button
+        mat-flat-button
+        (click)="saveConnection()"
+        class="submit-btn"
+        [disabled]="
+          !connectionForm.valid || connectionForm.pristine || isSaveInProgress
+        "
+        [ngClass]="{ 'test-conn-btn-inprogress': isSaveInProgress }"
+        *appCheckUserHasPermission="[
+          permissions.createConnection,
+          permissions.updateConnection
+        ]"
+      >
+        <span>
+          <span
+            *ngIf="data.mode === 'create'"
+            translate="saveConnection"
+          ></span>
+          <span
+            *ngIf="data.mode !== 'create'"
+            translate="updateConnection"
+          ></span>
+          <mat-progress-spinner
+            [mode]="'indeterminate'"
+            [diameter]="25"
+            class="test-conn-spinner"
+            *ngIf="isSaveInProgress"
+          ></mat-progress-spinner>
+        </span>
+      </button>
+    </div>
+  </div>
+</div>

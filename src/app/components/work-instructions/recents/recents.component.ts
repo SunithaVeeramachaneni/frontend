@@ -31,6 +31,7 @@ export class RecentsComponent implements OnInit {
   reverseObj: any = { updated_at: true };
   public CreatedBy = '';
   public EditedBy = '';
+  ghostLoading = new Array(16).fill(0).map((v, i) => i);
   currentRouteUrl$: Observable<string>;
   recents$: Observable<Instruction[]>;
   authors$: Observable<string[]>;
