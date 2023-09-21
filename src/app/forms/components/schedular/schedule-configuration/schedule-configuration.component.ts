@@ -959,7 +959,7 @@ export class ScheduleConfigurationComponent
           this.openScheduleSuccessModal('update');
           this.operatorRoundService.setScheduleStatus('loading');
           this.formScheduleConfigurationService
-            .updateFormScheduleConfiguration$(id, payload)
+            .updateFormScheduleConfiguration$(id, payload, info)
             .pipe(
               tap((scheduleConfig) => {
                 this.disableSchedule = false;
@@ -996,7 +996,7 @@ export class ScheduleConfigurationComponent
           this.openScheduleSuccessModal('update');
           this.operatorRoundService.setScheduleStatus('loading');
           this.rpscService
-            .updateRoundPlanScheduleConfiguration$(id, payload)
+            .updateRoundPlanScheduleConfiguration$(id, payload, info)
             .pipe(
               tap((scheduleConfig) => {
                 this.disableSchedule = false;
@@ -1045,7 +1045,7 @@ export class ScheduleConfigurationComponent
           this.openScheduleSuccessModal('create');
           this.operatorRoundService.setScheduleStatus('loading');
           this.formScheduleConfigurationService
-            .createFormScheduleConfiguration$(payload)
+            .createFormScheduleConfiguration$(payload, info)
             .pipe(
               tap((scheduleConfig) => {
                 this.disableSchedule = false;
@@ -1085,7 +1085,7 @@ export class ScheduleConfigurationComponent
           this.openScheduleSuccessModal('create');
           this.operatorRoundService.setScheduleStatus('loading');
           this.rpscService
-            .createRoundPlanScheduleConfiguration$(payload)
+            .createRoundPlanScheduleConfiguration$(payload, info)
             .pipe(
               tap((scheduleConfig) => {
                 this.disableSchedule = false;
