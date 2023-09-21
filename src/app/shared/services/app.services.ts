@@ -40,7 +40,7 @@ export class AppService {
     `${
       apiUrl.indexOf('http://localhost') !== -1
         ? `${apiUrl}`
-        : `https://cbotademo.innovapptive.com${apiUrl}`
+        : `${this.document.location.origin}${apiUrl}`
     }${urlString}`;
 
   _getResp(
