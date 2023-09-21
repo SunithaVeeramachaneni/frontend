@@ -191,7 +191,6 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
       this.allParentsData = this.parentInformation.filter(
         (parent) => parent?.plantsID === plantsID
       );
-      console.log(this.allParentsData);
       this.allParentsData$.next(this.allParentsData);
     }
   }
