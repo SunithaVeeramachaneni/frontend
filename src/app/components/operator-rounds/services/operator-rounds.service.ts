@@ -704,6 +704,7 @@ export class OperatorRoundsService {
         dueDateDisplay: p.dueDate
           ? format(new Date(p.dueDate), dateFormat2)
           : '',
+        submittedAt: p.submittedAt?.trim() ? new Date(p.submittedAt) : '',
         locationAssetsCompleted: `${p.locationAndAssetsCompleted}/${p.locationAndAssets}`,
         tasksCompleted: `${p.locationAndAssetTasksCompleted}/${
           p.locationAndAssetTasks
