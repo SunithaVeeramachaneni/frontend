@@ -284,6 +284,7 @@ export class UsersComponent implements OnInit {
   isOpenAddEditModal = false;
   searchUserGroup: FormControl;
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  ghostLoading = new Array(18).fill(0).map((v, i) => i);
 
   constructor(
     private usersService: UsersService,

@@ -55,6 +55,10 @@ import { RoundsComponent } from './rounds/rounds.component';
 import { ArchivedListComponent } from './archived-list/archived-list.component';
 import { ArchivedDeleteModalComponent } from './archived-delete-modal/archived-delete-modal.component';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
+import { GridsterModule } from 'angular-gridster2';
 
 import { AssetsModalComponent } from './assets-modal/assets-modal.component';
 import { SharedModule } from 'src/app/shared/shared.module';
@@ -73,6 +77,10 @@ import { RoundObservationsComponent } from './round-observations/round-observati
 import { RoundPlanEditViewComponent } from './round-plan-modal/round-plan-edit-view.component';
 import { NgxMatDatetimePickerModule } from '@angular-material-components/datetime-picker';
 import { RoundPlanModalComponent } from './round-plan-modal/round-plan-modal.component';
+// import { WidgetComponent } from '../dashboard/widget/widget.component';
+import { DashboardModule } from '../dashboard/dashboard.module';
+import { OperatorRoundsDashboardComponent } from './operator-rounds-dashboard/operator-rounds-dashboard.component';
+import { EmailDialogComponent } from './email-dialog/email-dialog.component';
 import { SchedulerModalComponent } from './scheduler-modal/scheduler-modal.component';
 import { TaskLevelSchedulerComponent } from './task-level-scheduler/task-level-scheduler.component';
 import { ReviseScheduleComponent } from './revise-schedule/revise-schedule.component';
@@ -85,6 +93,7 @@ export const customTranslateLoader = (http: HttpClient) =>
 @NgModule({
   declarations: [
     OperatorRoundsContainerComponent,
+    OperatorRoundsDashboardComponent,
     RoundPlanListComponent,
     RoundPlanDetailConfigurationComponent,
     RoundPlanHeaderConfigurationComponent,
@@ -103,6 +112,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     RoundObservationsComponent,
     RoundPlanModalComponent,
     RoundPlanEditViewComponent,
+    EmailDialogComponent,
     SchedulerModalComponent,
     TaskLevelSchedulerComponent,
     TaskLevelTaskComponentsComponent,
@@ -114,6 +124,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     ReactiveFormsModule,
     OperatorRoundsRoutingModule,
     SharedModule,
+    DashboardModule,
     RaceDynamicFormModule,
     DragDropModule,
     CommonModule,
@@ -127,6 +138,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatDatepickerModule,
     MatIconModule,
     MatAutocompleteModule,
+    MatDividerModule,
+    MatProgressSpinnerModule,
     MatCardModule,
     MatTreeModule,
     MatInputModule,
@@ -136,6 +149,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatTooltipModule,
     MatTabsModule,
     MatRadioModule,
+    GridsterModule,
     MatButtonToggleModule,
     NgxShimmerLoadingModule,
     NgxMatDatetimePickerModule,

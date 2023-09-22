@@ -227,7 +227,7 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
     const index = this.tags.indexOf(tag);
 
     if (index >= 0) {
-      this.tags.splice(index, 1);
+      this.tags = [...this.tags.slice(0, index), ...this.tags.slice(index + 1)];
     }
   }
 
@@ -345,6 +345,7 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
         this.rdfService
           .createTemplate$({
             ...this.headerDataForm.value,
+            tags: this.tags,
             additionalDetails: updatedAdditionalDetails,
             author: userEmail,
             formLogo: 'assets/rdf-forms-icons/formlogo.svg'
@@ -374,6 +375,7 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
             formMetadata: {
               ...this.headerDataForm.value,
               id: this.templateData.formMetadata.id,
+              tags: this.tags,
               additionalDetails: updatedAdditionalDetails
             },
             formStatus: this.hasFormChanges
@@ -395,6 +397,7 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
             formMetadata: {
               ...this.headerDataForm.value,
               id: this.templateData.formMetadata.id,
+              tags: this.tags,
               additionalDetails: updatedAdditionalDetails
             }
           })

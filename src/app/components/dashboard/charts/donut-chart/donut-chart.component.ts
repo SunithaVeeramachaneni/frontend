@@ -5,7 +5,9 @@ import {
   OnInit,
   Input,
   OnChanges,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  EventEmitter,
+  Output
 } from '@angular/core';
 import { EChartsOption } from 'echarts';
 
@@ -16,8 +18,17 @@ import { EChartsOption } from 'echarts';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DonutChartComponent implements OnInit, OnChanges {
+  @Input() hasCustomColorScheme;
+  @Output() chartClickEvent: EventEmitter<any> = new EventEmitter<any>();
   @Input() set chartConfig(chartConfig) {
     this.chartConfigurations = chartConfig;
+    if (chartConfig.customColors) {
+      try {
+        this.colorsByStatus = JSON.parse(chartConfig.customColors);
+      } catch (err) {
+        this.colorsByStatus = {};
+      }
+    }
     if (chartConfig.renderChart) {
       this.prepareChartDetails();
     }
@@ -36,6 +47,7 @@ export class DonutChartComponent implements OnInit, OnChanges {
   @Input() width;
   @Input() height;
 
+  colorsByStatus: any = {};
   chartOptions: any = {
     title: {
       text: ''
@@ -84,12 +96,23 @@ export class DonutChartComponent implements OnInit, OnChanges {
   preparedChartData: any;
   datasetField: any;
   countField: any;
+  showTotalCount = true;
   private chartConfigurations: any;
   private _chartData: any;
 
   constructor(private datePipe: DatePipe) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if (this.hasCustomColorScheme && Object.keys(this.colorsByStatus).length) {
+      this.chartOptions.series.itemStyle = {
+        color: (param: any) => this.colorsByStatus[param.name]
+      };
+    }
+  }
+
+  onChartClickHandler(event) {
+    this.chartClickEvent.emit(event);
+  }
 
   prepareChartDetails = () => {
     if (this.chartData && this.chartConfig) {
@@ -121,6 +144,25 @@ export class DonutChartComponent implements OnInit, OnChanges {
       this.preparedChartData = this.prepareChartData();
       newOptions.series.data = this.preparedChartData.data;
       newOptions.legend.data = this.preparedChartData.labels;
+      if (this.showTotalCount) {
+        newOptions.series = [newOptions.series];
+        newOptions.series.push({
+          name: 'COUNT',
+          type: 'pie',
+          radius: [0, '35%'],
+          label: {
+            position: 'center',
+            color: 'white'
+          },
+          data: [
+            {
+              value: this.preparedChartData.totalCount,
+              name: `Total Count\n ${this.preparedChartData.totalCount}`
+            }
+          ]
+        });
+      }
+
       this.chartOptions = newOptions;
     }
   };
@@ -153,9 +195,16 @@ export class DonutChartComponent implements OnInit, OnChanges {
       name: key,
       value
     }));
+
+    let totalCount = 0;
+    converted.forEach((c: any) => {
+      totalCount = totalCount + c.value;
+    });
+
     return {
       labels,
-      data: converted
+      data: converted,
+      totalCount
     };
   };
 

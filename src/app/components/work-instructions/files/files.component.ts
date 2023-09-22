@@ -45,6 +45,7 @@ export class MediaFilesComponent implements OnInit {
   reverseObj: any = { updatedAt: true };
   bulkUploadComponent = BulkUploadComponent;
   editRows = [];
+  ghostLoading = new Array(16).fill(0).map((v, i) => i);
   currentRouteUrl$: Observable<string>;
   mediaFiles$: Observable<MediaFile[]>;
   readonly routingUrls = routingUrls;

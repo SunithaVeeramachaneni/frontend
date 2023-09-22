@@ -363,7 +363,7 @@ export class RoundPlanHeaderConfigurationComponent
     const index = this.tags.indexOf(tag);
 
     if (index >= 0) {
-      this.tags.splice(index, 1);
+      this.tags = [...this.tags.slice(0, index), ...this.tags.slice(index + 1)];
     }
     this.filteredTags = of(
       this.tagsCtrl.value
@@ -446,6 +446,7 @@ export class RoundPlanHeaderConfigurationComponent
           BuilderConfigurationActions.addFormMetadata({
             formMetadata: {
               ...this.headerDataForm.value,
+              tags: this.tags,
               additionalDetails: updatedAdditionalDetails,
               plant: plant.name
             },
@@ -463,6 +464,7 @@ export class RoundPlanHeaderConfigurationComponent
           RoundPlanConfigurationActions.createRoundPlan({
             formMetadata: {
               ...this.headerDataForm.value,
+              tags: this.tags,
               additionalDetails: updatedAdditionalDetails,
               pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG,
               author: userName,
@@ -478,6 +480,7 @@ export class RoundPlanHeaderConfigurationComponent
             formMetadata: {
               ...this.headerDataForm.value,
               id: this.roundData.formMetadata.id,
+              tags: this.tags,
               additionalDetails: updatedAdditionalDetails,
               plant: plant.name,
               lastModifiedBy: this.loginService.getLoggedInUserName()
@@ -498,6 +501,7 @@ export class RoundPlanHeaderConfigurationComponent
           RoundPlanConfigurationActions.updateRoundPlan({
             formMetadata: {
               ...this.headerDataForm.value,
+              tags: this.tags,
               id: this.roundData.formMetadata.id,
               additionalDetails: updatedAdditionalDetails,
               plant: plant.name,

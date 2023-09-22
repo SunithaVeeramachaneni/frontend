@@ -9,6 +9,9 @@ import { RoundPlanResolverService } from './services/round-plan-resolver.service
 import { SchedulerComponent } from './scheduler/scheduler.component';
 import { RoundObservationsComponent } from './round-observations/round-observations.component';
 import { RoundPlanEditViewComponent } from './round-plan-modal/round-plan-edit-view.component';
+import { OperatorRoundsDashboardComponent } from './operator-rounds-dashboard/operator-rounds-dashboard.component';
+import { ReportsComponent } from '../dashboard/reports/reports.component';
+import { ReportConfigurationComponent } from '../dashboard/report-configuration/report-configuration.component';
 
 const routes: Routes = [
   {
@@ -20,6 +23,45 @@ const routes: Routes = [
       permissions: [permissions.viewORPlans]
     },
     children: [
+      // {
+      //   path: 'reports',
+      //   component: ReportsComponent,
+      //   canActivate: [AuthGuard],
+      //   data: {
+      //     breadcrumb: { label: 'Reports' },
+      //     permissions: [permissions.viewOPRReports]
+      //   }
+      // },
+      // {
+      //   path: 'addreport',
+      //   component: ReportConfigurationComponent,
+      //   canActivate: [AuthGuard],
+      //   data: {
+      //     breadcrumb: { label: 'Add Report', alias: 'reportConfiguration' },
+      //     permissions: [permissions.createOPRReport]
+      //   }
+      // },
+      // {
+      //   path: 'editreport/:id',
+      //   component: ReportConfigurationComponent,
+      //   canActivate: [AuthGuard],
+      //   data: {
+      //     breadcrumb: {
+      //       label: 'Edit Report',
+      //       alias: 'reportConfiguration'
+      //     },
+      //     permissions: [permissions.updateOPRReport]
+      //   }
+      // },
+      // {
+      //   path: 'round-plans',
+      //   component: OperatorRoundsContainerComponent,
+      //   canActivate: [AuthGuard],
+      //   data: {
+      //     breadcrumb: { label: 'Operator Rounds' },
+      //     permissions: [permissions.viewORPlans]
+      //   }
+      // },
       {
         path: 'create',
         component: OperatorRoundsContainerComponent,

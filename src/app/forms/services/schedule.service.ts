@@ -94,6 +94,9 @@ export class ScheduleConfigurationService {
       firstTime.toLowerCase() !== startTime.toLowerCase() &&
       secondTime.toLowerCase() === nextDayStartTime.toLowerCase()
     ) {
+      if (firstHour >= twelveHours && firstHour <= twentyFourHours) {
+        return (timeDifference = twentyFourHours - firstHour + 1);
+      }
       return (timeDifference = (firstHour === 0 ? 1 : firstHour) - secondHour);
     }
     if (firstTime === startTime && secondTime === startTime) {

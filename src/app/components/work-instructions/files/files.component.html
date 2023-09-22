@@ -58,9 +58,9 @@
           <ng-container
             *ngIf="
               mediaFiles
-                | filter: search
-                | orderBy: order:reverse:true
-                | paginate: config as result
+                | filter : search
+                | orderBy : order : reverse : true
+                | paginate : config as result
             "
           >
             <tr *ngFor="let obj of result; let i = index">
@@ -82,7 +82,7 @@
 
               <td class="width-20">
                 <span class="files-data">{{
-                  obj.updatedAt | dateTime: 'dd mmm yyyy | hh:mm:ss'
+                  obj.updatedAt | dateTime : 'dd mmm yyyy | hh:mm:ss'
                 }}</span>
               </td>
               <td class="width-50">
@@ -188,37 +188,9 @@
 
 <ng-template #loadingFiles>
   <div class="drafts-fav-recents-publish">
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
+    <div *ngFor="let number of ghostLoading">
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+    </div>
   </div>
 </ng-template>

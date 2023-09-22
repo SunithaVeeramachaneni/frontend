@@ -72,6 +72,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
   modules = [
     'Dashboard',
     'Tenant Management',
+    'Integration Manager',
     'Maintenance Control Center',
     'Spare Parts Control Center',
     'User Management',

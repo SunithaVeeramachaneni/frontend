@@ -145,6 +145,9 @@ export class ReportConfigurationComponent implements OnInit {
 
   reportTitleUpdate = new Subject();
   disabledSaveButton = false;
+  moduleName = 'dashboard';
+  ghostLoading = new Array(20).fill(0).map((v, i) => i);
+  ghostLoadingChart = new Array(8).fill(0).map((v, i) => i);
 
   constructor(
     private cdrf: ChangeDetectorRef,
@@ -210,7 +213,8 @@ export class ReportConfigurationComponent implements OnInit {
             return this.getReportDetails();
           } else {
             this.reportService.clickNewReport(true);
-            this.router.navigate(['/dashboard/reports']);
+            const moduleName = `operator-rounds`;
+            this.router.navigate([`/${moduleName}/reports`]);
             return of({} as ReportDetails);
           }
         }
@@ -297,6 +301,11 @@ export class ReportConfigurationComponent implements OnInit {
         )
       )
     );
+  }
+
+  cancel() {
+    const moduleName = `operator-rounds`;
+    this.router.navigate([`/${moduleName}/reports`]);
   }
 
   toggleReportInputField = () => {
@@ -752,7 +761,7 @@ export class ReportConfigurationComponent implements OnInit {
     if (showChart) {
       this.configOptions = {
         ...this.configOptions,
-        tableHeight: 'calc(100vh - 330px)'
+        tableHeight: 'calc(100vh - 365px)'
       };
     } else {
       this.configOptions = {

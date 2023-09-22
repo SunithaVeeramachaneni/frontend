@@ -39,6 +39,7 @@ export interface ChartDetail {
   countFieldName: string;
   stackFieldName?: string;
   renderChart?: boolean;
+  customColors?: any;
 }
 
 export interface TableDetail {

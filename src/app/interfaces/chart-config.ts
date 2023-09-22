@@ -3,6 +3,7 @@ import { ChartDetail } from './report-details';
 export interface AppChartConfig extends ChartDetail {
   datasetFields: AppDatasetField[];
   countFields: CountField[];
+  customColors?: any;
 }
 
 export interface AppChartData {
@@ -30,7 +31,8 @@ export interface ChartVariantChanges {
     | 'stackFieldName'
     | 'chartTitle'
     | 'showValues'
-    | 'showLegends';
+    | 'showLegends'
+    | 'customColors';
   value: string | boolean | any;
   isFormValid?: boolean;
 }

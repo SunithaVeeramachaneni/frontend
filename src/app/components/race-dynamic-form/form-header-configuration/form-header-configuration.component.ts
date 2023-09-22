@@ -361,7 +361,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     const index = this.tags.indexOf(tag);
 
     if (index >= 0) {
-      this.tags.splice(index, 1);
+      this.tags = [...this.tags.slice(0, index), ...this.tags.slice(index + 1)];
     }
     this.filteredTags = of(
       this.tagsCtrl.value
@@ -444,6 +444,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
           BuilderConfigurationActions.addFormMetadata({
             formMetadata: {
               ...this.headerDataForm.value,
+              tags: this.tags,
               additionalDetails: updatedAdditionalDetails,
               plant: plant.name
             },
@@ -460,6 +461,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
           BuilderConfigurationActions.createForm({
             formMetadata: {
               ...this.headerDataForm.value,
+              tags: this.tags,
               additionalDetails: updatedAdditionalDetails,
               pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG,
               author: userName,
@@ -473,6 +475,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
           BuilderConfigurationActions.updateFormMetadata({
             formMetadata: {
               ...this.headerDataForm.value,
+              tags: this.tags,
               id: this.formData.formMetadata.id,
               additionalDetails: updatedAdditionalDetails,
               plant: plant?.name
@@ -493,6 +496,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
           BuilderConfigurationActions.updateForm({
             formMetadata: {
               ...this.headerDataForm.value,
+              tags: this.tags,
               id: this.formData.formMetadata.id,
               additionalDetails: updatedAdditionalDetails,
               pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG

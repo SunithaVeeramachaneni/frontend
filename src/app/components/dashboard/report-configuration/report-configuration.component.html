@@ -192,7 +192,9 @@
             (click)="togglePreview()"
             *appCheckUserHasPermission="[
               permissions.createReport,
-              permissions.updateReport
+              permissions.updateReport,
+              permissions.createOPRReport,
+              permissions.updateOPRReport
             ]"
             aria-label="Preview"
           >
@@ -214,7 +216,10 @@
             matTooltip="Export to Excel"
             [disabled]="!reportDetails.report?.id || isExportInProgress"
             (click)="downloadReport($event)"
-            *appCheckUserHasPermission="[permissions.reportExportToExcel]"
+            *appCheckUserHasPermission="[
+              permissions.reportExportToExcel,
+              permissions.reportOPRExportToExcel
+            ]"
             [ngClass]="{ 'spinner-class btn-background': isExportInProgress }"
             aria-label="Export to Excel"
           >
@@ -229,8 +234,7 @@
             color="primary"
             class="cancel-button"
             matTooltip="Cancel"
-            [routerLink]="['/dashboard/reports']"
-            routerLinkActive="router-link-active"
+            (click)="cancel()"
             translate="cancel"
             aria-label="Cancel"
           ></button>
@@ -240,7 +244,10 @@
           >
             <mat-button-toggle-group
               class="save-btn-toggle"
-              *appCheckUserHasPermission="[permissions.createReport]"
+              *appCheckUserHasPermission="[
+                permissions.createReport,
+                permissions.createOPRReport
+              ]"
             >
               <mat-button-toggle
                 matTooltip="Save"
@@ -250,14 +257,17 @@
                   !!reportDetails.report && saveReport({ saveAs: false })
                 "
               >
-                <span>Save</span>
+                <span translate>save</span>
               </mat-button-toggle>
             </mat-button-toggle-group>
           </ng-container>
           <ng-template #updateButton>
             <mat-button-toggle-group
               class="save-btn-toggle"
-              *appCheckUserHasPermission="[permissions.updateReport]"
+              *appCheckUserHasPermission="[
+                permissions.updateReport,
+                permissions.updateOPRReport
+              ]"
             >
               <mat-button-toggle
                 matTooltip="Save"
@@ -267,7 +277,7 @@
                   !!reportDetails.report && saveReport({ saveAs: false })
                 "
               >
-                <span>Save</span>
+                <span translate>save</span>
               </mat-button-toggle>
               <mat-button-toggle
                 *ngIf="reportDetails.report?.id"
@@ -288,7 +298,7 @@
               (click)="!!reportDetails.report && openSaveAsDialog()"
               aria-label="Save As"
             >
-              Save As
+              <span translate>saveAs</span>
             </button>
           </mat-menu>
         </div>
@@ -421,18 +431,16 @@
                 [disabled]="isChartVariantApplyDisabled"
                 (click)="applyChartVariantChanges()"
                 aria-label="Apply Chart Variant Changes"
-              >
-                Done
-              </button>
+                translate="done"
+              ></button>
               <button
                 mat-button
                 color="primary"
                 class="yes-no-btn cancel-btn"
                 (click)="isPopoverOpen = false; chartVariantChanges = {}"
                 aria-label="Cancel Chart Variant Changes"
-              >
-                Cancel
-              </button>
+                translate="cancel"
+              ></button>
             </div>
           </div>
         </ng-template>
@@ -449,67 +457,19 @@
   </div>
   <ng-template #loading>
     <div class="p-15">
-      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-      </ngx-shimmer-loading>
-      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-      </ngx-shimmer-loading>
-      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-      </ngx-shimmer-loading>
-      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-      </ngx-shimmer-loading>
-      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-      </ngx-shimmer-loading>
-      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-      </ngx-shimmer-loading>
-      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-      </ngx-shimmer-loading>
-      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-      </ngx-shimmer-loading>
-      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-      </ngx-shimmer-loading>
-      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-      </ngx-shimmer-loading>
-      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-      </ngx-shimmer-loading>
-      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-      </ngx-shimmer-loading>
-      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-      </ngx-shimmer-loading>
-      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-      </ngx-shimmer-loading>
-      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-      </ngx-shimmer-loading>
-      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-      </ngx-shimmer-loading>
-      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-      </ngx-shimmer-loading>
-      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-      </ngx-shimmer-loading>
-      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-      </ngx-shimmer-loading>
-      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-      </ngx-shimmer-loading>
+      <div *ngFor="let number of ghostLoading">
+        <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+        </ngx-shimmer-loading>
+      </div>
     </div>
   </ng-template>
 
   <ng-template #loadingChartData>
     <div class="p-0-15 m-t-30">
-      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-      </ngx-shimmer-loading>
-      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-      </ngx-shimmer-loading>
-      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-      </ngx-shimmer-loading>
-      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-      </ngx-shimmer-loading>
-      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-      </ngx-shimmer-loading>
-      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-      </ngx-shimmer-loading>
-      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-      </ngx-shimmer-loading>
-      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-      </ngx-shimmer-loading>
+      <div *ngFor="let number of ghostLoadingChart">
+        <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+        </ngx-shimmer-loading>
+      </div>
     </div>
   </ng-template>
 </div>

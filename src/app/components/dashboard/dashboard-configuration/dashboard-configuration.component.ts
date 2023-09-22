@@ -116,7 +116,7 @@ export class DashboardConfigurationComponent implements OnInit {
   );
   options: GridInterface = {
     gridType: GridType.Fixed,
-    compactType: CompactType.None,
+    compactType: CompactType.CompactUpAndLeft,
     margin: 10,
     outerMargin: true,
     outerMarginTop: null,

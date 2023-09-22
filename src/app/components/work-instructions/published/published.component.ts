@@ -29,6 +29,7 @@ export class PublishedComponent implements OnInit {
   order = 'updated_at';
   reverse = true;
   reverseObj: any = { updated_at: true };
+  ghostLoading = new Array(16).fill(0).map((v, i) => i);
   public CreatedBy = '';
   public EditedBy = '';
   currentRouteUrl$: Observable<string>;

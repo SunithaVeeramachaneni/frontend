@@ -13,6 +13,7 @@ import { MatCheckboxChange } from '@angular/material/checkbox';
 import { BehaviorSubject, Observable, Subject, combineLatest } from 'rxjs';
 import {
   debounceTime,
+  delay,
   distinctUntilChanged,
   map,
   startWith,
@@ -63,6 +64,7 @@ export class AssignedToComponent implements OnInit, OnDestroy {
   assignTypes = ['plant', 'userGroup', 'user'];
   assigneeTypeControl = new FormControl('plant');
   assigneeDetails$ = new BehaviorSubject({} as AssigneeDetails);
+  selectedAssigneeInput$ = new BehaviorSubject({});
   private _assigneeType = 'plant';
   private _showAssigneeOptions = false;
   private onDestroy$ = new Subject();
@@ -116,6 +118,19 @@ export class AssignedToComponent implements OnInit, OnDestroy {
       }),
       tap((data) => (this.filteredDataCount = data.length))
     );
+
+    this.selectedAssigneeInput$
+      .pipe(
+        takeUntil(this.onDestroy$),
+        debounceTime(100),
+        delay(800),
+        tap((assignee: any) => {
+          if (this.assigneeType) {
+            this.selectedAssignee.emit(assignee);
+          }
+        })
+      )
+      .subscribe();
   }
 
   selectAssignee(
@@ -135,7 +150,9 @@ export class AssignedToComponent implements OnInit, OnDestroy {
     if (this.assigneeType === 'plant') {
       selectedAssignee.plant = data;
     }
-    if (this.assigneeType) this.selectedAssignee.emit(selectedAssignee);
+    if (this.assigneeType) {
+      this.selectedAssigneeInput$.next(selectedAssignee);
+    }
   }
 
   isAssigneeSelected(email: string) {
