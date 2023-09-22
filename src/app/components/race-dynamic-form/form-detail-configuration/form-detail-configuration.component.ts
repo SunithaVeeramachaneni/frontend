@@ -51,6 +51,7 @@ import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
 import { SaveTemplateContainerComponent } from '../save-template-container/save-template-container.component';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { FormService } from 'src/app/forms/services/form.service';
+import { ToastService } from 'src/app/shared/toast';
 
 @Component({
   selector: 'app-form-detail-configuration',
@@ -106,7 +107,8 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
     private formConfigurationService: FormConfigurationService,
     private loginService: LoginService,
     private rdfService: RaceDynamicFormService,
-    private formService: FormService
+    private formService: FormService,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -491,11 +493,6 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
         formDetailPublishStatus: formConfigurationStatus.publishing
       })
     );
-    this.store.dispatch(
-      BuilderConfigurationActions.updateIsFormDetailPublished({
-        isFormDetailPublished: true
-      })
-    );
     const form = {
       formMetadata: {
         ...this.formMetadata,
@@ -505,38 +502,49 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
     };
 
     if (this.isEmbeddedForm) {
-      this.rdfService.publishEmbeddedForms$(form).subscribe((response) => {
-        form.pages[0].questions.forEach((question) => {
-          if (response?.includes(question.id)) {
-            question.isPublished = true;
-            question.isPublishedTillSave = true;
+      this.rdfService
+        .publishEmbeddedForms$(form, {
+          displayToast: true,
+          failureResponse: {}
+        })
+        .subscribe((response) => {
+          if (Object.keys(response)?.length > 0) {
+            this.store.dispatch(
+              BuilderConfigurationActions.updateIsFormDetailPublished({
+                isFormDetailPublished: true
+              })
+            );
+
+            const {
+              formMetadata,
+              formStatus,
+              counter,
+              authoredFormDetailId,
+              authoredFormDetailVersion,
+              formDetailPublishStatus,
+              authoredFormDetailDynamoDBVersion
+            } = this.formDetails;
+            this.store.dispatch(
+              BuilderConfigurationActions.updateAuthoredFormDetail({
+                formStatus,
+                formDetailPublishStatus,
+                formListId: formMetadata.id,
+                counter,
+                pages: form.pages,
+                authoredFormDetailId,
+                authoredFormDetailVersion,
+                authoredFormDetailDynamoDBVersion
+              })
+            );
+          } else {
+            this.toastService.show({
+              type: 'warning',
+              text: 'Form Publishing Failed'
+            });
           }
+
+          this.router.navigate(['/forms']);
         });
-
-        const {
-          formMetadata,
-          formStatus,
-          counter,
-          authoredFormDetailId,
-          authoredFormDetailVersion,
-          formDetailPublishStatus,
-          authoredFormDetailDynamoDBVersion
-        } = this.formDetails;
-        this.store.dispatch(
-          BuilderConfigurationActions.updateAuthoredFormDetail({
-            formStatus,
-            formDetailPublishStatus,
-            formListId: formMetadata.id,
-            counter,
-            pages: form.pages,
-            authoredFormDetailId,
-            authoredFormDetailVersion,
-            authoredFormDetailDynamoDBVersion
-          })
-        );
-
-        this.router.navigate(['/forms']);
-      });
     }
   }
 
