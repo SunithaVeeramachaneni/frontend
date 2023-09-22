@@ -75,6 +75,35 @@
             </div>
           </mat-select>
         </mat-form-field>
+
+        <mat-form-field appearance="outline" class="filter-field custom-form-field-white-color"
+          *ngIf="dashboardForm.value.plantId && dashboardForm.value.plantId.length">
+          <mat-label id="locationSelect" translate="location"></mat-label>
+          <mat-select (valueChange)="onSelectLocation($event)" formControlName="locationId">
+            <input class="searchable-input" [placeholder]="'searchTxt' | translate" (keyup)="onKeyLocation($event)"
+              #searchInput />
+            <div class="scrollable-area">
+              <mat-option value="">{{'allTxt' | translate}}</mat-option>
+              <mat-option id="addEditAssetsPlantOptions" [value]="location.locationId"
+                *ngFor="let location of allLocationsData">{{
+                location.locationId }} - {{ location.name }}</mat-option>
+            </div>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="filter-field custom-form-field-white-color"
+          *ngIf="dashboardForm.value.plantId && dashboardForm.value.plantId.length">
+          <mat-label id="assetSelect" translate="asset"></mat-label>
+          <mat-select (valueChange)="onSelectAsset($event)" formControlName="assetId">
+            <input class="searchable-input" [placeholder]="'searchTxt' | translate" (keyup)="onKeyAsset($event)"
+              #searchInput />
+            <div class="scrollable-area">
+              <mat-option value="">{{'allTxt' | translate}}</mat-option>
+              <mat-option id="addEditAssetsPlantOptions" [value]="asset.assetsId" *ngFor="let asset of allAssetsData">{{
+                asset.assetsId }} - {{ asset.name }}</mat-option>
+            </div>
+          </mat-select>
+        </mat-form-field>
+
       </div>
       <div class="undo-redo-btns">
         <button mat-stroked-button color="primary" class="report-button" matTooltip="Undo" matTooltipClass=""

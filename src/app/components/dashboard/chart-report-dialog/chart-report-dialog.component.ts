@@ -15,7 +15,12 @@ import {
   combineLatest,
   of
 } from 'rxjs';
-import { LoadEvent, SearchEvent, TableEvent } from 'src/app/interfaces';
+import {
+  ErrorInfo,
+  LoadEvent,
+  SearchEvent,
+  TableEvent
+} from 'src/app/interfaces';
 import {
   Column,
   ConfigOptions
@@ -24,6 +29,8 @@ import { filter, map, switchMap } from 'rxjs/operators';
 import { ReportConfigurationService } from '../services/report-configuration.service';
 import { defaultLimit } from 'src/app/app.constants';
 import { DateUtilService } from 'src/app/shared/utils/dateUtils';
+import { downloadFile } from 'src/app/shared/utils/fileUtils';
+import { ToastService } from 'src/app/shared/toast';
 
 @Component({
   selector: 'app-chart-report-dialog',
@@ -65,6 +72,7 @@ export class ChartReportDialog implements OnInit {
   fetchType = 'load';
   nextToken = '';
   reportColumns: any[] = [];
+  downloadInProgress = false;
   ghostLoading = new Array(11).fill(0).map((v, i) => i);
 
   constructor(
@@ -73,7 +81,8 @@ export class ChartReportDialog implements OnInit {
     public data: any,
     private reportConfigService: ReportConfigurationService,
     private dateUtilService: DateUtilService,
-    private cdrf: ChangeDetectorRef
+    private cdrf: ChangeDetectorRef,
+    private toast: ToastService
   ) {}
 
   ngOnInit() {
@@ -86,7 +95,7 @@ export class ChartReportDialog implements OnInit {
     ) {
       const filterObj = {
         column: this.selectedReport.report.groupBy[0],
-        type: 'string',
+        type: chartData?.name.includes('Total') ? 'default' : 'string',
         filters: [
           {
             operation: 'equals',
@@ -122,6 +131,38 @@ export class ChartReportDialog implements OnInit {
     this.fetchReport$.next({} as TableEvent);
     this.getDisplayedForms();
   }
+
+  downloadReport = () => {
+    this.downloadInProgress = true;
+    this.cdrf.detectChanges();
+    const info: ErrorInfo = {
+      displayToast: true,
+      failureResponse: 'throwError'
+    };
+    console.log(this.selectedReport.reportId);
+    const filtersApplied = this.getFiltersApplied();
+    this.reportConfigService
+      .downloadWidgetReport$(
+        `reports/${this.selectedReport.reportId}/download`,
+        { report: this.selectedReport.report },
+        info
+      )
+      .subscribe(
+        (data) => {
+          this.downloadInProgress = false;
+          this.cdrf.detectChanges();
+          downloadFile(data, 'Report');
+          this.toast.show({
+            text: 'Report exported successfully',
+            type: 'success'
+          });
+        },
+        (err) => {
+          this.downloadInProgress = false;
+          this.cdrf.detectChanges();
+        }
+      );
+  };
 
   getDisplayedForms(): void {
     const formsOnLoadSearch$ = this.fetchReport$.pipe(
@@ -171,7 +212,7 @@ export class ChartReportDialog implements OnInit {
     );
   }
 
-  getReportData = () => {
+  getFiltersApplied = () => {
     const filtersApplied = [];
     const { filters } = this.data;
     if (filters.plantId && filters.plantId.length) {
@@ -200,6 +241,32 @@ export class ChartReportDialog implements OnInit {
       };
       filtersApplied.push(shiftFilter);
     }
+    if (filters.assetId && filters.assetId.length) {
+      const assetFilter = {
+        column: 'assetId',
+        type: 'string',
+        filters: [
+          {
+            operation: 'equals',
+            operand: filters.assetId
+          }
+        ]
+      };
+      filtersApplied.push(assetFilter);
+    }
+    if (filters.locationId && filters.locationId.length) {
+      const locationFilter = {
+        column: 'locationId',
+        type: 'string',
+        filters: [
+          {
+            operation: 'equals',
+            operand: filters.locationId
+          }
+        ]
+      };
+      filtersApplied.push(locationFilter);
+    }
 
     const startAndEndDate = this.dateUtilService.getStartAndEndDates(
       filters.timePeriod,
@@ -219,6 +286,11 @@ export class ChartReportDialog implements OnInit {
         }
       ]
     });
+    return filtersApplied;
+  };
+
+  getReportData = () => {
+    const filtersApplied = this.getFiltersApplied();
     if (
       this.selectedReport.report &&
       this.selectedReport.report.filtersApplied

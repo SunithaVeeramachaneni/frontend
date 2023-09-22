@@ -23,45 +23,45 @@ const routes: Routes = [
       permissions: [permissions.viewORPlans]
     },
     children: [
-      // {
-      //   path: 'reports',
-      //   component: ReportsComponent,
-      //   canActivate: [AuthGuard],
-      //   data: {
-      //     breadcrumb: { label: 'Reports' },
-      //     permissions: [permissions.viewOPRReports]
-      //   }
-      // },
-      // {
-      //   path: 'addreport',
-      //   component: ReportConfigurationComponent,
-      //   canActivate: [AuthGuard],
-      //   data: {
-      //     breadcrumb: { label: 'Add Report', alias: 'reportConfiguration' },
-      //     permissions: [permissions.createOPRReport]
-      //   }
-      // },
-      // {
-      //   path: 'editreport/:id',
-      //   component: ReportConfigurationComponent,
-      //   canActivate: [AuthGuard],
-      //   data: {
-      //     breadcrumb: {
-      //       label: 'Edit Report',
-      //       alias: 'reportConfiguration'
-      //     },
-      //     permissions: [permissions.updateOPRReport]
-      //   }
-      // },
-      // {
-      //   path: 'round-plans',
-      //   component: OperatorRoundsContainerComponent,
-      //   canActivate: [AuthGuard],
-      //   data: {
-      //     breadcrumb: { label: 'Operator Rounds' },
-      //     permissions: [permissions.viewORPlans]
-      //   }
-      // },
+      {
+        path: 'reports',
+        component: ReportsComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: { label: 'Reports' },
+          permissions: [permissions.viewOPRReports]
+        }
+      },
+      {
+        path: 'addreport',
+        component: ReportConfigurationComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: { label: 'Add Report', alias: 'reportConfiguration' },
+          permissions: [permissions.createOPRReport]
+        }
+      },
+      {
+        path: 'reports/editreport/:id',
+        component: ReportConfigurationComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: {
+            label: 'Edit Report',
+            alias: 'reportConfiguration'
+          },
+          permissions: [permissions.updateOPRReport]
+        }
+      },
+      {
+        path: 'round-plans',
+        component: OperatorRoundsContainerComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: { label: 'Operator Rounds' },
+          permissions: [permissions.viewORPlans]
+        }
+      },
       {
         path: 'create',
         component: OperatorRoundsContainerComponent,

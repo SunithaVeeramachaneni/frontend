@@ -20,6 +20,7 @@
         cursor: pointer;
         font-size: 18px;
         color: $dark-gray;
+        margin-top: 10px;
       }
     }
     .head-row2 {
@@ -52,4 +53,28 @@
       width: 150px;
     }
   }
+}
+.download-btn {
+  font-style: normal;
+  font-weight: 500;
+  font-size: 100%;
+  letter-spacing: 0.15px;
+  color: $white;
+  border: 1px solid $blue-main;
+  border-radius: 4px;
+  background-color: $blue-main;
+  padding: 5px 14px;
+  float: right;
+  cursor: pointer;
+  margin-right: 5px;
+}
+
+.heading-right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.downloading {
+  display: flex;
+  align-items: center;
 }
