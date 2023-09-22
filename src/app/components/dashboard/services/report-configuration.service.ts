@@ -73,6 +73,19 @@ export class ReportConfigurationService {
       info
     );
 
+  downloadWidgetReport$ = (
+    reportDownloadUrlStr: string,
+    data: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService.downloadWithPost(
+      environment.dashboardApiUrl,
+      reportDownloadUrlStr,
+      info,
+      data,
+      'arraybuffer'
+    );
+
   getGroupByCountDetails$ = (
     report: ReportConfiguration,
     queryParams: any,

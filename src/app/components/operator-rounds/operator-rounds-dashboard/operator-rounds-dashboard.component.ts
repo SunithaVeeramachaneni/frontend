@@ -58,6 +58,8 @@ import { Dashboard } from 'src/app/interfaces';
 import { ToastService } from 'src/app/shared/toast';
 import { DateUtilService } from 'src/app/shared/utils/dateUtils';
 import { EmailDialogComponent } from '../email-dialog/email-dialog.component';
+import { LocationService } from '../../master-configurations/locations/services/location.service';
+import { AssetsService } from '../../master-configurations/assets/services/assets.service';
 
 declare global {
   interface FormData {
@@ -156,7 +158,11 @@ export class OperatorRoundsDashboardComponent implements OnInit, OnDestroy {
   applyingFilters$ = new BehaviorSubject<boolean>(false);
 
   allPlantsData;
+  allLocationsData;
+  allAssetsData;
   plantInformation;
+  locationInformation;
+  assetInformation;
   searchInput: ElementRef<HTMLInputElement> = null;
   dashboardForm: FormGroup;
   selectedPlantShifts = [];
@@ -186,6 +192,8 @@ export class OperatorRoundsDashboardComponent implements OnInit, OnDestroy {
     private operatorRoundService: OperatorRoundsService,
     private loginService: LoginService,
     private plantService: PlantService,
+    private locationsService: LocationService,
+    private assetsService: AssetsService,
     private fb: FormBuilder,
     private translateService: TranslateService,
     private datePipe: DatePipe,
@@ -202,6 +210,8 @@ export class OperatorRoundsDashboardComponent implements OnInit, OnDestroy {
       timePeriod: new FormControl('last_month', []),
       plantId: new FormControl('', []),
       shiftId: new FormControl('', []),
+      locationId: new FormControl('', []),
+      assetId: new FormControl('', []),
       startDate: new FormControl(''),
       endDate: new FormControl('')
     });
@@ -224,11 +234,44 @@ export class OperatorRoundsDashboardComponent implements OnInit, OnDestroy {
       this.plantInformation = this.allPlantsData;
       this.cdrf.detectChanges();
     });
-
     const info: ErrorInfo = {
       displayToast: true,
       failureResponse: 'throwError'
     };
+    this.dashboardForm
+      .get('plantId')
+      .valueChanges.pipe(
+        startWith({}),
+        debounceTime(100),
+        distinctUntilChanged(),
+        takeUntil(this.destroy$),
+        pairwise(),
+        tap(([previous, current]) => {
+          if (!isEqual(previous, current)) {
+            console.log(current);
+            const selectedPlant = this.allPlantsData.find(
+              (p) => p.plantId === current
+            );
+            const selectedPlantId = selectedPlant.id ? selectedPlant.id : '';
+            this.locationsService
+              .fetchAllLocations$(selectedPlantId)
+              .subscribe((locations) => {
+                this.allLocationsData = locations.items || [];
+                this.locationInformation = this.allLocationsData;
+                this.cdrf.detectChanges();
+              });
+            this.assetsService
+              .fetchAllAssets$(selectedPlantId, info)
+              .subscribe((assets) => {
+                this.allAssetsData = assets.items || [];
+                this.assetInformation = this.allAssetsData;
+                this.cdrf.detectChanges();
+              });
+          }
+        })
+      )
+      .subscribe();
+
     this.widgetService
       .getDashboardByModule$('operator_rounds', { isActive: true }, info)
       .subscribe((resp: any) => {
@@ -351,12 +394,6 @@ export class OperatorRoundsDashboardComponent implements OnInit, OnDestroy {
     });
   };
 
-  // cancelEmail = () => {
-  //   // this.emailMenuTrigger.closeMenu();
-  //   // this.emailNotes = '';
-  //   // this.toEmailIDs = '';
-  // };
-
   getWidgetImage = async (widgetId) => {
     const elem = document.getElementById(widgetId.toString());
     return new Promise(async (resolve, reject) => {
@@ -438,6 +475,10 @@ export class OperatorRoundsDashboardComponent implements OnInit, OnDestroy {
       this.dashboardForm.patchValue({ plantId: prevValue });
     } else if (eventType === 'SHIFT') {
       this.dashboardForm.patchValue({ shiftId: prevValue });
+    } else if (eventType === 'ASSET') {
+      this.dashboardForm.patchValue({ assetId: prevValue });
+    } else if (eventType === 'LOCATION') {
+      this.dashboardForm.patchValue({ locationId: prevValue });
     }
   };
 
@@ -462,6 +503,10 @@ export class OperatorRoundsDashboardComponent implements OnInit, OnDestroy {
       this.dashboardForm.patchValue({ plantId: currentValue });
     } else if (eventType === 'SHIFT') {
       this.dashboardForm.patchValue({ shiftId: currentValue });
+    } else if (eventType === 'ASSET') {
+      this.dashboardForm.patchValue({ assetId: currentValue });
+    } else if (eventType === 'LOCATION') {
+      this.dashboardForm.patchValue({ locationId: currentValue });
     }
   };
   dateChanged(event) {
@@ -539,12 +584,50 @@ export class OperatorRoundsDashboardComponent implements OnInit, OnDestroy {
       currentValue: shift
     });
   }
+  onSelectAsset(asset) {
+    const selectedPlant = this.allAssetsData.find((a) => a.assetsId === asset);
+    if (selectedPlant) {
+      this.undoRedoUtil.WRITE({
+        eventType: 'ASSET',
+        prevValue: this.dashboardForm.value.locationId,
+        currentValue: selectedPlant.plantId
+      });
+    }
+  }
+  onSelectLocation(location) {
+    const selectedPlant = this.allPlantsData.find(
+      (l) => l.locationId === location
+    );
+    if (selectedPlant) {
+      this.undoRedoUtil.WRITE({
+        eventType: 'LOCATION',
+        prevValue: this.dashboardForm.value.plantId,
+        currentValue: selectedPlant.plantId
+      });
+    }
+  }
   onKeyPlant(event) {
     const value = event.target.value || '';
     if (!value) {
       this.allPlantsData = this.plantInformation;
     } else {
       this.allPlantsData = this.searchPlant(value);
+    }
+  }
+  onKeyLocation(event) {
+    const value = event.target.value || '';
+    if (!value) {
+      this.allLocationsData = this.locationInformation;
+    } else {
+      this.allLocationsData = this.searchLocation(value);
+    }
+  }
+  onKeyAsset(event) {
+    const value = event.target.value || '';
+    if (!value) {
+      this.allAssetsData = this.assetInformation;
+    } else {
+      this.allAssetsData = this.searchAsset(value);
     }
   }
   searchPlant(value: string) {
@@ -554,6 +637,25 @@ export class OperatorRoundsDashboardComponent implements OnInit, OnDestroy {
         (plant.name && plant.name.toLowerCase().indexOf(searchValue) !== -1) ||
         (plant.plantId &&
           plant.plantId.toLowerCase().indexOf(searchValue) !== -1)
+    );
+  }
+  searchLocation(value: string) {
+    const searchValue = value.toLowerCase();
+    return this.locationInformation.filter(
+      (location) =>
+        (location.name &&
+          location.name.toLowerCase().indexOf(searchValue) !== -1) ||
+        (location.locationId &&
+          location.locationId.toLowerCase().indexOf(searchValue) !== -1)
+    );
+  }
+  searchAsset(value: string) {
+    const searchValue = value.toLowerCase();
+    return this.assetInformation.filter(
+      (asset) =>
+        (asset.name && asset.name.toLowerCase().indexOf(searchValue) !== -1) ||
+        (asset.assetsId &&
+          asset.assetsId.toLowerCase().indexOf(searchValue) !== -1)
     );
   }
 
@@ -752,37 +854,6 @@ export class OperatorRoundsDashboardComponent implements OnInit, OnDestroy {
       this.editWidget(value);
     }
   };
-
-  // getStartAndEndDates = (timePeriod) => {
-  //   const today = new Date();
-  //   let startDate;
-  //   let endDate;
-  //   switch (timePeriod) {
-  //     case 'last_6_months':
-  //       // eslint-disable-next-line no-case-declarations
-  //       const todayClone1 = new Date(today.getTime());
-  //       startDate = todayClone1.setMonth(todayClone1.getMonth() - 6);
-  //       endDate = today;
-  //       break;
-  //     case 'last_3_months':
-  //       // eslint-disable-next-line no-case-declarations
-  //       const todayClone2 = new Date(today.getTime());
-  //       startDate = todayClone2.setMonth(todayClone2.getMonth() - 3);
-  //       endDate = today;
-  //       break;
-  //     case 'this_week':
-  //       startDate = new Date(today.setDate(today.getDate() - today.getDay()));
-  //       endDate = new Date(today.setDate(today.getDate() - today.getDay() + 6));
-  //       break;
-  //     case 'this_month':
-  //       startDate = new Date(today.getFullYear(), today.getMonth(), 1);
-  //       endDate = today;
-  //       break;
-  //     default:
-  //       break;
-  //   }
-  //   return { startDate, endDate };
-  // };
 
   ngOnDestroy() {
     this.destroy$.next();
