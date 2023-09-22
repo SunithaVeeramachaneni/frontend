@@ -1329,7 +1329,13 @@ export class RoundsComponent implements OnInit, OnDestroy {
       });
       return;
     }
-    const dueDateDisplayFormat = this.formatDate(changedDueDate, plantId);
+    const dueDateDisplayFormat = this.formatDate(
+      zonedTimeToUtc(
+        changedDueDate,
+        this.plantTimezoneMap[plantId].timeZoneIdentifier
+      ),
+      plantId
+    );
 
     const dueDateTime = changedDueDate.getTime(); ///curent Date
     let shiftStartDateAndTime: any;
@@ -1437,10 +1443,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
                         ...data,
                         scheduledAt,
                         dueDate: changedDueDate,
-                        dueDateDisplay: this.formatDate(
-                          dueDateDisplayFormat,
-                          plantId
-                        ),
+                        dueDateDisplay: dueDateDisplayFormat,
                         status: changedStatus,
                         slotDetails: slot,
                         roundDBVersion: resp.roundDBVersion + 1,
@@ -1495,7 +1498,13 @@ export class RoundsComponent implements OnInit, OnDestroy {
     }
     let shiftValidation: Boolean = true;
 
-    const startDateDisplayFormat = this.formatDate(changedScheduledAt, plantId);
+    const startDateDisplayFormat = this.formatDate(
+      zonedTimeToUtc(
+        changedScheduledAt,
+        this.plantTimezoneMap[plantId].timeZoneIdentifier
+      ),
+      plantId
+    );
 
     const scheduleTime = changedScheduledAt.getTime(); ///curent Date
 
@@ -1602,10 +1611,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
                         ...data,
                         scheduledAt: changedScheduledAt,
                         status: changedStatus,
-                        scheduledAtDisplay: this.formatDate(
-                          startDateDisplayFormat,
-                          plantId
-                        ),
+                        scheduledAtDisplay: startDateDisplayFormat,
                         slotDetails: slot,
                         roundDBVersion: resp.roundDBVersion + 1,
                         roundDetailDBVersion: resp.roundDetailDBVersion + 1,
