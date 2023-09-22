@@ -31,7 +31,7 @@ import { defaultLimit } from 'src/app/app.constants';
 import { DateUtilService } from 'src/app/shared/utils/dateUtils';
 import { downloadFile } from 'src/app/shared/utils/fileUtils';
 import { ToastService } from 'src/app/shared/toast';
-
+import { format } from 'date-fns';
 @Component({
   selector: 'app-chart-report-dialog',
   templateUrl: './chart-report-dialog.component.html',
@@ -74,6 +74,7 @@ export class ChartReportDialog implements OnInit {
   reportColumns: any[] = [];
   downloadInProgress = false;
   ghostLoading = new Array(11).fill(0).map((v, i) => i);
+  dateObject: any;
 
   constructor(
     private dialogRef: MatDialogRef<any>,
@@ -86,6 +87,20 @@ export class ChartReportDialog implements OnInit {
   ) {}
 
   ngOnInit() {
+    const { filters } = this.data;
+    this.dateObject = this.dateUtilService.getStartAndEndDates(
+      filters.timePeriod,
+      filters.startDate,
+      filters.endDate
+    );
+    this.dateObject.startDate = format(
+      new Date(this.dateObject.startDate),
+      'dd-MM-yyyy'
+    );
+    this.dateObject.endDate = format(
+      new Date(this.dateObject.endDate),
+      'dd-MM-yyyy'
+    );
     this.selectedReport = this.data?.widgetData;
     const { chartData } = this.data;
     if (
@@ -139,7 +154,6 @@ export class ChartReportDialog implements OnInit {
       displayToast: true,
       failureResponse: 'throwError'
     };
-    console.log(this.selectedReport.reportId);
     const filtersApplied = this.getFiltersApplied();
     this.reportConfigService
       .downloadWidgetReport$(

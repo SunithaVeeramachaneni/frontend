@@ -1,38 +1,67 @@
 <div class="chart-report-dialog">
   <div class="report-heading">
     <div class="head-row1">
-      <span class="heading">{{data.chartData?.name}}</span>
+      <span class="heading">{{ data.chartData?.name }}</span>
       <div class="heading-right">
-        <button translate="download" class="download-btn" [ngClass]="{'downloading':downloadInProgress}"
-          [disabled]="downloadInProgress" (click)="downloadReport()">
-          <mat-progress-spinner [mode]="'indeterminate'" [diameter]="25"
-            *ngIf="downloadInProgress"></mat-progress-spinner>
+        <button
+          translate="download"
+          class="download-btn"
+          [ngClass]="{ downloading: downloadInProgress }"
+          [disabled]="downloadInProgress"
+          (click)="downloadReport()"
+        >
+          <mat-progress-spinner
+            [mode]="'indeterminate'"
+            [diameter]="25"
+            *ngIf="downloadInProgress"
+          ></mat-progress-spinner>
         </button>
         <mat-icon class="close-icon" (click)="close()">close</mat-icon>
       </div>
     </div>
     <div class="head-row2">
-      <span class="filter-item"><b translate="timePeriod"></b>
-        <span *ngIf="data.filters.timePeriod !== 'custom'">{{
-          data.filters.timePeriod | translate
-          }}</span>
-        <span *ngIf="data.filters.timePeriod === 'custom'">
-          {{ data.filters.startDate }} - {{ data.filters.endDate }}
-        </span>
+      <span class="filter-item"
+        ><b>Time Period: </b>
+
+        <span> {{ dateObject?.startDate }} - {{ dateObject?.endDate }} </span>
       </span>
-      <span class="filter-item" *ngIf="
+      <span
+        class="filter-item"
+        *ngIf="
           data.filters && data.filters.plantId && data.filters.plantId.length
-        "><b>{{ 'plantTxt' | translate }} </b> {{ data.filters.plantId }}</span>
-      <span class="filter-item" *ngIf="
+        "
+        ><b>{{ 'plantTxt' | translate }} </b> {{ data.filters.plantId }}</span
+      >
+      <span
+        class="filter-item"
+        *ngIf="
           data.filters && data.filters.shiftId && data.filters.shiftId.length
-        "><b>{{ 'shiftsTxt' | translate }} </b> {{ data.filters.shiftId }}
+        "
+        ><b>{{ 'shiftsTxt' | translate }} </b> {{ data.filters.shiftId }}
+      </span>
+      <span
+        class="filter-item"
+        *ngIf="
+          data.filters && data.filters.plantId && data.filters.plantId.length
+        "
+        ><b>{{ 'plantTxt' | translate }} </b> {{ data.filters.plantId }}</span
+      >
+      <span
+        class="filter-item"
+        *ngIf="
+          data.filters && data.filters.shiftId && data.filters.shiftId.length
+        "
+        ><b>{{ 'shiftsTxt' | translate }} </b> {{ data.filters.shiftId }}
       </span>
     </div>
   </div>
   <div class="report-body">
     <div *ngIf="reportDetails$ | async; else loadingReportDetails">
-      <cwp-dynamictable [dataSource]="dataSource" [configOptions]="configOptions"
-        (fetchDataCallback)="tableEventHandler($event)"></cwp-dynamictable>
+      <cwp-dynamictable
+        [dataSource]="dataSource"
+        [configOptions]="configOptions"
+        (fetchDataCallback)="tableEventHandler($event)"
+      ></cwp-dynamictable>
     </div>
   </div>
 </div>
