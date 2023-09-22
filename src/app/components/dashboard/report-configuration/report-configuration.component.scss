@@ -2,7 +2,7 @@
 
 .report-configuration {
   overflow: hidden;
-  height: 100%;
+  height: calc(100vh - 70px);
 
   ::ng-deep .table-column {
     width: 10%;
