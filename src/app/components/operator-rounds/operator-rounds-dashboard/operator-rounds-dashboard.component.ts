@@ -248,7 +248,6 @@ export class OperatorRoundsDashboardComponent implements OnInit, OnDestroy {
         pairwise(),
         tap(([previous, current]) => {
           if (!isEqual(previous, current)) {
-            console.log(current);
             const selectedPlant = this.allPlantsData.find(
               (p) => p.plantId === current
             );
