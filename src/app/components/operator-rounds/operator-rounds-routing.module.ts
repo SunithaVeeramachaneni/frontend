@@ -42,7 +42,7 @@ const routes: Routes = [
         }
       },
       {
-        path: 'editreport/:id',
+        path: 'reports/editreport/:id',
         component: ReportConfigurationComponent,
         canActivate: [AuthGuard],
         data: {
