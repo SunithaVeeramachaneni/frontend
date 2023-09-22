@@ -51,7 +51,6 @@ import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
 import { SaveTemplateContainerComponent } from '../save-template-container/save-template-container.component';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { FormService } from 'src/app/forms/services/form.service';
-import { ToastService } from 'src/app/shared/toast';
 
 @Component({
   selector: 'app-form-detail-configuration',
@@ -107,8 +106,7 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
     private formConfigurationService: FormConfigurationService,
     private loginService: LoginService,
     private rdfService: RaceDynamicFormService,
-    private formService: FormService,
-    private toastService: ToastService
+    private formService: FormService
   ) {}
 
   ngOnInit(): void {
@@ -536,11 +534,6 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
                 authoredFormDetailDynamoDBVersion
               })
             );
-          } else {
-            this.toastService.show({
-              type: 'warning',
-              text: 'Form Publishing Failed'
-            });
           }
 
           this.router.navigate(['/forms']);
