@@ -23,10 +23,8 @@ export class DonutChartComponent implements OnInit, OnChanges {
   @Output() chartClickEvent: EventEmitter<any> = new EventEmitter<any>();
   @Input() set chartConfig(chartConfig) {
     this.chartConfigurations = chartConfig;
-    if (chartConfig.customColors) {
+    if (this.hasCustomColorScheme && chartConfig.customColors) {
       this.colorsByStatus = chartConfig.customColors;
-    } else {
-      this.colorsByStatus = {};
     }
 
     if (chartConfig.renderChart) {
@@ -168,7 +166,10 @@ export class DonutChartComponent implements OnInit, OnChanges {
       this.chartOptions = newOptions;
       this.chartOptions.series.forEach((series) => {
         series.itemStyle = {
-          color: (param: any) => this.colorsByStatus[param.name]
+          color: (param: any) =>
+            this.colorsByStatus[param.name]
+              ? this.colorsByStatus[param.name]
+              : '#c8c8c8'
         };
       });
     }
@@ -220,8 +221,6 @@ export class DonutChartComponent implements OnInit, OnChanges {
       const currValue = changes.chartConfig.currentValue;
       if (currValue.customColors) {
         this.colorsByStatus = currValue.customColors;
-      } else {
-        this.colorsByStatus = {};
       }
     }
     let newOption: EChartsOption = {
@@ -257,9 +256,13 @@ export class DonutChartComponent implements OnInit, OnChanges {
     this.chartOptions = newOption;
     this.chartOptions.series.forEach((series) => {
       series.itemStyle = {
-        color: (param: any) => this.colorsByStatus[param.name]
+        color: (param: any) =>
+          this.colorsByStatus[param.name]
+            ? this.colorsByStatus[param.name]
+            : '#c8c8c8'
       };
     });
+
     let legendData = [];
     this.chartOptions.series.forEach((s) => {
       if (s.name !== 'COUNT') {

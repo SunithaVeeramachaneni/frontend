@@ -6,7 +6,9 @@ import {
   Input,
   ChangeDetectionStrategy,
   EventEmitter,
-  Output
+  Output,
+  SimpleChanges,
+  OnChanges
 } from '@angular/core';
 
 @Component({
@@ -15,18 +17,14 @@ import {
   styleUrls: ['./column-chart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ColumnChartComponent implements OnInit {
+export class ColumnChartComponent implements OnInit, OnChanges {
   @Input() hasCustomColorScheme;
   @Output() chartClickEvent: EventEmitter<any> = new EventEmitter<any>();
 
   @Input() set chartConfig(chartConfig) {
     this.chartConfigurations = chartConfig;
-    if (chartConfig.customColors) {
-      try {
-        this.colorsByStatus = JSON.parse(chartConfig.customColors);
-      } catch (err) {
-        this.colorsByStatus = {};
-      }
+    if (this.hasCustomColorScheme && chartConfig.customColors) {
+      this.colorsByStatus = chartConfig.customColors;
     }
     if (chartConfig.renderChart) {
       this.prepareChartDetails();
@@ -148,13 +146,7 @@ export class ColumnChartComponent implements OnInit {
 
   constructor(private datePipe: DatePipe) {}
 
-  ngOnInit(): void {
-    if (this.hasCustomColorScheme && Object.keys(this.colorsByStatus).length) {
-      this.chartOptions.series.itemStyle = {
-        color: (param: any) => this.colorsByStatus[param.name]
-      };
-    }
-  }
+  ngOnInit(): void {}
 
   onChartClickHandler(event) {
     this.chartClickEvent.emit(event);
@@ -216,5 +208,23 @@ export class ColumnChartComponent implements OnInit {
     newOptions.yAxis.data = Object.keys(sortedObject);
     newOptions.series.data = Object.values(sortedObject);
     this.chartOptions = newOptions;
+
+    this.chartOptions.series.forEach((series) => {
+      series.itemStyle = {
+        color: (param: any) =>
+          this.colorsByStatus[param.name]
+            ? this.colorsByStatus[param.name]
+            : '#c8c8c8'
+      };
+    });
   };
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (!changes.firstChange && changes.chartConfig) {
+      const currValue = changes.chartConfig.currentValue;
+      if (currValue.customColors) {
+        this.colorsByStatus = currValue.customColors;
+      }
+    }
+  }
 }

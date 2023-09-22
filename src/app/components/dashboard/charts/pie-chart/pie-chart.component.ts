@@ -24,10 +24,8 @@ export class PieChartComponent implements OnInit, OnChanges {
 
   @Input() set chartConfig(chartConfig) {
     this.chartConfigurations = chartConfig;
-    if (chartConfig.customColors) {
+    if (chartConfig.customColors && this.hasCustomColorScheme) {
       this.colorsByStatus = chartConfig.customColors;
-    } else {
-      this.colorsByStatus = {};
     }
 
     if (chartConfig.renderChart) {
@@ -156,7 +154,10 @@ export class PieChartComponent implements OnInit, OnChanges {
       this.chartOptions = newOptions;
       this.chartOptions.series.forEach((series) => {
         series.itemStyle = {
-          color: (param: any) => this.colorsByStatus[param.name]
+          color: (param: any) =>
+            this.colorsByStatus[param.name]
+              ? this.colorsByStatus[param.name]
+              : '#c8c8c8'
         };
       });
     }
@@ -201,8 +202,6 @@ export class PieChartComponent implements OnInit, OnChanges {
       const currValue = changes.chartConfig.currentValue;
       if (currValue.customColors) {
         this.colorsByStatus = currValue.customColors;
-      } else {
-        this.colorsByStatus = {};
       }
     }
     let newOption: EChartsOption = {
@@ -235,11 +234,12 @@ export class PieChartComponent implements OnInit, OnChanges {
     }
 
     this.chartOptions = newOption;
-
-
     this.chartOptions.series.forEach((series) => {
       series.itemStyle = {
-        color: (param: any) => this.colorsByStatus[param.name]
+        color: (param: any) =>
+          this.colorsByStatus[param.name]
+            ? this.colorsByStatus[param.name]
+            : '#c8c8c8'
       };
     });
   }
