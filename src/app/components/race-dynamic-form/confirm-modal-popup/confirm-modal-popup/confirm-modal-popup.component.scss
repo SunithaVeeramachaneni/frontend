@@ -18,6 +18,16 @@
     font-size: 110%;
   }
 
+  .notes {
+    color: $light-gray;
+  }
+
+  .noteText {
+    font-weight: bold;
+    font-size: 110%;
+    color: $black !important;
+  }
+
   .primary-btn {
     font-size: 110%;
     color: $white;
@@ -28,9 +38,19 @@
     margin-left: 10px;
   }
 
+  .task-btn {
+    background-color: $blue-main;
+    font-size: 110%;
+    color: $white;
+    border-radius: 4px;
+    float: right;
+    border: none;
+    margin-left: 10px;
+  }
+
   .secondary-btn {
     font-size: 110%;
-    color: $blue-head;
+    color: $blue-main;
     background: $white;
     border-radius: 4px;
     float: right;

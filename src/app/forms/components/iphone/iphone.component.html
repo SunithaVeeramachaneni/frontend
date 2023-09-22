@@ -2,8 +2,9 @@
   class="bg-iphone"
   *ngIf="{
     formMetadata: formMetadata$ | async,
-    pagesCount: pagesCount$ | async
-  }"
+    pagesCount: pagesCount$ | async,
+    moduleName: moduleName$ | async
+  } as props"
 >
   <span id="iphoneTime" class="current-time">
     {{ currentTime }}
@@ -17,9 +18,9 @@
     <p
       id="iphoneName"
       class="form-heading"
-      matTooltip="{{ formMetadata.name }}"
+      matTooltip="{{ props.formMetadata.name }}"
     >
-      {{ formMetadata.name }}
+      {{ props.formMetadata.name }}
     </p>
     <svg-icon
       id="iphoneScanAssetIcon"
@@ -140,8 +141,9 @@
       (click)="openHistoryBottomSheet()"
       [disabled]="!isHistoryVisible"
       translate="historyTxt"
+      *ngIf="props.moduleName === operatorRounds"
     ></button>
-    <hr />
+    <hr *ngIf="props.moduleName === operatorRounds" />
     <div
       id="iphoneSkipTask"
       class="bottom-list-item skip-task"
@@ -159,89 +161,66 @@
   </div>
 
   <div
-    class="history-bottom-sheet"
+    class="history-bottom-container"
     [ngClass]="isOpenHistoryBottomSheet ? '' : 'hide-history-bottom-sheet'"
   >
-    <div class="header">
-      <div></div>
-      <div
-        id="iphoneHistoryText"
-        class="title"
-        matLine
-        translate="historyTxt"
-      ></div>
-      <button
-        id="iphoneDoneBtn"
-        (click)="closeHistoryBottomSheet()"
-        class="done-btn"
-        translate="done"
-      ></button>
-    </div>
-    <hr />
-    <div class="main">
-      <div
-        id="iphoneLastFiveReading"
-        class="main-heading"
-        matLine
-        translate="lastFiveReadingsHeader"
-      ></div>
-      <div
-        class="main-question"
-        matLine
-        translate="whatIsPressureReadingHeader"
-      ></div>
-      <div class="history-chart-container">
-        <img
-          id="iphoneHistoryChart"
-          class="history-chart"
-          src="assets/Images/History_Preview_Graph.png"
-          alt="preview-history-graph"
-        />
+    <div class="history-bottom-sheet">
+      <div class="header">
+        <div></div>
+        <div
+          id="iphoneHistoryText"
+          class="title"
+          matLine
+          translate="historyTxt"
+        ></div>
+        <button
+          id="iphoneDoneBtn"
+          (click)="closeHistoryBottomSheet()"
+          class="done-btn"
+          translate="done"
+        ></button>
       </div>
-      <table class="history-table">
-        <tr>
-          <th
-            id="iphoneDateLabel"
-            class="table-heading"
-            translate="dateLabel"
-          ></th>
-          <th
-            id="iphoneReadingLabel"
-            class="table-heading"
-            translate="readingLabel"
-          ></th>
-          <th
-            id="iphoneOperator"
-            class="table-heading"
-            translate="operator"
-          ></th>
-        </tr>
-        <tr>
-          <td>--</td>
-          <td>--</td>
-          <td>--</td>
-        </tr>
-        <tr>
-          <td>--</td>
-          <td>--</td>
-          <td>--</td>
-        </tr>
-        <tr>
-          <td>--</td>
-          <td>--</td>
-          <td>--</td>
-        </tr>
-        <tr>
-          <td>--</td>
-          <td>--</td>
-          <td>--</td>
-        </tr>
-        <tr>
-          <td>--</td>
-          <td>--</td>
-          <td>--</td>
-        </tr>
-      </table>
+      <hr />
+      <div class="main">
+        <div id="iphoneLastFiveReading" class="main-heading" matLine>
+          {{
+            'lastFiveReadingsHeader'
+              | translate
+                : {
+                    count: historyCount | translate
+                  }
+          }}
+        </div>
+        <div
+          class="main-question"
+          matLine
+          translate="whatIsPressureReadingHeader"
+        ></div>
+        <div class="history-chart-container">
+          <img
+            id="iphoneHistoryChart"
+            class="history-chart"
+            src="assets/Images/History_Preview_Graph.png"
+            alt="preview-history-graph"
+          />
+        </div>
+        <table class="history-table">
+          <tr>
+            <th
+              *ngFor="let header of historyTableHeaders"
+              [id]="header.id"
+              class="table-heading"
+            >
+              {{ header.translate | translate }}
+            </th>
+          </tr>
+          <tr *ngFor="let x of historyRecords; let i = index">
+            <td>Date {{ i + 1 }}</td>
+            <td>Reading {{ i + 1 }}</td>
+            <td>Operator {{ i + 1 }}</td>
+          </tr>
+        </table>
+      </div>
     </div>
   </div>
 </div>

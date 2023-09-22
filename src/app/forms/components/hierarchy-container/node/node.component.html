@@ -1,7 +1,8 @@
 <div
   class="node-item"
   *ngIf="{
-    selectedNode: selectedNode$ | async
+    selectedNode: selectedNode$ | async,
+    checkboxStatus: checkboxStatus$ | async
   }"
 >
   <div
@@ -18,9 +19,18 @@
         icon="icon-six-dots"
         cdkDragHandle
         class="question-six-dots"
-        *ngIf="hierarchyMode !== 'asset_hierarchy'"
+        *ngIf="
+          hierarchyMode !== 'asset_hierarchy' && hierarchyMode !== 'scheduler'
+        "
       ></svg-icon>
       <div class="nodeContent" (click)="setSelectedNode(node)">
+        <mat-checkbox
+          class="checkbox"
+          *ngIf="hierarchyMode === 'scheduler'"
+          [checked]="allCheckedPages.status"
+          [indeterminate]="partiallyChecked.status"
+          (change)="toggleCheckBox($event.checked, node)"
+        ></mat-checkbox>
         <svg-icon
           id="nodeIcons"
           [icon]="
@@ -29,7 +39,17 @@
           class="node-icon"
         ></svg-icon>
         <div class="description">
-          <span id="nodeName" class="title">{{ node.name }}</span>
+          <div class="dis-flex title-status">
+            <span id="nodeName" class="title">{{ node.name }}</span>
+            <span
+              id="nodeStatus"
+              *ngIf="hierarchyMode === 'scheduler'"
+              class="nodeStatus"
+            >
+              <div *ngIf="isRevised" translate>taskLevel</div>
+              <div *ngIf="!isRevised" translate>header</div>
+            </span>
+          </div>
           <span id="nodeSubTitle" class="subTitle">
             {{
               'nodeSubTitle'
@@ -69,7 +89,7 @@
         </span>
       </div>
     </div>
-    <div class="right">
+    <div class="right" *ngIf="hierarchyMode !== 'scheduler'">
       <span
         id="nodeGetCount"
         class="nodeCount"

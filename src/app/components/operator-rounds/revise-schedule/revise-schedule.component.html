@@ -1,0 +1,347 @@
+<div
+  class="right"
+  [formGroup]="reviseScheduleConfigForm"
+  *ngIf="{
+    locationListToTask: locationListToTask$ | async,
+    revisedInfo: revisedInfo$ | async,
+    allPageCheckBoxStatus: allPageCheckBoxStatus$ | async
+  }"
+>
+  <h3 class="heading" translate>reviseSchedule</h3>
+
+  <div
+    class="main-scroll"
+    [ngClass]="{
+      'custom-main-scroll':
+        reviseSchedule?.scheduleType === scheduleConfigs.scheduleTypes[1]
+    }"
+  >
+    <div>
+      <div class="selected-locations">
+        <p
+          class="m-0 m-b-5 cursor-pointer"
+          (click)="showLocations = !showLocations"
+        >
+          <mat-icon *ngIf="showLocations === true">
+            keyboard_arrow_down
+          </mat-icon>
+          <mat-icon *ngIf="showLocations === false">
+            keyboard_arrow_right
+          </mat-icon>
+          <span class="selected-text" translate>selected</span>
+        </p>
+        <div
+          [ngClass]="{
+            'show-locations': showLocations === true,
+            'hide-locations': showLocations === false
+          }"
+        >
+          <ng-container *ngIf="showLocations">
+            <div
+              class="locations-list"
+              *ngFor="let location of locationIdToTaskcountArr"
+            >
+              <div class="locations" *ngIf="location[1] !== '0'">
+                <div>{{ nodeIdToNodeName[location[0]] }}</div>
+                <div>{{ location[1] }} <span translate>tasks</span></div>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+
+    <div class="subheadings">
+      <ng-container
+        *ngIf="
+          reviseScheduleConfigForm.get('scheduleType').value ===
+          scheduleConfigs.scheduleTypes[0]
+        "
+      >
+        <h3 translate>scheduleByFrequency</h3>
+
+        <div class="dis-flex schedule-frequency">
+          <p id="taskScheduleConfigurationRepeatEvery" class="f-w-400">
+            {{ 'repeatEvery' | translate }}
+          </p>
+          <mat-form-field
+            appearance="fill"
+            class="task-repeat-num m-l-20 m-r-10"
+          >
+            <input
+              type="number"
+              matInput
+              min="1"
+              formControlName="repeatDuration"
+              [placeholder]="placeholder"
+            />
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" class="task-repeat-day">
+            <mat-select
+              formControlName="repeatEvery"
+              [placeholder]="placeholder"
+            >
+              <mat-option
+                *ngFor="let repeatEvery of repeatTypes"
+                [value]="repeatEvery"
+              >
+                {{ repeatEvery }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <ng-container
+          *ngIf="
+            reviseScheduleConfigForm.get('repeatEvery').value ===
+            scheduleConfigs.repeatTypes[1]
+          "
+        >
+          <div id="scheduleConfigurationRepeatOn" class="row-title">
+            {{ 'repeatOn' | translate }}
+          </div>
+          <mat-button-toggle-group
+            name="daysOfWeek"
+            formControlName="daysOfWeek"
+            multiple
+          >
+            <mat-button-toggle
+              id="scheduleConfigurationDayOfWeek"
+              *ngFor="let dayOfWeek of daysOfWeek; let i = index"
+              [value]="i"
+              >{{ dayOfWeek.slice(0, 1).toUpperCase() }}</mat-button-toggle
+            >
+          </mat-button-toggle-group>
+        </ng-container>
+        <ng-container
+          *ngIf="
+            reviseScheduleConfigForm.get('repeatEvery').value ===
+            scheduleConfigs.repeatTypes[2]
+          "
+        >
+          <div id="scheduleConfigurationRepeatOnMonth" class="row-title">
+            {{ 'repeatOn' | translate }}
+          </div>
+          <div formArrayName="monthlyDaysOfWeek">
+            <div
+              *ngFor="let weekOfMonth of weeksOfMonth; let i = index"
+              class="weeks-of-month"
+            >
+              <div
+                id="scheduleConfigurationWeekOfMonth"
+                class="row-title"
+                class="m-r-10"
+                [ngClass]="{ 'm-r-6': i === 1 }"
+              >
+                {{ weekOfMonth }}
+              </div>
+              <div>
+                <mat-button-toggle-group
+                  [formControlName]="i"
+                  name="{{ i }}"
+                  multiple
+                >
+                  <mat-button-toggle
+                    id="scheduleConfigurationMonth"
+                    *ngFor="let dayOfWeek of daysOfWeek; let i = index"
+                    [value]="i"
+                  >
+                    {{ dayOfWeek.slice(0, 1).toUpperCase() }}
+                  </mat-button-toggle>
+                </mat-button-toggle-group>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+
+        <div class="dis-flex custom-form-field-white-color m-t-10">
+          <span class="f-w-400 startdate" translate>startDate</span>
+          <mat-form-field
+            appearance="outline"
+            class="width-40"
+            (click)="startDate.open()"
+          >
+            <input
+              matInput
+              formControlName="startDate"
+              [placeholder]="placeholder"
+              readonly
+            />
+            <input
+              matInput
+              [matDatepicker]="startDate"
+              formControlName="startDatePicker"
+              (dateChange)="updateDate($event, 'startDate')"
+              [min]="this.reviseScheduleConfig.startDatePicker"
+              [max]="this.reviseScheduleConfig.endDatePicker"
+              hidden
+            />
+            <mat-datepicker-toggle matIconSuffix [for]="startDate">
+            </mat-datepicker-toggle>
+            <mat-datepicker #startDate></mat-datepicker>
+          </mat-form-field>
+        </div>
+
+        <div class="dis-flex custom-form-field-white-color m-t-10">
+          <span class="f-w-400 enddate" translate>endDate</span>
+          <mat-form-field
+            appearance="outline"
+            class="width-40"
+            (click)="endDate.open()"
+          >
+            <input
+              matInput
+              formControlName="endDate"
+              [placeholder]="placeholder"
+              readonly
+            />
+            <input
+              matInput
+              [matDatepicker]="endDate"
+              formControlName="endDatePicker"
+              (dateChange)="updateDate($event, 'endDate')"
+              [min]="this.reviseScheduleConfig.startDatePicker"
+              [max]="this.reviseScheduleConfig.endDatePicker"
+              hidden
+            />
+            <mat-datepicker-toggle matIconSuffix [for]="endDate">
+            </mat-datepicker-toggle>
+            <mat-datepicker #endDate></mat-datepicker>
+          </mat-form-field>
+        </div>
+      </ng-container>
+
+      <ng-container
+        *ngIf="
+          reviseScheduleConfigForm.get('scheduleType').value ===
+          scheduleConfigs.scheduleTypes[1]
+        "
+      >
+        <h3 translate>scheduleByDate</h3>
+
+        <div class="by-date">
+          <mat-calendar
+            #calendar
+            [minDate]="minDate"
+            [maxDate]="maxDate"
+            [dateClass]="dateClass"
+            [dateFilter]="dateFilter"
+            (selectedChange)="updateScheduleByDates($event)"
+          ></mat-calendar>
+        </div>
+      </ng-container>
+    </div>
+
+    <div class="subheadings custom-form-field-white-color shifts">
+      <h3 translate>shifts</h3>
+      <mat-form-field class="width-100" appearance="outline">
+        <mat-select
+          #shiftSelect
+          [formControl]="shiftsSelected"
+          multiple
+          (selectionChange)="onShiftChange($event)"
+          [compareWith]="compareFn"
+          panelClass="task-level-shifts"
+          [disabled]="allShifts[0].null"
+          placeholder="Select"
+        >
+          <mat-select-trigger id="taskScheduleConfigInitialShift">
+            {{ selectedShiftData !== '' ? selectedShiftData : 'Select' }}
+            <span id="taskScheduleConfigShiftMore" *ngIf="allShifts.length > 3">
+              (+{{ allSlots.length - 3 }}
+              {{ allSlots.length === 4 ? 'more' : 'more' }})
+            </span>
+          </mat-select-trigger>
+          <mat-option [value]="shifts" *ngFor="let shifts of allShifts">
+            <div>
+              <span>{{ shifts?.name }}</span>
+              <p id="scheduleConfigShiftTime" class="shift-time">
+                {{ shifts?.startTime }} - {{ shifts?.endTime }}
+              </p>
+            </div>
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="subheadings">
+      <h3 translate>slots</h3>
+      <ng-container *ngIf="allSlots[0] && allSlots[0].null">
+        <div *ngFor="let slots of allSlots">
+          <span *ngFor="let slot of slots.payload">
+            <ng-container
+              *ngIf="slot.startTime === '00:00' && slot.endTime === '23:59'"
+            >
+              <span class="no-slot-times">
+                <mat-checkbox
+                  [checked]="slot.checked"
+                  [disabled]="true"
+                  class="m-b-20 width-95"
+                >
+                  {{ slot?.startTime }} - {{ slot?.endTime }}
+                </mat-checkbox>
+              </span>
+            </ng-container>
+            <ng-container
+              *ngIf="!(slot.startTime === '00:00' && slot.endTime === '23:59')"
+            >
+              <span class="slot-times">
+                <mat-checkbox
+                  [checked]="slot.checked"
+                  (change)="checkboxEventSlots($event.checked, slots, slot)"
+                  class="m-b-20"
+                >
+                  {{ slot?.startTime }} - {{ slot?.endTime }}
+                </mat-checkbox>
+              </span>
+            </ng-container>
+          </span>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="allSlots[0] && allSlots[0].id">
+        <div *ngFor="let slots of allSlots">
+          <p>{{ slots?.name }}</p>
+          <span class="slot-times" *ngFor="let slot of slots.payload">
+            <mat-checkbox
+              [checked]="slot.checked"
+              (change)="checkboxEventSlots($event.checked, slots, slot)"
+              class="m-b-20 width-41"
+            >
+              {{ slot?.startTime }} - {{ slot?.endTime }}
+            </mat-checkbox>
+          </span>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+  <div class="footer">
+    <button
+      id="taskScheduleCancelBtn"
+      mat-stroked-button
+      type="button"
+      class="cancel-btn"
+      translate="cancelBtn"
+      (click)="cancel()"
+    ></button>
+    <button
+      id="taskScheduleReviseBtn"
+      mat-raised-button
+      type="submit"
+      class="revise-btn"
+      translate="reviseBtn"
+      (click)="onRevise()"
+      [disabled]="
+        reviseScheduleConfigForm.pristine ||
+        reviseScheduleConfigForm.invalid ||
+        reviseScheduleConfigForm.get('daysOfWeek').value.length === 0 ||
+        getMontlyDaysOfWeekCount(
+          reviseScheduleConfigForm.get('monthlyDaysOfWeek').value
+        ) === 0 ||
+        (reviseScheduleConfigForm.get('scheduleType').value ===
+          scheduleConfigs.scheduleTypes[1] &&
+          taskLevelScheduleByDates.length === 0)
+      "
+    ></button>
+  </div>
+</div>

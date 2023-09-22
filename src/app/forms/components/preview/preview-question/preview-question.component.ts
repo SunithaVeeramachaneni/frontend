@@ -41,7 +41,7 @@ export class PreviewQuestionComponent implements OnInit {
 
   @Input() question: Question;
   @Input() moduleType: string;
-  @Output() isOpenBottomSheet= new EventEmitter();
+  @Output() isOpenBottomSheet = new EventEmitter();
 
   fieldTypes = new Map();
   fieldTypeRef = [
@@ -62,9 +62,7 @@ export class PreviewQuestionComponent implements OnInit {
     DropdownResponseComponent
   ];
 
-  constructor(
-    private componentFactoryResolver: ComponentFactoryResolver
-  ) {}
+  constructor(private componentFactoryResolver: ComponentFactoryResolver) {}
 
   ngOnInit(): void {
     this.initializeFieldTypeRef();
@@ -72,7 +70,11 @@ export class PreviewQuestionComponent implements OnInit {
   }
 
   openMoreMenu(): void {
-    this.isOpenBottomSheet.emit({isOpen: true, isHistoryVisible: this.question.enableHistory});
+    this.isOpenBottomSheet.emit({
+      isOpen: true,
+      isHistoryVisible: this.question.enableHistory,
+      historyCount: this.question.historyCount
+    });
   }
 
   private initializeFieldTypeRef(): void {

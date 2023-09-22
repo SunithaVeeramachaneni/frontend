@@ -583,10 +583,11 @@ export class RaceDynamicFormService {
     };
   }
 
-  fetchAllFormListNames$() {
-    return this.appService
-      ._getResp(environment.rdfApiUrl, 'forms/name')
-      .pipe(map((res) => res.items));
+  fetchAllFormListNames$(formName) {
+    return this.appService._getResp(
+      environment.rdfApiUrl,
+      `forms/copy/${formName}`
+    );
   }
 
   fetchAllFormsList$() {
@@ -783,6 +784,9 @@ export class RaceDynamicFormService {
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<InspectionDetailResponse> {
     const { fetchType, next, limit: gLimit, ...rawParams } = queryParams;
+    if (rawParams.assignedToDisplay) {
+      rawParams.assignedToDisplay = JSON.stringify(rawParams.assignedToDisplay);
+    }
 
     if (
       ['load', 'search'].includes(fetchType) ||

@@ -52,7 +52,8 @@ import { State, getFormMetadata } from 'src/app/forms/state';
 import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
 import {
   DEFAULT_PDF_BUILDER_CONFIG,
-  formConfigurationStatus
+  formConfigurationStatus,
+  raceDynamicForms
 } from 'src/app/app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
@@ -78,6 +79,8 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   tagsInput: ElementRef<HTMLInputElement>;
   @ViewChild('auto', { static: false }) matAutocomplete: MatAutocomplete;
   @ViewChild(MatAutocompleteTrigger) auto: MatAutocompleteTrigger;
+  @ViewChild('formFileUpload', { static: false })
+  formFileUpload: ElementRef;
   @Output() gotoNextStep = new EventEmitter<void>();
   @Input() data;
   @Input() formData;
@@ -181,7 +184,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
       isPublic: [false],
       isArchived: [false],
       formStatus: [formConfigurationStatus.draft],
-      formType: [formConfigurationStatus.standalone],
+      formType: [this.data?.formType],
       tags: [this.tags],
       plantId: ['', Validators.required],
       additionalDetails: this.fb.array([]),
@@ -216,8 +219,14 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
       .pipe(map((data) => (Array.isArray(data) ? data : [])))
       .subscribe((attachments) => {
         attachments?.forEach((att) => {
-          this.filteredMediaType.mediaType.push(att.attachment);
-          this.filteredMediaTypeIds.mediaIds.push(att.id);
+          this.filteredMediaType.mediaType = [
+            ...this.filteredMediaType.mediaType,
+            att.attachment
+          ];
+          this.filteredMediaTypeIds.mediaIds = [
+            ...this.filteredMediaTypeIds.mediaIds,
+            att.id
+          ];
         });
         this.cdrf.detectChanges();
       });
@@ -269,7 +278,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
         {
           name: this.data.formData.name,
           description: this.data.formData.description,
-          formType: this.data.formData.formType,
+          formType: this.data.formType,
           formStatus: this.data.formData.formStatus,
           instructions: this.data.formData.instructions
         },
@@ -424,6 +433,11 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     );
 
     if (this.headerDataForm.valid) {
+      this.store.dispatch(
+        BuilderConfigurationActions.updateModuleName({
+          moduleName: raceDynamicForms
+        })
+      );
       const userName = this.loginService.getLoggedInUserName();
       if (this.formData.formExists === false) {
         this.store.dispatch(
@@ -633,6 +647,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
         }
       };
     }
+    this.clearAttachmentUpload();
   };
 
   async resizeImage(base64result: string): Promise<string> {
@@ -993,5 +1008,8 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     this.rdfService.pdfMapping$.next([]);
     this.destroy$.next();
     this.destroy$.complete();
+  }
+  clearAttachmentUpload() {
+    this.formFileUpload.nativeElement.value = '';
   }
 }

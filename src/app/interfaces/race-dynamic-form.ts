@@ -156,4 +156,6 @@ export interface InspectionDetail extends Form {
   previouslyAssignedTo: string;
   inspectionDBVersion: number;
   inspectionDetailDBVersion: number;
+  assignmentType?: string;
+  userGroupsIds?: string;
 }

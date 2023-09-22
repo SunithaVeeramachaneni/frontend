@@ -272,7 +272,7 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
       this.sliderOpenState = state;
       this.cdrf.detectChanges();
       if (this.question && typeof this.question.value !== 'string') {
-        this.sliderOptions = { ...this.question.value };
+        this.sliderOptionsForm.patchValue(this.question.value);
       }
     });
 
@@ -447,10 +447,6 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
     this.tags = [...this.tags, event.option.viewValue];
     this.tagsInput.nativeElement.value = '';
     this.tagsCtrl.patchValue('');
-    this.additionalDetailsForm.patchValue({
-      ...this.additionalDetailsForm.value,
-      tags: this.tags
-    });
   }
 
   get responses(): FormArray {
@@ -512,32 +508,49 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
     this.formService.setMultiChoiceOpenState({ isOpen: false, response: {} });
   };
 
-  applySliderOptions(values) {
-    if (values.min > values.max) {
+  applySliderOptions() {
+    if (this.sliderOptionsForm.value.min >= this.sliderOptionsForm.value.max) {
       this.toast.show({
-        text: 'The upper limit cannot be lower than the lower limit',
+        text: 'The upper limit should be greater than lower limit',
         type: 'warning'
       });
       return;
     }
-    if (values.increment <= 0) {
+    if (this.sliderOptionsForm.value.increment <= 0) {
       this.toast.show({
         text: 'Increment value should be greater than 0',
         type: 'warning'
       });
       return;
     }
-    if ((values.max - values.min) % values.increment !== 0) {
+    if (
+      this.sliderOptionsForm.value.max - this.sliderOptionsForm.value.min <
+      this.sliderOptionsForm.value.increment
+    ) {
+      this.toast.show({
+        text: 'Increment value cannot be greater than range difference',
+        type: 'warning'
+      });
+      return;
+    }
+    if (
+      (this.sliderOptionsForm.value.max - this.sliderOptionsForm.value.min) %
+        this.sliderOptionsForm.value.increment !==
+      0
+    ) {
       this.toast.show({
         text: 'Increment value should divide range difference',
         type: 'warning'
       });
       return;
     }
-    if (values.value < values.min) values.value = values.min;
-    else if (values.value > values.max) values.value = values.max;
-    this.question = { ...this.question, value: values };
-    this.setSliderValues.emit(values);
+    if (this.sliderOptionsForm.value.value < this.sliderOptionsForm.value.min)
+      this.sliderOptionsForm.value.value = this.sliderOptionsForm.value.min;
+    else if (
+      this.sliderOptionsForm.value.value > this.sliderOptionsForm.value.max
+    )
+      this.sliderOptionsForm.value.value = this.sliderOptionsForm.value.max;
+    this.setSliderValues.emit(this.sliderOptionsForm.value);
     this.formService.setsliderOpenState({
       isOpen: false,
       questionId: '',
@@ -563,6 +576,9 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
 
   cancelAdditionalDetails = () => {
     this.tagsCtrl.patchValue('');
+    this.tags = this.tags.filter((tag) => {
+      return this.additionalDetailsForm.value.tags.includes(tag);
+    });
     this.formService.setAdditionalDetailsOpenState({
       isOpen: false,
       questionId: '',
@@ -574,11 +590,17 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
     const attributesArray = this.additionalDetailsForm.get(
       'attributes'
     ) as FormArray;
-    const updatedattributes = attributesArray.value.map((attributesinfo) => ({
-      FIELDLABEL: attributesinfo.label,
-      DEFAULTVALUE: attributesinfo.value,
-      UIFIELDTYPE: 'LF'
-    }));
+    const updatedattributes = attributesArray.value
+      .filter((additionalValueData) => {
+        return !additionalValueData.label && !additionalValueData.value
+          ? false
+          : true;
+      })
+      .map((attributesinfo) => ({
+        FIELDLABEL: attributesinfo.label,
+        DEFAULTVALUE: attributesinfo.value,
+        UIFIELDTYPE: 'LF'
+      }));
     const newTags = [];
     this.tags.forEach((selectedTag) => {
       if (this.originalTags.indexOf(selectedTag) < 0) {
@@ -594,10 +616,10 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
       this.rdfService.createTags$(dataSet).subscribe((response) => {
         // do nothing
       });
-      this.additionalDetailsForm.patchValue({
-        tags: this.tags
-      });
     }
+    this.additionalDetailsForm.patchValue({
+      tags: this.tags
+    });
     this.setAdditionalDetails.emit({
       ...this.additionalDetailsForm.getRawValue(),
       attributes: updatedattributes

@@ -81,6 +81,12 @@ import { RoundPlanModalComponent } from './round-plan-modal/round-plan-modal.com
 import { DashboardModule } from '../dashboard/dashboard.module';
 import { OperatorRoundsDashboardComponent } from './operator-rounds-dashboard/operator-rounds-dashboard.component';
 import { EmailDialogComponent } from './email-dialog/email-dialog.component';
+import { SchedulerModalComponent } from './scheduler-modal/scheduler-modal.component';
+import { TaskLevelSchedulerComponent } from './task-level-scheduler/task-level-scheduler.component';
+import { ReviseScheduleComponent } from './revise-schedule/revise-schedule.component';
+import { TaskLevelTaskComponentsComponent } from './task-level-task-components/task-level-task-components.component';
+import { AlertModalComponent } from './scheduler-modal/alert-modal/alert-modal.component';
+
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/operator-rounds/', '.json');
 
@@ -106,7 +112,12 @@ export const customTranslateLoader = (http: HttpClient) =>
     RoundObservationsComponent,
     RoundPlanModalComponent,
     RoundPlanEditViewComponent,
-    EmailDialogComponent
+    EmailDialogComponent,
+    SchedulerModalComponent,
+    TaskLevelSchedulerComponent,
+    TaskLevelTaskComponentsComponent,
+    ReviseScheduleComponent,
+    AlertModalComponent
   ],
   imports: [
     FormsModule,
