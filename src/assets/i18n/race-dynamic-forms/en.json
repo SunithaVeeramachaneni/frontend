@@ -395,5 +395,6 @@
   "addMoreUpto5": "Add More ( Select Upto 5 )",
   "userGroup": "User Group",
   "selectUser": "Select User",
-  "selectUserGroup": "Select User Group"
+  "selectUserGroup": "Select User Group",
+  "submittedDate": "Submitted Date"
 }

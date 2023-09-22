@@ -162,22 +162,44 @@
               class="name-heading"
               *ngIf="scheduleConfiguration?.scheduleType !== 'byDate'"
             >
-              <div>
-                <p id="formDetailDueDate" class="color-gray">
-                  {{ 'dueDate' | translate }}
-                </p>
-              </div>
-              <div class="flex-custom">
-                <h4 id="formDetailFormatdate" class="create-name">
-                  {{
-                    formatDate(
-                      selectedForm?.dueDate,
-                      selectedForm?.plantId,
-                      dateFormat
-                    )
-                  }}
-                </h4>
-              </div>
+              <ng-container
+                *ngIf="selectedForm?.status === 'submitted'; else dueDate"
+              >
+                <div>
+                  <p id="formDetailSubmittedDate" class="color-gray">
+                    {{ 'submittedDate' | translate }}
+                  </p>
+                </div>
+                <div class="flex-custom">
+                  <h4 id="formDetailFormatdate" class="create-name">
+                    {{
+                      formatDate(
+                        selectedForm?.submittedAt,
+                        selectedForm?.plantId,
+                        dateFormat
+                      )
+                    }}
+                  </h4>
+                </div>
+              </ng-container>
+              <ng-template #dueDate>
+                <div>
+                  <p id="formDetailDueDate" class="color-gray">
+                    {{ 'dueDate' | translate }}
+                  </p>
+                </div>
+                <div class="flex-custom">
+                  <h4 id="formDetailFormatdate" class="create-name">
+                    {{
+                      formatDate(
+                        selectedForm?.dueDate,
+                        selectedForm?.plantId,
+                        dateFormat
+                      )
+                    }}
+                  </h4>
+                </div>
+              </ng-template>
             </div>
             <div class="name-heading">
               <div>
@@ -475,18 +497,39 @@
           </div>
 
           <div class="name-heading">
-            <div>
-              <p id="formDetailFormDueDate" class="color-gray">
-                {{ 'dueDate' | translate }}
-              </p>
-            </div>
-            <div class="flex-custom">
-              <h4 id="formDetailSelectedFormDueDate" class="create-name">
-                {{
-                  formatDateTime(selectedForm?.dueDate, selectedForm.plantId)
-                }}
-              </h4>
-            </div>
+            <ng-container
+              *ngIf="selectedForm?.status === 'submitted'; else dueDate"
+            >
+              <div>
+                <p id="formDetailFormDueDate" class="color-gray">
+                  {{ 'submittedDate' | translate }}
+                </p>
+              </div>
+              <div class="flex-custom">
+                <h4 id="roundPlanSubmittedDate" class="create-name">
+                  {{
+                    formatDateTime(
+                      selectedForm?.submittedAt,
+                      selectedForm.plantId
+                    )
+                  }}
+                </h4>
+              </div>
+            </ng-container>
+            <ng-template #dueDate>
+              <div>
+                <p id="formDetailFormDueDate" class="color-gray">
+                  {{ 'dueDate' | translate }}
+                </p>
+              </div>
+              <div class="flex-custom">
+                <h4 id="formDetailSelectedFormDueDate" class="create-name">
+                  {{
+                    formatDateTime(selectedForm?.dueDate, selectedForm.plantId)
+                  }}
+                </h4>
+              </div>
+            </ng-template>
           </div>
           <div class="name-heading">
             <div>

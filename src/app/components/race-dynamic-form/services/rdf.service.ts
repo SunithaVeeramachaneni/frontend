@@ -830,6 +830,7 @@ export class RaceDynamicFormService {
         dueDateDisplay: p.dueDate
           ? format(new Date(p.dueDate), dateFormat2)
           : '',
+        submittedAt: p.submittedAt ? new Date(p.submittedAt) : '',
         tasksCompleted: `${p.totalTasksCompleted}/${p.totalTasks},${
           p.totalTasks > 0
             ? Math.round(
