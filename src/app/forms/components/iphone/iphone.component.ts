@@ -11,8 +11,10 @@ import { FormMetadata } from 'src/app/interfaces';
 import {
   getFormMetadata,
   getPagesCount,
-  State
+  State,
+  getModuleName
 } from '../../state/builder/builder-state.selectors';
+import { operatorRounds } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-iphone',
@@ -34,6 +36,15 @@ export class IphoneComponent implements OnInit {
   isOpenBottomSheet = false;
   isHistoryVisible = false;
   isOpenHistoryBottomSheet = false;
+  historyCount = '5';
+  historyRecords = Array(5).fill(0);
+  historyTableHeaders = [
+    { id: 'iphoneDateLabel', translate: 'dateLabel' },
+    { id: 'iphoneReadingLabel', translate: 'readingLabel' },
+    { id: 'iphoneOperator', translate: 'operator' }
+  ];
+  moduleName$: Observable<string>;
+  operatorRounds: string = operatorRounds;
 
   constructor(private store: Store<State>) {}
 
@@ -58,6 +69,8 @@ export class IphoneComponent implements OnInit {
       })
     );
     this.getTime();
+
+    this.moduleName$ = this.store.select(getModuleName);
   }
 
   getTime() {
@@ -80,6 +93,7 @@ export class IphoneComponent implements OnInit {
   openBottomSheet(isOpenBottomSheet) {
     this.isOpenBottomSheet = isOpenBottomSheet.isOpen;
     this.isHistoryVisible = isOpenBottomSheet.isHistoryVisible;
+    this.historyCount = isOpenBottomSheet?.historyCount?.toString();
   }
 
   closeBottomSheet() {

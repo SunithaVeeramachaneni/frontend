@@ -1,0 +1,233 @@
+<div class="task-level-tasks">
+  <div class="task-title-div" *ngIf="selectedNode.length !== 0">
+    <span class="task-title">Tasks: {{ selectedNode.name }}</span>
+    <span class="task-title float-right">Frequency</span>
+  </div>
+  <div *ngFor="let page of selectedPage">
+    <div class="pages">
+      <div class="page-header">
+        <mat-icon
+          id="pageExpandIcon"
+          (click)="toggleIsOpenStatePage(page)"
+          class="page-arrow"
+          *ngIf="page.isOpen"
+        >
+          expand_more
+        </mat-icon>
+        <mat-icon
+          id="pageRightIcon"
+          (click)="toggleIsOpenStatePage(page)"
+          class="page-arrow"
+          *ngIf="!page.isOpen"
+        >
+          chevron_right
+        </mat-icon>
+
+        <mat-checkbox
+          class="page-checkbox"
+          [checked]="page.complete"
+          [indeterminate]="page.partiallyChecked"
+          (change)="toggleAllSectionCheckbox($event.checked, page)"
+        ></mat-checkbox>
+
+        <span class="form_page_name_input">{{ page.name }} </span>
+      </div>
+      <div class="section-content" *ngIf="page.isOpen">
+        <div *ngFor="let section of page.sections">
+          <div class="section dis-flex">
+            <div class="width-100 section-margin">
+              <div class="section-header">
+                <mat-icon
+                  id="sectionExpandMore"
+                  (click)="toggleIsOpenStateSection(section)"
+                  class="section-arrow"
+                  *ngIf="section.isOpen"
+                >
+                  expand_more
+                </mat-icon>
+                <mat-icon
+                  id="sectionArrow"
+                  (click)="toggleIsOpenStateSection(section)"
+                  class="section-arrow"
+                  *ngIf="!section.isOpen"
+                >
+                  chevron_right
+                </mat-icon>
+                <mat-checkbox
+                  class="section-checkbox"
+                  [checked]="section.complete"
+                  [indeterminate]="section.partiallyChecked"
+                  (change)="
+                    toggleAllSectionQuestion($event.checked, section, page)
+                  "
+                ></mat-checkbox>
+
+                <span class="form_section_name_input">{{ section.name }}</span>
+              </div>
+              <div class="questions-content" *ngIf="section.isOpen">
+                <div
+                  *ngFor="let question of questionToSection.get(section['id'])"
+                >
+                  <div class="questions">
+                    <div
+                      class="dis-flex questions-div revised-hover-container"
+                      [ngClass]="{ highlight: question.complete }"
+                    >
+                      <div class="width-70">
+                        <div class="width-100" class="dis-flex">
+                          <mat-checkbox
+                            class="question-checkbox questions"
+                            [checked]="question.complete"
+                            (change)="
+                              toggleAllQuestion(
+                                $event.checked,
+                                question,
+                                section,
+                                page
+                              )
+                            "
+                          ></mat-checkbox>
+                          <div class="task-question">{{ question.name }}</div>
+                        </div>
+                      </div>
+                      <div
+                        [ngClass]="{
+                          'revised-content': isThirdPanelOpen === false,
+                          'revised-content-width': isThirdPanelOpen === true
+                        }"
+                      >
+                        <div
+                          *ngIf="!displayTaskLevelConfig.get(question.id)"
+                          class="status-div"
+                        >
+                          <p class="status" translate>header</p>
+                        </div>
+                        <div
+                          *ngIf="displayTaskLevelConfig.get(question.id)"
+                          class="revised-state revised-hover-me status-div"
+                          (mouseenter)="
+                            getData(displayTaskLevelConfig.get(question.id))
+                          "
+                        >
+                          <p class="status" translate>revised</p>
+
+                          <div class="show-revised-content">
+                            <p
+                              *ngIf="
+                                revisedQuestionData?.scheduleType ===
+                                'byFrequency'
+                              "
+                            >
+                              <span class="revised-title" translate>
+                                Revised Frequency:
+                              </span>
+                              <span class="revised-value">
+                                Every {{ revisedQuestionData?.repeatDuration }}
+                                {{ revisedQuestionData?.repeatEvery }}
+                              </span>
+                              <span
+                                *ngIf="
+                                  revisedQuestionData?.repeatEvery === 'week'
+                                "
+                              >
+                                <span
+                                  *ngFor="
+                                    let dayName of extractedDaysOfWeek;
+                                    let i = index
+                                  "
+                                >
+                                  {{ dayName }}
+                                  <span
+                                    *ngIf="i !== extractedDaysOfWeek.length - 1"
+                                  >
+                                    ,
+                                  </span></span
+                                ></span
+                              >
+                            </p>
+                            <p
+                              *ngIf="
+                                revisedQuestionData?.scheduleType === 'byDate'
+                              "
+                            >
+                              <span class="revised-title" translate>
+                                Revised Dates:
+                              </span>
+                              <span class="revised-value" translate>
+                                Custom Dates
+                              </span>
+                            </p>
+                            <p>
+                              <span class="revised-title" translate
+                                >Shifts:
+                              </span>
+                              <span
+                                class="revised-value"
+                                *ngFor="
+                                  let shiftGroup of shiftArray;
+                                  let i = index
+                                "
+                              >
+                                {{ getNameById(shiftGroup.id) }}
+                                <span *ngIf="i !== shiftArray.length - 1"
+                                  >,</span
+                                >
+                              </span>
+                            </p>
+                            <div class="dis-flex m-l-10">
+                              <span class="revised-title" translate
+                                >Slots:
+                              </span>
+                              <div
+                                class="revised-slots m-r-10"
+                                *ngFor="let shiftGroup of shiftArray"
+                              >
+                                <span
+                                  class="revised-value"
+                                  *ngFor="
+                                    let shift of shiftGroup?.shifts;
+                                    let i = index
+                                  "
+                                >
+                                  {{ shift.startTime }} - {{ shift.endTime }}
+                                  <span
+                                    *ngIf="i !== shiftGroup?.shifts.length - 1"
+                                  >
+                                    ,
+                                  </span>
+                                </span>
+                              </div>
+                            </div>
+                            <div class="dis-flex m-l-10">
+                              <span class="revised-title" translate
+                                >Starts:
+                              </span>
+                              <div class="revised-slots">
+                                <p class="revised-value">
+                                  {{ revisedQuestionData?.startDate }}
+                                </p>
+                              </div>
+                              &nbsp;
+                              <span class="revised-title" translate
+                                >Ends:
+                              </span>
+                              <div class="revised-slots">
+                                <p class="revised-value">
+                                  {{ revisedQuestionData?.endDate }}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

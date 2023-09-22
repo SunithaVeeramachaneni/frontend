@@ -73,6 +73,7 @@ export class ChartReportDialog implements OnInit {
   nextToken = '';
   reportColumns: any[] = [];
   downloadInProgress = false;
+  ghostLoading = new Array(11).fill(0).map((v, i) => i);
 
   constructor(
     private dialogRef: MatDialogRef<any>,

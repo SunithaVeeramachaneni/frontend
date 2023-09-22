@@ -189,9 +189,7 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
     // if plant is selected already
     if (plantsID) {
       this.allParentsData = this.parentInformation.filter(
-        (parent) =>
-          parent?.plantsID === plantsID &&
-          (parentType === 'asset' ? parent?.parentType === parentType : true)
+        (parent) => parent?.plantsID === plantsID
       );
       this.allParentsData$.next(this.allParentsData);
     }

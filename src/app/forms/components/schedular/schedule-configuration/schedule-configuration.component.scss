@@ -1,13 +1,7 @@
 @import '../../../../../scss/colors.scss';
 
 :host {
-  position: fixed;
-  bottom: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
   background-color: $white;
-  border-left: 1px solid $border-color;
 }
 
 #scheduler-customizer {
@@ -369,6 +363,14 @@
     width: 50%;
     margin-left: 20%;
   }
+
+  ::ng-deep
+    .mat-form-field-appearance-outline.mat-form-field-disabled
+    .mat-form-field-outline {
+    color: $gray;
+    background: $gray;
+    border-radius: 7px;
+  }
 }
 
 #horizontal-row {
@@ -379,10 +381,15 @@
   float: right;
 }
 
-::ng-deep .assign-menu + * .mat-menu-panel {
+::ng-deep ::ng-deep .assign-menu + * .mat-menu-panel {
   position: relative;
   top: 60px;
 }
+
+::ng-deep .mat-menu-panel {
+  max-width: 340px !important;
+}
+
 ::ng-deep .mat-card > :last-child:not(.mat-card-footer),
 .mat-card-content > :last-child:not(.mat-card-footer) {
   margin-bottom: 70px;

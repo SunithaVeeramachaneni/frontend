@@ -38,6 +38,7 @@ export class DraftsComponent implements OnInit {
   readonly routingUrls = routingUrls;
   readonly permissions = permissions;
   routeWithSearch: string;
+  ghostLoading = new Array(16).fill(0).map((v, i) => i);
 
   @ViewChild('filteredResults', { static: false }) set drafts(
     drafts: DummyComponent

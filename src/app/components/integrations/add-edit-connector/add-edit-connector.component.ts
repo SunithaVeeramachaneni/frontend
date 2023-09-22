@@ -53,6 +53,14 @@ export class AddEditConnectorComponent implements OnInit {
 
   isConnectionTested = false;
   isConnectionSuccessful = false;
+  dialectTypes: any[] = [
+    {
+      value: '',
+      type: 'Select'
+    },
+    { value: 'mssql', type: 'MSSQL' },
+    { value: 'mysql', type: 'MySQL' }
+  ];
   readonly permissions = permissions;
 
   connectionForm = this.fb.group({

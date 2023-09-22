@@ -16,7 +16,7 @@ import { ReportConfigurationComponent } from '../dashboard/report-configuration/
 const routes: Routes = [
   {
     path: '',
-    component: OperatorRoundsDashboardComponent,
+    component: OperatorRoundsContainerComponent,
     canActivate: [AuthGuard],
     data: {
       breadcrumb: { label: 'Operator Rounds' },

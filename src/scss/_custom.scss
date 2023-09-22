@@ -73,6 +73,10 @@
   margin-right: 5px !important;
 }
 
+.m-r-6 {
+  margin-right: 6px !important;
+}
+
 .m-r-7 {
   margin-right: 7px;
 }
@@ -269,6 +273,10 @@
   margin-bottom: -10px;
 }
 
+.m-b-12 {
+  margin-bottom: 12px;
+}
+
 .m-b-35 {
   margin-bottom: -35px;
 }
@@ -313,6 +321,10 @@
   width: 40%;
 }
 
+.width-41 {
+  width: 41%;
+}
+
 .width-45 {
   width: 45%;
 }
@@ -355,6 +367,10 @@
 
 .width-100 {
   width: 100%;
+}
+
+.h-48 {
+  height: 48px;
 }
 
 .h-100 {
@@ -403,9 +419,9 @@ button {
   position: relative;
 }
 
-.cdk-overlay-container {
-  z-index: 10000 !important;
-}
+// .cdk-overlay-container {
+//   z-index: 10000 !important;
+// }
 
 .custom-card {
   box-shadow: 0px 0px 0px;
@@ -460,6 +476,10 @@ a {
 
 .f-s-80 {
   font-size: 80%;
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }
 
 @media screen and (min-width: 769px) {

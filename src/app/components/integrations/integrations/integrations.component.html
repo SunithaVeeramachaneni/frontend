@@ -1,35 +1,60 @@
 <div class="integrations-container">
   <div class="w-100 connector-step">
     <div class="connectors-container">
-      <div class="w-394 connector-left" *ngIf="connectors$ | async as connectors; else loadingConnectors">
+      <div
+        class="w-394 connector-left"
+        *ngIf="connectors$ | async as connectors; else loadingConnectors"
+      >
         <div class="connector-head-left">
           <span class="form-name-description p-10" translate="connectionsTxt">
           </span>
           <div class="test-connect" *ngIf="connectors.length">
-            <button mat-icon-button color="primary" class="next-btn test-connection-btn" (click)="addConnection()"
-              *appCheckUserHasPermission="[permissions.createConnection]">
+            <button
+              mat-icon-button
+              color="primary"
+              class="next-btn test-connection-btn"
+              (click)="addConnection()"
+              *appCheckUserHasPermission="[permissions.createConnection]"
+            >
               <mat-icon>add</mat-icon>
             </button>
           </div>
         </div>
         <div class="emptyContainer" *ngIf="!connectors.length">
-          <p class="text-align-center" translate="emptyConnectionsListTxt">
-          </p>
-          <button mat-raised-button color="primary" class="next-btn test-connection-btn" (click)="addConnection()"
-            *appCheckUserHasPermission="[permissions.createConnection]" translate="addConnectionBtn">
-          </button>
+          <p class="text-align-center" translate="emptyConnectionsListTxt"></p>
+          <button
+            mat-raised-button
+            color="primary"
+            class="next-btn test-connection-btn"
+            (click)="addConnection()"
+            *appCheckUserHasPermission="[permissions.createConnection]"
+            translate="addConnection"
+          ></button>
         </div>
         <div class="dis-flex flex-wrap connector-container">
-          <div *ngFor="let connector of connectors" class="connector-formtype-style w-100 m-l-0" [ngClass]="{
+          <div
+            *ngFor="let connector of connectors"
+            class="connector-formtype-style w-100 m-l-0"
+            [ngClass]="{
               'inactive-connector': connector.isActive,
               'active-connector': connector.isActive,
-              'selected-connector':selectedConnector.id === connector.id
-            }" (click)="connectorChanged(connector)">
+              'selected-connector': selectedConnector.id === connector.id
+            }"
+            (click)="connectorChanged(connector)"
+          >
             <div class="radio-label">
-              <svg-icon icon="icon-{{connector.connectorId}}" class="connector-icon"></svg-icon>
+              <svg-icon
+                icon="icon-{{ connector.connectorId }}"
+                class="connector-icon"
+              ></svg-icon>
               <div>
-                <span class="radio-btn-text">{{ connector.connectorName }}
-                  <svg-icon icon="icon-verified" class="verify-icon" *ngIf="connector.isVerified"></svg-icon>
+                <span class="radio-btn-text"
+                  >{{ connector.connectorName }}
+                  <svg-icon
+                    icon="icon-verified"
+                    class="verify-icon"
+                    *ngIf="connector.isVerified"
+                  ></svg-icon>
                 </span>
                 <p class="connector-radio-sub-text">
                   {{ connector.description }}
@@ -37,15 +62,33 @@
               </div>
             </div>
             <div>
-              <button mat-icon-button [matMenuTriggerFor]="menu" class="more-roles" aria-label="More Options">
+              <button
+                mat-icon-button
+                [matMenuTriggerFor]="menu"
+                class="more-roles"
+                aria-label="More Options"
+              >
                 <mat-icon id="rolesMoreIcon">more_horiz</mat-icon>
               </button>
               <mat-menu #menu="matMenu">
-                <button mat-menu-item (click)="viewConnection(connector)" translate="viewDetail"></button>
-                <button mat-menu-item *appCheckUserHasPermission="[permissions.updateConnection]"
-                  (click)="updateConnection(connector)" translate="editConnection"></button>
-                <button mat-menu-item *appCheckUserHasPermission="[permissions.deleteConnection]"
-                  (click)="deleteConnection(connector.id)" class="color-red" translate="deleteConnection"></button>
+                <button
+                  mat-menu-item
+                  (click)="viewConnection(connector)"
+                  translate="viewDetail"
+                ></button>
+                <button
+                  mat-menu-item
+                  *appCheckUserHasPermission="[permissions.updateConnection]"
+                  (click)="updateConnection(connector)"
+                  translate="editConnection"
+                ></button>
+                <button
+                  mat-menu-item
+                  *appCheckUserHasPermission="[permissions.deleteConnection]"
+                  (click)="deleteConnection(connector.id)"
+                  class="color-red"
+                  translate="deleteConnection"
+                ></button>
               </mat-menu>
             </div>
           </div>
@@ -53,20 +96,19 @@
       </div>
       <ng-template #loadingConnectors>
         <div class="p-15">
-          <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-          </ngx-shimmer-loading>
-          <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-          </ngx-shimmer-loading>
-          <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-          </ngx-shimmer-loading>
-          <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-          </ngx-shimmer-loading>
-          <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-          </ngx-shimmer-loading>
+          <div *ngFor="let number of ghostLoading">
+            <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+            </ngx-shimmer-loading>
+          </div>
         </div>
       </ng-template>
-      <div *ngIf="selectedConnector && selectedConnector.id" class="w-85 connectorMeta">
-        <app-connection-integrations [connector]="selectedConnector"></app-connection-integrations>
+      <div
+        *ngIf="selectedConnector && selectedConnector.id"
+        class="w-85 connectorMeta"
+      >
+        <app-connection-integrations
+          [connector]="selectedConnector"
+        ></app-connection-integrations>
       </div>
     </div>
   </div>

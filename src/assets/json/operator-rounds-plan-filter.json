@@ -9,8 +9,8 @@
   {
     "label": "Assigned To",
     "items": [],
-    "column": "assignedTo",
-    "type": "multiple",
+    "column": "assignedToDisplay",
+    "type": "assignmentType",
     "value": ""
   },
   {

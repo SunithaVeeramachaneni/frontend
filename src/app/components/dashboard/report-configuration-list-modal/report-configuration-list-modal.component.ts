@@ -21,6 +21,7 @@ export class ReportConfigurationListModalComponent implements OnInit {
   searchReport$: Observable<string>;
   selectedIndex = 0;
   filteredReportCategories$: Observable<ReportCategory[]>;
+  ghostLoading = new Array(3).fill(0).map((v, i) => i);
 
   constructor(private reportService: ReportService, private router: Router) {}
 

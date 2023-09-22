@@ -8,7 +8,9 @@ import {
   OnChanges,
   SimpleChanges,
   OnDestroy,
-  Inject
+  Inject,
+  Output,
+  EventEmitter
 } from '@angular/core';
 import {
   FormArray,
@@ -37,15 +39,21 @@ import {
   isBefore,
   weeksToDays
 } from 'date-fns';
-import { takeUntil, tap } from 'rxjs/operators';
+import {
+  distinctUntilChanged,
+  pairwise,
+  startWith,
+  takeUntil,
+  tap
+} from 'rxjs/operators';
 import { RoundPlanScheduleConfigurationService } from 'src/app/components/operator-rounds/services/round-plan-schedule-configuration.service';
 import {
   AssigneeDetails,
+  ErrorInfo,
   FormScheduleConfiguration,
   RoundPlanScheduleConfiguration,
   RoundPlanScheduleConfigurationObj,
   ScheduleByDate,
-  SelectedAssignee,
   ValidationError
 } from 'src/app/interfaces';
 import { ScheduleSuccessModalComponent } from '../schedule-success-modal/schedule-success-modal.component';
@@ -55,7 +63,7 @@ import {
   scheduleConfigs,
   shiftDefaultPayload
 } from './schedule-configuration.constants';
-import { Subject, Subscription } from 'rxjs';
+import { BehaviorSubject, Subject, Subscription } from 'rxjs';
 import { PlantService } from 'src/app/components/master-configurations/plants/services/plant.service';
 import {
   getDayTz,
@@ -70,6 +78,9 @@ import {
   hourFormat
 } from 'src/app/app.constants';
 import { ScheduleConfigurationService } from 'src/app/forms/services/schedule.service';
+import { isEqual } from 'lodash-es';
+import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
+import { ErrorHandlerService } from 'src/app/shared/error-handler/error-handler.service';
 
 export interface ScheduleConfigEvent {
   slideInOut: 'out' | 'in';
@@ -108,6 +119,9 @@ export class ScheduleConfigurationComponent
 {
   @ViewChild('menuTrigger', { static: false }) menuTrigger: MatMenuTrigger;
   @ViewChild(MatCalendar) calendar: MatCalendar<Date>;
+  @Output() gotoNextStep = new EventEmitter<void>();
+  @Output() payloadEmitter = new EventEmitter<any>();
+  payloadSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
   assigneeDetails: AssigneeDetails;
   moduleName: 'OPERATOR_ROUNDS' | 'RDF';
   plantMapSubscription: Subscription;
@@ -141,12 +155,15 @@ export class ScheduleConfigurationComponent
   plantTimezoneMap: any = {};
   placeHolder = '_ _';
   selectedShifts = [];
+  isTaskLevel: any;
+  payload: any = {};
   selectedShift: any;
   private onDestroy$ = new Subject();
   private shiftDetails: {
     [key: string]: { startTime: string; endTime: string }[];
-  } = shiftDefaultPayload;
+  } = JSON.parse(JSON.stringify(shiftDefaultPayload));
   private shiftApiResponse: any;
+
   constructor(
     private fb: FormBuilder,
     private rpscService: RoundPlanScheduleConfigurationService,
@@ -156,8 +173,10 @@ export class ScheduleConfigurationComponent
     private plantService: PlantService,
     private readonly scheduleConfigurationService: ScheduleConfigurationService,
     private dialogRef: MatDialogRef<ScheduleConfigurationComponent>,
+    private operatorRoundService: OperatorRoundsService,
     @Inject(MAT_DIALOG_DATA)
-    public data: any
+    public data: any,
+    private errorHandlerService: ErrorHandlerService
   ) {}
 
   initDetails(): void {
@@ -180,6 +199,7 @@ export class ScheduleConfigurationComponent
     this.shiftsInformation = this.selectedDetails?.shifts;
     this.allShifts = this.shiftsInformation;
     this.initCreatedSlots();
+    this.operatorRoundService.setShiftInformation(this.shiftsInformation);
   }
 
   initCreatedSlots(): void {
@@ -257,10 +277,25 @@ export class ScheduleConfigurationComponent
     });
 
     if (this.data) {
-      const { formDetail, roundPlanDetail, moduleName, assigneeDetails } =
-        this.data;
-      this.assigneeDetails = assigneeDetails;
+      const {
+        formDetail,
+        roundPlanDetail,
+        moduleName,
+        isTaskLevel,
+        assigneeDetails
+      } = this.data;
+      const plantId =
+        moduleName === 'RDF' ? formDetail.plantId : roundPlanDetail.plantId;
+      this.assigneeDetails = {
+        users: assigneeDetails.users?.filter((user) =>
+          user.plantId?.includes(plantId)
+        ),
+        userGroups: assigneeDetails.userGroups?.filter((userGroup) =>
+          userGroup.plantId?.includes(plantId)
+        )
+      };
       this.moduleName = moduleName;
+      this.isTaskLevel = isTaskLevel;
 
       // If the module name is RDF
       if (formDetail && moduleName === 'RDF') {
@@ -300,6 +335,7 @@ export class ScheduleConfigurationComponent
       this.plantService.plantTimeZoneMapping$.subscribe(
         (data) => (this.plantTimezoneMap = data)
       );
+    const initialShiftDetails = this.shiftDetails || shiftDefaultPayload;
     this.schedulerConfigForm = this.fb.group({
       id: '',
       roundPlanId: !this.isFormModule ? this.selectedDetails?.id : '',
@@ -329,16 +365,18 @@ export class ScheduleConfigurationComponent
         this.plantTimezoneMap[this.selectedDetails?.plantId],
         dateFormat3
       ),
-      startDateDisplay: localToTimezoneDate(
-        new Date(),
-        this.plantTimezoneMap[this.selectedDetails?.plantId],
-        dateFormat3
+
+      startDatePicker: new Date(
+        localToTimezoneDate(
+          new Date(),
+          this.plantTimezoneMap[this.selectedDetails?.plantId],
+          dateFormat3
+        )
       ),
-      startDatePicker: new Date(),
       endDate: [
         {
           value: localToTimezoneDate(
-            addDays(new Date(), 30),
+            addDays(new Date(), 29),
             this.plantTimezoneMap[this.selectedDetails?.plantId],
             dateFormat3
           ),
@@ -346,14 +384,20 @@ export class ScheduleConfigurationComponent
         }
       ],
       endDateDisplay: localToTimezoneDate(
-        new Date(),
+        addDays(new Date(), 29),
         this.plantTimezoneMap[this.selectedDetails?.plantId],
         dateFormat3
       ),
-      endDatePicker: new Date(addDays(new Date(), 30)),
+      endDatePicker: new Date(
+        localToTimezoneDate(
+          new Date(addDays(new Date(), 29)),
+          this.plantTimezoneMap[this.selectedDetails?.plantId],
+          dateFormat3
+        )
+      ),
       scheduledTill: null,
       assignmentDetails: this.fb.group({
-        type: ['User'],
+        type: ['plant'],
         value: '',
         displayValue: ''
       }),
@@ -373,9 +417,44 @@ export class ScheduleConfigurationComponent
           Validators.max(this.roundsGeneration.max)
         ]
       ],
-      shiftSlots: this.fb.array([this.addShiftDetails(true)]),
+      shiftSlots: this.fb.array([
+        this.addShiftDetails(false, {
+          null: {
+            startTime: initialShiftDetails?.null[0]?.startTime,
+            endTime: initialShiftDetails?.null[0]?.endTime,
+            payload: [
+              {
+                startTime: initialShiftDetails?.null[0]?.startTime,
+                endTime: initialShiftDetails?.null[0]?.endTime
+              }
+            ]
+          }
+        })
+      ]),
       shiftsSelected: []
     });
+
+    this.schedulerConfigForm
+      .get('assignmentDetails')
+      .valueChanges.pipe(
+        startWith({}),
+        distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
+        pairwise(),
+        tap(([prev, curr]) => {
+          if (!isEqual(prev, curr)) {
+            if (prev.type && prev.type !== '' && prev.type !== curr.type) {
+              this.schedulerConfigForm.get('assignmentDetails').patchValue({
+                type: curr.type,
+                value: '',
+                displayValue: ''
+              });
+            }
+          }
+        })
+      )
+      .subscribe();
+
     this.schedulerConfigForm
       .get('scheduleEndType')
       .valueChanges.pipe(takeUntil(this.onDestroy$))
@@ -646,26 +725,9 @@ export class ScheduleConfigurationComponent
           const startDate = new Date(
             this.schedulerConfigForm.get('startDate').value
           );
-          const current = new Date();
-          startDate.setHours(current.getHours());
-          startDate.setMinutes(current.getMinutes());
 
           this.schedulerConfigForm
             .get('endDate')
-            .patchValue(
-              localToTimezoneDate(
-                addDays(
-                  startDate,
-                  days * this.schedulerConfigForm.get('repeatDuration').value -
-                    1
-                ),
-                this.plantTimezoneMap[this.selectedDetails?.plantId],
-                dateFormat3
-              )
-            );
-
-          this.schedulerConfigForm
-            .get('endDateDisplay')
             .patchValue(
               format(
                 addDays(
@@ -718,9 +780,28 @@ export class ScheduleConfigurationComponent
           );
       });
 
-    this.currentDate = new Date();
-    this.startDatePickerMinDate = new Date();
-    this.scheduleEndOnPickerMinDate = new Date();
+    this.currentDate = new Date(
+      localToTimezoneDate(
+        new Date(),
+        this.plantTimezoneMap[this.selectedDetails?.plantId],
+        dateFormat3
+      )
+    );
+    this.startDatePickerMinDate = new Date(
+      localToTimezoneDate(
+        new Date(),
+        this.plantTimezoneMap[this.selectedDetails?.plantId],
+        dateFormat3
+      )
+    );
+    this.scheduleEndOnPickerMinDate = new Date(
+      localToTimezoneDate(
+        new Date(),
+        this.plantTimezoneMap[this.selectedDetails?.plantId],
+        dateFormat3
+      )
+    );
+
     this.setMonthlyDaysOfWeek();
     this.schedulerConfigForm.markAsDirty();
   }
@@ -759,9 +840,65 @@ export class ScheduleConfigurationComponent
     this.shiftSlots.push(this.addShiftDetails(true));
   }
 
+  prepareScheduleConfigurationDetail() {
+    const schedularConfigFormValue = this.schedulerConfigForm.getRawValue();
+
+    const {
+      startDate,
+      endDate,
+      scheduleEndOn,
+      startDatePicker,
+      endDatePicker,
+      scheduleEndOnPicker,
+      scheduleType,
+      scheduleEndType
+    } = schedularConfigFormValue;
+
+    const scheduleByDates =
+      scheduleType === 'byDate' ? this.scheduleByDates : [];
+
+    const formatedEndDate =
+      scheduleEndType === scheduleConfigs.scheduleEndTypes[0]
+        ? format(scheduleEndOnPicker, dateFormat4)
+        : format(endDatePicker, dateFormat4);
+
+    const formatedEndDate2 =
+      scheduleEndType === scheduleConfigs.scheduleEndTypes[0]
+        ? format(scheduleEndOnPicker, dateFormat3)
+        : format(endDatePicker, dateFormat3);
+
+    this.payload = {
+      ...schedularConfigFormValue,
+      startDate: format(startDatePicker, dateFormat4),
+      endDate: formatedEndDate,
+      endDatePicker:
+        scheduleEndType === scheduleConfigs.scheduleEndTypes[0]
+          ? scheduleEndOnPicker
+          : endDatePicker,
+      scheduleByDates,
+      shiftDetails: this.prepareShiftDetailsPayload(this.shiftDetails)
+    };
+    this.payloadEmitter.emit({
+      payload: this.payload,
+      plantTimezoneMap: this.plantTimezoneMap,
+      scheduleConfig: {
+        startDate,
+        shiftDetails: this.payload.shiftDetails,
+        scheduleType,
+        scheduleByDates: scheduleByDates.map((scheduleByDate) => ({
+          date: scheduleByDate.date
+        })),
+        endDate: formatedEndDate2,
+        scheduleEndOn
+      }
+    });
+    this.gotoNextStep.emit();
+  }
+
   scheduleConfiguration() {
     if (this.schedulerConfigForm.valid && this.schedulerConfigForm.dirty) {
       this.disableSchedule = true;
+
       const schedularConfigFormValue = this.schedulerConfigForm.getRawValue();
       const { id, startDate, endDate, scheduleEndOn } =
         schedularConfigFormValue;
@@ -808,44 +945,76 @@ export class ScheduleConfigurationComponent
             ?.timeZoneIdentifier
         ).toISOString();
       }
+      if (rest.assignmentDetails.type === 'plant') {
+        rest.assignmentDetails.type = 'user';
+      }
+      const info: ErrorInfo = {
+        displayToast: false,
+        failureResponse: 'throwError'
+      };
+
       if (id) {
+        const dates =
+          schedularConfigFormValue.scheduleType === 'byDate'
+            ? scheduleByDates.map((s) => ({
+                ...s,
+                scheduled: false
+              }))
+            : [];
         const payload = {
           ...rest,
           startDate: startDateByPlantTimezone,
           endDate: endDateByPlantTimezone,
           scheduleEndOn: scheduleEndOnByPlantTimezone,
-          scheduleByDates,
+          scheduleByDates: dates,
+          scheduledTill: null,
           shiftDetails: this.prepareShiftDetailsPayload(this.shiftDetails)
         };
         delete payload.shiftSlots;
         if (this.isFormModule) {
           delete payload.roundPlanId;
           delete payload.advanceRoundsCount;
+          this.openScheduleSuccessModal('update');
+          this.operatorRoundService.setScheduleStatus('loading');
           this.formScheduleConfigurationService
-            .updateFormScheduleConfiguration$(id, payload)
+            .updateFormScheduleConfiguration$(id, payload, info)
             .pipe(
               tap((scheduleConfig) => {
                 this.disableSchedule = false;
                 if (scheduleConfig && Object.keys(scheduleConfig)?.length) {
                   // Close popup and pass data through it
-                  this.openScheduleSuccessModal('update');
                   this.dialogRef.close({
                     formsScheduleConfiguration: scheduleConfig,
                     mode: 'update',
                     actionType: 'scheduleConfig'
                   });
                   this.schedulerConfigForm.markAsPristine();
+                  this.operatorRoundService.setScheduleStatus('scheduled');
                 }
                 this.initShiftStat();
                 this.cdrf.detectChanges();
               })
             )
-            .subscribe();
+            .subscribe({
+              error: (error) => {
+                this.operatorRoundService.setScheduleError(
+                  this.errorHandlerService.getErrorMessage(error)
+                );
+                this.operatorRoundService.setScheduleStatus('failed');
+                this.dialogRef.close({
+                  formsScheduleConfiguration: payload,
+                  mode: 'update',
+                  actionType: 'scheduleFailure'
+                });
+              }
+            });
         } else {
           delete payload.formId;
           delete payload.advanceFormsCount;
+          this.openScheduleSuccessModal('update');
+          this.operatorRoundService.setScheduleStatus('loading');
           this.rpscService
-            .updateRoundPlanScheduleConfiguration$(id, payload)
+            .updateRoundPlanScheduleConfiguration$(id, payload, info)
             .pipe(
               tap((scheduleConfig) => {
                 this.disableSchedule = false;
@@ -856,14 +1025,26 @@ export class ScheduleConfigurationComponent
                     mode: 'update',
                     actionType: 'scheduleConfig'
                   });
-                  this.openScheduleSuccessModal('update');
                   this.schedulerConfigForm.markAsPristine();
+                  this.operatorRoundService.setScheduleStatus('scheduled');
                 }
                 this.initShiftStat();
                 this.cdrf.detectChanges();
               })
             )
-            .subscribe();
+            .subscribe({
+              error: (error) => {
+                this.operatorRoundService.setScheduleError(
+                  this.errorHandlerService.getErrorMessage(error)
+                );
+                this.operatorRoundService.setScheduleStatus('failed');
+                this.dialogRef.close({
+                  roundPlanScheduleConfiguration: payload,
+                  mode: 'update',
+                  actionType: 'scheduleFailure'
+                });
+              }
+            });
         }
       } else {
         const payload = {
@@ -872,14 +1053,17 @@ export class ScheduleConfigurationComponent
           endDate: endDateByPlantTimezone,
           scheduleEndOn: scheduleEndOnByPlantTimezone,
           scheduleByDates,
-          shiftDetails: this.prepareShiftDetailsPayload(this.shiftDetails)
+          shiftDetails: this.prepareShiftDetailsPayload(this.shiftDetails),
+          isTaskLevel: false
         };
         delete payload.shiftSlots;
         if (this.isFormModule) {
           delete payload.roundPlanId;
           delete payload.advanceRoundsCount;
+          this.openScheduleSuccessModal('create');
+          this.operatorRoundService.setScheduleStatus('loading');
           this.formScheduleConfigurationService
-            .createFormScheduleConfiguration$(payload)
+            .createFormScheduleConfiguration$(payload, info)
             .pipe(
               tap((scheduleConfig) => {
                 this.disableSchedule = false;
@@ -890,22 +1074,36 @@ export class ScheduleConfigurationComponent
                     mode: 'create',
                     actionType: 'scheduleConfig'
                   });
-                  this.openScheduleSuccessModal('create');
                   this.schedulerConfigForm
                     .get('id')
                     .patchValue(scheduleConfig.id);
                   this.schedulerConfigForm.markAsPristine();
+                  this.operatorRoundService.setScheduleStatus('scheduled');
                 }
                 this.initShiftStat();
                 this.cdrf.detectChanges();
               })
             )
-            .subscribe();
+            .subscribe({
+              error: (error) => {
+                this.operatorRoundService.setScheduleError(
+                  this.errorHandlerService.getErrorMessage(error)
+                );
+                this.operatorRoundService.setScheduleStatus('failed');
+                this.dialogRef.close({
+                  formsScheduleConfiguration: payload,
+                  mode: 'create',
+                  actionType: 'scheduleFailure'
+                });
+              }
+            });
         } else {
           delete payload.formId;
           delete payload.advanceFormsCount;
+          this.openScheduleSuccessModal('create');
+          this.operatorRoundService.setScheduleStatus('loading');
           this.rpscService
-            .createRoundPlanScheduleConfiguration$(payload)
+            .createRoundPlanScheduleConfiguration$(payload, info)
             .pipe(
               tap((scheduleConfig) => {
                 this.disableSchedule = false;
@@ -916,17 +1114,29 @@ export class ScheduleConfigurationComponent
                     mode: 'create',
                     actionType: 'scheduleConfig'
                   });
-                  this.openScheduleSuccessModal('create');
                   this.schedulerConfigForm
                     .get('id')
                     .patchValue(scheduleConfig.id);
                   this.schedulerConfigForm.markAsPristine();
+                  this.operatorRoundService.setScheduleStatus('scheduled');
                 }
                 this.initShiftStat();
                 this.cdrf.detectChanges();
               })
             )
-            .subscribe();
+            .subscribe({
+              error: (error) => {
+                this.operatorRoundService.setScheduleError(
+                  this.errorHandlerService.getErrorMessage(error)
+                );
+                this.operatorRoundService.setScheduleStatus('failed');
+                this.dialogRef.close({
+                  roundPlanScheduleConfiguration: payload,
+                  mode: 'create',
+                  actionType: 'scheduleFailure'
+                });
+              }
+            });
         }
       }
     }
@@ -942,11 +1152,6 @@ export class ScheduleConfigurationComponent
           ? format(event.value, dateFormat3)
           : format(event.value, dateFormat4)
     });
-    if (formControlDateField === 'startDate') {
-      this.schedulerConfigForm.patchValue({
-        startDateDisplay: format(event.value, dateFormat3)
-      });
-    }
 
     this.schedulerConfigForm.markAsDirty();
   }
@@ -956,7 +1161,16 @@ export class ScheduleConfigurationComponent
     if (index === -1) {
       this.scheduleByDates = [
         ...this.scheduleByDates,
-        { date, scheduled: false }
+        {
+          date: new Date(
+            localToTimezoneDate(
+              new Date(date),
+              this.plantTimezoneMap[this.selectedDetails?.plantId],
+              ''
+            )
+          ),
+          scheduled: false
+        }
       ];
     } else {
       this.scheduleByDates.splice(index, 1);
@@ -1026,16 +1240,6 @@ export class ScheduleConfigurationComponent
                 )
               )
             };
-            config.endDateDisplay = localToTimezoneDate(
-              new Date(config.endDate),
-              this.plantTimezoneMap[this.selectedDetails?.plantId],
-              dateFormat3
-            );
-            config.startDateDisplay = localToTimezoneDate(
-              new Date(config.startDate),
-              this.plantTimezoneMap[this.selectedDetails?.plantId],
-              dateFormat3
-            );
             this.scheduleByDates = scheduleByDates?.map((scheduleByDate) => ({
               ...scheduleByDate,
               date: new Date(
@@ -1047,10 +1251,16 @@ export class ScheduleConfigurationComponent
               )
             }));
             if (config?.shiftDetails) {
+              if (Object.keys(config.shiftDetails)[0] !== 'null') {
+                config['shiftsSelected'] = Object.keys(config.shiftDetails);
+              }
               this.shiftApiResponse = this.prepareShiftDetailsPayload(
                 config?.shiftDetails,
                 '12'
               );
+              if (Object.keys(config.shiftDetails)[0] !== 'null') {
+                config['shiftsSelected'] = Object.keys(config.shiftDetails);
+              }
               this.shiftDetails = {};
               delete config?.shiftDetails;
               this.initCreatedSlots();
@@ -1080,12 +1290,12 @@ export class ScheduleConfigurationComponent
           dateFormat3
         ),
         endDate: localToTimezoneDate(
-          addDays(new Date(), 30),
+          addDays(new Date(), 29),
           this.plantTimezoneMap[this.selectedDetails?.plantId],
           dateFormat3
         ),
         endDateDisplay: localToTimezoneDate(
-          new Date(),
+          addDays(new Date(), 29),
           this.plantTimezoneMap[this.selectedDetails?.plantId],
           dateFormat3
         ),
@@ -1109,7 +1319,7 @@ export class ScheduleConfigurationComponent
         ),
         endDatePicker: new Date(
           localToTimezoneDate(
-            addDays(new Date(), 30),
+            addDays(new Date(), 29),
             this.plantTimezoneMap[this.selectedDetails?.plantId],
             dateFormat3
           )
@@ -1125,11 +1335,11 @@ export class ScheduleConfigurationComponent
     } else {
       return {
         startDate: format(new Date(), dateFormat3),
-        endDate: format(addDays(new Date(), 30), dateFormat3),
+        endDate: format(addDays(new Date(), 29), dateFormat3),
         scheduleEndOn: format(addDays(new Date(), 29), dateFormat4),
         daysOfWeek: [getDay(new Date())],
         startDatePicker: new Date(),
-        endDatePicker: addDays(new Date(), 30),
+        endDatePicker: addDays(new Date(), 29),
         scheduleEndOnPicker: addDays(new Date(), 29)
       };
     }
@@ -1148,11 +1358,9 @@ export class ScheduleConfigurationComponent
       scheduleEndOccurrences: 30,
       scheduleEndOccurrencesText: 'occurrences',
       startDate: format(new Date(), 'd MMMM yyyy'),
-      startDateDisplay: format(new Date(), 'd MMMM yyyy'),
-      endDateDisplay: format(new Date(), 'd MMMM yyyy'),
       startDatePicker: new Date(),
-      endDate: format(addDays(new Date(), 30), 'd MMMM yyyy'),
-      endDatePicker: new Date(addDays(new Date(), 30)),
+      endDate: format(addDays(new Date(), 29), 'd MMMM yyyy'),
+      endDatePicker: new Date(addDays(new Date(), 29)),
       scheduledTill: null,
       assignmentDetails: {
         type: this.assignTypes[0],
@@ -1165,7 +1373,6 @@ export class ScheduleConfigurationComponent
       shiftSlots: [],
       ...this.getDefaultSchedulerConfigDates()
     });
-
     this.schedulerConfigForm.markAsDirty();
   }
 
@@ -1230,16 +1437,6 @@ export class ScheduleConfigurationComponent
                 )
               )
             };
-            config.endDateDisplay = localToTimezoneDate(
-              new Date(config.endDate),
-              this.plantTimezoneMap[this.selectedDetails?.plantId],
-              dateFormat3
-            );
-            config.startDateDisplay = localToTimezoneDate(
-              new Date(config.startDate),
-              this.plantTimezoneMap[this.selectedDetails?.plantId],
-              dateFormat3
-            );
 
             this.scheduleByDates = scheduleByDates?.map((scheduleByDate) => ({
               ...scheduleByDate,
@@ -1312,7 +1509,7 @@ export class ScheduleConfigurationComponent
     const dialogRef = this.dialog.open(ScheduleSuccessModalComponent, {
       disableClose: true,
       width: '354px',
-      height: '275px',
+      height: 'max-content',
       backdropClass: 'schedule-success-modal',
       data: {
         name: this.selectedDetails?.name ?? '',
@@ -1347,11 +1544,19 @@ export class ScheduleConfigurationComponent
     });
   }
 
-  selectedAssigneeHandler({ user }: SelectedAssignee) {
-    const { email: value, firstName, lastName } = user;
-    this.schedulerConfigForm
-      .get('assignmentDetails')
-      .patchValue({ value, displayValue: `${firstName} ${lastName}` });
+  selectedAssigneeHandler(selectedAssignee: any) {
+    if (selectedAssignee.assigneeType === 'user') {
+      const { email: value, firstName, lastName } = selectedAssignee.user;
+      this.schedulerConfigForm
+        .get('assignmentDetails')
+        .patchValue({ value, displayValue: `${firstName} ${lastName}` });
+    }
+    if (selectedAssignee.assigneeType === 'userGroup') {
+      const { id: value, name: displayValue } = selectedAssignee.userGroup;
+      this.schedulerConfigForm
+        .get('assignmentDetails')
+        .patchValue({ value, displayValue });
+    }
     this.schedulerConfigForm.markAsDirty();
     this.menuTrigger.closeMenu();
   }
@@ -1444,7 +1649,19 @@ export class ScheduleConfigurationComponent
               id: foundShift?.id,
               name: foundShift?.name,
               startTime: foundShift?.startTime,
-              endTime: foundShift?.endTime
+              endTime: foundShift?.endTime,
+              payload: [
+                {
+                  startTime:
+                    this.scheduleConfigurationService.convertTo12HourFormat(
+                      foundShift?.startTime
+                    ),
+                  endTime:
+                    this.scheduleConfigurationService.convertTo12HourFormat(
+                      foundShift?.endTime
+                    )
+                }
+              ]
             })
           );
         }
@@ -1465,7 +1682,22 @@ export class ScheduleConfigurationComponent
       this.shiftSlots.clear();
       this.shiftApiResponse = null;
       this.shiftDetails = shiftDefaultPayload;
-      this.shiftSlots.push(this.addShiftDetails(true));
+      if (this.shiftDetails) {
+        this.shiftSlots.push(
+          this.addShiftDetails(false, {
+            null: {
+              startTime: this.shiftDetails?.null[0]?.startTime,
+              endTime: this.shiftDetails?.null[0]?.endTime,
+              payload: [
+                {
+                  startTime: this.shiftDetails?.null[0]?.startTime,
+                  endTime: this.shiftDetails?.null[0]?.endTime
+                }
+              ]
+            }
+          })
+        );
+      }
     }
     this.scheduleConfigurationService.setSlotChanged(true);
   }
@@ -1493,6 +1725,10 @@ export class ScheduleConfigurationComponent
     return '';
   }
 
+  headerLevelScheduling() {
+    this.prepareScheduleConfigurationDetail();
+  }
+
   ngOnDestroy(): void {
     this.plantMapSubscription.unsubscribe();
     this.onDestroy$.next();
@@ -1502,6 +1738,9 @@ export class ScheduleConfigurationComponent
     this.scheduleConfigurationService.setInitialSlotChanged();
   }
 
+  onChangeScheduleType() {
+    this.schedulerConfigForm.get('advanceRoundsCount').setValue(0);
+  }
   private prepareShiftDetailsPayload(shiftDetails, type: '24' | '12' = '24') {
     const payload = {};
     if (!shiftDetails) {

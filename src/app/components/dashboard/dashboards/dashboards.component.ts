@@ -58,6 +58,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     isDefault: false,
     createdBy: 'dummy'
   } as Dashboard;
+  ghostLoading = new Array(20).fill(0).map((v, i) => i);
   readonly permissions = permissions;
 
   private dashboardSelectionChangedSubscription: Subscription;

@@ -120,6 +120,7 @@ export class WidgetConfigurationModalComponent implements OnInit {
   countField: string;
   setSearchReport$ = new Subject<boolean>();
   updateWidget$: Observable<boolean>;
+  ghostLoading = new Array(11).fill(0).map((v, i) => i);
   readonly permissions = permissions;
   errors: ValidationError = {};
 

@@ -296,7 +296,7 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
           if (action === 'restore') {
             initial.data = initial.data.filter((d) => d.id !== form.id);
             this.toast.show({
-              text: 'Form restore successfully!',
+              text: 'Round restore successfully!',
               type: 'success'
             });
             action = null;
@@ -304,7 +304,7 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
           if (action === 'delete') {
             initial.data = initial.data.filter((d) => d.id !== form.id);
             this.toast.show({
-              text: 'Form delete successfully!',
+              text: 'Round delete successfully!',
               type: 'success'
             });
             action = null;
@@ -400,7 +400,7 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
         const objectKeys = Object.keys(plansList);
 
         if (objectKeys.length > 0) {
-          const uniquePlants = plansList.rows
+          this.plants = plansList.rows
             .map((item) => {
               if (item?.plant) {
                 this.plantsIdNameMap[item?.plant?.plantId] = item?.plant?.id;
@@ -408,8 +408,9 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
               }
               return '';
             })
-            .filter((value, index, self) => self.indexOf(value) === index);
-          this.plants = [...uniquePlants];
+            .filter((value, index, self) => self.indexOf(value) === index)
+            .sort();
+
           for (const item of this.filterJson) {
             if (item.column === 'plant') {
               item.items = this.plants;

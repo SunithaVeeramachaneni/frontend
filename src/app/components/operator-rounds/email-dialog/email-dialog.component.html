@@ -1,44 +1,82 @@
 <div class="email-modal">
   <div class="dialog-head">
-    <h2 mat-dialog-title class="email-title" translate>
-      shareDashboard
-    </h2>
+    <h2 mat-dialog-title class="email-title" translate>shareDashboard</h2>
     <mat-icon mat-dialog-close class="close-btn">close</mat-icon>
   </div>
   <mat-dialog-content class="dialog-content">
     <div class="emailContainer">
-      <div class="email-dialog-body" *ngIf="allUsers$ | async as allUsersList; else loadingUsers">
+      <div
+        class="email-dialog-body"
+        *ngIf="allUsers$ | async as allUsersList; else loadingUsers"
+      >
         <mat-form-field>
           <mat-chip-list #chipList>
-            <mat-chip *ngFor="let user of users" [selectable]="selectable" [removable]="removable"
-              (removed)="remove(user)">
-              {{user}}
+            <mat-chip
+              *ngFor="let user of users"
+              [selectable]="selectable"
+              [removable]="removable"
+              (removed)="remove(user)"
+            >
+              {{ user }}
               <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
             </mat-chip>
-            <input placeholder="Enter Email IDs..." class="autocomplete-input" #userInput [formControl]="userCtrl"
-              [matAutocomplete]="auto" [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-              [matChipInputAddOnBlur]="addOnBlur" (matChipInputTokenEnd)="add($event)" />
+            <input
+              placeholder="Enter Email IDs..."
+              class="autocomplete-input"
+              #userInput
+              [formControl]="userCtrl"
+              [matAutocomplete]="auto"
+              [matChipInputFor]="chipList"
+              [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+              [matChipInputAddOnBlur]="addOnBlur"
+              (matChipInputTokenEnd)="add($event)"
+            />
           </mat-chip-list>
-          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
-            <mat-option *ngFor="let user of filteredUsers | async" [value]="user.email">
-              {{ user.firstName }} {{user.lastName}}
+          <mat-autocomplete
+            #auto="matAutocomplete"
+            (optionSelected)="selected($event)"
+          >
+            <mat-option
+              *ngFor="let user of filteredUsers | async"
+              [value]="user.email"
+            >
+              {{ user.firstName }} {{ user.lastName }}
             </mat-option>
           </mat-autocomplete>
         </mat-form-field>
-        <span *ngIf="selectedUsers.length && !allValidEmails" class="invalidEmail" translate="invalidEmail"></span>
+        <span
+          *ngIf="selectedUsers.length && !allValidEmails"
+          class="invalidEmail"
+          translate="invalidEmail"
+        ></span>
         <mat-form-field appearance="outline" class="user-chip-list">
-          <mat-label>{{'notesTxt' | translate}}</mat-label>
-          <textarea matInput placeholder="Enter Notes.." [rows]="15" [(ngModel)]="emailNotes"></textarea>
+          <mat-label>{{ 'notesTxt' | translate }}</mat-label>
+          <textarea
+            matInput
+            placeholder="Enter Notes.."
+            [rows]="15"
+            [(ngModel)]="emailNotes"
+          ></textarea>
         </mat-form-field>
       </div>
     </div>
   </mat-dialog-content>
   <mat-dialog-actions align="end" class="dialog-footer">
     <button mat-button mat-dialog-close translate="cancelBtn"></button>
-    <button mat-flat-button color="primary" class="btn sendBtn" (click)="sendEmail()" translate="sendBtn"
-      [disabled]="sendEmailInprogress || !selectedUsers.length">
-      <mat-progress-spinner [mode]="'indeterminate'" [diameter]="25" *ngIf="sendEmailInprogress"
-        class="spinner"></mat-progress-spinner>
+    <button
+      mat-flat-button
+      color="primary"
+      class="btn sendBtn"
+      (click)="sendEmail()"
+      translate="sendBtn"
+      [disabled]="sendEmailInprogress || !selectedUsers.length"
+    >
+      <mat-progress-spinner
+        [mode]="'indeterminate'"
+        [diameter]="25"
+        *ngIf="sendEmailInprogress"
+        class="spinner"
+      ></mat-progress-spinner>
     </button>
   </mat-dialog-actions>
 </div>
@@ -46,13 +84,9 @@
   <div>
     <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
     </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
+    <div *ngFor="let number of ghostLoading">
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+    </div>
   </div>
 </ng-template>

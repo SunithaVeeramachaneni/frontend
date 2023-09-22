@@ -5,15 +5,33 @@
   <mat-dialog-content class="dialog-content">
     <div class="dis-flex">
       <ng-container *ngIf="updateWidget$ | async"></ng-container>
-      <form class="custom-form-field-white-color width-50" [ngClass]="!selectedReport ? '' : 'border-right'"
-        [formGroup]="widgetConfigForm">
-        <ng-container *ngIf="filteredReports$ | async as reports; else loadingReports">
+      <form
+        class="custom-form-field-white-color width-50"
+        [ngClass]="!selectedReport ? '' : 'border-right'"
+        [formGroup]="widgetConfigForm"
+      >
+        <ng-container
+          *ngIf="filteredReports$ | async as reports; else loadingReports"
+        >
           <mat-form-field appearance="outline" class="width-90">
             <mat-label translate>report</mat-label>
-            <input type="text" matInput tabindex="-1" formControlName="searchReport" [matAutocomplete]="auto" />
-            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayWith"
-              (optionSelected)="onReportSelection($event.option.value)">
-              <mat-option *ngFor="let report of reports.data" [value]="report" class="report-list-height">
+            <input
+              type="text"
+              matInput
+              tabindex="-1"
+              formControlName="searchReport"
+              [matAutocomplete]="auto"
+            />
+            <mat-autocomplete
+              #auto="matAutocomplete"
+              [displayWith]="displayWith"
+              (optionSelected)="onReportSelection($event.option.value)"
+            >
+              <mat-option
+                *ngFor="let report of reports.data"
+                [value]="report"
+                class="report-list-height"
+              >
                 <div>
                   <p class="report-name">{{ report.name }}</p>
                   <p class="description-title">
@@ -34,62 +52,96 @@
             <input type="text" matInput formControlName="widgetName" />
             <mat-error *ngIf="processValidationErrors('widgetName')">
               {{
-              errors.widgetName.name
-              | translate
-              : {
-              name: 'widgetLabel' | translate,
-              length: errors.widgetName.length
-              }
+                errors.widgetName.name
+                  | translate
+                    : {
+                        name: 'widgetLabel' | translate,
+                        length: errors.widgetName.length
+                      }
               }}
             </mat-error>
           </mat-form-field>
-          <app-chart-variant [report]="selectedReport" [chartConfig]="chartConfig" [configOptions]="configOptions"
-            [displayTableVarient]="true" (chartVarientChanges)="onChartVarientChanges($event)"></app-chart-variant>
+          <app-chart-variant
+            [report]="selectedReport"
+            [chartConfig]="chartConfig"
+            [configOptions]="configOptions"
+            [displayTableVarient]="true"
+            (chartVarientChanges)="onChartVarientChanges($event)"
+          ></app-chart-variant>
         </ng-container>
       </form>
       <div class="width-50">
         <ng-container *ngIf="selectedReport">
-          <ng-container *ngIf="filterOptions$ | async; else loadingFilterOptions">
-            <app-common-filter class="filter-component" [title]="" [filtersApplied]="selectedReport.filtersApplied"
-              [reportColumns]="reportColumns" [filterOptions]="selectedReport.filterOptions"
-              (appliedFilters)="applyFilter($event)">
+          <ng-container
+            *ngIf="filterOptions$ | async; else loadingFilterOptions"
+          >
+            <app-common-filter
+              class="filter-component"
+              [title]=""
+              [filtersApplied]="selectedReport.filtersApplied"
+              [reportColumns]="reportColumns"
+              [filterOptions]="selectedReport.filterOptions"
+              (appliedFilters)="applyFilter($event)"
+            >
             </app-common-filter>
           </ng-container>
 
           <div class="chart-wrapper" *ngIf="chartVarient !== 'table'">
             <h4 class="preview-heading">Preview</h4>
-            <ng-container *ngIf="
+            <ng-container
+              *ngIf="
                 chartConfig &&
                   chartConfig.countFieldName &&
                   chartConfig.datasetFieldName;
                 else displayWidgetWarning
-              ">
-              <ng-container *ngIf="chartData$ | async as data; else loadingChartData">
+              "
+            >
+              <ng-container
+                *ngIf="chartData$ | async as data; else loadingChartData"
+              >
                 <ng-container *ngIf="chartVarient === 'bar_x'">
-                  <app-bar-chart [chartConfig]="chartConfig" [chartData]="data"></app-bar-chart>
+                  <app-bar-chart
+                    [chartConfig]="chartConfig"
+                    [chartData]="data"
+                  ></app-bar-chart>
                 </ng-container>
 
                 <ng-container *ngIf="chartVarient === 'bar_y'">
-                  <app-column-chart [chartConfig]="chartConfig" [chartData]="data">
+                  <app-column-chart
+                    [chartConfig]="chartConfig"
+                    [chartData]="data"
+                  >
                   </app-column-chart>
                 </ng-container>
 
                 <ng-container *ngIf="chartVarient === 'stacked_bar_y'">
-                  <app-horizontal-stacked-chart [chartConfig]="chartConfig" [chartData]="data">
+                  <app-horizontal-stacked-chart
+                    [chartConfig]="chartConfig"
+                    [chartData]="data"
+                  >
                   </app-horizontal-stacked-chart>
                 </ng-container>
 
                 <ng-container *ngIf="chartVarient === 'multiline'">
-                  <app-multi-line-chart [chartConfig]="chartConfig" [chartData]="data">
+                  <app-multi-line-chart
+                    [chartConfig]="chartConfig"
+                    [chartData]="data"
+                  >
                   </app-multi-line-chart>
                 </ng-container>
                 <ng-container *ngIf="chartVarient === 'stacked_bar_x'">
-                  <app-vertical-stacked-chart [chartConfig]="chartConfig" [chartData]="data">
+                  <app-vertical-stacked-chart
+                    [chartConfig]="chartConfig"
+                    [chartData]="data"
+                  >
                   </app-vertical-stacked-chart>
                 </ng-container>
 
                 <ng-container *ngIf="chartVarient === 'line_x'">
-                  <app-line-chart [chartConfig]="chartConfig" [chartData]="data">
+                  <app-line-chart
+                    [chartConfig]="chartConfig"
+                    [chartData]="data"
+                  >
                   </app-line-chart>
                 </ng-container>
 
@@ -99,46 +151,64 @@
                 </ng-container>
 
                 <ng-container *ngIf="chartVarient === 'doughnut'">
-                  <app-donut-chart [chartConfig]="chartConfig" [chartData]="data">
+                  <app-donut-chart
+                    [chartConfig]="chartConfig"
+                    [chartData]="data"
+                  >
                   </app-donut-chart>
                 </ng-container>
 
                 <ng-container *ngIf="chartVarient === 'area'">
-                  <app-area-chart [chartConfig]="chartConfig" [chartData]="data">
+                  <app-area-chart
+                    [chartConfig]="chartConfig"
+                    [chartData]="data"
+                  >
                   </app-area-chart>
                 </ng-container>
               </ng-container>
             </ng-container>
           </div>
           <div *ngIf="chartVarient === 'table'">
-            <ng-container *ngIf="reportDetails$ | async; else loadingReportDetails">
-              <cwp-dynamictable [dataSource]="dataSource" [configOptions]="configOptions"
+            <ng-container
+              *ngIf="reportDetails$ | async; else loadingReportDetails"
+            >
+              <cwp-dynamictable
+                [dataSource]="dataSource"
+                [configOptions]="configOptions"
                 (fetchDataCallback)="tableEventHandler($event)"
-                (onConfigOptionsChange)="configOptionsChangeHandler($event)"></cwp-dynamictable>
+                (onConfigOptionsChange)="configOptionsChangeHandler($event)"
+              ></cwp-dynamictable>
             </ng-container>
           </div>
         </ng-container>
       </div>
     </div>
-    <p *ngIf="!selectedReport" class="select-report-text">
-      Select a report to start creating a widget
-    </p>
+    <p
+      *ngIf="!selectedReport"
+      class="select-report-text"
+      translate="selectReportTxt"
+    ></p>
   </mat-dialog-content>
   <mat-dialog-actions align="end">
-    <button mat-button mat-dialog-close>Close</button>
-    <button mat-raised-button class="widget-save-btn" (click)="saveWidget()" [disabled]="
+    <button mat-button mat-dialog-close translate="close"></button>
+    <button
+      mat-raised-button
+      class="widget-save-btn"
+      (click)="saveWidget()"
+      [disabled]="
         !selectedReport ||
         widgetConfigForm.invalid ||
         widgetConfigForm.pristine ||
         !isChartVarientFormValid
-      " *appCheckUserHasPermission="[
+      "
+      *appCheckUserHasPermission="[
         permissions.createDashboard,
         permissions.updateDashboard,
         permissions.createOPRDashboard,
         permissions.updateOPRDashboard
-      ]">
-      Save
-    </button>
+      ]"
+      translate="save"
+    ></button>
   </mat-dialog-actions>
 </div>
 <ng-template #displayWidgetWarning>
@@ -150,29 +220,16 @@
   <ngx-shimmer-loading [width]="'100%'" [height]="'30px'"></ngx-shimmer-loading>
 </ng-template>
 <ng-template #loadingChartData>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+  <div *ngFor="let number of ghostLoading">
+    <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+  </div>
 </ng-template>
 <ng-template #loadingReportDetails>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+  <div *ngFor="let number of ghostLoading">
+    <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+  </div>
 </ng-template>
-<ng-template #loadingFilterOptions>Loading Filter Options...</ng-template>
+<ng-template
+  #loadingFilterOptions
+  translate="loadingFilterOptions"
+></ng-template>

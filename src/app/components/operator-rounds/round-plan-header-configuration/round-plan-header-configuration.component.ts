@@ -75,6 +75,8 @@ export class RoundPlanHeaderConfigurationComponent
   tagsInput: ElementRef<HTMLInputElement>;
   @ViewChild('valueInput', { static: false }) valueInput: ElementRef;
   @ViewChild('labelInput', { static: false }) labelInput: ElementRef;
+  @ViewChild('roundPlanFileUpload', { static: false })
+  roundPlanFileUpload: ElementRef;
   @ViewChild('auto', { static: false }) matAutocomplete: MatAutocomplete;
   @ViewChild(MatAutocompleteTrigger) auto: MatAutocompleteTrigger;
   @Output() gotoNextStep = new EventEmitter<void>();
@@ -109,7 +111,6 @@ export class RoundPlanHeaderConfigurationComponent
   modalIsOpen = false;
   attachment: any;
   formMetadata: FormMetadata;
-  moduleName: string;
   form: FormGroup;
   isOpen = new FormControl(false);
   options: any = [];
@@ -210,8 +211,14 @@ export class RoundPlanHeaderConfigurationComponent
       .pipe(map((data) => (Array.isArray(data) ? data : [])))
       .subscribe((attachments) => {
         attachments?.forEach((att) => {
-          this.filteredMediaType.mediaType.push(att.attachment);
-          this.filteredMediaTypeIds.mediaIds.push(att.id);
+          this.filteredMediaType.mediaType = [
+            ...this.filteredMediaType.mediaType,
+            att.attachment
+          ];
+          this.filteredMediaTypeIds.mediaIds = [
+            ...this.filteredMediaTypeIds.mediaIds,
+            att.id
+          ];
         });
         this.cdrf.detectChanges();
       });
@@ -277,7 +284,7 @@ export class RoundPlanHeaderConfigurationComponent
       const additionalDetailsArray =
         this.roundData.formMetadata.additionalDetails;
 
-      const tagsValue = this.roundData.formMetadata.tags;
+      const tagsValue = [...this.roundData.formMetadata.tags];
 
       this.updateAdditionalDetailsArray(additionalDetailsArray);
       this.patchTags(tagsValue);
@@ -287,7 +294,8 @@ export class RoundPlanHeaderConfigurationComponent
   }
 
   patchTags(values: any[]): void {
-    this.tags = values;
+    this.tags = [...values];
+    this.headerDataForm.get('tags').setValue([...this.tags]);
   }
 
   updateAdditionalDetailsArray(values: any[]): void {
@@ -355,13 +363,14 @@ export class RoundPlanHeaderConfigurationComponent
     const index = this.tags.indexOf(tag);
 
     if (index >= 0) {
-      this.tags.splice(index, 1);
+      this.tags = [...this.tags.slice(0, index), ...this.tags.slice(index + 1)];
     }
     this.filteredTags = of(
       this.tagsCtrl.value
         ? this.filter(this.tagsCtrl.value)
         : this.allTags.slice()
     );
+    this.headerDataForm.get('tags').setValue([...this.tags]);
   }
 
   selected(event: MatAutocompleteSelectedEvent): void {
@@ -437,9 +446,9 @@ export class RoundPlanHeaderConfigurationComponent
           BuilderConfigurationActions.addFormMetadata({
             formMetadata: {
               ...this.headerDataForm.value,
+              tags: this.tags,
               additionalDetails: updatedAdditionalDetails,
-              plant: plant.name,
-              moduleName: 'rdf'
+              plant: plant.name
             },
             formDetailPublishStatus: formConfigurationStatus.draft,
             formSaveStatus: formConfigurationStatus.saving
@@ -455,6 +464,7 @@ export class RoundPlanHeaderConfigurationComponent
           RoundPlanConfigurationActions.createRoundPlan({
             formMetadata: {
               ...this.headerDataForm.value,
+              tags: this.tags,
               additionalDetails: updatedAdditionalDetails,
               pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG,
               author: userName,
@@ -470,9 +480,9 @@ export class RoundPlanHeaderConfigurationComponent
             formMetadata: {
               ...this.headerDataForm.value,
               id: this.roundData.formMetadata.id,
+              tags: this.tags,
               additionalDetails: updatedAdditionalDetails,
               plant: plant.name,
-              moduleName: 'rdf',
               lastModifiedBy: this.loginService.getLoggedInUserName()
             },
             formStatus: this.hasFormChanges
@@ -491,10 +501,10 @@ export class RoundPlanHeaderConfigurationComponent
           RoundPlanConfigurationActions.updateRoundPlan({
             formMetadata: {
               ...this.headerDataForm.value,
+              tags: this.tags,
               id: this.roundData.formMetadata.id,
               additionalDetails: updatedAdditionalDetails,
               plant: plant.name,
-              moduleName: 'rdf',
               lastModifiedBy: this.loginService.getLoggedInUserName()
             },
             formListDynamoDBVersion: this.roundData.formListDynamoDBVersion,
@@ -516,7 +526,7 @@ export class RoundPlanHeaderConfigurationComponent
 
   onCancel(): void {
     this.dialogRef.close();
-    this.router.navigate(['/operator-rounds/round-plans']);
+    this.router.navigate(['/operator-rounds']);
   }
 
   resetPlantSearchFilter = () => {
@@ -643,6 +653,7 @@ export class RoundPlanHeaderConfigurationComponent
         }
       };
     }
+    this.clearAttachmentUpload();
   };
 
   async resizeImage(base64result: string): Promise<string> {
@@ -1002,5 +1013,8 @@ export class RoundPlanHeaderConfigurationComponent
     this.operatorRoundsService.pdfMapping$.next([]);
     this.destroy$.next();
     this.destroy$.complete();
+  }
+  clearAttachmentUpload() {
+    this.roundPlanFileUpload.nativeElement.value = '';
   }
 }

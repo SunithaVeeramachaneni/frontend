@@ -47,7 +47,8 @@ import { LoginService } from '../../login/services/login.service';
 import {
   DEFAULT_TEMPLATE_PAGES_STANDALONE,
   DEFAULT_TEMPLATE_PAGES_EMBEDDED,
-  formConfigurationStatus
+  formConfigurationStatus,
+  raceDynamicForms
 } from 'src/app/app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
@@ -182,6 +183,11 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
+    this.store.dispatch(
+      BuilderConfigurationActions.updateModuleName({
+        moduleName: raceDynamicForms
+      })
+    );
   }
 
   add(event: MatChipInputEvent): void {
@@ -221,7 +227,7 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
     const index = this.tags.indexOf(tag);
 
     if (index >= 0) {
-      this.tags.splice(index, 1);
+      this.tags = [...this.tags.slice(0, index), ...this.tags.slice(index + 1)];
     }
   }
 
@@ -339,6 +345,7 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
         this.rdfService
           .createTemplate$({
             ...this.headerDataForm.value,
+            tags: this.tags,
             additionalDetails: updatedAdditionalDetails,
             author: userEmail,
             formLogo: 'assets/rdf-forms-icons/formlogo.svg'
@@ -368,6 +375,7 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
             formMetadata: {
               ...this.headerDataForm.value,
               id: this.templateData.formMetadata.id,
+              tags: this.tags,
               additionalDetails: updatedAdditionalDetails
             },
             formStatus: this.hasFormChanges
@@ -389,6 +397,7 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
             formMetadata: {
               ...this.headerDataForm.value,
               id: this.templateData.formMetadata.id,
+              tags: this.tags,
               additionalDetails: updatedAdditionalDetails
             }
           })

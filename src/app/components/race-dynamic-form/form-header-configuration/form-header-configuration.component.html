@@ -29,57 +29,19 @@
           {{ 'setFormDetailsHeading' | translate }}
         </h2>
 
-        <p
-          class="sub-heading"
-          id="formSubHeading"
-          translate="setFormTypeHeading"
-        ></p>
-        <div class="formtype-flex">
-          <mat-radio-group class="dis-flex" formControlName="formType">
-            <div class="formtype-style">
-              <mat-radio-button
-                id="standaloneRadioBtn"
-                class="radio-btns"
-                [value]="formConfigurationStatus.standalone"
-                [disabled]="this.formData.formExists"
-              ></mat-radio-button>
-              <span
-                class="radio-btn-text"
-                id="standaloneText"
-                translate="standalone"
-              >
-              </span>
-              <p
-                class="radio-sub-text"
-                id="standaloneSubText"
-                translate="standaloneSubText"
-              ></p>
-            </div>
-            <div class="formtype-style">
-              <mat-radio-button
-                id="embeddedRadioBtn"
-                class="radio-btns"
-                [value]="formConfigurationStatus.embedded"
-                [disabled]="this.formData.formExists"
-              ></mat-radio-button>
-              <span
-                id="embeddedText"
-                class="radio-btn-text"
-                translate="embedded"
-              >
-              </span
-              ><br />
-              <p
-                id="embeddedSubText"
-                class="radio-sub-text"
-                translate="embeddedSubText"
-              ></p>
-            </div>
-          </mat-radio-group>
-        </div>
-        <hr class="horizontal-line" />
-
         <div class="form-name">
+          <p class="form-name-description" id="formType">
+            {{ 'formType' | translate }}
+          </p>
+          <p class="formtype-formfield">
+            {{
+              (this.headerDataForm.get('formType').value === 'Embedded'
+                ? 'createEmbedded'
+                : 'createStandalone'
+              ) | translate
+            }}
+          </p>
+
           <p class="form-name-description" id="formNameHeading">
             {{ 'addFormNameMandatory' | translate }}
           </p>

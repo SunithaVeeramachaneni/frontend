@@ -31,6 +31,7 @@ export class IntegrationsComponent implements OnInit {
     type: 'create',
     connector: {} as any
   });
+  ghostLoading = new Array(5).fill(0).map((v, i) => i);
   readonly permissions = permissions;
 
   constructor(
