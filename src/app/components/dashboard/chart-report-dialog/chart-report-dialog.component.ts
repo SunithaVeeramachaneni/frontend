@@ -94,7 +94,7 @@ export class ChartReportDialog implements OnInit {
     ) {
       const filterObj = {
         column: this.selectedReport.report.groupBy[0],
-        type: 'string',
+        type: chartData?.name.includes('Total') ? 'default' : 'string',
         filters: [
           {
             operation: 'equals',
