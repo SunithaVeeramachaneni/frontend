@@ -243,6 +243,12 @@ export class VerticalStackedChartComponent implements OnInit, OnChanges {
 
     newOptions.series = datasets;
 
+    if (!Array.isArray(newOptions.series)) {
+      newOptions.series = [newOptions.series];
+    } else {
+      newOptions.series = [...newOptions.series];
+    }
+
     this.chartOptions = newOptions;
     this.chartOptions.series.forEach((series) => {
       series.itemStyle = {

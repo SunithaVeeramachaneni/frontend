@@ -207,6 +207,12 @@ export class ColumnChartComponent implements OnInit, OnChanges {
 
     newOptions.yAxis.data = Object.keys(sortedObject);
     newOptions.series.data = Object.values(sortedObject);
+    if (!Array.isArray(newOptions.series)) {
+      newOptions.series = [newOptions.series];
+    } else {
+      newOptions.series = [...newOptions.series];
+    }
+
     this.chartOptions = newOptions;
 
     this.chartOptions.series.forEach((series) => {

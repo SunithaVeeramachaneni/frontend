@@ -208,6 +208,13 @@ export class BarChartComponent implements OnInit, OnChanges {
 
     newOptions.xAxis.data = Object.keys(sortedObject);
     newOptions.series.data = Object.values(sortedObject);
+
+    if (!Array.isArray(newOptions.series)) {
+      newOptions.series = [newOptions.series];
+    } else {
+      newOptions.series = [...newOptions.series];
+    }
+
     this.chartOptions = newOptions;
 
     this.chartOptions.series.forEach((series) => {
