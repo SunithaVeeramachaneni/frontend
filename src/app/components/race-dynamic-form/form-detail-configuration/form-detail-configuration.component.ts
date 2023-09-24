@@ -535,6 +535,12 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
               })
             );
             this.router.navigate(['/forms']);
+          } else {
+            this.store.dispatch(
+              BuilderConfigurationActions.updateFormPublishStatus({
+                formDetailPublishStatus: formConfigurationStatus.draft
+              })
+            );
           }
         });
     }
