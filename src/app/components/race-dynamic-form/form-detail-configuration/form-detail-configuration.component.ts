@@ -534,9 +534,8 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
                 authoredFormDetailDynamoDBVersion
               })
             );
+            this.router.navigate(['/forms']);
           }
-
-          this.router.navigate(['/forms']);
         });
     }
   }
