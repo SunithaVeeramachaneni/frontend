@@ -49,6 +49,7 @@ export class TaskLevelTaskComponentsComponent implements OnInit {
   shiftInformation: any;
   shortDaysOfWeek = scheduleConfigs.shortDaysOfWeek;
   extractedDaysOfWeek: string[] = [];
+  placeHolder = '--';
   private _checkboxStatus: any;
   private _selectedPage: any;
   constructor(private operatorRoundService: OperatorRoundsService) {}
