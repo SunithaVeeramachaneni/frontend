@@ -94,7 +94,6 @@
   "fillTxt": "Fill",
   "legendTxt": "Legends",
   "customColorCodesJSON": "Enter Custom Color Codes in JSON",
-  "invalidJSON": "Invalid Input(JSON)",
   "loadingReportsCount": "Loading Reports Count...",
   "loadingFilterOptions": "Loading Filter Options...",
   "selectReportTxt": "Select a report to start creating a widget"

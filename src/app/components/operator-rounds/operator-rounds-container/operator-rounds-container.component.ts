@@ -36,14 +36,14 @@ export class OperatorRoundsContainerComponent implements OnInit {
     this.plantService.getPlantTimeZoneMapping();
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
       tap((currentRouteUrl) => {
-        if (currentRouteUrl === routingUrls.operatorRoundPlans.url) {
+        if (currentRouteUrl === routingUrls.myRoundPlans.url) {
           this.headerService.setHeaderTitle(routingUrls.myRoundPlans.title);
-          this.breadcrumbService.set(routingUrls.operatorRoundPlans.url, {
+          this.breadcrumbService.set(routingUrls.myRoundPlans.url, {
             skip: true
           });
           this.cdrf.detectChanges();
         } else {
-          this.breadcrumbService.set(routingUrls.operatorRoundPlans.url, {
+          this.breadcrumbService.set(routingUrls.myRoundPlans.url, {
             skip: false
           });
         }
