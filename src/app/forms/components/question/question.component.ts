@@ -353,6 +353,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
           if (!isEqual(prev, curr)) {
             const { value: prevValue } = prev;
             const { value: currValue } = curr;
+            this.checkAskQuestionFeatures();
             if (
               current.fieldType === 'INST' &&
               !isEqual(prevValue, currValue)
@@ -427,6 +428,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     this.questionForm.patchValue(this.question, {
       emitEvent: false
     });
+    this.checkAskQuestionFeatures();
     this.rangeDisplayText = '';
     this.additionalDetailsText = '';
   }
@@ -496,14 +498,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
     const fieldType = this.questionForm.get('fieldType').value;
     if (this.isAskQuestion) {
       switch (fieldType) {
-        case 'SF':
-        case 'CB':
-        case 'SGF':
         case 'ATT':
-        case 'GAL':
-        case 'DFR':
-        case 'VI':
-          this.showAskQuestionFeatures = false;
+          if (this.isAskQuestion) this.showAskQuestionFeatures = false;
           break;
         default:
           this.showAskQuestionFeatures = true;
