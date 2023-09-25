@@ -259,7 +259,7 @@
   "userGroup": "User Group",
   "plant": "Plant",
   "plantMandatory": "Plant *",
-  "assignToInfo": "All the tasks will be assigned to the selected user",
+  "assignToInfo": "All the tasks will be assigned to the selected ",
   "advanceRoundsCountInfo": "For how many days would you like to generate rounds at a time in advance?",
   "select": "Select",
   "roundsGeneration": "Rounds Generation",
