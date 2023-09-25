@@ -127,14 +127,20 @@ export class FormConfigurationEffects {
                     formConfigurationStatus.published
                 })
               ]).pipe(
-                map(([createAuthoredFormDetail]) =>
-                  FormConfigurationApiActions.createFormDetailSuccess({
+                map(([createAuthoredFormDetail]) => {
+                  if (
+                    formDetail.formMetadata.formType ===
+                    formConfigurationStatus.embedded
+                  ) {
+                    this.raceDynamicFormService.redirectToFormsList$.next(true);
+                  }
+                  return FormConfigurationApiActions.createFormDetailSuccess({
                     formDetail: response?.data?.updateFormList,
                     authoredFormDetail: createAuthoredFormDetail,
                     formStatus: formConfigurationStatus.published,
                     formDetailPublishStatus: formConfigurationStatus.published
-                  })
-                )
+                  });
+                })
               )
             ),
             catchError((error) => {
@@ -203,14 +209,20 @@ export class FormConfigurationEffects {
                   isEdit: location?.pathname?.startsWith('/forms/edit/')
                 })
               ]).pipe(
-                map(([createAuthoredFormDetail]) =>
-                  FormConfigurationApiActions.updateFormDetailSuccess({
+                map(([createAuthoredFormDetail]) => {
+                  if (
+                    formDetail.formMetadata.formType ===
+                    formConfigurationStatus.embedded
+                  ) {
+                    this.raceDynamicFormService.redirectToFormsList$.next(true);
+                  }
+                  return FormConfigurationApiActions.updateFormDetailSuccess({
                     formDetail: response?.data?.updateFormList,
                     authoredFormDetail: createAuthoredFormDetail,
                     formStatus: formConfigurationStatus.published,
                     formDetailPublishStatus: formConfigurationStatus.published
-                  })
-                )
+                  });
+                })
               )
             ),
             catchError((error) => {
