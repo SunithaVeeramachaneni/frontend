@@ -389,6 +389,8 @@
   "last3Months": "Last 3 Months",
   "last6Months": "Last 6 Months",
   "allTxt": "All",
+  "recent": "Recent",
+  "favorite": "Favorite",
   "shareDashboard": "Share Dashboard via Email",
   "share": "Share",
   "emailIds": "Email IDs",
@@ -467,5 +469,8 @@
   "taskLevelAlert": "Any schedule changes in the Header Step would override the Schedule of all the tasks. Do you want to continue to the Header Step?",
   "taskLevelNote": "If there’s no Schedule change in the Header Step, there would not be any impact at task level.",
   "note": "Note:",
-  "submittedDate": "Submitted Date"
+  "submittedDate": "Submitted Date",
+  "loadingReportsCount": "Loading Reports Count...",
+  "loadingFilterOptions": "Loading Filter Options...",
+  "selectReportTxt": "Select a report to start creating a widget"
 }
