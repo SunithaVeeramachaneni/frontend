@@ -572,6 +572,11 @@ export class QuestionComponent implements OnInit, OnDestroy {
           pdf: null
         };
         this.questionForm.get('value').setValue(instructionsValue);
+        if (this.questionForm.get('name').value) {
+          this.questionForm
+            .get('name')
+            .setValue('<p>' + this.questionForm.get('name').value + '</p>');
+        }
         break;
       default:
       // do nothing
@@ -924,6 +929,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
         this.instructionsUpdateValue();
         this.questionForm.get('value').setValue(originalValue);
       });
+    console.log('this.qustionForm', this.questionForm.get('value').value);
   }
 
   handleEditorFocus(focus: boolean) {
