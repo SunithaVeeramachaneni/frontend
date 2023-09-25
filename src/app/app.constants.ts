@@ -280,7 +280,7 @@ export const routingUrls = {
   operatorRoundPlans: {
     url: '/operator-rounds',
     title: 'Operator Rounds',
-    permission: permissions.viewORPlans
+    permission: permissions.viewOPRDashboards
   },
   oprDashboard: {
     url: '/operator-rounds',
@@ -293,7 +293,7 @@ export const routingUrls = {
     permission: permissions.viewOPRReports
   },
   myRoundPlans: {
-    url: '/operator-rounds',
+    url: '/operator-rounds/round-plans',
     title: 'Round Plans',
     permission: permissions.viewORPlans
   },

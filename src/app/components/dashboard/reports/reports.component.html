@@ -5,81 +5,46 @@
       <div class="reports-body custom-form-field-gray-color">
         <div class="dis-flex">
           <div class="width-40 toggle-btns">
-            <mat-button-toggle-group
-              [formControl]="selectedReportSegmentControl"
-            >
-              <mat-button-toggle
-                value="recent"
-                class="toogle-btn-text"
-                translate="recent"
-              >
+            <mat-button-toggle-group [formControl]="selectedReportSegmentControl">
+              <mat-button-toggle value="recent" class="toogle-btn-text"> {{'recent' | translate}}
               </mat-button-toggle>
-              <mat-button-toggle
-                value="favorite"
-                class="toogle-btn-text"
-                translate="favorite"
-              >
+              <mat-button-toggle value="favorite" class="toogle-btn-text"> {{'favorite' | translate}}
               </mat-button-toggle>
-              <mat-button-toggle
-                value="all"
-                class="toogle-btn-text"
-                translate="all"
-              >
+              <mat-button-toggle value="all" class="toogle-btn-text"> {{'allTxt' | translate}}
               </mat-button-toggle>
             </mat-button-toggle-group>
-            <span
-              class="no-of-records"
-              *ngIf="
+            <span class="no-of-records" *ngIf="
                 reportsCount$ | async as reportsCount;
                 else loadingReportsCount
-              "
-            >
+              ">
               {{
-                'reportPlural'
-                  | translate
-                    : {
-                        totalCount: reportsCount.count
-                          ? (reportsCount.count | numberToKM)
-                          : 0,
-                        count: this.skip ? this.skip : 0
-                      }
+              'reportPlural'
+              | translate
+              : {
+              totalCount: reportsCount.count
+              ? (reportsCount.count | numberToKM)
+              : 0,
+              count: this.skip ? this.skip : 0
+              }
               }}
             </span>
           </div>
           <div class="width-60">
-            <button
-              class="new-report-btn"
-              (click)="openDialog()"
-              translate="newReport"
-              *appCheckUserHasPermission="[
+            <button class="new-report-btn" (click)="openDialog()" translate="newReport" *appCheckUserHasPermission="[
                 perms.createReport,
                 perms.createOPRReport
-              ]"
-            ></button>
+              ]"></button>
             <mat-form-field appearance="outline" class="search-form-field">
               <mat-icon matPrefix class="searchIcon">search</mat-icon>
-              <input
-                matInput
-                type="text"
-                placeholder="Search Reports"
-                [(ngModel)]="searchValue"
-                (keyup.enter)="debouncedSearchReports()"
-                autocomplete="off"
-              />
+              <input matInput type="text" placeholder="Search Reports" [(ngModel)]="searchValue"
+                (keyup.enter)="debouncedSearchReports()" autocomplete="off" />
             </mat-form-field>
           </div>
         </div>
-        <div
-          class="p-l-5 p-r-5"
-          *ngIf="reports$ | async as reports; else loadingReports"
-        >
-          <cwp-dynamictable
-            [dataSource]="dataSource"
-            [configOptions]="configOptions"
-            (fetchDataCallback)="handleTableEvent($event)"
-            (rowLevelActionHandler)="rowLevelActionHandler($event)"
-            (cellClickActionHandler)="cellClickActionHandler($event)"
-          ></cwp-dynamictable>
+        <div class="p-l-5 p-r-5" *ngIf="reports$ | async as reports; else loadingReports">
+          <cwp-dynamictable [dataSource]="dataSource" [configOptions]="configOptions"
+            (fetchDataCallback)="handleTableEvent($event)" (rowLevelActionHandler)="rowLevelActionHandler($event)"
+            (cellClickActionHandler)="cellClickActionHandler($event)"></cwp-dynamictable>
         </div>
       </div>
     </ng-container>
@@ -101,6 +66,3 @@
     </div>
   </div>
 </ng-template>
-<ng-template #loadingReportsCount
-  ><span translate="loadingReportsCount"></span
-></ng-template>

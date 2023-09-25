@@ -46,6 +46,7 @@ export class RaceDynamicFormService {
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   attachmentsMapping$ = new BehaviorSubject<any>({});
   pdfMapping$ = new BehaviorSubject<any>({});
+  redirectToFormsList$ = new BehaviorSubject<boolean>(false);
   embeddedFormId;
 
   constructor(
