@@ -90,6 +90,7 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
   isEmbeddedForm: boolean;
   errors: ValidationError = {};
   formDetails: any;
+  embeddedFormDetails: any;
   pages: any;
   readonly formConfigurationStatus = formConfigurationStatus;
   authoredFormDetailSubscription: Subscription;
@@ -240,6 +241,7 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
           authoredFormDetailDynamoDBVersion,
           skipAuthoredDetail
         } = formDetails;
+        this.embeddedFormDetails = formDetails;
 
         if (skipAuthoredDetail) {
           return;
@@ -521,7 +523,7 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
               authoredFormDetailVersion,
               formDetailPublishStatus,
               authoredFormDetailDynamoDBVersion
-            } = this.formDetails;
+            } = this.embeddedFormDetails;
             this.store.dispatch(
               BuilderConfigurationActions.updateAuthoredFormDetail({
                 formStatus,
