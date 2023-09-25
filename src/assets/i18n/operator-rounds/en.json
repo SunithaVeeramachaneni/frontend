@@ -478,5 +478,8 @@
   "slotsInRevised": "Slots:",
   "shiftsInRevised": "Shifts:",
   "revisedFrequency": "Revised Frequency:",
-  "revisedDates": "Revised Dates:"
+  "revisedDates": "Revised Dates:",
+  "recent": "Recent",
+  "favorite": "Favorite",
+  "all": "All"
 }
