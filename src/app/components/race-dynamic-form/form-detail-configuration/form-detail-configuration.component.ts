@@ -90,11 +90,11 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
   isEmbeddedForm: boolean;
   errors: ValidationError = {};
   formDetails: any;
-  embeddedFormDetails: any;
   pages: any;
   readonly formConfigurationStatus = formConfigurationStatus;
   authoredFormDetailSubscription: Subscription;
   getFormMetadataSubscription: Subscription;
+  redirectToFormsList$: Observable<boolean>;
   private onDestroy$ = new Subject();
 
   constructor(
@@ -241,7 +241,6 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
           authoredFormDetailDynamoDBVersion,
           skipAuthoredDetail
         } = formDetails;
-        this.embeddedFormDetails = formDetails;
 
         if (skipAuthoredDetail) {
           return;
@@ -438,6 +437,14 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
         }
       }
     });
+
+    this.redirectToFormsList$ = this.rdfService.redirectToFormsList$.pipe(
+      tap((redirect) => {
+        if (redirect) {
+          this.router.navigate(['/forms']);
+        }
+      })
+    );
   }
 
   retrieveDetails() {
@@ -514,29 +521,6 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
                 isFormDetailPublished: true
               })
             );
-
-            const {
-              formMetadata,
-              formStatus,
-              counter,
-              authoredFormDetailId,
-              authoredFormDetailVersion,
-              formDetailPublishStatus,
-              authoredFormDetailDynamoDBVersion
-            } = this.embeddedFormDetails;
-            this.store.dispatch(
-              BuilderConfigurationActions.updateAuthoredFormDetail({
-                formStatus,
-                formDetailPublishStatus,
-                formListId: formMetadata.id,
-                counter,
-                pages: form.pages,
-                authoredFormDetailId,
-                authoredFormDetailVersion,
-                authoredFormDetailDynamoDBVersion
-              })
-            );
-            this.router.navigate(['/forms']);
           } else {
             this.store.dispatch(
               BuilderConfigurationActions.updateFormPublishStatus({
