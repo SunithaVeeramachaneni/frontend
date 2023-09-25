@@ -96,11 +96,10 @@
         <!-- Plant and time zone -->
         <ng-container>
           <div>
-            <br />
             <p id="scheduleConfigurationPlant" translate class="field-info">
               plant
             </p>
-            <mat-form-field appearance="outline" class="width-100 cursor">
+            <mat-form-field appearance="outline" class="width-100 cursor plant">
               <input
                 id="scheduleConfigurationPlantText"
                 disabled
@@ -117,12 +116,14 @@
               >
             </mat-form-field>
           </div>
-          <br />
           <div>
             <p id="scheduleConfigurationTimeZone" translate class="field-info">
               timeZone
             </p>
-            <mat-form-field appearance="outline" class="width-100 cursor">
+            <mat-form-field
+              appearance="outline"
+              class="width-100 cursor plant-time-zone"
+            >
               <input
                 id="scheduleConfigurationTimeZoneText"
                 disabled
@@ -507,7 +508,34 @@
               >
             </mat-form-field>
             <div id="scheduleConfigAssignToInfo" class="info" translate>
-              assignToInfo
+              <span translate>assignToInfo</span>
+              <span
+                *ngIf="
+                  schedulerConfigForm?.get('assignmentDetails').value.type ===
+                  'plant'
+                "
+                translate
+              >
+                plant
+              </span>
+              <span
+                *ngIf="
+                  schedulerConfigForm?.get('assignmentDetails').value.type ===
+                  'user'
+                "
+                translate
+              >
+                user
+              </span>
+              <span
+                *ngIf="
+                  schedulerConfigForm?.get('assignmentDetails').value.type ===
+                  'userGroup'
+                "
+                translate
+              >
+                userGroup
+              </span>
             </div>
           </div>
           <div class="forms-count">
