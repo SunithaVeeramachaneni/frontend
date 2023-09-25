@@ -275,6 +275,14 @@
                   "
                   translate="raiseNotification"
                 ></button>
+                <button
+                  id="addLogicHideSectionsBtn"
+                  class="logicActionMenuItem"
+                  mat-menu-item
+                  *ngIf="!isTemplate"
+                  (click)="openHideSectionsDialog(logic.value, i)"
+                  translate="hideSections"
+                ></button>
               </mat-menu>
             </div>
             <div
