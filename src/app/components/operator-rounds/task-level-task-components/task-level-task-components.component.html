@@ -119,7 +119,7 @@
                               "
                             >
                               <span class="revised-title" translate>
-                                Revised Frequency:
+                                revisedFrequency
                               </span>
                               <span class="revised-value">
                                 Every {{ revisedQuestionData?.repeatDuration }}
@@ -151,15 +151,15 @@
                               "
                             >
                               <span class="revised-title" translate>
-                                Revised Dates:
+                                revisedDates
                               </span>
                               <span class="revised-value" translate>
-                                Custom Dates
+                                customDates
                               </span>
                             </p>
                             <p class="m-t-15 m-b-0">
                               <span class="revised-title" translate>
-                                Shifts:
+                                shiftsInRevised
                               </span>
                               <span
                                 class="revised-value"
@@ -171,7 +171,7 @@
                                 {{
                                   getNameById(shiftGroup.id)
                                     ? getNameById(shiftGroup.id)
-                                    : '- -'
+                                    : placeHolder
                                 }}
                                 <span *ngIf="i !== shiftArray.length - 1">
                                   ,
@@ -180,7 +180,7 @@
                             </p>
                             <div class="dis-flex m-t-8">
                               <span class="revised-title" translate>
-                                Slots:
+                                slotsInRevised
                               </span>
                               &nbsp;&nbsp;
                               <div
@@ -205,15 +205,17 @@
                             </div>
                             <div class="dis-flex m-t-8">
                               <div class="revised-title" translate>
-                                Starts:&nbsp;
+                                startsTime
                               </div>
+                              &nbsp;
                               <div class="revised-slots revised-value">
                                 {{ revisedQuestionData?.startDate }}
                               </div>
                               &nbsp; &nbsp; &nbsp;
                               <span class="revised-title" translate>
-                                Ends:&nbsp;
+                                endsTime
                               </span>
+                              &nbsp;
                               <div class="revised-slots revised-value">
                                 {{ revisedQuestionData?.endDate }}
                               </div>

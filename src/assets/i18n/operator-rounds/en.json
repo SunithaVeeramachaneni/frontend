@@ -472,5 +472,11 @@
   "submittedDate": "Submitted Date",
   "loadingReportsCount": "Loading Reports Count...",
   "loadingFilterOptions": "Loading Filter Options...",
-  "selectReportTxt": "Select a report to start creating a widget"
+  "selectReportTxt": "Select a report to start creating a widget",
+  "startsTime": "Starts:",
+  "endsTime": "Ends:",
+  "slotsInRevised": "Slots:",
+  "shiftsInRevised": "Shifts:",
+  "revisedFrequency": "Revised Frequency:",
+  "revisedDates": "Revised Dates:"
 }
