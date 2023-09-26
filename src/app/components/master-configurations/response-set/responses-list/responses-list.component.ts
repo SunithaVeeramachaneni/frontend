@@ -45,11 +45,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { UploadResponseModalComponent } from '../../../../shared/components/upload-response-modal/upload-response-modal.component';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { CommonService } from 'src/app/shared/services/common.service';
-
+import { slideInOut } from 'src/app/animations';
 @Component({
   selector: 'app-responses-list',
   templateUrl: './responses-list.component.html',
   styleUrls: ['./responses-list.component.scss'],
+  animations: [slideInOut],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ResponsesListComponent implements OnInit, OnDestroy {

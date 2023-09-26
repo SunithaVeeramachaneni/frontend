@@ -649,6 +649,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
       name: responseSet?.name,
       description: responseSet?.description,
       isMultiColumn: responseSet?.isMultiColumn,
+      moduleName: responseSet?.moduleName,
       refCount: responseSet?.refCount + (actionType === 'deselected' ? -1 : 1),
       values: JSON.stringify(responseSet?.value),
       createdBy: responseSet?.createdBy,

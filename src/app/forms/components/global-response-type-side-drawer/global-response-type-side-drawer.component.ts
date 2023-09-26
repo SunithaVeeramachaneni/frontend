@@ -40,7 +40,6 @@ import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-valid
 import { Subject, Subscription, timer } from 'rxjs';
 import { ValidationError } from 'src/app/interfaces';
 import { FormValidationUtil } from 'src/app/shared/utils/formValidationUtil';
-import { slideInOut } from 'src/app/animations';
 import { metadataModuleNames } from 'src/app/app.constants';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/core';
@@ -49,7 +48,6 @@ import { MatOption } from '@angular/material/core';
   selector: 'app-global-response-type-side-drawer',
   templateUrl: './global-response-type-side-drawer.component.html',
   styleUrls: ['./global-response-type-side-drawer.component.scss'],
-  animations: [slideInOut],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GlobalResponseTypeSideDrawerComponent
@@ -120,10 +118,8 @@ export class GlobalResponseTypeSideDrawerComponent
       )
       .subscribe();
   }
-  //////////////////////////////////////////////////////////////
-  // TODO - Changes related to displaying of global response ///
-  //////////////////////////////////////////////////////////////
   ngOnChanges(changes: SimpleChanges): void {
+    this.cdrf.detectChanges();
     if (changes.globalResponseToBeEdited) {
       const response = changes.globalResponseToBeEdited.currentValue;
       if (response) {
@@ -239,7 +235,6 @@ export class GlobalResponseTypeSideDrawerComponent
       description: this.description.value,
       refCount: 0
     };
-    console.log(responseSetPayload);
     if (this.globalResponse !== null) {
       this.responseSetService
         .updateResponseSet$({
@@ -289,7 +284,7 @@ export class GlobalResponseTypeSideDrawerComponent
   };
 
   objectComparisonFunction(option, value): boolean {
-    return option.id === value.id;
+    return option === value;
   }
   closeSelect(select: MatSelect): void {
     select.close();
