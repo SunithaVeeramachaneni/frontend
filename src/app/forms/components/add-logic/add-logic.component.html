@@ -190,6 +190,15 @@
                 <mat-icon id="addLogicEditIcon">edit</mat-icon>
               </span>
               <span
+                id="addLogicHideSections"
+                *ngIf="logic.value.hideSections.length"
+                class="mandateAction"
+                (click)="openHideSectionsDialog(logic.value, i)"
+              >
+                Hide ({{ logic.value.hideSections.length }}) Sections
+                <mat-icon id="addLogicEditIcon">edit</mat-icon>
+              </span>
+              <span
                 id="addLogicAskQuestions"
                 *ngIf="logic.value.questions.length"
                 class="mandateAction"
