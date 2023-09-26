@@ -88,19 +88,22 @@ export class ChartReportDialog implements OnInit {
 
   ngOnInit() {
     const { filters } = this.data;
-    this.dateObject = this.dateUtilService.getStartAndEndDates(
-      filters.timePeriod,
-      filters.startDate,
-      filters.endDate
-    );
-    this.dateObject.startDate = format(
-      new Date(this.dateObject.startDate),
-      'dd-MM-yyyy'
-    );
-    this.dateObject.endDate = format(
-      new Date(this.dateObject.endDate),
-      'dd-MM-yyyy'
-    );
+    if (Object.keys(filters).length) {
+      this.dateObject = this.dateUtilService.getStartAndEndDates(
+        filters.timePeriod,
+        filters.startDate,
+        filters.endDate
+      );
+      this.dateObject.startDate = format(
+        new Date(this.dateObject.startDate),
+        'dd-MM-yyyy'
+      );
+      this.dateObject.endDate = format(
+        new Date(this.dateObject.endDate),
+        'dd-MM-yyyy'
+      );
+    }
+
     this.selectedReport = this.data?.widgetData;
     const { chartData } = this.data;
     if (
@@ -138,7 +141,7 @@ export class ChartReportDialog implements OnInit {
     this.configOptions.allColumns?.forEach((col: any) => {
       col.id = col.name;
       col.controlType = 'string';
-      col.displayName = col.name?.toUpperCase();
+      col.displayName = col?.displayName || col?.name;
       this.reportColumns = this.reportColumns.concat(col);
     });
 
@@ -282,24 +285,26 @@ export class ChartReportDialog implements OnInit {
       filtersApplied.push(locationFilter);
     }
 
-    const startAndEndDate = this.dateUtilService.getStartAndEndDates(
-      filters.timePeriod,
-      filters.startDate,
-      filters.endDate
-    );
-    filtersApplied.push({
-      column: 'updatedOn',
-      type: 'daterange',
-      filters: [
-        {
-          operation: 'custom',
-          operand: {
-            startDate: startAndEndDate.startDate,
-            endDate: startAndEndDate.endDate
+    if (Object.keys(filters).length) {
+      const startAndEndDate = this.dateUtilService.getStartAndEndDates(
+        filters.timePeriod,
+        filters.startDate,
+        filters.endDate
+      );
+      filtersApplied.push({
+        column: 'updatedOn',
+        type: 'daterange',
+        filters: [
+          {
+            operation: 'custom',
+            operand: {
+              startDate: startAndEndDate.startDate,
+              endDate: startAndEndDate.endDate
+            }
           }
-        }
-      ]
-    });
+        ]
+      });
+    }
     return filtersApplied;
   };
 
