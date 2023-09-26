@@ -429,10 +429,13 @@ export class RoundPlanDetailConfigurationComponent
     ]).pipe(
       tap(([data, createOrEditForm]) => {
         if (!createOrEditForm) {
-          this.router.navigate(['/operator-rounds']);
+          this.router.navigate(['/operator-rounds/round-plans']);
         }
         const { formConfigurationState, hierarchyState } = data.form || {};
-        if (createOrEditForm && this.router.url === '/operator-rounds')
+        if (
+          createOrEditForm &&
+          this.router.url === '/operator-rounds/round-plans'
+        )
           this.openHierarchyModal();
 
         if (hierarchyState && Object.keys(hierarchyState).length) {

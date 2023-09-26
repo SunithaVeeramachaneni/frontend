@@ -56,7 +56,6 @@ const {
   formsTemplates,
   archivedForms,
   schedularForms,
-  operatorRoundPlans,
   myRoundPlans,
   roundPlanScheduler,
   masterConfiguration,
@@ -200,7 +199,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       ]
     },
     {
-      title: operatorRoundPlans.title,
+      title: myRoundPlans.title,
       url: oprDashboard.url,
       imageName: 'operator-rounds',
       showSubMenu: false,
