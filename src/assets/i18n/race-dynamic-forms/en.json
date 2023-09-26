@@ -397,6 +397,6 @@
   "selectUser": "Select User",
   "selectUserGroup": "Select User Group",
   "submittedDate": "Submitted Date",
-  "hideSections": "Hide Sections",
+  "hideSection": "Hide Section",
   "hideSectionsQuestionTitle": "Q: {questionName}"
 }

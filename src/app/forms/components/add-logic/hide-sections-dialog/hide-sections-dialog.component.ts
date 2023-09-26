@@ -12,7 +12,7 @@ import { Page, Question } from 'src/app/interfaces';
 import { tap } from 'rxjs/operators';
 import {
   getPage,
-  getQuestionByQuestionID,
+  getQuestionByID,
   State
 } from 'src/app/forms/state/builder/builder-state.selectors';
 
@@ -39,25 +39,19 @@ export class HideSectionsDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.operatorDisplayNameMap = operatorDisplayNameMap;
+
+    const { pageIndex, sectionId, questionId, subFormId } = this.data;
+
     this.question$ = this.store.select(
-      getQuestionByQuestionID(this.data.pageIndex, this.data.questionId)
+      getQuestionByID(pageIndex, sectionId, questionId, subFormId)
     );
 
-    this.question$.subscribe((question) => {
-      this.question = question;
-      console.log(question);
-    });
-
-    this.page$ = this.store
-      .select(getPage(this.data.pageIndex, this.data.subFormId))
-      .pipe(
-        tap((pageObj) => {
-          const page = Object.assign({}, pageObj);
-          this.sections = page.sections.filter(
-            (s) => s.id !== this.data.sectionId
-          );
-        })
-      );
+    this.page$ = this.store.select(getPage(pageIndex, subFormId)).pipe(
+      tap((pageObj) => {
+        const page = Object.assign({}, pageObj);
+        this.sections = page.sections.filter((s) => s.id !== sectionId);
+      })
+    );
 
     const hiddenSections = this.data.logic.hideSections || [];
     this.selectedSections = this.selectedSections.concat(hiddenSections);

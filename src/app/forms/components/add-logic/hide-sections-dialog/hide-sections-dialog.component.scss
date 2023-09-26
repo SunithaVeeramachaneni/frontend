@@ -8,14 +8,12 @@
   .page-header-embedded {
     border-radius: 10px !important;
     border: 1px solid $border-color !important;
-    margin-top: 12px;
     padding: 5px 7px;
   }
 
   .page-header {
     background: $white;
     border-radius: 10px 10px 0px 0px;
-    margin-top: 12px;
     padding: 5px 7px 5px 7px;
     border-top-width: 1px;
     border-bottom-width: 1px;
@@ -144,6 +142,14 @@
     .question {
       padding: 5px;
       margin-left: 10px;
+
+      ::ng-deep .mat-checkbox-frame {
+        border-color: $white;
+      }
+
+      ::ng-deep .mat-checkbox-checkmark-path {
+        stroke: $black !important;
+      }
     }
 
     .strike-question {
@@ -161,4 +167,13 @@
   align-items: center;
   box-sizing: content-box;
   margin-bottom: 0px;
+}
+
+::ng-deep .mat-checkbox-checked.mat-accent .mat-checkbox-background,
+::ng-deep .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background {
+  background-color: $white !important;
+}
+
+.mat-dialog-title {
+  margin: 0px;
 }

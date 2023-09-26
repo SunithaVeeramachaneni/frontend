@@ -1,7 +1,7 @@
 <div mat-dialog-title *ngIf="page$ | async">
   <div class="header">
     <div class="hide-sections-title">
-      <span translate="hideSections" class="title"></span>
+      <span translate="hideSection" class="title"></span>
       <button mat-icon-button mat-dialog-close (click)="close()">
         <mat-icon>close</mat-icon>
       </button>
@@ -18,13 +18,9 @@
             'hideSectionsQuestionTitle'
               | translate
                 : {
-                    questionName:
-                      question?.name?.length > 0
-                        ? question?.name
-                        : 'Untitled Question'
+                    questionName: question?.name || 'Untitled Question'
                   }
           }}
-          {{ question.name.length }}
         </span>
         <p id="selectQuestionAnswer" class="m-0">
           <span translate="ifAnswer"></span>
@@ -98,6 +94,7 @@
     mat-raised-button
     color="primary"
     [mat-dialog-close]="true"
+    [disabled]="selectedSections.length === 0"
     (click)="submit()"
     translate="save"
   ></button>

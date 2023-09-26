@@ -456,6 +456,6 @@
   "taskLevelAlert": "Any schedule changes in the Header Step would override the Schedule of all the tasks. Do you want to continue to the Header Step?",
   "taskLevelNote": "If there’s no Schedule change in the Header Step, there would not be any impact at task level.",
   "submittedDate": "Submitted Date",
-  "hideSections": "Hide Sections",
+  "hideSection": "Hide Section",
   "hideSectionsQuestionTitle": "Q: {questionName}"
 }
