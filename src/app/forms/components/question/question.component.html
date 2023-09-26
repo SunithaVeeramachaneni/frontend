@@ -374,25 +374,11 @@
               </span>
 
               <span
-                *ngIf="
-                  questionForm.get('fieldType').value === 'LF' ||
-                  (isEmbeddedForm &&
-                    questionForm.get('fieldType').value === 'HL')
-                "
+                *ngIf="questionForm.get('fieldType').value === 'LF'"
                 class="action"
-                [ngClass]="{
-                  'width-100':
-                    isEmbeddedForm &&
-                    questionForm.get('fieldType').value === 'HL'
-                }"
               >
                 <app-read-only
                   [question]="questionForm"
-                  [ngClass]="{
-                    'hyperlink-long':
-                      isEmbeddedForm &&
-                      questionForm.get('fieldType').value === 'HL'
-                  }"
                   [translateValue]="
                     questionForm.get('fieldType').value === 'LF'
                       ? 'defaultValue'
@@ -425,10 +411,7 @@
               </span>
 
               <span
-                *ngIf="
-                  questionForm.get('fieldType').value === 'HL' &&
-                  !isEmbeddedForm
-                "
+                *ngIf="questionForm.get('fieldType').value === 'HL'"
                 class="action"
               >
                 <button
