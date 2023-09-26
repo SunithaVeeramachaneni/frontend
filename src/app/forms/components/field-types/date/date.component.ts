@@ -39,6 +39,8 @@ export class DateComponent implements OnInit {
   }
 
   toggleChecked() {
+    if (!this.defaultDateChecked && !this.defaultTimeChecked)
+      this.defaultDateChecked = true;
     this.checkedToDefaultDateAndTime.emit({
       date: this.defaultDateChecked,
       time: this.defaultTimeChecked

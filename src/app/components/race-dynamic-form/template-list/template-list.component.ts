@@ -378,22 +378,21 @@ export class TemplateListComponent implements OnInit, OnDestroy {
     this.raceDynamicFormService.getTemplateFilter().subscribe((res) => {
       this.filterJson = res;
 
-      const uniqueLastPublishedBy = Array.from(
+      this.lastPublishedBy = Array.from(
         new Set(
           this.allTemplates
             .map((item: any) => item.lastPublishedBy)
             .filter((item) => item != null)
         )
-      );
-      this.lastPublishedBy = uniqueLastPublishedBy;
-      const uniqueCreatedBy = Array.from(
+      ).sort();
+
+      this.createdBy = Array.from(
         new Set(
           this.allTemplates
             .map((item: any) => item.author)
             .filter((item) => item != null)
         )
-      );
-      this.createdBy = uniqueCreatedBy;
+      ).sort();
 
       this.filterJson.forEach((item) => {
         if (item.column === 'status') {

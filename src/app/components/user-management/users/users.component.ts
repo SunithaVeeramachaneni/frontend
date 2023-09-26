@@ -513,7 +513,7 @@ export class UsersComponent implements OnInit {
                 if (user) {
                   initial.data = [user, ...initial.data];
                   initial.data[0].plantIdPlaceholder =
-                    this.plantsObject[user.plantId];
+                    this.getPlantIdPlaceholder(user.plantId);
                   initial.data[0].validThroughPlaceholder = this.formatDate(
                     user.validThrough
                   );
@@ -540,7 +540,7 @@ export class UsersComponent implements OnInit {
                   if (index > -1) {
                     initial.data[index] = user;
                     initial.data[index].plantIdPlaceholder =
-                      this.plantsObject[user.plantId];
+                      this.getPlantIdPlaceholder(user.plantId);
                     initial.data[index].validThroughPlaceholder =
                       this.formatDate(user.validThrough);
                   }
@@ -575,10 +575,22 @@ export class UsersComponent implements OnInit {
     return users.map((user) => {
       user.validThroughPlaceholder = this.formatDate(user.validThrough);
       if (user.plantId) {
-        user.plantIdPlaceholder = this.plantsObject[user.plantId];
+        user.plantIdPlaceholder = this.getPlantIdPlaceholder(user.plantId);
       }
       return user;
     });
+  }
+  getPlantIdPlaceholder(plantId) {
+    let plantIdPlaceholder = '';
+    if (plantId) {
+      plantId = plantId.split(',');
+      plantId.map((id, idx) => {
+        plantIdPlaceholder += `${this.plantsObject[id]}${
+          idx !== plantId.length - 1 ? ', ' : ''
+        }`;
+      });
+    }
+    return plantIdPlaceholder;
   }
 
   formatDate(validThrough) {

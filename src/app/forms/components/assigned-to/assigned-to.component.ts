@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, combineLatest } from 'rxjs';
 import {
   debounceTime,
   delay,
@@ -23,7 +23,8 @@ import {
 import {
   AssigneeDetails,
   SelectedAssignee,
-  UserDetails
+  UserDetails,
+  UserGroup
 } from 'src/app/interfaces';
 @Component({
   selector: 'app-assigned-to',
@@ -33,43 +34,89 @@ import {
 })
 export class AssignedToComponent implements OnInit, OnDestroy {
   @Input() set assigneeDetails(assigneeDetails: AssigneeDetails) {
-    this._assigneeDetails = assigneeDetails;
-  }
-  get assigneeDetails(): AssigneeDetails {
-    return this._assigneeDetails;
+    this.assigneeDetails$.next(assigneeDetails);
   }
   @Output() selectedAssignee: EventEmitter<SelectedAssignee> =
     new EventEmitter<SelectedAssignee>();
 
+  @Input() set assigneeType(assigneeType) {
+    this._assigneeType = assigneeType;
+  }
+
+  get assigneeType() {
+    return this._assigneeType;
+  }
+
+  @Input() set showAssigneeOptions(assigneeOption: boolean) {
+    this._showAssigneeOptions = assigneeOption;
+  }
+
+  get showAssigneeOptions() {
+    return this._showAssigneeOptions;
+  }
+
   @Input() dropdownPosition;
   @Input() isMultiple = false;
   @Input() assignedTo: string;
-  searchUsers: FormControl;
-  filteredUsers$: Observable<UserDetails[]>;
-  filteredUsersCount: number;
+  searchInput = new FormControl('');
+  filteredData$: Observable<any[]>;
+  filteredDataCount: number;
+  assignTypes = ['plant', 'userGroup', 'user'];
+  assigneeTypeControl = new FormControl('plant');
+  assigneeDetails$ = new BehaviorSubject({} as AssigneeDetails);
   selectedAssigneeInput$ = new BehaviorSubject({});
-  private _assigneeDetails: AssigneeDetails;
+  private _assigneeType = 'plant';
+  private _showAssigneeOptions = false;
   private onDestroy$ = new Subject();
-
   constructor() {}
 
   ngOnInit(): void {
-    this.searchUsers = new FormControl('');
+    this.assigneeTypeControl.valueChanges
+      .pipe(
+        takeUntil(this.onDestroy$),
+        tap((type) => {
+          this.assigneeType = type;
+          this.searchInput.patchValue('');
+        })
+      )
+      .subscribe();
 
-    this.filteredUsers$ = this.searchUsers.valueChanges.pipe(
-      startWith(''),
-      debounceTime(500),
-      distinctUntilChanged(),
-      map((search) => {
+    this.filteredData$ = combineLatest([
+      this.searchInput.valueChanges.pipe(
+        startWith(''),
+        debounceTime(500),
+        distinctUntilChanged()
+      ),
+      this.assigneeDetails$
+    ]).pipe(
+      map(([search, assigneeDetails]) => {
         search = search.toLowerCase();
-        return this.assigneeDetails.users.filter(
-          (user) =>
-            user.isActive &&
-            (user.firstName.toLowerCase().indexOf(search) !== -1 ||
-              user.lastName.toLowerCase().indexOf(search) !== -1)
-        );
+        if (this.assigneeType === 'user') {
+          return (
+            assigneeDetails?.users?.filter(
+              (user) =>
+                user.isActive &&
+                (user.firstName.toLowerCase().indexOf(search) !== -1 ||
+                  user.lastName.toLowerCase().indexOf(search) !== -1)
+            ) || []
+          );
+        }
+        if (this.assigneeType === 'userGroup') {
+          return (
+            assigneeDetails?.userGroups?.filter(
+              (userGroup: any) => userGroup.searchTerm.indexOf(search) !== -1
+            ) || []
+          );
+        }
+        if (this.assigneeType === 'plant') {
+          return (
+            assigneeDetails?.plants?.filter(
+              (plant: any) => plant.indexOf(search) !== -1
+            ) || []
+          );
+        }
       }),
-      tap((users) => (this.filteredUsersCount = users.length))
+      tap((data) => (this.filteredDataCount = data.length))
     );
 
     this.selectedAssigneeInput$
@@ -78,7 +125,7 @@ export class AssignedToComponent implements OnInit, OnDestroy {
         debounceTime(100),
         delay(800),
         tap((assignee: any) => {
-          if (assignee.user) {
+          if (this.assigneeType) {
             this.selectedAssignee.emit(assignee);
           }
         })
@@ -87,16 +134,30 @@ export class AssignedToComponent implements OnInit, OnDestroy {
   }
 
   selectAssignee(
-    user: UserDetails,
+    data: any,
     { checked }: MatCheckboxChange = {} as MatCheckboxChange
   ) {
-    this.selectedAssigneeInput$.next({ user, checked });
+    const selectedAssignee: any = {
+      assigneeType: this.assigneeType,
+      checked
+    };
+    if (this.assigneeType === 'user') {
+      selectedAssignee.user = data;
+    }
+    if (this.assigneeType === 'userGroup') {
+      selectedAssignee.userGroup = data;
+    }
+    if (this.assigneeType === 'plant') {
+      selectedAssignee.plant = data;
+    }
+    if (this.assigneeType) {
+      this.selectedAssigneeInput$.next(selectedAssignee);
+    }
   }
 
   isAssigneeSelected(email: string) {
     return this.assignedTo.indexOf(email) !== -1;
   }
-
   ngOnDestroy(): void {
     this.onDestroy$.next();
     this.onDestroy$.complete();

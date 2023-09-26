@@ -666,3 +666,26 @@ button.mat-menu-item {
   opacity: 0.6;
   font-size: 105%;
 }
+
+.task-level-shifts {
+  .mat-option-text {
+    overflow: visible;
+    position: relative;
+    top: -8px;
+  }
+
+  .mat-option {
+    line-height: 35px !important;
+    height: 60px !important;
+  }
+
+  .mat-pseudo-checkbox {
+    position: relative;
+    top: -6px;
+  }
+
+  .shift-time {
+    margin: 0;
+    line-height: 0;
+  }
+}

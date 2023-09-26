@@ -144,6 +144,32 @@ export class WidgetComponent implements OnInit {
         };
         filtersApplied.push(shiftFilter);
       }
+      if (this.filters?.locationId && this.filters?.locationId.length) {
+        const locationFilter = {
+          column: 'locationId',
+          type: 'string',
+          filters: [
+            {
+              operation: 'equals',
+              operand: this.filters.locationId
+            }
+          ]
+        };
+        filtersApplied.push(locationFilter);
+      }
+      if (this.filters?.assetId && this.filters?.assetId.length) {
+        const assetFilter = {
+          column: 'assetId',
+          type: 'string',
+          filters: [
+            {
+              operation: 'equals',
+              operand: this.filters.assetId
+            }
+          ]
+        };
+        filtersApplied.push(assetFilter);
+      }
 
       const startAndEndDate = this.dateUtilService.getStartAndEndDates(
         this.filters?.timePeriod,

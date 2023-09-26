@@ -46,6 +46,7 @@ export class RaceDynamicFormService {
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   attachmentsMapping$ = new BehaviorSubject<any>({});
   pdfMapping$ = new BehaviorSubject<any>({});
+  redirectToFormsList$ = new BehaviorSubject<boolean>(false);
   embeddedFormId;
 
   constructor(
@@ -583,10 +584,11 @@ export class RaceDynamicFormService {
     };
   }
 
-  fetchAllFormListNames$() {
-    return this.appService
-      ._getResp(environment.rdfApiUrl, 'forms/name')
-      .pipe(map((res) => res.items));
+  fetchAllFormListNames$(formName) {
+    return this.appService._getResp(
+      environment.rdfApiUrl,
+      `forms/copy/${formName}`
+    );
   }
 
   fetchAllFormsList$() {
@@ -783,6 +785,9 @@ export class RaceDynamicFormService {
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<InspectionDetailResponse> {
     const { fetchType, next, limit: gLimit, ...rawParams } = queryParams;
+    if (rawParams.assignedToDisplay) {
+      rawParams.assignedToDisplay = JSON.stringify(rawParams.assignedToDisplay);
+    }
 
     if (
       ['load', 'search'].includes(fetchType) ||
@@ -826,6 +831,7 @@ export class RaceDynamicFormService {
         dueDateDisplay: p.dueDate
           ? format(new Date(p.dueDate), dateFormat2)
           : '',
+        submittedAt: p.submittedAt ? new Date(p.submittedAt) : '',
         tasksCompleted: `${p.totalTasksCompleted}/${p.totalTasks},${
           p.totalTasks > 0
             ? Math.round(

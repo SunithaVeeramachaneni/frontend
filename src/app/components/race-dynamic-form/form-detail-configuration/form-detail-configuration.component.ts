@@ -94,6 +94,7 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
   readonly formConfigurationStatus = formConfigurationStatus;
   authoredFormDetailSubscription: Subscription;
   getFormMetadataSubscription: Subscription;
+  redirectToFormsList$: Observable<boolean>;
   private onDestroy$ = new Subject();
 
   constructor(
@@ -436,6 +437,14 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
         }
       }
     });
+
+    this.redirectToFormsList$ = this.rdfService.redirectToFormsList$.pipe(
+      tap((redirect) => {
+        if (redirect) {
+          this.router.navigate(['/forms']);
+        }
+      })
+    );
   }
 
   retrieveDetails() {
@@ -491,11 +500,6 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
         formDetailPublishStatus: formConfigurationStatus.publishing
       })
     );
-    this.store.dispatch(
-      BuilderConfigurationActions.updateIsFormDetailPublished({
-        isFormDetailPublished: true
-      })
-    );
     const form = {
       formMetadata: {
         ...this.formMetadata,
@@ -505,38 +509,26 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
     };
 
     if (this.isEmbeddedForm) {
-      this.rdfService.publishEmbeddedForms$(form).subscribe((response) => {
-        form.pages[0].questions.forEach((question) => {
-          if (response?.includes(question.id)) {
-            question.isPublished = true;
-            question.isPublishedTillSave = true;
+      this.rdfService
+        .publishEmbeddedForms$(form, {
+          displayToast: true,
+          failureResponse: {}
+        })
+        .subscribe((response) => {
+          if (Object.keys(response)?.length > 0) {
+            this.store.dispatch(
+              BuilderConfigurationActions.updateIsFormDetailPublished({
+                isFormDetailPublished: true
+              })
+            );
+          } else {
+            this.store.dispatch(
+              BuilderConfigurationActions.updateFormPublishStatus({
+                formDetailPublishStatus: formConfigurationStatus.draft
+              })
+            );
           }
         });
-
-        const {
-          formMetadata,
-          formStatus,
-          counter,
-          authoredFormDetailId,
-          authoredFormDetailVersion,
-          formDetailPublishStatus,
-          authoredFormDetailDynamoDBVersion
-        } = this.formDetails;
-        this.store.dispatch(
-          BuilderConfigurationActions.updateAuthoredFormDetail({
-            formStatus,
-            formDetailPublishStatus,
-            formListId: formMetadata.id,
-            counter,
-            pages: form.pages,
-            authoredFormDetailId,
-            authoredFormDetailVersion,
-            authoredFormDetailDynamoDBVersion
-          })
-        );
-
-        this.router.navigate(['/forms']);
-      });
     }
   }
 

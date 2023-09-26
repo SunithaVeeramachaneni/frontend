@@ -270,7 +270,7 @@
     </ng-container>
   </div>
   <div
-    *ngIf="isEmptyPlan"
+    *ngIf="isEmptyPlan && mode !== 'scheduler'"
     [ngClass]="{
       emptyRoutePlanContainer: moduleName === 'rounds',
       emptyRoutePlanContainerWithPreview: moduleName === 'forms'

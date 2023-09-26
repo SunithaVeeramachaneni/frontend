@@ -381,3 +381,8 @@ export const updateFormStatus = createAction(
   '[Builder Configuration] updateFormStatus',
   props<{ formStatus: string }>()
 );
+
+export const updateModuleName = createAction(
+  '[Builder Configuration] updateModuleName',
+  props<{ moduleName: string }>()
+);

@@ -212,6 +212,6 @@ export class UserGroupService {
     this.appService._getResp(
       environment.userRoleManagementApiUrl,
       'user-groups/all',
-      info
+      { displayToast: true, failureResponse: { items: [], count: 0 } }
     );
 }

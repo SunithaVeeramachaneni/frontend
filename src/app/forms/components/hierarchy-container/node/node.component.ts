@@ -6,7 +6,8 @@ import {
   Input,
   Output,
   EventEmitter,
-  ViewChild
+  ViewChild,
+  OnDestroy
 } from '@angular/core';
 import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
@@ -24,7 +25,9 @@ export class NodeComponent implements OnInit {
   @Input() node;
   @Input() hierarchyMode;
   @Input() dropTargetIds;
+  @Input() isRevised = false;
   @Output() nodeRemoved: EventEmitter<any> = new EventEmitter();
+  @Output() checkevent: EventEmitter<[any, any]> = new EventEmitter();
   @Input() set nodeWiseQuestionsCount(nodeWiseQuestionsCount: any) {
     if (nodeWiseQuestionsCount) {
       this._nodeWiseQuestionsCount = nodeWiseQuestionsCount;
@@ -38,6 +41,9 @@ export class NodeComponent implements OnInit {
   selectedNode: any;
   selectedNode$: any;
   positions: any;
+  allCheckedPages: any = { status: false };
+  partiallyChecked: any = { status: false };
+  checkboxStatus$: any;
   public nodeSelectedForShowHierarchy = {} as any;
   public togglePopover = false;
   private _nodeWiseQuestionsCount: any = {};
@@ -52,6 +58,24 @@ export class NodeComponent implements OnInit {
     this.selectedNode$ = this.operatorRoundsService.selectedNode$.pipe(
       tap((data) => {
         this.selectedNode = data;
+      })
+    );
+
+    this.checkboxStatus$ = this.operatorRoundsService.checkboxStatus$.pipe(
+      tap((value) => {
+        if (value !== null && value.nodeId === this.node.id) {
+          this.allCheckedPages = {
+            status: value.selectedPage.every((t) => t.complete)
+          };
+
+          this.partiallyChecked = {
+            status:
+              (value.selectedPage.filter((t) => t.partiallyChecked).length >
+                0 ||
+                value.selectedPage.filter((t) => t.complete).length > 0) &&
+              !this.allCheckedPages.status
+          };
+        }
       })
     );
   }
@@ -128,4 +152,10 @@ export class NodeComponent implements OnInit {
     this.nodeSelectedForShowHierarchy = node;
     this.togglePopover = !this.togglePopover;
   };
+
+  toggleCheckBox(checked, node) {
+    this.allCheckedPages.status = checked;
+    this.partiallyChecked = false;
+    this.checkevent.emit([checked, node]);
+  }
 }

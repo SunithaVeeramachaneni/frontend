@@ -282,11 +282,16 @@ export const routingUrls = {
     title: 'Operator Rounds',
     permission: permissions.viewORPlans
   },
-  // oprReports: {
-  //   url: '/operator-rounds/reports',
-  //   title: 'Reports',
-  //   permission: permissions.viewOPRReports
-  // },
+  oprDashboard: {
+    url: '/operator-rounds',
+    title: 'Dashboard',
+    permission: permissions.viewOPRReports
+  },
+  oprReports: {
+    url: '/operator-rounds/reports',
+    title: 'Reports',
+    permission: permissions.viewOPRReports
+  },
   myRoundPlans: {
     url: '/operator-rounds',
     title: 'Round Plans',
@@ -366,6 +371,7 @@ export const defaultCategoryName = 'Unassigned';
 export const defaultLanguage = 'en';
 export const defaultLimit = 25;
 export const graphQLDefaultLimit = 100;
+export const graphQLPlanLimit = 200;
 export const graphQLDefaultMaxLimit = 10000;
 export const graphQLRoundsOrInspectionsLimit = 10000;
 export const defaultCountFieldName = 'Record Count';

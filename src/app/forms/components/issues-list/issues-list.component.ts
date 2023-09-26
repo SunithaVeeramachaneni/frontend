@@ -287,6 +287,7 @@ export class IssuesListComponent implements OnInit, OnDestroy {
   filter = {
     title: '',
     location: '',
+    asset: '',
     plant: '',
     priority: '',
     status: '',
@@ -593,6 +594,7 @@ export class IssuesListComponent implements OnInit, OnDestroy {
     this.filter = {
       title: '',
       location: '',
+      asset: '',
       plant: '',
       priority: '',
       status: '',

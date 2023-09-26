@@ -1,0 +1,37 @@
+<ng-container
+  *ngIf="{ isRevised: isRevised$ | async, revisedInfo: revisedInfo$ | async }"
+></ng-container>
+<app-dynamic-stepper
+  [moduleName]="'Scheduler'"
+  [steps]="steps"
+  [currentStep]="currentStep"
+  [showGoBack]="true"
+  (goBack)="goBack()"
+  (gotoStep)="onGotoStep($event)"
+  (gotoNextStep)="gotoNextStep()"
+  (gotoPreviousStep)="gotoPreviousStep()"
+>
+  <div stepsContent>
+    <!-- STEP 1 -->
+    <div [hidden]="currentStep !== 0">
+      <app-schedule-configuration
+        (gotoNextStep)="gotoNextStep()"
+        (payloadEmitter)="payloadEmitter($event)"
+      ></app-schedule-configuration>
+    </div>
+
+    <!-- STEP 2 -->
+    <div [hidden]="currentStep !== 1">
+      <app-task-level-scheduler
+        (gotoNextStep)="gotoNextStep()"
+        (gotoPreviousStep)="gotoPreviousStep()"
+        [payload]="payload"
+        [roundPlanData]="data"
+        [plantTimezoneMap]="plantTimezoneMap"
+      ></app-task-level-scheduler>
+    </div>
+
+    <!-- STEP 3 -->
+    <div [hidden]="currentStep !== 2"></div>
+  </div>
+</app-dynamic-stepper>

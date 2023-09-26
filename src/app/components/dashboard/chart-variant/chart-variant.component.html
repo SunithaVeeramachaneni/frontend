@@ -98,11 +98,23 @@
           'showLegends' | translate
           }}</mat-checkbox>
       </p>
-      <p class="chartCustomColors" translate="customColorCodesJSON"> </p>
-      <mat-form-field appearance="outline" class="width-90">
-        <textarea matInput placeholder="Enter Chart Color Codes.." [rows]="5" formControlName="customColors"></textarea>
-      </mat-form-field>
+      <p class="chartCustomColors" translate="colorSelection"> </p>
+      <div [formGroup]="colorsForm">
+        <ng-container *ngIf="chartData" formArrayName="colors">
+          <div class="dis-flex color-head">
+            <span translate="fillTxt" class="m-r-25"></span>
+            <span translate="legendTxt"></span>
+          </div>
+          <div *ngFor="let color of getColorsList(); let i = index">
+            <div class="dis-flex" [formGroupName]="i">
+              <input matInput type="color" class="color-type m-r-25" formControlName="color" />
+              <input matInput [placeholder]="'responseTitle' | translate" autocomplete="off"
+                formControlName="seriesName" />
+            </div>
+          </div>
+        </ng-container>
 
+      </div>
     </div>
   </ng-container>
   <ng-container *ngIf="displayTableVarient && f.chartVarient.value === 'table'">

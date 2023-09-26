@@ -1,6 +1,6 @@
 @import '../../../../../scss/colors.scss';
 
-#success-container {
+.success-container {
   display: flex;
   flex-direction: column;
   padding: 20px;
@@ -12,8 +12,20 @@
     line-height: 19px;
   }
 
-  p.color {
+  .schedulerGif {
+    height: 100px;
+    width: 100px;
+  }
+
+  p.processColor {
+    color: $blue-main;
+  }
+  p.successColor {
     color: $green2;
+  }
+
+  p.failureColor {
+    color: $red-main;
   }
 
   .schedule-icon {
@@ -41,7 +53,7 @@
 
     p:last-of-type {
       margin-top: 0;
-      font-weight: 400;
+      font-weight: 500;
       font-size: 120%;
     }
   }
