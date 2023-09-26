@@ -27,7 +27,8 @@ import {
   debounceTime,
   distinctUntilChanged,
   tap,
-  takeUntil
+  takeUntil,
+  startWith
 } from 'rxjs/operators';
 
 import { isEqual } from 'lodash-es';
@@ -98,11 +99,11 @@ export class GlobalResponseTypeSideDrawerComponent
     this.responseForm.valueChanges
       .pipe(
         pairwise(),
+        startWith([null, this.responseForm.value]), // To detect changes on load
         debounceTime(500),
         distinctUntilChanged(),
         takeUntil(this.onDestroy$),
         tap(([prev, curr]) => {
-          console.log(this.responseForm.value);
           if (isEqual(prev, curr) || !curr.name || curr.responses.length < 1)
             this.isResponseFormUpdated = false;
           else if (curr.responses.find((item) => !item.title))
@@ -125,12 +126,11 @@ export class GlobalResponseTypeSideDrawerComponent
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.globalResponseToBeEdited) {
       const response = changes.globalResponseToBeEdited.currentValue;
-      response.moduleName = 'RDF,RDF_TEMPLATES';
       if (response) {
         this.responseForm.reset();
         this.name.patchValue(response.name);
         this.description.patchValue(response.description);
-        this.moduleName.patchValue(response.moduleName.split(','));
+        this.moduleName.patchValue(response?.moduleName?.split(','));
         const globalresponseValues = JSON.parse(response.values);
         this.responses.clear();
         globalresponseValues.forEach((item) => {
@@ -240,26 +240,26 @@ export class GlobalResponseTypeSideDrawerComponent
       refCount: 0
     };
     console.log(responseSetPayload);
-    // if (this.globalResponse !== null) {
-    //   this.responseSetService
-    //     .updateResponseSet$({
-    //       ...responseSetPayload,
-    //       id: this.globalResponse.id,
-    //       version: this.globalResponse._version,
-    //       refCount: this.globalResponse.refCount,
-    //       createdBy: this.globalResponse.createdBy
-    //     })
-    //     .subscribe((response) => {
-    //       if (Object.keys(response).length)
-    //         this.handleResponseSetSuccess(response, 'update');
-    //     });
-    // } else
-    //   this.responseSetService
-    //     .createResponseSet$(responseSetPayload)
-    //     .subscribe((response) => {
-    //       if (Object.keys(response).length)
-    //         this.handleResponseSetSuccess(response, 'create');
-    //     });
+    if (this.globalResponse !== null) {
+      this.responseSetService
+        .updateResponseSet$({
+          ...responseSetPayload,
+          id: this.globalResponse.id,
+          version: this.globalResponse._version,
+          refCount: this.globalResponse.refCount,
+          createdBy: this.globalResponse.createdBy
+        })
+        .subscribe((response) => {
+          if (Object.keys(response).length)
+            this.handleResponseSetSuccess(response, 'update');
+        });
+    } else
+      this.responseSetService
+        .createResponseSet$(responseSetPayload)
+        .subscribe((response) => {
+          if (Object.keys(response).length)
+            this.handleResponseSetSuccess(response, 'create');
+        });
   };
 
   closeGlobalResponse = () => {

@@ -98,7 +98,8 @@ export class ResponseSetService {
         description: responseSet?.description,
         refCount: responseSet.refCount,
         isMultiColumn: responseSet.isMultiColumn,
-        values: responseSet.values
+        values: responseSet.values,
+        moduleName: responseSet.moduleName
       }
     );
 
@@ -108,6 +109,7 @@ export class ResponseSetService {
       name: responseSet.name,
       description: responseSet.description,
       refCount: responseSet.refCount,
+      moduleName: responseSet.moduleName,
       isMultiColumn: responseSet.isMultiColumn,
       values: responseSet.values,
       createdBy: responseSet.createdBy,

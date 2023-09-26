@@ -108,7 +108,6 @@
           multiple
           [compareWith]="objectComparisonFunction"
           formControlName="moduleName"
-          class="width-50"
         >
           <div class="multiple-header">
             <span id="doneLabel">{{ 'addModuleNameHeading' | translate }}</span>
@@ -223,6 +222,7 @@
       (click)="closeGlobalResponse()"
       translate="cancel"
     ></button>
+    {{ isResponseFormUpdated }}{{ responseForm.pristine }}
     <button
       id="globalResponseCreateBtn"
       mat-raised-button
