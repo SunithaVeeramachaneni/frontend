@@ -226,7 +226,15 @@
     background: $lavendar;
     padding: 10px;
     border-radius: 4px;
-    margin-right: 10px;
+    width: 42%;
+    display: inline-block;
+    margin-bottom: 10px;
+    height: 15px;
+
+    mat-checkbox {
+      position: relative;
+      top: -4px;
+    }
   }
 
   .no-slot-times {

@@ -119,7 +119,7 @@
                               "
                             >
                               <span class="revised-title" translate>
-                                Revised Frequency:
+                                revisedFrequency
                               </span>
                               <span class="revised-value">
                                 Every {{ revisedQuestionData?.repeatDuration }}
@@ -141,9 +141,9 @@
                                     *ngIf="i !== extractedDaysOfWeek.length - 1"
                                   >
                                     ,
-                                  </span></span
-                                ></span
-                              >
+                                  </span>
+                                </span>
+                              </span>
                             </p>
                             <p
                               *ngIf="
@@ -151,15 +151,15 @@
                               "
                             >
                               <span class="revised-title" translate>
-                                Revised Dates:
+                                revisedDates
                               </span>
                               <span class="revised-value" translate>
-                                Custom Dates
+                                customDates
                               </span>
                             </p>
-                            <p>
-                              <span class="revised-title" translate
-                                >Shifts:
+                            <p class="m-t-15 m-b-0">
+                              <span class="revised-title" translate>
+                                shiftsInRevised
                               </span>
                               <span
                                 class="revised-value"
@@ -168,16 +168,21 @@
                                   let i = index
                                 "
                               >
-                                {{ getNameById(shiftGroup.id) }}
-                                <span *ngIf="i !== shiftArray.length - 1"
-                                  >,</span
-                                >
+                                {{
+                                  getNameById(shiftGroup.id)
+                                    ? getNameById(shiftGroup.id)
+                                    : placeHolder
+                                }}
+                                <span *ngIf="i !== shiftArray.length - 1">
+                                  ,
+                                </span>
                               </span>
                             </p>
-                            <div class="dis-flex m-l-10">
-                              <span class="revised-title" translate
-                                >Slots:
+                            <div class="dis-flex m-t-8">
+                              <span class="revised-title" translate>
+                                slotsInRevised
                               </span>
+                              &nbsp;&nbsp;
                               <div
                                 class="revised-slots m-r-10"
                                 *ngFor="let shiftGroup of shiftArray"
@@ -198,23 +203,21 @@
                                 </span>
                               </div>
                             </div>
-                            <div class="dis-flex m-l-10">
-                              <span class="revised-title" translate
-                                >Starts:
-                              </span>
-                              <div class="revised-slots">
-                                <p class="revised-value">
-                                  {{ revisedQuestionData?.startDate }}
-                                </p>
+                            <div class="dis-flex m-t-8">
+                              <div class="revised-title" translate>
+                                startsTime
                               </div>
                               &nbsp;
-                              <span class="revised-title" translate
-                                >Ends:
+                              <div class="revised-slots revised-value">
+                                {{ revisedQuestionData?.startDate }}
+                              </div>
+                              &nbsp; &nbsp; &nbsp;
+                              <span class="revised-title" translate>
+                                endsTime
                               </span>
-                              <div class="revised-slots">
-                                <p class="revised-value">
-                                  {{ revisedQuestionData?.endDate }}
-                                </p>
+                              &nbsp;
+                              <div class="revised-slots revised-value">
+                                {{ revisedQuestionData?.endDate }}
                               </div>
                             </div>
                           </div>

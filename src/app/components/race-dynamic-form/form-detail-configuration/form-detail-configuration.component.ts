@@ -94,6 +94,7 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
   readonly formConfigurationStatus = formConfigurationStatus;
   authoredFormDetailSubscription: Subscription;
   getFormMetadataSubscription: Subscription;
+  redirectToFormsList$: Observable<boolean>;
   private onDestroy$ = new Subject();
 
   constructor(
@@ -436,6 +437,14 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
         }
       }
     });
+
+    this.redirectToFormsList$ = this.rdfService.redirectToFormsList$.pipe(
+      tap((redirect) => {
+        if (redirect) {
+          this.router.navigate(['/forms']);
+        }
+      })
+    );
   }
 
   retrieveDetails() {
@@ -512,31 +521,13 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
                 isFormDetailPublished: true
               })
             );
-
-            const {
-              formMetadata,
-              formStatus,
-              counter,
-              authoredFormDetailId,
-              authoredFormDetailVersion,
-              formDetailPublishStatus,
-              authoredFormDetailDynamoDBVersion
-            } = this.formDetails;
+          } else {
             this.store.dispatch(
-              BuilderConfigurationActions.updateAuthoredFormDetail({
-                formStatus,
-                formDetailPublishStatus,
-                formListId: formMetadata.id,
-                counter,
-                pages: form.pages,
-                authoredFormDetailId,
-                authoredFormDetailVersion,
-                authoredFormDetailDynamoDBVersion
+              BuilderConfigurationActions.updateFormPublishStatus({
+                formDetailPublishStatus: formConfigurationStatus.draft
               })
             );
           }
-
-          this.router.navigate(['/forms']);
         });
     }
   }

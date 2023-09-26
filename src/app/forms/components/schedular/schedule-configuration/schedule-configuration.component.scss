@@ -46,7 +46,14 @@
         background: $gray;
         padding: 12px;
         border-radius: 4px;
-        height: 20px;
+        height: 15px;
+        margin-top: 6px;
+      }
+
+      ::ng-deep .plant .mat-input-element:disabled,
+      ::ng-deep .plant-time-zone .mat-input-element:disabled {
+        position: relative;
+        top: -1px;
       }
 
       .schedule {
@@ -233,6 +240,7 @@
           font-weight: 400;
           line-height: 20px;
           color: $gray-bg;
+          margin-top: 5px;
         }
 
         .cursor {

@@ -269,7 +269,7 @@
       <h3 translate>slots</h3>
       <ng-container *ngIf="allSlots[0] && allSlots[0].null">
         <div *ngFor="let slots of allSlots">
-          <span *ngFor="let slot of slots.payload">
+          <span *ngFor="let slot of slots.payload; let i = index">
             <ng-container
               *ngIf="slot.startTime === '00:00' && slot.endTime === '23:59'"
             >
@@ -286,15 +286,17 @@
             <ng-container
               *ngIf="!(slot.startTime === '00:00' && slot.endTime === '23:59')"
             >
-              <span class="slot-times">
+              <div
+                class="slot-times"
+                [ngClass]="{ 'm-r-0': i % 2 === 1, 'm-r-10': i % 2 === 0 }"
+              >
                 <mat-checkbox
                   [checked]="slot.checked"
                   (change)="checkboxEventSlots($event.checked, slots, slot)"
-                  class="m-b-20"
                 >
                   {{ slot?.startTime }} - {{ slot?.endTime }}
                 </mat-checkbox>
-              </span>
+              </div>
             </ng-container>
           </span>
         </div>
@@ -302,15 +304,18 @@
       <ng-container *ngIf="allSlots[0] && allSlots[0].id">
         <div *ngFor="let slots of allSlots">
           <p>{{ slots?.name }}</p>
-          <span class="slot-times" *ngFor="let slot of slots.payload">
+          <div
+            class="slot-times"
+            *ngFor="let slot of slots.payload; let i = index"
+            [ngClass]="{ 'm-r-0': i % 2 === 1, 'm-r-10': i % 2 === 0 }"
+          >
             <mat-checkbox
               [checked]="slot.checked"
               (change)="checkboxEventSlots($event.checked, slots, slot)"
-              class="m-b-20 width-41"
             >
               {{ slot?.startTime }} - {{ slot?.endTime }}
             </mat-checkbox>
-          </span>
+          </div>
         </div>
       </ng-container>
     </div>
