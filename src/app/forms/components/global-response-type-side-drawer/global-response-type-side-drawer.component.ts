@@ -39,11 +39,16 @@ import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-valid
 import { Subject, Subscription, timer } from 'rxjs';
 import { ValidationError } from 'src/app/interfaces';
 import { FormValidationUtil } from 'src/app/shared/utils/formValidationUtil';
+import { slideInOut } from 'src/app/animations';
+import { metadataModuleNames } from 'src/app/app.constants';
+import { MatSelect } from '@angular/material/select';
+import { MatOption } from '@angular/material/core';
 
 @Component({
   selector: 'app-global-response-type-side-drawer',
   templateUrl: './global-response-type-side-drawer.component.html',
   styleUrls: ['./global-response-type-side-drawer.component.scss'],
+  animations: [slideInOut],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GlobalResponseTypeSideDrawerComponent
@@ -55,6 +60,7 @@ export class GlobalResponseTypeSideDrawerComponent
   @ViewChildren('globalResponses')
   private globalResponses: QueryList<ElementRef>;
   isCreate = false;
+  selectMetadataModuleNames = metadataModuleNames;
   public isViewMode: boolean;
   public responseForm: FormGroup = this.fb.group({
     name: new FormControl('', [
@@ -63,6 +69,7 @@ export class GlobalResponseTypeSideDrawerComponent
       WhiteSpaceValidator.trimWhiteSpace
     ]),
     description: new FormControl('', [WhiteSpaceValidator.trimWhiteSpace]),
+    moduleName: new FormControl([]),
     responses: this.fb.array([])
   });
   errors: ValidationError = {};
@@ -95,6 +102,7 @@ export class GlobalResponseTypeSideDrawerComponent
         distinctUntilChanged(),
         takeUntil(this.onDestroy$),
         tap(([prev, curr]) => {
+          console.log(this.responseForm.value);
           if (isEqual(prev, curr) || !curr.name || curr.responses.length < 1)
             this.isResponseFormUpdated = false;
           else if (curr.responses.find((item) => !item.title))
@@ -111,14 +119,18 @@ export class GlobalResponseTypeSideDrawerComponent
       )
       .subscribe();
   }
-
+  //////////////////////////////////////////////////////////////
+  // TODO - Changes related to displaying of global response ///
+  //////////////////////////////////////////////////////////////
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.globalResponseToBeEdited) {
       const response = changes.globalResponseToBeEdited.currentValue;
+      response.moduleName = 'RDF,RDF_TEMPLATES';
       if (response) {
         this.responseForm.reset();
         this.name.patchValue(response.name);
         this.description.patchValue(response.description);
+        this.moduleName.patchValue(response.moduleName.split(','));
         const globalresponseValues = JSON.parse(response.values);
         this.responses.clear();
         globalresponseValues.forEach((item) => {
@@ -167,6 +179,9 @@ export class GlobalResponseTypeSideDrawerComponent
 
   get description(): FormControl {
     return this.responseForm.get('description') as FormControl;
+  }
+  get moduleName() {
+    return this.responseForm.get('moduleName');
   }
 
   getResponseList() {
@@ -219,30 +234,32 @@ export class GlobalResponseTypeSideDrawerComponent
       name: this.name.value ? this.name.value : 'Untitled Response Set',
       responseType: 'globalResponse',
       isMultiColumn: false,
+      moduleName: this.moduleName.value.toString(),
       values: JSON.stringify(this.responses.value),
       description: this.description.value,
       refCount: 0
     };
-    if (this.globalResponse !== null) {
-      this.responseSetService
-        .updateResponseSet$({
-          ...responseSetPayload,
-          id: this.globalResponse.id,
-          version: this.globalResponse._version,
-          refCount: this.globalResponse.refCount,
-          createdBy: this.globalResponse.createdBy
-        })
-        .subscribe((response) => {
-          if (Object.keys(response).length)
-            this.handleResponseSetSuccess(response, 'update');
-        });
-    } else
-      this.responseSetService
-        .createResponseSet$(responseSetPayload)
-        .subscribe((response) => {
-          if (Object.keys(response).length)
-            this.handleResponseSetSuccess(response, 'create');
-        });
+    console.log(responseSetPayload);
+    // if (this.globalResponse !== null) {
+    //   this.responseSetService
+    //     .updateResponseSet$({
+    //       ...responseSetPayload,
+    //       id: this.globalResponse.id,
+    //       version: this.globalResponse._version,
+    //       refCount: this.globalResponse.refCount,
+    //       createdBy: this.globalResponse.createdBy
+    //     })
+    //     .subscribe((response) => {
+    //       if (Object.keys(response).length)
+    //         this.handleResponseSetSuccess(response, 'update');
+    //     });
+    // } else
+    //   this.responseSetService
+    //     .createResponseSet$(responseSetPayload)
+    //     .subscribe((response) => {
+    //       if (Object.keys(response).length)
+    //         this.handleResponseSetSuccess(response, 'create');
+    //     });
   };
 
   closeGlobalResponse = () => {
@@ -270,6 +287,17 @@ export class GlobalResponseTypeSideDrawerComponent
     this.slideInOut.next('out');
     this.cdrf.markForCheck();
   };
+
+  objectComparisonFunction(option, value): boolean {
+    return option.id === value.id;
+  }
+  closeSelect(select: MatSelect): void {
+    select.close();
+  }
+
+  isOptionArrayEmpty(options: MatOption[] | any[]): boolean {
+    return Array.isArray(options) && options.length === 0;
+  }
 
   ngOnDestroy(): void {
     this.onDestroy$.next();

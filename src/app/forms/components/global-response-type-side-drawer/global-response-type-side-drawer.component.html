@@ -1,57 +1,83 @@
 <div class="app-customizer">
   <mat-card class="p-0">
-    <mat-icon id="globalResponseCloseIcon" (click)="closeGlobalResponse()"
+    <mat-icon
+      id="globalResponseCloseIcon"
+      class="close-btn"
+      (click)="closeGlobalResponse()"
       >close</mat-icon
     >
-    <mat-card-title class="m-0 light-gray">
-      <div
-        id="globalResponseHeading"
-        class="mcq-heading"
-        translate="globalResponseHeading"
-        [hidden]="isViewMode"
-      ></div>
-      <div
-        id="globalResponseEdit"
-        class="mcq-heading"
-        translate="editResponses"
-        *ngIf="isViewMode"
-      ></div>
-    </mat-card-title>
+    <div
+      id="globalResponseHeading"
+      class="mcq-heading"
+      translate="globalResponseHeading"
+      [hidden]="isViewMode"
+    ></div>
+    <div
+      id="globalResponseEdit"
+      class="mcq-heading"
+      translate="editResponses"
+      *ngIf="isViewMode"
+    ></div>
     <div [formGroup]="responseForm">
       <div>
-        <input
-          id="globalResponseUntitled"
-          matInput
-          formControlName="name"
-          placeholder="Untitled Response Set"
-          autocomplete="off"
-          class="global_response_name_input"
-          [hidden]="isViewMode"
-          #formName
-        />
-        <input
+        <mat-form-field
+          appearance="outline"
+          class="width-100"
+          *ngIf="!isViewMode"
+        >
+          <mat-label id="addEditGlobalResponseName">{{
+            'name' | translate
+          }}</mat-label>
+          <input
+            id="globalResponseUntitled"
+            matInput
+            formControlName="name"
+            autocomplete="off"
+            #formName
+          />
+        </mat-form-field>
+        <mat-error
+          id="addEditDescriptionError"
+          *ngIf="processValidationErrors('name')"
+          class="m-t-5 error-fields"
+        >
+          {{
+            errors.name.name
+              | translate
+                : {
+                    name: 'name' | translate
+                  }
+          }}
+        </mat-error>
+
+        <p
           id="globalResponseName"
           *ngIf="isViewMode"
-          matInput
-          disabled
-          [value]="globalResponse?.name"
           class="global_response_name_input"
-        />
+        >
+          {{ globalResponse?.name }}
+        </p>
       </div>
       <div>
-        <input
-          id="globalResponseDescription"
-          matInput
-          formControlName="description"
-          [placeholder]="'untitledDescription' | translate"
-          autocomplete="off"
-          class="global_response_description_input"
-          [hidden]="isViewMode"
-        />
+        <mat-form-field
+          appearance="outline"
+          class="width-100"
+          *ngIf="!isViewMode"
+        >
+          <mat-label id="addEditGlobalResponseDescription">{{
+            'description' | translate
+          }}</mat-label>
+          <input
+            id="globalResponseDescription"
+            matInput
+            formControlName="description"
+            autocomplete="off"
+            [hidden]="isViewMode"
+          />
+        </mat-form-field>
         <mat-error
           id="addEditDescriptionError"
           *ngIf="processValidationErrors('description')"
-          class="m-t-5 error-fields"
         >
           {{
             errors.description.name
@@ -61,19 +87,53 @@
                   }
           }}
         </mat-error>
-        <input
+        <p
           id="globalResponseViewMode"
           *ngIf="isViewMode"
-          matInput
-          disabled
-          [value]="getDescription()"
           class="global_response_description_input"
-        />
+        >
+          {{ getDescription() }}
+        </p>
       </div>
+      <mat-form-field
+        appearance="outline"
+        class="width-100"
+        *ngIf="!isViewMode"
+      >
+        <mat-label id="addEditGlobalResponseModuleNameLabel">{{
+          'addModuleNameHeading' | translate
+        }}</mat-label>
+        <mat-select
+          #matSelect
+          multiple
+          [compareWith]="objectComparisonFunction"
+          formControlName="moduleName"
+          class="width-50"
+        >
+          <div class="multiple-header">
+            <span id="doneLabel">{{ 'addModuleNameHeading' | translate }}</span>
+            <button
+              id="filterDoneBtn"
+              class="done-filters-btn"
+              (click)="closeSelect(matSelect)"
+            >
+              {{ 'done' | translate }}
+            </button>
+          </div>
+          <div class="scrollable-area">
+            <mat-option
+              *ngFor="let module of selectMetadataModuleNames"
+              [value]="module.moduleId"
+            >
+              {{ module.moduleName }}
+            </mat-option>
+          </div>
+        </mat-select>
+      </mat-form-field>
       <div
         id="globalResponse"
         class="margin response-heading"
-        translate="response"
+        translate="values"
       ></div>
       <mat-card-content>
         <div
@@ -89,18 +149,20 @@
             [cdkDropListData]="getResponseList()"
           >
             <div *ngFor="let response of getResponseList(); let i = index">
-              <div [formGroupName]="i" class="dis-flex response-list" cdkDrag>
-                <input
-                  id="globalResponseTitle"
-                  #globalResponses
-                  matInput
-                  formControlName="title"
-                  [placeholder]="'responseTitle' | translate"
-                  autocomplete="off"
-                  class="input-forms"
-                  (keyup.enter)="addResponse(i + 1)"
-                />
-                <div>
+              <div [formGroupName]="i" cdkDrag>
+                <div class="dis-flex width-100">
+                  <mat-form-field appearance="outline" class="width-90">
+                    <input
+                      id="globalResponseTitle"
+                      #globalResponses
+                      matInput
+                      formControlName="title"
+                      [placeholder]="'valueTitle' | translate"
+                      autocomplete="off"
+                      (keyup.enter)="addResponse(i + 1)"
+                    />
+                  </mat-form-field>
+
                   <button
                     id="globalResponseDelete"
                     mat-flat-button
@@ -114,21 +176,18 @@
                     ></svg-icon>
                   </button>
                 </div>
-                <div class="error_div">
-                  <mat-error
-                    id="addEditTitleError"
-                    *ngIf="processValidationErrorsFormArrays('responses', i)"
-                    class="m-t-5 error-fields"
-                  >
-                    {{
-                      errors.responses.name
-                        | translate
-                          : {
-                              name: 'responses' | translate
-                            }
-                    }}
-                  </mat-error>
-                </div>
+                <mat-error
+                  id="addEditTitleError"
+                  *ngIf="processValidationErrorsFormArrays('responses', i)"
+                >
+                  {{
+                    errors.responses.name
+                      | translate
+                        : {
+                            name: 'value' | translate
+                          }
+                  }}
+                </mat-error>
               </div>
             </div>
           </div>
@@ -151,7 +210,7 @@
           mat-flat-button
           (click)="addResponse(getResponseCount())"
           class="add-response"
-          translate="addRes"
+          translate="addVal"
         ></button>
       </mat-card-content>
     </div>

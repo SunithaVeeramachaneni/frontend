@@ -834,3 +834,18 @@ export const colorsByStatus = {
   Incomplete: '#FF3B30',
   Created: '#F6685E'
 };
+
+export const metadataModuleNames = [
+  {
+    moduleId: 'RDF',
+    moduleName: 'Race Dynamic Forms'
+  },
+  {
+    moduleId: 'RDF_TEMPLATES',
+    moduleName: 'RDF Templates'
+  },
+  {
+    moduleId: 'OR',
+    moduleName: 'Operator Rounds'
+  }
+];
