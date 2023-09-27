@@ -1,13 +1,20 @@
 <div mat-dialog-title *ngIf="page$ | async">
   <div class="header">
     <div class="hide-sections-title">
-      <span translate="hideSection" class="title"></span>
-      <button mat-icon-button mat-dialog-close (click)="close()">
+      <span id="hideSectionSpan" translate="hideSection" class="title"></span>
+      <button
+        id="closeButton"
+        mat-icon-button
+        mat-dialog-close
+        (click)="close()"
+      >
         <mat-icon>close</mat-icon>
       </button>
     </div>
     <div class="logicRow">
-      <mat-icon icon="selectQuestionInfoIcon">info</mat-icon>
+      <mat-icon id="selectQuestionInfoIcon" icon="selectQuestionInfoIcon"
+        >info</mat-icon
+      >
       <div class="questionLogic">
         <span
           id="selectQuestionName"
@@ -63,9 +70,10 @@
     class="section"
     [ngClass]="{ 'page-header-embedded': data.isEmbeddedForm }"
   >
-    <div *ngFor="let section of sections">
+    <div *ngFor="let section of sections" trackBy:trackBySectionId>
       <div class="section-header">
         <mat-checkbox
+          id="selectSectionCheckbox"
           class="question"
           [checked]="selectedSections.indexOf(section.id) > -1"
           (change)="selectSection($event.checked, section.id)"

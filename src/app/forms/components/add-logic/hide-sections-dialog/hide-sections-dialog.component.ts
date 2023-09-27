@@ -82,4 +82,8 @@ export class HideSectionsDialogComponent implements OnInit {
       selectedSections: this.selectedSections
     });
   }
+
+  trackBySectionId(index: number, section: any) {
+    return section.id;
+  }
 }

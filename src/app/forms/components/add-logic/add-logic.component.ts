@@ -37,7 +37,6 @@ import { RaiseNotificationDailogComponent } from './raise-notification-dialog/ra
 import { NumberRangeMetadata } from 'src/app/interfaces';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { HideSectionsDialogComponent } from './hide-sections-dialog/hide-sections-dialog.component';
-import hi from 'date-fns/esm/locale/hi/index';
 
 @Component({
   selector: 'app-add-logic',
