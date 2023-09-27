@@ -118,6 +118,8 @@ export const permissions = Object.freeze({
   deleteOPRReport: 'OPR_DELETE_REPORT',
   copyOPRReport: 'OPR_COPY_REPORT',
   reportOPRExportToExcel: 'OPR_REPORT_EXPORT_TO_EXCEL',
+  restoreArchivedOR: 'RESTORE_OR_ARCHIVED_PLAN',
+  deleteArchivedOR: 'DELETE_OR_ARCHIVED_PLAN',
 
   viewUnitOfMeasurement: 'VIEW_UNIT_OF_MEASUREMENTS',
   createUnitOfMeasurement: 'CREATE_UNIT_OF_MEASUREMENT',

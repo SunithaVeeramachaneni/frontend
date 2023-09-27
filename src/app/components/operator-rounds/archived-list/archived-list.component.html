@@ -1,7 +1,10 @@
 <ng-container *ngIf="currentRouteUrl$ | async as currentRouteUrl">
   <div
     class="list-view"
-    *ngIf="currentRouteUrl === routingUrls.roundPlanArchivedForms.url"
+    *ngIf="
+      currentRouteUrl === routingUrls.roundPlanArchivedForms.url && userInfo$
+        | async
+    "
   >
     <div class="main-container">
       <div class="forms-header">
