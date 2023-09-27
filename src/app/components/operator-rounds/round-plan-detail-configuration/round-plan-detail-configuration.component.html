@@ -224,6 +224,12 @@
                   }}
                 </span>
               </ng-template>
+              <mat-slide-toggle
+                class="collapse-btn slide-toggle"
+                [formControl]="collapseAllSections"
+                name="collapseAllSections"
+                >{{ 'collapseAllSections' | translate }}</mat-slide-toggle
+              >
               <button
                 id="roundPlanDetailImportTaskBtn"
                 mat-stroked-button

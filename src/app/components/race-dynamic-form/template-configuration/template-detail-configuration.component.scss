@@ -116,6 +116,26 @@
     overflow-y: auto;
     margin-top: 0.6rem;
   }
+
+  ::ng-deep .mat-slide-toggle.mat-checked .mat-slide-toggle-bar {
+    background-color: $green4 !important;
+  }
+  ::ng-deep .mat-slide-toggle.mat-checked .mat-slide-toggle-thumb {
+    background-color: $white !important;
+  }
+  ::ng-deep .slide-toggle .mat-slide-toggle-bar {
+    width: 32px;
+    height: 15px !important;
+    border-radius: 25px !important;
+  }
+  ::ng-deep .slide-toggle .mat-slide-toggle-thumb {
+    height: 15px;
+    width: 15px;
+    border-radius: 50%;
+  }
+  ::ng-deep .slide-toggle .mat-slide-toggle-thumb-container {
+    top: 0px !important;
+  }
 }
 
 .questionContainer {
@@ -352,5 +372,15 @@
 }
 .mat-error {
   margin-top: 1px;
+  margin-left: 20px;
+}
+
+.collapse-btn {
+  color: $gray-text;
+}
+.collapse-margin {
+  margin-bottom: 0px;
+  margin-right: 25px;
+  margin-top: -1px;
   margin-left: 20px;
 }
