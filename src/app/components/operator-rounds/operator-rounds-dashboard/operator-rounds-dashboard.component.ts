@@ -282,16 +282,14 @@ export class OperatorRoundsDashboardComponent implements OnInit, OnDestroy {
 
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
       tap((currentRouteUrl) => {
-        if (currentRouteUrl === routingUrls.operatorRoundPlans.url) {
-          this.headerService.setHeaderTitle(
-            routingUrls.operatorRoundPlans.title
-          );
-          this.breadcrumbService.set(routingUrls.operatorRoundPlans.url, {
+        if (currentRouteUrl === routingUrls.oprDashboard.url) {
+          this.headerService.setHeaderTitle(routingUrls.oprDashboard.title);
+          this.breadcrumbService.set(routingUrls.oprDashboard.url, {
             skip: true
           });
           this.cdrf.detectChanges();
         } else {
-          this.breadcrumbService.set(routingUrls.operatorRoundPlans.url, {
+          this.breadcrumbService.set(routingUrls.oprDashboard.url, {
             skip: false
           });
         }

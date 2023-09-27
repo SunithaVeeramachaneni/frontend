@@ -1,5 +1,5 @@
 <div *ngIf="currentRouteUrl$ | async as currentRouteUrl" class="dashboard-container">
-  <ng-container *ngIf="currentRouteUrl === routingUrls.operatorRoundPlans.url">
+  <ng-container *ngIf="currentRouteUrl === routingUrls.oprDashboard.url">
     <div class="dis-flex dashboard-filters">
       <div class="toggle-btns" [formGroup]="dashboardForm">
         <div class="date-segment">
