@@ -144,7 +144,7 @@
                 color="primary"
                 class="addLogicBtn"
                 *ngIf="
-                  !isAskQuestion &&
+                  !isAskQuestion && questionForm.get('fieldType').value !== 'USR' &&
                   addLogicNotAppliedFields.indexOf(
                     questionForm.get('fieldType').value
                   ) < 0
