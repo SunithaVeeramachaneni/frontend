@@ -382,7 +382,6 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     this.tags = [...this.tags, event.option.viewValue];
     this.tagsInput.nativeElement.value = '';
     this.tagsCtrl.patchValue('');
-    debugger
     this.headerDataForm.patchValue({
       ...this.headerDataForm.value,
       tags: this.tags
