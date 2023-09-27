@@ -1,0 +1,109 @@
+<div mat-dialog-title *ngIf="page$ | async">
+  <div class="header">
+    <div class="hide-sections-title">
+      <span id="hideSectionSpan" translate="hideSection" class="title"></span>
+      <button
+        id="closeButton"
+        mat-icon-button
+        mat-dialog-close
+        (click)="close()"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <div class="logicRow">
+      <mat-icon id="selectQuestionInfoIcon" icon="selectQuestionInfoIcon"
+        >info</mat-icon
+      >
+      <div class="questionLogic">
+        <span
+          id="selectQuestionName"
+          class="currentQuestion"
+          *ngIf="question$ | async as question"
+        >
+          {{
+            'hideSectionsQuestionTitle'
+              | translate
+                : {
+                    questionName: question?.name || 'Untitled Question'
+                  }
+          }}
+        </span>
+        <p id="selectQuestionAnswer" class="m-0">
+          <span translate="ifAnswer"></span>
+          {{ operatorDisplayNameMap[data.logic.operator] }}
+          {{ data.logic.operand2 }}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="dialogBody">
+  <div
+    class="page-header"
+    *ngIf="!data.isEmbeddedForm && page$ | async as page"
+  >
+    <mat-icon
+      id="pageExpandIcon"
+      (click)="togglePageIsOpenState()"
+      *ngIf="isPageOpen === true"
+      class="page-arrow"
+    >
+      expand_more
+    </mat-icon>
+    <mat-icon
+      id="pageRightIcon"
+      (click)="togglePageIsOpenState()"
+      *ngIf="isPageOpen === false"
+      class="page-arrow"
+    >
+      chevron_right
+    </mat-icon>
+
+    <span class="page-name">
+      {{ page.name }}
+    </span>
+  </div>
+
+  <div
+    *ngIf="isPageOpen === true"
+    class="section"
+    [ngClass]="{ 'page-header-embedded': data.isEmbeddedForm }"
+  >
+    <div *ngFor="let section of sections" trackBy:trackBySectionId>
+      <div class="section-header">
+        <mat-checkbox
+          id="selectSectionCheckbox"
+          class="question"
+          [checked]="selectedSections.indexOf(section.id) > -1"
+          (change)="selectSection($event.checked, section.id)"
+          [ngClass]="{
+            'strike-question': selectedSections.indexOf(section.id) > -1
+          }"
+        >
+          <span class="section-name">
+            {{ section.name }}
+          </span>
+        </mat-checkbox>
+      </div>
+    </div>
+  </div>
+</div>
+<mat-dialog-actions align="end" class="mat-dialog-actions">
+  <button
+    id="selectQuestionCancelBtn"
+    mat-raised-button
+    mat-dialog-close
+    (click)="close()"
+    translate="cancel"
+  ></button>
+  <button
+    id="selectQuestionSubmitBtn"
+    mat-raised-button
+    color="primary"
+    [mat-dialog-close]="true"
+    [disabled]="selectedSections.length === 0"
+    (click)="submit()"
+    translate="save"
+  ></button>
+</mat-dialog-actions>
