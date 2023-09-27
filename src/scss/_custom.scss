@@ -929,8 +929,18 @@ body {
   height: 2px;
   margin: 30px 30px;
 }
-
 .mat-checkbox-checked.mat-accent .mat-checkbox-background,
 .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background {
   background-color: #637bfe !important;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+.justify-content-start {
+  justify-content: start;
+}
+.align-items-center {
+  align-items: center;
 }

@@ -849,3 +849,9 @@ export const metadataModuleNames = [
     moduleName: 'Operator Rounds'
   }
 ];
+
+export const metadataFlatModuleNames = {
+  RACE_DYNAMIC_FORMS: 'RDF',
+  RDF_TEMPLATES: 'RDF_TEMPLATES',
+  OPERATOR_ROUNDS: 'OR'
+};

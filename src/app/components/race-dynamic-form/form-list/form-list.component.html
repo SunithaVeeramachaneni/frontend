@@ -139,6 +139,22 @@
             ></svg-icon>
             <span id="downloadTemplateSpan" translate="downloadTemplate"></span>
           </button>
+          <button
+            id="columnConfigurationBtn"
+            mat-menu-item
+            class="menu-buttons"
+            (click)="showColumnConfig()"
+          >
+            <svg-icon
+              id="excelIconMenu"
+              icon="column-configuration-icon"
+              class="menu-icons"
+            ></svg-icon>
+            <span
+              id="columnConfigurationSpan"
+              translate="columnConfiguration"
+            ></span>
+          </button>
         </mat-menu>
         <mat-menu id="downloadTemplateMeny" #templateMenu="matMenu">
           <button
@@ -202,6 +218,13 @@
     ></app-form-detail>
   </ng-container>
 
+  <ng-container *ngIf="columnConfigMenuState">
+    <app-column-configuration-slider
+      [@slideInOut]="columnConfigMenuState"
+      (slideInOut)="onCloseColumnConfig()"
+      [moduleName]="RDF_MODULE_NAME"
+    ></app-column-configuration-slider>
+  </ng-container>
   <div *ngIf="isLoading$ | async">
     <div class="ghost-loading">
       <div *ngFor="let number of ghostLoading">

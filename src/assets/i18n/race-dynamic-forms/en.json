@@ -391,10 +391,13 @@
   "backToList": "Back to List",
   "additionalDetailsHeading": "Additional Details",
   "additionalDetails": "Additional Details:",
+  "additionalDetail": "Additional Details",
   "attributesHeading": "Attributes",
   "addMoreUpto5": "Add More ( Select Upto 5 )",
   "userGroup": "User Group",
   "selectUser": "Select User",
   "selectUserGroup": "Select User Group",
-  "submittedDate": "Submitted Date"
+  "submittedDate": "Submitted Date",
+  "columnConfiguration": "Column Configuration",
+  "resetToDefault": "Reset to Default View"
 }

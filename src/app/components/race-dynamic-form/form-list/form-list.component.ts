@@ -49,6 +49,7 @@ import { UsersService } from '../../user-management/services/users.service';
 import { downloadFile } from 'src/app/shared/utils/fileUtils';
 import { UploadResponseModalComponent } from '../../../shared/components/upload-response-modal/upload-response-modal.component';
 import { FormModalComponent } from '../form-modal/form-modal.component';
+import { metadataFlatModuleNames } from '../../../app.constants';
 
 @Component({
   selector: 'app-form-list',
@@ -59,108 +60,12 @@ import { FormModalComponent } from '../form-modal/form-modal.component';
 })
 export class FormListComponent implements OnInit, OnDestroy {
   public menuState = 'out';
+  public columnConfigMenuState = 'out';
   submissionSlider = 'out';
   isPopoverOpen = false;
   status: any[] = ['Draft', 'Published'];
   filterJson: any[] = [];
-  partialColumns: Partial<Column>[] = [
-    {
-      id: 'name',
-      displayName: 'Name',
-      type: 'string',
-      controlType: 'string',
-      visible: true,
-      titleStyle: {
-        'font-weight': '500',
-        'font-size': '100%',
-        color: '#000000',
-        'overflow-wrap': 'anywhere'
-      },
-      hasSubtitle: true,
-      subtitleColumn: 'description',
-      subtitleStyle: {
-        'font-size': '80%',
-        color: 'darkgray',
-        display: 'block',
-        'white-space': 'wrap',
-        'max-width': '350px',
-        'overflow-wrap': 'anywhere'
-      },
-      hasPreTextImage: true
-    },
-    {
-      id: 'formStatus',
-      displayName: 'Status',
-      type: 'string',
-      controlType: 'string',
-      sortable: true,
-      visible: true,
-      groupable: true,
-      titleStyle: {
-        textTransform: 'capitalize',
-        fontWeight: 500,
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        position: 'relative',
-        top: '10px',
-        width: '80px',
-        height: '24px',
-        background: '#FEF3C7',
-        color: '#92400E',
-        borderRadius: '12px'
-      },
-      hasConditionalStyles: true
-    },
-    {
-      id: 'plant',
-      displayName: 'Plant',
-      type: 'string',
-      controlType: 'string',
-      sortable: true,
-      visible: true,
-      groupable: true
-    },
-    {
-      id: 'formType',
-      displayName: 'Form Type',
-      type: 'string',
-      controlType: 'string',
-      sortable: true,
-      visible: true,
-      groupable: true
-    },
-    {
-      id: 'lastPublishedBy',
-      displayName: 'Last Published By',
-      type: 'number',
-      controlType: 'string',
-      sortable: true,
-      visible: true,
-      groupable: true
-    },
-    {
-      id: 'publishedDate',
-      displayName: 'Last Published',
-      type: 'timeAgo',
-      controlType: 'string',
-      sortable: true,
-      reverseSort: true,
-      visible: true,
-      groupable: true
-    },
-    {
-      id: 'author',
-      displayName: 'Created By',
-      type: 'number',
-      controlType: 'string',
-      isMultiValued: true,
-      sortable: true,
-      visible: true,
-      titleStyle: { color: '' }
-    }
-  ];
+
   columns: Column[] = [];
 
   configOptions: ConfigOptions = {
@@ -228,6 +133,7 @@ export class FormListComponent implements OnInit, OnDestroy {
   createdBy = [];
   userInfo$: Observable<UserInfo>;
   triggerCountUpdate = false;
+  RDF_MODULE_NAME = metadataFlatModuleNames.RACE_DYNAMIC_FORMS;
   readonly perms = perms;
   private onDestroy$ = new Subject();
 
@@ -560,6 +466,9 @@ export class FormListComponent implements OnInit, OnDestroy {
     this.selectedForm = null;
     this.menuState = 'out';
   }
+  onCloseColumnConfig() {
+    this.columnConfigMenuState = 'out';
+  }
   formDetailActionHandler() {
     this.router.navigate([`/forms/edit/${this.selectedForm.id}`]);
   }
@@ -723,6 +632,9 @@ export class FormListComponent implements OnInit, OnDestroy {
     this.menuState = 'in';
   }
 
+  showColumnConfig(): void {
+    this.columnConfigMenuState = 'in';
+  }
   private generateCopyFormName(form: GetFormList, rows: GetFormList[]) {
     if (rows?.length > 0) {
       const listCopyNumbers: number[] = [];
