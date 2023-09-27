@@ -470,6 +470,7 @@
   "taskLevelNote": "If there’s no Schedule change in the Header Step, there would not be any impact at task level.",
   "note": "Note:",
   "submittedDate": "Submitted Date",
+  "collapseAllSections": "Collapse All Sections",
   "loadingReportsCount": "Loading Reports Count...",
   "loadingFilterOptions": "Loading Filter Options...",
   "selectReportTxt": "Select a report to start creating a widget",
