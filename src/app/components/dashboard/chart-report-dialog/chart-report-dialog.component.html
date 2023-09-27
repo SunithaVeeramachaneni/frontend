@@ -22,13 +22,7 @@
     <div class="head-row2">
       <span class="filter-item"
         ><b>Time Period: </b>
-
-        <span *ngIf="data.filters.timePeriod !== 'custom'">{{
-          data.filters.timePeriod | translate
-        }}</span>
-        <span *ngIf="data.filters.timePeriod === 'custom'">
-          {{ dateObject?.startDate }} - {{ dateObject?.endDate }}
-        </span>
+        <span> {{ dateObject?.startDate }} - {{ dateObject?.endDate }} </span>
       </span>
       <span
         class="filter-item"

@@ -74,7 +74,10 @@ export class ChartReportDialog implements OnInit {
   reportColumns: any[] = [];
   downloadInProgress = false;
   ghostLoading = new Array(11).fill(0).map((v, i) => i);
-  dateObject: any;
+  dateObject = {
+    startDate: '',
+    endDate: ''
+  };
 
   constructor(
     private dialogRef: MatDialogRef<any>,
