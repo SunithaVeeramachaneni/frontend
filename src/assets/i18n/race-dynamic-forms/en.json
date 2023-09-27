@@ -237,6 +237,7 @@
   "createResponses": "Create Responses",
   "plant": "Plant",
   "plantMandatory": "Plant *",
+  "selectIntegrationType": "Select Integration Type",
   "done": "Done",
   "lastFiveReadingsHeader": "Last 5 readings",
   "whatIsPressureReadingHeader": "What is the pressure reading?",

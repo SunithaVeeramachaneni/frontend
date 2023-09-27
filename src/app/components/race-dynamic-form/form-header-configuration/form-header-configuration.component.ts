@@ -187,6 +187,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
       formType: [this.data?.formType],
       tags: [this.tags],
       plantId: ['', Validators.required],
+      integrationType: [''],
       additionalDetails: this.fb.array([]),
       instructions: this.fb.group({
         notes: [
@@ -280,7 +281,8 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
           description: this.data.formData.description,
           formType: this.data.formType,
           formStatus: this.data.formData.formStatus,
-          instructions: this.data.formData.instructions
+          instructions: this.data.formData.instructions,
+          integrationType: this.data.formData.integrationType
         },
         { emitEvent: false }
       );
@@ -380,6 +382,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     this.tags = [...this.tags, event.option.viewValue];
     this.tagsInput.nativeElement.value = '';
     this.tagsCtrl.patchValue('');
+    debugger
     this.headerDataForm.patchValue({
       ...this.headerDataForm.value,
       tags: this.tags

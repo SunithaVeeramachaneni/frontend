@@ -121,6 +121,32 @@
               }}
             </mat-error>
           </mat-form-field>
+          <p class="form-name-description" id="integrationTypeHeading">
+            {{ 'selectIntegrationType' | translate }}
+          </p>
+          <mat-form-field appearance="outline" class="width-100">
+            <mat-select
+              formControlName="integrationType"
+              [placeholder]="'Integration Type' | translate"
+            >
+              <div class="scrollable-area">
+                <mat-option id="integrationTypeOptions" [value]="'Deloitte-ECS'">Deloitte-ECS</mat-option>
+              </div>
+            </mat-select>
+            <mat-error
+              id="plantError"
+              *ngIf="processValidationErrors('plantId')"
+              class="m-t-5 error-fields"
+            >
+              {{
+                errors.plantId.name
+                  | translate
+                    : {
+                        name: 'plant' | translate
+                      }
+              }}
+            </mat-error>
+          </mat-form-field>
         </div>
         <div class="tags">
           <p id="tagsHeading" class="form-name-description m-b-0">

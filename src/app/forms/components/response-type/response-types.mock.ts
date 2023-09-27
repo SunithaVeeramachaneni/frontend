@@ -90,6 +90,10 @@ export const fieldTypesMock = {
     {
       type: 'TIF',
       description: 'Time Picker'
+    },
+    {
+      type: 'IMA',
+      description: 'Image Analysis'
     }
   ]
 };
