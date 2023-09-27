@@ -140,6 +140,12 @@
       >
         {{ 'publishingChanges' | translate }}
       </div>
+      <mat-slide-toggle
+        class="collapse-btn slide-toggle"
+        [formControl]="collapseAllSections"
+        name="collapseAllSections"
+        >{{ 'collapseAllSections' | translate }}</mat-slide-toggle
+      >
       <button
         id="FormImportBtn"
         mat-stroked-button
