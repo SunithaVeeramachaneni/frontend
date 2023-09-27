@@ -276,6 +276,11 @@ export const routingUrls = {
     title: 'Observations',
     permission: permissions.viewRdfObservations
   },
+  oprRounds: {
+    url: '/operator-rounds',
+    title: 'Operator Rounds',
+    permission: permissions.viewOPRReports
+  },
   oprDashboard: {
     url: '/operator-rounds',
     title: 'Dashboard',

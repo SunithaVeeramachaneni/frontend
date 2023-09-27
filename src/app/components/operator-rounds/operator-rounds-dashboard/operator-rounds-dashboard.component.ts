@@ -838,6 +838,16 @@ export class OperatorRoundsDashboardComponent implements OnInit, OnDestroy {
     ]).pipe(
       // eslint-disable-next-line arrow-body-style
       map(([widgetsData]) => {
+        const { data: widgets } = widgetsData;
+        const unique = {};
+        const uniqueArray = widgets.filter((widget) => {
+          if (!unique[widget?.id]) {
+            unique[widget?.id] = true;
+            return true;
+          }
+          return false;
+        });
+        widgetsData.data = uniqueArray;
         this.applyingFilters$.next(false);
         return widgetsData;
       }),
