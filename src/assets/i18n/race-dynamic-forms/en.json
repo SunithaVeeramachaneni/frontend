@@ -398,5 +398,6 @@
   "selectUserGroup": "Select User Group",
   "submittedDate": "Submitted Date",
   "hideSection": "Hide Section",
-  "hideSectionsQuestionTitle": "Q: {questionName}"
+  "hideSectionsQuestionTitle": "Q: {questionName}",
+  "collapseAllSections": "Collapse All Sections"
 }
