@@ -288,7 +288,7 @@
                   id="addLogicHideSectionsBtn"
                   class="logicActionMenuItem"
                   mat-menu-item
-                  *ngIf="!isTemplate"
+                  *ngIf="!isTemplate && isEmbeddedForm"
                   (click)="openHideSectionsDialog(logic.value, i)"
                   translate="hideSection"
                 ></button>
