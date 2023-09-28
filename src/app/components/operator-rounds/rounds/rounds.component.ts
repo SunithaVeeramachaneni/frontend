@@ -587,7 +587,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   userInfo$: Observable<UserInfo>;
   filterData$: Observable<any>;
   selectedRound: RoundDetail;
-  selectedRoundInfo: RoundDetail;
+  selectedRoundInfo: RoundDetail = {} as RoundDetail;
   selectedDueDate = null;
   selectedStartDate = null;
   zIndexDelay = 0;
@@ -1240,7 +1240,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
         .join(',');
     }
 
-    let { status } = this.selectedRoundInfo;
+    let { status = '' } = this.selectedRoundInfo;
 
     if (status.toLowerCase() === 'open' && assigneeType === 'user') {
       status = 'assigned';
