@@ -73,13 +73,9 @@
     <div *ngFor="let section of sections" trackBy:trackBySectionId>
       <div class="section-header">
         <mat-checkbox
-          id="selectSectionCheckbox"
           class="question"
           [checked]="selectedSections.indexOf(section.id) > -1"
           (change)="selectSection($event.checked, section.id)"
-          [ngClass]="{
-            'strike-question': selectedSections.indexOf(section.id) > -1
-          }"
         >
           <span class="section-name">
             {{ section.name }}
