@@ -58,9 +58,13 @@ export class PreviewForEmbeddedFormsComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {}
 
-  toggleSectionOpenState = () => {
-    this.isSectionOpenState = !this.isSectionOpenState;
+  toggleSectionOpenState = (sectionIdx: number, pageData): void => {
+    const pageSection = pageData.sections[sectionIdx];
+    if (pageSection) {
+      pageSection.isOpen = !pageSection.isOpen;
+    }
   };
+
   formatLabel(value: number): string {
     if (value >= 1000) {
       return Math.round(value / 1000) + 'k';
