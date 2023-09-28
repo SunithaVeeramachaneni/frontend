@@ -33,52 +33,8 @@ export class ColumnConfigurationSliderComponent implements OnInit {
   freezeIndexTill: number;
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   ghostLoading = new Array(15).fill(0).map((v, i) => i);
-  additionalColumns: columnConfiguration[] = [
-    {
-      columnId: 'test1',
-      columnName: 'Test 1',
-      disabled: false,
-      selected: false,
-      draggable: true,
-      default: false
-    },
-    {
-      columnId: 'test2',
-      columnName: 'Test 2',
-      disabled: false,
-      selected: false,
-      draggable: true,
-      default: false
-    },
-    {
-      columnId: 'test3',
-      columnName: 'Test 3',
-      disabled: false,
-      selected: false,
-      draggable: true,
-      default: false
-    },
-    {
-      columnId: 'test4',
-      columnName: 'Test 4',
-      disabled: false,
-      selected: false,
-      draggable: true,
-      default: false
-    },
-    {
-      columnId: 'test5',
-      columnName: 'Test 5',
-      disabled: false,
-      selected: false,
-      draggable: true,
-      default: false
-    }
-  ];
-  allColumns: columnConfiguration[] = [
-    ...RDF_DEFAULT_COLUMNS,
-    ...this.additionalColumns
-  ];
+  additionalColumns: columnConfiguration[] = [];
+  allColumns: columnConfiguration[] = [];
   allComplete: boolean = false;
   constructor(
     private responseSetService: ResponseSetService,
@@ -122,14 +78,22 @@ export class ColumnConfigurationSliderComponent implements OnInit {
     return this.responseSetService
       .fetchResponseSetByModuleName$(this.moduleName)
       .pipe(
-        /////////////////////////////////////////////////////////////////
-        delay(3000), // Remove this before merge
         tap((data) => {
-          ///////////////////////////////////////////////////
           this.additionalColumns = data?.map((item) =>
-            this.columnConfigService.getColumnConfigFromAdditionalDetails(item)
+            this.columnConfigService.getColumnConfigFromAdditionalDetails(
+              item,
+              false
+            )
           );
-          this.allColumns = [...RDF_DEFAULT_COLUMNS, ...this.additionalColumns];
+          this.columnConfigService.setAllColumnConfigurations([
+            ...RDF_DEFAULT_COLUMNS,
+            ...this.additionalColumns
+          ]);
+          this.allColumns =
+            this.columnConfigService.getAllColumnConfigurations();
+          this.columnConfigService.setUserColumnConfigByModuleName(
+            this.moduleName
+          );
           this.isLoading$.next(false);
           this.cdrf.detectChanges();
         })
@@ -164,21 +128,19 @@ export class ColumnConfigurationSliderComponent implements OnInit {
     arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
     return arr;
   }
-  getModuleDefaultDynamicTableConfig() {
-    switch (this.moduleName) {
-      case metadataFlatModuleNames.RACE_DYNAMIC_FORMS:
-        return RDF_DEFAULT_COLUMN_CONFIG;
-      default:
-        return [];
-    }
-  }
+
   onSave() {
-    const dynamicTableColumns =
-      this.columnConfigService.getDynamicColumnsFromColumnConfig(
-        this.getModuleDefaultDynamicTableConfig(),
-        this.allColumns.filter((column) => column.selected)
-      );
-    this.setColumnConfigurationToDynamicTable(dynamicTableColumns);
+    const columnIds = this.allColumns.map((column) => {
+      if (column.selected) {
+        return column.columnId;
+      }
+    });
+    this.columnConfigService.setUserColumnConfigurationByModule(
+      this.moduleName,
+      columnIds
+    );
+    this.columnConfigService.isLoadingColumns$.next(true);
+    this.columnConfigService.setUserColumnConfigByModuleName(this.moduleName);
     this.slideInOut.emit('in');
   }
   setColumnConfigurationToDynamicTable(dynamicTableColumns: Column[]) {

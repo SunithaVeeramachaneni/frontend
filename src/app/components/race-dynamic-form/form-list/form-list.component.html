@@ -196,7 +196,13 @@
       </div>
     </div>
 
-    <div *ngIf="(forms$ | async) && (isLoading$ | async) === false">
+    <div
+      *ngIf="
+        (forms$ | async) &&
+        (isLoading$ | async) === false &&
+        (isLoadingColumns$ | async) === false
+      "
+    >
       <cwp-dynamictable
         [dataSource]="dataSource"
         [configOptions]="configOptions"
@@ -225,7 +231,7 @@
       [moduleName]="RDF_MODULE_NAME"
     ></app-column-configuration-slider>
   </ng-container>
-  <div *ngIf="isLoading$ | async">
+  <div *ngIf="(isLoading$ | async) || (isLoadingColumns$ | async)">
     <div class="ghost-loading">
       <div *ngFor="let number of ghostLoading">
         <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">

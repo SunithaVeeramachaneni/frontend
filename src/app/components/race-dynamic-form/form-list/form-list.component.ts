@@ -126,6 +126,8 @@ export class FormListComponent implements OnInit, OnDestroy {
   selectedForm: GetFormList = null;
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  isLoadingColumns$: Observable<boolean> =
+    this.columnConfigService.isLoadingColumns$;
   formsList$: Observable<any>;
   lastPublishedBy = [];
   lastPublishedOn = [];
@@ -156,15 +158,10 @@ export class FormListComponent implements OnInit, OnDestroy {
     this.columnConfigService.moduleColumnConfiguration$
       .pipe(takeUntil(this.onDestroy$))
       .subscribe((res) => {
-        this.isLoading$.next(true);
         if (res) {
-          setTimeout(() => {
-            this.columns = res;
-            this.configOptions.allColumns = this.columns;
-            console.log(this.configOptions);
-            this.isLoading$.next(false);
-            this.cdrf.detectChanges();
-          }, 500);
+          this.columns = res;
+          this.configOptions.allColumns = this.columns;
+          this.cdrf.detectChanges();
         }
       });
 
