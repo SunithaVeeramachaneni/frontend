@@ -56,5 +56,15 @@ export const quickResponseReducer = createReducer<QuickResponse>(
     (): QuickResponse => ({
       ...initialState
     })
+  ),
+  on(
+    QuickResponseActions.addFormSpecificQuickResponses,
+    (state, action): QuickResponse => ({
+      ...state,
+      formSpecificResponses: [
+        ...state.formSpecificResponses,
+        ...action.formSpecificResponses
+      ]
+    })
   )
 );

@@ -100,6 +100,17 @@ export class RaceDynamicFormService {
   ): Observable<any> =>
     this.appService._postData(environment.rdfApiUrl, 'datasets', dataset, info);
 
+  createDataSetMultiple$ = (
+    dataset: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._postData(
+      environment.rdfApiUrl,
+      'datasets-multiple',
+      dataset,
+      info
+    );
+
   updateDataSet$ = (
     datasetId: string,
     dataset: any,
