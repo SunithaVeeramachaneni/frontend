@@ -68,6 +68,7 @@ export class ColumnConfigurationService {
       : null;
   }
   setUserColumnConfigurationByModule(moduleName, columnIdArray) {
+    if (!this.userColumnConfiguration) this.userColumnConfiguration = {};
     this.userColumnConfiguration[moduleName] = columnIdArray;
   }
   setAllColumnConfigurations(allColumnConfigurations) {
