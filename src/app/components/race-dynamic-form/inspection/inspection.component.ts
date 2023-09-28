@@ -394,7 +394,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
   userInfo$: Observable<UserInfo>;
   filterData$: Observable<any>;
   selectedForm: InspectionDetail;
-  selectedFormInfo: InspectionDetail;
+  selectedFormInfo: InspectionDetail = {} as InspectionDetail;
   selectedDate = null;
   zIndexDelay = 0;
   hideInspectionDetail: boolean;
@@ -1043,7 +1043,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
         .join(',');
     }
 
-    let { status } = this.selectedFormInfo;
+    let { status = '' } = this.selectedFormInfo;
 
     if (status.toLowerCase() === 'open' && assigneeType === 'user') {
       status = 'assigned';

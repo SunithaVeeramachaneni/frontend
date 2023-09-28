@@ -923,7 +923,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       return {
         ...form,
         scheduleDates: this.placeHolder,
-        forms: this.placeHolder,
+        forms: form.forms || this.placeHolder,
         assignedTo: this.placeHolder,
         assignedToDisplay: this.placeHolder
       };
