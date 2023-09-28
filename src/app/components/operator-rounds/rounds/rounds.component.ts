@@ -1383,15 +1383,18 @@ export class RoundsComponent implements OnInit, OnDestroy {
       );
       openDialogModalRef.afterClosed().subscribe((resp) => {
         if (resp) {
+          let changedDueDateToUTC;
           if (
             plantId &&
             this.plantTimezoneMap[plantId] &&
             this.plantTimezoneMap[plantId].timeZoneIdentifier
           ) {
-            changedDueDate = zonedTimeToUtc(
+            changedDueDateToUTC = zonedTimeToUtc(
               format(changedDueDate, dateTimeFormat5),
               this.plantTimezoneMap[plantId].timeZoneIdentifier
             );
+          } else {
+            changedDueDateToUTC = changedDueDate;
           }
           let changedStatus = status;
           if (status === this.statusMap.overdue) {
@@ -1424,7 +1427,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
                 plantId,
                 status: changedStatus,
                 roundId,
-                dueDate: changedDueDate,
+                dueDate: changedDueDateToUTC,
                 scheduledAt,
                 slotDetails: slot,
                 locationAndAssetTasksCompleted,
@@ -1442,7 +1445,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
                       return {
                         ...data,
                         scheduledAt,
-                        dueDate: changedDueDate,
+                        dueDate: changedDueDateToUTC,
                         dueDateDisplay: dueDateDisplayFormat,
                         status: changedStatus,
                         slotDetails: slot,
@@ -1554,15 +1557,18 @@ export class RoundsComponent implements OnInit, OnDestroy {
       );
       openDialogModalRef.afterClosed().subscribe((resp) => {
         if (resp) {
+          let changedScheduledAtToUTC;
           if (
             plantId &&
             this.plantTimezoneMap[plantId] &&
             this.plantTimezoneMap[plantId].timeZoneIdentifier
           ) {
-            changedScheduledAt = zonedTimeToUtc(
+            changedScheduledAtToUTC = zonedTimeToUtc(
               format(changedScheduledAt, dateTimeFormat5),
               this.plantTimezoneMap[plantId].timeZoneIdentifier
             );
+          } else {
+            changedScheduledAtToUTC = changedScheduledAt;
           }
           let changedStatus = status;
           if (status === this.statusMap.overdue) {
@@ -1595,7 +1601,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
                 roundId,
                 assignedTo,
                 slotDetails: slot,
-                scheduledAt: changedScheduledAt,
+                scheduledAt: changedScheduledAtToUTC,
                 dueDate,
                 assignmentType,
                 userGroupsIds
@@ -1609,7 +1615,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
                     if (data.roundId === roundId) {
                       return {
                         ...data,
-                        scheduledAt: changedScheduledAt,
+                        scheduledAt: changedScheduledAtToUTC,
                         status: changedStatus,
                         scheduledAtDisplay: startDateDisplayFormat,
                         slotDetails: slot,
