@@ -55,6 +55,7 @@ import {
   formConfigurationStatus,
   raceDynamicForms
 } from 'src/app/app.constants';
+import { ResponseSetService } from '../../master-configurations/response-set/services/response-set.service';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
@@ -121,6 +122,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   base64result: string;
   pdfFiles: any = { mediaType: [] };
   hasFormChanges = false;
+  allValue: any;
   private destroy$ = new Subject();
 
   constructor(
@@ -135,7 +137,8 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     private operatorRoundService: OperatorRoundsService,
     public dialog: MatDialog,
     private imageCompress: NgxImageCompressService,
-    private router: Router
+    private router: Router,
+    private responseSetService: ResponseSetService
   ) {}
 
   maxLengthWithoutBulletPoints(maxLength: number): ValidatorFn {
@@ -256,6 +259,27 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
+    this.additionalDetails = this.headerDataForm.get(
+      'additionalDetails'
+    ) as FormArray;
+    this.responseSetService
+      .listResponseSetByModuleName$('RDF')
+      .subscribe((responseSets) => {
+        console.log('responseSets:', responseSets);
+        responseSets.forEach((responseSet) => {
+          console.log('responseSet:', responseSet);
+          let value = '';
+          JSON.parse(responseSet.values).forEach((val) => {
+            value += val.title + ',';
+          });
+
+          const objFormGroup = this.fb.group({
+            label: responseSet.name,
+            value: 'select'
+          });
+          this.additionalDetails.push(objFormGroup);
+        });
+      });
   }
 
   handleEditorFocus(focus: boolean) {
@@ -750,70 +774,6 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     return !touched || this.errors[controlName] === null ? false : true;
   }
 
-  addAdditionalDetails() {
-    this.additionalDetails = this.headerDataForm.get(
-      'additionalDetails'
-    ) as FormArray;
-    this.additionalDetails.push(
-      this.fb.group({
-        label: [
-          '',
-          [
-            Validators.maxLength(25),
-            WhiteSpaceValidator.trimWhiteSpace,
-            WhiteSpaceValidator.whiteSpace
-          ]
-        ],
-        value: [
-          '',
-          [
-            Validators.maxLength(40),
-            WhiteSpaceValidator.trimWhiteSpace,
-            WhiteSpaceValidator.whiteSpace
-          ]
-        ]
-      })
-    );
-
-    if (this.additionalDetails) {
-      merge(
-        ...this.additionalDetails.controls.map(
-          (control: AbstractControl, index: number) =>
-            control.valueChanges.pipe(
-              map((value) => ({ rowIndex: index, value }))
-            )
-        )
-      ).subscribe((changes) => {
-        this.changedValues = changes.value;
-        if (this.changedValues.label) {
-          this.filteredLabels$ = of(
-            Object.keys(this.labels).filter(
-              (label) =>
-                label
-                  .toLowerCase()
-                  .indexOf(this.changedValues.label.toLowerCase()) === 0
-            )
-          );
-        } else {
-          this.filteredLabels$ = of([]);
-        }
-
-        if (this.changedValues.value && this.labels[this.changedValues.label]) {
-          this.filteredValues$ = of(
-            this.labels[this.changedValues.label]?.filter(
-              (value) =>
-                value
-                  .toLowerCase()
-                  .indexOf(this.changedValues.value.toLowerCase()) === 0
-            )
-          );
-        } else {
-          this.filteredValues$ = of([]);
-        }
-      });
-    }
-  }
-
   deleteAdditionalDetails(index: number) {
     const add = this.headerDataForm.get('additionalDetails') as FormArray;
     add.removeAt(index);
@@ -994,6 +954,10 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
       });
   }
   getAdditionalDetailList() {
+    console.log(
+      'addigional details:',
+      (this.headerDataForm.get('additionalDetails') as FormArray).controls
+    );
     return (this.headerDataForm.get('additionalDetails') as FormArray).controls;
   }
 

@@ -290,16 +290,6 @@
             id="additionalDetailsHeading"
             class="additional-details-text"
           ></p>
-          <button
-            *ngIf="
-              headerDataForm.get('additionalDetails')['controls'].length < 5
-            "
-            class="add-button"
-            (click)="addAdditionalDetails()"
-            id="additionalDetailsBtn"
-          >
-            {{ 'add' | translate }}
-          </button>
         </div>
         <div
           class="label-value-text"
@@ -335,7 +325,8 @@
                     formControlName="label"
                     class="example-input"
                     [matAutocomplete]="autolabel"
-                    (click)="labelOptionClick(i)"
+                    readonly="true"
+                    [disabled]="true"
                   />
                   <mat-autocomplete #autolabel="matAutocomplete">
                     <mat-option
@@ -421,7 +412,8 @@
                     formControlName="value"
                     [matAutocomplete]="autoValue"
                     class="example-input"
-                    (click)="valueOptionClick(i)"
+                    readonly="true"
+                    [disabled]="true"
                   />
                   <mat-autocomplete #autoValue="matAutocomplete">
                     <mat-option
