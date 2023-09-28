@@ -428,12 +428,7 @@ export class RaceDynamicFormService {
         environment.rdfApiUrl,
         `forms/authored/${formId}?` + params.toString()
       )
-    ).pipe(
-      map(({ items }) => {
-        items.sort((a, b) => parseInt(b.version, 10) - parseInt(a.version, 10));
-        return items[0];
-      })
-    );
+    ).pipe(map(({ items }) => (items.length ? items[0] : {})));
   }
 
   getAuthoredFormDetailsByFormId$(formId: string) {
