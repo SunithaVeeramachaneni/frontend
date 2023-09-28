@@ -9,7 +9,6 @@
     padding-bottom: 7px;
     border-bottom: 1px solid $border-color;
     display: flex;
-    margin-bottom: 10px;
 
     .name {
       margin: 10px 0 0 0;
@@ -21,6 +20,7 @@
     float: right;
     position: relative;
     top: 5px;
+    cursor: pointer;
   }
 
   .question-name {
