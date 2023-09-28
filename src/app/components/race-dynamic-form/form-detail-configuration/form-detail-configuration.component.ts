@@ -92,6 +92,7 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
   formDetails: any;
   pages: any;
   readonly formConfigurationStatus = formConfigurationStatus;
+  collapseAllSections: FormControl = new FormControl(false);
   authoredFormDetailSubscription: Subscription;
   getFormMetadataSubscription: Subscription;
   redirectToFormsList$: Observable<boolean>;
@@ -241,10 +242,12 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
           authoredFormDetailDynamoDBVersion,
           skipAuthoredDetail
         } = formDetails;
+        this.setCollapseAllSectionsState(pages);
 
         if (skipAuthoredDetail) {
           return;
         }
+
         this.formListVersion = formListDynamoDBVersion;
         this.formStatus = formStatus;
         this.formDetailPublishStatus = formDetailPublishStatus;
@@ -438,6 +441,14 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
       }
     });
 
+    this.collapseAllSections.valueChanges.subscribe((isCollapse) => {
+      this.store.dispatch(
+        BuilderConfigurationActions.updateAllSectionState({
+          isCollapse,
+          subFormId: ''
+        })
+      );
+    });
     this.redirectToFormsList$ = this.rdfService.redirectToFormsList$.pipe(
       tap((redirect) => {
         if (redirect) {
@@ -631,5 +642,29 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
     }
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  private setCollapseAllSectionsState(pages = []): void {
+    if (pages?.length === 0) {
+      this.collapseAllSections.setValue(false, {
+        emitEvent: false
+      });
+      return;
+    }
+    let allSections = 0;
+    let closedSections = 0;
+    if (pages) {
+      if (pages?.length > 0) {
+        pages.forEach((page) => {
+          allSections += page?.sections?.length;
+          closedSections +=
+            page?.sections?.filter((section) => !section?.isOpen)?.length || 0;
+        });
+      }
+    }
+    const allCollapse: boolean = closedSections === allSections ? true : false;
+    this.collapseAllSections.setValue(allCollapse, {
+      emitEvent: false
+    });
   }
 }

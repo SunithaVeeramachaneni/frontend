@@ -141,6 +141,7 @@ export const updatePageState = createAction(
     pageIndex: number;
     isOpen: boolean;
     subFormId?: string;
+    isCollapse?: boolean;
   }>()
 );
 export const updatePage = createAction(
@@ -385,4 +386,12 @@ export const updateFormStatus = createAction(
 export const updateModuleName = createAction(
   '[Builder Configuration] updateModuleName',
   props<{ moduleName: string }>()
+);
+
+export const updateAllSectionState = createAction(
+  '[Builder Configuration] updateAllSectionState',
+  props<{
+    isCollapse: boolean;
+    subFormId: string;
+  }>()
 );

@@ -472,7 +472,7 @@ export class RoundPlanHeaderConfigurationComponent
             }
           })
         );
-        this.router.navigate(['/operator-rounds/create']);
+        this.router.navigate(['/operator-rounds/round-plans/create']);
         this.gotoNextStep.emit();
       } else if (this.roundData?.roundExists === true) {
         this.store.dispatch(
@@ -526,7 +526,7 @@ export class RoundPlanHeaderConfigurationComponent
 
   onCancel(): void {
     this.dialogRef.close();
-    this.router.navigate(['/operator-rounds']);
+    this.router.navigate(['/operator-rounds/round-plans']);
   }
 
   resetPlantSearchFilter = () => {

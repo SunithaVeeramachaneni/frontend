@@ -901,7 +901,13 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
                   }
                 });
               }
-              if (history.type === 'Media') {
+
+              if (
+                history.type === 'Media' &&
+                !this.filteredMediaType.some(
+                  (a) => a?.message === history?.message
+                )
+              ) {
                 this.filteredMediaType.push(history);
               }
             });
@@ -944,7 +950,10 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
               }
             });
           }
-          if (history.type === 'Media') {
+          if (
+            history.type === 'Media' &&
+            !this.filteredMediaType.some((a) => a?.message === history?.message)
+          ) {
             this.filteredMediaType.push(history);
           }
         });
@@ -986,6 +995,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
             statusDisplay: this.observations.prepareStatus(
               jsonData.STATUS ?? ''
             ),
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             PHOTO: this.data?.PHOTO ?? [],
             assignedTo: data?.assignedTo,
             assignedToDisplay: this.observations.formatUsersDisplay(

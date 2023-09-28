@@ -2,7 +2,7 @@
   <div class="main-container">
     <div class="forms-header">
       <h2 id="templateListHeading" class="heading" translate="templates"></h2>
-      <span class="custom-form-field-gray-color search">
+      <div class="custom-form-field-gray-color search">
         <span class="no-of-forms" *ngIf="templatesCount$ | async as totalCount">
           <span id="templateListCount" class="forms-count">
             {{ totalCount | count }}
@@ -16,9 +16,9 @@
           }}</span>
         </span>
         <mat-form-field appearance="outline">
-          <mat-icon id="templateListSearchIcon" matPrefix class="searchIcon"
-            >search</mat-icon
-          >
+          <mat-icon id="templateListSearchIcon" matPrefix class="searchIcon">
+            search
+          </mat-icon>
           <input
             id="templateListSearchText"
             matInput
@@ -39,13 +39,36 @@
         </mat-form-field>
         <button
           id="templateListCreateBtn"
-          mat-raised-button
           translate="createNew"
           class="create-new-btn"
-          (click)="openCreateTemplateModal()"
+          mat-menu-item
+          [matMenuTriggerFor]="createTemplateMenu"
           *appCheckUserHasPermission="[perms.createFormTemplate]"
         ></button>
-      </span>
+
+        <mat-menu #createTemplateMenu="matMenu" id="templateFormTypeCreateMenu">
+          <button
+            id="templateEmbeddedCreateButton"
+            mat-menu-item
+            (click)="openCreateTemplateModal('Embedded')"
+          >
+            <span
+              id="templateCreateEmbeddedSpan"
+              translate="createEmbedded"
+            ></span>
+          </button>
+          <button
+            id="templateStandaloneCreateButton"
+            mat-menu-item
+            (click)="openCreateTemplateModal('Standalone')"
+          >
+            <span
+              id="templateCreateStandaloneSpan"
+              translate="createStandalone"
+            ></span>
+          </button>
+        </mat-menu>
+      </div>
     </div>
 
     <div *ngIf="(isLoading$ | async) === false">
