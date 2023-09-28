@@ -1,14 +1,16 @@
 import { Column } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { columnConfiguration } from 'src/app/interfaces/columnConfiguration';
+// INFO: This is the default column configuration for RDF module
 
+// To add a column in FormList Screen add the column in RDF_DEFAULT_COLUMNS and RDF_DEFAULT_COLUMN_CONFIG
 export const RDF_DEFAULT_COLUMNS: columnConfiguration[] = [
   {
     columnId: 'name',
     columnName: 'Name',
-    disabled: true,
-    selected: true,
-    draggable: false,
-    default: true
+    disabled: true, // Column which should not be modified by the user should be marked as disabled
+    selected: true, // Column which should be selected by default should be marked as selected
+    draggable: false, // If this is a default column then it should not be draggable
+    default: true // reset to default view in column configuration slider will select all columns selected as default
   },
   {
     columnId: 'formStatus',
@@ -53,6 +55,14 @@ export const RDF_DEFAULT_COLUMNS: columnConfiguration[] = [
   {
     columnId: 'author',
     columnName: 'Created By',
+    disabled: false,
+    selected: true,
+    draggable: true,
+    default: true
+  },
+  {
+    columnId: 'tags',
+    columnName: 'Tags',
     disabled: false,
     selected: true,
     draggable: true,
@@ -156,5 +166,14 @@ export const RDF_DEFAULT_COLUMN_CONFIG: Partial<Column>[] = [
     sortable: true,
     visible: true,
     titleStyle: { color: '' }
+  },
+  {
+    id: 'tags',
+    displayName: 'Tags',
+    type: 'string',
+    controlType: 'string',
+    sortable: true,
+    visible: true,
+    groupable: true
   }
 ];

@@ -1,99 +1,94 @@
 <div id="opendetail" class="column-config-slider">
   <mat-card>
     <ng-container>
-      <div>
+      <div class="slider-close-container">
         <svg-icon
           id="templateSliderCancelIcon"
           icon="icon-close"
           class="cancel-icon"
           (click)="cancelForm()"
         ></svg-icon>
+      </div>
+      <div *ngIf="isLoading$ | async; else columnConfigContainer">
+        <div class="ghost-loading">
+          <div *ngFor="let number of ghostLoading">
+            <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+            </ngx-shimmer-loading>
+          </div>
+        </div>
+      </div>
+      <ng-template #columnConfigContainer>
         <h2 id="column-configuration-heading" class="detail-heading" translate>
           columnConfiguration
         </h2>
-      </div>
-      <button class="reset-view-btn" (click)="resetToDefault()" translate>
-        resetToDefault
-      </button>
-      <section class="column-select-all">
-        <span>
-          <mat-checkbox
-            class="checkbox-margin"
-            [checked]="allComplete"
-            [indeterminate]="someComplete()"
-            (change)="setAll($event.checked)"
-            >{{ 'selectAll' | translate }}</mat-checkbox
-          >
-        </span>
-        <span>
-          <ul
-            class="column-list-container"
-            cdkDropList
-            (cdkDropListDropped)="drop($event)"
-          >
-            <li *ngFor="let column of allColumns">
-              <div class="column-container" cdkDrag>
-                <div class="dis-flex justify-content-start align-items-center">
-                  <svg-icon
-                    icon="icon-six-dots"
-                    [ngClass]="
-                      column.draggable ? 'drag-handle' : 'drag-handle hidden'
-                    "
-                    cdkDragHandle
-                  ></svg-icon>
-                  <mat-checkbox
-                    [(ngModel)]="column.selected"
-                    (ngModelChange)="updateAllComplete()"
-                    [disabled]="column.disabled"
+        <button class="reset-view-btn" (click)="resetToDefault()" translate>
+          resetToDefault
+        </button>
+        <section class="column-select-all">
+          <span>
+            <mat-checkbox
+              class="checkbox-margin"
+              [checked]="allComplete"
+              [indeterminate]="someComplete()"
+              (change)="setAll($event.checked)"
+              >{{ 'selectAll' | translate }}</mat-checkbox
+            >
+          </span>
+          <span>
+            <ul
+              class="column-list-container"
+              cdkDropList
+              (cdkDropListDropped)="drop($event)"
+            >
+              <li *ngFor="let column of allColumns">
+                <div class="column-container" cdkDrag>
+                  <div
+                    class="dis-flex justify-content-start align-items-center"
                   >
-                    {{ column.columnName }}
-                  </mat-checkbox>
+                    <svg-icon
+                      icon="icon-six-dots"
+                      [ngClass]="
+                        column.draggable ? 'drag-handle' : 'drag-handle hidden'
+                      "
+                      cdkDragHandle
+                    ></svg-icon>
+                    <mat-checkbox
+                      [(ngModel)]="column.selected"
+                      (ngModelChange)="updateAllComplete()"
+                      [disabled]="column.disabled"
+                    >
+                      {{ column.columnName }}
+                    </mat-checkbox>
+                  </div>
+                  <span
+                    *ngIf="!column.default"
+                    class="addition-detail-label"
+                    translate
+                    >additionalDetail</span
+                  >
                 </div>
-                <span
-                  *ngIf="!column.default"
-                  class="addition-detail-label"
-                  translate
-                  >additionalDetail</span
-                >
-              </div>
-            </li>
-          </ul>
-        </span>
-      </section>
-
-      <!-- <div *ngIf="(forms$ | async) && (isLoading$ | async) === false">
-      <cwp-dynamictable
-        [dataSource]="dataSource"
-        [configOptions]="configOptions"
-        (cellClickActionHandler)="cellClickActionHandler($event)"
-        (fetchDataCallback)="handleTableEvent($event)"
-        class="width-100"
-      ></cwp-dynamictable>
-    </div>
-    <div *ngIf="isLoading$ | async">
-      <div class="ghost-loading mt-5 pt-5">
-        <div *ngFor="let number of ghostLoading">
-          <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
-          </ngx-shimmer-loading>
+              </li>
+            </ul>
+          </span>
+        </section>
+        <div class="column-config-footer">
+          <button
+            id="cancelColumnConfigBtn"
+            mat-stroked-button
+            class="cancel-button"
+            translate="cancel"
+            (click)="cancelForm()"
+          ></button>
+          <button
+            id="saveColumnConfigBtn"
+            mat-raised-button
+            color="primary"
+            class="save-button"
+            translate="save"
+            (click)="onSave()"
+          ></button>
         </div>
-      </div>
-    </div> -->
-      <div class="column-config-footer">
-        <button
-          id="cancelColumnConfigBtn"
-          mat-stroked-button
-          class="cancel-button"
-          translate="cancel"
-          (click)="cancelForm()"
-        ></button>
-        <button
-          id="saveColumnConfigBtn"
-          mat-raised-button
-          color="primary"
-          class="save-button"
-          translate="save"
-        ></button>
-      </div>
+      </ng-template>
     </ng-container>
   </mat-card>
 </div>

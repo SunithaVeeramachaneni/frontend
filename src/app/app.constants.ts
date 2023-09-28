@@ -855,3 +855,14 @@ export const metadataFlatModuleNames = {
   RDF_TEMPLATES: 'RDF_TEMPLATES',
   OPERATOR_ROUNDS: 'OR'
 };
+
+export const additionalDetailColumnConfig = {
+  id: '',
+  displayName: '',
+  type: 'string',
+  controlType: 'string',
+  sortable: true,
+  reverseSort: true,
+  visible: true,
+  groupable: true
+};

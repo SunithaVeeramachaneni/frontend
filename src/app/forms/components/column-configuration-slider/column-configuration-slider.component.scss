@@ -8,8 +8,8 @@
   top: 0;
   right: 0;
   bottom: 0;
-  width: 400px;
-  min-width: 400px;
+  width: 500px;
+  min-width: 500px;
   height: 100%;
   overflow: hidden;
   z-index: 9999;
@@ -23,6 +23,9 @@
   .mat-card {
     box-shadow: none;
     min-height: 96vh;
+    .slider-close-container {
+      margin-bottom: 20px;
+    }
     .cancel-icon {
       cursor: pointer;
       height: 15px;

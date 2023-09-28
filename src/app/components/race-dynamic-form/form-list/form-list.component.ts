@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   OnDestroy,
   OnInit
@@ -50,6 +51,8 @@ import { downloadFile } from 'src/app/shared/utils/fileUtils';
 import { UploadResponseModalComponent } from '../../../shared/components/upload-response-modal/upload-response-modal.component';
 import { FormModalComponent } from '../form-modal/form-modal.component';
 import { metadataFlatModuleNames } from '../../../app.constants';
+import { RDF_DEFAULT_COLUMN_CONFIG } from '../race-dynamic-forms.constants';
+import { ColumnConfigurationService } from 'src/app/forms/services/column-configuration.service';
 
 @Component({
   selector: 'app-form-list',
@@ -140,17 +143,31 @@ export class FormListComponent implements OnInit, OnDestroy {
   constructor(
     private readonly toast: ToastService,
     private readonly raceDynamicFormService: RaceDynamicFormService,
+    private columnConfigService: ColumnConfigurationService,
     private router: Router,
     private dialog: MatDialog,
     private loginService: LoginService,
     private usersService: UsersService,
-    private plantService: PlantService
+    private plantService: PlantService,
+    private cdrf: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
-    this.columns = this.raceDynamicFormService.updateConfigOptionsFromColumns(
-      this.partialColumns
-    );
+    this.columnConfigService.moduleColumnConfiguration$
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe((res) => {
+        this.isLoading$.next(true);
+        if (res) {
+          setTimeout(() => {
+            this.columns = res;
+            this.configOptions.allColumns = this.columns;
+            console.log(this.configOptions);
+            this.isLoading$.next(false);
+            this.cdrf.detectChanges();
+          }, 500);
+        }
+      });
+
     this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
     this.raceDynamicFormService.fetchForms$.next({} as TableEvent);
     this.searchForm = new FormControl('');
