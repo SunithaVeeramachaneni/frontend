@@ -31,7 +31,7 @@ export class PreviewComponent implements OnInit, OnChanges {
   @Input()
   pageIndex = 1;
 
-  isSectionOpenState = true;
+  isOpen = true;
   fieldTypes: any;
   sliderOptions = {
     value: 0,
@@ -83,10 +83,10 @@ export class PreviewComponent implements OnInit, OnChanges {
     this.fieldTypes = fieldTypesMock.fieldTypes;
   }
 
-  toggleSectionOpenState = (sectionIdx: number): void => {
-    const section = this.sectionsData[sectionIdx];
-    if (section) {
-      section.isSectionOpenState = !section.isSectionOpenState;
+  toggleSectionOpenState = (sectionIdx: number, pageData): void => {
+    const pageSection = pageData.sections[sectionIdx];
+    if (pageSection) {
+      pageSection.isOpen = !pageSection.isOpen;
     }
   };
 

@@ -16,11 +16,11 @@ import { ReportConfigurationComponent } from '../dashboard/report-configuration/
 const routes: Routes = [
   {
     path: '',
-    component: OperatorRoundsContainerComponent,
+    component: OperatorRoundsDashboardComponent,
     canActivate: [AuthGuard],
     data: {
       breadcrumb: { label: 'Operator Rounds' },
-      permissions: [permissions.viewORPlans]
+      permissions: [permissions.viewOPRDashboards]
     },
     children: [
       {
@@ -63,7 +63,7 @@ const routes: Routes = [
         }
       },
       {
-        path: 'create',
+        path: 'round-plans/create',
         component: OperatorRoundsContainerComponent,
         canActivate: [AuthGuard],
         resolve: { form: RoundPlanResolverService },
@@ -73,7 +73,7 @@ const routes: Routes = [
         }
       },
       {
-        path: 'edit/:id',
+        path: 'round-plans/edit/:id',
         component: RoundPlanEditViewComponent,
         canActivate: [AuthGuard],
         resolve: { form: RoundPlanResolverService },

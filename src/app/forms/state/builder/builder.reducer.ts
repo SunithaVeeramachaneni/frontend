@@ -342,13 +342,13 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
               // eslint-disable-next-line @typescript-eslint/no-shadow
               const sections = page.sections.map((section) => ({
                 ...section,
-                isOpen: true
+                isOpen: action.isCollapse ? section.isOpen : true // Note: Added because if collapse all after refresh we need to show in state which is collapsed or expanded
               }));
               return { ...page, sections, isOpen: action.isOpen };
             }
             const sections = page.sections.map((section) => ({
               ...section,
-              isOpen: false
+              isOpen: action.isCollapse ? section.isOpen : false // Note: Added because if collapse all after refresh we need to show in state which is collapsed or expanded
             }));
             const questions = page.questions.map((question) => ({
               ...question,
@@ -1205,5 +1205,34 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       ...state,
       moduleName: action.moduleName
     })
+  ),
+  on(
+    BuilderConfigurationActions.updateAllSectionState,
+    (state, action): FormConfigurationState => {
+      let key = 'pages';
+      const subFormId = action.subFormId;
+      if (subFormId) {
+        key = `${key}_${subFormId}`;
+      }
+      const pages = state[key].map((page) => {
+        const sections =
+          page?.sections?.map((section) => ({
+            ...section,
+            isOpen: action.isCollapse ? false : true
+          })) || [];
+        return {
+          ...page,
+          sections
+        };
+      });
+      return {
+        ...state,
+        [key]: pages,
+        formStatus: 'Draft',
+        formDetailPublishStatus: 'Draft',
+        formSaveStatus: 'Saving',
+        skipAuthoredDetail: false
+      };
+    }
   )
 );
