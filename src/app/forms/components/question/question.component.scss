@@ -159,6 +159,24 @@
         align-items: center;
         background: none;
         border: none;
+        ::ng-deep .mat-form-field-appearance-outline.mat-form-field-disabled,
+        ::ng-deep .mat-form-field-outline {
+          opacity: 0;
+        }
+    
+        ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
+          padding: 0 !important;
+          border-top: none !important;
+          width: 90px;
+        }
+        label {
+          display: flex;
+        }
+        mat-form-field {
+          ::ng-deep .mat-select-value-text span {
+            color: $blue-main;
+          }
+        }
       }
 
       .hyperlink-long {
@@ -169,6 +187,14 @@
     }
     .addLogicRow {
       width: 100%;
+    }
+    .ima-image-preview {
+      display: block;
+      width: 100%;
+      min-width: 100%;
+    }
+    .ima-pdf-preview {
+      display: flex;
     }
 
     .m-l-50 {

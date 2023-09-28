@@ -137,7 +137,25 @@
       >
         <div class="input-fields">
           <div *ngIf="questionForm.get('fieldType').value !== 'IMG'">
-            <div class="questionActionsRow">
+            <div *ngIf="questionForm.get('fieldType').value === 'IMA' && !isEmbeddedForm">
+              <div class="ima-image-preview" *ngIf="questionForm.get('value').value.fileType === 'image'">
+                <app-instruction-image
+                  [image]="questionForm.get('value').value"
+                  (indexEmitter)="imaFileDeleteHandler($event)"
+                  class="m-r-10"
+                  (click)="openIMAPreviewDialog()"
+                ></app-instruction-image>
+              </div>
+
+              <span class="ima-pdf-preview" *ngIf="questionForm.get('value').value.fileType === 'pdf'">
+                <app-instruction-pdf
+                  [pdf]="questionForm.get('value').value"
+                  (indexEmitter)="imaFileDeleteHandler($event)"
+                >
+                </app-instruction-pdf>
+              </span>
+            </div>
+            <div class="questionActionsRow"> 
               <button
                 id="questionAddLogicBtn"
                 mat-button
@@ -510,7 +528,60 @@
                   (checkedMultiple)="questionForm.get('multi').setValue($event)"
                 ></app-drop-down>
               </span>
-              <span *ngIf="!isEmbeddedForm" class="action"
+
+              <ng-container *ngIf="questionForm.get('fieldType').value === 'IMA' && !isEmbeddedForm">                
+                <span class="action">
+                  <label translate="component"></label>&nbsp;
+                  <mat-form-field appearance="outline">
+                    <mat-select
+                      [placeholder]="'select' | translate"
+                      formControlName="component"
+                    >
+                      <div class="scrollable-area">
+                        <mat-option [value]="component" *ngFor="let component of components">{{component}}</mat-option>
+                      </div>
+                    </mat-select>
+                  </mat-form-field>
+                </span>
+
+                <span class="action">
+                  <label translate="samplingPoint"></label>&nbsp;
+                  <mat-form-field appearance="outline">
+                    <mat-select
+                      [placeholder]="'select' | translate"
+                      formControlName="samplingPoint"
+                    >
+                      <div class="scrollable-area">
+                        <mat-option [value]="points" *ngFor="let points of samplingPoints">{{points}}</mat-option>
+                      </div>
+                    </mat-select>
+                  </mat-form-field>
+                </span>
+
+                <input
+                  type="file"
+                  class="file-upload"
+                  accept="image/jpeg,image/jpg,image/png,application/pdf"
+                  (change)="imageAnalysisAttachmentHandler($event)"
+                  [hidden]="true"
+                  #imaFileUpload
+                />
+
+                <button
+                  mat-button
+                  color="primary"
+                  class="ask-question-inst-btn"
+                  (click)="imaFileUpload.click()"
+                >
+                  <mat-icon class="icon">link</mat-icon>
+                  <span
+                    id="questionAddImgPDFBtn"
+                    translate="addReferenceImageOrPDF"
+                  ></span>
+                </button>
+              </ng-container>
+
+              <span *ngIf="!isEmbeddedForm && questionForm.get('fieldType').value !== 'IMA'" class="action"
                 ><label translate="additionalDetails"></label>&nbsp;
                 <span
                   class="additionalDetailsBtn"

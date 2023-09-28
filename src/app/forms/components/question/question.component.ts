@@ -216,8 +216,26 @@ export class QuestionComponent implements OnInit, OnDestroy {
     'HL',
     'INST',
     'DF',
-    'TIF'
+    'TIF',
+    'IMA'
   ];
+
+  components: string[] = [
+    'Terrain Wheels',
+    'Transmission',
+    'Engine',
+    'Wheels',
+    'Bonnet',
+    'Brakes & Clutch'
+  ]
+
+  samplingPoints: string[] = [
+    'Mag Plug',
+    'Fuel Injector',
+    'Cooling System',
+    'Exhaust System',
+    'Oil Reservoir'
+  ]
 
   unitOfMeasurementsAvailable: any[] = [];
   unitOfMeasurements = [];
@@ -241,6 +259,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
     unitOfMeasurement: 'None',
     rangeMetadata: {} as NumberRangeMetadata,
     additionalDetails: {} as AdditionalDetails,
+    component: 'Engine',
+    samplingPoint: 'Mag Plug',
     createdAt: '',
     createdBy: '',
     updatedAt: '',
@@ -635,6 +655,42 @@ export class QuestionComponent implements OnInit, OnDestroy {
       });
   }
 
+  imageAnalysisAttachmentHandler(event) {
+    const { files } = event.target as HTMLInputElement;
+    const file = {
+      name: files[0].name,
+      size: (files[0].size / 1024).toFixed(2),
+      type: files[0].type
+    };
+
+    const allowedFileTypes: string[] = [
+      'image/jpeg',
+      'image/jpg',
+      'image/png',
+      'application/pdf'
+    ];
+
+    if (allowedFileTypes.indexOf(file.type) === -1) {
+      this.toast.show({
+        text: 'Invalid file type, only JPG/JPEG/PNG/PDF accepted.',
+        type: 'warning'
+      });
+      return;
+    }
+    this.formService
+      .uploadToS3$(`${this.moduleName}/${this.formMetadata?.id}`, files[0])
+      .subscribe(async (data) => {
+        const value = {
+          name: file.name,
+          size: file.size,
+          objectKey: data.message.objectKey,
+          objectURL: data.message.objectURL,
+          fileType: file.type === 'application/pdf'  ? 'pdf' : 'image'
+        };
+        this.questionForm.get('value').setValue(value);
+      });
+  }
+
   getImageSrc(base64) {
     return this.imageUtils.getImageSrc(base64);
   }
@@ -977,6 +1033,13 @@ export class QuestionComponent implements OnInit, OnDestroy {
     this.instructionsUpdateValue();
   }
 
+  imaFileDeleteHandler(index: number) {
+    let originalValue = this.questionForm.get('value').value;
+    this.formService.deleteFromS3(originalValue.objectKey);
+    this.questionForm.get('value').setValue('');
+    this.instructionsUpdateValue();
+  }
+
   imagesArrayRemoveNullGaps(images) {
     const nonNullImages = images.filter((image) => image !== null);
     return nonNullImages.concat(Array(3 - nonNullImages.length).fill(null));
@@ -990,6 +1053,26 @@ export class QuestionComponent implements OnInit, OnDestroy {
   openPreviewDialog() {
     const attachments = this.questionForm.get('value').value.images;
     const filteredMedia = [...attachments];
+    const slideshowImages = [];
+    filteredMedia.forEach((media) => {
+      if (media) {
+        slideshowImages.push(media.objectURL);
+      }
+    });
+    if (slideshowImages) {
+      this.dialog.open(SlideshowComponent, {
+        width: '100%',
+        height: '100%',
+        panelClass: 'slideshow-container',
+        backdropClass: 'slideshow-backdrop',
+        data: slideshowImages
+      });
+    }
+  }
+
+  openIMAPreviewDialog() {
+    const attachments = this.questionForm.get('value').value;
+    const filteredMedia = [attachments];
     const slideshowImages = [];
     filteredMedia.forEach((media) => {
       if (media) {

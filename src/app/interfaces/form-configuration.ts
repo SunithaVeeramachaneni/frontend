@@ -13,6 +13,7 @@ export interface FormMetadata {
   isArchived: boolean;
   formType: 'Standalone' | 'Embedded';
   formStatus: 'Draft' | 'Published';
+  integrationType: string;
   tags: string[];
   searchTerm: string;
   hierarchy?: any;
@@ -85,6 +86,8 @@ export interface Question {
   rangeMetadata?: NumberRangeMetadata;
   additionalDetails?: AdditionalDetails;
   skipIdGeneration?: boolean;
+  component?: string;
+  samplingPoingt?: string;
   createdAt?: string;
   updatedAt?: string;
   createdBy?: string;

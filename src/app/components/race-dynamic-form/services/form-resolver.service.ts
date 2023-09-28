@@ -41,7 +41,6 @@ export class FormResolverService implements Resolve<FormConfigurationState> {
             createOrEditForm: true
           })
         );
-
         const {
           // eslint-disable-next-line @typescript-eslint/no-shadow
           id,
@@ -51,6 +50,7 @@ export class FormResolverService implements Resolve<FormConfigurationState> {
           isPublic,
           formStatus,
           formType,
+          integrationType,
           tags,
           plantId,
           plant,
@@ -112,6 +112,7 @@ export class FormResolverService implements Resolve<FormConfigurationState> {
           pdfTemplateConfiguration,
           formStatus,
           formType,
+          integrationType,
           tags,
           plantId,
           additionalDetails: JSON.parse(additionalDetails),
