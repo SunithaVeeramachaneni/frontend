@@ -128,7 +128,7 @@ export class TemplateDetailConfigurationComponent implements OnInit, OnDestroy {
       // waiting for the store to catchup before filtering
       setTimeout(() => {
         this.allTemplates = window.history.state.allTemplates.filter(
-          (item) => item.id !== this.formDetails.formMetadata.id
+          (item) => item.id !== this.formDetails?.formMetadata?.id
         );
       }, 1000);
     } else {
