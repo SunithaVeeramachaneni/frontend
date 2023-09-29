@@ -63,7 +63,7 @@ const routes: Routes = [
         }
       },
       {
-        path: 'create',
+        path: 'round-plans/create',
         component: OperatorRoundsContainerComponent,
         canActivate: [AuthGuard],
         resolve: { form: RoundPlanResolverService },
@@ -73,7 +73,7 @@ const routes: Routes = [
         }
       },
       {
-        path: 'edit/:id',
+        path: 'round-plans/edit/:id',
         component: RoundPlanEditViewComponent,
         canActivate: [AuthGuard],
         resolve: { form: RoundPlanResolverService },

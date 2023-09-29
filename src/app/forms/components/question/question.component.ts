@@ -334,14 +334,14 @@ export class QuestionComponent implements OnInit, OnDestroy {
         fieldType.type !== 'DD' &&
         fieldType.type !== 'DDM' &&
         fieldType.type !== 'VI' &&
-        fieldType.type !== 'USR' &&
         fieldType.type !== 'ARD' &&
         fieldType.type !== 'TAF' &&
         (this.isEmbeddedForm
           ? fieldType.type !== 'DT'
           : fieldType.type !== 'DF' &&
             fieldType.type !== 'TIF' &&
-            fieldType.type !== 'IMG')
+            fieldType.type !== 'IMG' &&
+            fieldType.type !== 'USR')
     );
 
     // isAskQuestion true set question id and section id
@@ -586,6 +586,11 @@ export class QuestionComponent implements OnInit, OnDestroy {
           pdf: null
         };
         this.questionForm.get('value').setValue(instructionsValue);
+        if (this.questionForm.get('name').value) {
+          this.questionForm
+            .get('name')
+            .setValue('<p>' + this.questionForm.get('name').value + '</p>');
+        }
         break;
       default:
       // do nothing
