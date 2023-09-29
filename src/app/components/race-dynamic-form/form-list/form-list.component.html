@@ -52,6 +52,7 @@
           backdropClass="template-list"
         >
           <button
+          *appCheckUserHasPermission="[perms.importForm]"
             id="uploadExcelMenu"
             mat-menu-item
             [matMenuTriggerFor]="uploadMenu"

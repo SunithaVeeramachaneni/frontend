@@ -4,7 +4,10 @@
     [selectedIndex]="getSelectedIndex()"
     (selectedTabChange)="onTabChange($event)"
   >
-    <mat-tab id="archiveTemplates">
+    <mat-tab
+      id="archiveTemplates"
+      *appCheckUserHasPermission="[permissions.viewArchivedTemplates]"
+    >
       <ng-template mat-tab-label>{{ 'templates' | translate }}</ng-template>
       <app-lazy-load-container>
         <ng-template #body>
