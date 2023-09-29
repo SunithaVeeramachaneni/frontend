@@ -33,7 +33,7 @@ import {
   FormMetadata,
   InstructionsFile,
   UnitOfMeasurement,
-  AdditionalDetails
+  AdditionalDetails,
 } from 'src/app/interfaces';
 import {
   State,
@@ -259,8 +259,11 @@ export class QuestionComponent implements OnInit, OnDestroy {
     unitOfMeasurement: 'None',
     rangeMetadata: {} as NumberRangeMetadata,
     additionalDetails: {} as AdditionalDetails,
-    component: 'Engine',
-    samplingPoint: 'Mag Plug',
+    analysisInfo: this.fb.group({
+      component: '',
+      samplingPoint: '',
+      refImage: ''
+    }),
     createdAt: '',
     createdBy: '',
     updatedAt: '',

@@ -25,6 +25,7 @@ import { DateRangeResponseComponent } from '../response-types/date-range-respons
 import { AttachmentResponseComponent } from '../response-types/attachment-response/attachment-response.component';
 import { DropdownResponseComponent } from '../response-types/dropdown-response/dropdown-response.component';
 import { VisibleInputResponseComponent } from '../response-types/visible-input-response/visible-input-response.component';
+import { AnalysisAttachmentResponseComponent } from '../response-types/analysis-attachment-response/analysis-attachment-response.component';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 
 @Component({
@@ -59,7 +60,8 @@ export class PreviewQuestionComponent implements OnInit {
     LocationResponseComponent,
     DateRangeResponseComponent,
     VisibleInputResponseComponent,
-    DropdownResponseComponent
+    DropdownResponseComponent,
+    AnalysisAttachmentResponseComponent
   ];
 
   constructor(private componentFactoryResolver: ComponentFactoryResolver) {}
@@ -93,6 +95,7 @@ export class PreviewQuestionComponent implements OnInit {
     this.fieldTypes.set('DFR', 12);
     this.fieldTypes.set('VI', 13);
     this.fieldTypes.set('DD', 14);
+    this.fieldTypes.set('IMA', 15);
   }
 
   private loadDynamicResponseType() {

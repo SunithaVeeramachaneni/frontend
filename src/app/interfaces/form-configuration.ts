@@ -86,8 +86,7 @@ export interface Question {
   rangeMetadata?: NumberRangeMetadata;
   additionalDetails?: AdditionalDetails;
   skipIdGeneration?: boolean;
-  component?: string;
-  samplingPoingt?: string;
+  analysisInfo?: AnalysisInfo;
   createdAt?: string;
   updatedAt?: string;
   createdBy?: string;
@@ -117,6 +116,12 @@ export interface NumberRangeMetadata {
 export interface AdditionalDetails {
   tags: any[];
   attributes: any[];
+}
+
+export interface AnalysisInfo {
+  component: string;
+  samplingPoint: string;
+  refImage: string;
 }
 
 export interface PageEvent {

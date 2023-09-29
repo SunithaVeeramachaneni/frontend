@@ -529,7 +529,7 @@
                 ></app-drop-down>
               </span>
 
-              <ng-container *ngIf="questionForm.get('fieldType').value === 'IMA' && !isEmbeddedForm">                
+              <ng-container *ngIf="questionForm.get('fieldType').value === 'IMA' && !isEmbeddedForm" formGroupName="analysisInfo">   
                 <span class="action">
                   <label translate="component"></label>&nbsp;
                   <mat-form-field appearance="outline">
@@ -579,6 +579,7 @@
                     translate="addReferenceImageOrPDF"
                   ></span>
                 </button>
+              
               </ng-container>
 
               <span *ngIf="!isEmbeddedForm && questionForm.get('fieldType').value !== 'IMA'" class="action"
