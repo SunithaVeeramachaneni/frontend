@@ -696,6 +696,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
           fileType: file.type === 'application/pdf'  ? 'pdf' : 'image'
         };
         this.questionForm.get('value').setValue(value);
+        this.questionForm.get('analysisInfo').patchValue({refImage: value.objectKey});
       });
   }
 
