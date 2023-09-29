@@ -33,7 +33,7 @@ import {
   FormMetadata,
   InstructionsFile,
   UnitOfMeasurement,
-  AdditionalDetails,
+  AdditionalDetails
 } from 'src/app/interfaces';
 import {
   State,
@@ -227,7 +227,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     'Wheels',
     'Bonnet',
     'Brakes & Clutch'
-  ]
+  ];
 
   samplingPoints: string[] = [
     'Mag Plug',
@@ -235,7 +235,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     'Cooling System',
     'Exhaust System',
     'Oil Reservoir'
-  ]
+  ];
 
   unitOfMeasurementsAvailable: any[] = [];
   unitOfMeasurements = [];
@@ -262,7 +262,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
     analysisInfo: this.fb.group({
       component: '',
       samplingPoint: '',
-      refImage: ''
+      refImage: '',
+      machineSNO: 5000757
     }),
     createdAt: '',
     createdBy: '',
@@ -693,10 +694,12 @@ export class QuestionComponent implements OnInit, OnDestroy {
           size: file.size,
           objectKey: data.message.objectKey,
           objectURL: data.message.objectURL,
-          fileType: file.type === 'application/pdf'  ? 'pdf' : 'image'
+          fileType: file.type === 'application/pdf' ? 'pdf' : 'image'
         };
         this.questionForm.get('value').setValue(value);
-        this.questionForm.get('analysisInfo').patchValue({refImage: value.objectKey});
+        this.questionForm
+          .get('analysisInfo')
+          .patchValue({ refImage: value.objectKey });
       });
   }
 

@@ -1,35 +1,18 @@
 <div class="attachment-wrapper">
-    <p>Sacn for equipment Hydro-Terrain Tracker (HT-23)</p>
-    <div class="scan-input">
-        <input
-          id="scanResponseChoose"
-          type="text"
-          class="text-answer"
-          [placeholder]="'enter' | translate"
-        />
-        <svg-icon
-          id="scanResponseIcon"
-          icon="icon-scan-bg"
-          class="scan-icon"
-        ></svg-icon>
-    </div>
-    <p>Take a picture of the sampling point. Ensure distance from camera in 30cm</p>
-    <div class="section">
-        <label>Component: </label>
-        <span>{{question.analysisInfo.component}}</span>
-    </div>
-    <div class="section">
-        <label>Sampling Point: </label>
-        <span>{{question.analysisInfo.samplingPoint}}</span>
-    </div>
-    <div class="image-div" *ngIf="question.value.fileType === 'image'">
-        <span>Reference Image</span>
-        <img [src]="question.value.objectURL" alt="" >
-    </div>
-    <button class="attachment">
-        <div class="attachment-image"></div>
-        <span id="attachmentAdd" translate="addAtt"></span>
-    </button>
+  <div class="section">
+    <label>Component: </label>
+    <span>{{ question.analysisInfo.component }}</span>
+  </div>
+  <div class="section">
+    <label>Sampling Point: </label>
+    <span>{{ question.analysisInfo.samplingPoint }}</span>
+  </div>
+  <div class="image-div" *ngIf="question.value.fileType === 'image'">
+    <span>Reference Image</span>
+    <img [src]="question.value.objectURL" alt="" />
+  </div>
+  <button class="attachment">
+    <div class="attachment-image"></div>
+    <span id="attachmentAdd" translate="addAtt"></span>
+  </button>
 </div>
-
-  

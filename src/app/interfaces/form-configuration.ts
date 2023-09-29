@@ -122,6 +122,7 @@ export interface AnalysisInfo {
   component: string;
   samplingPoint: string;
   refImage: string;
+  machineSNO: number;
 }
 
 export interface PageEvent {

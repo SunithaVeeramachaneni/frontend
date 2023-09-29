@@ -1,31 +1,7 @@
 @import '../../../../../../scss/colors.scss';
 
 .attachment-wrapper {
-  .scan-input {
-    display: flex;
-    justify-content: space-between;
-    .text-answer {
-      width: 93%;
-      border: 1px solid $gray3;
-      height: 28px;
-      padding-left: 0.5rem;
-      border-radius: 6px;
-      margin-top: 5px;
-      &:focus {
-        outline: none;
-      }
-      &::placeholder {
-        font-size: 90%;
-      }
-    }
-    .scan-icon {
-      height: 32px;
-      width: 32px;
-      position: relative;
-      top: 5px;
-      margin-left: 4px;
-    }
-  }
+  padding: 4px;
   .attachment {
     height: 30px;
     background: $blue-head;
@@ -71,7 +47,7 @@
       object-fit: contain;
     }
   }
-  
+
   .section {
     display: flex;
     label {
