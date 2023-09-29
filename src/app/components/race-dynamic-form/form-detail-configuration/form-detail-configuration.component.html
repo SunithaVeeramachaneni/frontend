@@ -140,6 +140,12 @@
       >
         {{ 'publishingChanges' | translate }}
       </div>
+      <mat-slide-toggle
+        class="collapse-btn slide-toggle"
+        [formControl]="collapseAllSections"
+        name="collapseAllSections"
+        >{{ 'collapseAllSections' | translate }}</mat-slide-toggle
+      >
       <button
         id="FormImportBtn"
         mat-stroked-button
@@ -162,7 +168,9 @@
         class="next-btn"
         (click)="publishOrShowPdf()"
         [disabled]="
-          formStatus === formConfigurationStatus.published && isEmbeddedForm
+          (isFormDetailPublished ||
+            formDetailPublishStatus === formConfigurationStatus.published) &&
+          isEmbeddedForm
         "
       >
         {{ isEmbeddedForm ? ('publishBtn' | translate) : ('next' | translate) }}
@@ -200,6 +208,7 @@
       [title]="'forms'"
       [isFooter]="true"
       [selectedFormName]="selectedFormName"
+      [selectedFormId]="selectedFormId"
       [selectedFormData]="selectedFormData"
       [isEmbeddedForm]="isEmbeddedForm"
       [currentFormData]="currentFormData"

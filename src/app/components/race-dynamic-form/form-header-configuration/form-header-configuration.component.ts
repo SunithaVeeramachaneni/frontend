@@ -470,7 +470,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
           })
         );
         this.router.navigate(['/forms/create']);
-      } else if (this.formData.formExists === true) {
+      } else if (this.formData.formExists === true && this.hasFormChanges) {
         this.store.dispatch(
           BuilderConfigurationActions.updateFormMetadata({
             formMetadata: {
@@ -480,16 +480,9 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
               additionalDetails: updatedAdditionalDetails,
               plant: plant?.name
             },
-            formStatus: this.hasFormChanges
-              ? formConfigurationStatus.draft
-              : this.headerDataForm.value.formStatus,
+            formStatus: formConfigurationStatus.draft,
             formDetailPublishStatus: formConfigurationStatus.draft,
             formSaveStatus: formConfigurationStatus.saving
-          })
-        );
-        this.store.dispatch(
-          BuilderConfigurationActions.updateCreateOrEditForm({
-            createOrEditForm: true
           })
         );
         this.store.dispatch(

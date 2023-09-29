@@ -1590,7 +1590,9 @@ export class ScheduleConfigurationComponent
   }
 
   get isShiftsSelected(): boolean {
-    return this.shiftsSelected?.value?.length > 0;
+    return (
+      this.shiftSlots?.value?.length > 0 && !this.shiftSlots?.value[0].null
+    );
   }
 
   get shiftSlots(): FormArray {

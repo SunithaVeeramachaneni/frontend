@@ -153,7 +153,7 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
       isPublic: [false],
       isArchived: [false],
       formStatus: [formConfigurationStatus.draft],
-      formType: [formConfigurationStatus.standalone],
+      formType: [this.alltemplatesData?.formType],
       tags: [this.tags],
       additionalDetails: this.fb.array([])
     });
@@ -363,7 +363,7 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
                 this.formProgressService.isTemplateCreated$.next(true);
                 this.router
                   .navigate(['/forms/templates/edit', template.id], {
-                    state: { allTemplates: this.alltemplatesData }
+                    state: { allTemplates: this.alltemplatesData.data }
                   })
                   .then(() => this.gotoNextStep.emit());
               });

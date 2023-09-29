@@ -32,6 +32,7 @@ import { dateFormat4 } from 'src/app/app.constants';
 import { ScheduleByDate, TaskLevelScheduleSubForm } from 'src/app/interfaces';
 import { Observable, Subject } from 'rxjs';
 import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
+import { ToastService } from 'src/app/shared/toast';
 
 @Component({
   selector: 'app-revise-schedule',
@@ -104,7 +105,8 @@ export class ReviseScheduleComponent implements OnInit, OnDestroy {
 
   constructor(
     private fb: FormBuilder,
-    private operatorRoundService: OperatorRoundsService
+    private operatorRoundService: OperatorRoundsService,
+    private toast: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -605,6 +607,10 @@ export class ReviseScheduleComponent implements OnInit, OnDestroy {
     });
     this.operatorRoundService.setIsRevised(true);
     this.operatorRoundService.setRevisedInfo(this.revisedInfo);
+    this.toast.show({
+      text: 'Schedule Revised Successfully',
+      type: 'success'
+    });
   }
 
   ngOnDestroy(): void {

@@ -1175,7 +1175,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       return {
         ...roundPlan,
         scheduleDates: this.placeHolder,
-        rounds: this.placeHolder,
+        rounds: roundPlan.rounds || this.placeHolder,
         assignedTo: this.placeHolder,
         assignedToDisplay: this.placeHolder
       };

@@ -122,6 +122,7 @@ export class RoundPlanDetailConfigurationComponent
   createOrEditForm: boolean;
   isPreviewActive = false;
   readonly formConfigurationStatus = formConfigurationStatus;
+  collapseAllSections: FormControl = new FormControl(false);
   authoredRoundPlanDetailSubscription: Subscription;
   private destroy$ = new Subject();
 
@@ -314,6 +315,8 @@ export class RoundPlanDetailConfigurationComponent
           subFormsObj[key] = formDetails[key];
         });
 
+        this.setCollapseAllSectionsState(subFormsObj, this.selectedNode?.id);
+
         this.formListVersion = formListDynamoDBVersion;
         this.formStatus = formStatus;
         this.formDetailPublishStatus = formDetailPublishStatus;
@@ -429,10 +432,13 @@ export class RoundPlanDetailConfigurationComponent
     ]).pipe(
       tap(([data, createOrEditForm]) => {
         if (!createOrEditForm) {
-          this.router.navigate(['/operator-rounds']);
+          this.router.navigate(['/operator-rounds/round-plans']);
         }
         const { formConfigurationState, hierarchyState } = data.form || {};
-        if (createOrEditForm && this.router.url === '/operator-rounds')
+        if (
+          createOrEditForm &&
+          this.router.url === '/operator-rounds/round-plans'
+        )
           this.openHierarchyModal();
 
         if (hierarchyState && Object.keys(hierarchyState).length) {
@@ -495,6 +501,15 @@ export class RoundPlanDetailConfigurationComponent
         }
       })
     );
+
+    this.collapseAllSections.valueChanges.subscribe((isCollapse) => {
+      this.store.dispatch(
+        BuilderConfigurationActions.updateAllSectionState({
+          isCollapse,
+          subFormId: this.selectedNode.id
+        })
+      );
+    });
   }
 
   retrieveDetails() {
@@ -679,4 +694,46 @@ export class RoundPlanDetailConfigurationComponent
   goToPDFBuilderConfiguration = () => {
     this.gotoNextStep.emit();
   };
+
+  private setCollapseAllSectionsState(subFormsObj = {}, selectedNodeId = null) {
+    let pages = [];
+    if (selectedNodeId) {
+      let key = 'pages';
+      const subFormId = selectedNodeId;
+      if (subFormId) {
+        key = `${key}_${subFormId}`;
+      }
+      pages = subFormsObj[key] || [];
+    }
+    if (
+      !subFormsObj ||
+      Object.values(subFormsObj)?.flat()?.length === 0 ||
+      pages?.length === 0
+    ) {
+      this.collapseAllSections.setValue(false, {
+        emitEvent: false
+      });
+      return;
+    }
+    let allSections = 0;
+    let closedSections = 0;
+    if (subFormsObj) {
+      if (pages?.length > 0) {
+        pages.forEach((page) => {
+          allSections += page?.sections?.length;
+          closedSections +=
+            page?.sections?.filter((section) => !section?.isOpen)?.length || 0;
+        });
+      } else {
+        this.collapseAllSections.setValue(false, {
+          emitEvent: false
+        });
+        return;
+      }
+    }
+    const allCollapse: boolean = closedSections === allSections ? true : false;
+    this.collapseAllSections.setValue(allCollapse, {
+      emitEvent: false
+    });
+  }
 }

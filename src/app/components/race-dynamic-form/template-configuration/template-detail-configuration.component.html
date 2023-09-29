@@ -127,7 +127,14 @@
       >
         {{ 'publishingChanges' | translate }}
       </div>
-
+      <div id="collapseBtn" class="save-status collapse-margin">
+        <mat-slide-toggle
+          class="collapse-btn slide-toggle"
+          [formControl]="collapseAllSections"
+          name="collapseAllSections"
+          >{{ 'collapseAllSections' | translate }}</mat-slide-toggle
+        >
+      </div>
       <button
         id="templateConfigurationPublishBtn"
         mat-raised-button
@@ -169,5 +176,4 @@
       ></app-iphone-for-embedded-forms>
     </div>
   </div>
- 
 </div>
