@@ -512,6 +512,11 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
         formDetailPublishStatus: formConfigurationStatus.publishing
       })
     );
+    this.store.dispatch(
+      BuilderConfigurationActions.updateIsFormDetailPublished({
+        isFormDetailPublished: true
+      })
+    );
     const form = {
       formMetadata: {
         ...this.formMetadata,
@@ -527,13 +532,7 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
           failureResponse: {}
         })
         .subscribe((response) => {
-          if (Object.keys(response)?.length > 0) {
-            this.store.dispatch(
-              BuilderConfigurationActions.updateIsFormDetailPublished({
-                isFormDetailPublished: true
-              })
-            );
-          } else {
+          if (Object.keys(response)?.length === 0) {
             this.store.dispatch(
               BuilderConfigurationActions.updateFormPublishStatus({
                 formDetailPublishStatus: formConfigurationStatus.draft

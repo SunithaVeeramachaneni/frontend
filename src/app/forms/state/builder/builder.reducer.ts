@@ -175,6 +175,9 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
         ...state.formMetadata,
         pdfTemplateConfiguration: action.pdfBuilderConfiguration
       },
+      formStatus: action.formStatus,
+      formDetailPublishStatus: action.formDetailPublishStatus,
+      formSaveStatus: action.formSaveStatus,
       skipAuthoredDetail: false
     })
   ),
