@@ -1258,53 +1258,55 @@ export class RoundsComponent implements OnInit, OnDestroy {
       status = 'partly-open';
     }
 
-    this.operatorRoundsService
-      .updateRound$(
-        roundId,
-        {
-          ...rest,
+    if (roundId) {
+      this.operatorRoundsService
+        .updateRound$(
           roundId,
-          assignedTo,
-          previouslyAssignedTo,
-          assignmentType,
-          userGroupsIds,
-          status
-        },
-        'assigned-to'
-      )
-      .pipe(
-        tap((resp) => {
-          if (Object.keys(resp).length) {
-            this.dataSource.data = this.dataSource.data.map((data) => {
-              if (data.roundId === roundId) {
-                return {
-                  ...data,
-                  assignedTo: assignedTo?.length
-                    ? this.userService.getUserFullName(assignedTo)
-                    : '',
-                  userGroupsIds,
-                  assignedToDisplay: assignedTo?.length
-                    ? this.userService.getUserFullName(assignedTo)
-                    : userGroupsIds?.length
-                    ? this.userGroupsIdMap[userGroupsIds?.split(',')[0]]?.name
-                    : '',
-                  status,
-                  roundDBVersion: resp.roundDBVersion + 1,
-                  assignedToEmail: assignedTo?.length ? assignedTo : ''
-                };
-              }
-              return data;
-            });
-            this.dataSource = new MatTableDataSource(this.dataSource.data);
-            this.cdrf.detectChanges();
-            this.toastService.show({
-              type: 'success',
-              text: 'Assigned to updated successfully'
-            });
-          }
-        })
-      )
-      .subscribe();
+          {
+            ...rest,
+            roundId,
+            assignedTo,
+            previouslyAssignedTo,
+            assignmentType,
+            userGroupsIds,
+            status
+          },
+          'assigned-to'
+        )
+        .pipe(
+          tap((resp) => {
+            if (Object.keys(resp).length) {
+              this.dataSource.data = this.dataSource.data.map((data) => {
+                if (data.roundId === roundId) {
+                  return {
+                    ...data,
+                    assignedTo: assignedTo?.length
+                      ? this.userService.getUserFullName(assignedTo)
+                      : '',
+                    userGroupsIds,
+                    assignedToDisplay: assignedTo?.length
+                      ? this.userService.getUserFullName(assignedTo)
+                      : userGroupsIds?.length
+                      ? this.userGroupsIdMap[userGroupsIds?.split(',')[0]]?.name
+                      : '',
+                    status,
+                    roundDBVersion: resp.roundDBVersion + 1,
+                    assignedToEmail: assignedTo?.length ? assignedTo : ''
+                  };
+                }
+                return data;
+              });
+              this.dataSource = new MatTableDataSource(this.dataSource.data);
+              this.cdrf.detectChanges();
+              this.toastService.show({
+                type: 'success',
+                text: 'Assigned to updated successfully'
+              });
+            }
+          })
+        )
+        .subscribe();
+    }
     this.trigger.toArray()[0].closeMenu();
   }
 
