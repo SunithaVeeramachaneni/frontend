@@ -284,7 +284,7 @@ export const routingUrls = {
     permission: permissions.viewORPlans
   },
   oprDashboard: {
-    url: '/operator-rounds',
+    url: '/operator-rounds/dashboard',
     title: 'Dashboard',
     permission: permissions.viewOPRDashboards
   },
