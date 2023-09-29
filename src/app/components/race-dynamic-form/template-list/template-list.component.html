@@ -45,10 +45,40 @@
           (click)="openCreateTemplateModal()"
           *appCheckUserHasPermission="[perms.createFormTemplate]"
         ></button>
+        <button
+          id="moreButton"
+          mat-raised-button
+          [matMenuTriggerFor]="moreMenu"
+          class="more-btn"
+        >
+          <mat-icon id="moreMenuIcon" class="menu-icon">more_horiz</mat-icon>
+        </button>
+        <mat-menu id="moreMenu" #moreMenu="matMenu">
+          <button
+            id="columnConfigurationBtn"
+            mat-menu-item
+            class="menu-buttons"
+            (click)="showColumnConfig()"
+          >
+            <svg-icon
+              id="excelIconMenu"
+              icon="column-configuration-icon"
+              class="menu-icons"
+            ></svg-icon>
+            <span
+              id="columnConfigurationSpan"
+              translate="columnConfiguration"
+            ></span>
+          </button>
+        </mat-menu>
       </span>
     </div>
 
-    <div *ngIf="(isLoading$ | async) === false">
+    <div
+      *ngIf="
+        (isLoading$ | async) === false && (isLoadingColumns$ | async) === false
+      "
+    >
       <cwp-dynamictable
         [dataSource]="dataSource"
         [configOptions]="configOptions"
@@ -69,6 +99,13 @@
       [isTemplate]="true"
       (formDetailAction)="templateDetailActionHandler()"
     ></app-form-detail>
+  </ng-container>
+  <ng-container *ngIf="columnConfigMenuState">
+    <app-column-configuration-slider
+      [@slideInOut]="columnConfigMenuState"
+      (slideInOut)="onCloseColumnConfig()"
+      [moduleName]="RDF_TEMPLATE_MODULE_NAME"
+    ></app-column-configuration-slider>
   </ng-container>
 
   <ng-container *ngIf="affectedSliderState">

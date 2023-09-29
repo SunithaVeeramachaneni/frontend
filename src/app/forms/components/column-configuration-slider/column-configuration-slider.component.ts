@@ -9,16 +9,11 @@ import {
   Output
 } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { delay, tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { slideInOut } from 'src/app/animations';
 import { ResponseSetService } from 'src/app/components/master-configurations/response-set/services/response-set.service';
-import {
-  RDF_DEFAULT_COLUMNS,
-  RDF_DEFAULT_COLUMN_CONFIG
-} from 'src/app/components/race-dynamic-form/race-dynamic-forms.constants';
 import { columnConfiguration } from 'src/app/interfaces/columnConfiguration';
 import { ColumnConfigurationService } from '../../services/column-configuration.service';
-import { metadataFlatModuleNames } from 'src/app/app.constants';
 import { Column } from '@innovapptive.com/dynamictable/lib/interfaces';
 @Component({
   selector: 'app-column-configuration-slider',
@@ -64,7 +59,10 @@ export class ColumnConfigurationSliderComponent implements OnInit {
     );
   }
   resetToDefault() {
-    this.allColumns = [...RDF_DEFAULT_COLUMNS, ...this.additionalColumns];
+    this.allColumns = [
+      ...this.columnConfigService.getModuleDefaultColumnConfig(this.moduleName),
+      ...this.additionalColumns
+    ];
     this.allColumns.map((column) => {
       if (column.default) {
         column.selected = true;
@@ -86,7 +84,9 @@ export class ColumnConfigurationSliderComponent implements OnInit {
             )
           );
           this.columnConfigService.setAllColumnConfigurations([
-            ...RDF_DEFAULT_COLUMNS,
+            ...this.columnConfigService.getModuleDefaultColumnConfig(
+              this.moduleName
+            ),
             ...this.additionalColumns
           ]);
           this.allColumns =
@@ -150,5 +150,6 @@ export class ColumnConfigurationSliderComponent implements OnInit {
   }
   ngOnDestroy(): void {
     this.columnConfigService.moduleColumnConfiguration$.next(null);
+    this.columnConfigService.isLoadingColumns$.next(true);
   }
 }

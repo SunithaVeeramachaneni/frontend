@@ -32,6 +32,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { MatDialog } from '@angular/material/dialog';
 import {
   formConfigurationStatus,
+  metadataFlatModuleNames,
   permissions as perms
 } from 'src/app/app.constants';
 import { generateCopyNumber, generateCopyRegex } from '../utils/utils';
@@ -40,6 +41,7 @@ import { LoginService } from '../../login/services/login.service';
 import { ToastService } from 'src/app/shared/toast';
 import { TemplateModalComponent } from '../template-modal/template-modal.component';
 import { ConfirmModalPopupComponent } from '../confirm-modal-popup/confirm-modal-popup/confirm-modal-popup.component';
+import { ColumnConfigurationService } from 'src/app/forms/services/column-configuration.service';
 
 @Component({
   selector: 'app-template-list',
@@ -52,6 +54,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
   public menuState = 'out';
   public affectedFormDetailState = 'out';
   public affectedSliderState = 'out';
+  public columnConfigMenuState = 'out';
   selectedForm: any = null;
   affectedFormDetail: any = null;
   selectedTemplate: any = null;
@@ -198,11 +201,14 @@ export class TemplateListComponent implements OnInit, OnDestroy {
   ghostLoading = new Array(12).fill(0).map((_, i) => i);
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  isLoadingColumns$: Observable<boolean> =
+    this.columnConfigService.isLoadingColumns$;
   lastPublishedBy = [];
   createdBy = [];
   readonly perms = perms;
   fetchAllTemplatesSubscription: Subscription;
   userInfo$: Observable<UserInfo>;
+  RDF_TEMPLATE_MODULE_NAME = metadataFlatModuleNames.RDF_TEMPLATES;
   private onDestroy$ = new Subject();
 
   constructor(
@@ -212,6 +218,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
     private usersService: UsersService,
     private headerService: HeaderService,
     private translateService: TranslateService,
+    private columnConfigService: ColumnConfigurationService,
     private router: Router,
     private dialog: MatDialog,
     private cdrf: ChangeDetectorRef,
@@ -219,9 +226,16 @@ export class TemplateListComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.columns = this.raceDynamicFormService.updateConfigOptionsFromColumns(
-      this.partialColumns
-    );
+    this.columnConfigService.moduleColumnConfiguration$
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe((res) => {
+        if (res) {
+          this.columns = res;
+          this.configOptions.allColumns = this.columns;
+          this.cdrf.detectChanges();
+        }
+      });
+
     this.searchTemplates = new FormControl('');
     this.headerService.setHeaderTitle(
       this.translateService.instant('templates')
@@ -263,8 +277,6 @@ export class TemplateListComponent implements OnInit, OnDestroy {
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
     );
-
-    this.configOptions.allColumns = this.columns;
   }
 
   onCloseViewDetail() {
@@ -277,6 +289,9 @@ export class TemplateListComponent implements OnInit, OnDestroy {
   onCloseAffectedSlider() {
     this.selectedTemplate = null;
     this.affectedSliderState = 'out';
+  }
+  onCloseColumnConfig() {
+    this.columnConfigMenuState = 'out';
   }
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
@@ -638,6 +653,9 @@ export class TemplateListComponent implements OnInit, OnDestroy {
       this.affectedSliderState = 'in';
       this.onCloseViewDetail();
     }
+  }
+  showColumnConfig(): void {
+    this.columnConfigMenuState = 'in';
   }
 
   private showFormDetail(row: any): void {

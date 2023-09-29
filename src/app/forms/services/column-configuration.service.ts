@@ -8,7 +8,9 @@ import {
 import { LoginService } from 'src/app/components/login/services/login.service';
 import {
   RDF_DEFAULT_COLUMNS,
-  RDF_DEFAULT_COLUMN_CONFIG
+  RDF_DEFAULT_COLUMN_CONFIG,
+  RDF_TEMPLATE_DEFAULT_COLUMNS,
+  RDF_TEMPLATE_DEFAULT_COLUMN_CONFIG
 } from 'src/app/components/race-dynamic-form/race-dynamic-forms.constants';
 import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
 import { columnConfiguration } from 'src/app/interfaces/columnConfiguration';
@@ -26,6 +28,29 @@ export class ColumnConfigurationService {
 
   getColumnIdFromName(columnName: string): string {
     return columnName.toLowerCase().replace(/ /g, '_');
+  }
+  getAllColumnConfigurations() {
+    return this.allColumnConfigurations;
+  }
+  getModuleDefaultDynamicTableConfig(moduleName: string): Partial<Column>[] {
+    switch (moduleName) {
+      case metadataFlatModuleNames.RACE_DYNAMIC_FORMS:
+        return RDF_DEFAULT_COLUMN_CONFIG;
+      case metadataFlatModuleNames.RDF_TEMPLATES:
+        return RDF_TEMPLATE_DEFAULT_COLUMN_CONFIG;
+      default:
+        return [];
+    }
+  }
+  getModuleDefaultColumnConfig(moduleName: string): columnConfiguration[] {
+    switch (moduleName) {
+      case metadataFlatModuleNames.RACE_DYNAMIC_FORMS:
+        return RDF_DEFAULT_COLUMNS;
+      case metadataFlatModuleNames.RDF_TEMPLATES:
+        return RDF_TEMPLATE_DEFAULT_COLUMNS;
+      default:
+        return [];
+    }
   }
   getColumnConfigFromAdditionalDetails(
     additionalDetail: any,
@@ -62,6 +87,7 @@ export class ColumnConfigurationService {
     });
     return this.rdfService.updateConfigOptionsFromColumns(dynamicTableColumns);
   }
+
   setUserColumnConfigurationOnInit(userColumnConfig) {
     this.userColumnConfiguration = userColumnConfig
       ? JSON.parse(userColumnConfig)
@@ -73,10 +99,6 @@ export class ColumnConfigurationService {
   }
   setAllColumnConfigurations(allColumnConfigurations) {
     this.allColumnConfigurations = allColumnConfigurations;
-  }
-
-  getAllColumnConfigurations() {
-    return this.allColumnConfigurations;
   }
   setUserColumnConfigByModuleName(moduleName: string) {
     if (
@@ -104,21 +126,5 @@ export class ColumnConfigurationService {
       );
     this.moduleColumnConfiguration$.next(dynamicTableConfiguration);
     this.isLoadingColumns$.next(false);
-  }
-  getModuleDefaultDynamicTableConfig(moduleName: string): Partial<Column>[] {
-    switch (moduleName) {
-      case metadataFlatModuleNames.RACE_DYNAMIC_FORMS:
-        return RDF_DEFAULT_COLUMN_CONFIG;
-      default:
-        return [];
-    }
-  }
-  getModuleDefaultColumnConfig(moduleName: string): columnConfiguration[] {
-    switch (moduleName) {
-      case metadataFlatModuleNames.RACE_DYNAMIC_FORMS:
-        return RDF_DEFAULT_COLUMNS;
-      default:
-        return [];
-    }
   }
 }

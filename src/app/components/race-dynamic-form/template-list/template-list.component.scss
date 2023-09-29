@@ -109,4 +109,34 @@
     cursor: pointer;
     font-weight: normal;
   }
+  .more-btn {
+    background: $blue-main;
+    color: $white;
+    min-width: 8px;
+    height: 29px;
+    position: relative;
+    top: -1px;
+    right: 2px;
+    margin-right: 10px;
+    line-height: 20px;
+    max-width: 42px;
+  }
+
+  .menu-icon {
+    position: relative;
+    right: 6px;
+  }
+}
+
+.menu-buttons {
+  height: 40px;
+  align-items: center;
+  line-height: 20px;
+  .menu-icons {
+    width: 20px;
+    height: 20px;
+    position: relative;
+    top: 5px;
+    margin-right: 12px;
+  }
 }
