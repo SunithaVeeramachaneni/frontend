@@ -25,11 +25,12 @@ import { Column } from '@innovapptive.com/dynamictable/lib/interfaces';
 export class ColumnConfigurationSliderComponent implements OnInit {
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Input() moduleName: string;
-  freezeIndexTill: number;
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   ghostLoading = new Array(15).fill(0).map((v, i) => i);
   additionalColumns: columnConfiguration[] = [];
   allColumns: columnConfiguration[] = [];
+  staticColumns: columnConfiguration[] = [];
+  draggableColumns: columnConfiguration[] = [];
   allComplete: boolean = false;
   constructor(
     private responseSetService: ResponseSetService,
@@ -40,9 +41,6 @@ export class ColumnConfigurationSliderComponent implements OnInit {
   ngOnInit(): void {
     this.fetchResponseSetByModuleName().subscribe();
     //This function is based on the assumption that non draggable fields will always be set above the draggable fields
-    this.freezeIndexTill = this.allColumns.findIndex(
-      (column) => column.draggable
-    );
   }
 
   cancelForm() {
@@ -50,6 +48,7 @@ export class ColumnConfigurationSliderComponent implements OnInit {
   }
 
   updateAllComplete() {
+    this.allColumns = [...this.staticColumns, ...this.draggableColumns];
     this.allComplete = this.allColumns.every((t) => t.selected);
   }
 
@@ -71,6 +70,9 @@ export class ColumnConfigurationSliderComponent implements OnInit {
       }
       return column;
     });
+    this.extractDraggableColumns();
+    this.extractStaticColumns();
+    this.updateAllComplete();
   }
   fetchResponseSetByModuleName = () => {
     return this.responseSetService
@@ -91,6 +93,8 @@ export class ColumnConfigurationSliderComponent implements OnInit {
           ]);
           this.allColumns =
             this.columnConfigService.getAllColumnConfigurations();
+          this.extractStaticColumns();
+          this.extractDraggableColumns();
           this.columnConfigService.setUserColumnConfigByModuleName(
             this.moduleName
           );
@@ -108,15 +112,24 @@ export class ColumnConfigurationSliderComponent implements OnInit {
       return column;
     });
   }
+  extractStaticColumns() {
+    this.staticColumns = this.allColumns.filter((column) => column.disabled);
+  }
+  extractDraggableColumns() {
+    this.draggableColumns = this.allColumns.filter(
+      (column) => !column.disabled
+    );
+  }
 
   //drop event after the elements which are not set as draggable
   drop(event: CdkDragDrop<string[]>) {
-    if (event.currentIndex < this.freezeIndexTill) {
-      event.currentIndex = this.freezeIndexTill;
-    }
     const prevIndex = event.previousIndex;
     const currIndex = event.currentIndex;
-    this.allColumns = this.array_move(this.allColumns, prevIndex, currIndex);
+    this.draggableColumns = this.array_move(
+      this.draggableColumns,
+      prevIndex,
+      currIndex
+    );
   }
   array_move(arr, old_index, new_index) {
     if (new_index >= arr.length) {
@@ -130,16 +143,18 @@ export class ColumnConfigurationSliderComponent implements OnInit {
   }
 
   onSave() {
-    const columnIds = this.allColumns.map((column) => {
+    this.columnConfigService.isLoadingColumns$.next(true);
+    this.allColumns = [...this.staticColumns, ...this.draggableColumns];
+    const columnIds = this.allColumns.reduce((acc, column) => {
       if (column.selected) {
-        return column.columnId;
+        acc.push(column.columnId);
       }
-    });
+      return acc;
+    }, []);
     this.columnConfigService.setUserColumnConfigurationByModule(
       this.moduleName,
       columnIds
     );
-    this.columnConfigService.isLoadingColumns$.next(true);
     this.columnConfigService.setUserColumnConfigByModuleName(this.moduleName);
     this.slideInOut.emit('in');
   }

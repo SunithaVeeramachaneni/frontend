@@ -108,14 +108,13 @@ export class ColumnConfigurationService {
       this.selectedColumnConfigurations =
         this.getModuleDefaultColumnConfig(moduleName);
     } else {
-      this.allColumnConfigurations.forEach((column) => {
-        column.selected = this.userColumnConfiguration[moduleName]?.includes(
-          column.columnId
+      this.selectedColumnConfigurations = [];
+      this.userColumnConfiguration[moduleName].forEach((columnId) => {
+        const column = this.allColumnConfigurations.find(
+          (column) => column.columnId === columnId
         );
+        if (column) this.selectedColumnConfigurations.push(column);
       });
-      this.selectedColumnConfigurations = this.allColumnConfigurations.filter(
-        (column) => column.selected
-      );
     }
     const dynamicTableConfiguration =
       this.rdfService.updateConfigOptionsFromColumns(

@@ -35,12 +35,29 @@
             >
           </span>
           <span>
+            <ul class="column-list-container">
+              <li *ngFor="let column of staticColumns">
+                <div class="column-container">
+                  <div
+                    class="dis-flex justify-content-start align-items-center"
+                  >
+                    <svg-icon
+                      icon="icon-six-dots"
+                      class="drag-handle hidden"
+                    ></svg-icon>
+                    <mat-checkbox [checked]="true" [disabled]="true">
+                      {{ column.columnName }}
+                    </mat-checkbox>
+                  </div>
+                </div>
+              </li>
+            </ul>
             <ul
               class="column-list-container"
               cdkDropList
               (cdkDropListDropped)="drop($event)"
             >
-              <li *ngFor="let column of allColumns">
+              <li *ngFor="let column of draggableColumns">
                 <div class="column-container" cdkDrag>
                   <div
                     class="dis-flex justify-content-start align-items-center"
