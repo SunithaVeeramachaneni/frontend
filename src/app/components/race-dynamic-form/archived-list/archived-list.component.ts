@@ -6,6 +6,7 @@ import { tap } from 'rxjs/operators';
 import { routingUrls } from 'src/app/app.constants';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { HeaderService } from 'src/app/shared/services/header.service';
+import { permissions as perms } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-archived-list',
@@ -15,6 +16,7 @@ import { HeaderService } from 'src/app/shared/services/header.service';
 })
 export class ArchivedListComponent implements OnInit {
   tabIndex: number;
+  permissions = perms;
   currentRouteUrl$: Observable<string>;
 
   constructor(
