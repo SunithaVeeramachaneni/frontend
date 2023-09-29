@@ -32,3 +32,8 @@ export const updateFormSpecificQuickResponse = createAction(
 export const resetQuickResponses = createAction(
   '[Quick Responses] resetQuickResponses'
 );
+
+export const addFormSpecificQuickResponses = createAction(
+  '[Quick Responses] addFormSpecificQuickResponses',
+  props<{ formSpecificResponses: any[] }>()
+);
