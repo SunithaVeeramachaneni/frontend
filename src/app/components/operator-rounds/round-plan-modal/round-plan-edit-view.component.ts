@@ -101,14 +101,16 @@ export class RoundPlanEditViewComponent implements OnInit, OnDestroy {
                   BuilderConfigurationActions.updatePageState({
                     pageIndex: index,
                     isOpen: false,
-                    subFormId: this.selectedNode.id
+                    subFormId: this.selectedNode.id,
+                    isCollapse: true
                   })
                 );
                 this.store.dispatch(
                   BuilderConfigurationActions.updatePageState({
                     pageIndex: index,
                     isOpen: true,
-                    subFormId: this.selectedNode.id
+                    subFormId: this.selectedNode.id,
+                    isCollapse: true
                   })
                 );
               } else {
@@ -116,7 +118,8 @@ export class RoundPlanEditViewComponent implements OnInit, OnDestroy {
                   BuilderConfigurationActions.updatePageState({
                     pageIndex: index,
                     isOpen: false,
-                    subFormId: this.selectedNode.id
+                    subFormId: this.selectedNode.id,
+                    isCollapse: true
                   })
                 );
               }
