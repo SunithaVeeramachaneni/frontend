@@ -37,6 +37,7 @@ export interface UserDetails {
   plantId: string;
   displayRoles?: string;
   displayUsergroup?: string;
+  columnConfigurations?: any;
 }
 
 export interface UserInfo extends UserDetails {

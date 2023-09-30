@@ -164,6 +164,16 @@ export class ResponseSetService {
       body
     );
   }
+  
+  fetchResponseSetByModuleName$ = (moduleName: string) => {
+    const info: ErrorInfo = {} as ErrorInfo;
+    const { displayToast, failureResponse = {} } = info;
+    return this._appService._getResp(
+      environment.masterConfigApiUrl,
+      'response-set/list/' + moduleName,
+      { displayToast, failureResponse }
+    );
+  };
 
   private formatGraphQLocationResponse(resp) {
     let rows =

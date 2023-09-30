@@ -1639,6 +1639,14 @@
 <rect width="24" height="24" fill="white"/>
 </clipPath>
 </symbol>
+<symbol id="column-configuration-icon" viewBox="0 0 24 24">
+<g clip-path="url(#clip0_2503_109602)">
+<path d="M10 18H15V5H10V18ZM4 18H9V5H4V18ZM16 5V18H21V5H16Z" fill="#757575"/>
+</g>
+<clipPath id="clip0_2503_109602">
+<rect width="24" height="24" fill="white"/>
+</clipPath>
+</symbol>
 
 </defs>
 </svg>

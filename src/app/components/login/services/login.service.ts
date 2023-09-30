@@ -5,6 +5,7 @@ import { BehaviorSubject } from 'rxjs';
 import { Permission, UserInfo } from 'src/app/interfaces';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { TenantService } from '../../tenant-management/services/tenant.service';
+import { ColumnConfigurationService } from 'src/app/forms/services/column-configuration.service';
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +24,8 @@ export class LoginService {
 
   constructor(
     private commonService: CommonService,
-    private tenantService: TenantService
+    private tenantService: TenantService,
+    private columnConfigurationService: ColumnConfigurationService
   ) {}
 
   setUserAuthenticated(isUserAuthenticated: boolean) {
@@ -33,6 +35,9 @@ export class LoginService {
   setLoggedInUserInfo(userInfo: UserInfo) {
     this.loggedInUserInfoSubject.next(userInfo);
     this.loggedInUserInfo = userInfo;
+    this.columnConfigurationService.setUserColumnConfigurationOnInit(
+      userInfo?.columnConfigurations
+    );
   }
 
   performPostLoginActions = (userDataResult: UserDataResult) => {
