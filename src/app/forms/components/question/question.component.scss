@@ -163,11 +163,14 @@
         ::ng-deep .mat-form-field-outline {
           opacity: 0;
         }
-    
+
         ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
           padding: 0 !important;
           border-top: none !important;
           width: 90px;
+        }
+        ::ng-deep .mat-form-field-appearance-outline .mat-select-arrow-wrapper {
+          transform: translateY(0%);
         }
         label {
           display: flex;
