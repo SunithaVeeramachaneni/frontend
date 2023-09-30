@@ -263,7 +263,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
       component: '',
       samplingPoint: '',
       refImage: '',
-      machineSNO: 5000757
+      machineSNO: '5000757'
     }),
     createdAt: '',
     createdBy: '',
