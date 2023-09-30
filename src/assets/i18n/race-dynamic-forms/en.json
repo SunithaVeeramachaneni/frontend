@@ -401,5 +401,7 @@
   "selectUser": "Select User",
   "selectUserGroup": "Select User Group",
   "submittedDate": "Submitted Date",
-  "collapseAllSections": "Collapse All Sections"
+  "collapseAllSections": "Collapse All Sections",
+  "scheduleInProgress": "Scheduling in progress...",
+  "scheduleProgressMessage": "is currently being scheduled."
 }
