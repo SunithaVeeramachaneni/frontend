@@ -18,7 +18,7 @@
       <mat-radio-group class="radio-group" [formControl]="assigneeTypeControl">
         <mat-radio-button
           color="primary"
-          *ngFor="let assignType of assignTypes; let i = index"
+          *ngFor="let assignType of assignTypes"
           (click)="$event.stopPropagation()"
           [value]="assignType"
         >
@@ -83,6 +83,17 @@
             (click)="selectAssignee(userGroup)"
           >
             {{ userGroup.name }}
+          </div>
+        </ng-container>
+      </ng-container>
+      <ng-container *ngIf="assigneeType === 'plant'">
+        <ng-container *ngFor="let plant of filteredData$ | async">
+          <div
+            mat-menu-item
+            class="user-group-item"
+            (click)="selectAssignee(plant)"
+          >
+            {{ plant }}
           </div>
         </ng-container>
       </ng-container>

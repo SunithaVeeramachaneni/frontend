@@ -24,6 +24,8 @@ export interface RoundPlanScheduleConfiguration {
   advanceRoundsCount: number;
   startDatePicker?: Date;
   scheduleEndOnPicker?: Date;
+  taskLevelConfig?: TaskLevelScheduleConfig[];
+  isTaskLevel: boolean;
 }
 
 export interface AssignmentDetail {
@@ -87,6 +89,7 @@ export interface RoundPlanDetail extends RoundPlan {
   plantId?: string;
   plant?: string;
   assignedTo?: string;
+  userGroupsIds?: string;
   shifts: [];
 }
 
@@ -98,6 +101,7 @@ export interface RoundDetail extends RoundPlan {
   slotDetails: string;
   scheduledAt: Date;
   dueDate: Date;
+  submittedAt?: any;
   shiftId: string;
   locationAndAssets: number;
   locationAndAssetsCompleted: number;
@@ -180,6 +184,7 @@ export interface SelectTab {
 export interface AssigneeDetails {
   users: UserDetails[];
   userGroups?: UserGroup[];
+  plants?: any[];
 }
 
 export interface IssueOrAction {
@@ -223,4 +228,17 @@ export interface SelectedAssignee {
   user: UserDetails;
   userGroup: UserGroup;
   checked: boolean;
+}
+
+export interface TaskLevelScheduleConfig {
+  nodeWiseQuestionIds: { [x: string]: [string] };
+  repeatDuration: number;
+  repeatEvery: string;
+  daysOfWeek: number[];
+  monthlyDaysOfWeek: MonthlyDaysOfWeek[];
+  startDate: string;
+  endDate: string;
+  scheduleByDates: ScheduleByDate[];
+  scheduledTill?: string;
+  shiftDetails: { [x: string]: { startTime: string; endTime: string }[] };
 }

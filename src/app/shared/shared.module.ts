@@ -39,6 +39,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatBadgeModule } from '@angular/material/badge';
+import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatDividerModule } from '@angular/material/divider';
@@ -102,6 +103,7 @@ import { AmIvisibleDirective } from './directives/am-ivisible.directive';
     OverlayModule,
     MatDialogModule,
     MatToolbarModule,
+    MatRadioModule,
     MatIconModule,
     MatButtonToggleModule,
     MatAutocompleteModule,

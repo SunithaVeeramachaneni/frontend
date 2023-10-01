@@ -16,7 +16,10 @@ import {
   Validators
 } from '@angular/forms';
 
-import { shiftDefaultPayload } from '../schedule-configuration/schedule-configuration.constants';
+import {
+  shiftDefaultPayload,
+  TimeType
+} from '../schedule-configuration/schedule-configuration.constants';
 import { ScheduleConfigurationService } from 'src/app/forms/services/schedule.service';
 @Component({
   selector: 'app-shift-chart',
@@ -94,6 +97,29 @@ export class ShiftChartComponent implements OnInit, OnChanges {
         const isBookIndex = this.dataArrays.findIndex(
           (e) => e.isBook === false
         );
+        if (
+          checkIsBook[0].startTime === this.service.addLeadingZero(val) &&
+          checkIsBook[0].index > 1
+        ) {
+          this.dataArrays[isBookIndex].startTime = this.service.addTime(
+            val,
+            1,
+            0
+          );
+          this.dataArrays[isBookIndex].index = checkSlot[0].index - 1;
+          this.dataArrays[isBookIndex].isBook = false;
+          const obj1 = {
+            index: 1,
+            startTime: val,
+            endTime: this.service.addTime(val, 0, 59),
+            isBook: true
+          };
+          this.dataArrays.push(obj1);
+          this.dataArrays = this.service.sortArray(this.dataArrays, this.slots);
+          this.slotsArray.push(this.createItemFormGroup());
+          this.setShiftDetails();
+          return;
+        }
         this.dataArrays[isBookIndex].isBook = true;
         this.setShiftDetails();
         return;
@@ -102,9 +128,155 @@ export class ShiftChartComponent implements OnInit, OnChanges {
         this.setShiftDetails();
         return;
       }
-      this.setShiftDetails();
-      return;
+      //For First Slot Create
+      if (idx === 0) {
+        const firstSlot = {
+          index: 1,
+          startTime: this.service.addLeadingZero(val),
+          endTime: this.service.addTime(val, 0, 59),
+          isBook: true
+        };
+        this.dataArrays[0].index = this.dataArrays[0].index - 1;
+        this.dataArrays[0].startTime = this.service.addTime(val, 1, 0);
+        this.dataArrays.push(firstSlot);
+        this.slotsArray.push(this.createItemFormGroup());
+        this.dataArrays = this.service.sortArray(this.dataArrays, this.slots);
+        this.setShiftDetails();
+        return;
+      } else {
+        let index = this.dataArrays.length - 1;
+        const slot = {
+          index: 1,
+          startTime: this.service.addLeadingZero(val),
+          endTime: this.service.addTime(val, 0, 59),
+          isBook: true
+        };
+        this.dataArrays[index].index -= 1;
+        if (!this.checkSlotAlreadyPresent(slot)) {
+          const existingIndex = this.checkSlotStartAlreadyPresent(slot);
+          if (existingIndex !== -1) {
+            this.dataArrays[index].index += 1;
+            this.dataArrays[existingIndex].index -= 1;
+            this.dataArrays[existingIndex].startTime = this.service.addTime(
+              val,
+              1,
+              0
+            );
+          }
+          this.dataArrays.push(slot);
+        }
+        this.slotsArray.push(this.createItemFormGroup());
+        this.dataArrays = this.service.sortArray(this.dataArrays, this.slots);
+        this.setShiftDetails();
+        return;
+      }
     }
+    // If start time is PM and end time is AM
+    if (this.isTimeStartsWithPMEndsWithAM()) {
+      if (this.slots.some((item) => item === val)) {
+        let obj: {
+          index: any;
+          startTime: string;
+          endTime: string;
+          isBook: boolean;
+        };
+        const checkSlotValue = this.slots.findIndex((item) => item === val);
+        if (this.dataArrays.filter((e) => e.startTime === val).length) {
+          const findIndx = this.dataArrays.findIndex(
+            (e) => e.startTime === val
+          );
+          const myObj = this.dataArrays.filter((e) => e.startTime === val)[0];
+          obj = {
+            index: 1,
+            startTime: this.service.addTime(val, 1, 0),
+            endTime: myObj.endTime,
+            isBook: true
+          };
+          obj.index = this.service.getTimeDifference(
+            obj.startTime,
+            this.service.addTime(obj.endTime, 0, 1)
+          );
+          this.dataArrays[findIndx].isBook = true;
+          this.dataArrays[findIndx].endTime = this.service.addTime(val, 0, 59);
+          this.dataArrays[findIndx].index = findIndx;
+          this.dataArrays.push(obj);
+          this.slotsArray.push(this.createItemFormGroup());
+          this.setShiftDetails();
+          return;
+        }
+
+        const lastTime = this.dataArrays[0].endTime;
+        const oldIndex = this.dataArrays[0].index;
+        this.dataArrays[0].index = checkSlotValue;
+        this.dataArrays[0].endTime = this.service.subtractTime(val, 0, 1);
+        obj = {
+          index: Math.abs(oldIndex - checkSlotValue),
+          startTime: this.service.subtractTime(val, 0, 0),
+          endTime: lastTime,
+          isBook: true
+        };
+        this.dataArrays.push(obj);
+        this.slotsArray.push(this.createItemFormGroup());
+        this.setShiftDetails();
+        return;
+      }
+    }
+
+    const matchingTimeSlot = this.dataArrays.find((timeSlot) =>
+      this.service.isTimeInRange(timeSlot, val)
+    );
+    if (matchingTimeSlot !== undefined && !this.shift.value.null) {
+      const checkSlot1 = this.service.generateTimeSlots(
+        matchingTimeSlot.startTime,
+        matchingTimeSlot.endTime
+      );
+      const currentIdx = checkSlot1.findIndex((item) => item === val);
+      const checkIndex = this.dataArrays.findIndex(
+        (item) => item === matchingTimeSlot
+      );
+      if (checkIndex) {
+        if (matchingTimeSlot?.isBook === false) {
+          if (matchingTimeSlot?.endTime === this.service.addTime(val, 0, 59)) {
+            this.dataArrays[checkIndex].isBook = true;
+            const endTime = this.dataArrays[checkIndex].endTime;
+            this.dataArrays[checkIndex].endTime = endTime;
+            this.setShiftDetails();
+            return;
+          }
+          if (matchingTimeSlot?.endTime === this.service.addTime(val, 0, 1)) {
+            this.dataArrays[checkIndex].isBook = true;
+            const endTime = this.dataArrays[checkIndex].endTime;
+            this.dataArrays[checkIndex].endTime = this.service.subtractTime(
+              endTime,
+              0,
+              1
+            );
+            this.setShiftDetails();
+            return;
+          }
+        }
+        const lastTime = this.dataArrays[checkIndex].endTime;
+        const oldIndex = this.dataArrays[checkIndex].index;
+        this.dataArrays[checkIndex].index = currentIdx;
+        this.dataArrays[checkIndex].endTime = this.service.subtractTime(
+          val,
+          0,
+          1
+        );
+        const obj = {
+          index: Math.abs(oldIndex - currentIdx),
+          startTime: this.service.subtractTime(val, 0, 0),
+          endTime: lastTime,
+          isBook: true
+        };
+        this.dataArrays.push(obj);
+        this.slotsArray.push(this.createItemFormGroup());
+        this.dataArrays = this.service.sortArray(this.dataArrays, this.slots);
+        this.setShiftDetails();
+        return;
+      }
+    }
+
     // 2. If we create slot in already created slot
     if (this.service.isTimeSlotPresent(val, this.dataArrays)) {
       const indexOfMatchObject = this.dataArrays.findIndex(
@@ -403,6 +575,31 @@ export class ShiftChartComponent implements OnInit, OnChanges {
       this.dataArrays = [];
       const frmArray = this.addForm.get('slotsArray') as FormArray;
       frmArray.clear();
+      if (this.shift?.value?.null?.payload) {
+        this.shift.value.null.payload = [];
+        this.shift.value.null.payload = [
+          {
+            startTime: this.shift.value?.null?.startTime,
+            endTime: this.shift.value?.null?.endTime
+          }
+        ];
+
+        this.initEditPayloadForSlots(this.shift.value.null.payload);
+      }
+      if (this.shift?.value?.id) {
+        this.shift.value.payload = [];
+        this.shift.value.payload = [
+          {
+            startTime: this.service.convertTo12HourFormat(
+              this.shift.value?.startTime
+            ),
+            endTime: this.service.convertTo12HourFormat(
+              this.shift.value?.endTime
+            )
+          }
+        ];
+        this.initEditPayloadForSlots(this.shift.value.payload);
+      }
     }
 
     this.setShiftDetails();
@@ -499,12 +696,44 @@ export class ShiftChartComponent implements OnInit, OnChanges {
     timeDiff = timeDiff === 0 ? 1 : timeDiff;
     const obj = {
       index: timeDiff,
-      startTime: payload.startTime,
-      endTime: payload.endTime,
+      startTime: this.service.addLeadingZero(payload.startTime),
+      endTime: this.service.addLeadingZero(payload.endTime),
       isBook: payload?.isBook === false ? false : true
     };
     this.dataArrays.push(obj);
     this.slotsArray.push(this.createItemFormGroup());
     this.setShiftDetails();
+  }
+
+  private isTimeStartsWithPMEndsWithAM(): boolean {
+    const startTime = this.dataArrays[0]?.startTime
+      ?.split(':')[1]
+      ?.split(' ')[1];
+    const endTime = this.dataArrays[0]?.endTime?.split(':')[1]?.split(' ')[1];
+    const isBookStatus = this.dataArrays[0].isBook;
+    return (
+      startTime.toUpperCase() === TimeType.pm.toUpperCase() &&
+      endTime.toUpperCase() === TimeType.am.toUpperCase() &&
+      isBookStatus
+    );
+  }
+
+  private checkSlotAlreadyPresent(slot: any): boolean {
+    const { startTime, endTime } = slot;
+
+    const slotsArray = this.dataArrays.filter(
+      (s) => s.startTime === startTime && s.endTime === endTime
+    );
+
+    return slotsArray?.length > 0;
+  }
+
+  private checkSlotStartAlreadyPresent(slot: any): number {
+    const { startTime } = slot;
+    const index = this.dataArrays.findIndex(
+      (s) => s.startTime === this.service.addLeadingZero(startTime)
+    );
+
+    return index;
   }
 }

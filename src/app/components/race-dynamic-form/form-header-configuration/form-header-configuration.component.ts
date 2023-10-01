@@ -79,6 +79,8 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   tagsInput: ElementRef<HTMLInputElement>;
   @ViewChild('auto', { static: false }) matAutocomplete: MatAutocomplete;
   @ViewChild(MatAutocompleteTrigger) auto: MatAutocompleteTrigger;
+  @ViewChild('formFileUpload', { static: false })
+  formFileUpload: ElementRef;
   @Output() gotoNextStep = new EventEmitter<void>();
   @Input() data;
   @Input() formData;
@@ -217,8 +219,14 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
       .pipe(map((data) => (Array.isArray(data) ? data : [])))
       .subscribe((attachments) => {
         attachments?.forEach((att) => {
-          this.filteredMediaType.mediaType.push(att.attachment);
-          this.filteredMediaTypeIds.mediaIds.push(att.id);
+          this.filteredMediaType.mediaType = [
+            ...this.filteredMediaType.mediaType,
+            att.attachment
+          ];
+          this.filteredMediaTypeIds.mediaIds = [
+            ...this.filteredMediaTypeIds.mediaIds,
+            att.id
+          ];
         });
         this.cdrf.detectChanges();
       });
@@ -353,7 +361,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     const index = this.tags.indexOf(tag);
 
     if (index >= 0) {
-      this.tags.splice(index, 1);
+      this.tags = [...this.tags.slice(0, index), ...this.tags.slice(index + 1)];
     }
     this.filteredTags = of(
       this.tagsCtrl.value
@@ -436,6 +444,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
           BuilderConfigurationActions.addFormMetadata({
             formMetadata: {
               ...this.headerDataForm.value,
+              tags: this.tags,
               additionalDetails: updatedAdditionalDetails,
               plant: plant.name
             },
@@ -452,6 +461,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
           BuilderConfigurationActions.createForm({
             formMetadata: {
               ...this.headerDataForm.value,
+              tags: this.tags,
               additionalDetails: updatedAdditionalDetails,
               pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG,
               author: userName,
@@ -460,31 +470,26 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
           })
         );
         this.router.navigate(['/forms/create']);
-      } else if (this.formData.formExists === true) {
+      } else if (this.formData.formExists === true && this.hasFormChanges) {
         this.store.dispatch(
           BuilderConfigurationActions.updateFormMetadata({
             formMetadata: {
               ...this.headerDataForm.value,
+              tags: this.tags,
               id: this.formData.formMetadata.id,
               additionalDetails: updatedAdditionalDetails,
               plant: plant?.name
             },
-            formStatus: this.hasFormChanges
-              ? formConfigurationStatus.draft
-              : this.headerDataForm.value.formStatus,
+            formStatus: formConfigurationStatus.draft,
             formDetailPublishStatus: formConfigurationStatus.draft,
             formSaveStatus: formConfigurationStatus.saving
-          })
-        );
-        this.store.dispatch(
-          BuilderConfigurationActions.updateCreateOrEditForm({
-            createOrEditForm: true
           })
         );
         this.store.dispatch(
           BuilderConfigurationActions.updateForm({
             formMetadata: {
               ...this.headerDataForm.value,
+              tags: this.tags,
               id: this.formData.formMetadata.id,
               additionalDetails: updatedAdditionalDetails,
               pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG
@@ -635,6 +640,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
         }
       };
     }
+    this.clearAttachmentUpload();
   };
 
   async resizeImage(base64result: string): Promise<string> {
@@ -995,5 +1001,8 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     this.rdfService.pdfMapping$.next([]);
     this.destroy$.next();
     this.destroy$.complete();
+  }
+  clearAttachmentUpload() {
+    this.formFileUpload.nativeElement.value = '';
   }
 }

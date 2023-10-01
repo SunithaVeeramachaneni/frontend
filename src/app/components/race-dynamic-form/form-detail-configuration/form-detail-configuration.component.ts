@@ -84,6 +84,7 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
   public openAppSider$: Observable<any>;
   public openImportTemplateSider$: Observable<any>;
   selectedFormName: string;
+  selectedFormId = '';
   selectedFormData: any;
   allTemplates: any;
   currentFormData: any;
@@ -92,8 +93,10 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
   formDetails: any;
   pages: any;
   readonly formConfigurationStatus = formConfigurationStatus;
+  collapseAllSections: FormControl = new FormControl(false);
   authoredFormDetailSubscription: Subscription;
   getFormMetadataSubscription: Subscription;
+  redirectToFormsList$: Observable<boolean>;
   private onDestroy$ = new Subject();
 
   constructor(
@@ -240,10 +243,12 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
           authoredFormDetailDynamoDBVersion,
           skipAuthoredDetail
         } = formDetails;
+        this.setCollapseAllSectionsState(pages);
 
         if (skipAuthoredDetail) {
           return;
         }
+
         this.formListVersion = formListDynamoDBVersion;
         this.formStatus = formStatus;
         this.formDetailPublishStatus = formDetailPublishStatus;
@@ -436,6 +441,22 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
         }
       }
     });
+
+    this.collapseAllSections.valueChanges.subscribe((isCollapse) => {
+      this.store.dispatch(
+        BuilderConfigurationActions.updateAllSectionState({
+          isCollapse,
+          subFormId: ''
+        })
+      );
+    });
+    this.redirectToFormsList$ = this.rdfService.redirectToFormsList$.pipe(
+      tap((redirect) => {
+        if (redirect) {
+          this.router.navigate(['/forms']);
+        }
+      })
+    );
   }
 
   retrieveDetails() {
@@ -505,38 +526,20 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
     };
 
     if (this.isEmbeddedForm) {
-      this.rdfService.publishEmbeddedForms$(form).subscribe((response) => {
-        form.pages[0].questions.forEach((question) => {
-          if (response?.includes(question.id)) {
-            question.isPublished = true;
-            question.isPublishedTillSave = true;
+      this.rdfService
+        .publishEmbeddedForms$(form, {
+          displayToast: true,
+          failureResponse: {}
+        })
+        .subscribe((response) => {
+          if (Object.keys(response)?.length === 0) {
+            this.store.dispatch(
+              BuilderConfigurationActions.updateFormPublishStatus({
+                formDetailPublishStatus: formConfigurationStatus.draft
+              })
+            );
           }
         });
-
-        const {
-          formMetadata,
-          formStatus,
-          counter,
-          authoredFormDetailId,
-          authoredFormDetailVersion,
-          formDetailPublishStatus,
-          authoredFormDetailDynamoDBVersion
-        } = this.formDetails;
-        this.store.dispatch(
-          BuilderConfigurationActions.updateAuthoredFormDetail({
-            formStatus,
-            formDetailPublishStatus,
-            formListId: formMetadata.id,
-            counter,
-            pages: form.pages,
-            authoredFormDetailId,
-            authoredFormDetailVersion,
-            authoredFormDetailDynamoDBVersion
-          })
-        );
-
-        this.router.navigate(['/forms']);
-      });
     }
   }
 
@@ -580,6 +583,7 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
       this.selectedFormData = result.selectedFormData;
       this.allTemplates = result.allTemplates;
       this.selectedFormName = result.selectedFormName;
+      this.selectedFormId = result?.selectedFormId;
       this.authoredFormDetailSubscription = this.authoredFormDetail$.subscribe(
         (pagesData) => {
           this.currentFormData = pagesData;
@@ -639,5 +643,29 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
     }
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  private setCollapseAllSectionsState(pages = []): void {
+    if (pages?.length === 0) {
+      this.collapseAllSections.setValue(false, {
+        emitEvent: false
+      });
+      return;
+    }
+    let allSections = 0;
+    let closedSections = 0;
+    if (pages) {
+      if (pages?.length > 0) {
+        pages.forEach((page) => {
+          allSections += page?.sections?.length;
+          closedSections +=
+            page?.sections?.filter((section) => !section?.isOpen)?.length || 0;
+        });
+      }
+    }
+    const allCollapse: boolean = closedSections === allSections ? true : false;
+    this.collapseAllSections.setValue(allCollapse, {
+      emitEvent: false
+    });
   }
 }

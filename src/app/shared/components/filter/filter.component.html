@@ -14,8 +14,8 @@
       ></svg-icon>
     </button>
   </div>
-  <div class="filter-form-fields">
-    <div class="filter-items" *ngFor="let item of json">
+  <div class="filter-form-fields" *ngIf="(isLoading$ | async) === false">
+    <div class="filter-items" *ngFor="let item of json$ | async">
       <mat-form-field
         *ngIf="item.type === 'select'"
         appearance="outline"
@@ -114,7 +114,12 @@
         >
           <mat-form-field appearance="outline" class="mat-field">
             <mat-label id="filterEnterSchedule">Enter Schedule</mat-label>
-            <input [(ngModel)]="item.itemValue" type="number" matInput />
+            <input
+              id="enterScheduleInput"
+              [(ngModel)]="item.itemValue"
+              type="number"
+              matInput
+            />
           </mat-form-field>
         </div>
       </div>
@@ -126,6 +131,7 @@
         <mat-label id="filterDatePickerLabel">{{ item.label }}</mat-label>
         <div class="date-picker-wrap">
           <input
+            id="datePickerInput"
             [(ngModel)]="item.value"
             readonly=""
             matInput
@@ -175,9 +181,140 @@
         appearance="outline"
         class="mat-field"
       >
-        <mat-label>{{ item.label }}</mat-label>
-        <input matInput type="text" [(ngModel)]="item.value" />
+        <mat-label id="inputFieldLabel">{{ item.label }}</mat-label>
+        <input id="fieldInput" matInput type="text" [(ngModel)]="item.value" />
       </mat-form-field>
+      <mat-form-field
+        *ngIf="item.type === 'assignmentType'"
+        appearance="outline"
+        class="mat-field"
+      >
+        <mat-label id="filterStatusLabel">{{ item.label }}</mat-label>
+        <mat-select
+          #matSelect
+          multiple
+          [compareWith]="compareAssignedToObjects"
+          [(ngModel)]="item.value"
+          name="showStatus"
+        >
+          <mat-select-trigger>
+            <span *ngIf="assigneeTypeControl.value === 'user'"
+              ><span
+                *ngFor="let it of item.value; let i = index"
+                [attr.data-index]="i"
+                >{{ it.value?.fullName
+                }}<span *ngIf="i !== item.value.length - 1">, </span></span
+              ></span
+            >
+            <span *ngIf="assigneeTypeControl.value === 'userGroup'"
+              ><span
+                *ngFor="let it of item.value; let i = index"
+                [attr.data-index]="i"
+                >{{ it.value?.name
+                }}<span *ngIf="i !== item.value.length - 1">, </span></span
+              ></span
+            >
+            <span *ngIf="assigneeTypeControl.value === 'plant'"
+              ><span
+                *ngFor="let it of item.value; let i = index"
+                [attr.data-index]="i"
+                >{{ it.plant
+                }}<span *ngIf="i !== item.value.length - 1">, </span></span
+              ></span
+            >
+          </mat-select-trigger>
+          <div class="multiple-header">
+            <span id="doneLabel">{{ item.label }}</span>
+            <button
+              id="filterDoneBtn"
+              class="done-filters-btn"
+              (click)="closeSelect(matSelect)"
+            >
+              {{ 'done' | translate }}
+            </button>
+          </div>
+          <mat-radio-group
+            class="radio-group"
+            [formControl]="assigneeTypeControl"
+          >
+            <mat-radio-button
+              color="primary"
+              *ngFor="let assignType of assignTypes"
+              (click)="$event.stopPropagation()"
+              [value]="assignType"
+            >
+              {{ assignType | translate }}</mat-radio-button
+            >
+          </mat-radio-group>
+          <span class="custom-form-field-gray-color">
+            <mat-form-field appearance="outline" class="search">
+              <mat-icon id="assignedToSearchIcon" matPrefix class="searchIcon"
+                >search</mat-icon
+              >
+              <input
+                id="assignedToSearchText"
+                matInput
+                type="text"
+                [placeholder]="'search' | translate"
+                autocomplete="off"
+                [formControl]="searchInput"
+              />
+            </mat-form-field>
+          </span>
+          <div
+            [ngClass]="{ 'user-items': assigneeTypeControl.value === 'user' }"
+            class="scrollable-area m-b-12"
+          >
+            <mat-option
+              *ngFor="let item of filteredAssignedToData$ | async"
+              [value]="item"
+            >
+              <div
+                *ngIf="assigneeTypeControl.value === 'user'"
+                class="user-menu-item"
+              >
+                <img
+                  id="assignedToProfileImg"
+                  [src]="item.value?.profileImage"
+                  alt="Profile Image"
+                  class="profile-image"
+                />
+                <div class="user-info">
+                  <span id="assignedToName" class="name">{{
+                    item.value?.fullName
+                  }}</span>
+                  <span id="assignedToEmail" class="email">{{
+                    item.value?.email
+                  }}</span>
+                </div>
+              </div>
+              <span *ngIf="assigneeTypeControl.value === 'userGroup'">{{
+                item.value?.name
+              }}</span>
+              <span *ngIf="assigneeTypeControl.value === 'plant'">{{
+                item.plant
+              }}</span>
+            </mat-option>
+            <div
+              id="assignedToNoResult"
+              *ngIf="!filteredAssignedToCount"
+              class="no-results"
+              translate
+            >
+              noSearchResultsFound
+            </div>
+          </div>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading$ | async">
+    <div class="loader-container">
+      <div class="loader" *ngFor="let number of ghostLoading">
+        <ngx-shimmer-loading [width]="'100%'" [height]="'30px'">
+        </ngx-shimmer-loading>
+      </div>
     </div>
   </div>
 

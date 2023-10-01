@@ -90,18 +90,34 @@ import { ShiftDateChangeWarningModalComponent } from 'src/app/forms/components/s
 export class RoundsComponent implements OnInit, OnDestroy {
   @ViewChildren(MatMenuTrigger) trigger: QueryList<MatMenuTrigger>;
   @Input() set users$(users$: Observable<UserDetails[]>) {
-    this._users$ = users$.pipe(
-      tap((users) => {
-        this.assigneeDetails = {
-          ...this.assigneeDetails,
-          users
-        };
-        this.assigneeDetailsFiltered = {
-          ...this.assigneeDetails
-        };
-        this.userFullNameByEmail = this.userService.getUsersInfo();
-      })
-    );
+    this._users$ = users$
+      .pipe(
+        tap((users) => {
+          this.assigneeDetails = {
+            ...this.assigneeDetails,
+            users
+          };
+          this.assigneeDetailsFiltered = {
+            ...this.assigneeDetails
+          };
+          this.userFullNameByEmail = this.userService.getUsersInfo();
+        })
+      )
+      .pipe(
+        tap(() => {
+          this.assignedTo = this.assignedTo.filter(
+            (item) => item.type !== 'user'
+          );
+          for (const key in this.userFullNameByEmail) {
+            if (this.userFullNameByEmail.hasOwnProperty(key)) {
+              this.assignedTo.push({
+                type: 'user',
+                value: this.userFullNameByEmail[key]
+              });
+            }
+          }
+        })
+      );
   }
   get users$(): Observable<UserDetails[]> {
     return this._users$;
@@ -116,8 +132,15 @@ export class RoundsComponent implements OnInit, OnDestroy {
         this.assigneeDetailsFiltered = {
           ...this.assigneeDetails
         };
+        this.assignedTo = this.assignedTo.filter(
+          (item) => item.type !== 'userGroup'
+        );
         userGroups?.items?.map((userGroup) => {
-          this.userGroupsIdMap[userGroup.id] = userGroup.name;
+          this.userGroupsIdMap[userGroup.id] = userGroup;
+          this.assignedTo.push({
+            type: 'userGroup',
+            value: userGroup
+          });
         });
       })
     );
@@ -150,7 +173,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   filter = {
     status: '',
     schedule: '',
-    assignedTo: '',
+    assignedToDisplay: '',
     dueDate: '',
     plant: '',
     scheduledAt: '',
@@ -562,8 +585,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   userInfo$: Observable<UserInfo>;
+  filterData$: Observable<any>;
   selectedRound: RoundDetail;
-  selectedRoundInfo: RoundDetail;
+  selectedRoundInfo: RoundDetail = {} as RoundDetail;
   selectedDueDate = null;
   selectedStartDate = null;
   zIndexDelay = 0;
@@ -612,8 +636,68 @@ export class RoundsComponent implements OnInit, OnDestroy {
       );
     this.fetchRounds$.next({} as TableEvent);
     this.searchForm = new FormControl('');
-    this.getFilter();
-    this.getAllOperatorRounds();
+    let filterJson = [];
+    this.filterData$ = combineLatest([
+      this.users$,
+      this.operatorRoundsService.getRoundFilter().pipe(
+        tap((res) => {
+          filterJson = res;
+          for (const item of filterJson) {
+            if (item['column'] === 'status') {
+              item.items = this.status;
+            }
+          }
+        })
+      ),
+      this.operatorRoundsService.fetchAllRounds$()
+    ]).pipe(
+      tap(([, , formsList]) => {
+        this.isLoading$.next(false);
+        const objectKeys = Object.keys(formsList);
+        if (objectKeys.length > 0) {
+          const uniqueSchedules = formsList
+            ?.map((item) => item?.schedule)
+            .filter((value, index, self) => self?.indexOf(value) === index);
+
+          if (uniqueSchedules?.length > 0) {
+            uniqueSchedules?.filter(Boolean).forEach((item) => {
+              if (item) {
+                this.schedules.push(item);
+              }
+            });
+          }
+
+          this.plants = formsList
+            .map((item) => {
+              if (item.plant) {
+                this.plantsIdNameMap[item.plant] = item.plantId;
+                return item.plant;
+              }
+              return '';
+            })
+            .filter((value, index, self) => self.indexOf(value) === index)
+            .sort();
+
+          for (const item of filterJson) {
+            if (item.column === 'assignedToDisplay') {
+              item.items = this.assignedTo.sort();
+            } else if (item['column'] === 'plant') {
+              item.items = this.plants;
+            }
+            if (item.column === 'schedule') {
+              item.items = this.schedules.sort();
+            }
+            if (item['column'] === 'shiftId') {
+              item.items = Object.values(this.shiftNameMap).sort();
+            }
+            if (item['column'] === 'dueDate') {
+              item.items = this.selectedDueDate;
+            }
+          }
+        }
+        this.filterJson = filterJson;
+      })
+    );
     this.searchForm.valueChanges
       .pipe(
         debounceTime(500),
@@ -698,17 +782,16 @@ export class RoundsComponent implements OnInit, OnDestroy {
             assignedTo: this.userService.getUserFullName(
               roundDetail.assignedTo
             ),
-            assignedToDisplay:
-              roundDetail.assignmentType === 'user'
-                ? this.userService.getUserFullName(roundDetail.assignedTo)
-                : this.userGroupsIdMap[
-                    roundDetail.userGroupsIds?.split(',')[0]
-                  ],
+            assignedToDisplay: roundDetail.assignedTo?.length
+              ? this.userService.getUserFullName(roundDetail.assignedTo)
+              : roundDetail.userGroupsIds?.length
+              ? this.userGroupsIdMap[roundDetail.userGroupsIds?.split(',')[0]]
+                  ?.name
+              : '',
             statusDisplay: roundDetail.status.replace('-', ' '),
-            assignedToEmail:
-              roundDetail.assignmentType === 'user'
-                ? roundDetail.assignedTo
-                : ''
+            assignedToEmail: roundDetail.assignedTo?.length
+              ? roundDetail.assignedTo
+              : ''
           }));
         } else {
           this.initial.data = this.initial.data.concat(
@@ -725,17 +808,16 @@ export class RoundsComponent implements OnInit, OnDestroy {
               assignedTo: this.userService.getUserFullName(
                 roundDetail.assignedTo
               ),
-              assignedToDisplay:
-                roundDetail.assignmentType === 'user'
-                  ? this.userService.getUserFullName(roundDetail.assignedTo)
-                  : this.userGroupsIdMap[
-                      roundDetail.userGroupsIds?.split(',')[0]
-                    ],
+              assignedToDisplay: roundDetail.assignedTo?.length
+                ? this.userService.getUserFullName(roundDetail.assignedTo)
+                : roundDetail.userGroupsIds?.length
+                ? this.userGroupsIdMap[roundDetail.userGroupsIds?.split(',')[0]]
+                    ?.name
+                : '',
               statusDisplay: roundDetail.status.replace('-', ' '),
-              assignedToEmail:
-                roundDetail.assignmentType === 'user'
-                  ? roundDetail.assignedTo
-                  : ''
+              assignedToEmail: roundDetail.assignedTo?.length
+                ? roundDetail.assignedTo
+                : ''
             }))
           );
         }
@@ -830,7 +912,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
           ),
           userGroups: this.assigneeDetails.userGroups?.filter((userGroup) =>
             userGroup.plantId?.includes(row.plantId)
-          )
+          ),
+          plants: [row.plant]
         };
         if (
           row.status !== 'submitted' &&
@@ -1008,77 +1091,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
       );
   }
 
-  getAllOperatorRounds() {
-    this.isLoading$.next(true);
-    this.operatorRoundsService.fetchAllRounds$().subscribe(
-      (formsList) => {
-        this.isLoading$.next(false);
-        const objectKeys = Object.keys(formsList);
-        if (objectKeys.length > 0) {
-          const uniqueAssignTo = formsList
-            ?.map((item) => item.assignedTo)
-            .filter((value, index, self) => self.indexOf(value) === index);
-
-          const uniqueSchedules = formsList
-            ?.map((item) => item?.schedule)
-            .filter((value, index, self) => self?.indexOf(value) === index);
-
-          if (uniqueSchedules?.length > 0) {
-            uniqueSchedules?.filter(Boolean).forEach((item) => {
-              if (item) {
-                this.schedules.push(item);
-              }
-            });
-          }
-          if (uniqueAssignTo?.length > 0) {
-            uniqueAssignTo?.filter(Boolean).forEach((item) => {
-              if (item && this.userFullNameByEmail[item] !== undefined) {
-                this.assignedTo.push(this.userFullNameByEmail[item].fullName);
-              }
-            });
-          }
-
-          this.plants = formsList
-            .map((item) => {
-              if (item.plant) {
-                this.plantsIdNameMap[item.plant] = item.plantId;
-                return item.plant;
-              }
-              return '';
-            })
-            .filter((value, index, self) => self.indexOf(value) === index)
-            .sort();
-
-          for (const item of this.filterJson) {
-            if (item.column === 'assignedTo') {
-              item.items = this.assignedTo.sort();
-            } else if (item['column'] === 'plant') {
-              item.items = this.plants;
-            }
-            if (item.column === 'schedule') {
-              item.items = this.schedules.sort();
-            }
-            if (item['column'] === 'shiftId') {
-              item.items = Object.values(this.shiftNameMap).sort();
-            }
-          }
-        }
-      },
-      () => this.isLoading$.next(false)
-    );
-  }
-
-  getFilter() {
-    this.operatorRoundsService.getRoundFilter().subscribe((res) => {
-      this.filterJson = res;
-      for (const item of this.filterJson) {
-        if (item['column'] === 'status') {
-          item.items = this.status;
-        }
-      }
-    });
-  }
-
   getFullNameToEmailArray(data: any) {
     const emailArray = [];
     data?.forEach((name: any) => {
@@ -1089,6 +1101,26 @@ export class RoundsComponent implements OnInit, OnDestroy {
       );
     });
     return emailArray;
+  }
+
+  getPlantNameToPlantId(data: any) {
+    const plantIdArray = [];
+    data?.forEach((name: any) => {
+      plantIdArray.push(this.plantsIdNameMap[name]);
+    });
+    return plantIdArray;
+  }
+
+  getUserGroupNameToIdsArray(data: any) {
+    const userGroupIdsArray = [];
+    data?.forEach((name: any) => {
+      userGroupIdsArray.push(
+        Object.keys(this.userGroupsIdMap).find(
+          (id) => this.userGroupsIdMap[id].name === name
+        )
+      );
+    });
+    return userGroupIdsArray;
   }
 
   applyFilters(data: any): void {
@@ -1106,14 +1138,36 @@ export class RoundsComponent implements OnInit, OnDestroy {
         this.filter[item.column] = item.value;
       } else if (item.column === 'schedule' && item.value) {
         this.filter[item.column] = item.value;
-      } else if (item.column === 'assignedTo' && item.value) {
-        this.filter[item.column] = this.getFullNameToEmailArray(item.value);
+      } else if (item.column === 'assignedToDisplay' && item.value) {
+        if (item.value[0].type === 'user') {
+          this.filter[item.column] = {
+            type: 'user',
+            value: this.getFullNameToEmailArray(
+              item.value.map((user) => user.value.fullName)
+            )
+          };
+        }
+        if (item.value[0].type === 'userGroup') {
+          this.filter[item.column] = {
+            type: 'userGroup',
+            value: this.getUserGroupNameToIdsArray(
+              item.value.map((userGroup) => userGroup.value.name)
+            )
+          };
+        }
+        if (item.value[0].type === 'plant') {
+          this.filter[item.column] = {
+            type: 'plant',
+            value: this.getPlantNameToPlantId(item.value.map((p) => p.plant))
+          };
+        }
       } else if (item.column === 'dueDate' && item.value) {
         this.filter[item.column] = item.value;
       } else if (item.column === 'scheduledAt' && item.value) {
         this.filter[item.column] = item.value;
       }
     }
+
     this.nextToken = '';
     this.fetchRounds$.next({ data: 'load' });
   }
@@ -1123,7 +1177,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
     this.filter = {
       status: '',
       schedule: '',
-      assignedTo: '',
+      assignedToDisplay: '',
       dueDate: '',
       plant: '',
       scheduledAt: '',
@@ -1153,94 +1207,106 @@ export class RoundsComponent implements OnInit, OnDestroy {
   selectedAssigneeHandler(selectedAssignee: any) {
     const { assigneeType, user, userGroup } = selectedAssignee;
     const { roundId, assignedToEmail, ...rest } = this.selectedRoundInfo;
+    let assignmentType = this.selectedRoundInfo?.assignmentType || '';
     let previouslyAssignedTo =
       this.selectedRoundInfo.previouslyAssignedTo || '';
 
     let assignedTo = '';
-    let assignmentType = 'user';
-    let userGroupsIds = '';
+    let userGroupsIds = this.selectedRoundInfo?.userGroupsIds || '';
     if (assigneeType === 'user') {
       assignedTo = user.email;
-      if (assignedTo !== assignedToEmail) {
-        previouslyAssignedTo += previouslyAssignedTo.length
-          ? `,${assignedToEmail}`
-          : assignedToEmail;
-      }
-
-      if (previouslyAssignedTo.includes(assignedTo)) {
-        previouslyAssignedTo = previouslyAssignedTo
-          .split(',')
-          .filter((email) => email !== assignedTo)
-          .join(',');
-      }
     }
 
     if (assigneeType === 'userGroup') {
+      userGroupsIds = `${userGroup.id}`;
       assignmentType = 'userGroup';
-      userGroupsIds += `${userGroup.id}`;
     }
 
-    let { status } = this.selectedRoundInfo;
+    if (assigneeType === 'plant') {
+      userGroupsIds = '';
+      assignmentType = 'user';
+    }
+
+    if (assignedTo !== assignedToEmail) {
+      previouslyAssignedTo += previouslyAssignedTo.length
+        ? `,${assignedToEmail}`
+        : assignedToEmail;
+    }
+
+    if (previouslyAssignedTo.includes(assignedTo)) {
+      previouslyAssignedTo = previouslyAssignedTo
+        .split(',')
+        .filter((email) => email !== assignedTo)
+        .join(',');
+    }
+
+    let { status = '' } = this.selectedRoundInfo;
 
     if (status.toLowerCase() === 'open' && assigneeType === 'user') {
       status = 'assigned';
-    } else if (status.toLowerCase() === 'partly-open') {
-      status = 'in-progress';
     } else if (
-      status.toLowerCase() === 'assigned' &&
-      assigneeType === 'userGroup'
+      status.toLowerCase() === 'partly-open' &&
+      assigneeType === 'user'
     ) {
+      status = 'in-progress';
+    } else if (status.toLowerCase() === 'assigned' && assigneeType !== 'user') {
       status = 'open';
+    } else if (
+      status.toLowerCase() === 'in-progress' &&
+      assigneeType !== 'user'
+    ) {
+      status = 'partly-open';
     }
 
-    this.operatorRoundsService
-      .updateRound$(
-        roundId,
-        {
-          ...rest,
+    if (roundId) {
+      this.operatorRoundsService
+        .updateRound$(
           roundId,
-          assignedTo,
-          previouslyAssignedTo,
-          assignmentType,
-          userGroupsIds,
-          status
-        },
-        'assigned-to'
-      )
-      .pipe(
-        tap((resp) => {
-          if (Object.keys(resp).length) {
-            this.dataSource.data = this.dataSource.data.map((data) => {
-              if (data.roundId === roundId) {
-                return {
-                  ...data,
-                  assignedTo:
-                    assigneeType === 'user'
+          {
+            ...rest,
+            roundId,
+            assignedTo,
+            previouslyAssignedTo,
+            assignmentType,
+            userGroupsIds,
+            status
+          },
+          'assigned-to'
+        )
+        .pipe(
+          tap((resp) => {
+            if (Object.keys(resp).length) {
+              this.dataSource.data = this.dataSource.data.map((data) => {
+                if (data.roundId === roundId) {
+                  return {
+                    ...data,
+                    assignedTo: assignedTo?.length
                       ? this.userService.getUserFullName(assignedTo)
                       : '',
-                  assignmentType,
-                  userGroupsIds,
-                  assignedToDisplay:
-                    assigneeType === 'user'
+                    userGroupsIds,
+                    assignedToDisplay: assignedTo?.length
                       ? this.userService.getUserFullName(assignedTo)
-                      : this.userGroupsIdMap[userGroupsIds.split(',')[0]],
-                  status,
-                  roundDBVersion: resp.roundDBVersion + 1,
-                  assignedToEmail: assignmentType === 'user' ? assignedTo : ''
-                };
-              }
-              return data;
-            });
-            this.dataSource = new MatTableDataSource(this.dataSource.data);
-            this.cdrf.detectChanges();
-            this.toastService.show({
-              type: 'success',
-              text: 'Assigned to updated successfully'
-            });
-          }
-        })
-      )
-      .subscribe();
+                      : userGroupsIds?.length
+                      ? this.userGroupsIdMap[userGroupsIds?.split(',')[0]]?.name
+                      : '',
+                    status,
+                    roundDBVersion: resp.roundDBVersion + 1,
+                    assignedToEmail: assignedTo?.length ? assignedTo : ''
+                  };
+                }
+                return data;
+              });
+              this.dataSource = new MatTableDataSource(this.dataSource.data);
+              this.cdrf.detectChanges();
+              this.toastService.show({
+                type: 'success',
+                text: 'Assigned to updated successfully'
+              });
+            }
+          })
+        )
+        .subscribe();
+    }
     this.trigger.toArray()[0].closeMenu();
   }
 
@@ -1265,7 +1331,13 @@ export class RoundsComponent implements OnInit, OnDestroy {
       });
       return;
     }
-    const dueDateDisplayFormat = this.formatDate(changedDueDate, plantId);
+    const dueDateDisplayFormat = this.formatDate(
+      zonedTimeToUtc(
+        changedDueDate,
+        this.plantTimezoneMap[plantId].timeZoneIdentifier
+      ),
+      plantId
+    );
 
     const dueDateTime = changedDueDate.getTime(); ///curent Date
     let shiftStartDateAndTime: any;
@@ -1313,15 +1385,18 @@ export class RoundsComponent implements OnInit, OnDestroy {
       );
       openDialogModalRef.afterClosed().subscribe((resp) => {
         if (resp) {
+          let changedDueDateToUTC;
           if (
             plantId &&
             this.plantTimezoneMap[plantId] &&
             this.plantTimezoneMap[plantId].timeZoneIdentifier
           ) {
-            changedDueDate = zonedTimeToUtc(
+            changedDueDateToUTC = zonedTimeToUtc(
               format(changedDueDate, dateTimeFormat5),
               this.plantTimezoneMap[plantId].timeZoneIdentifier
             );
+          } else {
+            changedDueDateToUTC = changedDueDate;
           }
           let changedStatus = status;
           if (status === this.statusMap.overdue) {
@@ -1354,7 +1429,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
                 plantId,
                 status: changedStatus,
                 roundId,
-                dueDate: changedDueDate,
+                dueDate: changedDueDateToUTC,
                 scheduledAt,
                 slotDetails: slot,
                 locationAndAssetTasksCompleted,
@@ -1372,11 +1447,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
                       return {
                         ...data,
                         scheduledAt,
-                        dueDate: changedDueDate,
-                        dueDateDisplay: this.formatDate(
-                          dueDateDisplayFormat,
-                          plantId
-                        ),
+                        dueDate: changedDueDateToUTC,
+                        dueDateDisplay: dueDateDisplayFormat,
                         status: changedStatus,
                         slotDetails: slot,
                         roundDBVersion: resp.roundDBVersion + 1,
@@ -1431,7 +1503,13 @@ export class RoundsComponent implements OnInit, OnDestroy {
     }
     let shiftValidation: Boolean = true;
 
-    const startDateDisplayFormat = this.formatDate(changedScheduledAt, plantId);
+    const startDateDisplayFormat = this.formatDate(
+      zonedTimeToUtc(
+        changedScheduledAt,
+        this.plantTimezoneMap[plantId].timeZoneIdentifier
+      ),
+      plantId
+    );
 
     const scheduleTime = changedScheduledAt.getTime(); ///curent Date
 
@@ -1481,15 +1559,18 @@ export class RoundsComponent implements OnInit, OnDestroy {
       );
       openDialogModalRef.afterClosed().subscribe((resp) => {
         if (resp) {
+          let changedScheduledAtToUTC;
           if (
             plantId &&
             this.plantTimezoneMap[plantId] &&
             this.plantTimezoneMap[plantId].timeZoneIdentifier
           ) {
-            changedScheduledAt = zonedTimeToUtc(
+            changedScheduledAtToUTC = zonedTimeToUtc(
               format(changedScheduledAt, dateTimeFormat5),
               this.plantTimezoneMap[plantId].timeZoneIdentifier
             );
+          } else {
+            changedScheduledAtToUTC = changedScheduledAt;
           }
           let changedStatus = status;
           if (status === this.statusMap.overdue) {
@@ -1522,7 +1603,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
                 roundId,
                 assignedTo,
                 slotDetails: slot,
-                scheduledAt: changedScheduledAt,
+                scheduledAt: changedScheduledAtToUTC,
                 dueDate,
                 assignmentType,
                 userGroupsIds
@@ -1536,12 +1617,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
                     if (data.roundId === roundId) {
                       return {
                         ...data,
-                        scheduledAt: changedScheduledAt,
+                        scheduledAt: changedScheduledAtToUTC,
                         status: changedStatus,
-                        scheduledAtDisplay: this.formatDate(
-                          startDateDisplayFormat,
-                          plantId
-                        ),
+                        scheduledAtDisplay: startDateDisplayFormat,
                         slotDetails: slot,
                         roundDBVersion: resp.roundDBVersion + 1,
                         roundDetailDBVersion: resp.roundDetailDBVersion + 1,

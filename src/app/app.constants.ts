@@ -99,11 +99,27 @@ export const permissions = Object.freeze({
   shareRounds: 'SHARE_ROUNDS',
   viewScheduler: 'VIEW_SCHEDULER',
   scheduleRoundPlan: 'SCHEDULE_ROUND_PLAN',
+  downloadDashboardAsPDF: 'DOWNLOAD_DASHBOARD_PDF',
+  sendDashboardEmail: 'SEND_DASHBOARD_EMAIL',
   viewORPTemplates: 'VIEW_ORP_TEMPLATES',
   createORPTemplate: 'CREATE_ORP_TEMPLATES',
   updateORPTemplate: 'UPDATE_ORP_TEMPLATES',
   viewArchivedORP: 'VIEW_OR_ARCHIVED_PLANS',
   viewORObservations: 'VIEW_OR_OBSERVATIONS',
+
+  viewOPRDashboards: 'OPR_VIEW_DASHBOARDS',
+  createOPRDashboard: 'OPR_CREATE_DASHBOARD',
+  updateOPRDashboard: 'OPR_UPDATE_DASHBOARD',
+  deleteOPRDashboard: 'OPR_DELETE_DASHBOARD',
+  copyOPRDashboard: 'OPR_COPY_DASHBOARD',
+  viewOPRReports: 'OPR_VIEW_REPORTS',
+  createOPRReport: 'OPR_CREATE_REPORT',
+  updateOPRReport: 'OPR_UPDATE_REPORT',
+  deleteOPRReport: 'OPR_DELETE_REPORT',
+  copyOPRReport: 'OPR_COPY_REPORT',
+  reportOPRExportToExcel: 'OPR_REPORT_EXPORT_TO_EXCEL',
+  restoreArchivedOR: 'RESTORE_OR_ARCHIVED_PLAN',
+  deleteArchivedOR: 'DELETE_OR_ARCHIVED_PLAN',
 
   viewUnitOfMeasurement: 'VIEW_UNIT_OF_MEASUREMENTS',
   createUnitOfMeasurement: 'CREATE_UNIT_OF_MEASUREMENT',
@@ -117,7 +133,17 @@ export const permissions = Object.freeze({
   deleteGlobalResponses: 'DELETE_GLOBAL_RESPONSES',
   importGlobalResponses: 'IMPORT_GLOBAL_RESPONSES',
 
-  viewRdfObservations: 'VIEW_RDF_OBSERVATIONS'
+  viewRdfObservations: 'VIEW_RDF_OBSERVATIONS',
+
+  // Integration Manager Permissions
+  createConnection: 'CREATE_CONNECTION',
+  updateConnection: 'UPDATE_CONNECTION',
+  deleteConnection: 'DELETE_CONNECTION',
+  viewConnection: 'VIEW_CONNECTION',
+  createIntegration: 'CREATE_INTEGRATION',
+  updateIntegration: 'UPDATE_INTEGRATION',
+  deleteIntegration: 'DELETE_INTEGRATION',
+  viewIntegration: 'VIEW_INTEGRATION'
 });
 
 export const routingUrls = {
@@ -211,6 +237,11 @@ export const routingUrls = {
     title: 'Tenant Management',
     permission: permissions.viewTenants
   },
+  integrationManagement: {
+    url: '/integrations',
+    title: 'Integrations Manager',
+    permission: permissions.viewIntegration
+  },
   inActiveTenants: {
     url: '/tenant-management/inactive-tenants',
     title: 'Inactive Tenants',
@@ -247,14 +278,23 @@ export const routingUrls = {
     title: 'Observations',
     permission: permissions.viewRdfObservations
   },
-
-  operatorRoundPlans: {
+  oprRounds: {
     url: '/operator-rounds',
     title: 'Operator Rounds',
     permission: permissions.viewORPlans
   },
+  oprDashboard: {
+    url: '/operator-rounds/dashboard',
+    title: 'Dashboard',
+    permission: permissions.viewOPRDashboards
+  },
+  oprReports: {
+    url: '/operator-rounds/reports',
+    title: 'Reports',
+    permission: permissions.viewOPRReports
+  },
   myRoundPlans: {
-    url: '/operator-rounds',
+    url: '/operator-rounds/round-plans',
     title: 'Round Plans',
     permission: permissions.viewORPlans
   },
@@ -583,3 +623,215 @@ export const defaultProfilePic =
 export const locationImg = 'assets/master-configurations/locationIcon.svg';
 export const assetImg = 'assets/master-configurations/asset-icon.svg';
 export const plantImg = 'assets/master-configurations/default-plant.svg';
+
+export const integrationPoints = [
+  {
+    name: 'Round Submission',
+    id: 'round-submission'
+  }
+];
+export const dataEntities = {
+  'round-submission': [
+    {
+      attributeName: 'Round Plan ID',
+      attributeId: 'ROUND_PLAN_ID'
+    },
+    {
+      attributeName: 'Round Plan Name',
+      attributeId: 'ROUND_PLAN_NAME'
+    },
+    {
+      attributeName: 'Round Plan Description',
+      attributeId: 'ROUND_PLAN_DESC'
+    },
+    {
+      attributeName: 'Plant ID',
+      attributeId: 'PLANT_ID'
+    },
+    {
+      attributeName: 'Plant Name',
+      attributeId: 'PLANT_NAME'
+    },
+    {
+      attributeName: 'Shift Name',
+      attributeId: 'SHIFT_NAME'
+    },
+    {
+      attributeName: 'Shift Time',
+      attributeId: 'SHIFT_TIME'
+    },
+    {
+      attributeName: 'Frequency',
+      attributeId: 'FREQUENCY'
+    },
+    {
+      attributeName: 'Slot',
+      attributeId: 'SLOT'
+    },
+    {
+      attributeName: 'Slot Time',
+      attributeId: 'SLOT_TIME'
+    },
+    {
+      attributeName: 'Due Date',
+      attributeId: 'DUE_DATE'
+    },
+    {
+      attributeName: 'Round ID',
+      attributeId: 'ROUND_ID'
+    },
+    {
+      attributeName: 'Task ID',
+      attributeId: 'TASK_ID'
+    },
+    {
+      attributeName: 'Task Description',
+      attributeId: 'TASK_DESCRIPTION'
+    },
+    {
+      attributeName: 'Location ID',
+      attributeId: 'LOCATION_ID'
+    },
+    {
+      attributeName: 'Location Name',
+      attributeId: 'LOCATION_NAME'
+    },
+    {
+      attributeName: 'Asset ID',
+      attributeId: 'ASSET_ID'
+    },
+    {
+      attributeName: 'Asset Name',
+      attributeId: 'ASSET_NAME'
+    },
+    {
+      attributeName: 'Task Value',
+      attributeId: 'TASK_VALUE'
+    },
+    {
+      attributeName: 'Task Completed By',
+      attributeId: 'TASK_COMPLETED_BY'
+    },
+    {
+      attributeName: 'Tag Value',
+      attributeId: 'TAG_VALUE'
+    },
+    ,
+    {
+      attributeName: 'Min Value',
+      attributeId: 'MIN_VALUE'
+    },
+    {
+      attributeName: 'Max Value',
+      attributeId: 'MAX_VALUE'
+    },
+    {
+      attributeName: 'Measurement',
+      attributeId: 'UOM'
+    },
+    {
+      attributeName: 'Round Skip Reason',
+      attributeId: 'ROUND_SKIP_REASON'
+    },
+    {
+      attributeName: 'Task Skip Reason',
+      attributeId: 'TASK_SKIP_REASON'
+    },
+    {
+      attributeName: 'Asset or Location Skip Reason',
+      attributeId: 'ASSET_LOC_SKIP_REASON'
+    },
+    {
+      attributeName: 'Round Status',
+      attributeId: 'ROUND_STATUS'
+    },
+    {
+      attributeName: 'Submitted By',
+      attributeId: 'SUBMITTED_BY'
+    },
+    {
+      attributeName: 'Submitted Date',
+      attributeId: 'SUBMITTED_DATE'
+    },
+    {
+      attributeName: 'Submitted Time',
+      attributeId: 'SUBMITTED_TIME'
+    },
+    {
+      attributeName: 'Issue ID',
+      attributeId: 'ISSUE_ID'
+    },
+    {
+      attributeName: 'Issue Description',
+      attributeId: 'ISSUE_DESC'
+    },
+    {
+      attributeName: 'Issue Priority',
+      attributeId: 'ISSUE_PRIORITY'
+    },
+    {
+      attributeName: 'Issue Assignee',
+      attributeId: 'ISSUE_ASSIGNEE'
+    },
+    {
+      attributeName: 'Issue Status',
+      attributeId: 'ISSUE_STATUS'
+    },
+    {
+      attributeName: 'Issue Category',
+      attributeId: 'ISSUE_CATEGORY'
+    },
+    {
+      attributeName: 'Issue Due Date',
+      attributeId: 'ISSUE_DUE_DATE'
+    },
+    {
+      attributeName: 'Notification Num',
+      attributeId: 'NOTIFICATION_NUM'
+    },
+    {
+      attributeName: 'Action ID',
+      attributeId: 'ACTION_ID'
+    },
+    {
+      attributeName: 'Action Description',
+      attributeId: 'ACTION_DESC'
+    },
+    {
+      attributeName: 'Aciton Priority',
+      attributeId: 'ACTION_PRIORITY'
+    },
+    {
+      attributeName: 'Action Assignee',
+      attributeId: 'ACTION_ASSIGNEE'
+    },
+    {
+      attributeName: 'Action Status',
+      attributeId: 'ACTION_STATUS'
+    },
+    {
+      attributeName: 'Action Due Date',
+      attributeId: 'ACTION_DUE_DATE'
+    }
+  ]
+};
+
+export const colorsByStatus = {
+  ASSIGNED: '#32ADE6',
+  OPEN: '#E4E4E6',
+  OVERDUE: '#F44336',
+  SUBMITTED: '#34C759',
+  SKIPPED: '#9E9E9E',
+  Assigned: '#32ADE6',
+  Overdue: '#FF3B30',
+  Submitted: '#34C759',
+  Skipped: '#9E9E9E',
+  'In-Progress': '#FFCC00',
+  Open: '#E4E4E6',
+  Resolved: '#4CAF50',
+  'No Exception': '#76CC6D',
+  Exception: '#ED8E4B',
+  Completed: '#CDDC39',
+  Incomplete: '#FF3B30',
+  Created: '#F6685E'
+};

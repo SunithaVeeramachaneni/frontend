@@ -49,6 +49,7 @@ export class PeopleComponent implements OnInit {
   searchKey = '';
   searchKeyUpdate = new Subject<string>();
   fetchActiveUsersInprogress = false;
+  ghostLoading = new Array(8).fill(0).map((v, i) => i);
 
   updatePeople$ = new BehaviorSubject<UpdatePeople>({
     action: '',

@@ -56,7 +56,6 @@
                 *ngFor="let subCategory of reportCategory.subCategories"
                 (click)="updateReportDefinitionName(subCategory)"
                 mat-dialog-close
-                routerLink="/dashboard/reports/addreport"
               >
                 {{ subCategory }}
               </li>
@@ -82,34 +81,22 @@
 </div>
 <ng-template #loadingObjects>
   <div class="p-0-20">
-    <ngx-shimmer-loading
-      [width]="'80%'"
-      [height]="'30px'"
-    ></ngx-shimmer-loading>
-    <ngx-shimmer-loading
-      [width]="'80%'"
-      [height]="'30px'"
-    ></ngx-shimmer-loading>
-    <ngx-shimmer-loading
-      [width]="'80%'"
-      [height]="'30px'"
-    ></ngx-shimmer-loading>
+    <div *ngFor="let number of ghostLoading">
+      <ngx-shimmer-loading
+        [width]="'80%'"
+        [height]="'30px'"
+      ></ngx-shimmer-loading>
+    </div>
   </div>
 </ng-template>
 
 <ng-template #loadingReports>
   <div class="p-0-20">
-    <ngx-shimmer-loading
-      [width]="'80%'"
-      [height]="'30px'"
-    ></ngx-shimmer-loading>
-    <ngx-shimmer-loading
-      [width]="'80%'"
-      [height]="'30px'"
-    ></ngx-shimmer-loading>
-    <ngx-shimmer-loading
-      [width]="'80%'"
-      [height]="'30px'"
-    ></ngx-shimmer-loading>
+    <div *ngFor="let number of ghostLoading">
+      <ngx-shimmer-loading
+        [width]="'80%'"
+        [height]="'30px'"
+      ></ngx-shimmer-loading>
+    </div>
   </div>
 </ng-template>

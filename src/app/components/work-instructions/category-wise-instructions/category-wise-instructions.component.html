@@ -103,10 +103,10 @@
               <ng-container
                 *ngIf="
                   workInstructions.drafts
-                    | filter: search
-                    | dropdownFilter: CreatedBy
-                    | orderBy: order:reverse:true
-                    | paginate: draftsConfig as result
+                    | filter : search
+                    | dropdownFilter : CreatedBy
+                    | orderBy : order : reverse : true
+                    | paginate : draftsConfig as result
                 "
               >
                 <app-dummy #draftedFilteredResults [value]="result"></app-dummy>
@@ -338,10 +338,10 @@
               <ng-container
                 *ngIf="
                   workInstructions.published
-                    | filter: search
-                    | dropdownFilter: CreatedBy
-                    | orderBy: order:reverse:true
-                    | paginate: publishedConfig as result
+                    | filter : search
+                    | dropdownFilter : CreatedBy
+                    | orderBy : order : reverse : true
+                    | paginate : publishedConfig as result
                 "
               >
                 <app-dummy
@@ -503,37 +503,9 @@
 
 <ng-template #loadingCategoryBasedInstructions>
   <div class="drafts-fav-recents-publish">
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
+    <div *ngFor="let number of ghostLoading">
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+    </div>
   </div>
 </ng-template>

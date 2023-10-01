@@ -315,7 +315,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
       .subscribe(() => this.isLoading$.next(true));
     this.getFilter();
     this.getDisplayedForms();
-    this.getAllOperatorRounds();
+    // this.getAllOperatorRounds();
     this.configOptions.allColumns = this.columns;
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
@@ -397,7 +397,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
       this.plantService.fetchAllPlants$().pipe(
         tap(
           ({ items: plants }) =>
-            (this.plantsObject = plants.reduce((acc, curr) => {
+            (this.plantsObject = plants?.reduce((acc, curr) => {
               acc[curr.id] = `${curr.plantId} - ${curr.name}`;
               return acc;
             }, {}))
@@ -547,7 +547,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
         break;
 
       case 'edit':
-        this.router.navigate(['/operator-rounds/edit', data.id]);
+        this.router.navigate(['/operator-rounds/round-plans/edit', data.id]);
         break;
 
       case 'archive':
@@ -599,7 +599,9 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
     this.menuState = 'out';
   }
   roundPlanDetailActionHandler(event) {
-    this.router.navigate([`/operator-rounds/edit/${this.selectedForm.id}`]);
+    this.router.navigate([
+      `/operator-rounds/round-plans/edit/${this.selectedForm.id}`
+    ]);
   }
 
   getAllOperatorRounds() {

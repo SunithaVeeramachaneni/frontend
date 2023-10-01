@@ -29,6 +29,7 @@ export class CallsComponent implements OnInit {
   limit = defaultLimit;
   lastScrollLeft = 0;
   searchKey = '';
+  ghostLoading = new Array(16).fill(0).map((v, i) => i);
   searchKeyUpdate = new Subject<string>();
   fetchcallListInprogress = false;
 

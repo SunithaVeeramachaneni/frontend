@@ -114,7 +114,8 @@ export class RoundPlanConfigurationService {
       BuilderConfigurationActions.updatePageState({
         pageIndex,
         isOpen: true,
-        subFormId
+        subFormId,
+        isCollapse: true
       })
     );
     if (

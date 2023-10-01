@@ -1,7 +1,7 @@
 <div id="scheduler-customizer">
   <mat-card class="bg-white">
     <mat-card-title class="m-0 light-gray">
-      <span>
+      <span *ngIf="!isTaskLevel">
         <span class="cancel-side-drawer" (click)="cancel()">
           <mat-icon id="scheduleConfigurationCloseIcon" class="dialog-close"
             >close</mat-icon
@@ -38,6 +38,7 @@
         </div>
         <div class="mt-12">
           <button
+            *ngIf="!isTaskLevel"
             id="scheduleConfigurationBtn"
             class="schedule-button"
             mat-raised-button
@@ -51,6 +52,15 @@
             (click)="scheduleConfiguration()"
             type="submit"
             translate="schedule"
+          ></button>
+          <button
+            *ngIf="isTaskLevel"
+            id="scheduleConfigurationNextBtn"
+            class="schedule-button"
+            mat-raised-button
+            type="submit"
+            translate="next"
+            (click)="headerLevelScheduling()"
           ></button>
         </div>
       </div>
@@ -86,11 +96,10 @@
         <!-- Plant and time zone -->
         <ng-container>
           <div>
-            <br />
             <p id="scheduleConfigurationPlant" translate class="field-info">
               plant
             </p>
-            <mat-form-field appearance="outline" class="width-100 cursor">
+            <mat-form-field appearance="outline" class="width-100 cursor plant">
               <input
                 id="scheduleConfigurationPlantText"
                 disabled
@@ -107,12 +116,14 @@
               >
             </mat-form-field>
           </div>
-          <br />
           <div>
             <p id="scheduleConfigurationTimeZone" translate class="field-info">
               timeZone
             </p>
-            <mat-form-field appearance="outline" class="width-100 cursor">
+            <mat-form-field
+              appearance="outline"
+              class="width-100 cursor plant-time-zone"
+            >
               <input
                 id="scheduleConfigurationTimeZoneText"
                 disabled
@@ -138,6 +149,7 @@
             color="primary"
             *ngFor="let scheduleType of scheduleTypes"
             [value]="scheduleType"
+            (change)="onChangeScheduleType()"
           >
             {{ scheduleType | translate }}</mat-radio-button
           >
@@ -297,7 +309,7 @@
             <mat-label id="scheduleConfigStartDate" translate
               >startDate</mat-label
             >
-            <input matInput formControlName="startDateDisplay" readonly />
+            <input matInput formControlName="startDate" readonly />
             <input
               matInput
               [matDatepicker]="startDate"
@@ -327,7 +339,7 @@
             *ngIf="schedulerConfigForm.get('scheduleEndType').value === 'after'"
           >
             <mat-label id="scheduleConfigEndDate" translate>endDate</mat-label>
-            <input matInput formControlName="endDateDisplay" readonly />
+            <input matInput formControlName="endDate" readonly />
             <input
               matInput
               [matDatepicker]="endDate"
@@ -455,8 +467,33 @@
             <mat-form-field
               appearance="outline"
               class="width-100 cursor"
+              *ngIf="
+                schedulerConfigForm?.get('assignmentDetails').value.type ===
+                'plant'
+              "
+            >
+              <mat-label id="scheduleConfigSelect" translate>select</mat-label>
+              <input
+                id="scheduleConfigSelectText"
+                type="text"
+                matInput
+                [value]="selectedDetails?.plant"
+                class="cursor"
+                [disabled]="true"
+              />
+              <mat-icon id="scheduleConfigDropDown" matSuffix class="cursor"
+                >arrow_drop_down</mat-icon
+              >
+            </mat-form-field>
+            <mat-form-field
+              appearance="outline"
+              class="width-100 cursor"
               [matMenuTriggerFor]="menu"
               #menuTrigger="matMenuTrigger"
+              *ngIf="
+                schedulerConfigForm?.get('assignmentDetails').value.type !==
+                'plant'
+              "
             >
               <mat-label id="scheduleConfigSelect" translate>select</mat-label>
               <input
@@ -471,7 +508,34 @@
               >
             </mat-form-field>
             <div id="scheduleConfigAssignToInfo" class="info" translate>
-              assignToInfo
+              <span translate>assignToInfo</span>
+              <span
+                *ngIf="
+                  schedulerConfigForm?.get('assignmentDetails').value.type ===
+                  'plant'
+                "
+                translate
+              >
+                plant
+              </span>
+              <span
+                *ngIf="
+                  schedulerConfigForm?.get('assignmentDetails').value.type ===
+                  'user'
+                "
+                translate
+              >
+                user
+              </span>
+              <span
+                *ngIf="
+                  schedulerConfigForm?.get('assignmentDetails').value.type ===
+                  'userGroup'
+                "
+                translate
+              >
+                userGroup
+              </span>
             </div>
           </div>
           <div class="forms-count">

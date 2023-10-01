@@ -1,0 +1,80 @@
+@import '../../../../scss/colors.scss';
+
+.chart-report-dialog {
+  width: 100%;
+  height: 100%;
+  background: $white;
+  position: relative;
+  .report-heading {
+    .head-row1 {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 15px;
+      border-bottom: 1px solid $border-color;
+      .heading {
+        font-weight: 500;
+        font-size: 10pt;
+      }
+      .close-icon {
+        cursor: pointer;
+        font-size: 18px;
+        color: $dark-gray;
+        margin-top: 10px;
+      }
+    }
+    .head-row2 {
+      display: flex;
+      background: $blue4;
+      padding: 10px;
+      .filter-item {
+        color: $blue5;
+        margin: 0px 5px;
+      }
+    }
+  }
+  .report-body {
+    // height: 30%;
+  }
+  .report-footer {
+    position: sticky;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 15px 0px;
+    justify-content: flex-end;
+    border-top: 1px solid $border-color;
+    background: $white;
+    .close-btn {
+      margin-right: 15px;
+      background-color: $blue;
+      height: 35px;
+      width: 150px;
+    }
+  }
+}
+.download-btn {
+  font-style: normal;
+  font-weight: 500;
+  font-size: 100%;
+  letter-spacing: 0.15px;
+  color: $white;
+  border: 1px solid $blue-main;
+  border-radius: 4px;
+  background-color: $blue-main;
+  padding: 5px 14px;
+  float: right;
+  cursor: pointer;
+  margin-right: 5px;
+}
+
+.heading-right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.downloading {
+  display: flex;
+  align-items: center;
+}

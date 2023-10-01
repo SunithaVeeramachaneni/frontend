@@ -82,7 +82,11 @@
 </div>
 <ng-container *ngIf="userInfo$ | async">
   <div
-    *ngIf="(inspections$ | async) && (isLoading$ | async) === false"
+    *ngIf="
+      (inspections$ | async) &&
+      (filterData$ | async) &&
+      (isLoading$ | async) === false
+    "
     class="inspections-list"
   >
     <cwp-dynamictable
@@ -104,7 +108,7 @@
       </div>
     </div>
   </div>
-  <ng-container *ngIf="users$ | async">
+  <ng-container *ngIf="filterData$ | async">
     <button
       id="inspectionAssigneeBtn"
       class="hide-mat-menu"

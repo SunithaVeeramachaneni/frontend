@@ -1,75 +1,85 @@
 <ng-container *ngIf="currentRouteUrl$ | async as currentRouteUrl">
-  <div *ngIf="currentRouteUrl === routingUrls.reports.url">
-    <ng-container *ngIf="userInfo$ | async">
-      <div class="reports-body custom-form-field-gray-color">
-        <div class="dis-flex">
-          <div class="width-40 toggle-btns">
-            <mat-button-toggle-group
-              [formControl]="selectedReportSegmentControl"
-            >
-              <mat-button-toggle value="recent" class="toogle-btn-text">
-                Recent
-              </mat-button-toggle>
-              <mat-button-toggle value="favorite" class="toogle-btn-text">
-                Favorite
-              </mat-button-toggle>
-              <mat-button-toggle value="all" class="toogle-btn-text">
-                All
-              </mat-button-toggle>
-            </mat-button-toggle-group>
-            <span
-              class="no-of-records"
-              *ngIf="
-                reportsCount$ | async as reportsCount;
-                else loadingReportsCount
-              "
-            >
-              {{
-                'reportPlural'
-                  | translate
-                    : {
-                        totalCount: reportsCount.count
-                          ? (reportsCount.count | numberToKM)
-                          : 0,
-                        count: this.skip ? this.skip : 0
-                      }
-              }}
-            </span>
+  <div
+    *ngIf="
+      currentRouteUrl === routingUrls.reports.url ||
+      currentRouteUrl === routingUrls.oprReports.url
+    "
+  >
+    <div>
+      <ng-container *ngIf="userInfo$ | async">
+        <div class="reports-body custom-form-field-gray-color">
+          <div class="dis-flex">
+            <div class="width-40 toggle-btns">
+              <mat-button-toggle-group
+                [formControl]="selectedReportSegmentControl"
+              >
+                <mat-button-toggle value="recent" class="toogle-btn-text">
+                  {{ 'recent' | translate }}
+                </mat-button-toggle>
+                <mat-button-toggle value="favorite" class="toogle-btn-text">
+                  {{ 'favorite' | translate }}
+                </mat-button-toggle>
+                <mat-button-toggle value="all" class="toogle-btn-text">
+                  {{ 'all' | translate }}
+                </mat-button-toggle>
+              </mat-button-toggle-group>
+              <span
+                class="no-of-records"
+                *ngIf="
+                  reportsCount$ | async as reportsCount;
+                  else loadingReportsCount
+                "
+              >
+                {{
+                  'reportPlural'
+                    | translate
+                      : {
+                          totalCount: reportsCount.count
+                            ? (reportsCount.count | numberToKM)
+                            : 0,
+                          count: this.skip ? this.skip : 0
+                        }
+                }}
+              </span>
+            </div>
+            <div class="width-60">
+              <button
+                class="new-report-btn"
+                (click)="openDialog()"
+                translate="newReport"
+                *appCheckUserHasPermission="[
+                  perms.createReport,
+                  perms.createOPRReport
+                ]"
+              ></button>
+              <mat-form-field appearance="outline" class="search-form-field">
+                <mat-icon matPrefix class="searchIcon">search</mat-icon>
+                <input
+                  matInput
+                  type="text"
+                  placeholder="Search Reports"
+                  [(ngModel)]="searchValue"
+                  (keyup.enter)="debouncedSearchReports()"
+                  autocomplete="off"
+                />
+              </mat-form-field>
+            </div>
           </div>
-          <div class="width-60">
-            <button
-              class="new-report-btn"
-              (click)="openDialog()"
-              translate="newReport"
-              *appCheckUserHasPermission="[perms.createReport]"
-            ></button>
-            <mat-form-field appearance="outline" class="search-form-field">
-              <mat-icon matPrefix class="searchIcon">search</mat-icon>
-              <input
-                matInput
-                type="text"
-                placeholder="Search Reports"
-                [(ngModel)]="searchValue"
-                (keyup.enter)="debouncedSearchReports()"
-                autocomplete="off"
-              />
-            </mat-form-field>
+          <div
+            class="p-l-5 p-r-5"
+            *ngIf="reports$ | async as reports; else loadingReports"
+          >
+            <cwp-dynamictable
+              [dataSource]="dataSource"
+              [configOptions]="configOptions"
+              (fetchDataCallback)="handleTableEvent($event)"
+              (rowLevelActionHandler)="rowLevelActionHandler($event)"
+              (cellClickActionHandler)="cellClickActionHandler($event)"
+            ></cwp-dynamictable>
           </div>
         </div>
-        <div
-          class="p-l-5 p-r-5"
-          *ngIf="reports$ | async as reports; else loadingReports"
-        >
-          <cwp-dynamictable
-            [dataSource]="dataSource"
-            [configOptions]="configOptions"
-            (fetchDataCallback)="handleTableEvent($event)"
-            (rowLevelActionHandler)="rowLevelActionHandler($event)"
-            (cellClickActionHandler)="cellClickActionHandler($event)"
-          ></cwp-dynamictable>
-        </div>
-      </div>
-    </ng-container>
+      </ng-container>
+    </div>
   </div>
   <router-outlet></router-outlet>
 </ng-container>
@@ -82,42 +92,12 @@
   <div class="p-0-20">
     <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
     </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
-    </ngx-shimmer-loading>
+    <div *ngFor="let number of ghostLoading">
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+    </div>
   </div>
 </ng-template>
-<ng-template #loadingReportsCount>Loading Reports Count...</ng-template>
+<ng-template #loadingReportsCount
+  ><span translate="loadingReportsCount"></span
+></ng-template>

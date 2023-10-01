@@ -40,6 +40,13 @@ export const routes: Routes = [
       )
   },
   {
+    path: 'integrations',
+    loadChildren: () =>
+      import('./components/integrations/integrations.module').then(
+        (m) => m.IntegrationsModule
+      )
+  },
+  {
     path: 'work-instructions',
     loadChildren: () =>
       import('./components/work-instructions/work-instructions.module').then(
