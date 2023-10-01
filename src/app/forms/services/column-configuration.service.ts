@@ -5,7 +5,6 @@ import {
   additionalDetailColumnConfig,
   metadataFlatModuleNames
 } from 'src/app/app.constants';
-import { LoginService } from 'src/app/components/login/services/login.service';
 import {
   RDF_DEFAULT_COLUMNS,
   RDF_DEFAULT_COLUMN_CONFIG,
@@ -97,7 +96,24 @@ export class ColumnConfigurationService {
     if (!this.userColumnConfiguration) this.userColumnConfiguration = {};
     this.userColumnConfiguration[moduleName] = columnIdArray;
   }
-  setAllColumnConfigurations(allColumnConfigurations) {
+  getUserColumnConfigurationByModule() {
+    return this.userColumnConfiguration;
+  }
+
+  setAllColumnConfigurations(moduleName, allColumnConfigurations) {
+    if (this.userColumnConfiguration[moduleName]) {
+      allColumnConfigurations.map((column) => (column.selected = false));
+      this.userColumnConfiguration[moduleName].forEach((columnId) => {
+        const columnIdx = allColumnConfigurations.findIndex(
+          (column) => column.columnId === columnId
+        );
+        if (columnIdx !== -1)
+          allColumnConfigurations[columnIdx] = {
+            ...allColumnConfigurations[columnIdx],
+            selected: true
+          };
+      });
+    }
     this.allColumnConfigurations = allColumnConfigurations;
   }
   setUserColumnConfigByModuleName(moduleName: string) {

@@ -20,7 +20,10 @@ import {
   takeUntil,
   tap
 } from 'rxjs/operators';
-
+import { ResponseSetService } from '../../master-configurations/response-set/services/response-set.service';
+import { metadataFlatModuleNames } from 'src/app/app.constants';
+import { ColumnConfigurationService } from 'src/app/forms/services/column-configuration.service';
+import { columnConfiguration } from 'src/app/interfaces/columnConfiguration';
 @Component({
   selector: 'app-import-template-list',
   templateUrl: './import-template-list.component.html',
@@ -38,64 +41,12 @@ export class ImportTemplateListComponent implements OnInit, OnDestroy {
   formMetadata: FormMetadata;
   ghostLoading = new Array(11).fill(0).map((v, i) => i);
   isLoading$ = new BehaviorSubject(true);
+  isLoadingColumns$: Observable<boolean> =
+    this.columnConfigService.isLoadingColumns$;
   allTemplates = [];
-
-  columns: Column[] = [
-    {
-      id: 'name',
-      displayName: 'Template Name',
-      type: 'string',
-      controlType: 'string',
-      order: 1,
-      searchable: false,
-      sortable: false,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
-      titleStyle: {
-        'font-weight': '500',
-        'font-size': '100%',
-        color: '#000000',
-        'overflow-wrap': 'anywhere'
-      },
-      hasSubtitle: true,
-      showMenuOptions: false,
-      subtitleColumn: 'description',
-      subtitleStyle: {
-        'font-size': '80%',
-        color: 'darkgray',
-        'overflow-wrap': 'anywhere'
-      },
-      hasPreTextImage: true,
-      hasPostTextImage: false
-    },
-    {
-      id: 'questionsCount',
-      displayName: 'Questions',
-      type: 'number',
-      controlType: 'string',
-      order: 2,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
-      sortable: true,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
-    }
-  ];
-
+  RDF_TEMPLATE_MODULE_NAME = metadataFlatModuleNames.RDF_TEMPLATES;
+  columns: Column[];
+  additionalColumns: columnConfiguration[] = [];
   configOptions: ConfigOptions = {
     tableID: 'formsTable',
     rowsExpandable: false,
@@ -109,8 +60,18 @@ export class ImportTemplateListComponent implements OnInit, OnDestroy {
     groupByColumns: [],
     pageSizeOptions: [10, 25, 50, 75, 100],
     allColumns: [],
-    tableHeight: '492px',
-    groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957']
+    tableHeight: 'calc(100vh - 135px)',
+    groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
+    conditionalStyles: {
+      draft: {
+        'background-color': '#FFCC00',
+        color: '#000000'
+      },
+      ready: {
+        'background-color': '#2C9E53',
+        color: '#FFFFFF'
+      }
+    }
   };
 
   dataSource: MatTableDataSource<any>;
@@ -120,10 +81,28 @@ export class ImportTemplateListComponent implements OnInit, OnDestroy {
     public dialogRef: MatDialogRef<ImportQuestionsModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data,
     private raceDynamicFormService: RaceDynamicFormService,
+    private responseSetService: ResponseSetService,
+    private columnConfigService: ColumnConfigurationService,
     private store: Store<State>
   ) {}
 
   ngOnInit(): void {
+    this.columnConfigService.moduleColumnConfiguration$
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe((res) => {
+        if (res) {
+          this.columns = res;
+          this.columns.map((dynamicColumnConfiguration) => {
+            if (dynamicColumnConfiguration.id === 'displayFormsUsageCount') {
+              dynamicColumnConfiguration.titleStyle = '';
+            }
+            return dynamicColumnConfiguration;
+          });
+          this.configOptions.allColumns = this.columns;
+        }
+      });
+
+    this.fetchResponseSetByModuleName().subscribe();
     this.searchTemplates = new FormControl('');
 
     const filterData = {
@@ -140,6 +119,10 @@ export class ImportTemplateListComponent implements OnInit, OnDestroy {
                 item.formType === filterData.formType &&
                 item.formStatus === 'Ready'
             ) || [];
+          this.allTemplates.map((template) => {
+            template.displayFormsUsageCount = template.formsUsageCount;
+          });
+          console.log(this.allTemplates);
           this.dataSource = new MatTableDataSource(this.allTemplates);
           this.isLoading$.next(false);
           return this.allTemplates;
@@ -156,8 +139,6 @@ export class ImportTemplateListComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe(() => this.isLoading$.next(false));
-
-    this.configOptions.allColumns = this.columns;
 
     this.formMetadata$ = this.store
       .select(getFormMetadata)
@@ -190,6 +171,33 @@ export class ImportTemplateListComponent implements OnInit, OnDestroy {
         break;
       default:
     }
+  };
+  fetchResponseSetByModuleName = () => {
+    return this.responseSetService
+      .fetchResponseSetByModuleName$(this.RDF_TEMPLATE_MODULE_NAME)
+      .pipe(
+        takeUntil(this.onDestroy$),
+        tap((data) => {
+          this.additionalColumns = data?.map((item) =>
+            this.columnConfigService.getColumnConfigFromAdditionalDetails(
+              item,
+              false
+            )
+          );
+          this.columnConfigService.setAllColumnConfigurations(
+            this.RDF_TEMPLATE_MODULE_NAME,
+            [
+              ...this.columnConfigService.getModuleDefaultColumnConfig(
+                this.RDF_TEMPLATE_MODULE_NAME
+              ),
+              ...this.additionalColumns
+            ]
+          );
+          this.columnConfigService.setUserColumnConfigByModuleName(
+            this.RDF_TEMPLATE_MODULE_NAME
+          );
+        })
+      );
   };
 
   ngOnDestroy(): void {

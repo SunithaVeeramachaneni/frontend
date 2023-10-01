@@ -12,6 +12,9 @@ export interface UserProfile {
   profileImage: string;
   profileImageFileName?: string;
 }
+export interface UserPreferences {
+  columnConfigurations?: string;
+}
 
 export interface UserDetails {
   id: number;

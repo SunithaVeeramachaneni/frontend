@@ -251,6 +251,7 @@
     (backdropClick)="isPopoverOpen = false"
   >
     <app-filter
+      *ngIf="(isLoadingColumns$ | async) === false"
       [json]="filterJson"
       (close)="isPopoverOpen = false"
       (apply)="applyFilter($event)"

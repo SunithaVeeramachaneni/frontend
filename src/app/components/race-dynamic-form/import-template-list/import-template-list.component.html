@@ -24,7 +24,13 @@
     </mat-form-field>
   </div>
 
-  <div *ngIf="(templates$ | async) && (isLoading$ | async) === false">
+  <div
+    *ngIf="
+      (templates$ | async) &&
+      (isLoading$ | async) === false &&
+      (isLoadingColumns$ | async) === false
+    "
+  >
     <cwp-dynamictable
       [dataSource]="dataSource"
       [configOptions]="configOptions"
