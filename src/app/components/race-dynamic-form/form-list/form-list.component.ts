@@ -154,6 +154,39 @@ export class FormListComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    console.log('init form list');
+    this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
+    this.raceDynamicFormService.fetchForms$.next({} as TableEvent);
+    this.searchForm = new FormControl('');
+
+    this.searchForm.valueChanges
+      .pipe(
+        debounceTime(500),
+        distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
+        tap((value: string) => {
+          this.raceDynamicFormService.fetchForms$.next({ data: 'search' });
+        })
+      )
+      .subscribe(() => this.isLoading$.next(true));
+
+    this.getDisplayedForms();
+
+    this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
+      tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
+    );
+    this.formsListCount$ = combineLatest([
+      this.formsListCountRaw$,
+      this.formsListCountUpdate$
+    ]).pipe(
+      map(([count, update]) => {
+        if (this.triggerCountUpdate) {
+          count += update;
+          this.triggerCountUpdate = false;
+        }
+        return count;
+      })
+    );
     this.columnConfigService.moduleColumnConfiguration$
       .pipe(takeUntil(this.onDestroy$))
       .subscribe((res) => {
@@ -172,41 +205,7 @@ export class FormListComponent implements OnInit, OnDestroy {
           this.cdrf.detectChanges();
         }
       });
-
-    this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
-    this.raceDynamicFormService.fetchForms$.next({} as TableEvent);
-    this.searchForm = new FormControl('');
-
-    this.searchForm.valueChanges
-      .pipe(
-        debounceTime(500),
-        distinctUntilChanged(),
-        takeUntil(this.onDestroy$),
-        tap((value: string) => {
-          this.raceDynamicFormService.fetchForms$.next({ data: 'search' });
-        })
-      )
-      .subscribe(() => this.isLoading$.next(true));
-
     this.populateFilter();
-    this.getDisplayedForms();
-
-    this.configOptions.allColumns = this.columns;
-    this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
-      tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
-    );
-    this.formsListCount$ = combineLatest([
-      this.formsListCountRaw$,
-      this.formsListCountUpdate$
-    ]).pipe(
-      map(([count, update]) => {
-        if (this.triggerCountUpdate) {
-          count += update;
-          this.triggerCountUpdate = false;
-        }
-        return count;
-      })
-    );
   }
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
@@ -668,6 +667,7 @@ export class FormListComponent implements OnInit, OnDestroy {
     return null;
   }
   ngOnDestroy(): void {
+    console.log('destroy form list');
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }
