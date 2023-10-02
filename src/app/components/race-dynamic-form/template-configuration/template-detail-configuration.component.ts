@@ -56,6 +56,7 @@ import { FormService } from 'src/app/forms/services/form.service';
 export class TemplateDetailConfigurationComponent implements OnInit, OnDestroy {
   @ViewChild('name') formName: ElementRef;
   @Output() markReadyEvent = new EventEmitter<void>();
+  collapseAllSections: FormControl = new FormControl(false);
   selectedNode = { id: null };
   formConfiguration: FormGroup;
   formMetadata$: Observable<FormMetadata>;
@@ -127,7 +128,7 @@ export class TemplateDetailConfigurationComponent implements OnInit, OnDestroy {
       // waiting for the store to catchup before filtering
       setTimeout(() => {
         this.allTemplates = window.history.state.allTemplates.filter(
-          (item) => item.id !== this.formDetails.formMetadata.id
+          (item) => item.id !== this.formDetails?.formMetadata?.id
         );
       }, 1000);
     } else {
@@ -266,6 +267,7 @@ export class TemplateDetailConfigurationComponent implements OnInit, OnDestroy {
           formSaveStatus,
           skipAuthoredDetail
         } = formDetails;
+        this.setCollapseAllSectionsState(pages);
 
         if (skipAuthoredDetail) {
           return;
@@ -355,6 +357,14 @@ export class TemplateDetailConfigurationComponent implements OnInit, OnDestroy {
           }
         });
       }
+    });
+    this.collapseAllSections.valueChanges.subscribe((isCollapse) => {
+      this.store.dispatch(
+        BuilderConfigurationActions.updateAllSectionState({
+          isCollapse,
+          subFormId: this.selectedNode.id
+        })
+      );
     });
   }
 
@@ -447,5 +457,27 @@ export class TemplateDetailConfigurationComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  private setCollapseAllSectionsState(pages = []) {
+    if (pages?.length === 0) {
+      this.collapseAllSections.setValue(false, {
+        emitEvent: false
+      });
+      return;
+    }
+    let allSections = 0;
+    let closedSections = 0;
+    if (pages?.length > 0) {
+      pages.forEach((page) => {
+        allSections += page?.sections?.length;
+        closedSections +=
+          page?.sections?.filter((section) => !section?.isOpen)?.length || 0;
+      });
+    }
+    const allCollapse: boolean = closedSections === allSections ? true : false;
+    this.collapseAllSections.setValue(allCollapse, {
+      emitEvent: false
+    });
   }
 }

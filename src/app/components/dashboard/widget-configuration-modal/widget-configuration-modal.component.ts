@@ -311,8 +311,14 @@ export class WidgetConfigurationModalComponent implements OnInit {
     const tableColumns: TableColumn[] = columns
       .map((column) => {
         if (column.visible) {
-          const { id, order, sticky, visible } = column;
-          return { name: id, order, sticky, visible } as TableColumn;
+          const { id, order, sticky, visible, displayName } = column;
+          return {
+            name: id,
+            order,
+            sticky,
+            visible,
+            displayName
+          } as TableColumn;
         }
       })
       .filter((data) => data);

@@ -118,6 +118,8 @@ export const permissions = Object.freeze({
   deleteOPRReport: 'OPR_DELETE_REPORT',
   copyOPRReport: 'OPR_COPY_REPORT',
   reportOPRExportToExcel: 'OPR_REPORT_EXPORT_TO_EXCEL',
+  restoreArchivedOR: 'RESTORE_OR_ARCHIVED_PLAN',
+  deleteArchivedOR: 'DELETE_OR_ARCHIVED_PLAN',
 
   viewUnitOfMeasurement: 'VIEW_UNIT_OF_MEASUREMENTS',
   createUnitOfMeasurement: 'CREATE_UNIT_OF_MEASUREMENT',
@@ -276,16 +278,15 @@ export const routingUrls = {
     title: 'Observations',
     permission: permissions.viewRdfObservations
   },
-
-  operatorRoundPlans: {
+  oprRounds: {
     url: '/operator-rounds',
     title: 'Operator Rounds',
     permission: permissions.viewORPlans
   },
   oprDashboard: {
-    url: '/operator-rounds',
+    url: '/operator-rounds/dashboard',
     title: 'Dashboard',
-    permission: permissions.viewOPRReports
+    permission: permissions.viewOPRDashboards
   },
   oprReports: {
     url: '/operator-rounds/reports',
@@ -293,7 +294,7 @@ export const routingUrls = {
     permission: permissions.viewOPRReports
   },
   myRoundPlans: {
-    url: '/operator-rounds',
+    url: '/operator-rounds/round-plans',
     title: 'Round Plans',
     permission: permissions.viewORPlans
   },

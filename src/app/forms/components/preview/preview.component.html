@@ -23,16 +23,16 @@
       <div class="section-header">
         <mat-icon
           id="previewExpandMore"
-          (click)="toggleSectionOpenState(i)"
-          *ngIf="section?.isSectionOpenState"
+          (click)="toggleSectionOpenState(i, page)"
+          *ngIf="section?.isOpen"
           class="fix-arrow"
         >
           expand_more
         </mat-icon>
         <mat-icon
           id="previewRightArrow"
-          (click)="toggleSectionOpenState(i)"
-          *ngIf="!section?.isSectionOpenState"
+          (click)="toggleSectionOpenState(i, page)"
+          *ngIf="!section?.isOpen"
           class="fix-arrow"
         >
           chevron_right
@@ -46,7 +46,7 @@
         >
       </div>
 
-      <div *ngIf="section?.isSectionOpenState === true">
+      <div *ngIf="section?.isOpen === true">
         <div id="preview" *ngFor="let question of section.questions">
           <app-preview-question
             [moduleType]="moduleType"

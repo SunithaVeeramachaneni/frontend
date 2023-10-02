@@ -49,6 +49,7 @@ export class ImportFormListComponent implements OnInit, OnDestroy {
   formMetadata: FormMetadata;
   ghostLoading = new Array(11).fill(0).map((v, i) => i);
   isLoading$ = new BehaviorSubject(true);
+  selectedFormId = '';
 
   status: any[] = ['Draft', 'Published'];
   columns: Column[] = [
@@ -294,6 +295,7 @@ export class ImportFormListComponent implements OnInit, OnDestroy {
   }
 
   selectListItem(form) {
+    this.selectedFormId = form?.id;
     this.raceDynamicFormService
       .getAuthoredFormDetailByFormId$(form.id)
       .pipe(
@@ -333,6 +335,7 @@ export class ImportFormListComponent implements OnInit, OnDestroy {
     });
     this.data.selectedFormData = this.selectedForm;
     this.data.openImportQuestionsSlider = true;
+    this.data.selectedFormId = this.selectedFormId;
     this.dialogRef.close(this.data);
   }
 

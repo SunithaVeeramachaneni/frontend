@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -274,7 +275,10 @@ export class ReportsComponent implements OnInit {
       columnId,
       row: { id }
     } = event;
-    const moduleName = `operator-rounds`;
+    let moduleName;
+    this.router.url.includes('dashboard')
+      ? (moduleName = `dashboard/reports`)
+      : (moduleName = 'operator-rounds/reports');
     switch (columnId) {
       case 'name':
       case 'description':
@@ -296,7 +300,10 @@ export class ReportsComponent implements OnInit {
       data: { id, name, isFavorite }
     } = event;
     let report;
-    const moduleName = `operator-rounds`;
+    let moduleName;
+    this.router.url.includes('dashboard')
+      ? (moduleName = `dashboard/reports`)
+      : (moduleName = 'operator-rounds/reports');
     switch (action) {
       case 'preview':
         this.router.navigate([`${moduleName}/editreport`, id], {
@@ -304,7 +311,7 @@ export class ReportsComponent implements OnInit {
         });
         break;
       case 'edit':
-        this.router.navigate([`${moduleName}/reports/editreport`, id]);
+        this.router.navigate([`${moduleName}/editreport`, id]);
         break;
       case 'delete':
         this.reportService.getWidgets$(id).subscribe((groupedWidgets) => {

@@ -399,5 +399,8 @@
   "selectUserGroup": "Select User Group",
   "submittedDate": "Submitted Date",
   "columnConfiguration": "Column Configuration",
-  "resetToDefault": "Reset to Default View"
+  "resetToDefault": "Reset to Default View",
+  "hideSection": "Hide Section",
+  "hideSectionsQuestionTitle": "Q: {questionName}",
+  "collapseAllSections": "Collapse All Sections"
 }

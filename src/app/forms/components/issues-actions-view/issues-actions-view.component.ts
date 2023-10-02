@@ -34,7 +34,7 @@ import { TenantService } from 'src/app/components/tenant-management/services/ten
 import { Amplify } from 'aws-amplify';
 import { tap } from 'rxjs/operators';
 import { SlideshowComponent } from 'src/app/shared/components/slideshow/slideshow.component';
-import { format, isToday, isYesterday, parse } from 'date-fns';
+import { format, isToday, isYesterday, parse, isSameDay } from 'date-fns';
 import { ToastService } from 'src/app/shared/toast';
 import { MatDatetimePickerInputEvent } from '@angular-material-components/datetime-picker/public-api';
 import { PlantService } from 'src/app/components/master-configurations/plants/services/plant.service';
@@ -773,6 +773,10 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     return format(new Date(date), timeFormat);
   }
 
+  ifSameDay(date1: any, date2: any) {
+    return isSameDay(new Date(date1), new Date(date2));
+  }
+
   formatDate(date: string) {
     const parsedDate = new Date();
     if (
@@ -901,7 +905,13 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
                   }
                 });
               }
-              if (history.type === 'Media') {
+
+              if (
+                history.type === 'Media' &&
+                !this.filteredMediaType.some(
+                  (a) => a?.message === history?.message
+                )
+              ) {
                 this.filteredMediaType.push(history);
               }
             });
@@ -944,7 +954,10 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
               }
             });
           }
-          if (history.type === 'Media') {
+          if (
+            history.type === 'Media' &&
+            !this.filteredMediaType.some((a) => a?.message === history?.message)
+          ) {
             this.filteredMediaType.push(history);
           }
         });
@@ -986,6 +999,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
             statusDisplay: this.observations.prepareStatus(
               jsonData.STATUS ?? ''
             ),
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             PHOTO: this.data?.PHOTO ?? [],
             assignedTo: data?.assignedTo,
             assignedToDisplay: this.observations.formatUsersDisplay(

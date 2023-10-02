@@ -52,7 +52,15 @@
                 formatDate(logHistory.rows[i - 1].createdAt)
             "
           >
-            <div class="date-divider">
+            <div
+              class="date-divider"
+              *ngIf="
+                !ifSameDay(
+                  history?.createdAt,
+                  logHistory.rows[i - 1]?.createdAt
+                )
+              "
+            >
               <span id="issuesActionsViewCompareDates" class="date-card">
                 {{ compareDates(formatDate(history.createdAt)) }}
               </span>

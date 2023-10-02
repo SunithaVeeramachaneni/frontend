@@ -56,7 +56,6 @@ const {
   formsTemplates,
   archivedForms,
   schedularForms,
-  operatorRoundPlans,
   myRoundPlans,
   roundPlanScheduler,
   masterConfiguration,
@@ -68,7 +67,8 @@ const {
   globalResponse,
   roundPlanArchivedForms,
   roundPlanObservations,
-  rdfObservations
+  rdfObservations,
+  oprRounds
 } = routingUrls;
 
 @Component({
@@ -200,11 +200,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       ]
     },
     {
-      title: operatorRoundPlans.title,
-      url: operatorRoundPlans.url,
+      title: oprRounds.title,
+      url: oprRounds.url,
       imageName: 'operator-rounds',
       showSubMenu: false,
-      permission: operatorRoundPlans.permission,
+      permission: oprRounds.permission,
       disable: false,
       subPages: [
         {
