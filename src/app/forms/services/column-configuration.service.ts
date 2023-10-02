@@ -132,7 +132,7 @@ export class ColumnConfigurationService {
     });
     return filterConfig;
   }
-  getSelectedColumnsFilterData(allAdditionalDetails: any[]) {
+  setSelectedColumnsFilterData(allAdditionalDetails: any[]) {
     const filterData = {};
     allAdditionalDetails.forEach((additionalDetail) => {
       filterData[this.getColumnIdFromName(additionalDetail.name)] = JSON.parse(

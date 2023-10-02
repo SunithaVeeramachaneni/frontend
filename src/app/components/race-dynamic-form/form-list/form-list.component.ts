@@ -111,6 +111,7 @@ export class FormListComponent implements OnInit, OnDestroy {
     });
   skip = 0;
   limit = graphQLDefaultLimit;
+  tags = new Set();
   searchForm: FormControl;
   addCopyFormCount = false;
   formsListCount$: Observable<number>;
@@ -396,6 +397,7 @@ export class FormListComponent implements OnInit, OnDestroy {
         }),
         map((data) =>
           data.map((item) => {
+            item?.tags?.forEach((tag) => this.tags.add(tag));
             if (item.plantId) {
               item = {
                 ...item,
@@ -568,6 +570,8 @@ export class FormListComponent implements OnInit, OnDestroy {
         item.items = this.plants;
       } else if (item.column === 'author') {
         item.items = this.createdBy;
+      } else if (item.column === 'tags') {
+        item.items = this.tags;
       } else if (!item?.items?.length) {
         item.items = this.additionalDetailFilterData[item.column]
           ? this.additionalDetailFilterData[item.column]

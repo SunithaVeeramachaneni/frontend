@@ -102,6 +102,7 @@ export class ColumnConfigurationSliderComponent implements OnInit {
           this.columnConfigService.setUserColumnConfigByModuleName(
             this.moduleName
           );
+          this.columnConfigService.setSelectedColumnsFilterData(data);
           this.isLoading$.next(false);
           this.cdrf.detectChanges();
         })
