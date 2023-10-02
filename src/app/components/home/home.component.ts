@@ -53,7 +53,7 @@ export class HomeComponent implements OnInit {
       spareParts,
       workInstructions,
       raceDynamicForms,
-      operatorRoundPlans,
+      myRoundPlans,
       masterConfiguration
     } = routingUrls;
 
@@ -65,7 +65,7 @@ export class HomeComponent implements OnInit {
       spareParts,
       workInstructions,
       raceDynamicForms,
-      operatorRoundPlans,
+      myRoundPlans,
       masterConfiguration
     ];
 

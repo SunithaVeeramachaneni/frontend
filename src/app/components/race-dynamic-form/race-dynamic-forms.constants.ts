@@ -1,4 +1,5 @@
 import { Column } from '@innovapptive.com/dynamictable/lib/interfaces';
+import { formConfigurationStatus } from 'src/app/app.constants';
 import { columnConfiguration } from 'src/app/interfaces/columnConfiguration';
 // INFO: This is the default column configuration for RDF module
 
@@ -10,7 +11,8 @@ export const RDF_DEFAULT_COLUMNS: columnConfiguration[] = [
     disabled: true, // Column which should not be modified by the user should be marked as disabled
     selected: true, // Column which should be selected by default should be marked as selected
     draggable: false, // If this is a default column then it should not be draggable
-    default: true // reset to default view in column configuration slider will select all columns selected as default
+    default: true, // reset to default view in column configuration slider will select all columns selected as default,
+    filterable: false
   },
   {
     columnId: 'formStatus',
@@ -18,7 +20,8 @@ export const RDF_DEFAULT_COLUMNS: columnConfiguration[] = [
     disabled: true,
     selected: true,
     draggable: false,
-    default: true
+    default: true,
+    filterable: true
   },
   {
     columnId: 'plant',
@@ -26,7 +29,8 @@ export const RDF_DEFAULT_COLUMNS: columnConfiguration[] = [
     disabled: false,
     selected: true,
     draggable: true,
-    default: true
+    default: true,
+    filterable: true
   },
   {
     columnId: 'formType',
@@ -34,7 +38,8 @@ export const RDF_DEFAULT_COLUMNS: columnConfiguration[] = [
     disabled: false,
     selected: true,
     draggable: true,
-    default: true
+    default: true,
+    filterable: true
   },
   {
     columnId: 'lastPublishedBy',
@@ -42,7 +47,8 @@ export const RDF_DEFAULT_COLUMNS: columnConfiguration[] = [
     disabled: false,
     selected: true,
     draggable: true,
-    default: true
+    default: true,
+    filterable: true
   },
   {
     columnId: 'publishedDate',
@@ -50,7 +56,8 @@ export const RDF_DEFAULT_COLUMNS: columnConfiguration[] = [
     disabled: false,
     selected: true,
     draggable: true,
-    default: true
+    default: true,
+    filterable: false
   },
   {
     columnId: 'author',
@@ -58,7 +65,8 @@ export const RDF_DEFAULT_COLUMNS: columnConfiguration[] = [
     disabled: false,
     selected: true,
     draggable: true,
-    default: true
+    default: true,
+    filterable: true
   },
   {
     columnId: 'tags',
@@ -66,7 +74,8 @@ export const RDF_DEFAULT_COLUMNS: columnConfiguration[] = [
     disabled: false,
     selected: true,
     draggable: true,
-    default: true
+    default: true,
+    filterable: true
   }
 ];
 export const RDF_TEMPLATE_DEFAULT_COLUMNS: columnConfiguration[] = [
@@ -76,7 +85,8 @@ export const RDF_TEMPLATE_DEFAULT_COLUMNS: columnConfiguration[] = [
     disabled: true, // Column which should not be modified by the user should be marked as disabled
     selected: true, // Column which should be selected by default should be marked as selected
     draggable: false, // If this is a default column then it should not be draggable
-    default: true // reset to default view in column configuration slider will select all columns selected as default
+    default: true, // reset to default view in column configuration slider will select all columns selected as default
+    filterable: false
   },
   {
     columnId: 'formStatus',
@@ -84,7 +94,8 @@ export const RDF_TEMPLATE_DEFAULT_COLUMNS: columnConfiguration[] = [
     disabled: true,
     selected: true,
     draggable: false,
-    default: true
+    default: true,
+    filterable: true
   },
   {
     columnId: 'questionsCount',
@@ -92,7 +103,8 @@ export const RDF_TEMPLATE_DEFAULT_COLUMNS: columnConfiguration[] = [
     disabled: false,
     selected: true,
     draggable: true,
-    default: true
+    default: true,
+    filterable: false
   },
 
   {
@@ -101,7 +113,8 @@ export const RDF_TEMPLATE_DEFAULT_COLUMNS: columnConfiguration[] = [
     disabled: false,
     selected: true,
     draggable: true,
-    default: true
+    default: true,
+    filterable: true
   },
   {
     columnId: 'displayFormsUsageCount',
@@ -109,7 +122,8 @@ export const RDF_TEMPLATE_DEFAULT_COLUMNS: columnConfiguration[] = [
     disabled: false,
     selected: true,
     draggable: true,
-    default: true
+    default: true,
+    filterable: false
   },
   {
     columnId: 'lastPublishedBy',
@@ -117,7 +131,8 @@ export const RDF_TEMPLATE_DEFAULT_COLUMNS: columnConfiguration[] = [
     disabled: false,
     selected: true,
     draggable: true,
-    default: true
+    default: true,
+    filterable: true
   },
   {
     columnId: 'author',
@@ -125,7 +140,8 @@ export const RDF_TEMPLATE_DEFAULT_COLUMNS: columnConfiguration[] = [
     disabled: false,
     selected: true,
     draggable: true,
-    default: true
+    default: true,
+    filterable: true
   },
   {
     columnId: 'tags',
@@ -133,7 +149,8 @@ export const RDF_TEMPLATE_DEFAULT_COLUMNS: columnConfiguration[] = [
     disabled: false,
     selected: true,
     draggable: true,
-    default: true
+    default: true,
+    filterable: true
   }
 ];
 
@@ -349,5 +366,53 @@ export const RDF_TEMPLATE_DEFAULT_COLUMN_CONFIG: Partial<Column>[] = [
     sortable: true,
     visible: true,
     groupable: true
+  }
+];
+
+export const RDF_FORM_LIST_FILTERS = [
+  {
+    label: 'Status',
+    items: ['Draft', 'Published'],
+    column: 'formStatus',
+    type: 'select',
+    value: ''
+  },
+  {
+    label: 'Last Published by',
+    items: [],
+    column: 'lastPublishedBy',
+    type: 'multiple',
+    value: ''
+  },
+  {
+    label: 'Created By',
+    items: [],
+    column: 'author',
+    type: 'multiple',
+    value: ''
+  },
+  {
+    label: 'Plant',
+    items: [],
+    column: 'plant',
+    type: 'select',
+    value: ''
+  },
+  {
+    label: 'Form Type',
+    items: [
+      formConfigurationStatus.embedded,
+      formConfigurationStatus.standalone
+    ],
+    column: 'formType',
+    type: 'select',
+    value: ''
+  },
+  {
+    label: 'Tags',
+    items: [],
+    column: 'tags',
+    type: 'multiple',
+    value: ''
   }
 ];

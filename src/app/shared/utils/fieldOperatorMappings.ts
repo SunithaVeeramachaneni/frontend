@@ -118,3 +118,12 @@ export const oppositeOperatorMap = {
   GE: 'LT',
   GT: 'LE'
 };
+
+export const operatorDisplayNameMap = {
+  EQ: 'is',
+  NE: 'is not',
+  LT: 'less than',
+  LE: 'less than or equal to',
+  GE: 'greater than or equal to',
+  GT: 'greater than'
+};

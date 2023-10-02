@@ -100,6 +100,17 @@ export class RaceDynamicFormService {
   ): Observable<any> =>
     this.appService._postData(environment.rdfApiUrl, 'datasets', dataset, info);
 
+  createDataSetMultiple$ = (
+    dataset: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._postData(
+      environment.rdfApiUrl,
+      'datasets-multiple',
+      dataset,
+      info
+    );
+
   updateDataSet$ = (
     datasetId: string,
     dataset: any,
@@ -428,12 +439,7 @@ export class RaceDynamicFormService {
         environment.rdfApiUrl,
         `forms/authored/${formId}?` + params.toString()
       )
-    ).pipe(
-      map(({ items }) => {
-        items.sort((a, b) => parseInt(b.version, 10) - parseInt(a.version, 10));
-        return items[0];
-      })
-    );
+    ).pipe(map(({ items }) => (items.length ? items[0] : {})));
   }
 
   getAuthoredFormDetailsByFormId$(formId: string) {
@@ -748,10 +754,6 @@ export class RaceDynamicFormService {
       })
       .pipe(map((res) => this.formatGetRdfFormsResponse(res)));
   };
-
-  getFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
-    return this.appService._getLocal('', '/assets/json/rdf-filter.json', info);
-  }
 
   getInspectionFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
     return this.appService._getLocal(

@@ -35,6 +35,7 @@ import { MatInputModule } from '@angular/material/input';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { HttpClient } from '@angular/common/http';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
@@ -188,7 +189,8 @@ export const customTranslateLoader = (http: HttpClient) =>
       UnitOfMeasurementEffects,
       QuickResponseEffects,
       GlobalResponseEffects
-    ])
+    ]),
+    MatSlideToggleModule
   ],
   providers: [
     {

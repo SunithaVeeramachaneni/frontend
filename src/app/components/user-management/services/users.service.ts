@@ -14,7 +14,8 @@ import {
   Permission,
   UserProfile,
   UserInfo,
-  UsersInfoByEmail
+  UsersInfoByEmail,
+  UserPreferences
 } from '../../../interfaces';
 import { environment } from '../../../../environments/environment';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -252,6 +253,22 @@ export class UsersService {
       )
       .pipe(map((response) => (response === null ? userProfile : response)));
 
+  updateUserPreferences$ = (
+    userPreferences: UserPreferences,
+    info: ErrorInfo = {} as ErrorInfo
+  ) => {
+    const patchUser = { ...userPreferences };
+    return this.appService
+      .patchData(
+        environment.userRoleManagementApiUrl,
+        `users/user-preferences`,
+        patchUser,
+        info
+      )
+      .pipe(
+        map((response) => (response === null ? userPreferences : response))
+      );
+  };
   verifyUserEmail$ = (
     emailID: string,
     info: ErrorInfo = {} as ErrorInfo

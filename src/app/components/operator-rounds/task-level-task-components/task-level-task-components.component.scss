@@ -138,31 +138,17 @@
   display: block;
   height: 0;
   overflow: hidden;
-  transition: height 0.5s linear;
-  background: $gray;
+  transition: height 0.3s;
+  background: transparent;
   color: $black;
-
-  p {
-    margin: 10px;
-  }
 
   .revised-title {
     font-size: 120%;
     font-weight: 500;
   }
 
-  .revised-slots {
-    p {
-      margin: 0 0 5px 5px;
-    }
-  }
-
   .revised-value {
-    font-size: 110%;
-  }
-
-  .shift-time {
-    display: flex;
+    font-size: 120%;
   }
 }
 

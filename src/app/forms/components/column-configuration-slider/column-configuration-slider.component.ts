@@ -15,6 +15,8 @@ import { ResponseSetService } from 'src/app/components/master-configurations/res
 import { columnConfiguration } from 'src/app/interfaces/columnConfiguration';
 import { ColumnConfigurationService } from '../../services/column-configuration.service';
 import { Column } from '@innovapptive.com/dynamictable/lib/interfaces';
+import { UsersService } from 'src/app/components/user-management/services/users.service';
+import { ToastService } from 'src/app/shared/toast';
 @Component({
   selector: 'app-column-configuration-slider',
   templateUrl: './column-configuration-slider.component.html',
@@ -33,8 +35,10 @@ export class ColumnConfigurationSliderComponent implements OnInit {
   draggableColumns: columnConfiguration[] = [];
   allComplete: boolean = false;
   constructor(
+    private userService: UsersService,
     private responseSetService: ResponseSetService,
     private columnConfigService: ColumnConfigurationService,
+    private toastService: ToastService,
     private cdrf: ChangeDetectorRef
   ) {}
 
@@ -85,7 +89,7 @@ export class ColumnConfigurationSliderComponent implements OnInit {
               false
             )
           );
-          this.columnConfigService.setAllColumnConfigurations([
+          this.columnConfigService.setAllColumnConfigurations(this.moduleName, [
             ...this.columnConfigService.getModuleDefaultColumnConfig(
               this.moduleName
             ),
@@ -143,7 +147,6 @@ export class ColumnConfigurationSliderComponent implements OnInit {
   }
 
   onSave() {
-    this.columnConfigService.isLoadingColumns$.next(true);
     this.allColumns = [...this.staticColumns, ...this.draggableColumns];
     const columnIds = this.allColumns.reduce((acc, column) => {
       if (column.selected) {
@@ -155,8 +158,23 @@ export class ColumnConfigurationSliderComponent implements OnInit {
       this.moduleName,
       columnIds
     );
-    this.columnConfigService.setUserColumnConfigByModuleName(this.moduleName);
-    this.slideInOut.emit('in');
+    this.userService
+      .updateUserPreferences$({
+        columnConfigurations: JSON.stringify(
+          this.columnConfigService.getUserColumnConfigurationByModule()
+        )
+      })
+      .subscribe(() => {
+        this.toastService.show({
+          type: 'success',
+          text: 'Column Configuration Stored Successfully'
+        });
+        this.columnConfigService.isLoadingColumns$.next(true);
+        this.columnConfigService.setUserColumnConfigByModuleName(
+          this.moduleName
+        );
+        this.slideInOut.emit('in');
+      });
   }
   setColumnConfigurationToDynamicTable(dynamicTableColumns: Column[]) {
     this.columnConfigService.moduleColumnConfiguration$.next(

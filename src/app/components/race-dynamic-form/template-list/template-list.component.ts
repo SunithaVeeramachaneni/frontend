@@ -602,7 +602,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
     });
   }
 
-  openCreateTemplateModal() {
+  openCreateTemplateModal(formType) {
     this.store.dispatch(
       updateCreateOrEditForm({
         createOrEditForm: true
@@ -615,7 +615,10 @@ export class TemplateListComponent implements OnInit, OnDestroy {
       width: '100%',
       panelClass: 'full-screen-modal',
       disableClose: true,
-      data: this.allTemplates
+      data: {
+        data: this.allTemplates,
+        formType
+      }
     });
   }
 
@@ -627,7 +630,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
         }
       })
       .then(() => {
-        this.openCreateTemplateModal();
+        this.openCreateTemplateModal(this.selectedForm.formType);
       });
   }
   affectedFormDetailActionHandler() {

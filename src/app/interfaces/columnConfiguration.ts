@@ -5,4 +5,5 @@ export interface columnConfiguration {
   selected: boolean;
   draggable: boolean;
   default: boolean;
+  filterable: boolean;
 }

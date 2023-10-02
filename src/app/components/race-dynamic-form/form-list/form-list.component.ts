@@ -51,7 +51,6 @@ import { downloadFile } from 'src/app/shared/utils/fileUtils';
 import { UploadResponseModalComponent } from '../../../shared/components/upload-response-modal/upload-response-modal.component';
 import { FormModalComponent } from '../form-modal/form-modal.component';
 import { metadataFlatModuleNames } from '../../../app.constants';
-import { RDF_DEFAULT_COLUMN_CONFIG } from '../race-dynamic-forms.constants';
 import { ColumnConfigurationService } from 'src/app/forms/services/column-configuration.service';
 
 @Component({
@@ -66,7 +65,6 @@ export class FormListComponent implements OnInit, OnDestroy {
   public columnConfigMenuState = 'out';
   submissionSlider = 'out';
   isPopoverOpen = false;
-  status: any[] = ['Draft', 'Published'];
   filterJson: any[] = [];
 
   columns: Column[] = [];
@@ -136,6 +134,7 @@ export class FormListComponent implements OnInit, OnDestroy {
   plantsIdNameMap = {};
   plants = [];
   createdBy = [];
+  additionalDetailFilterData = {};
   userInfo$: Observable<UserInfo>;
   triggerCountUpdate = false;
   RDF_MODULE_NAME = metadataFlatModuleNames.RACE_DYNAMIC_FORMS;
@@ -155,16 +154,6 @@ export class FormListComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.columnConfigService.moduleColumnConfiguration$
-      .pipe(takeUntil(this.onDestroy$))
-      .subscribe((res) => {
-        if (res) {
-          this.columns = res;
-          this.configOptions.allColumns = this.columns;
-          this.cdrf.detectChanges();
-        }
-      });
-
     this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
     this.raceDynamicFormService.fetchForms$.next({} as TableEvent);
     this.searchForm = new FormControl('');
@@ -179,12 +168,9 @@ export class FormListComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe(() => this.isLoading$.next(true));
-    this.getFilter();
 
-    this.populateFilter();
     this.getDisplayedForms();
 
-    this.configOptions.allColumns = this.columns;
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
     );
@@ -200,6 +186,25 @@ export class FormListComponent implements OnInit, OnDestroy {
         return count;
       })
     );
+    this.columnConfigService.moduleColumnConfiguration$
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe((res) => {
+        if (res) {
+          this.columns = res;
+          this.configOptions.allColumns = this.columns;
+          this.cdrf.detectChanges();
+        }
+      });
+    this.columnConfigService.moduleFilterConfiguration$
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe((res) => {
+        if (res) {
+          this.filterJson = res;
+          this.setFilters();
+          this.cdrf.detectChanges();
+        }
+      });
+    this.populateFilter();
   }
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
@@ -491,49 +496,33 @@ export class FormListComponent implements OnInit, OnDestroy {
     combineLatest([
       this.usersService.getUsersInfo$(),
       this.plantService.fetchAllPlants$(),
-      this.raceDynamicFormService.fetchAllFormsList$()
-    ]).subscribe(([usersList, { items: plantsList }, formsList]) => {
-      this.createdBy = usersList
-        .map((user) => `${user.firstName} ${user.lastName}`)
-        .sort();
-      this.lastModifiedBy = usersList.map(
-        (user) => `${user.firstName} ${user.lastName}`
-      );
-      this.plants = plantsList
-        .map((plant) => {
-          this.plantsIdNameMap[`${plant.plantId} - ${plant.name}`] = plant.id;
-          return `${plant.plantId} - ${plant.name}`;
-        })
-        .sort();
+      this.raceDynamicFormService.fetchAllFormsList$(),
+      this.columnConfigService.moduleAdditionalDetailsFiltersData$
+    ]).subscribe(
+      ([usersList, { items: plantsList }, formsList, additionDetailsData]) => {
+        this.createdBy = usersList
+          .map((user) => `${user.firstName} ${user.lastName}`)
+          .sort();
+        this.lastModifiedBy = usersList.map(
+          (user) => `${user.firstName} ${user.lastName}`
+        );
+        this.plants = plantsList
+          .map((plant) => {
+            this.plantsIdNameMap[`${plant.plantId} - ${plant.name}`] = plant.id;
+            return `${plant.plantId} - ${plant.name}`;
+          })
+          .sort();
 
-      this.lastPublishedBy = formsList.rows
-        .map((item) => item.lastPublishedBy)
-        .filter((value, index, self) => self.indexOf(value) === index && value)
-        .sort();
-
-      for (const item of this.filterJson) {
-        if (item.column === 'status') {
-          item.items = this.status;
-        } else if (item.column === 'publishedBy') {
-          item.items = this.lastPublishedBy;
-        } else if (item.column === 'plant') {
-          item.items = this.plants;
-        } else if (item.column === 'createdBy') {
-          item.items = this.createdBy;
-        } else if (item.column === 'formType') {
-          item.items = [
-            formConfigurationStatus.embedded,
-            formConfigurationStatus.standalone
-          ];
-        }
+        this.lastPublishedBy = formsList.rows
+          .map((item) => item.lastPublishedBy)
+          .filter(
+            (value, index, self) => self.indexOf(value) === index && value
+          )
+          .sort();
+        this.additionalDetailFilterData = additionDetailsData;
+        this.setFilters();
       }
-    });
-  }
-
-  getFilter() {
-    this.raceDynamicFormService.getFilter().subscribe((res) => {
-      this.filterJson = res;
-    });
+    );
   }
 
   applyFilter(data: any) {
@@ -571,7 +560,21 @@ export class FormListComponent implements OnInit, OnDestroy {
       }
     });
   }
-
+  setFilters() {
+    for (const item of this.filterJson) {
+      if (item.column === 'lastPublishedBy') {
+        item.items = this.lastPublishedBy;
+      } else if (item.column === 'plant') {
+        item.items = this.plants;
+      } else if (item.column === 'author') {
+        item.items = this.createdBy;
+      } else if (!item?.items?.length) {
+        item.items = this.additionalDetailFilterData[item.column]
+          ? this.additionalDetailFilterData[item.column]
+          : [];
+      }
+    }
+  }
   resetFilter() {
     this.filter = {
       status: '',
@@ -636,11 +639,6 @@ export class FormListComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy(): void {
-    this.onDestroy$.next();
-    this.onDestroy$.complete();
-  }
-
   private showFormDetail(row: GetFormList): void {
     this.selectedForm = row;
     this.menuState = 'in';
@@ -666,5 +664,9 @@ export class FormListComponent implements OnInit, OnDestroy {
       };
     }
     return null;
+  }
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 }

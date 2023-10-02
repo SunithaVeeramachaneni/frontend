@@ -1,19 +1,20 @@
 import { Injectable, OnInit } from '@angular/core';
 import { Column } from '@innovapptive.com/dynamictable/lib/interfaces';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import {
   additionalDetailColumnConfig,
   metadataFlatModuleNames
 } from 'src/app/app.constants';
-import { LoginService } from 'src/app/components/login/services/login.service';
 import {
   RDF_DEFAULT_COLUMNS,
   RDF_DEFAULT_COLUMN_CONFIG,
+  RDF_FORM_LIST_FILTERS,
   RDF_TEMPLATE_DEFAULT_COLUMNS,
   RDF_TEMPLATE_DEFAULT_COLUMN_CONFIG
 } from 'src/app/components/race-dynamic-form/race-dynamic-forms.constants';
 import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
 import { columnConfiguration } from 'src/app/interfaces/columnConfiguration';
+import { filterConfiguration } from 'src/app/interfaces/filterConfiguration';
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +24,11 @@ export class ColumnConfigurationService {
   selectedColumnConfigurations: columnConfiguration[] = [];
   isLoadingColumns$ = new BehaviorSubject<boolean>(true);
   private userColumnConfiguration: any;
+  moduleAdditionalDetailsFiltersData$ = new Subject<any>();
   moduleColumnConfiguration$ = new BehaviorSubject<Column[] | null>(null);
+  moduleFilterConfiguration$ = new BehaviorSubject<
+    filterConfiguration[] | null
+  >(null);
   constructor(private rdfService: RaceDynamicFormService) {}
 
   getColumnIdFromName(columnName: string): string {
@@ -62,7 +67,8 @@ export class ColumnConfigurationService {
       disabled: false,
       selected: selected,
       draggable: true,
-      default: false
+      default: false,
+      filterable: true
     };
   }
   getDynamicColumnsFromColumnConfig(
@@ -87,6 +93,56 @@ export class ColumnConfigurationService {
     });
     return this.rdfService.updateConfigOptionsFromColumns(dynamicTableColumns);
   }
+  getUserColumnConfigurationByModule() {
+    return this.userColumnConfiguration;
+  }
+  getAdditionalDetailFilterConfig(columnConfig: columnConfiguration) {
+    return {
+      label: columnConfig.columnName,
+      items: [],
+      column: columnConfig.columnId,
+      type: 'multiple',
+      value: ''
+    };
+  }
+  getDefaultFilterConfigByModule(moduleName: string) {
+    switch (moduleName) {
+      case metadataFlatModuleNames.RACE_DYNAMIC_FORMS:
+        return RDF_FORM_LIST_FILTERS;
+      default:
+        return [];
+    }
+  }
+  getFilterConfigurationByColumnConfig(
+    selectedColumnConfig: columnConfiguration[],
+    moduleName: string
+  ) {
+    const filterConfig = [];
+    selectedColumnConfig.forEach((column) => {
+      if (column.filterable && column.default) {
+        filterConfig.push({
+          ...this.getDefaultFilterConfigByModule(moduleName).find(
+            (filter) => filter.column === column.columnId
+          )
+        });
+      }
+      if (column.filterable && !column.default) {
+        filterConfig.push(this.getAdditionalDetailFilterConfig(column));
+      }
+    });
+    return filterConfig;
+  }
+  getSelectedColumnsFilterData(allAdditionalDetails: any[]) {
+    const filterData = {};
+    allAdditionalDetails.forEach((additionalDetail) => {
+      filterData[this.getColumnIdFromName(additionalDetail.name)] = JSON.parse(
+        additionalDetail.values
+      ).map((value) => {
+        return value?.title;
+      });
+    });
+    this.moduleAdditionalDetailsFiltersData$.next(filterData);
+  }
 
   setUserColumnConfigurationOnInit(userColumnConfig) {
     this.userColumnConfiguration = userColumnConfig
@@ -97,7 +153,21 @@ export class ColumnConfigurationService {
     if (!this.userColumnConfiguration) this.userColumnConfiguration = {};
     this.userColumnConfiguration[moduleName] = columnIdArray;
   }
-  setAllColumnConfigurations(allColumnConfigurations) {
+
+  setAllColumnConfigurations(moduleName, allColumnConfigurations) {
+    if (this.userColumnConfiguration[moduleName]) {
+      allColumnConfigurations.map((column) => (column.selected = false));
+      this.userColumnConfiguration[moduleName].forEach((columnId) => {
+        const columnIdx = allColumnConfigurations.findIndex(
+          (column) => column.columnId === columnId
+        );
+        if (columnIdx !== -1)
+          allColumnConfigurations[columnIdx] = {
+            ...allColumnConfigurations[columnIdx],
+            selected: true
+          };
+      });
+    }
     this.allColumnConfigurations = allColumnConfigurations;
   }
   setUserColumnConfigByModuleName(moduleName: string) {
@@ -116,6 +186,13 @@ export class ColumnConfigurationService {
         if (column) this.selectedColumnConfigurations.push(column);
       });
     }
+    this.moduleFilterConfiguration$.next(
+      this.getFilterConfigurationByColumnConfig(
+        this.selectedColumnConfigurations,
+        moduleName
+      )
+    );
+
     const dynamicTableConfiguration =
       this.rdfService.updateConfigOptionsFromColumns(
         this.getDynamicColumnsFromColumnConfig(
