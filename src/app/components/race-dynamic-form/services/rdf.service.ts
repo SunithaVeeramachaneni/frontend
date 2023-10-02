@@ -749,10 +749,6 @@ export class RaceDynamicFormService {
       .pipe(map((res) => this.formatGetRdfFormsResponse(res)));
   };
 
-  getFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
-    return this.appService._getLocal('', '/assets/json/rdf-filter.json', info);
-  }
-
   getInspectionFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
     return this.appService._getLocal(
       '',
