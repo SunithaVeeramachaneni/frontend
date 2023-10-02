@@ -154,7 +154,6 @@ export class FormListComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    console.log('init form list');
     this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
     this.raceDynamicFormService.fetchForms$.next({} as TableEvent);
     this.searchForm = new FormControl('');
@@ -667,7 +666,6 @@ export class FormListComponent implements OnInit, OnDestroy {
     return null;
   }
   ngOnDestroy(): void {
-    console.log('destroy form list');
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }
