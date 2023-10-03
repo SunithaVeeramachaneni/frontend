@@ -55,6 +55,7 @@ import {
   formConfigurationStatus,
   raceDynamicForms
 } from 'src/app/app.constants';
+import { ResponseSetService } from '../../master-configurations/response-set/services/response-set.service';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
@@ -109,7 +110,8 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   deletedLabel = '';
   isDisabled = false;
   isOpen = new FormControl(false);
-
+  additionalDetailMap = {};
+  additionalDetailMapPreSelect = {};
   plantFilterInput = '';
   readonly formConfigurationStatus = formConfigurationStatus;
   additionalDetails: FormArray;
@@ -121,6 +123,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   base64result: string;
   pdfFiles: any = { mediaType: [] };
   hasFormChanges = false;
+  allValue: any;
   private destroy$ = new Subject();
 
   constructor(
@@ -135,7 +138,8 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     private operatorRoundService: OperatorRoundsService,
     public dialog: MatDialog,
     private imageCompress: NgxImageCompressService,
-    private router: Router
+    private router: Router,
+    private responseSetService: ResponseSetService
   ) {}
 
   maxLengthWithoutBulletPoints(maxLength: number): ValidatorFn {
@@ -256,6 +260,27 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
+    this.additionalDetails = this.headerDataForm.get(
+      'additionalDetails'
+    ) as FormArray;
+    this.responseSetService
+      .listResponseSetByModuleName$('RDF')
+      .subscribe((responseSets) => {
+        responseSets.forEach((responseSet) => {
+          let value = [];
+
+          JSON.parse(responseSet.values).forEach((val) => {
+            value.push(val.title);
+          });
+          this.additionalDetailMap[responseSet.name] = [];
+          const objFormGroup = this.fb.group({
+            label: responseSet.name,
+            value: new FormArray(value.map((val) => this.fb.control(val)))
+          });
+          this.additionalDetails.push(objFormGroup);
+        });
+        this.cdrf.detectChanges();
+      });
   }
 
   handleEditorFocus(focus: boolean) {
@@ -285,12 +310,12 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
         { emitEvent: false }
       );
 
-      const additionalDetailsArray = this.data.formData.additionalDetails;
-
       const tagsValue = this.data.formData.tags;
-
-      this.updateAdditionalDetailsArray(additionalDetailsArray);
       this.patchTags(tagsValue);
+      this.data.formData.additionalDetails.forEach((additionalDetail) => {
+        this.additionalDetailMapPreSelect[additionalDetail.FIELDLABEL] =
+          additionalDetail.DEFAULTVALUE.split(',');
+      });
 
       this.headerDataForm.markAsDirty();
     }
@@ -400,7 +425,14 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     const updatedAdditionalDetails = additionalinfoArray.value.map(
       (additionalinfo) => ({
         FIELDLABEL: additionalinfo.label,
-        DEFAULTVALUE: additionalinfo.value,
+        DEFAULTVALUE: this.additionalDetailMap[additionalinfo.label].reduce(
+          (accumulatedLable, current) => {
+            return accumulatedLable === ''
+              ? current
+              : accumulatedLable + ',' + current;
+          },
+          ''
+        ),
         UIFIELDTYPE: 'LF'
       })
     );
@@ -743,70 +775,6 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     return !touched || this.errors[controlName] === null ? false : true;
   }
 
-  addAdditionalDetails() {
-    this.additionalDetails = this.headerDataForm.get(
-      'additionalDetails'
-    ) as FormArray;
-    this.additionalDetails.push(
-      this.fb.group({
-        label: [
-          '',
-          [
-            Validators.maxLength(25),
-            WhiteSpaceValidator.trimWhiteSpace,
-            WhiteSpaceValidator.whiteSpace
-          ]
-        ],
-        value: [
-          '',
-          [
-            Validators.maxLength(40),
-            WhiteSpaceValidator.trimWhiteSpace,
-            WhiteSpaceValidator.whiteSpace
-          ]
-        ]
-      })
-    );
-
-    if (this.additionalDetails) {
-      merge(
-        ...this.additionalDetails.controls.map(
-          (control: AbstractControl, index: number) =>
-            control.valueChanges.pipe(
-              map((value) => ({ rowIndex: index, value }))
-            )
-        )
-      ).subscribe((changes) => {
-        this.changedValues = changes.value;
-        if (this.changedValues.label) {
-          this.filteredLabels$ = of(
-            Object.keys(this.labels).filter(
-              (label) =>
-                label
-                  .toLowerCase()
-                  .indexOf(this.changedValues.label.toLowerCase()) === 0
-            )
-          );
-        } else {
-          this.filteredLabels$ = of([]);
-        }
-
-        if (this.changedValues.value && this.labels[this.changedValues.label]) {
-          this.filteredValues$ = of(
-            this.labels[this.changedValues.label]?.filter(
-              (value) =>
-                value
-                  .toLowerCase()
-                  .indexOf(this.changedValues.value.toLowerCase()) === 0
-            )
-          );
-        } else {
-          this.filteredValues$ = of([]);
-        }
-      });
-    }
-  }
-
   deleteAdditionalDetails(index: number) {
     const add = this.headerDataForm.get('additionalDetails') as FormArray;
     add.removeAt(index);
@@ -1004,5 +972,10 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   }
   clearAttachmentUpload() {
     this.formFileUpload.nativeElement.value = '';
+  }
+
+  closeSelect(matSelect) {}
+  onSelectionChange(event, label) {
+    this.additionalDetailMap[label] = event.value;
   }
 }
