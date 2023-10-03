@@ -84,6 +84,7 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
   public openAppSider$: Observable<any>;
   public openImportTemplateSider$: Observable<any>;
   selectedFormName: string;
+  selectedFormId = '';
   selectedFormData: any;
   allTemplates: any;
   currentFormData: any;
@@ -511,6 +512,11 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
         formDetailPublishStatus: formConfigurationStatus.publishing
       })
     );
+    this.store.dispatch(
+      BuilderConfigurationActions.updateIsFormDetailPublished({
+        isFormDetailPublished: true
+      })
+    );
     const form = {
       formMetadata: {
         ...this.formMetadata,
@@ -526,13 +532,7 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
           failureResponse: {}
         })
         .subscribe((response) => {
-          if (Object.keys(response)?.length > 0) {
-            this.store.dispatch(
-              BuilderConfigurationActions.updateIsFormDetailPublished({
-                isFormDetailPublished: true
-              })
-            );
-          } else {
+          if (Object.keys(response)?.length === 0) {
             this.store.dispatch(
               BuilderConfigurationActions.updateFormPublishStatus({
                 formDetailPublishStatus: formConfigurationStatus.draft
@@ -583,6 +583,7 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
       this.selectedFormData = result.selectedFormData;
       this.allTemplates = result.allTemplates;
       this.selectedFormName = result.selectedFormName;
+      this.selectedFormId = result?.selectedFormId;
       this.authoredFormDetailSubscription = this.authoredFormDetail$.subscribe(
         (pagesData) => {
           this.currentFormData = pagesData;

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -62,7 +63,10 @@ export class ReportConfigurationListModalComponent implements OnInit {
   }
 
   updateReportDefinitionName(subCategory: string) {
-    const moduleName = `operator-rounds`;
+    let moduleName;
+    this.router.url.includes('dashboard')
+      ? (moduleName = `dashboard/reports`)
+      : (moduleName = 'operator-rounds/reports');
     this.router.navigate([`${moduleName}/addreport`]);
     this.reportService.updateReportDefinitionName(subCategory);
   }
