@@ -166,7 +166,10 @@ export class ColumnConfigurationService {
   }
 
   setAllColumnConfigurations(moduleName, allColumnConfigurations) {
-    if (this.userColumnConfiguration[moduleName]) {
+    if (
+      this.userColumnConfiguration &&
+      this.userColumnConfiguration[moduleName]
+    ) {
       allColumnConfigurations.map((column) => (column.selected = false));
       this.userColumnConfiguration[moduleName].forEach((columnId) => {
         const columnIdx = allColumnConfigurations.findIndex(
