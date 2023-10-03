@@ -306,7 +306,7 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
           if (action === 'restore') {
             initial.data = initial.data.filter((d) => d.id !== form.id);
             this.toast.show({
-              text: 'Round restore successfully!',
+              text: 'Plan restored successfully!',
               type: 'success'
             });
             action = null;
