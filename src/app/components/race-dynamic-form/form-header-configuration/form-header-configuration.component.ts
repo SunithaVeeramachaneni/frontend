@@ -110,7 +110,8 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   deletedLabel = '';
   isDisabled = false;
   isOpen = new FormControl(false);
-
+  additionalDetailMap = {};
+  additionalDetailMapPreSelect = {};
   plantFilterInput = '';
   readonly formConfigurationStatus = formConfigurationStatus;
   additionalDetails: FormArray;
@@ -265,20 +266,20 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     this.responseSetService
       .listResponseSetByModuleName$('RDF')
       .subscribe((responseSets) => {
-        console.log('responseSets:', responseSets);
         responseSets.forEach((responseSet) => {
-          console.log('responseSet:', responseSet);
-          let value = '';
-          JSON.parse(responseSet.values).forEach((val) => {
-            value += val.title + ',';
-          });
+          let value = [];
 
+          JSON.parse(responseSet.values).forEach((val) => {
+            value.push(val.title);
+          });
+          this.additionalDetailMap[responseSet.name] = [];
           const objFormGroup = this.fb.group({
             label: responseSet.name,
-            value: 'select'
+            value: new FormArray(value.map((val) => this.fb.control(val)))
           });
           this.additionalDetails.push(objFormGroup);
         });
+        this.cdrf.detectChanges();
       });
   }
 
@@ -309,12 +310,12 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
         { emitEvent: false }
       );
 
-      const additionalDetailsArray = this.data.formData.additionalDetails;
-
       const tagsValue = this.data.formData.tags;
-
-      this.updateAdditionalDetailsArray(additionalDetailsArray);
       this.patchTags(tagsValue);
+      this.data.formData.additionalDetails.forEach((additionalDetail) => {
+        this.additionalDetailMapPreSelect[additionalDetail.FIELDLABEL] =
+          additionalDetail.DEFAULTVALUE.split(',');
+      });
 
       this.headerDataForm.markAsDirty();
     }
@@ -424,7 +425,14 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     const updatedAdditionalDetails = additionalinfoArray.value.map(
       (additionalinfo) => ({
         FIELDLABEL: additionalinfo.label,
-        DEFAULTVALUE: additionalinfo.value,
+        DEFAULTVALUE: this.additionalDetailMap[additionalinfo.label].reduce(
+          (accumulatedLable, current) => {
+            return accumulatedLable === ''
+              ? current
+              : accumulatedLable + ',' + current;
+          },
+          ''
+        ),
         UIFIELDTYPE: 'LF'
       })
     );
@@ -954,10 +962,6 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
       });
   }
   getAdditionalDetailList() {
-    console.log(
-      'addigional details:',
-      (this.headerDataForm.get('additionalDetails') as FormArray).controls
-    );
     return (this.headerDataForm.get('additionalDetails') as FormArray).controls;
   }
 
@@ -975,5 +979,10 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   }
   clearAttachmentUpload() {
     this.formFileUpload.nativeElement.value = '';
+  }
+
+  closeSelect(matSelect) {}
+  onSelectionChange(event, label) {
+    this.additionalDetailMap[label] = event.value;
   }
 }
