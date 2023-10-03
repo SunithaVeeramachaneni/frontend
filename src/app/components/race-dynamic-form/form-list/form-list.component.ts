@@ -96,11 +96,11 @@ export class FormListComponent implements OnInit, OnDestroy {
     }
   };
   filter: any = {
-    status: '',
-    authoredBy: '',
-    lastModifiedOn: '',
-    publishedBy: '',
-    plant: ''
+    formStatus: '',
+    author: '',
+    lastPublishedBy: '',
+    plant: '',
+    tags: ''
   };
   dataSource: MatTableDataSource<any>;
   forms$: Observable<any>;
@@ -190,8 +190,8 @@ export class FormListComponent implements OnInit, OnDestroy {
     this.columnConfigService.moduleColumnConfiguration$
       .pipe(takeUntil(this.onDestroy$))
       .subscribe((res) => {
-        if (res) {
-          this.columns = res;
+        if (res && res[this.RDF_MODULE_NAME]) {
+          this.columns = res[this.RDF_MODULE_NAME];
           this.configOptions.allColumns = this.columns;
           this.cdrf.detectChanges();
         }
@@ -200,7 +200,7 @@ export class FormListComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.onDestroy$))
       .subscribe((res) => {
         if (res) {
-          this.filterJson = res;
+          this.filterJson = res[this.RDF_MODULE_NAME];
           this.setFilters();
           this.cdrf.detectChanges();
         }

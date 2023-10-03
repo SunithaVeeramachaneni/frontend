@@ -241,13 +241,7 @@ export class RaceDynamicFormService {
       searchTerm: queryParams?.searchKey,
       limit: queryParams?.limit.toString(),
       isArchived: String(isArchived),
-      formStatus: filterData?.status,
-      modifiedBy: filterData?.modifiedBy,
-      createdBy: filterData?.createdBy,
-      lastModifiedOn: filterData?.lastModifiedOn,
-      plantId: filterData?.plant,
-      formType: filterData?.formType,
-      publishedBy: filterData.publishedBy
+      ...filterData
     };
     const params = new URLSearchParams({
       next: queryParams.next,

@@ -1,6 +1,7 @@
 import { Injectable, OnInit } from '@angular/core';
 import { Column } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { BehaviorSubject, Subject } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import {
   additionalDetailColumnConfig,
   metadataFlatModuleNames
@@ -20,22 +21,27 @@ import { filterConfiguration } from 'src/app/interfaces/filterConfiguration';
   providedIn: 'root'
 })
 export class ColumnConfigurationService {
-  allColumnConfigurations: columnConfiguration[] = [];
-  selectedColumnConfigurations: columnConfiguration[] = [];
+  allColumnConfigurations: { [moduleName: string]: columnConfiguration[] } = {};
+  selectedColumnConfigurations: {
+    [moduleName: string]: columnConfiguration[];
+  } = {};
   isLoadingColumns$ = new BehaviorSubject<boolean>(true);
   private userColumnConfiguration: any;
   moduleAdditionalDetailsFiltersData$ = new Subject<any>();
-  moduleColumnConfiguration$ = new BehaviorSubject<Column[] | null>(null);
-  moduleFilterConfiguration$ = new BehaviorSubject<
-    filterConfiguration[] | null
-  >(null);
+  moduleColumnConfiguration: { [moduleName: string]: Column[] } = {};
+  moduleColumnConfiguration$ = new BehaviorSubject<{
+    [moduleName: string]: Column[];
+  }>(null);
+  moduleFilterConfiguration$ = new BehaviorSubject<{
+    [moduleName: string]: filterConfiguration[];
+  }>(null);
   constructor(private rdfService: RaceDynamicFormService) {}
 
   getColumnIdFromName(columnName: string): string {
     return columnName.toLowerCase().replace(/ /g, '_');
   }
-  getAllColumnConfigurations() {
-    return this.allColumnConfigurations;
+  getAllColumnConfigurations(moduleName: string) {
+    return this.allColumnConfigurations[moduleName];
   }
   getModuleDefaultDynamicTableConfig(moduleName: string): Partial<Column>[] {
     switch (moduleName) {
@@ -93,7 +99,7 @@ export class ColumnConfigurationService {
     });
     return this.rdfService.updateConfigOptionsFromColumns(dynamicTableColumns);
   }
-  getUserColumnConfigurationByModule() {
+  getUserColumnConfiguration() {
     return this.userColumnConfiguration;
   }
   getAdditionalDetailFilterConfig(columnConfig: columnConfiguration) {
@@ -113,32 +119,37 @@ export class ColumnConfigurationService {
         return [];
     }
   }
-  getFilterConfigurationByColumnConfig(
-    selectedColumnConfig: columnConfiguration[],
-    moduleName: string
-  ) {
-    const filterConfig = [];
-    selectedColumnConfig.forEach((column) => {
-      if (column.filterable && column.default) {
-        filterConfig.push({
-          ...this.getDefaultFilterConfigByModule(moduleName).find(
-            (filter) => filter.column === column.columnId
-          )
-        });
-      }
-      if (column.filterable && !column.default) {
-        filterConfig.push(this.getAdditionalDetailFilterConfig(column));
-      }
+  getFilterConfigurationByColumnConfig(selectedColumnConfig: {
+    [moduleName: string]: columnConfiguration[];
+  }) {
+    const filterConfig = {};
+    Object.entries(selectedColumnConfig).forEach(([moduleName, columns]) => {
+      filterConfig[moduleName] = [];
+      columns.forEach((column) => {
+        if (column.filterable && column.default) {
+          filterConfig[moduleName].push({
+            ...this.getDefaultFilterConfigByModule(moduleName).find(
+              (filter) => filter.column === column.columnId
+            )
+          });
+        }
+        if (column.filterable && !column.default) {
+          filterConfig[moduleName].push(
+            this.getAdditionalDetailFilterConfig(column)
+          );
+        }
+      });
     });
     return filterConfig;
   }
   setSelectedColumnsFilterData(allAdditionalDetails: any[]) {
     const filterData = {};
-    allAdditionalDetails.forEach((additionalDetail) => {
-      filterData[this.getColumnIdFromName(additionalDetail.name)] = JSON.parse(
-        additionalDetail.values
-      ).map((value) => {
-        return value?.title;
+    Object.values(allAdditionalDetails).forEach((additionalDetails) => {
+      additionalDetails.forEach((additionalDetail) => {
+        filterData[this.getColumnIdFromName(additionalDetail.name)] =
+          JSON.parse(additionalDetail.values).map((value) => {
+            return value?.title;
+          });
       });
     });
     this.moduleAdditionalDetailsFiltersData$.next(filterData);
@@ -168,39 +179,58 @@ export class ColumnConfigurationService {
           };
       });
     }
-    this.allColumnConfigurations = allColumnConfigurations;
+    this.allColumnConfigurations[moduleName] = allColumnConfigurations;
   }
-  setUserColumnConfigByModuleName(moduleName: string) {
+  updateUserColumnConfig(moduleName: string) {
     if (
       !this.userColumnConfiguration ||
       !this.userColumnConfiguration[moduleName]
     ) {
-      this.selectedColumnConfigurations =
+      // If user Column Configuration is not set by default set the default column configuration
+      this.selectedColumnConfigurations[moduleName] =
         this.getModuleDefaultColumnConfig(moduleName);
     } else {
-      this.selectedColumnConfigurations = [];
+      // If user Column Configuration is set then set the user column configuration from all Column Configuration
+      this.selectedColumnConfigurations[moduleName] = [];
       this.userColumnConfiguration[moduleName].forEach((columnId) => {
-        const column = this.allColumnConfigurations.find(
+        const column = this.allColumnConfigurations[moduleName].find(
           (column) => column.columnId === columnId
         );
-        if (column) this.selectedColumnConfigurations.push(column);
+        if (column) this.selectedColumnConfigurations[moduleName].push(column);
       });
     }
-    this.moduleFilterConfiguration$.next(
-      this.getFilterConfigurationByColumnConfig(
-        this.selectedColumnConfigurations,
-        moduleName
-      )
-    );
-
     const dynamicTableConfiguration =
       this.rdfService.updateConfigOptionsFromColumns(
         this.getDynamicColumnsFromColumnConfig(
           this.getModuleDefaultDynamicTableConfig(moduleName),
-          this.selectedColumnConfigurations
+          this.selectedColumnConfigurations[moduleName]
         )
       );
-    this.moduleColumnConfiguration$.next(dynamicTableConfiguration);
-    this.isLoadingColumns$.next(false);
+    this.moduleColumnConfiguration[moduleName] = dynamicTableConfiguration;
+    this.moduleColumnConfiguration$.next(this.moduleColumnConfiguration);
+  }
+  setAllModuleFiltersAndColumns(data) {
+    Object.entries(data).forEach(([moduleName, additionalDetails]) => {
+      const additionalColumns = Array.isArray(additionalDetails)
+        ? additionalDetails.map((item) =>
+            this.getColumnConfigFromAdditionalDetails(item, false)
+          )
+        : [];
+      this.setAllColumnConfigurations(moduleName, [
+        ...this.getModuleDefaultColumnConfig(moduleName),
+        ...additionalColumns
+      ]);
+      this.updateUserColumnConfig(moduleName);
+      this.setSelectedColumnsFilterData(data);
+      this.updateFilterConfiguration();
+      this.isLoadingColumns$.next(false);
+    });
+  }
+  updateFilterConfiguration() {
+    this.moduleFilterConfiguration$.next(
+      this.getFilterConfigurationByColumnConfig(
+        this.selectedColumnConfigurations
+      )
+    );
   }
 }
