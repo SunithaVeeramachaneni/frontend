@@ -96,11 +96,11 @@ export class FormListComponent implements OnInit, OnDestroy {
     }
   };
   filter: any = {
-    status: '',
-    authoredBy: '',
-    lastModifiedOn: '',
-    publishedBy: '',
-    plant: ''
+    formStatus: '',
+    author: '',
+    lastPublishedBy: '',
+    plant: '',
+    tags: ''
   };
   dataSource: MatTableDataSource<any>;
   forms$: Observable<any>;
@@ -111,6 +111,7 @@ export class FormListComponent implements OnInit, OnDestroy {
     });
   skip = 0;
   limit = graphQLDefaultLimit;
+  tags = new Set();
   searchForm: FormControl;
   addCopyFormCount = false;
   formsListCount$: Observable<number>;
@@ -189,8 +190,8 @@ export class FormListComponent implements OnInit, OnDestroy {
     this.columnConfigService.moduleColumnConfiguration$
       .pipe(takeUntil(this.onDestroy$))
       .subscribe((res) => {
-        if (res) {
-          this.columns = res;
+        if (res && res[this.RDF_MODULE_NAME]) {
+          this.columns = res[this.RDF_MODULE_NAME];
           this.configOptions.allColumns = this.columns;
           this.cdrf.detectChanges();
         }
@@ -199,7 +200,7 @@ export class FormListComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.onDestroy$))
       .subscribe((res) => {
         if (res) {
-          this.filterJson = res;
+          this.filterJson = res[this.RDF_MODULE_NAME];
           this.setFilters();
           this.cdrf.detectChanges();
         }
@@ -396,6 +397,7 @@ export class FormListComponent implements OnInit, OnDestroy {
         }),
         map((data) =>
           data.map((item) => {
+            item?.tags?.forEach((tag) => this.tags.add(tag));
             if (item.plantId) {
               item = {
                 ...item,
@@ -568,6 +570,8 @@ export class FormListComponent implements OnInit, OnDestroy {
         item.items = this.plants;
       } else if (item.column === 'author') {
         item.items = this.createdBy;
+      } else if (item.column === 'tags') {
+        item.items = this.tags;
       } else if (!item?.items?.length) {
         item.items = this.additionalDetailFilterData[item.column]
           ? this.additionalDetailFilterData[item.column]

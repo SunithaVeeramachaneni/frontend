@@ -91,7 +91,7 @@ export class ImportTemplateListComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.onDestroy$))
       .subscribe((res) => {
         if (res) {
-          this.columns = res;
+          this.columns = res[this.RDF_TEMPLATE_MODULE_NAME];
           this.columns.map((dynamicColumnConfiguration) => {
             if (dynamicColumnConfiguration.id === 'displayFormsUsageCount') {
               dynamicColumnConfiguration.titleStyle = '';
@@ -102,7 +102,7 @@ export class ImportTemplateListComponent implements OnInit, OnDestroy {
         }
       });
 
-    this.fetchResponseSetByModuleName().subscribe();
+    // this.fetchResponseSetByModuleName().subscribe();
     this.searchTemplates = new FormControl('');
 
     const filterData = {
@@ -172,33 +172,33 @@ export class ImportTemplateListComponent implements OnInit, OnDestroy {
       default:
     }
   };
-  fetchResponseSetByModuleName = () => {
-    return this.responseSetService
-      .fetchResponseSetByModuleName$(this.RDF_TEMPLATE_MODULE_NAME)
-      .pipe(
-        takeUntil(this.onDestroy$),
-        tap((data) => {
-          this.additionalColumns = data?.map((item) =>
-            this.columnConfigService.getColumnConfigFromAdditionalDetails(
-              item,
-              false
-            )
-          );
-          this.columnConfigService.setAllColumnConfigurations(
-            this.RDF_TEMPLATE_MODULE_NAME,
-            [
-              ...this.columnConfigService.getModuleDefaultColumnConfig(
-                this.RDF_TEMPLATE_MODULE_NAME
-              ),
-              ...this.additionalColumns
-            ]
-          );
-          this.columnConfigService.setUserColumnConfigByModuleName(
-            this.RDF_TEMPLATE_MODULE_NAME
-          );
-        })
-      );
-  };
+  // fetchResponseSetByModuleName = () => {
+  //   return this.responseSetService
+  //     .fetchResponseSetByModuleName$(this.RDF_TEMPLATE_MODULE_NAME)
+  //     .pipe(
+  //       takeUntil(this.onDestroy$),
+  //       tap((data) => {
+  //         this.additionalColumns = data?.map((item) =>
+  //           this.columnConfigService.getColumnConfigFromAdditionalDetails(
+  //             item,
+  //             false
+  //           )
+  //         );
+  //         this.columnConfigService.setAllColumnConfigurations(
+  //           this.RDF_TEMPLATE_MODULE_NAME,
+  //           [
+  //             ...this.columnConfigService.getModuleDefaultColumnConfig(
+  //               this.RDF_TEMPLATE_MODULE_NAME
+  //             ),
+  //             ...this.additionalColumns
+  //           ]
+  //         );
+  //         this.columnConfigService.setUserColumnConfigByModuleName(
+  //           this.RDF_TEMPLATE_MODULE_NAME
+  //         );
+  //       })
+  //     );
+  // };
 
   ngOnDestroy(): void {
     this.onDestroy$.next();
