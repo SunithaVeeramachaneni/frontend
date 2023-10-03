@@ -52,7 +52,8 @@ import { State, getFormMetadata } from 'src/app/forms/state';
 import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
 import {
   DEFAULT_PDF_BUILDER_CONFIG,
-  formConfigurationStatus
+  formConfigurationStatus,
+  raceDynamicForms
 } from 'src/app/app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
@@ -78,6 +79,8 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   tagsInput: ElementRef<HTMLInputElement>;
   @ViewChild('auto', { static: false }) matAutocomplete: MatAutocomplete;
   @ViewChild(MatAutocompleteTrigger) auto: MatAutocompleteTrigger;
+  @ViewChild('formFileUpload', { static: false })
+  formFileUpload: ElementRef;
   @Output() gotoNextStep = new EventEmitter<void>();
   @Input() data;
   @Input() formData;
@@ -87,7 +90,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   removable = true;
   addOnBlur = true;
   separatorKeysCodes: number[] = [ENTER, COMMA];
-  tagsCtrl = new FormControl();
+  tagsCtrl: FormControl;
   filteredTags: Observable<string[]>;
   tags: string[] = [];
   labels: any = {};
@@ -133,22 +136,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     public dialog: MatDialog,
     private imageCompress: NgxImageCompressService,
     private router: Router
-  ) {
-    this.rdfService.getDataSetsByType$('tags').subscribe((tags) => {
-      if (tags && tags.length) {
-        this.allTags = tags[0].values;
-        this.originalTags = JSON.parse(JSON.stringify(tags[0].values));
-        this.tagsCtrl.setValue('');
-        this.cdrf.detectChanges();
-      }
-    });
-    this.filteredTags = this.tagsCtrl.valueChanges.pipe(
-      startWith(null),
-      map((tag: string | null) =>
-        tag ? this.filter(tag) : this.allTags.slice()
-      )
-    );
-  }
+  ) {}
 
   maxLengthWithoutBulletPoints(maxLength: number): ValidatorFn {
     const htmlTagsRegex = /<[^>]+>/g;
@@ -162,6 +150,25 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.tagsCtrl = new FormControl('', [
+      Validators.maxLength(25),
+      WhiteSpaceValidator.whiteSpace,
+      WhiteSpaceValidator.trimWhiteSpace
+    ]);
+    this.rdfService.getDataSetsByType$('formHeaderTags').subscribe((tags) => {
+      if (tags && tags.length) {
+        this.allTags = tags[0].values;
+        this.originalTags = JSON.parse(JSON.stringify(tags[0].values));
+        this.tagsCtrl.patchValue('');
+        this.cdrf.detectChanges();
+      }
+    });
+    this.filteredTags = this.tagsCtrl.valueChanges.pipe(
+      startWith(null),
+      map((tag: string | null) =>
+        tag ? this.filter(tag) : this.allTags.slice()
+      )
+    );
     this.headerDataForm = this.fb.group({
       name: [
         '',
@@ -177,7 +184,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
       isPublic: [false],
       isArchived: [false],
       formStatus: [formConfigurationStatus.draft],
-      formType: [formConfigurationStatus.standalone],
+      formType: [this.data?.formType],
       tags: [this.tags],
       plantId: ['', Validators.required],
       additionalDetails: this.fb.array([]),
@@ -212,8 +219,14 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
       .pipe(map((data) => (Array.isArray(data) ? data : [])))
       .subscribe((attachments) => {
         attachments?.forEach((att) => {
-          this.filteredMediaType.mediaType.push(att.attachment);
-          this.filteredMediaTypeIds.mediaIds.push(att.id);
+          this.filteredMediaType.mediaType = [
+            ...this.filteredMediaType.mediaType,
+            att.attachment
+          ];
+          this.filteredMediaTypeIds.mediaIds = [
+            ...this.filteredMediaTypeIds.mediaIds,
+            att.id
+          ];
         });
         this.cdrf.detectChanges();
       });
@@ -265,7 +278,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
         {
           name: this.data.formData.name,
           description: this.data.formData.description,
-          formType: this.data.formData.formType,
+          formType: this.data.formType,
           formStatus: this.data.formData.formStatus,
           instructions: this.data.formData.instructions
         },
@@ -324,18 +337,20 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   }
 
   add(event: MatChipInputEvent): void {
-    const input = event.input;
-    const value = event.value;
+    if (!this.processValidationErrorTags()) {
+      const input = event.input;
+      const value = event.value || '';
 
-    if ((value || '').trim()) {
-      this.tags.push(value.trim());
+      if (value.trim()) {
+        this.tags = [...this.tags, value.trim()];
+      }
+
+      if (input) {
+        input.value = '';
+      }
+
+      this.tagsCtrl.patchValue('');
     }
-
-    if (input) {
-      input.value = '';
-    }
-
-    this.tagsCtrl.setValue(null);
   }
   openAutoComplete() {
     this.auto.openPanel();
@@ -346,7 +361,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     const index = this.tags.indexOf(tag);
 
     if (index >= 0) {
-      this.tags.splice(index, 1);
+      this.tags = [...this.tags.slice(0, index), ...this.tags.slice(index + 1)];
     }
     this.filteredTags = of(
       this.tagsCtrl.value
@@ -364,7 +379,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
 
     this.tags = [...this.tags, event.option.viewValue];
     this.tagsInput.nativeElement.value = '';
-    this.tagsCtrl.setValue(null);
+    this.tagsCtrl.patchValue('');
     this.headerDataForm.patchValue({
       ...this.headerDataForm.value,
       tags: this.tags
@@ -405,7 +420,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     });
     if (newTags.length) {
       const dataSet = {
-        type: 'tags',
+        type: 'formHeaderTags',
         values: newTags
       };
       this.rdfService.createTags$(dataSet).subscribe((response) => {
@@ -418,12 +433,18 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     );
 
     if (this.headerDataForm.valid) {
+      this.store.dispatch(
+        BuilderConfigurationActions.updateModuleName({
+          moduleName: raceDynamicForms
+        })
+      );
       const userName = this.loginService.getLoggedInUserName();
       if (this.formData.formExists === false) {
         this.store.dispatch(
           BuilderConfigurationActions.addFormMetadata({
             formMetadata: {
               ...this.headerDataForm.value,
+              tags: this.tags,
               additionalDetails: updatedAdditionalDetails,
               plant: plant.name
             },
@@ -440,6 +461,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
           BuilderConfigurationActions.createForm({
             formMetadata: {
               ...this.headerDataForm.value,
+              tags: this.tags,
               additionalDetails: updatedAdditionalDetails,
               pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG,
               author: userName,
@@ -448,31 +470,26 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
           })
         );
         this.router.navigate(['/forms/create']);
-      } else if (this.formData.formExists === true) {
+      } else if (this.formData.formExists === true && this.hasFormChanges) {
         this.store.dispatch(
           BuilderConfigurationActions.updateFormMetadata({
             formMetadata: {
               ...this.headerDataForm.value,
+              tags: this.tags,
               id: this.formData.formMetadata.id,
               additionalDetails: updatedAdditionalDetails,
               plant: plant?.name
             },
-            formStatus: this.hasFormChanges
-              ? formConfigurationStatus.draft
-              : this.headerDataForm.value.formStatus,
+            formStatus: formConfigurationStatus.draft,
             formDetailPublishStatus: formConfigurationStatus.draft,
             formSaveStatus: formConfigurationStatus.saving
-          })
-        );
-        this.store.dispatch(
-          BuilderConfigurationActions.updateCreateOrEditForm({
-            createOrEditForm: true
           })
         );
         this.store.dispatch(
           BuilderConfigurationActions.updateForm({
             formMetadata: {
               ...this.headerDataForm.value,
+              tags: this.tags,
               id: this.formData.formMetadata.id,
               additionalDetails: updatedAdditionalDetails,
               pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG
@@ -520,6 +537,21 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
       });
     }
     return !touched || this.errors[controlName] === null ? false : true;
+  }
+
+  processValidationErrorTags(): boolean {
+    const errors = this.tagsCtrl.errors;
+
+    this.errors.tagsCtrl = null;
+    if (errors) {
+      Object.keys(errors).forEach((messageKey) => {
+        this.errors.tagsCtrl = {
+          name: messageKey,
+          length: errors[messageKey]?.requiredLength
+        };
+      });
+    }
+    return this.errors.tagsCtrl === null ? false : true;
   }
 
   formFileUploadHandler = (event: Event) => {
@@ -608,6 +640,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
         }
       };
     }
+    this.clearAttachmentUpload();
   };
 
   async resizeImage(base64result: string): Promise<string> {
@@ -781,7 +814,11 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
 
   storeDetails(i) {
     this.operatorRoundService
-      .createAdditionalDetails$({ ...this.changedValues })
+      .createAdditionalDetails$({
+        ...this.changedValues,
+        type: 'forms',
+        level: 'header'
+      })
       .subscribe((response) => {
         if (response?.label) {
           this.toastService.show({
@@ -842,7 +879,10 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
 
   retrieveDetails() {
     this.operatorRoundService
-      .getAdditionalDetails$()
+      .getAdditionalDetails$({
+        type: 'forms',
+        level: 'header'
+      })
       .subscribe((details: any[]) => {
         this.labels = this.convertArrayToObject(details);
         details.forEach((data) => {
@@ -961,5 +1001,8 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     this.rdfService.pdfMapping$.next([]);
     this.destroy$.next();
     this.destroy$.complete();
+  }
+  clearAttachmentUpload() {
+    this.formFileUpload.nativeElement.value = '';
   }
 }

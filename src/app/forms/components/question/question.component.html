@@ -151,6 +151,7 @@
                 class="addLogicBtn"
                 *ngIf="
                   !isAskQuestion &&
+                  questionForm.get('fieldType').value !== 'USR' &&
                   addLogicNotAppliedFields.indexOf(
                     questionForm.get('fieldType').value
                   ) < 0
@@ -317,7 +318,8 @@
                 *ngIf="
                   (questionForm.get('fieldType').value === 'NF' ||
                     questionForm.get('fieldType').value === 'RT') &&
-                  !isEmbeddedForm
+                  !isEmbeddedForm &&
+                  moduleName === operatorRounds
                 "
               >
                 <mat-checkbox
@@ -379,25 +381,11 @@
               </span>
 
               <span
-                *ngIf="
-                  questionForm.get('fieldType').value === 'LF' ||
-                  (isEmbeddedForm &&
-                    questionForm.get('fieldType').value === 'HL')
-                "
+                *ngIf="questionForm.get('fieldType').value === 'LF'"
                 class="action"
-                [ngClass]="{
-                  'width-100':
-                    isEmbeddedForm &&
-                    questionForm.get('fieldType').value === 'HL'
-                }"
               >
                 <app-read-only
                   [question]="questionForm"
-                  [ngClass]="{
-                    'hyperlink-long':
-                      isEmbeddedForm &&
-                      questionForm.get('fieldType').value === 'HL'
-                  }"
                   [translateValue]="
                     questionForm.get('fieldType').value === 'LF'
                       ? 'defaultValue'
@@ -430,10 +418,7 @@
               </span>
 
               <span
-                *ngIf="
-                  questionForm.get('fieldType').value === 'HL' &&
-                  !isEmbeddedForm
-                "
+                *ngIf="questionForm.get('fieldType').value === 'HL'"
                 class="action"
               >
                 <button
@@ -476,6 +461,11 @@
                 [question]="questionForm.value"
                 [formId]="formId"
                 (setSliderValues)="questionForm.get('value').setValue($event)"
+                (setAdditionalDetails)="
+                  questionForm.get('additionalDetails').setValue($event)
+                "
+                [tagDetailType]="tagDetailType"
+                [attributeDetailType]="attributeDetailType"
               ></app-response-type-side-drawer>
 
               <span
@@ -510,6 +500,17 @@
                   (checkedMultiple)="questionForm.get('multi').setValue($event)"
                 ></app-drop-down>
               </span>
+              <span *ngIf="!isEmbeddedForm" class="action"
+                ><label translate="additionalDetails"></label>&nbsp;
+                <span
+                  class="additionalDetailsBtn"
+                  (click)="additionalDetailsOpen()"
+                >
+                  <span class="additionalDetailsValues">{{
+                    additionalDetailsText
+                  }}</span>
+                </span>
+              </span>
             </div>
             <div class="addLogicRow" *ngIf="logics.length">
               <app-add-logic
@@ -524,6 +525,8 @@
                 [isEmbeddedForm]="isEmbeddedForm"
                 [questionName]="questionForm.get('name').value"
                 [isPreviewActive]="isPreviewActive"
+                [tagDetailType]="tagDetailType"
+                [attributeDetailType]="attributeDetailType"
               ></app-add-logic>
             </div>
           </div>

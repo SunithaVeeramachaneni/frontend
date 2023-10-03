@@ -67,6 +67,8 @@ export class BuilderComponent implements OnInit, OnDestroy {
   get selectedNode(): any {
     return this._selectedNode;
   }
+
+  @Input() mode;
   @Input() counter;
   @Input() isPreviewActive;
   @Input() moduleName;
@@ -109,9 +111,24 @@ export class BuilderComponent implements OnInit, OnDestroy {
   importedSectionsByTemplateId$: Observable<any>;
   getFormConfigurationCounter$: Observable<any>;
   updateFormTemplateUsageByFormIdSubscription: Subscription;
+  get tagDetailType() {
+    return this._tagDetailType;
+  }
+  set tagDetailType(type) {
+    this._tagDetailType = type;
+  }
+
+  get attributeDetailType() {
+    return this._attributeDetailType;
+  }
+  set attributeDetailType(type) {
+    this._attributeDetailType = type;
+  }
 
   readonly formConfigurationStatus = formConfigurationStatus;
 
+  private _attributeDetailType = '';
+  private _tagDetailType = '';
   private _selectedNode: any;
 
   constructor(
@@ -188,7 +205,29 @@ export class BuilderComponent implements OnInit, OnDestroy {
       );
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.setTagType();
+  }
+
+  setTagType() {
+    if (this.moduleName === 'forms') {
+      if (this.isTemplate) {
+        this.attributeDetailType = 'formTemplates';
+        this.tagDetailType = 'formTemplateDetailTags';
+      } else {
+        this.attributeDetailType = 'forms';
+        this.tagDetailType = 'formDetailTags';
+      }
+    } else if (this.moduleName === 'rounds') {
+      if (this.isTemplate) {
+        this.attributeDetailType = 'roundTemplates';
+        this.tagDetailType = 'roundTemplateDetailTags';
+      } else {
+        this.attributeDetailType = 'rounds';
+        this.tagDetailType = 'roundDetailTags';
+      }
+    }
+  }
 
   addPage() {
     this.isEmptyPlan = false;

@@ -45,6 +45,7 @@ import { RaceDynamicFormService } from '../services/rdf.service';
 import { EditTemplateNameModalComponent } from '../edit-template-name-modal/edit-template-name-modal.component';
 import { TemplateAffectedFormsModalComponent } from './template-affected-forms-modal/template-affected-forms-modal.component';
 import { FormUpdateProgressService } from 'src/app/forms/services/form-update-progress.service';
+import { FormService } from 'src/app/forms/services/form.service';
 
 @Component({
   selector: 'app-template-detail-configuration',
@@ -55,6 +56,7 @@ import { FormUpdateProgressService } from 'src/app/forms/services/form-update-pr
 export class TemplateDetailConfigurationComponent implements OnInit, OnDestroy {
   @ViewChild('name') formName: ElementRef;
   @Output() markReadyEvent = new EventEmitter<void>();
+  collapseAllSections: FormControl = new FormControl(false);
   selectedNode = { id: null };
   formConfiguration: FormGroup;
   formMetadata$: Observable<FormMetadata>;
@@ -85,10 +87,20 @@ export class TemplateDetailConfigurationComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private dialog: MatDialog,
     private formProgressService: FormUpdateProgressService,
+    private formService: FormService,
     private readonly raceDynamicFormService: RaceDynamicFormService
   ) {}
 
   ngOnInit(): void {
+    this.raceDynamicFormService
+      .getDataSetsByType$('formTemplateDetailTags')
+      .subscribe((tags) => {
+        if (tags && tags.length)
+          this.formService.setDetailLevelTagsState(tags[0].values);
+      });
+
+    this.retrieveDetails();
+
     this.formConfiguration = this.fb.group({
       formLogo: [''],
       name: new FormControl(
@@ -116,7 +128,7 @@ export class TemplateDetailConfigurationComponent implements OnInit, OnDestroy {
       // waiting for the store to catchup before filtering
       setTimeout(() => {
         this.allTemplates = window.history.state.allTemplates.filter(
-          (item) => item.id !== this.formDetails.formMetadata.id
+          (item) => item.id !== this.formDetails?.formMetadata?.id
         );
       }, 1000);
     } else {
@@ -255,6 +267,7 @@ export class TemplateDetailConfigurationComponent implements OnInit, OnDestroy {
           formSaveStatus,
           skipAuthoredDetail
         } = formDetails;
+        this.setCollapseAllSectionsState(pages);
 
         if (skipAuthoredDetail) {
           return;
@@ -300,9 +313,7 @@ export class TemplateDetailConfigurationComponent implements OnInit, OnDestroy {
       tap((createOrEditForm) => {
         if (!createOrEditForm) {
           this.formProgressService.formUpdateDeletePayloadBuffer$
-            .pipe(
-              takeUntil(this.onDestroy$)
-            )
+            .pipe(takeUntil(this.onDestroy$))
             .subscribe((data) => {
               this.formProgressService.formUpdateDeletePayload$.next(data);
             });
@@ -347,6 +358,41 @@ export class TemplateDetailConfigurationComponent implements OnInit, OnDestroy {
         });
       }
     });
+    this.collapseAllSections.valueChanges.subscribe((isCollapse) => {
+      this.store.dispatch(
+        BuilderConfigurationActions.updateAllSectionState({
+          isCollapse,
+          subFormId: this.selectedNode.id
+        })
+      );
+    });
+  }
+
+  retrieveDetails() {
+    this.raceDynamicFormService
+      .getAdditionalDetails$({
+        type: 'formTemplates',
+        level: 'detail'
+      })
+      .subscribe((details: any[]) => {
+        const labels = this.convertArrayToObject(details);
+        const attributesIdMap = {};
+        details.forEach((data) => {
+          attributesIdMap[data.label] = data.id;
+        });
+        this.formService.setDetailLevelAttributesState({
+          labels,
+          attributesIdMap
+        });
+      });
+  }
+
+  convertArrayToObject(details) {
+    const convertedDetail = {};
+    details.map((obj) => {
+      convertedDetail[obj.label] = obj.values;
+    });
+    return convertedDetail;
   }
 
   editFormName() {
@@ -411,5 +457,27 @@ export class TemplateDetailConfigurationComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  private setCollapseAllSectionsState(pages = []) {
+    if (pages?.length === 0) {
+      this.collapseAllSections.setValue(false, {
+        emitEvent: false
+      });
+      return;
+    }
+    let allSections = 0;
+    let closedSections = 0;
+    if (pages?.length > 0) {
+      pages.forEach((page) => {
+        allSections += page?.sections?.length;
+        closedSections +=
+          page?.sections?.filter((section) => !section?.isOpen)?.length || 0;
+      });
+    }
+    const allCollapse: boolean = closedSections === allSections ? true : false;
+    this.collapseAllSections.setValue(allCollapse, {
+      emitEvent: false
+    });
   }
 }

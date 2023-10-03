@@ -15,7 +15,9 @@
     color="primary"
     class="next-btn"
     (click)="next()"
-    [disabled]="headerDataForm.invalid || headerDataForm.pristine"
+    [disabled]="
+      headerDataForm.invalid || headerDataForm.pristine || tagsCtrl.invalid
+    "
     translate="nextBtn"
   ></button>
 </div>
@@ -35,49 +37,16 @@
           class="sub-heading"
           translate="setTemplateTypeHeading"
         ></p>
-        <div class="formtype-flex">
-          <mat-radio-group class="dis-flex" formControlName="formType">
-            <div class="formtype-style">
-              <mat-radio-button
-                id="templateConfigurationModelStandaloneType"
-                class="radio-btns"
-                [value]="formConfigurationStatus.standalone"
-                [disabled]="this.templateData.templateExists"
-              ></mat-radio-button>
-              <span
-                class="radio-btn-text"
-                id="templateConfigurationModelStandalone"
-                translate="standalone"
-              >
-              </span>
-              <p
-                class="radio-sub-text"
-                id="templateConfigurationModelStandaloneText"
-                translate="standaloneSubText"
-              ></p>
-            </div>
-            <div class="formtype-style">
-              <mat-radio-button
-                id="templateConfigurationModelStandaloneRadio"
-                class="radio-btns"
-                [value]="formConfigurationStatus.embedded"
-                [disabled]="this.templateData.templateExists"
-              ></mat-radio-button>
-              <span
-                class="radio-btn-text"
-                id="templateConfigurationModelEmbedded"
-                translate="embedded"
-              >
-              </span
-              ><br />
-              <p
-                class="radio-sub-text"
-                id="templateConfigurationModelEmbeddedText"
-                translate="embeddedSubText"
-              ></p>
-            </div>
-          </mat-radio-group>
-        </div>
+
+        <p class="formtype-formfield">
+          {{
+            (this.headerDataForm.get('formType').value === 'Embedded'
+              ? 'createEmbedded'
+              : 'createStandalone'
+            ) | translate
+          }}
+        </p>
+
         <div class="form-name">
           <p
             id="templateConfigurationModelName"
@@ -161,11 +130,25 @@
                 </mat-option>
               </mat-autocomplete>
             </mat-form-field>
+            <mat-error
+              id="tagsError"
+              *ngIf="processValidationErrorTags()"
+              class="m-5"
+            >
+              {{
+                errors.tagsCtrl.name
+                  | translate
+                    : {
+                        name: 'tags' | translate,
+                        length: errors.tagsCtrl.length
+                      }
+              }}
+            </mat-error>
           </div>
 
           <div class="additional-details">
             <p
-              translate="additionalDetails"
+              translate="additionalDetailsHeading"
               id="additionalDetailsHeading"
               class="additional-details-text"
             ></p>

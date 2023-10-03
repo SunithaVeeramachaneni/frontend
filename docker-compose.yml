@@ -432,8 +432,50 @@ services:
       - ENCRYPTION_KEY=${ENCRYPTION_KEY}
       - RABBITMQ_URL=${RABBITMQ_URL}
       - LOGGING_QUEUE_NAME=${LOGGING_QUEUE_NAME}
+      - DATASET_DB_QUEUE=${DATASET_DB_QUEUE}
     ports:
       - '8010:8010'
+    depends_on:
+      - mysql
+      - redis-cluster
+      - rabbitmq
+    networks:
+      - app-network
+
+  data-integration-service:
+    container_name: data-integration-service-local
+    image: data-integration-service-local
+    build:
+      context: ${BACKEND_HOME}/DataIntegrationService
+      dockerfile: .docker/data-integration-service.dockerfile
+      args:
+        - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
+    volumes:
+      - ${BACKEND_HOME}/DataIntegrationService:/usr/src/data-integration-service
+      - /usr/src/data-integration-service/node_modules
+      - ${SHARED_PACKAGES_HOME}/nodejs/authentication-factory:/usr/src/data-integration-service/authentication-factory
+      - ${SHARED_PACKAGES_HOME}/nodejs/authentication-factory:/usr/src/authentication-factory
+      - authentication-factory-modules:/usr/src/authentication-factory/node_modules
+    environment:
+      - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
+      - NODE_ENV=${APP_ENV}
+      - NODE_CONFIG_ENV=${DEPLOYMENT_ENV}
+      - MYSQL_HOST_NAME=mysql-local
+      - MYSQL_PORT=3306
+      - MYSQL_USER_NAME=${MYSQL_USER_NAME}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - CATALOG_TABLE_NAME=${CATALOG_TABLE_NAME}
+      - REDIS_NODES=redis-node-1:6373 redis-node-2:6374 redis-node-3:6375 redis-node-4:6376 redis-node-5:6377 redis-node-6:6378
+      - REDIS_HOST_NAME=${REDIS_HOST_NAME}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_TTL=${REDIS_TTL}
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+      - RABBITMQ_URL=${RABBITMQ_URL}
+      - LOGGING_QUEUE_NAME=${LOGGING_QUEUE_NAME}
+      - DATASET_DB_QUEUE=${DATASET_DB_QUEUE}
+    ports:
+      - '8011:8011'
     depends_on:
       - mysql
       - redis-cluster

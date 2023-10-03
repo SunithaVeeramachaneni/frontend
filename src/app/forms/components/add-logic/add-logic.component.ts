@@ -36,6 +36,7 @@ import { SelectQuestionsDialogComponent } from './select-questions-dialog/select
 import { RaiseNotificationDailogComponent } from './raise-notification-dialog/raise-notification-dialog.component';
 import { NumberRangeMetadata } from 'src/app/interfaces';
 import { CommonService } from 'src/app/shared/services/common.service';
+import { HideSectionsDialogComponent } from './hide-sections-dialog/hide-sections-dialog.component';
 
 @Component({
   selector: 'app-add-logic',
@@ -50,6 +51,8 @@ export class AddLogicComponent implements OnInit, OnDestroy {
   @Input() isTemplate: boolean;
   @Output() logicEvent: EventEmitter<any> = new EventEmitter<any>();
   @Input() isPreviewActive;
+  @Input() tagDetailType: string;
+  @Input() attributeDetailType: string;
 
   @Input() set questionId(id: string) {
     this._questionId = id;
@@ -167,6 +170,7 @@ export class AddLogicComponent implements OnInit, OnDestroy {
                 this.pageWiseLogicSectionAskEvidenceQuestions[this.pageIndex][
                   logic.id
                 ];
+              const hiddenSections = logic.hideSections || [];
 
               let mandateQuestionsFormArray = [];
               if (mandateQuestions && mandateQuestions.length) {
@@ -223,6 +227,13 @@ export class AddLogicComponent implements OnInit, OnDestroy {
                 );
               }
 
+              let hideSectionsFormArray = [];
+              if (hiddenSections && hiddenSections.length) {
+                hideSectionsFormArray = hiddenSections.map((hs) =>
+                  this.fb.control(hs)
+                );
+              }
+
               return this.fb.group({
                 id: logic.id || '',
                 questionId: logic.questionId || '',
@@ -242,7 +253,8 @@ export class AddLogicComponent implements OnInit, OnDestroy {
                 questions: this.fb.array(askQuestionsFormArray),
                 evidenceQuestions: this.fb.array(askEvidenceQuestionsFormArray),
                 mandateQuestions: this.fb.array(mandateQuestionsFormArray),
-                hideQuestions: this.fb.array(hideQuestionsFormArray)
+                hideQuestions: this.fb.array(hideQuestionsFormArray),
+                hideSections: this.fb.array(hideSectionsFormArray)
               });
             }) || [];
           this.logicsForm.setControl('logics', this.fb.array(logicsFormArray));
@@ -449,6 +461,37 @@ export class AddLogicComponent implements OnInit, OnDestroy {
       });
     });
   }
+
+  openHideSectionsDialog(logic, index) {
+    const dialogRef = this.dialog.open(HideSectionsDialogComponent, {
+      restoreFocus: false,
+      disableClose: true,
+      hasBackdrop: true,
+      width: '60%',
+      data: {
+        logic,
+        pageIndex: this.pageIndex,
+        questionId: this.questionId,
+        isEmbeddedForm: this.isEmbeddedForm,
+        subFormId: this.selectedNodeId,
+        sectionId: this.sectionId
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (!result) return;
+      logic.hideSections = result.selectedSections;
+      logic.action = 'hide_sections';
+      this.logicEvent.emit({
+        questionId: this.questionId,
+        pageIndex: this.pageIndex,
+        logicIndex: index,
+        type: 'update',
+        logic
+      });
+    });
+  }
+
   triggerMenuAction(action, index, logic) {
     this.logicEvent.emit({
       questionId: this.questionId,

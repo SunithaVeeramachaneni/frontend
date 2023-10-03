@@ -16,6 +16,7 @@ import { Step } from 'src/app/interfaces/stepper';
 })
 export class StepsHeaderComponent implements OnInit {
   @Input() steps: Step[];
+  @Input() moduleName: string;
   @Input() currentStep = 0;
   @Input() showGoBack?: boolean;
   @Output() gotoStep = new EventEmitter<number>();

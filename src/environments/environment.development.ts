@@ -9,6 +9,7 @@ export const environment = {
   rdfApiUrl: '/rdfapi/',
   masterConfigApiUrl: '/masterconfigapi/',
   operatorRoundsApiUrl: '/operatorroundsapi/',
+  integrationsApiUrl: '/integrationsapi/',
   s3BaseUrl: 'https://innovwi.s3.ap-south-1.amazonaws.com/',
   requestTimeout: 60000 * 15,
   undoRedoOffset: 5,

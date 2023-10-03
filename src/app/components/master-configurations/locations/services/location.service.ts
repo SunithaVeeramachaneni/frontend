@@ -26,20 +26,16 @@ export class LocationService {
 
   constructor(private _appService: AppService) {}
 
-  fetchAllLocations$ = (plantsID = null) => {
-    const params: URLSearchParams = new URLSearchParams();
-    if (plantsID) {
-      const locationsListFilter = {
-        plantsID: {
-          eq: plantsID
-        }
-      };
-      params.set('filter', JSON.stringify(locationsListFilter));
+  fetchAllLocations$ = (plantId = null) => {
+    let queryParamaters = {};
+    if (plantId) {
+      queryParamaters = { ...queryParamaters, plantId };
     }
     return this._appService._getResp(
       environment.masterConfigApiUrl,
-      'location/listAll?' + params.toString(),
-      { displayToast: true, failureResponse: {} }
+      'location/listAll',
+      { displayToast: true, failureResponse: {} },
+      queryParamaters
     );
   };
 
@@ -47,39 +43,25 @@ export class LocationService {
     queryParams: {
       next?: string;
       limit: number;
-      searchKey: string;
+      searchTerm: string;
       fetchType: string;
     },
-    filterData: any = null
+    filterData: any = {}
   ) {
     if (
       ['load', 'search'].includes(queryParams.fetchType) ||
       (['infiniteScroll'].includes(queryParams.fetchType) &&
         queryParams.next !== null)
     ) {
-      const locationsListFilter = JSON.stringify(
-        Object.fromEntries(
-          Object.entries({
-            searchTerm: {
-              contains: encodeURIComponent(
-                queryParams.searchKey.toLocaleLowerCase().trim()
-              )
-            },
-            plantsID: { eq: filterData.plant }
-          }).filter(([_, v]) => Object.values(v).some((x) => x !== ''))
-        )
-      );
+      const { plant: plantId } = filterData;
       return this._appService
         ._getResp(
           environment.masterConfigApiUrl,
           'location/list',
           { displayToast: true, failureResponse: {} },
           {
-            limit: `${queryParams.limit}`,
-            next: queryParams.next,
-            ...(Object.keys(locationsListFilter).length > 0 && {
-              filter: locationsListFilter
-            })
+            ...queryParams,
+            plantId
           }
         )
         .pipe(map((res) => this.formatGraphQLocationResponse(res)));

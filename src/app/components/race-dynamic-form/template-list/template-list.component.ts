@@ -378,22 +378,21 @@ export class TemplateListComponent implements OnInit, OnDestroy {
     this.raceDynamicFormService.getTemplateFilter().subscribe((res) => {
       this.filterJson = res;
 
-      const uniqueLastPublishedBy = Array.from(
+      this.lastPublishedBy = Array.from(
         new Set(
           this.allTemplates
             .map((item: any) => item.lastPublishedBy)
             .filter((item) => item != null)
         )
-      );
-      this.lastPublishedBy = uniqueLastPublishedBy;
-      const uniqueCreatedBy = Array.from(
+      ).sort();
+
+      this.createdBy = Array.from(
         new Set(
           this.allTemplates
             .map((item: any) => item.author)
             .filter((item) => item != null)
         )
-      );
-      this.createdBy = uniqueCreatedBy;
+      ).sort();
 
       this.filterJson.forEach((item) => {
         if (item.column === 'status') {
@@ -588,7 +587,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
     });
   }
 
-  openCreateTemplateModal() {
+  openCreateTemplateModal(formType) {
     this.store.dispatch(
       updateCreateOrEditForm({
         createOrEditForm: true
@@ -601,7 +600,10 @@ export class TemplateListComponent implements OnInit, OnDestroy {
       width: '100%',
       panelClass: 'full-screen-modal',
       disableClose: true,
-      data: this.allTemplates
+      data: {
+        data: this.allTemplates,
+        formType
+      }
     });
   }
 
@@ -613,7 +615,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
         }
       })
       .then(() => {
-        this.openCreateTemplateModal();
+        this.openCreateTemplateModal(this.selectedForm.formType);
       });
   }
   affectedFormDetailActionHandler() {

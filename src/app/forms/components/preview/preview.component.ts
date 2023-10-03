@@ -31,7 +31,7 @@ export class PreviewComponent implements OnInit, OnChanges {
   @Input()
   pageIndex = 1;
 
-  isSectionOpenState = true;
+  isOpen = true;
   fieldTypes: any;
   sliderOptions = {
     value: 0,
@@ -41,7 +41,7 @@ export class PreviewComponent implements OnInit, OnChanges {
   };
   previewFormData$: Observable<any>;
   previewFormData = [];
-
+  sectionsData: any[];
   constructor(private store: Store<State>) {}
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.page && changes.page.currentValue) {
@@ -68,6 +68,7 @@ export class PreviewComponent implements OnInit, OnChanges {
                   });
                   return { ...section, questions: questionsArray };
                 });
+                this.sectionsData = sectionData;
                 return { ...page, sections: sectionData };
               });
             }
@@ -82,8 +83,11 @@ export class PreviewComponent implements OnInit, OnChanges {
     this.fieldTypes = fieldTypesMock.fieldTypes;
   }
 
-  toggleSectionOpenState = () => {
-    this.isSectionOpenState = !this.isSectionOpenState;
+  toggleSectionOpenState = (sectionIdx: number, pageData): void => {
+    const pageSection = pageData.sections[sectionIdx];
+    if (pageSection) {
+      pageSection.isOpen = !pageSection.isOpen;
+    }
   };
 
   openBottomSheet(isOpenBottomSheet) {

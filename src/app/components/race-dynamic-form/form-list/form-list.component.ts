@@ -33,7 +33,7 @@ import {
 import {
   formConfigurationStatus,
   permissions as perms,
-  defaultLimit
+  graphQLDefaultLimit
 } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { RaceDynamicFormService } from '../services/rdf.service';
@@ -204,7 +204,7 @@ export class FormListComponent implements OnInit, OnDestroy {
       form: {} as GetFormList
     });
   skip = 0;
-  limit = defaultLimit;
+  limit = graphQLDefaultLimit;
   searchForm: FormControl;
   addCopyFormCount = false;
   formsListCount$: Observable<number>;
@@ -304,7 +304,7 @@ export class FormListComponent implements OnInit, OnDestroy {
       return;
     }
     combineLatest([
-      this.raceDynamicFormService.fetchAllFormListNames$(),
+      this.raceDynamicFormService.fetchAllFormListNames$(form.name),
       this.raceDynamicFormService.getAuthoredFormDetailByFormId$(form.id)
     ])
       .pipe(
@@ -322,6 +322,7 @@ export class FormListComponent implements OnInit, OnDestroy {
               name: createdForm.newName,
               formStatus: formConfigurationStatus.draft,
               additionalDetails: JSON.parse(form.additionalDetails),
+              instructions: JSON.parse(form.instructions),
               isPublic: false
             })
             .subscribe((newRecord) => {
@@ -569,20 +570,23 @@ export class FormListComponent implements OnInit, OnDestroy {
       this.plantService.fetchAllPlants$(),
       this.raceDynamicFormService.fetchAllFormsList$()
     ]).subscribe(([usersList, { items: plantsList }, formsList]) => {
-      this.createdBy = usersList.map(
-        (user) => `${user.firstName} ${user.lastName}`
-      );
+      this.createdBy = usersList
+        .map((user) => `${user.firstName} ${user.lastName}`)
+        .sort();
       this.lastModifiedBy = usersList.map(
         (user) => `${user.firstName} ${user.lastName}`
       );
-      this.plants = plantsList.map((plant) => {
-        this.plantsIdNameMap[`${plant.plantId} - ${plant.name}`] = plant.id;
-        return `${plant.plantId} - ${plant.name}`;
-      });
+      this.plants = plantsList
+        .map((plant) => {
+          this.plantsIdNameMap[`${plant.plantId} - ${plant.name}`] = plant.id;
+          return `${plant.plantId} - ${plant.name}`;
+        })
+        .sort();
 
       this.lastPublishedBy = formsList.rows
         .map((item) => item.lastPublishedBy)
-        .filter((value, index, self) => self.indexOf(value) === index && value);
+        .filter((value, index, self) => self.indexOf(value) === index && value)
+        .sort();
 
       for (const item of this.filterJson) {
         if (item.column === 'status') {
@@ -621,7 +625,7 @@ export class FormListComponent implements OnInit, OnDestroy {
     this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
   }
 
-  openFormCreationModal(data: any) {
+  openFormCreationModal(data: any, formType) {
     const dialogRef = this.dialog.open(FormModalComponent, {
       maxWidth: '100vw',
       maxHeight: '100vh',
@@ -631,6 +635,7 @@ export class FormListComponent implements OnInit, OnDestroy {
       disableClose: true,
       data: {
         formData: data,
+        formType,
         type: 'add'
       }
     });

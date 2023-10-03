@@ -47,48 +47,11 @@
         margin: 10px 5px;
       }
 
-      .radio-btns {
-        position: relative;
-        top: 15px;
-        left: 7px;
-      }
-
-      ::ng-deep
-        .mat-radio-button.mat-accent.mat-radio-checked
-        .mat-radio-outer-circle {
-        border-color: $blue-main;
-      }
-
-      ::ng-deep .mat-radio-button.mat-accent .mat-radio-inner-circle {
-        background-color: $blue-main;
-      }
-
-      ::ng-deep .mat-ripple-element {
-        display: none !important;
-      }
-
-      ::ng-deep .mat-radio-button.mat-radio-disabled .mat-radio-outer-circle {
-        border-color: $disabled-color !important;
-      }
-
-      ::ng-deep .mat-radio-button.mat-radio-disabled .mat-radio-inner-circle {
-        background-color: $disabled-color !important;
-      }
-
-      .radio-btn-text {
-        font-weight: 500;
-        font-size: 110%;
+      .formtype-formfield {
+        background: $gray;
+        padding: 12px 10px;
+        border-radius: 4px;
         color: $black;
-        position: relative;
-        left: 10px;
-      }
-
-      .radio-sub-text {
-        font-weight: 400;
-        font-size: 90%;
-        color: $text-color;
-        opacity: 0.8;
-        margin: 3px 0px 5px 35px;
       }
 
       .form-name {
@@ -106,6 +69,10 @@
       .tags {
         ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
           padding: 17px 0 0 0 !important;
+        }
+
+        .mat-error {
+          margin: 5px;
         }
       }
 

@@ -30,9 +30,14 @@ import {
   TableEvent,
   LoadEvent,
   SearchEvent,
-  RoundPlan
+  RoundPlan,
+  Permission
 } from 'src/app/interfaces';
-import { graphQLDefaultLimit, routingUrls } from 'src/app/app.constants';
+import {
+  graphQLDefaultLimit,
+  routingUrls,
+  permissions as perms
+} from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { MatDialog } from '@angular/material/dialog';
 import { ArchivedDeleteModalComponent } from '../archived-delete-modal/archived-delete-modal.component';
@@ -40,6 +45,7 @@ import { OperatorRoundsService } from '../../operator-rounds/services/operator-r
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { HeaderService } from 'src/app/shared/services/header.service';
+import { LoginService } from '../../login/services/login.service';
 
 interface FormTableUpdate {
   action: 'restore' | 'delete' | null;
@@ -198,19 +204,13 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
   isPopoverOpen = false;
   filterJson = [];
   filter = {
-    status: '',
-    modifiedBy: '',
-    createdBy: '',
-    authoredBy: '',
-    lastModifiedOn: '',
-    scheduleStartDate: '',
-    scheduleEndDate: '',
     plant: ''
   };
   plantsIdNameMap = {};
   plants = [];
   currentRouteUrl$: Observable<string>;
   triggerCountUpdate = false;
+  userInfo$: Observable<any>;
   readonly routingUrls = routingUrls;
   private destroy$ = new Subject();
 
@@ -219,7 +219,8 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
     public dialog: MatDialog,
     private readonly operatorRoundsService: OperatorRoundsService,
     private commonService: CommonService,
-    private headerService: HeaderService
+    private headerService: HeaderService,
+    private loginService: LoginService
   ) {}
 
   ngOnInit(): void {
@@ -243,7 +244,9 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
       .subscribe(() => this.isLoading$.next(true));
     this.getDisplayedForms();
     this.configOptions.allColumns = this.columns;
-    this.prepareMenuActions();
+    this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
+      tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
+    );
     this.getFilter();
     this.getAllArchivedRoundPlans();
     this.archivedFormsListCount$ = combineLatest([
@@ -303,7 +306,7 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
           if (action === 'restore') {
             initial.data = initial.data.filter((d) => d.id !== form.id);
             this.toast.show({
-              text: 'Form restore successfully!',
+              text: 'Round restore successfully!',
               type: 'success'
             });
             action = null;
@@ -311,7 +314,7 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
           if (action === 'delete') {
             initial.data = initial.data.filter((d) => d.id !== form.id);
             this.toast.show({
-              text: 'Form delete successfully!',
+              text: 'Round delete successfully!',
               type: 'success'
             });
             action = null;
@@ -371,17 +374,33 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
     this.fetchForms$.next(event);
   };
 
-  prepareMenuActions(): void {
-    const menuActions = [
-      {
-        title: 'Restore',
-        action: 'restore'
-      },
-      {
-        title: 'Delete',
-        action: 'delete'
-      }
-    ];
+  prepareMenuActions(permissions: Permission[]): void {
+    const menuActions = [];
+
+    if (
+      this.loginService.checkUserHasPermission(
+        permissions,
+        perms.restoreArchivedOR
+      )
+    ) {
+      menuActions.push({
+        action: 'restore',
+        title: 'Restore'
+      });
+    }
+
+    if (
+      this.loginService.checkUserHasPermission(
+        permissions,
+        perms.deleteArchivedOR
+      )
+    ) {
+      menuActions.push({
+        action: 'delete',
+        title: 'Delete'
+      });
+    }
+
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
     this.configOptions = { ...this.configOptions };
@@ -407,7 +426,7 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
         const objectKeys = Object.keys(plansList);
 
         if (objectKeys.length > 0) {
-          const uniquePlants = plansList.rows
+          this.plants = plansList.rows
             .map((item) => {
               if (item?.plant) {
                 this.plantsIdNameMap[item?.plant?.plantId] = item?.plant?.id;
@@ -415,8 +434,9 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
               }
               return '';
             })
-            .filter((value, index, self) => self.indexOf(value) === index);
-          this.plants = [...uniquePlants];
+            .filter((value, index, self) => self.indexOf(value) === index)
+            .sort();
+
           for (const item of this.filterJson) {
             if (item.column === 'plant') {
               item.items = this.plants;
@@ -448,13 +468,6 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
   resetFilter() {
     this.isPopoverOpen = false;
     this.filter = {
-      status: '',
-      createdBy: '',
-      modifiedBy: '',
-      authoredBy: '',
-      lastModifiedOn: '',
-      scheduleStartDate: '',
-      scheduleEndDate: '',
       plant: ''
     };
     this.nextToken = '';

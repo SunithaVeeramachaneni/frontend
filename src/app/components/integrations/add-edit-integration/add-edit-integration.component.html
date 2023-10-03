@@ -1,0 +1,149 @@
+<div class="dialog-container" [formGroup]="integrationConfigForm">
+  <div class="dialog-head">
+    <span class="heading">
+      <span *ngIf="data.mode === 'create'" translate="addIntegration"></span>
+      <span *ngIf="data.mode !== 'create'" translate="editIntegration"></span>
+    </span>
+    <mat-icon mat-dialog-close class="close-icon">close</mat-icon>
+  </div>
+  <div mat-dialog-content class="dialog-body">
+    <div>
+      <mat-form-field appearance="outline" class="width-100 form-field">
+        <mat-label translate="selectIntegrationPoint"></mat-label>
+        <mat-select
+          formControlName="integrationPointId"
+          (selectionChange)="selectIntegrationPoint($event)"
+        >
+          <mat-option [value]=""> <span translate="select"></span> </mat-option>
+          <mat-option
+            *ngFor="let integrationPoint of integrationPoints"
+            [value]="integrationPoint.id"
+            class="select-option-container"
+          >
+            {{ integrationPoint.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <div class="form-field-wrapper">
+        <span class="field-label" translate="dataSyncTxt"></span>
+        <mat-radio-group
+          aria-label="Select an option"
+          formControlName="syncType"
+        >
+          <mat-radio-button value="realtime" class="radio-group-option"
+            ><span translate="realtime"></span
+          ></mat-radio-button>
+          <mat-radio-button
+            value="scheduled"
+            class="radio-group-option"
+            disabled
+            ><span translate="scheduled"></span
+          ></mat-radio-button>
+        </mat-radio-group>
+      </div>
+      <div
+        class="schedule-wrapper"
+        *ngIf="integrationConfigForm.value.syncType === 'scheduled'"
+      >
+        <ng-container
+          class="schedule"
+          *ngIf="
+            integrationConfigForm.get('scheduleType').value === 'byFrequency'
+          "
+        >
+          <div class="by-frequency">
+            <div class="dis-flex">
+              <p id="scheduleConfigurationRepeatEvery" class="f-w-400">
+                {{ 'repeatEveryDayAt' | translate }}
+              </p>
+              <mat-form-field appearance="fill" class="repeat-time">
+                <input
+                  id="scheduleConfigurationTime"
+                  type="time"
+                  matInput
+                  formControlName="repeatTime"
+                />
+              </mat-form-field>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+      <div
+        class="data-mapping-container"
+        *ngIf="
+          integrationConfigForm.value.integrationPointId &&
+          integrationConfigForm.value.integrationPointId.length
+        "
+      >
+        <span class="field-label" translate="dataMappingTxt"></span>
+        <div class="dis-flex">
+          <div class="w-100">
+            <mat-list role="list">
+              <mat-list-item role="listitem">
+                <div class="attribute-list">
+                  <span
+                    class="mapping-head"
+                    translate="sourceAttrHeading"
+                  ></span>
+                  <span class="mapping-head" translate="destAttrHeading"></span>
+                </div>
+              </mat-list-item>
+              <mat-list-item
+                *ngFor="let field of getDataEntityMapping(); let i = index"
+                role="listitem"
+                formArrayName="dataMapping"
+              >
+                <div [formGroupName]="i" class="attribute-list">
+                  <span class="ip-head w-100 p-l-r-10">
+                    <input
+                      type="hidden"
+                      formControlName="sourceKey"
+                      [value]="field.value.attributeId"
+                    />
+                    <span class="ip-title">{{
+                      field.value.attributeName
+                    }}</span>
+                    <span class="ip-desc">{{ field.value.attributeId }}</span>
+                  </span>
+                  <mat-form-field appearance="outline" class="width-100">
+                    <input type="text" matInput formControlName="targetKey" />
+                  </mat-form-field>
+                </div>
+              </mat-list-item>
+            </mat-list>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div mat-dialog-actions class="dialog-footer">
+    <div class="dis-flex"></div>
+    <div class="dis-flex">
+      <button
+        mat-button
+        mat-dialog-close
+        color="primary"
+        translate="close"
+      ></button>
+      <button
+        mat-flat-button
+        class="submit-btn"
+        (click)="saveIntegration()"
+        *appCheckUserHasPermission="[
+          permissions.createIntegration,
+          permissions.updateIntegration
+        ]"
+      >
+        <span
+          >{{ 'saveIntegrationTxt' | translate }}
+          <mat-progress-spinner
+            *ngIf="isSaveInProgress"
+            [mode]="'indeterminate'"
+            [diameter]="25"
+            class="test-conn-spinner"
+          ></mat-progress-spinner>
+        </span>
+      </button>
+    </div>
+  </div>
+</div>

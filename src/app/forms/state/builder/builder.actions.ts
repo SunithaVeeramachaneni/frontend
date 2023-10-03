@@ -34,6 +34,9 @@ export const updatePDFBuilderConfiguration = createAction(
   '[Builder Configuration] updatePDFBuilderConfiguration',
   props<{
     pdfBuilderConfiguration: any;
+    formStatus: string;
+    formDetailPublishStatus: string;
+    formSaveStatus: string;
   }>()
 );
 
@@ -141,6 +144,7 @@ export const updatePageState = createAction(
     pageIndex: number;
     isOpen: boolean;
     subFormId?: string;
+    isCollapse?: boolean;
   }>()
 );
 export const updatePage = createAction(
@@ -373,5 +377,23 @@ export const replacePagesAndCounter = createAction(
   props<{
     counter: number;
     pages: Page[];
+  }>()
+);
+
+export const updateFormStatus = createAction(
+  '[Builder Configuration] updateFormStatus',
+  props<{ formStatus: string }>()
+);
+
+export const updateModuleName = createAction(
+  '[Builder Configuration] updateModuleName',
+  props<{ moduleName: string }>()
+);
+
+export const updateAllSectionState = createAction(
+  '[Builder Configuration] updateAllSectionState',
+  props<{
+    isCollapse: boolean;
+    subFormId: string;
   }>()
 );

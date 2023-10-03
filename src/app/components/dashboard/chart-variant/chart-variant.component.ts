@@ -1,6 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   EventEmitter,
   Input,
@@ -8,10 +9,16 @@ import {
   OnInit,
   Output
 } from '@angular/core';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import {
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators
+} from '@angular/forms';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { ConfigOptions } from '@innovapptive.com/dynamictable/lib/interfaces';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -20,11 +27,13 @@ import {
 } from 'rxjs/operators';
 import {
   AppChartConfig,
+  AppChartData,
   ChartVariantChanges,
   ReportConfiguration,
   ValidationError
 } from 'src/app/interfaces';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
+import { ReportConfigurationService } from '../services/report-configuration.service';
 
 @Component({
   selector: 'app-chart-variant',
@@ -58,27 +67,84 @@ export class ChartVariantComponent implements OnInit, OnDestroy {
     datasetFieldName: [''],
     countFieldName: [''],
     stackFieldName: [''],
+    customColors: [''],
     chartVarient: new FormControl(''),
     showValues: new FormControl(false),
     showLegends: new FormControl(false)
   });
   errors: ValidationError = {};
+
+  chartData$: Observable<AppChartData[]>;
+  chartData: AppChartData[];
+  countType: string;
+  countField: string;
+
+  public colorsForm: FormGroup;
+
   private _report: ReportConfiguration;
   private destroy$ = new Subject();
 
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    private reportConfigService: ReportConfigurationService,
+    private cdrf: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
+    this.colorsForm = this.fb.group({
+      colors: this.fb.array([])
+    });
+
+    this.reportConfigService
+      .getGroupByCountDetails$(this.report, {
+        type: this.countType,
+        field: this.countField
+      })
+      .subscribe((chartData) => {
+        const datasetFieldKeyName = this.chartConfig.datasetFieldName;
+        const data = [];
+        const colorsArr = [];
+
+        chartData.forEach((d) => {
+          const colorConfig = this.chartConfig.customColors;
+          if (colorConfig) {
+            const key = d[datasetFieldKeyName];
+            const colorCode = colorConfig[key] ? colorConfig[key] : '#e8e8e8';
+            colorsArr.push(
+              this.fb.group({
+                seriesName: d[datasetFieldKeyName],
+                color: colorCode
+              })
+            );
+            data.push({ seriesName: d[datasetFieldKeyName], color: colorCode });
+          } else {
+            colorsArr.push(
+              this.fb.group({
+                seriesName: d[datasetFieldKeyName],
+                color: '#e8e8e8'
+              })
+            );
+            data.push({ seriesName: d[datasetFieldKeyName], color: '#7d7d7d' });
+          }
+        });
+        this.colorsForm.setControl('colors', this.fb.array(colorsArr || []));
+
+        this.chartData = data;
+        this.cdrf.detectChanges();
+      });
+
     const {
       chartDetails: {
         type,
         indexAxis,
         title: chartTitle,
         showValues,
-        showLegends
+        showLegends,
+        customColors
       } = {},
       groupBy
     } = this.report;
+
     const { isStacked, datasetFieldName, countFieldName, stackFieldName } =
       this.chartConfig;
     this.isStacked = isStacked;
@@ -95,7 +161,8 @@ export class ChartVariantComponent implements OnInit, OnDestroy {
       countFieldName,
       stackFieldName,
       showValues,
-      showLegends
+      showLegends,
+      customColors
     });
     this.setAxisNames();
 
@@ -135,6 +202,23 @@ export class ChartVariantComponent implements OnInit, OnDestroy {
           this.chartVarientChanges.emit({
             type: 'showLegends',
             value
+          });
+        })
+      )
+      .subscribe();
+
+    this.colorsForm.valueChanges
+      .pipe(
+        distinctUntilChanged(),
+        takeUntil(this.destroy$),
+        tap((value) => {
+          const colors = {};
+          value.colors.forEach((c) => {
+            colors[c.seriesName] = c.color;
+          });
+          this.chartVarientChanges.emit({
+            type: 'customColors',
+            value: colors
           });
         })
       )
@@ -211,7 +295,6 @@ export class ChartVariantComponent implements OnInit, OnDestroy {
     this.setAxisNames();
   };
 
-
   setAxisNames = () => {
     this.isStacked = false;
     if (
@@ -249,6 +332,10 @@ export class ChartVariantComponent implements OnInit, OnDestroy {
       });
     }
     return !touched || this.errors[controlName] === null ? false : true;
+  }
+
+  getColorsList() {
+    return (this.colorsForm.get('colors') as FormArray).controls;
   }
 
   ngOnDestroy(): void {

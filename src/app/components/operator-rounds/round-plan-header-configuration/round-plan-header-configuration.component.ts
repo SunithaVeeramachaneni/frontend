@@ -75,6 +75,8 @@ export class RoundPlanHeaderConfigurationComponent
   tagsInput: ElementRef<HTMLInputElement>;
   @ViewChild('valueInput', { static: false }) valueInput: ElementRef;
   @ViewChild('labelInput', { static: false }) labelInput: ElementRef;
+  @ViewChild('roundPlanFileUpload', { static: false })
+  roundPlanFileUpload: ElementRef;
   @ViewChild('auto', { static: false }) matAutocomplete: MatAutocomplete;
   @ViewChild(MatAutocompleteTrigger) auto: MatAutocompleteTrigger;
   @Output() gotoNextStep = new EventEmitter<void>();
@@ -84,7 +86,7 @@ export class RoundPlanHeaderConfigurationComponent
   removable = true;
   addOnBlur = true;
   separatorKeysCodes: number[] = [ENTER, COMMA];
-  tagsCtrl = new FormControl();
+  tagsCtrl: FormControl;
   filteredTags: Observable<string[]>;
   tags: string[] = [];
   labels: any = {};
@@ -109,7 +111,6 @@ export class RoundPlanHeaderConfigurationComponent
   modalIsOpen = false;
   attachment: any;
   formMetadata: FormMetadata;
-  moduleName: string;
   form: FormGroup;
   isOpen = new FormControl(false);
   options: any = [];
@@ -138,24 +139,30 @@ export class RoundPlanHeaderConfigurationComponent
     public dialog: MatDialog,
     private imageCompress: NgxImageCompressService,
     private router: Router
-  ) {
-    this.operatorRoundsService.getDataSetsByType$('tags').subscribe((tags) => {
-      if (tags && tags.length) {
-        this.allTags = tags[0].values;
-        this.originalTags = cloneDeep(tags[0].values);
-        this.tagsCtrl.setValue('');
-        this.cdrf.detectChanges();
-      }
-    });
+  ) {}
+
+  ngOnInit(): void {
+    this.tagsCtrl = new FormControl('', [
+      Validators.maxLength(25),
+      WhiteSpaceValidator.whiteSpace,
+      WhiteSpaceValidator.trimWhiteSpace
+    ]);
+    this.operatorRoundsService
+      .getDataSetsByType$('roundHeaderTags')
+      .subscribe((tags) => {
+        if (tags && tags.length) {
+          this.allTags = tags[0].values;
+          this.originalTags = cloneDeep(tags[0].values);
+          this.tagsCtrl.patchValue('');
+          this.cdrf.detectChanges();
+        }
+      });
     this.filteredTags = this.tagsCtrl.valueChanges.pipe(
       startWith(null),
       map((tag: string | null) =>
         tag ? this.filter(tag) : this.allTags.slice()
       )
     );
-  }
-
-  ngOnInit(): void {
     this.headerDataForm = this.fb.group({
       name: [
         '',
@@ -204,8 +211,14 @@ export class RoundPlanHeaderConfigurationComponent
       .pipe(map((data) => (Array.isArray(data) ? data : [])))
       .subscribe((attachments) => {
         attachments?.forEach((att) => {
-          this.filteredMediaType.mediaType.push(att.attachment);
-          this.filteredMediaTypeIds.mediaIds.push(att.id);
+          this.filteredMediaType.mediaType = [
+            ...this.filteredMediaType.mediaType,
+            att.attachment
+          ];
+          this.filteredMediaTypeIds.mediaIds = [
+            ...this.filteredMediaTypeIds.mediaIds,
+            att.id
+          ];
         });
         this.cdrf.detectChanges();
       });
@@ -230,11 +243,21 @@ export class RoundPlanHeaderConfigurationComponent
         takeUntil(this.destroy$),
         pairwise(),
         tap(([previous, current]) => {
+          delete previous.plantId;
+          delete current.plantId;
           if (isEqual(previous, current)) this.hasFormChanges = false;
           else this.hasFormChanges = true;
         })
       )
-      .subscribe();
+      .subscribe(() => {
+        if (this.hasFormChanges) {
+          this.store.dispatch(
+            BuilderConfigurationActions.updateFormStatus({
+              formStatus: formConfigurationStatus.draft
+            })
+          );
+        }
+      });
   }
 
   getAllPlantsData() {
@@ -243,7 +266,7 @@ export class RoundPlanHeaderConfigurationComponent
       this.plantInformation = this.allPlantsData;
       const plantId = this.roundData?.formMetadata?.plantId;
       if (plantId !== undefined) {
-        this.headerDataForm.patchValue({ plantId }, { emitEvent: false });
+        this.headerDataForm.patchValue({ plantId });
       }
     });
 
@@ -261,7 +284,7 @@ export class RoundPlanHeaderConfigurationComponent
       const additionalDetailsArray =
         this.roundData.formMetadata.additionalDetails;
 
-      const tagsValue = this.roundData.formMetadata.tags;
+      const tagsValue = [...this.roundData.formMetadata.tags];
 
       this.updateAdditionalDetailsArray(additionalDetailsArray);
       this.patchTags(tagsValue);
@@ -271,7 +294,8 @@ export class RoundPlanHeaderConfigurationComponent
   }
 
   patchTags(values: any[]): void {
-    this.tags = values;
+    this.tags = [...values];
+    this.headerDataForm.get('tags').setValue([...this.tags]);
   }
 
   updateAdditionalDetailsArray(values: any[]): void {
@@ -299,18 +323,35 @@ export class RoundPlanHeaderConfigurationComponent
   }
 
   add(event: MatChipInputEvent): void {
-    const input = event.input;
-    const value = event.value;
+    if (!this.processValidationErrorTags()) {
+      const input = event.input;
+      const value = event.value;
 
-    if ((value || '').trim()) {
-      this.tags.push(value.trim());
+      if ((value || '').trim()) {
+        this.tags = [...this.tags, value.trim()];
+      }
+
+      if (input) {
+        input.value = '';
+      }
+
+      this.tagsCtrl.patchValue('');
     }
+  }
 
-    if (input) {
-      input.value = '';
+  processValidationErrorTags(): boolean {
+    const errors = this.tagsCtrl.errors;
+
+    this.errors.tagsCtrl = null;
+    if (errors) {
+      Object.keys(errors).forEach((messageKey) => {
+        this.errors.tagsCtrl = {
+          name: messageKey,
+          length: errors[messageKey]?.requiredLength
+        };
+      });
     }
-
-    this.tagsCtrl.setValue(null);
+    return this.errors.tagsCtrl === null ? false : true;
   }
 
   openAutoComplete() {
@@ -322,13 +363,14 @@ export class RoundPlanHeaderConfigurationComponent
     const index = this.tags.indexOf(tag);
 
     if (index >= 0) {
-      this.tags.splice(index, 1);
+      this.tags = [...this.tags.slice(0, index), ...this.tags.slice(index + 1)];
     }
     this.filteredTags = of(
       this.tagsCtrl.value
         ? this.filter(this.tagsCtrl.value)
         : this.allTags.slice()
     );
+    this.headerDataForm.get('tags').setValue([...this.tags]);
   }
 
   selected(event: MatAutocompleteSelectedEvent): void {
@@ -340,7 +382,7 @@ export class RoundPlanHeaderConfigurationComponent
 
     this.tags = [...this.tags, event.option.viewValue];
     this.tagsInput.nativeElement.value = '';
-    this.tagsCtrl.setValue(null);
+    this.tagsCtrl.patchValue('');
     this.headerDataForm.patchValue({
       ...this.headerDataForm.value,
       tags: this.tags
@@ -385,12 +427,12 @@ export class RoundPlanHeaderConfigurationComponent
     });
     if (newTags.length) {
       const dataSet = {
-        type: 'tags',
+        type: 'roundHeaderTags',
         values: newTags
       };
-      // this.operatorRoundsService.createTags$(dataSet).subscribe((response) => {
-      //   // do nothing
-      // });
+      this.operatorRoundsService.createTags$(dataSet).subscribe((response) => {
+        // do nothing
+      });
     }
 
     const plant = this.allPlantsData.find(
@@ -404,9 +446,9 @@ export class RoundPlanHeaderConfigurationComponent
           BuilderConfigurationActions.addFormMetadata({
             formMetadata: {
               ...this.headerDataForm.value,
+              tags: this.tags,
               additionalDetails: updatedAdditionalDetails,
-              plant: plant.name,
-              moduleName: 'rdf'
+              plant: plant.name
             },
             formDetailPublishStatus: formConfigurationStatus.draft,
             formSaveStatus: formConfigurationStatus.saving
@@ -422,6 +464,7 @@ export class RoundPlanHeaderConfigurationComponent
           RoundPlanConfigurationActions.createRoundPlan({
             formMetadata: {
               ...this.headerDataForm.value,
+              tags: this.tags,
               additionalDetails: updatedAdditionalDetails,
               pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG,
               author: userName,
@@ -429,7 +472,7 @@ export class RoundPlanHeaderConfigurationComponent
             }
           })
         );
-        this.router.navigate(['/operator-rounds/create']);
+        this.router.navigate(['/operator-rounds/round-plans/create']);
         this.gotoNextStep.emit();
       } else if (this.roundData?.roundExists === true) {
         this.store.dispatch(
@@ -437,9 +480,9 @@ export class RoundPlanHeaderConfigurationComponent
             formMetadata: {
               ...this.headerDataForm.value,
               id: this.roundData.formMetadata.id,
+              tags: this.tags,
               additionalDetails: updatedAdditionalDetails,
               plant: plant.name,
-              moduleName: 'rdf',
               lastModifiedBy: this.loginService.getLoggedInUserName()
             },
             formStatus: this.hasFormChanges
@@ -458,10 +501,10 @@ export class RoundPlanHeaderConfigurationComponent
           RoundPlanConfigurationActions.updateRoundPlan({
             formMetadata: {
               ...this.headerDataForm.value,
+              tags: this.tags,
               id: this.roundData.formMetadata.id,
               additionalDetails: updatedAdditionalDetails,
               plant: plant.name,
-              moduleName: 'rdf',
               lastModifiedBy: this.loginService.getLoggedInUserName()
             },
             formListDynamoDBVersion: this.roundData.formListDynamoDBVersion,
@@ -483,7 +526,7 @@ export class RoundPlanHeaderConfigurationComponent
 
   onCancel(): void {
     this.dialogRef.close();
-    this.router.navigate(['/operator-rounds']);
+    this.router.navigate(['/operator-rounds/round-plans']);
   }
 
   resetPlantSearchFilter = () => {
@@ -610,6 +653,7 @@ export class RoundPlanHeaderConfigurationComponent
         }
       };
     }
+    this.clearAttachmentUpload();
   };
 
   async resizeImage(base64result: string): Promise<string> {
@@ -789,7 +833,11 @@ export class RoundPlanHeaderConfigurationComponent
 
   storeDetails(i) {
     this.operatorRoundsService
-      .createAdditionalDetails$({ ...this.changedValues })
+      .createAdditionalDetails$({
+        ...this.changedValues,
+        type: 'rounds',
+        level: 'header'
+      })
       .subscribe((response) => {
         if (response?.label) {
           this.toastService.show({
@@ -850,7 +898,7 @@ export class RoundPlanHeaderConfigurationComponent
 
   retrieveDetails() {
     this.operatorRoundsService
-      .getAdditionalDetails$()
+      .getAdditionalDetails$({ type: 'rounds', level: 'header' })
       .subscribe((details: any[]) => {
         this.labels = this.convertArrayToObject(details);
         details.forEach((data) => {
@@ -965,5 +1013,8 @@ export class RoundPlanHeaderConfigurationComponent
     this.operatorRoundsService.pdfMapping$.next([]);
     this.destroy$.next();
     this.destroy$.complete();
+  }
+  clearAttachmentUpload() {
+    this.roundPlanFileUpload.nativeElement.value = '';
   }
 }

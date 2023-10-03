@@ -1,7 +1,8 @@
 <div class="dashboard-create-update-dialog">
   <div class="dialog-head" disableClose="true">
     <span class="dialog-title">
-      {{dialogData.dialogMode ==='CREATE' ? "Create " :"Update "}} Dashboard
+      {{dialogData.dialogMode ==='CREATE' ? "Create " :"Update "}}
+      <span translate>dashboards</span>
     </span>
     <span class="dialog-close-btn" (click)="onNoClick()">
       <mat-icon class="dialog-close">close</mat-icon>
@@ -14,6 +15,19 @@
     >
       <mat-label translate>dashboardTitle</mat-label>
       <input matInput type="text" formControlName="dashboardName" />
+    </mat-form-field>
+    <mat-form-field
+      appearance="outline"
+      class="width-100 custom-form-field-white-color"
+    >
+      <mat-label translate>dashboardModule</mat-label>
+      <mat-select formControlName="moduleName">
+        <mat-option [value]=""><span translate>dashboards</span></mat-option>
+        <mat-option *ngFor="let module of modules" [value]="module.id">
+          {{module.name}}
+        </mat-option>
+      </mat-select>
+      <!-- <input matInput type="text" formControlName="moduleName" /> -->
     </mat-form-field>
     <mat-error *ngIf="processValidationErrors('dashboardName')">
       {{ errors.dashboardName.name | translate : { name: 'dashboardTitle' |

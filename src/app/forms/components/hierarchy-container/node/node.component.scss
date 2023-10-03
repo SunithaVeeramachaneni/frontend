@@ -17,7 +17,7 @@
   min-width: max-content;
   .left {
     display: flex;
-    width: 85%;
+    width: 100%;
     flex-direction: column;
     img {
       max-width: 40px;
@@ -29,12 +29,20 @@
       margin-left: 10px;
       justify-content: center;
       line-height: 1.5;
+      width: 100%;
       .title {
         font-weight: 500;
       }
       .subTitle {
         font-weight: 400;
       }
+      .title-status {
+        justify-content: space-between;
+      }
+    }
+
+    .nodeStatus {
+      margin-right: 10px;
     }
   }
 
@@ -51,6 +59,9 @@
   display: flex;
   justify-content: flex-start;
   width: 100%;
+  .checkbox {
+    margin: 10px;
+  }
 }
 .children {
   margin-left: 40px;
@@ -76,6 +87,10 @@
 .active {
   background: $active-blue;
   color: $white;
+
+  ::ng-deep .mat-checkbox-frame {
+    border-color: $white;
+  }
 }
 
 .active:hover {

@@ -39,6 +39,7 @@ export interface ChartDetail {
   countFieldName: string;
   stackFieldName?: string;
   renderChart?: boolean;
+  customColors?: any;
 }
 
 export interface TableDetail {
@@ -78,12 +79,14 @@ export interface Filter {
 export interface RowLevelActionEvent {
   action: string;
   data: any;
+  subMenu: any;
 }
 
 export interface CellClickActionEvent {
   row: any;
   columnId: string;
   element?: string;
+  option?: string;
 }
 
 export interface Count {

@@ -17,8 +17,20 @@ export class ScheduleConfigurationService {
     actionType: 'scheduleConfigEvent';
     mode?: 'create' | 'update';
   }>(null);
-  onSlotChanged$ = new Subject();
+  private onSlotChanged$ = new Subject();
   constructor() {}
+
+  setSlotChanged(action: boolean): void {
+    this.onSlotChanged$.next(action);
+  }
+
+  getSlotChanged() {
+    return this.onSlotChanged$.asObservable();
+  }
+
+  setInitialSlotChanged() {
+    this.onSlotChanged$.next(null);
+  }
 
   // The convertTo24Hour function takes a time string in the 12-hour format with AM/PM indicator and converts it to the 24-hour format.
   convertTo24Hour(timeString: string): string {
@@ -82,6 +94,9 @@ export class ScheduleConfigurationService {
       firstTime.toLowerCase() !== startTime.toLowerCase() &&
       secondTime.toLowerCase() === nextDayStartTime.toLowerCase()
     ) {
+      if (firstHour >= twelveHours && firstHour <= twentyFourHours) {
+        return (timeDifference = twentyFourHours - firstHour + 1);
+      }
       return (timeDifference = (firstHour === 0 ? 1 : firstHour) - secondHour);
     }
     if (firstTime === startTime && secondTime === startTime) {
@@ -379,6 +394,38 @@ export class ScheduleConfigurationService {
     const minutes = parseInt(timeParts[1], 10);
 
     return minutes;
+  }
+
+  isTimeInRange(timeSlot, time) {
+    const startTime = this.convertAMPMTo24Hour(timeSlot.startTime);
+    const endTime = this.convertAMPMTo24Hour(timeSlot.endTime);
+    const targetTime = this.convertAMPMTo24Hour(time);
+    if (startTime <= endTime) {
+      return startTime <= targetTime && targetTime <= endTime;
+    } else {
+      return startTime <= targetTime || targetTime <= endTime;
+    }
+  }
+
+  convertAMPMTo24Hour(timeString) {
+    const [time, period] = timeString?.split(' ');
+    const [hours, minutes] = time?.split(':')?.map(Number);
+    const TWELVE = 12;
+    if (period?.toLowerCase() === TimeType.am.toLowerCase()) {
+      if (hours === TWELVE) {
+        return `00:${minutes}`;
+      } else {
+        return `${hours < 10 ? '0' : ''}${hours}:${minutes}`;
+      }
+    }
+    if (period?.toLowerCase() === TimeType.pm.toLowerCase()) {
+      if (hours === TWELVE) {
+        return `${TWELVE}:${minutes}`;
+      } else {
+        return `${hours + TWELVE}:${minutes}`;
+      }
+    }
+    return timeString;
   }
 
   private getDateString(data?: Date): string {

@@ -34,7 +34,7 @@ import { TenantService } from 'src/app/components/tenant-management/services/ten
 import { Amplify } from 'aws-amplify';
 import { tap } from 'rxjs/operators';
 import { SlideshowComponent } from 'src/app/shared/components/slideshow/slideshow.component';
-import { format, isToday, isYesterday, parse } from 'date-fns';
+import { format, isToday, isYesterday, parse, isSameDay } from 'date-fns';
 import { ToastService } from 'src/app/shared/toast';
 import { MatDatetimePickerInputEvent } from '@angular-material-components/datetime-picker/public-api';
 import { PlantService } from 'src/app/components/master-configurations/plants/services/plant.service';
@@ -773,6 +773,10 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     return format(new Date(date), timeFormat);
   }
 
+  ifSameDay(date1: any, date2: any) {
+    return isSameDay(new Date(date1), new Date(date2));
+  }
+
   formatDate(date: string) {
     const parsedDate = new Date();
     if (
@@ -785,20 +789,20 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
         this.plantTimezoneMap[
           this.issuesActionsDetailViewForm.get('plantId').value
         ],
-        dateFormat2
+        dateTimeFormat2
       );
     }
-    return format(parsedDate, dateFormat2);
+    return format(parsedDate, dateTimeFormat2);
   }
 
   compareDates(dateString: string): string {
-    const parsedDate = parse(dateString, dateFormat2, new Date());
+    const parsedDate = parse(dateString, dateTimeFormat2, new Date());
 
     return isToday(parsedDate)
       ? 'Today'
       : isYesterday(parsedDate)
       ? 'Yesterday'
-      : format(parsedDate, dateFormat2);
+      : format(new Date(parsedDate), dateFormat2);
   }
 
   ngOnDestroy(): void {
@@ -886,7 +890,6 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
       .pipe(
         tap((logHistory) => {
           this.logHistory = logHistory?.rows || [];
-          this.filteredMediaType = [];
           this.prepareInitialIssueActionAttachments();
           if (this.logHistory.length > 0) {
             this.logHistory.forEach((history) => {
@@ -902,7 +905,13 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
                   }
                 });
               }
-              if (history.type === 'Media') {
+
+              if (
+                history.type === 'Media' &&
+                !this.filteredMediaType.some(
+                  (a) => a?.message === history?.message
+                )
+              ) {
                 this.filteredMediaType.push(history);
               }
             });
@@ -929,7 +938,6 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
           newMessage.message = foundImageData?.imageData || newMessage.message;
         }
       }
-      this.filteredMediaType = [];
       this.prepareInitialIssueActionAttachments();
       this.logHistory = [...this.logHistory, newMessage];
       if (this.logHistory?.length > 0) {
@@ -946,7 +954,10 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
               }
             });
           }
-          if (history.type === 'Media') {
+          if (
+            history.type === 'Media' &&
+            !this.filteredMediaType.some((a) => a?.message === history?.message)
+          ) {
             this.filteredMediaType.push(history);
           }
         });
@@ -988,6 +999,8 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
             statusDisplay: this.observations.prepareStatus(
               jsonData.STATUS ?? ''
             ),
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            PHOTO: this.data?.PHOTO ?? [],
             assignedTo: data?.assignedTo,
             assignedToDisplay: this.observations.formatUsersDisplay(
               data?.assignedTo
@@ -1014,7 +1027,12 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   private prepareInitialIssueActionAttachments(): void {
-    if (this.data?.PHOTO?.length > 0) {
+    this.filteredMediaType = [];
+    if (
+      this.data &&
+      Array.isArray(this.data?.PHOTO) &&
+      this.data?.PHOTO?.length > 0
+    ) {
       this.data?.PHOTO?.forEach((element) => {
         if (element) {
           this.filteredMediaType.push({

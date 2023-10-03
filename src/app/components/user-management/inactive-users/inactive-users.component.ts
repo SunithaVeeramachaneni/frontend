@@ -169,6 +169,7 @@ export class InactiveUsersComponent implements OnInit {
     tableHeight: 'calc(100vh - 150px)',
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957']
   };
+  ghostLoading = new Array(18).fill(0).map((v, i) => i);
 
   dataSource: MatTableDataSource<any>;
   users$: Observable<UserTable>;

@@ -4,7 +4,11 @@ import {
   Component,
   OnInit,
   Input,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  EventEmitter,
+  Output,
+  SimpleChanges,
+  OnChanges
 } from '@angular/core';
 
 import { DatePipe } from '@angular/common';
@@ -15,9 +19,15 @@ import { DatePipe } from '@angular/common';
   styleUrls: ['./vertical-stacked-chart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class VerticalStackedChartComponent implements OnInit {
+export class VerticalStackedChartComponent implements OnInit, OnChanges {
+  @Input() hasCustomColorScheme;
+  @Output() chartClickEvent: EventEmitter<any> = new EventEmitter<any>();
+
   @Input() set chartConfig(chartConfig) {
     this.chartConfigurations = chartConfig;
+    if (this.hasCustomColorScheme && chartConfig.customColors) {
+      this.colorsByStatus = chartConfig.customColors;
+    }
     if (chartConfig.renderChart) {
       this.prepareChartDetails();
     }
@@ -33,6 +43,7 @@ export class VerticalStackedChartComponent implements OnInit {
     return this._chartData;
   }
 
+  colorsByStatus: any = {};
   chartOptions: any = {
     title: {
       text: ''
@@ -141,6 +152,10 @@ export class VerticalStackedChartComponent implements OnInit {
 
   ngOnInit(): void {}
 
+  onChartClickHandler(event) {
+    this.chartClickEvent.emit(event);
+  }
+
   prepareChartDetails = () => {
     if (this.chartData && this.chartConfig) {
       const {
@@ -162,6 +177,7 @@ export class VerticalStackedChartComponent implements OnInit {
       this.datasetField = datasetFields.find(
         (datasetField) => datasetField.visible
       );
+
       this.prepareChartData(showValues);
     }
   };
@@ -226,6 +242,30 @@ export class VerticalStackedChartComponent implements OnInit {
     });
 
     newOptions.series = datasets;
+
+    if (!Array.isArray(newOptions.series)) {
+      newOptions.series = [newOptions.series];
+    } else {
+      newOptions.series = [...newOptions.series];
+    }
+
     this.chartOptions = newOptions;
+    this.chartOptions.series.forEach((series) => {
+      series.itemStyle = {
+        color: (param: any) =>
+          this.colorsByStatus[param.name]
+            ? this.colorsByStatus[param.name]
+            : '#c8c8c8'
+      };
+    });
   };
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (!changes.firstChange && changes.chartConfig) {
+      const currValue = changes.chartConfig.currentValue;
+      if (currValue.customColors) {
+        this.colorsByStatus = currValue.customColors;
+      }
+    }
+  }
 }

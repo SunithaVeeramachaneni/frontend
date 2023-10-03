@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   Inject,
   OnInit
@@ -119,6 +120,7 @@ export class WidgetConfigurationModalComponent implements OnInit {
   countField: string;
   setSearchReport$ = new Subject<boolean>();
   updateWidget$: Observable<boolean>;
+  ghostLoading = new Array(11).fill(0).map((v, i) => i);
   readonly permissions = permissions;
   errors: ValidationError = {};
 
@@ -129,7 +131,8 @@ export class WidgetConfigurationModalComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA)
     public data: WidgetConfigurationModalData,
     private fb: FormBuilder,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private cdrf: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -308,8 +311,14 @@ export class WidgetConfigurationModalComponent implements OnInit {
     const tableColumns: TableColumn[] = columns
       .map((column) => {
         if (column.visible) {
-          const { id, order, sticky, visible } = column;
-          return { name: id, order, sticky, visible } as TableColumn;
+          const { id, order, sticky, visible, displayName } = column;
+          return {
+            name: id,
+            order,
+            sticky,
+            visible,
+            displayName
+          } as TableColumn;
         }
       })
       .filter((data) => data);
@@ -485,6 +494,15 @@ export class WidgetConfigurationModalComponent implements OnInit {
           showLegends: value,
           renderChart: !this.isFetchingChartData
         };
+        break;
+      case 'customColors':
+        this.selectedReport.chartDetails.customColors = value;
+        this.chartConfig = {
+          ...this.chartConfig,
+          customColors: value,
+          renderChart: !this.isFetchingChartData
+        };
+        this.cdrf.detectChanges();
         break;
 
       default:

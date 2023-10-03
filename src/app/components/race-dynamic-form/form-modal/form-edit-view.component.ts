@@ -43,14 +43,16 @@ export class FormEditViewComponent implements OnInit, OnDestroy {
               BuilderConfigurationActions.updatePageState({
                 pageIndex: index,
                 isOpen: false,
-                subFormId: null
+                subFormId: null,
+                isCollapse: true
               })
             );
             this.store.dispatch(
               BuilderConfigurationActions.updatePageState({
                 pageIndex: index,
                 isOpen: true,
-                subFormId: null
+                subFormId: null,
+                isCollapse: true
               })
             );
           } else {
@@ -58,7 +60,8 @@ export class FormEditViewComponent implements OnInit, OnDestroy {
               BuilderConfigurationActions.updatePageState({
                 pageIndex: index,
                 isOpen: false,
-                subFormId: null
+                subFormId: null,
+                isCollapse: true
               })
             );
           }
@@ -81,6 +84,7 @@ export class FormEditViewComponent implements OnInit, OnDestroy {
       disableClose: true,
       data: {
         formData: this.formMetadata,
+        formType: this.formMetadata.formType,
         type: 'edit'
       }
     });

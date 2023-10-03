@@ -33,6 +33,8 @@ const {
   dashboard,
   myDashboard,
   reports,
+  oprReports,
+  oprDashboard,
   spareParts,
   maintenance,
   workInstructions,
@@ -48,12 +50,12 @@ const {
   userGroups,
   inActiveUsers,
   tenantManagement,
+  integrationManagement,
   raceDynamicForms,
   myForms,
   formsTemplates,
   archivedForms,
   schedularForms,
-  operatorRoundPlans,
   myRoundPlans,
   roundPlanScheduler,
   masterConfiguration,
@@ -65,7 +67,8 @@ const {
   globalResponse,
   roundPlanArchivedForms,
   roundPlanObservations,
-  rdfObservations
+  rdfObservations,
+  oprRounds
 } = routingUrls;
 
 @Component({
@@ -101,6 +104,15 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       imageName: 'tenant-management',
       showSubMenu: false,
       permission: tenantManagement.permission,
+      subPages: null,
+      disable: false
+    },
+    {
+      title: integrationManagement.title,
+      url: integrationManagement.url,
+      imageName: 'integrations',
+      showSubMenu: false,
+      permission: integrationManagement.permission,
       subPages: null,
       disable: false
     },
@@ -188,13 +200,23 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       ]
     },
     {
-      title: operatorRoundPlans.title,
-      url: operatorRoundPlans.url,
+      title: oprRounds.title,
+      url: oprRounds.url,
       imageName: 'operator-rounds',
       showSubMenu: false,
-      permission: operatorRoundPlans.permission,
+      permission: oprRounds.permission,
       disable: false,
       subPages: [
+        {
+          title: oprDashboard.title,
+          url: oprDashboard.url,
+          permission: oprDashboard.permission
+        },
+        {
+          title: oprReports.title,
+          url: oprReports.url,
+          permission: oprReports.permission
+        },
         {
           title: myRoundPlans.title,
           url: myRoundPlans.url,
