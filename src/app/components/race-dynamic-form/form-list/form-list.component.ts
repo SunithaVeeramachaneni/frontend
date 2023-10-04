@@ -397,7 +397,6 @@ export class FormListComponent implements OnInit, OnDestroy {
         }),
         map((data) =>
           data.map((item) => {
-            item?.tags?.forEach((tag) => this.tags.add(tag));
             if (item.plantId) {
               item = {
                 ...item,
@@ -410,6 +409,10 @@ export class FormListComponent implements OnInit, OnDestroy {
               this.raceDynamicFormService.extractAdditionalDetailsToColumns(
                 item
               );
+            item = this.raceDynamicFormService.handleEmptyColumns(
+              item,
+              this.columns
+            );
             return item;
           })
         )
@@ -503,9 +506,16 @@ export class FormListComponent implements OnInit, OnDestroy {
       this.usersService.getUsersInfo$(),
       this.plantService.fetchAllPlants$(),
       this.raceDynamicFormService.fetchAllFormsList$(),
+      this.raceDynamicFormService.getDataSetsByType$('formHeaderTags'),
       this.columnConfigService.moduleAdditionalDetailsFiltersData$
     ]).subscribe(
-      ([usersList, { items: plantsList }, formsList, additionDetailsData]) => {
+      ([
+        usersList,
+        { items: plantsList },
+        formsList,
+        allTags,
+        additionDetailsData
+      ]) => {
         this.createdBy = usersList
           .map((user) => `${user.firstName} ${user.lastName}`)
           .sort();
@@ -525,6 +535,7 @@ export class FormListComponent implements OnInit, OnDestroy {
             (value, index, self) => self.indexOf(value) === index && value
           )
           .sort();
+        this.tags = allTags[0]?.values;
         this.additionalDetailFilterData = additionDetailsData;
         this.setFilters();
       }

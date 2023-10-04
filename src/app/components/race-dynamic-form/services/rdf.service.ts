@@ -1121,6 +1121,18 @@ export class RaceDynamicFormService {
 
     return form;
   }
+  handleEmptyColumns(row, columns: Column[]) {
+    columns.forEach((column) => {
+      if (
+        column.id !== 'publishedDate' &&
+        (!row[column.id] ||
+          (column.id === 'tags' && row[column.id].length === 0))
+      ) {
+        row[column.id] = '_ _';
+      }
+    });
+    return row;
+  }
   updateConfigOptionsFromColumns(columns: Partial<Column>[]) {
     const allColumns: Column[] = columns.map((column, index) => {
       const defaultColumn: Column = {
