@@ -315,7 +315,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
       .subscribe(() => this.isLoading$.next(true));
     this.getFilter();
     this.getDisplayedForms();
-    // this.getAllOperatorRounds();
+    this.getAllOperatorRounds();
     this.configOptions.allColumns = this.columns;
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
@@ -695,6 +695,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
       }
     }
     this.nextToken = '';
+    this.isLoading$.next(true);
     this.operatorRoundsService.fetchForms$.next({ data: 'load' });
   }
 
@@ -728,6 +729,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
       publishedBy: ''
     };
     this.nextToken = '';
+    this.isLoading$.next(true);
     this.operatorRoundsService.fetchForms$.next({ data: 'load' });
   }
 
