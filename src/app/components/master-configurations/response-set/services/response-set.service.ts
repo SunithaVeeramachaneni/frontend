@@ -177,13 +177,13 @@ export class ResponseSetService {
       body
     );
   }
-  
-  fetchResponseSetByModuleName$ = (moduleName: string) => {
+
+  fetchResponseSetByModuleName$ = () => {
     const info: ErrorInfo = {} as ErrorInfo;
     const { displayToast, failureResponse = {} } = info;
     return this._appService._getResp(
       environment.masterConfigApiUrl,
-      'response-set/list/' + moduleName,
+      'response-set/list/all-modules',
       { displayToast, failureResponse }
     );
   };

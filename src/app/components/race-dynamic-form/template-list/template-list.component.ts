@@ -230,7 +230,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.onDestroy$))
       .subscribe((res) => {
         if (res) {
-          this.columns = res;
+          this.columns = res[this.RDF_TEMPLATE_MODULE_NAME] || [];
           this.configOptions.allColumns = this.columns;
           this.cdrf.detectChanges();
         }

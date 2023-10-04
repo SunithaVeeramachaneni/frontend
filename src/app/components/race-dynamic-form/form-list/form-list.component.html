@@ -123,12 +123,12 @@
           mat-raised-button
           [matMenuTriggerFor]="moreMenu"
           class="more-btn"
-          *appCheckUserHasPermission="[perms.importForm]"
         >
           <mat-icon id="moreMenuIcon" class="menu-icon">more_horiz</mat-icon>
         </button>
         <mat-menu id="moreMenu" #moreMenu="matMenu">
           <button
+            *appCheckUserHasPermission="[perms.importForm]"
             id="templateMenuButton"
             mat-menu-item
             class="menu-buttons"

@@ -79,33 +79,25 @@ export class ColumnConfigurationSliderComponent implements OnInit {
     this.updateAllComplete();
   }
   fetchResponseSetByModuleName = () => {
-    return this.responseSetService
-      .fetchResponseSetByModuleName$(this.moduleName)
-      .pipe(
-        tap((data) => {
-          this.additionalColumns = data?.map((item) =>
-            this.columnConfigService.getColumnConfigFromAdditionalDetails(
-              item,
-              false
-            )
-          );
-          this.columnConfigService.setAllColumnConfigurations(this.moduleName, [
-            ...this.columnConfigService.getModuleDefaultColumnConfig(
-              this.moduleName
-            ),
-            ...this.additionalColumns
-          ]);
-          this.allColumns =
-            this.columnConfigService.getAllColumnConfigurations();
-          this.extractStaticColumns();
-          this.extractDraggableColumns();
-          this.columnConfigService.setUserColumnConfigByModuleName(
-            this.moduleName
-          );
-          this.isLoading$.next(false);
-          this.cdrf.detectChanges();
-        })
-      );
+    return this.responseSetService.fetchResponseSetByModuleName$().pipe(
+      tap((data) => {
+        this.additionalColumns = data[this.moduleName]?.map((item) =>
+          this.columnConfigService.getColumnConfigFromAdditionalDetails(
+            item,
+            false
+          )
+        );
+        this.columnConfigService.setSelectedColumnsFilterData(data);
+        this.columnConfigService.setAllModuleFiltersAndColumns(data);
+        this.allColumns = this.columnConfigService.getAllColumnConfigurations(
+          this.moduleName
+        );
+        this.extractStaticColumns();
+        this.extractDraggableColumns();
+        this.isLoading$.next(false);
+        this.cdrf.detectChanges();
+      })
+    );
   };
   setAll(completed: boolean) {
     this.allComplete = completed;
@@ -161,26 +153,22 @@ export class ColumnConfigurationSliderComponent implements OnInit {
     this.userService
       .updateUserPreferences$({
         columnConfigurations: JSON.stringify(
-          this.columnConfigService.getUserColumnConfigurationByModule()
+          this.columnConfigService.getUserColumnConfiguration()
         )
       })
       .subscribe(() => {
+        this.columnConfigService.isLoadingColumns$.next(true);
         this.toastService.show({
           type: 'success',
           text: 'Column Configuration Stored Successfully'
         });
-        this.columnConfigService.isLoadingColumns$.next(true);
-        this.columnConfigService.setUserColumnConfigByModuleName(
-          this.moduleName
-        );
+        this.columnConfigService.updateUserColumnConfig(this.moduleName);
+        this.columnConfigService.updateFilterConfiguration();
+        this.columnConfigService.isLoadingColumns$.next(false);
         this.slideInOut.emit('in');
       });
   }
-  setColumnConfigurationToDynamicTable(dynamicTableColumns: Column[]) {
-    this.columnConfigService.moduleColumnConfiguration$.next(
-      dynamicTableColumns
-    );
-  }
+
   ngOnDestroy(): void {
     this.columnConfigService.moduleColumnConfiguration$.next(null);
     this.columnConfigService.isLoadingColumns$.next(true);
