@@ -1107,7 +1107,18 @@ export class RaceDynamicFormService {
       requestId
     );
   };
+  getColumnIdFromName(columnName: string): string {
+    return columnName.toLowerCase().replace(/ /g, '_');
+  }
 
+  extractAdditionalDetailsToColumns(form: any) {
+    const additionalDetails = JSON.parse(form?.additionalDetails);
+    additionalDetails?.forEach((detail) => {
+      form[this.getColumnIdFromName(detail?.FIELDLABEL)] = detail?.DEFAULTVALUE;
+    });
+
+    return form;
+  }
   updateConfigOptionsFromColumns(columns: Partial<Column>[]) {
     const allColumns: Column[] = columns.map((column, index) => {
       const defaultColumn: Column = {
