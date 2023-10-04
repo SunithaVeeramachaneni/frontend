@@ -323,18 +323,14 @@
                   appearance="outline"
                   class="m-l-20 symbol m-b-10 width-100 value-field"
                 >
-                  <mat-label id="filterStatusLabel">select</mat-label>
+                  <mat-label id="filterStatusLabel">Select</mat-label>
                   <mat-select
                     #matSelect
                     multiple
-                    [formControl]="additionalDetails.value.value"
+                    [(value)]="additionalDetails.value.selectedValue"
                     name="showStatus"
-                    placeholder="select"
-                    [(value)]="
-                      additionalDetailMapPreSelect[
-                        additionalDetails.value.label
-                      ]
-                    "
+                    placeholder="Select"
+                    [compareWith]="compareValues"
                     (selectionChange)="
                       onSelectionChange($event, additionalDetails.value.label)
                     "
@@ -351,10 +347,10 @@
                     </div>
                     <mat-select-trigger>
                       {{
-                        additionalDetails.value.value.length > 0 &&
-                        additionalDetailMap[additionalDetails.value.label]
+                        additionalDetails?.value.value.length > 0 &&
+                        additionalDetailMap[additionalDetails.value?.label]
                           .length !== additionalDetails['value']['value'].length
-                          ? additionalDetails.value.value[0]
+                          ? additionalDetails.value.selectedValue[0]
                           : ''
                       }}
                       <span
@@ -381,7 +377,7 @@
                         *ngIf="
                           additionalDetailMap[additionalDetails.value.label]
                             .length ===
-                          additionalDetails['value']['value'].length
+                          additionalDetails['value']['value']?.length
                         "
                         >All
                       </span>
@@ -389,7 +385,7 @@
                     <div class="scrollable-area">
                       <mat-option
                         *ngFor="let addValue of additionalDetails.value.value"
-                        value="addValue"
+                        [value]="addValue"
                       >
                         {{ addValue }}
                       </mat-option>

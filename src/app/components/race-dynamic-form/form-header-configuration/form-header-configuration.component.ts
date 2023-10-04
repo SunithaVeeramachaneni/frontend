@@ -271,10 +271,20 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
         JSON.parse(responseSet.values).forEach((val) => {
           value.push(val.title);
         });
-        this.additionalDetailMap[responseSet.name] = [];
+        let selectedValues = [];
+        if (this.data.formData) {
+          const obj = this.data.formData.additionalDetails.find(
+            (object) => object.FIELDLABEL === responseSet.name
+          );
+          selectedValues = obj ? obj.DEFAULTVALUE.split(',') : [];
+        }
+        this.additionalDetailMap[responseSet.name] = selectedValues;
         const objFormGroup = this.fb.group({
           label: responseSet.name,
-          value: new FormArray(value.map((val) => this.fb.control(val)))
+          value: new FormArray(value.map((val) => this.fb.control(val))),
+          selectedValue: new FormArray(
+            selectedValues.map((val) => this.fb.control(val))
+          )
         });
         this.additionalDetails.push(objFormGroup);
       });
@@ -329,7 +339,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
       const formGroups = values?.map((value) =>
         this.fb.group({
           label: [value.FIELDLABEL],
-          value: [value.DEFAULTVALUE]
+          value: [value.DEFAULTVALUE.split(',')]
         })
       );
       const formArray = this.fb.array(formGroups);
@@ -973,8 +983,13 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     this.formFileUpload.nativeElement.value = '';
   }
 
-  closeSelect(matSelect) {}
+  closeSelect(matSelect) {
+    matSelect.close();
+  }
   onSelectionChange(event, label) {
     this.additionalDetailMap[label] = event.value;
+  }
+  compareValues(value1: any, value2: any) {
+    return value1 && value2 && value1.toLowerCase() === value2.toLowerCase();
   }
 }
