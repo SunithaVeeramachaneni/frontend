@@ -351,6 +351,8 @@ export class FormListComponent implements OnInit, OnDestroy {
                       })
                       .subscribe();
                   });
+
+                this.createQuickResponsesOnCopyForm$(form.id);
               }
               newRecord.publishedDate = '';
               this.addEditCopyForm$.next({
@@ -711,6 +713,34 @@ export class FormListComponent implements OnInit, OnDestroy {
         });
       }
     });
+  }
+
+  createQuickResponsesOnCopyForm$(formId) {
+    let quickResponses = [];
+    this.raceDynamicFormService
+      .getDataSetsByType$('quickResponses')
+      .subscribe(
+        (responses) =>
+          (quickResponses = responses.filter(
+            (response) => response?.formId === formId
+          ))
+      );
+    quickResponses = quickResponses
+      .map((response) => {
+        response.formId = formId;
+        delete response.id;
+        return response;
+      })
+      .filter((response) => response);
+    console.log(quickResponses);
+    if (quickResponses?.length) {
+      this.raceDynamicFormService
+        .createDataSetMultiple$(quickResponses, {
+          displayToast: true,
+          failureResponse: []
+        })
+        .subscribe();
+    }
   }
 
   ngOnDestroy(): void {
