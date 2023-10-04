@@ -234,6 +234,13 @@ export class TemplateListComponent implements OnInit, OnDestroy {
           this.configOptions.allColumns = this.columns;
           this.cdrf.detectChanges();
         }
+        this.allTemplates.map((item) => {
+          return this.raceDynamicFormService.handleEmptyColumns(
+            item,
+            this.columns
+          );
+        });
+        this.dataSource = new MatTableDataSource(this.allTemplates);
       });
 
     this.searchTemplates = new FormControl('');
@@ -256,7 +263,13 @@ export class TemplateListComponent implements OnInit, OnDestroy {
             )
           }));
           this.displayedTemplates = this.allTemplates;
-          this.dataSource = new MatTableDataSource(this.displayedTemplates);
+          this.displayedTemplates.map((item) => {
+            return this.raceDynamicFormService.handleEmptyColumns(
+              item,
+              this.columns
+            );
+          });
+          this.dataSource = new MatTableDataSource(this.allTemplates);
           this.isLoading$.next(false);
 
           this.initializeFilter();
@@ -541,6 +554,12 @@ export class TemplateListComponent implements OnInit, OnDestroy {
                   newTemplate.lastPublishedBy
                 );
               this.allTemplates = [newTemplate, ...this.allTemplates];
+              this.allTemplates.map((item) => {
+                return this.raceDynamicFormService.handleEmptyColumns(
+                  item,
+                  this.columns
+                );
+              });
               this.dataSource = new MatTableDataSource(this.allTemplates);
               this.cdrf.detectChanges();
               this.toast.show({

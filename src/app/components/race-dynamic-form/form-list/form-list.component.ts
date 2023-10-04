@@ -128,6 +128,7 @@ export class FormListComponent implements OnInit, OnDestroy {
   isLoadingColumns$: Observable<boolean> =
     this.columnConfigService.isLoadingColumns$;
   formsList$: Observable<any>;
+  allForms = [];
   lastPublishedBy = [];
   lastPublishedOn = [];
   lastModifiedBy = [];
@@ -199,6 +200,25 @@ export class FormListComponent implements OnInit, OnDestroy {
         if (res && res[this.RDF_MODULE_NAME]) {
           this.columns = res[this.RDF_MODULE_NAME];
           this.configOptions.allColumns = this.columns;
+          this.allForms?.map((item) => {
+            item =
+              this.raceDynamicFormService.extractAdditionalDetailsToColumns(
+                item
+              );
+            item = this.raceDynamicFormService.handleEmptyColumns(
+              item,
+              this.columns
+            );
+            return item;
+          });
+          this.dataSource = new MatTableDataSource(this.allForms);
+          let reloadData = false;
+          Object.values(this.filter).forEach((value) => {
+            if (value) {
+              reloadData = true;
+            }
+          });
+          if (reloadData) this.resetFilter();
           this.cdrf.detectChanges();
         }
       });
@@ -369,9 +389,19 @@ export class FormListComponent implements OnInit, OnDestroy {
             initial.data = initial.data.concat(scrollData);
           }
         }
-
-        this.skip = initial.data.length;
-        this.dataSource = new MatTableDataSource(initial.data);
+        this.allForms = initial.data;
+        this.allForms?.map((item) => {
+          item.tags = item.tags?.toString();
+          item =
+            this.raceDynamicFormService.extractAdditionalDetailsToColumns(item);
+          item = this.raceDynamicFormService.handleEmptyColumns(
+            item,
+            this.columns
+          );
+          return item;
+        });
+        this.dataSource = new MatTableDataSource(this.allForms);
+        this.skip = this.allForms.length;
         return initial;
       })
     );
@@ -413,14 +443,6 @@ export class FormListComponent implements OnInit, OnDestroy {
             } else {
               item = { ...item, plant: '' };
             }
-            item =
-              this.raceDynamicFormService.extractAdditionalDetailsToColumns(
-                item
-              );
-            item = this.raceDynamicFormService.handleEmptyColumns(
-              item,
-              this.columns
-            );
             return item;
           })
         )
@@ -559,6 +581,7 @@ export class FormListComponent implements OnInit, OnDestroy {
       }
     }
     this.nextToken = '';
+    this.isLoading$.next(true);
     this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
   }
 
@@ -611,6 +634,7 @@ export class FormListComponent implements OnInit, OnDestroy {
       publishedBy: ''
     };
     this.nextToken = '';
+    this.isLoading$.next(true);
     this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
   }
 

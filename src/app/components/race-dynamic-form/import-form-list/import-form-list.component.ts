@@ -230,6 +230,9 @@ export class ImportFormListComponent implements OnInit, OnDestroy {
         }),
         map((data) =>
           data.map((item) => {
+            if (item?.tags) {
+              item.tags = item.tags.toString();
+            }
             if (item.plantId) {
               item = {
                 ...item,
