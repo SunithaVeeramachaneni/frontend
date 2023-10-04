@@ -263,24 +263,23 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     this.additionalDetails = this.headerDataForm.get(
       'additionalDetails'
     ) as FormArray;
-    this.responseSetService
-      .listResponseSetByModuleName$('RDF')
-      .subscribe((responseSets) => {
-        responseSets.forEach((responseSet) => {
-          let value = [];
+    this.responseSetService.listResponseSetByModuleName$().subscribe((data) => {
+      let resposneSets = data.RDF;
+      resposneSets.forEach((responseSet) => {
+        let value = [];
 
-          JSON.parse(responseSet.values).forEach((val) => {
-            value.push(val.title);
-          });
-          this.additionalDetailMap[responseSet.name] = [];
-          const objFormGroup = this.fb.group({
-            label: responseSet.name,
-            value: new FormArray(value.map((val) => this.fb.control(val)))
-          });
-          this.additionalDetails.push(objFormGroup);
+        JSON.parse(responseSet.values).forEach((val) => {
+          value.push(val.title);
         });
-        this.cdrf.detectChanges();
+        this.additionalDetailMap[responseSet.name] = [];
+        const objFormGroup = this.fb.group({
+          label: responseSet.name,
+          value: new FormArray(value.map((val) => this.fb.control(val)))
+        });
+        this.additionalDetails.push(objFormGroup);
       });
+      this.cdrf.detectChanges();
+    });
   }
 
   handleEditorFocus(focus: boolean) {
