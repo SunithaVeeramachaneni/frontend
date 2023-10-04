@@ -268,7 +268,7 @@ export class ArchivedFormListComponent implements OnInit, OnDestroy {
               text:
                 'Form "' +
                 form.data.updateFormList.name +
-                '" restore successfully!',
+                '" restored successfully!',
               type: 'success'
             });
             action = null;

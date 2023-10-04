@@ -258,6 +258,23 @@ export class RoundPlanHeaderConfigurationComponent
           );
         }
       });
+
+    this.additionalDetails = this.headerDataForm.get(
+      'additionalDetails'
+    ) as FormArray;
+
+    if (this.additionalDetails) {
+      merge(
+        ...this.additionalDetails.controls.map(
+          (control: AbstractControl, index: number) =>
+            control.valueChanges.pipe(
+              map((value) => ({ rowIndex: index, value }))
+            )
+        )
+      ).subscribe((changes) => {
+        this.changedValues = changes.value;
+      });
+    }
   }
 
   getAllPlantsData() {
@@ -763,9 +780,6 @@ export class RoundPlanHeaderConfigurationComponent
   }
 
   addAdditionalDetails() {
-    this.additionalDetails = this.headerDataForm.get(
-      'additionalDetails'
-    ) as FormArray;
     this.additionalDetails.push(
       this.fb.group({
         label: [
