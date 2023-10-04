@@ -209,6 +209,10 @@ export class ImportFormListComponent implements OnInit, OnDestroy {
               this.raceDynamicFormService.extractAdditionalDetailsToColumns(
                 item
               );
+            item = this.raceDynamicFormService.handleEmptyColumns(
+              item,
+              this.columns
+            );
             return item;
           })
         )
