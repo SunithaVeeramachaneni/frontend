@@ -139,6 +139,7 @@ export class FormListComponent implements OnInit, OnDestroy {
   userInfo$: Observable<UserInfo>;
   triggerCountUpdate = false;
   RDF_MODULE_NAME = metadataFlatModuleNames.RACE_DYNAMIC_FORMS;
+  quickResponses = [];
   readonly perms = perms;
   private onDestroy$ = new Subject();
 
@@ -171,6 +172,11 @@ export class FormListComponent implements OnInit, OnDestroy {
       .subscribe(() => this.isLoading$.next(true));
 
     this.getDisplayedForms();
+    this.raceDynamicFormService
+      .getDataSetsByType$('quickResponses')
+      .subscribe((responses) => {
+        this.quickResponses = responses;
+      });
 
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
@@ -277,6 +283,8 @@ export class FormListComponent implements OnInit, OnDestroy {
                       })
                       .subscribe();
                   });
+
+                this.createQuickResponsesOnCopyForm$(form.id, newRecord.id);
               }
               newRecord.publishedDate = '';
               this.addEditCopyForm$.next({
@@ -656,6 +664,24 @@ export class FormListComponent implements OnInit, OnDestroy {
         });
       }
     });
+  }
+
+  createQuickResponsesOnCopyForm$(formId, copiedFormId) {
+    const quickResponses = this.quickResponses
+      .filter((response) => response?.formId === formId)
+      .map((response) => {
+        response.formId = copiedFormId;
+        delete response.id;
+        return response;
+      });
+    if (quickResponses?.length) {
+      this.raceDynamicFormService
+        .createDataSetMultiple$(quickResponses, {
+          displayToast: true,
+          failureResponse: []
+        })
+        .subscribe();
+    }
   }
 
   private showFormDetail(row: GetFormList): void {

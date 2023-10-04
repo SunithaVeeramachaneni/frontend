@@ -40,7 +40,8 @@ export class ImportQuestionsSliderComponent implements OnInit {
   pagesCount: number;
   questionCounter$: Observable<number>;
   questionCounter: number;
-  quickResponses: any;
+  quickResponses: any[] = [];
+  currentFormQuickResponses: any[] = [];
   formId: any;
 
   constructor(
@@ -58,6 +59,9 @@ export class ImportQuestionsSliderComponent implements OnInit {
       .subscribe((responses) => {
         this.quickResponses = responses.filter(
           (response) => response?.formId === this.selectedFormId
+        );
+        this.currentFormQuickResponses = responses.filter(
+          (response) => response?.formId === this.formId
         );
       });
     this.selectedFormData.forEach((item) => {
@@ -147,29 +151,36 @@ export class ImportQuestionsSliderComponent implements OnInit {
           this.importSectionQuestions
         );
       }
-      this.quickResponses = this.quickResponses.map((response) => {
-        response.formId = this.formId;
-        delete response.id;
-        return response;
-      });
-      this.rdfService
-        .createDataSetMultiple$(this.quickResponses, {
-          displayToast: true,
-          failureResponse: []
+      this.quickResponses = this.quickResponses
+        .map((response) => {
+          if (!this.checkQuickResponseAlreadyPresent(response)) {
+            response.formId = this.formId;
+            delete response.id;
+            return response;
+          }
         })
-        .subscribe((res) => {
-          this.store.dispatch(
-            QuickResponseActions.addFormSpecificQuickResponses({
-              formSpecificResponses: res
-            })
-          );
-
-          this.cancelSliderEvent.emit(false);
-          this.toast.show({
-            text: 'Questions Imported successfully!',
-            type: 'success'
+        .filter((response) => response);
+      if (this.quickResponses?.length) {
+        this.rdfService
+          .createDataSetMultiple$(this.quickResponses, {
+            displayToast: true,
+            failureResponse: []
+          })
+          .subscribe((res) => {
+            if (Object.keys(res).length > 0) {
+              this.store.dispatch(
+                QuickResponseActions.addFormSpecificQuickResponses({
+                  formSpecificResponses: res
+                })
+              );
+            }
           });
-        });
+      }
+      this.cancelSliderEvent.emit(false);
+      this.toast.show({
+        text: 'Questions Imported successfully!',
+        type: 'success'
+      });
     });
   }
   toggleIsOpen(page) {
@@ -227,5 +238,12 @@ export class ImportQuestionsSliderComponent implements OnInit {
     const checkedCount = page.sections.filter((p) => p.checked).length;
 
     return checkedCount > 0 && checkedCount !== page.sections.length;
+  }
+
+  checkQuickResponseAlreadyPresent(response) {
+    return this.currentFormQuickResponses.some(
+      (quickResponse) =>
+        JSON.stringify(quickResponse.values) === JSON.stringify(response.values)
+    );
   }
 }
