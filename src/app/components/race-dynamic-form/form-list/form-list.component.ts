@@ -406,6 +406,10 @@ export class FormListComponent implements OnInit, OnDestroy {
             } else {
               item = { ...item, plant: '' };
             }
+            item =
+              this.raceDynamicFormService.extractAdditionalDetailsToColumns(
+                item
+              );
             return item;
           })
         )

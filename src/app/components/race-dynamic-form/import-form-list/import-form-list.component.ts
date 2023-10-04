@@ -20,7 +20,7 @@ import {
   TableEvent
 } from '../../../interfaces';
 
-import { defaultLimit } from '../../../app.constants';
+import { defaultLimit, metadataFlatModuleNames } from '../../../app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { getFormMetadata, State } from 'src/app/forms/state';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
@@ -30,6 +30,7 @@ import {
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { MatTableDataSource } from '@angular/material/table';
+import { ColumnConfigurationService } from 'src/app/forms/services/column-configuration.service';
 @Component({
   selector: 'app-import-form-list',
   templateUrl: './import-form-list.component.html',
@@ -50,103 +51,10 @@ export class ImportFormListComponent implements OnInit, OnDestroy {
   ghostLoading = new Array(11).fill(0).map((v, i) => i);
   isLoading$ = new BehaviorSubject(true);
   selectedFormId = '';
-
+  RDF_MODULE_NAME = metadataFlatModuleNames.RACE_DYNAMIC_FORMS;
+  tags = new Set();
   status: any[] = ['Draft', 'Published'];
-  columns: Column[] = [
-    {
-      id: 'name',
-      displayName: 'Name',
-      type: 'string',
-      controlType: 'string',
-      order: 1,
-      searchable: false,
-      sortable: false,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
-      titleStyle: {
-        'font-weight': '500',
-        'font-size': '100%',
-        color: '#000000',
-        'overflow-wrap': 'anywhere'
-      },
-      hasSubtitle: true,
-      showMenuOptions: false,
-      subtitleColumn: 'description',
-      subtitleStyle: {
-        'font-size': '80%',
-        color: 'darkgray',
-        display: 'block',
-        'white-space': 'wrap',
-        'max-width': '240px',
-        'overflow-wrap': 'anywhere'
-      },
-      hasPreTextImage: true,
-      hasPostTextImage: false
-    },
-    {
-      id: 'plant',
-      displayName: 'Plant',
-      type: 'string',
-      controlType: 'string',
-      order: 2,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
-      sortable: true,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
-    },
-    {
-      id: 'formStatus',
-      displayName: 'Status',
-      type: 'string',
-      controlType: 'string',
-      order: 3,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
-      sortable: true,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: true,
-      titleStyle: {
-        textTransform: 'capitalize',
-        fontWeight: 500,
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        position: 'relative',
-        top: '10px',
-        width: '80px',
-        height: '24px',
-        background: '#FEF3C7',
-        color: '#92400E',
-        borderRadius: '12px'
-      },
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false,
-      hasConditionalStyles: true
-    }
-  ];
+  columns: Column[] = [];
 
   configOptions: ConfigOptions = {
     tableID: 'formsTable',
@@ -181,10 +89,19 @@ export class ImportFormListComponent implements OnInit, OnDestroy {
     public dialogRef: MatDialogRef<ImportQuestionsModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data,
     private raceDynamicFormService: RaceDynamicFormService,
+    private columnConfigService: ColumnConfigurationService,
     private store: Store<State>
   ) {}
 
   ngOnInit(): void {
+    this.columnConfigService.moduleColumnConfiguration$
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe((res) => {
+        if (res && res[this.RDF_MODULE_NAME]) {
+          this.columns = res[this.RDF_MODULE_NAME];
+          this.configOptions.allColumns = this.columns;
+        }
+      });
     this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
     this.raceDynamicFormService.fetchForms$.next({} as TableEvent);
     this.searchForm = new FormControl('');
@@ -200,7 +117,6 @@ export class ImportFormListComponent implements OnInit, OnDestroy {
       .subscribe(() => this.isLoading$.next(true));
 
     this.getDisplayedForms();
-    this.configOptions.allColumns = this.columns;
 
     this.formMetadata$ = this.store
       .select(getFormMetadata)
@@ -280,6 +196,7 @@ export class ImportFormListComponent implements OnInit, OnDestroy {
         }),
         map((data) =>
           data.map((item) => {
+            item?.tags?.forEach((tag) => this.tags.add(tag));
             if (item.plantId) {
               item = {
                 ...item,
@@ -288,6 +205,10 @@ export class ImportFormListComponent implements OnInit, OnDestroy {
             } else {
               item = { ...item, plant: '' };
             }
+            item =
+              this.raceDynamicFormService.extractAdditionalDetailsToColumns(
+                item
+              );
             return item;
           })
         )
