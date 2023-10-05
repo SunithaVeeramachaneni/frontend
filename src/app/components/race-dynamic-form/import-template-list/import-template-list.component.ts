@@ -257,19 +257,26 @@ export class ImportTemplateListComponent implements OnInit, OnDestroy {
   }
 
   setFilters() {
-    this.filterJson.forEach((item) => {
-      if (item.column === 'lastPublishedBy') {
-        item.items = this.lastPublishedBy;
-      } else if (item.column === 'author') {
-        item.items = this.createdBy;
-      } else if (item.column === 'tags') {
-        item.items = this.tags;
-      } else if (!item?.items?.length) {
-        item.items = this.additionalDetailFilterData[item.column]
-          ? this.additionalDetailFilterData[item.column]
-          : [];
+    for (const item of this.filterJson) {
+      switch (item.column) {
+        case 'lastPublishedBy':
+          item.items = this.lastPublishedBy;
+          break;
+        case 'author':
+          item.items = this.createdBy;
+          break;
+        case 'tags':
+          item.items = this.tags;
+          break;
+        default:
+          if (!item?.items?.length) {
+            item.items = this.additionalDetailFilterData[item.column]
+              ? this.additionalDetailFilterData[item.column]
+              : [];
+          }
+          break;
       }
-    });
+    }
   }
 
   applyFilter(data: any) {

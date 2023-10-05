@@ -627,18 +627,26 @@ export class FormListComponent implements OnInit, OnDestroy {
   }
   setFilters() {
     for (const item of this.filterJson) {
-      if (item.column === 'lastPublishedBy') {
-        item.items = this.lastPublishedBy;
-      } else if (item.column === 'plant') {
-        item.items = this.plants;
-      } else if (item.column === 'author') {
-        item.items = this.createdBy;
-      } else if (item.column === 'tags') {
-        item.items = this.tags;
-      } else if (!item?.items?.length) {
-        item.items = this.additionalDetailFilterData[item.column]
-          ? this.additionalDetailFilterData[item.column]
-          : [];
+      switch (item.column) {
+        case 'lastPublishedBy':
+          item.items = this.lastPublishedBy;
+          break;
+        case 'plant':
+          item.items = this.plants;
+          break;
+        case 'author':
+          item.items = this.createdBy;
+          break;
+        case 'tags':
+          item.items = this.tags;
+          break;
+        default:
+          if (!item?.items?.length) {
+            item.items = this.additionalDetailFilterData[item.column]
+              ? this.additionalDetailFilterData[item.column]
+              : [];
+          }
+          break;
       }
     }
   }
