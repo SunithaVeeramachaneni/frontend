@@ -210,7 +210,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
       }
     }
   };
-  filters: any = {
+  filter: any = {
     formStatus: '',
     lastPublishedBy: '',
     author: ''
@@ -228,7 +228,6 @@ export class TemplateListComponent implements OnInit, OnDestroy {
   lastPublishedBy = [];
   createdBy = [];
   readonly perms = perms;
-  fetchAllTemplatesSubscription: Subscription;
   userInfo$: Observable<UserInfo>;
   searchTerm: string = '';
   RDF_TEMPLATE_MODULE_NAME = metadataFlatModuleNames.RDF_TEMPLATES;
@@ -288,6 +287,13 @@ export class TemplateListComponent implements OnInit, OnDestroy {
           );
           return item;
         });
+        let reloadData = false;
+        Object.values(this.filter).forEach((value) => {
+          if (value) {
+            reloadData = true;
+          }
+        });
+        if (reloadData) this.resetFilter();
         this.dataSource = new MatTableDataSource(this.allTemplates);
       });
     this.columnConfigService.moduleFilterConfiguration$
@@ -436,7 +442,6 @@ export class TemplateListComponent implements OnInit, OnDestroy {
             );
             const formsUsageCount =
               item.formsUsageCount === 0 ? '_ _' : item.formsUsageCount;
-            console.log(author);
             return {
               ...item,
               author,
@@ -448,6 +453,10 @@ export class TemplateListComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe(([_, res]) => {
+        this.configOptions = {
+          ...this.configOptions,
+          tableHeight: 'calc(100vh - 130px)'
+        };
         this.templatesCount$ = of(res.rows.length);
         this.displayedTemplates = this.allTemplates;
         this.dataSource = new MatTableDataSource(this.allTemplates);
@@ -459,7 +468,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
       isArchived: 'false',
       isDeleted: 'false',
       searchTerm: this.searchTerm,
-      ...this.filters
+      ...this.filter
     });
   }
 
@@ -509,14 +518,23 @@ export class TemplateListComponent implements OnInit, OnDestroy {
 
   applyFilter(data: any) {
     for (const item of data) {
-      this.filters[item.column] = item.value;
+      if (item.column === 'author' || item.column === 'lastPublishedBy') {
+        this.filter[item.column] = Array.isArray(item.value)
+          ? item?.value?.reduce((acc, curr) => {
+              acc.push(this.usersService.getUserEmailByFullName(curr));
+              return acc;
+            }, [])
+          : [];
+      } else {
+        this.filter[item.column] = item.value;
+      }
     }
     this.isLoading$.next(true);
     this.fetchTemplates$.next({ data: 'load' });
   }
 
   resetFilter() {
-    this.filters = {
+    this.filter = {
       formStatus: '',
       lastPublishedBy: '',
       author: ''
@@ -711,14 +729,6 @@ export class TemplateListComponent implements OnInit, OnDestroy {
     this.affectedFormDetailState = 'in';
   }
 
-  ngOnDestroy(): void {
-    if (this.fetchAllTemplatesSubscription) {
-      this.fetchAllTemplatesSubscription.unsubscribe();
-    }
-    this.onDestroy$.next();
-    this.onDestroy$.complete();
-  }
-
   showAffectedSlider(row: any): void {
     if (row.formsUsageCount > 0) {
       this.selectedTemplate = row;
@@ -753,5 +763,9 @@ export class TemplateListComponent implements OnInit, OnDestroy {
       };
     }
     return null;
+  }
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 }

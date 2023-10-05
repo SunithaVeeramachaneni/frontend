@@ -426,6 +426,13 @@ export const RDF_TEMPLATE_LIST_FILTERS = [
     value: ''
   },
   {
+    label: 'Template Type',
+    items: ['Standalone', 'Embedded'],
+    column: 'formType',
+    type: 'select',
+    value: ''
+  },
+  {
     label: 'Modified By',
     items: [],
     column: 'lastPublishedBy',
