@@ -99,5 +99,6 @@
   "backToEditingBtn": "Back to Editing",
   "searchId": "Search by Name/Id",
   "values": "Values",
-  "addModuleNameHeading": "Add as Meta Data For"
+  "addModuleNameHeading": "Add as Meta Data For",
+  "responseSetNameExists": "Response Set Name already exists"
 }

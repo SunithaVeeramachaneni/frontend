@@ -443,19 +443,32 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     const additionalinfoArray = this.headerDataForm.get(
       'additionalDetails'
     ) as FormArray;
-    const updatedAdditionalDetails = additionalinfoArray.value.map(
-      (additionalinfo) => ({
-        FIELDLABEL: additionalinfo.label,
-        DEFAULTVALUE: this.additionalDetailMap[additionalinfo.label].reduce(
-          (accumulatedLable, current) => {
-            return accumulatedLable === ''
-              ? current
-              : accumulatedLable + ',' + current;
-          },
-          ''
-        ),
-        UIFIELDTYPE: 'LF'
-      })
+    let updatedAdditionalDetails = additionalinfoArray.value.map(
+      (additionalinfo) => {
+        this.additionalDetailMap[additionalinfo.label] =
+          this.additionalDetailMap[additionalinfo.label].filter(
+            (data) => !!data
+          );
+        if (this.additionalDetailMap[additionalinfo.label].length) {
+          return {
+            FIELDLABEL: additionalinfo.label,
+            DEFAULTVALUE: this.additionalDetailMap[additionalinfo.label].reduce(
+              (accumulatedLable, current) => {
+                return accumulatedLable === ''
+                  ? current
+                  : accumulatedLable + ',' + current;
+              },
+              ''
+            ),
+            UIFIELDTYPE: 'LF'
+          };
+        } else {
+          return {};
+        }
+      }
+    );
+    updatedAdditionalDetails = updatedAdditionalDetails.filter(
+      (data) => Object.keys(data).length !== 0
     );
 
     const newTags = [];

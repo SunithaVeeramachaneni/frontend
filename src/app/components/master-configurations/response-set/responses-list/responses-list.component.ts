@@ -236,6 +236,9 @@ export class ResponsesListComponent implements OnInit, OnDestroy {
     this.responseSetService.fetchResponses$.next({ data: 'load' });
     this.responseSetService.fetchResponses$.next({} as TableEvent);
     this.allResponseSets$ = this.responseSetService.fetchAllGlobalResponses$();
+    this.allResponseSets$.pipe(takeUntil(this.onDestroy$)).subscribe((data) => {
+      this.allResponseSets = data?.items || [];
+    })
     this.responseSetCount$ = combineLatest([
       this.responseSetCount$,
       this.responseSetCountUpdate$
