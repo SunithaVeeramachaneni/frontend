@@ -230,7 +230,7 @@
     <app-column-configuration-slider
       [@slideInOut]="columnConfigMenuState"
       (slideInOut)="onCloseColumnConfig()"
-      [moduleName]="RDF_MODULE_NAME"
+      [moduleName]="rdfModuleName"
     ></app-column-configuration-slider>
   </ng-container>
   <div *ngIf="(isLoading$ | async) || (isLoadingColumns$ | async)">

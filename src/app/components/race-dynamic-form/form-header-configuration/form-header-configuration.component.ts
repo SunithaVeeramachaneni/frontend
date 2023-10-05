@@ -271,34 +271,36 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     this.responseSetService
       .fetchResponseSetByModuleName$()
       .subscribe((data) => {
-        let resposneSets = data.RDF;
-        resposneSets.forEach((responseSet) => {
-          let values = [];
+        if (Object.keys(data).length) {
+          let resposneSets = data.RDF;
+          resposneSets.forEach((responseSet) => {
+            let values = [];
 
-          JSON.parse(responseSet.values).forEach((val) => {
-            values.push(val.title);
+            JSON.parse(responseSet.values).forEach((val) => {
+              values.push(val.title);
+            });
+            let selectedValues = [];
+            if (this.data.formData) {
+              const obj = this.data.formData.additionalDetails.find(
+                (object) => object.FIELDLABEL === responseSet.name
+              );
+              selectedValues = obj ? obj.DEFAULTVALUE.split(',') : [];
+            }
+            this.additionalDetailMap[responseSet.name] = selectedValues;
+            const objFormGroup = this.fb.group({
+              label: [responseSet.name],
+              value: [values],
+              selectedValue: [selectedValues]
+            });
+            this.additionalDetails.push(objFormGroup);
+            this.additionalDetailsMasterData[responseSet.name] = {
+              value: values,
+              selectedValue: selectedValues
+            };
           });
-          let selectedValues = [];
-          if (this.data.formData) {
-            const obj = this.data.formData.additionalDetails.find(
-              (object) => object.FIELDLABEL === responseSet.name
-            );
-            selectedValues = obj ? obj.DEFAULTVALUE.split(',') : [];
-          }
-          this.additionalDetailMap[responseSet.name] = selectedValues;
-          const objFormGroup = this.fb.group({
-            label: [responseSet.name],
-            value: [values],
-            selectedValue: [selectedValues]
-          });
-          this.additionalDetails.push(objFormGroup);
-          this.additionalDetailsMasterData[responseSet.name] = {
-            value: values,
-            selectedValue: selectedValues
-          };
-        });
-        this.cdrf.detectChanges();
-        this.isLoading$.next(false);
+          this.cdrf.detectChanges();
+          this.isLoading$.next(false);
+        }
       });
   }
 

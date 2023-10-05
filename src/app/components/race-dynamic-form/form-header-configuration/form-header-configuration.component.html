@@ -334,6 +334,7 @@
                   >
                     <mat-label id="filterStatusLabel">Select</mat-label>
                     <mat-select
+                      id="additional-detail-select"
                       #matSelect
                       multiple
                       [(value)]="additionalDetails.value.selectedValue"
@@ -357,7 +358,7 @@
                     >
                       <div class="scroll-headers">
                         <div class="multiple-header">
-                          <span id="doneLabel">Select</span>
+                          <span id="doneLabel" translate>select</span>
                           <button
                             id="filterDoneBtn"
                             class="done-filters-btn"

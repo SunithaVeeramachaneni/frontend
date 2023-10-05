@@ -188,8 +188,11 @@
                       appearance="outline"
                       class="m-l-5 symbol m-b-10 m-t-5 width-100"
                     >
-                      <mat-label id="filterStatusLabel">Select</mat-label>
+                      <mat-label id="filterStatusLabel" translate
+                        >select</mat-label
+                      >
                       <mat-select
+                        id="additional-detail-template-select"
                         #matSelect
                         multiple
                         [(value)]="additionalDetails.value.selectedValue"

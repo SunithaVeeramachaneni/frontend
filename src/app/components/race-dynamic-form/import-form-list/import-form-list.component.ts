@@ -60,7 +60,7 @@ export class ImportFormListComponent implements OnInit, OnDestroy {
   isLoadingColumns$: Observable<boolean> =
     this.columnConfigService.isLoadingColumns$;
   selectedFormId = '';
-  RDF_MODULE_NAME = metadataFlatModuleNames.RACE_DYNAMIC_FORMS;
+  rdfModuleName = metadataFlatModuleNames.RACE_DYNAMIC_FORMS;
   tags = new Set();
   status: any[] = ['Draft', 'Published'];
   columns: Column[] = [];
@@ -144,16 +144,16 @@ export class ImportFormListComponent implements OnInit, OnDestroy {
     this.columnConfigService.moduleColumnConfiguration$
       .pipe(takeUntil(this.onDestroy$))
       .subscribe((res) => {
-        if (res && res[this.RDF_MODULE_NAME]) {
-          this.columns = res[this.RDF_MODULE_NAME];
+        if (res && res[this.rdfModuleName]) {
+          this.columns = res[this.rdfModuleName];
           this.configOptions.allColumns = this.columns;
         }
       });
     this.columnConfigService.moduleFilterConfiguration$
       .pipe(takeUntil(this.onDestroy$))
       .subscribe((res) => {
-        if (res && res[this.RDF_MODULE_NAME]) {
-          this.filterJson = res[this.RDF_MODULE_NAME]?.filter(
+        if (res && res[this.rdfModuleName]) {
+          this.filterJson = res[this.rdfModuleName]?.filter(
             (item) => item.column !== 'formType'
           );
           this.setFilters();

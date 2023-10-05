@@ -171,37 +171,39 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
     this.responseSetSerivce
       .fetchResponseSetByModuleName$()
       .subscribe((response) => {
-        let responseSets = response.RDF_TEMPLATES;
-        responseSets.forEach((responseSet) => {
-          let values = [];
+        if (Object.keys(response).length) {
+          let responseSets = response.RDF_TEMPLATES;
+          responseSets.forEach((responseSet) => {
+            let values = [];
 
-          JSON.parse(responseSet.values).forEach((val) => {
-            values.push(val.title);
+            JSON.parse(responseSet.values).forEach((val) => {
+              values.push(val.title);
+            });
+            let selectedValues = [];
+            if (Object.keys(this.templateData.formMetadata).length) {
+              const obj = this.templateData.formMetadata.additionalDetails.find(
+                (object) => object.FIELDLABEL === responseSet.name
+              );
+              selectedValues = obj ? obj.DEFAULTVALUE.split(',') : [];
+            }
+            this.additionalDetailMap[responseSet.name] = selectedValues;
+            const objFormGroup = this.fb.group({
+              label: [responseSet.name],
+              value: [values],
+              selectedValue: [selectedValues]
+            });
+            this.additionalDetails.push(objFormGroup);
+            this.additionalDetailsMasterData[responseSet.name] = {
+              value: values,
+              selectedValue: selectedValues
+            };
           });
-          let selectedValues = [];
-          if (Object.keys(this.templateData.formMetadata).length) {
-            const obj = this.templateData.formMetadata.additionalDetails.find(
-              (object) => object.FIELDLABEL === responseSet.name
-            );
-            selectedValues = obj ? obj.DEFAULTVALUE.split(',') : [];
-          }
-          this.additionalDetailMap[responseSet.name] = selectedValues;
-          const objFormGroup = this.fb.group({
-            label: [responseSet.name],
-            value: [values],
-            selectedValue: [selectedValues]
-          });
-          this.additionalDetails.push(objFormGroup);
-          this.additionalDetailsMasterData[responseSet.name] = {
-            value: values,
-            selectedValue: selectedValues
-          };
-        });
-        this.headerDataForm.setControl(
-          'additionalDetails',
-          this.additionalDetails
-        );
-        this.isLoading$.next(false);
+          this.headerDataForm.setControl(
+            'additionalDetails',
+            this.additionalDetails
+          );
+          this.isLoading$.next(false);
+        }
       });
 
     this.formMetadataSubscription = this.store

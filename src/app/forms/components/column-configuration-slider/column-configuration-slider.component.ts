@@ -8,8 +8,8 @@ import {
   OnInit,
   Output
 } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { BehaviorSubject, throwError } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
 import { slideInOut } from 'src/app/animations';
 import { ResponseSetService } from 'src/app/components/master-configurations/response-set/services/response-set.service';
 import { columnConfiguration } from 'src/app/interfaces/columnConfiguration';
@@ -151,19 +151,29 @@ export class ColumnConfigurationSliderComponent implements OnInit {
       columnIds
     );
     this.userService
-      .updateUserPreferences$({
-        columnConfigurations: JSON.stringify(
-          this.columnConfigService.getUserColumnConfiguration()
-        )
-      })
-      .subscribe(() => {
-        this.columnConfigService.isLoadingColumns$.next(true);
-        this.toastService.show({
-          type: 'success',
-          text: 'Column Configuration Stored Successfully'
-        });
-        this.columnConfigService.updateUserColumnConfig(this.moduleName);
-        this.columnConfigService.updateFilterConfiguration();
+      .updateUserPreferences$(
+        {
+          columnConfigurations: JSON.stringify(
+            this.columnConfigService.getUserColumnConfiguration()
+          )
+        },
+        { displayToast: false, failureResponse: {} }
+      )
+      .subscribe((response) => {
+        if (Object.keys(response).length) {
+          this.columnConfigService.isLoadingColumns$.next(true);
+          this.toastService.show({
+            type: 'success',
+            text: 'Column Configuration Stored Successfully'
+          });
+          this.columnConfigService.updateUserColumnConfig(this.moduleName);
+          this.columnConfigService.updateFilterConfiguration();
+        } else {
+          this.toastService.show({
+            type: 'warning',
+            text: 'Unable to store column configuration'
+          });
+        }
         this.columnConfigService.isLoadingColumns$.next(false);
         this.slideInOut.emit('in');
       });
