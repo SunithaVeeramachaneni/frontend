@@ -314,7 +314,10 @@ export class FormListComponent implements OnInit, OnDestroy {
                   ...newRecord,
                   name: createdForm.newName,
                   preTextImage: (form as any)?.preTextImage,
-                  oldId: form.id
+                  oldId: form.id,
+                  plant: Object.keys(this.plantsIdNameMap).find(
+                    (key) => this.plantsIdNameMap[key] === newRecord.plantId
+                  )
                 } as any
               });
             });
@@ -483,7 +486,10 @@ export class FormListComponent implements OnInit, OnDestroy {
   rowLevelActionHandler = ({ data, action }): void => {
     switch (action) {
       case 'copy':
-        this.onCopyFormMetaData(data);
+        this.onCopyFormMetaData({
+          ...data,
+          tags: data.tags !== '_ _' ? data.tags.split(',') : []
+        });
         break;
 
       case 'edit':

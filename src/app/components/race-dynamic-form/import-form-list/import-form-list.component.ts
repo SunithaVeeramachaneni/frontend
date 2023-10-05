@@ -20,7 +20,11 @@ import {
   TableEvent
 } from '../../../interfaces';
 
-import { defaultLimit, graphQLDefaultFilterLimit, metadataFlatModuleNames } from '../../../app.constants';
+import {
+  defaultLimit,
+  graphQLDefaultFilterLimit,
+  metadataFlatModuleNames
+} from '../../../app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { getFormMetadata, State } from 'src/app/forms/state';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
@@ -347,6 +351,7 @@ export class ImportFormListComponent implements OnInit, OnDestroy {
       }
     }
     this.nextToken = '';
+    this.isLoading$.next(true);
     this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
   }
   resetFilter() {
@@ -358,6 +363,7 @@ export class ImportFormListComponent implements OnInit, OnDestroy {
       publishedBy: ''
     };
     this.nextToken = '';
+    this.isLoading$.next(true);
     this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
   }
 
