@@ -885,6 +885,7 @@ export class RaceDynamicFormService {
     const rawParams = {
       searchTerm: filter?.searchTerm,
       limit: String(0),
+      skip: String(0),
       isArchived: String(filter.isArchived),
       isDeleted: String(filter.isDeleted),
       ...filter

@@ -202,7 +202,11 @@ export class UsersService {
   getUserFullName(email: string): string {
     return this.usersInfoByEmail[email]?.fullName;
   }
-
+  getUserEmailByFullName(fullName: string): string {
+    return Object.keys(this.usersInfoByEmail).find(
+      (email) => this.usersInfoByEmail[email]?.fullName === fullName
+    );
+  }
   deactivateUser$ = (userID, info: ErrorInfo = {} as ErrorInfo) => {
     const deactivateUser = { isActive: false };
     return this.appService
