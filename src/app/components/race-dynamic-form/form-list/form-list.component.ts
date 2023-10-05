@@ -228,6 +228,7 @@ export class FormListComponent implements OnInit, OnDestroy {
   createdBy = [];
   userInfo$: Observable<UserInfo>;
   triggerCountUpdate = false;
+  quickResponses = [];
   readonly perms = perms;
   private onDestroy$ = new Subject();
 
@@ -263,6 +264,11 @@ export class FormListComponent implements OnInit, OnDestroy {
 
     this.populateFilter();
     this.getDisplayedForms();
+    this.raceDynamicFormService
+      .getDataSetsByType$('quickResponses')
+      .subscribe((responses) => {
+        this.quickResponses = responses;
+      });
 
     this.configOptions.allColumns = this.columns;
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
@@ -351,6 +357,8 @@ export class FormListComponent implements OnInit, OnDestroy {
                       })
                       .subscribe();
                   });
+
+                this.createQuickResponsesOnCopyForm$(form.id, newRecord.id);
               }
               newRecord.publishedDate = '';
               this.addEditCopyForm$.next({
@@ -711,6 +719,24 @@ export class FormListComponent implements OnInit, OnDestroy {
         });
       }
     });
+  }
+
+  createQuickResponsesOnCopyForm$(formId, copiedFormId) {
+    const quickResponses = this.quickResponses
+      .filter((response) => response?.formId === formId)
+      .map((response) => {
+        response.formId = copiedFormId;
+        delete response.id;
+        return response;
+      });
+    if (quickResponses?.length) {
+      this.raceDynamicFormService
+        .createDataSetMultiple$(quickResponses, {
+          displayToast: true,
+          failureResponse: []
+        })
+        .subscribe();
+    }
   }
 
   ngOnDestroy(): void {

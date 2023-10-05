@@ -190,6 +190,15 @@
                 <mat-icon id="addLogicEditIcon">edit</mat-icon>
               </span>
               <span
+                id="addLogicHideSections"
+                *ngIf="logic.value.hideSections.length"
+                class="mandateAction"
+                (click)="openHideSectionsDialog(logic.value, i)"
+              >
+                Hide ({{ logic.value.hideSections.length }}) Sections
+                <mat-icon id="addLogicEditIcon">edit</mat-icon>
+              </span>
+              <span
                 id="addLogicAskQuestions"
                 *ngIf="logic.value.questions.length"
                 class="mandateAction"
@@ -274,6 +283,14 @@
                     openRaiseNotificationDialog('raise_notification', i, logic)
                   "
                   translate="raiseNotification"
+                ></button>
+                <button
+                  id="addLogicHideSectionsBtn"
+                  class="logicActionMenuItem"
+                  mat-menu-item
+                  *ngIf="!isTemplate && isEmbeddedForm"
+                  (click)="openHideSectionsDialog(logic.value, i)"
+                  translate="hideSection"
                 ></button>
               </mat-menu>
             </div>

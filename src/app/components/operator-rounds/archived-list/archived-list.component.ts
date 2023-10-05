@@ -30,9 +30,14 @@ import {
   TableEvent,
   LoadEvent,
   SearchEvent,
-  RoundPlan
+  RoundPlan,
+  Permission
 } from 'src/app/interfaces';
-import { graphQLDefaultLimit, routingUrls } from 'src/app/app.constants';
+import {
+  graphQLDefaultLimit,
+  routingUrls,
+  permissions as perms
+} from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { MatDialog } from '@angular/material/dialog';
 import { ArchivedDeleteModalComponent } from '../archived-delete-modal/archived-delete-modal.component';
@@ -40,6 +45,7 @@ import { OperatorRoundsService } from '../../operator-rounds/services/operator-r
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { HeaderService } from 'src/app/shared/services/header.service';
+import { LoginService } from '../../login/services/login.service';
 
 interface FormTableUpdate {
   action: 'restore' | 'delete' | null;
@@ -204,6 +210,7 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
   plants = [];
   currentRouteUrl$: Observable<string>;
   triggerCountUpdate = false;
+  userInfo$: Observable<any>;
   readonly routingUrls = routingUrls;
   private destroy$ = new Subject();
 
@@ -212,7 +219,8 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
     public dialog: MatDialog,
     private readonly operatorRoundsService: OperatorRoundsService,
     private commonService: CommonService,
-    private headerService: HeaderService
+    private headerService: HeaderService,
+    private loginService: LoginService
   ) {}
 
   ngOnInit(): void {
@@ -236,7 +244,9 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
       .subscribe(() => this.isLoading$.next(true));
     this.getDisplayedForms();
     this.configOptions.allColumns = this.columns;
-    this.prepareMenuActions();
+    this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
+      tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
+    );
     this.getFilter();
     this.getAllArchivedRoundPlans();
     this.archivedFormsListCount$ = combineLatest([
@@ -296,7 +306,7 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
           if (action === 'restore') {
             initial.data = initial.data.filter((d) => d.id !== form.id);
             this.toast.show({
-              text: 'Round restore successfully!',
+              text: 'Plan restored successfully!',
               type: 'success'
             });
             action = null;
@@ -364,17 +374,33 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
     this.fetchForms$.next(event);
   };
 
-  prepareMenuActions(): void {
-    const menuActions = [
-      {
-        title: 'Restore',
-        action: 'restore'
-      },
-      {
-        title: 'Delete',
-        action: 'delete'
-      }
-    ];
+  prepareMenuActions(permissions: Permission[]): void {
+    const menuActions = [];
+
+    if (
+      this.loginService.checkUserHasPermission(
+        permissions,
+        perms.restoreArchivedOR
+      )
+    ) {
+      menuActions.push({
+        action: 'restore',
+        title: 'Restore'
+      });
+    }
+
+    if (
+      this.loginService.checkUserHasPermission(
+        permissions,
+        perms.deleteArchivedOR
+      )
+    ) {
+      menuActions.push({
+        action: 'delete',
+        title: 'Delete'
+      });
+    }
+
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
     this.configOptions = { ...this.configOptions };

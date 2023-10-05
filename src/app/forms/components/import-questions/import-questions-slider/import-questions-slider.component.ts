@@ -14,6 +14,8 @@ import {
 import { SectionQuestions } from 'src/app/interfaces';
 import { AddPageOrSelectExistingPageModalComponent } from '../add-page-or-select-existing-page-modal/add-page-or-select-existing-page-modal.component';
 import { ToastService } from 'src/app/shared/toast/toast.service';
+import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
+import { QuickResponseActions } from 'src/app/forms/state/actions';
 
 @Component({
   selector: 'app-import-questions-slider',
@@ -27,6 +29,7 @@ export class ImportQuestionsSliderComponent implements OnInit {
   @Input() isEmbeddedForm;
   @Input() isFooter;
   @Input() title;
+  @Input() selectedFormId;
 
   @Output() cancelSliderEvent: EventEmitter<boolean> = new EventEmitter();
   @Output() backEvent: EventEmitter<boolean> = new EventEmitter();
@@ -37,15 +40,30 @@ export class ImportQuestionsSliderComponent implements OnInit {
   pagesCount: number;
   questionCounter$: Observable<number>;
   questionCounter: number;
+  quickResponses: any[] = [];
+  currentFormQuickResponses: any[] = [];
+  formId: any;
 
   constructor(
     private modal: MatDialog,
     private formConfigurationService: FormConfigurationService,
     private store: Store<State>,
-    private readonly toast: ToastService
+    private readonly toast: ToastService,
+    private rdfService: RaceDynamicFormService
   ) {}
 
   ngOnInit(): void {
+    this.formId = this.currentFormData?.formMetadata?.id;
+    this.rdfService
+      .getDataSetsByType$('quickResponses')
+      .subscribe((responses) => {
+        this.quickResponses = responses.filter(
+          (response) => response?.formId === this.selectedFormId
+        );
+        this.currentFormQuickResponses = responses.filter(
+          (response) => response?.formId === this.formId
+        );
+      });
     this.selectedFormData.forEach((item) => {
       if (item) {
         item.isOpen = false;
@@ -133,6 +151,31 @@ export class ImportQuestionsSliderComponent implements OnInit {
           this.importSectionQuestions
         );
       }
+      this.quickResponses = this.quickResponses
+        .map((response) => {
+          if (!this.checkQuickResponseAlreadyPresent(response)) {
+            response.formId = this.formId;
+            delete response.id;
+            return response;
+          }
+        })
+        .filter((response) => response);
+      if (this.quickResponses?.length) {
+        this.rdfService
+          .createDataSetMultiple$(this.quickResponses, {
+            displayToast: true,
+            failureResponse: []
+          })
+          .subscribe((res) => {
+            if (Object.keys(res).length > 0) {
+              this.store.dispatch(
+                QuickResponseActions.addFormSpecificQuickResponses({
+                  formSpecificResponses: res
+                })
+              );
+            }
+          });
+      }
       this.cancelSliderEvent.emit(false);
       this.toast.show({
         text: 'Questions Imported successfully!',
@@ -195,5 +238,12 @@ export class ImportQuestionsSliderComponent implements OnInit {
     const checkedCount = page.sections.filter((p) => p.checked).length;
 
     return checkedCount > 0 && checkedCount !== page.sections.length;
+  }
+
+  checkQuickResponseAlreadyPresent(response) {
+    return this.currentFormQuickResponses.some(
+      (quickResponse) =>
+        JSON.stringify(quickResponse.values) === JSON.stringify(response.values)
+    );
   }
 }

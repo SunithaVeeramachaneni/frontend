@@ -174,6 +174,7 @@ export class ImportTemplateListComponent implements OnInit, OnDestroy {
   }
 
   selectListItem(template) {
+    this.data.selectedFormId = template.id;
     this.data.selectedFormName = template.name;
     this.data.selectedFormData = template;
     this.data.openImportTemplateQuestionsSlider = true;

@@ -30,27 +30,38 @@ const routes: Routes = [
         data: {
           breadcrumb: { label: 'Reports' },
           permissions: [permissions.viewOPRReports]
-        }
-      },
-      {
-        path: 'addreport',
-        component: ReportConfigurationComponent,
-        canActivate: [AuthGuard],
-        data: {
-          breadcrumb: { label: 'Add Report', alias: 'reportConfiguration' },
-          permissions: [permissions.createOPRReport]
-        }
-      },
-      {
-        path: 'reports/editreport/:id',
-        component: ReportConfigurationComponent,
-        canActivate: [AuthGuard],
-        data: {
-          breadcrumb: {
-            label: 'Edit Report',
-            alias: 'reportConfiguration'
+        },
+        children: [
+          {
+            path: 'addreport',
+            component: ReportConfigurationComponent,
+            canActivate: [AuthGuard],
+            data: {
+              breadcrumb: { label: 'Add Report', alias: 'reportConfiguration' },
+              permissions: [permissions.createOPRReport]
+            }
           },
-          permissions: [permissions.updateOPRReport]
+          {
+            path: 'editreport/:id',
+            component: ReportConfigurationComponent,
+            canActivate: [AuthGuard],
+            data: {
+              breadcrumb: {
+                label: 'Edit Report',
+                alias: 'reportConfiguration'
+              },
+              permissions: [permissions.updateOPRReport]
+            }
+          }
+        ]
+      },
+      {
+        path: 'dashboard',
+        component: OperatorRoundsDashboardComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: { label: 'Dashboard' },
+          permissions: [permissions.viewOPRDashboards]
         }
       },
       {

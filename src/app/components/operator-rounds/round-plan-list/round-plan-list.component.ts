@@ -693,6 +693,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
       }
     }
     this.nextToken = '';
+    this.isLoading$.next(true);
     this.operatorRoundsService.fetchForms$.next({ data: 'load' });
   }
 
@@ -726,6 +727,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
       publishedBy: ''
     };
     this.nextToken = '';
+    this.isLoading$.next(true);
     this.operatorRoundsService.fetchForms$.next({ data: 'load' });
   }
 

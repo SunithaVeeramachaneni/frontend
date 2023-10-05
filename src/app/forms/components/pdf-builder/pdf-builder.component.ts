@@ -146,8 +146,8 @@ export class PDFBuilderComponent implements OnInit, OnDestroy {
       .select(getFormPublishStatus)
       .pipe(
         tap((formDetailPublishStatus) => {
-          if (formDetailPublishStatus === 'Draft') this.inDraftState = true;
           this.formDetailPublishStatus = formDetailPublishStatus;
+          if (formDetailPublishStatus === 'Draft') this.inDraftState = true;
           if (formDetailPublishStatus === 'Published' && this.inDraftState) {
             if (this.moduleName === this.operatorRounds) {
               this.toast.show({
@@ -208,7 +208,10 @@ export class PDFBuilderComponent implements OnInit, OnDestroy {
             pdfBuilderConfiguration: {
               ...this.pdfBuilderConfigurationsFormCustomText.value,
               ...data
-            }
+            },
+            formStatus: formConfigurationStatus.draft,
+            formDetailPublishStatus: formConfigurationStatus.draft,
+            formSaveStatus: formConfigurationStatus.saving
           })
         );
 
@@ -245,7 +248,10 @@ export class PDFBuilderComponent implements OnInit, OnDestroy {
               ...this.pdfBuilderConfigurationsForm.value,
               customTextField,
               customTextLabel
-            }
+            },
+            formStatus: formConfigurationStatus.draft,
+            formDetailPublishStatus: formConfigurationStatus.draft,
+            formSaveStatus: formConfigurationStatus.saving
           })
         );
 

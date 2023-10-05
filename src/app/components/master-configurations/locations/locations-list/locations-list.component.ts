@@ -417,6 +417,7 @@ export class LocationsListComponent implements OnInit, OnDestroy {
   }
 
   applyFilters(data: any): void {
+    this.isLoading$.next(true);
     this.isPopoverOpen = false;
     for (const item of data) {
       if (item.column === 'plant') {
@@ -429,6 +430,7 @@ export class LocationsListComponent implements OnInit, OnDestroy {
   }
 
   clearFilters(): void {
+    this.isLoading$.next(true);
     this.isPopoverOpen = false;
     this.filter = {
       plant: ''

@@ -113,7 +113,8 @@ export class PageComponent implements OnInit, OnDestroy {
       BuilderConfigurationActions.updatePageState({
         pageIndex: this.pageIndex,
         isOpen: this.pageForm.get('isOpen').value,
-        subFormId: this.selectedNodeId
+        subFormId: this.selectedNodeId,
+        isCollapse: true
       })
     );
   };
