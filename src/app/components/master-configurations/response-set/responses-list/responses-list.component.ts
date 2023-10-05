@@ -199,6 +199,19 @@ export class ResponsesListComponent implements OnInit, OnDestroy {
     }
   };
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
+  filterJson: {
+    label: string;
+    items: string[];
+    column: string;
+    type: string;
+    value: string;
+  }[] = [];
+  filter = {
+    createdBy: ''
+  };
+  createdBy = [];
+  isPopoverOpen = false;
+  userFullNameByEmail = {};
   public searchResponseSet: FormControl;
   currentRouteUrl$: Observable<string>;
   readonly routingUrls = routingUrls;
@@ -257,6 +270,7 @@ export class ResponsesListComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe(() => this.isLoading$.next(true));
+    this.getFilter();
   }
 
   getDisplayedResponseSets = () => {
@@ -294,6 +308,14 @@ export class ResponsesListComponent implements OnInit, OnDestroy {
       this.usersService.getUsersInfo$()
     ]).pipe(
       map(([rows, addEditData, scrollData, users]) => {
+        this.userFullNameByEmail = users.reduce((acc, curr) => {
+          acc[curr.email] = {
+            fullName: `${curr.firstName} ${curr.lastName}`,
+            email: curr.email
+          };
+          return acc;
+        }, {});
+
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
@@ -364,7 +386,8 @@ export class ResponsesListComponent implements OnInit, OnDestroy {
         next: this.nextToken,
         limit: this.limit,
         searchTerm: this.searchResponseSet.value,
-        fetchType: this.fetchType
+        fetchType: this.fetchType,
+        createdBy: this.filter.createdBy
       })
       .pipe(
         mergeMap(({ count, rows, next }) => {
@@ -557,5 +580,60 @@ export class ResponsesListComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  applyFilters(data = []): void {
+    this.isLoading$.next(true);
+    if (this.searchResponseSet.value) {
+      this.searchResponseSet.patchValue('');
+    }
+    this.isPopoverOpen = false;
+    for (const item of data) {
+      if (item.column === 'createdBy' && item.value) {
+        this.filter[item.column] = this.getFullNameToEmailArray(item.value);
+      } else {
+        this.filter[item.column] = item.value ?? '';
+      }
+    }
+    this.nextToken = '';
+    this.responseSetService.fetchResponses$.next({ data: 'load' });
+  }
+
+  getFullNameToEmailArray(data: any) {
+    const emailArray = [];
+    data?.forEach((name: any) => {
+      emailArray.push(
+        Object.keys(this.userFullNameByEmail).find(
+          (email) => this.userFullNameByEmail[email].fullName === name
+        )
+      );
+    });
+    return emailArray;
+  }
+
+  clearFilters(): void {
+    this.isLoading$.next(true);
+    this.isPopoverOpen = false;
+    this.filter = {
+      createdBy: ''
+    };
+    this.nextToken = '';
+    this.responseSetService.fetchResponses$.next({ data: 'load' });
+  }
+
+  private getFilter(): void {
+    this.responseSetService
+      .getFilter()
+      .subscribe((res) => (this.filterJson = res || []));
+    this.usersService.getUsersInfo$().subscribe((usersList) => {
+      this.createdBy = usersList
+        .map((user) => `${user.firstName} ${user.lastName}`)
+        .sort();
+      for (const item of this.filterJson) {
+        if (item.column === 'createdBy') {
+          item.items = this.createdBy;
+        }
+      }
+    });
   }
 }

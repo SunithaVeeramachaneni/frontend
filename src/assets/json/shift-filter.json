@@ -1,0 +1,16 @@
+[
+  {
+    "label": "Shift Type",
+    "items": [],
+    "column": "shiftType",
+    "type": "select",
+    "value": ""
+  },
+  {
+    "label": "Status",
+    "items": [],
+    "column": "status",
+    "type": "select",
+    "value": ""
+  }
+]

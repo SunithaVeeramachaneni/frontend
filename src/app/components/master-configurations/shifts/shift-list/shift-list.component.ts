@@ -42,6 +42,7 @@ import { slideInOut } from 'src/app/animations';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { HeaderService } from 'src/app/shared/services/header.service';
+import { UsersService } from 'src/app/components/user-management/services/users.service';
 @Component({
   selector: 'app-shift-list',
   templateUrl: './shift-list.component.html',
@@ -52,7 +53,6 @@ import { HeaderService } from 'src/app/shared/services/header.service';
 export class ShiftListComponent implements OnInit, OnDestroy {
   readonly perms = perms;
   userInfo$: Observable<UserInfo>;
-
   columns: Column[] = [
     {
       id: 'name',
@@ -172,6 +172,18 @@ export class ShiftListComponent implements OnInit, OnDestroy {
   fetchType = 'load';
   nextToken = '';
   parentInformation: any;
+  isPopoverOpen = false;
+  filterJson: {
+    label: string;
+    items: string[];
+    column: string;
+    type: string;
+    value: string;
+  }[] = [];
+  filter = {
+    status: '',
+    shiftType: ''
+  };
   private onDestroy$ = new Subject();
 
   constructor(
@@ -201,6 +213,7 @@ export class ShiftListComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe(() => this.isLoading$.next(true));
+    this.getFilter();
     this.getDisplayedShifts();
     this.configOptions.allColumns = this.columns;
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
@@ -275,16 +288,20 @@ export class ShiftListComponent implements OnInit, OnDestroy {
 
   getShifts() {
     return this.shiftService
-      .getShiftsList$({
-        next: this.nextToken,
-        limit: this.limit,
-        searchKey: this.searchShift.value,
-        fetchType: this.fetchType
-      })
+      .getShiftsList$(
+        {
+          next: this.nextToken,
+          limit: this.limit,
+          searchKey: this.searchShift.value,
+          fetchType: this.fetchType
+        },
+        this.filter
+      )
       .pipe(
         mergeMap(({ count, rows, next }) => {
           this.nextToken = next;
           this.isLoading$.next(false);
+          this.prepareFilters();
           return of(rows);
         }),
         catchError(() => {
@@ -434,8 +451,56 @@ export class ShiftListComponent implements OnInit, OnDestroy {
     });
   }
 
+  applyFilters(data = []): void {
+    this.isLoading$.next(true);
+    if (this.searchShift.value) {
+      this.searchShift.patchValue('');
+    }
+    this.isPopoverOpen = false;
+    data?.forEach((item) => (this.filter[item?.column] = item.value ?? ''));
+    this.nextToken = '';
+    this.shiftService.fetchShifts$.next({ data: 'load' });
+  }
+
+  clearFilters(): void {
+    this.isLoading$.next(true);
+    this.isPopoverOpen = false;
+    this.filter = {
+      status: '',
+      shiftType: ''
+    };
+    this.nextToken = '';
+    this.shiftService.fetchShifts$.next({ data: 'load' });
+  }
+
   ngOnDestroy(): void {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  private getFilter(): void {
+    this.shiftService
+      .getFilter()
+      .subscribe((res) => (this.filterJson = res || []));
+  }
+
+  private prepareFilters(): void {
+    const STATUS_ENUMS = {
+      active: 'Active',
+      inactive: 'Inactive'
+    };
+
+    const SHIFT_ENUMS = {
+      day: 'Day shift',
+      night: 'Night shift'
+    };
+    this.filterJson?.forEach((item) => {
+      if (item?.column === 'status') {
+        item.items = [STATUS_ENUMS.active, STATUS_ENUMS.inactive]; // filters?.status || [];
+      }
+      if (item?.column === 'shiftType') {
+        item.items = [SHIFT_ENUMS.day, SHIFT_ENUMS.night]; // filters?.unitTypes || [];
+      }
+    });
   }
 }

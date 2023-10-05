@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable @typescript-eslint/naming-convention */
 import { Injectable } from '@angular/core';
-import { of, ReplaySubject } from 'rxjs';
+import { Observable, of, ReplaySubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import {
   ErrorInfo,
@@ -65,6 +65,8 @@ export class ShiftService {
       const queryParameters = {
         limit: `${queryParams.limit}`,
         next: queryParams.next,
+        shiftType: filter?.shiftType,
+        status: filter.status,
         ...(Object.keys(shiftListFilter).length > 0 && {
           filter: shiftListFilter
         })
@@ -123,6 +125,22 @@ export class ShiftService {
           `
         }
       }
+    );
+  }
+
+  getFilter(info: ErrorInfo = {} as ErrorInfo): Observable<
+    {
+      label: string;
+      items: string[];
+      column: string;
+      type: string;
+      value: string;
+    }[]
+  > {
+    return this._appService._getLocal(
+      '',
+      '/assets/json/shift-filter.json',
+      info
     );
   }
 

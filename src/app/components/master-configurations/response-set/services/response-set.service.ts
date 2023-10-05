@@ -40,6 +40,22 @@ export class ResponseSetService {
     private readonly dateUtilService: DateUtilService
   ) {}
 
+  getFilter(info: ErrorInfo = {} as ErrorInfo): Observable<
+    {
+      label: string;
+      items: string[];
+      column: string;
+      type: string;
+      value: string;
+    }[]
+  > {
+    return this._appService._getLocal(
+      '',
+      '/assets/json/response-set-filter.json',
+      info
+    );
+  }
+
   uploadExcel(
     form: FormData,
     info: ErrorInfo = {} as ErrorInfo
@@ -72,6 +88,7 @@ export class ResponseSetService {
     limit: number;
     searchTerm?: string;
     fetchType: string;
+    createdBy: string;
   }) => {
     if (
       ['load', 'search'].includes(queryParams.fetchType) ||
