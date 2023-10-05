@@ -171,7 +171,7 @@
     <app-filter
       [json]="filterJson"
       (close)="isPopoverOpen = false"
-      (apply)="updateFilter($event)"
+      (apply)="applyFilter($event)"
       (reset)="resetFilter()"
     ></app-filter>
   </ng-template>
