@@ -167,8 +167,6 @@ export class RaceDynamicFormService {
       `datasets/${datasetType}/${formId}`,
       info
     );
-  getResponseSet$ = (info: ErrorInfo = {} as ErrorInfo): Observable<any[]> =>
-    this.appService._getResp(environment.rdfApiUrl, `forms/response-set`, info);
 
   getFormsForScheduler$(
     queryParams: FormQueryParam,
