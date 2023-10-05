@@ -34,12 +34,13 @@ import {
 import {
   formConfigurationStatus,
   permissions as perms,
-  graphQLDefaultLimit
+  graphQLDefaultLimit,
+  graphQLDefaultFilterLimit
 } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { Router } from '@angular/router';
-import { omit } from 'lodash-es';
+import { cloneDeep, omit } from 'lodash-es';
 import { generateCopyNumber, generateCopyRegex } from '../utils/utils';
 import { slideInOut } from 'src/app/animations';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
@@ -283,7 +284,7 @@ export class FormListComponent implements OnInit, OnDestroy {
               }
               if (
                 authoredFormDetail &&
-                Object.keys(authoredFormDetail).length
+                Object.keys(authoredFormDetail)?.length
               ) {
                 this.raceDynamicFormService
                   .createAuthoredFormDetail$({
@@ -408,11 +409,20 @@ export class FormListComponent implements OnInit, OnDestroy {
   }
 
   getForms() {
+    const columnConfigFilter = cloneDeep(this.filter);
+    delete columnConfigFilter.plant;
+    delete columnConfigFilter.tags;
+    delete columnConfigFilter.lastPublishedBy;
+    delete columnConfigFilter.author;
+    delete columnConfigFilter.formStatus;
+
+    const hasColumnConfigFilter = Object.keys(columnConfigFilter)?.length || 0;
+
     return this.raceDynamicFormService
       .getFormsList$(
         {
           next: this.nextToken,
-          limit: this.limit,
+          limit: hasColumnConfigFilter ? graphQLDefaultFilterLimit : this.limit,
           searchKey: this.searchForm.value,
           fetchType: this.fetchType
         },
@@ -603,7 +613,7 @@ export class FormListComponent implements OnInit, OnDestroy {
     });
     dialogRef.afterClosed().subscribe((result) => {
       const formData = result.data === undefined ? {} : result;
-      if (Object.keys(formData.data).length !== 0) {
+      if (Object.keys(formData.data)?.length !== 0) {
         this.isLoading$.next(true);
         this.raceDynamicFormService.fetchForms$.next({ data: 'search' });
         this.formsListCountUpdate$.next(1);

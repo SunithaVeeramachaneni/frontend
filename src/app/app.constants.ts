@@ -372,6 +372,7 @@ export const defaultCategoryName = 'Unassigned';
 export const defaultLanguage = 'en';
 export const defaultLimit = 25;
 export const graphQLDefaultLimit = 100;
+export const graphQLDefaultFilterLimit = 500;
 export const graphQLPlanLimit = 200;
 export const graphQLDefaultMaxLimit = 10000;
 export const graphQLRoundsOrInspectionsLimit = 10000;
