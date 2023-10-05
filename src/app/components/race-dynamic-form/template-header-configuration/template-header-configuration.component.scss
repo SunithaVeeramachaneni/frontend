@@ -197,3 +197,14 @@
     background-color: $gray2-bg;
   }
 }
+.multiple-header {
+  height: 16px;
+  padding: 12px;
+  border-radius: 4px;
+}
+.done-filters-btn {
+  border: 0;
+  float: right;
+  background-color: $white;
+  color: $blue-main;
+}

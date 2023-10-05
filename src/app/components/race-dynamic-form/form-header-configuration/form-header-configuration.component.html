@@ -291,107 +291,148 @@
             class="additional-details-text"
           ></p>
         </div>
-        <div
-          class="label-value-text"
-          *ngIf="
-            headerDataForm.get('additionalDetails')['controls']?.length > 0
-          "
-        >
-          <div class="width-45 label" id="labelHeading">
-            {{ 'label' | translate }}
-          </div>
-          <div class="width-45 m-l-20 value" id="valueHeading">
-            {{ 'value' | translate }}
+        <div class="m-t-15" *ngIf="isLoading$ | async">
+          <div class="ghost-loading">
+            <div *ngFor="let number of ghostLoading">
+              <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+              </ngx-shimmer-loading>
+            </div>
           </div>
         </div>
-        <div formArrayName="additionalDetails">
+        <div *ngIf="(isLoading$ | async) === false">
           <div
-            *ngFor="
-              let additionalDetails of getAdditionalDetailList();
-              let i = index
+            class="label-value-text"
+            *ngIf="
+              headerDataForm.get('additionalDetails')['controls']?.length > 0
             "
           >
-            <div [formGroupName]="i" class="dis-flex">
-              <div class="width-45">
-                <p class="formtype-formfield">
-                  {{ additionalDetails.value.label }}
-                </p>
-              </div>
+            <div class="width-45 label" id="labelHeading">
+              {{ 'label' | translate }}
+            </div>
+            <div class="width-45 m-l-20 value" id="valueHeading">
+              {{ 'value' | translate }}
+            </div>
+          </div>
+          <div formArrayName="additionalDetails">
+            <div
+              *ngFor="
+                let additionalDetails of getAdditionalDetailList();
+                let i = index
+              "
+            >
+              <div [formGroupName]="i" class="dis-flex">
+                <div class="width-45">
+                  <p class="formtype-formfield">
+                    {{ additionalDetails.value.label }}
+                  </p>
+                </div>
 
-              <div class="width-45">
-                <mat-form-field
-                  appearance="outline"
-                  class="m-l-20 symbol m-b-10 width-100 value-field"
-                >
-                  <mat-label id="filterStatusLabel">Select</mat-label>
-                  <mat-select
-                    #matSelect
-                    multiple
-                    [(value)]="additionalDetails.value.selectedValue"
-                    name="showStatus"
-                    placeholder="Select"
-                    [compareWith]="compareValues"
-                    (selectionChange)="
-                      onSelectionChange($event, additionalDetails.value.label)
-                    "
+                <div class="width-45">
+                  <mat-form-field
+                    appearance="outline"
+                    class="m-l-20 symbol m-b-10 width-100 value-field"
                   >
-                    <div class="multiple-header">
-                      <span id="doneLabel">Select</span>
-                      <button
-                        id="filterDoneBtn"
-                        class="done-filters-btn"
-                        (click)="closeSelect(matSelect)"
-                      >
-                        {{ 'done' | translate }}
-                      </button>
-                    </div>
-                    <mat-select-trigger>
-                      {{
-                        additionalDetails?.value.value.length > 0 &&
-                        additionalDetailMap[additionalDetails.value?.label]
-                          .length !== additionalDetails['value']['value'].length
-                          ? additionalDetails.value.selectedValue[0]
-                          : ''
-                      }}
-                      <span
-                        *ngIf="
-                          additionalDetailMap[additionalDetails.value.label]
-                            .length > 1 &&
-                          additionalDetailMap[additionalDetails.value.label]
+                    <mat-label id="filterStatusLabel">Select</mat-label>
+                    <mat-select
+                      #matSelect
+                      multiple
+                      [(value)]="additionalDetails.value.selectedValue"
+                      name="showStatus"
+                      placeholder="Select"
+                      [compareWith]="compareValues"
+                      (selectionChange)="
+                        onSelectionChange($event, additionalDetails.value.label)
+                      "
+                    >
+                      <div class="scroll-headers">
+                        <div class="multiple-header">
+                          <span id="doneLabel">Select</span>
+                          <button
+                            id="filterDoneBtn"
+                            class="done-filters-btn"
+                            (click)="closeSelect(matSelect)"
+                          >
+                            {{ 'done' | translate }}
+                          </button>
+                        </div>
+                        <div class="custom-form-field-gray-color">
+                          <mat-form-field
+                            appearance="outline"
+                            class="search-form-field"
+                          >
+                            <mat-icon
+                              id="userGroupSearchIcon"
+                              matPrefix
+                              class="searchIcon"
+                              >search</mat-icon
+                            >
+                            <input
+                              id="userGroupSearchText"
+                              matInput
+                              type="text"
+                              [placeholder]="
+                                'additionalDetailsSearch' | translate
+                              "
+                              autocomplete="off"
+                              (keydown)="
+                                valueSearch(
+                                  $event,
+                                  additionalDetails.value.value
+                                )
+                              "
+                            />
+                          </mat-form-field>
+                        </div>
+                      </div>
+                      <mat-select-trigger>
+                        {{
+                          additionalDetails?.value.value.length > 0 &&
+                          additionalDetailMap[additionalDetails.value?.label]
                             .length !==
                             additionalDetails['value']['value'].length
-                        "
-                      >
-                        (+{{
-                          additionalDetailMap[additionalDetails.value.label]
-                            .length - 1
+                            ? additionalDetails.value.selectedValue[0]
+                            : ''
                         }}
-                        {{
-                          additionalDetailMap[additionalDetails.value.label]
-                            .length === 2
-                            ? 'other'
-                            : 'others'
-                        }})
-                      </span>
-                      <span
-                        *ngIf="
-                          additionalDetailMap[additionalDetails.value.label]
-                            .length ===
-                          additionalDetails['value']['value']?.length
-                        "
-                        >All
-                      </span>
-                    </mat-select-trigger>
-                    <div class="scrollable-area">
-                      <mat-option
-                        *ngFor="let addValue of additionalDetails.value.value"
-                        [value]="addValue"
-                      >
-                        {{ addValue }}
-                      </mat-option>
-                    </div>
-                  </mat-select>
-                </mat-form-field>
+                        <span
+                          *ngIf="
+                            additionalDetailMap[additionalDetails.value.label]
+                              .length > 1 &&
+                            additionalDetailMap[additionalDetails.value.label]
+                              .length !==
+                              additionalDetails['value']['value'].length
+                          "
+                        >
+                          (+{{
+                            additionalDetailMap[additionalDetails.value.label]
+                              .length - 1
+                          }}
+                          {{
+                            additionalDetailMap[additionalDetails.value.label]
+                              .length === 2
+                              ? 'other'
+                              : 'others'
+                          }})
+                        </span>
+                        <span
+                          *ngIf="
+                            additionalDetailMap[additionalDetails.value.label]
+                              .length ===
+                            additionalDetails['value']['value']?.length
+                          "
+                          >All
+                        </span>
+                      </mat-select-trigger>
+                      <div class="scrollable-area">
+                        <mat-option
+                          *ngFor="let addValue of additionalDetails.value.value"
+                          [value]="addValue"
+                        >
+                          {{ addValue }}
+                        </mat-option>
+                      </div>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
               </div>
             </div>
           </div>

@@ -124,6 +124,8 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   pdfFiles: any = { mediaType: [] };
   hasFormChanges = false;
   allValue: any;
+  isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  ghostLoading = new Array(3).fill(0).map((v, i) => i);
   private destroy$ = new Subject();
 
   constructor(
@@ -266,10 +268,10 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     this.responseSetService.listResponseSetByModuleName$().subscribe((data) => {
       let resposneSets = data.RDF;
       resposneSets.forEach((responseSet) => {
-        let value = [];
+        let values = [];
 
         JSON.parse(responseSet.values).forEach((val) => {
-          value.push(val.title);
+          values.push(val.title);
         });
         let selectedValues = [];
         if (this.data.formData) {
@@ -280,15 +282,14 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
         }
         this.additionalDetailMap[responseSet.name] = selectedValues;
         const objFormGroup = this.fb.group({
-          label: responseSet.name,
-          value: new FormArray(value.map((val) => this.fb.control(val))),
-          selectedValue: new FormArray(
-            selectedValues.map((val) => this.fb.control(val))
-          )
+          label: [responseSet.name],
+          value: [values],
+          selectedValue: [selectedValues]
         });
         this.additionalDetails.push(objFormGroup);
       });
       this.cdrf.detectChanges();
+      this.isLoading$.next(false);
     });
   }
 
@@ -992,4 +993,5 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   compareValues(value1: any, value2: any) {
     return value1 && value2 && value1.toLowerCase() === value2.toLowerCase();
   }
+  valueSearch(event, valueArray) {}
 }

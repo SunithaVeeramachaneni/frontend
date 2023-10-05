@@ -61,6 +61,7 @@ import { FormUpdateProgressService } from 'src/app/forms/services/form-update-pr
 import { ToastService } from 'src/app/shared/toast';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
 import { MatChipInputEvent } from '@angular/material/chips';
+import { ResponseSetService } from '../../master-configurations/response-set/services/response-set.service';
 @Component({
   selector: 'app-template-header-configuration',
   templateUrl: './template-header-configuration.component.html',
@@ -100,6 +101,9 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
   originalTags: string[] = [];
   formMetadataSubscription: Subscription;
   hasFormChanges = false;
+  additionalDetailMap = {};
+  isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  ghostLoading = new Array(3).fill(0).map((v, i) => i);
   private destroy$ = new Subject();
 
   constructor(
@@ -112,7 +116,8 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
     private cdrf: ChangeDetectorRef,
     private formProgressService: FormUpdateProgressService,
     private toastService: ToastService,
-    private operatorRoundService: OperatorRoundsService
+    private operatorRoundService: OperatorRoundsService,
+    private responseSetSerivce: ResponseSetService
   ) {}
 
   ngOnInit(): void {
@@ -158,6 +163,40 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
       additionalDetails: this.fb.array([])
     });
     this.retrieveDetails();
+    this.additionalDetails = this.headerDataForm.get(
+      'additionalDetails'
+    ) as FormArray;
+    this.responseSetSerivce
+      .listResponseSetByModuleName$()
+      .subscribe((response) => {
+        let responseSets = response.RDF_TEMPLATES;
+        responseSets.forEach((responseSet) => {
+          let values = [];
+
+          JSON.parse(responseSet.values).forEach((val) => {
+            values.push(val.title);
+          });
+          let selectedValues = [];
+          if (Object.keys(this.templateData.formMetadata).length) {
+            const obj = this.templateData.formMetadata.additionalDetails.find(
+              (object) => object.FIELDLABEL === responseSet.name
+            );
+            selectedValues = obj ? obj.DEFAULTVALUE.split(',') : [];
+          }
+          this.additionalDetailMap[responseSet.name] = selectedValues;
+          const objFormGroup = this.fb.group({
+            label: [responseSet.name],
+            value: [values],
+            selectedValue: [selectedValues]
+          });
+          this.additionalDetails.push(objFormGroup);
+        });
+        this.headerDataForm.setControl(
+          'additionalDetails',
+          this.additionalDetails
+        );
+        this.isLoading$.next(false);
+      });
 
     this.formMetadataSubscription = this.store
       .select(getFormMetadata)
@@ -319,7 +358,14 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
     const updatedAdditionalDetails = additionalinfoArray.value.map(
       (additionalinfo) => ({
         FIELDLABEL: additionalinfo.label,
-        DEFAULTVALUE: additionalinfo.value,
+        DEFAULTVALUE: this.additionalDetailMap[additionalinfo.label].reduce(
+          (accumulatedLable, current) => {
+            return accumulatedLable === ''
+              ? current
+              : accumulatedLable + ',' + current;
+          },
+          ''
+        ),
         UIFIELDTYPE: 'LF'
       })
     );
@@ -717,5 +763,14 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
     this.formMetadataSubscription.unsubscribe();
     this.destroy$.next();
     this.destroy$.complete();
+  }
+  onSelectionChange(event, label) {
+    this.additionalDetailMap[label] = event.value;
+  }
+  compareValues(value1: any, value2: any) {
+    return value1 && value2 && value1.toLowerCase() === value2.toLowerCase();
+  }
+  closeSelect(matSelect) {
+    matSelect.close();
   }
 }

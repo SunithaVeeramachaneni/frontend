@@ -402,5 +402,6 @@
   "resetToDefault": "Reset to Default View",
   "hideSection": "Hide Section",
   "hideSectionsQuestionTitle": "Q: {questionName}",
-  "collapseAllSections": "Collapse All Sections"
+  "collapseAllSections": "Collapse All Sections",
+  "additionalDetailsSearch": "Search"
 }
