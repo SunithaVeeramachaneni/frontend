@@ -142,6 +142,7 @@
             [globalResponseToBeEdited]="responseToBeEdited"
             [isControlInViewMode]="isControlModeView"
             (globalResponseHandler)="handleGlobalResponseChange($event)"
+            [allResponseSets]="allResponseSets"
           ></app-global-response-type-side-drawer>
         </div>
         <div *ngIf="isLoading$ | async">
