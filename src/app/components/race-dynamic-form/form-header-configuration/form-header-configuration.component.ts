@@ -1010,7 +1010,6 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     matSelect.close();
   }
   onSelectionChange(event, label, index) {
-    this.hasFormChanges = true;
     let selectedArray = [...this.additionalDetailMap[label]];
     const eventValue = event.value;
     const valuesArray =
