@@ -180,6 +180,7 @@ export class ImportTemplateListComponent implements OnInit, OnDestroy {
       .pipe(
         tap(([_, { count, rows, next }]) => {
           rows = rows.map((item) => {
+            item.tags = item.tags.toString();
             item =
               this.raceDynamicFormService.extractAdditionalDetailsToColumns(
                 item

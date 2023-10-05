@@ -329,6 +329,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
       .pipe(
         tap(([_, { count, rows, next }]) => {
           rows = rows.map((item) => {
+            item.tags = item.tags.toString();
             item =
               this.raceDynamicFormService.extractAdditionalDetailsToColumns(
                 item
@@ -456,6 +457,8 @@ export class TemplateListComponent implements OnInit, OnDestroy {
           const authoredFormTemplateDetails =
             template.authoredFormTemplateDetails[0];
           const preTextImage = template.preTextImage;
+          template.tags =
+            template.tags !== '_ _' ? template.tags.split(',') : [];
           this.raceDynamicFormService
             .createTemplate$({
               ...omit(template, [
