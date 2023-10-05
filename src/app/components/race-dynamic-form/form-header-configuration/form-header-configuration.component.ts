@@ -126,6 +126,9 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   allValue: any;
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   ghostLoading = new Array(3).fill(0).map((v, i) => i);
+  filteredValues = [];
+  currentValuesArray = [];
+  additionalDetailsMasterData = {};
   private destroy$ = new Subject();
 
   constructor(
@@ -289,6 +292,10 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
             selectedValue: [selectedValues]
           });
           this.additionalDetails.push(objFormGroup);
+          this.additionalDetailsMasterData[responseSet.name] = {
+            value: values,
+            selectedValue: selectedValues
+          };
         });
         this.cdrf.detectChanges();
         this.isLoading$.next(false);
@@ -989,19 +996,49 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   closeSelect(matSelect) {
     matSelect.close();
   }
-  onSelectionChange(event, label) {
-    this.additionalDetailMap[label] = event.value;
+  onSelectionChange(event, label, index) {
+    let selectedArray = [...this.additionalDetailMap[label]];
+    const eventValue = event.value;
+    const valuesArray =
+      this.getAdditionalDetailList()[index].get('value').value;
+    valuesArray.forEach((val) => {
+      if (eventValue.includes(val)) {
+        selectedArray.push(val);
+      } else {
+        selectedArray = selectedArray.filter((value) => value !== val);
+      }
+    });
+    selectedArray = selectedArray.filter(
+      (value, arrIndex, self) => value && self.indexOf(value) === arrIndex
+    );
+    this.additionalDetailMap[label] = selectedArray;
+    this.additionalDetailsMasterData[label].selectedValue = selectedArray;
+    this.getAdditionalDetailList()
+      [index].get('selectedValue')
+      .setValue(selectedArray);
   }
   compareValues(value1: any, value2: any) {
     return value1 && value2 && value1.toLowerCase() === value2.toLowerCase();
   }
-  valueSearch(event, valueArray) {
+  valueSearch(event, valueArray, label, index) {
     const searchValue = event.target.value;
+    const parentValues = this.additionalDetailsMasterData[label].value;
     if (searchValue) {
-      valueArray = valueArray.filter(
+      this.currentValuesArray = parentValues.filter(
         (value) => value.toLowerCase().indexOf(searchValue.toLowerCase()) === 0
       );
+    } else {
+      this.currentValuesArray = [...parentValues];
     }
-    console.log('Value array :', valueArray);
+    this.getAdditionalDetailList()
+      [index].get('value')
+      .setValue(this.currentValuesArray);
+  }
+  matSelectClosed(index, label, searchInput: HTMLInputElement) {
+    const parentValueData = this.additionalDetailsMasterData[label].value;
+    searchInput.value = '';
+    this.getAdditionalDetailList()
+      [index].get('value')
+      .setValue(parentValueData);
   }
 }

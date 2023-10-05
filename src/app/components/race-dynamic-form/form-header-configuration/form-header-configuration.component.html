@@ -339,9 +339,20 @@
                       [(value)]="additionalDetails.value.selectedValue"
                       name="showStatus"
                       placeholder="Select"
+                      (closed)="
+                        matSelectClosed(
+                          i,
+                          additionalDetails.value.label,
+                          searchInput
+                        )
+                      "
                       [compareWith]="compareValues"
                       (selectionChange)="
-                        onSelectionChange($event, additionalDetails.value.label)
+                        onSelectionChange(
+                          $event,
+                          additionalDetails.value.label,
+                          i
+                        )
                       "
                     >
                       <div class="scroll-headers">
@@ -361,25 +372,29 @@
                             class="search-form-field"
                           >
                             <mat-icon
-                              id="userGroupSearchIcon"
+                              id="ValueSearchIcon"
                               matPrefix
                               class="searchIcon"
                               >search</mat-icon
                             >
                             <input
-                              id="userGroupSearchText"
+                              id="valueSearchText"
+                              #searchInput
                               matInput
                               type="text"
                               [placeholder]="
                                 'additionalDetailsSearch' | translate
                               "
                               autocomplete="off"
-                              (keydown)="
+                              (keyup)="
                                 valueSearch(
                                   $event,
-                                  additionalDetails.value.value
+                                  additionalDetails.value.value,
+                                  additionalDetails.value.label,
+                                  i
                                 )
                               "
+                              (keydown)="$event.stopPropagation()"
                             />
                           </mat-form-field>
                         </div>
