@@ -287,6 +287,7 @@ export class ReportConfigurationComponent implements OnInit {
         this.skip = loadFilter.reportData
           ? loadFilter.reportData.length
           : this.skip;
+        this.formatReportData(loadFilter.reportData);
         this.dataSource = new MatTableDataSource(loadFilter.reportData);
         return loadFilter;
       })
@@ -307,6 +308,17 @@ export class ReportConfigurationComponent implements OnInit {
     const moduleName = `operator-rounds`;
     this.router.navigate([`/${moduleName}/reports`]);
   }
+  formatReportData = (reportData) => {
+    reportData = reportData.map((data) => {
+      if (data.taskType === 'NF') {
+        if (data?.exception) {
+          data.exception = 'True';
+        } else {
+          data.exception = 'False';
+        }
+      }
+    });
+  };
 
   toggleReportInputField = () => {
     this.reportNameDisabled = !this.reportNameDisabled;
