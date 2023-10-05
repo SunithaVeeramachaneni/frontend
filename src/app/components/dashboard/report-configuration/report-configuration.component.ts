@@ -311,10 +311,12 @@ export class ReportConfigurationComponent implements OnInit {
   formatReportData = (reportData) => {
     reportData = reportData.map((data) => {
       if (data.taskType === 'NF') {
-        if (data?.exception) {
+        if (data?.exception > 0) {
           data.exception = 'True';
-        } else {
+        } else if (data?.exception === 0) {
           data.exception = 'False';
+        } else {
+          data.exception = '';
         }
       }
     });
