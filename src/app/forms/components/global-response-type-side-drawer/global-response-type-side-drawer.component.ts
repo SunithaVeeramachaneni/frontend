@@ -19,7 +19,10 @@ import {
   FormGroup,
   FormControl,
   FormArray,
-  Validators
+  Validators,
+  ValidationErrors,
+  ValidatorFn,
+  AbstractControl
 } from '@angular/forms';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import {
@@ -65,7 +68,8 @@ export class GlobalResponseTypeSideDrawerComponent
     name: new FormControl('', [
       Validators.required,
       Validators.minLength(3),
-      WhiteSpaceValidator.trimWhiteSpace
+      WhiteSpaceValidator.trimWhiteSpace,
+      this.responseSetNameValidator()
     ]),
     description: new FormControl('', [WhiteSpaceValidator.trimWhiteSpace]),
     moduleName: new FormControl([]),
@@ -84,6 +88,16 @@ export class GlobalResponseTypeSideDrawerComponent
   @Input() set isControlInViewMode(mode) {
     this.isViewMode = mode;
   }
+
+  @Input() set allResponseSets(allResponseSets) {
+    this._allResponseSets = allResponseSets;
+  }
+
+  get allResponseSets() {
+    return this._allResponseSets;
+  }
+
+  private _allResponseSets: any[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -292,6 +306,26 @@ export class GlobalResponseTypeSideDrawerComponent
 
   isOptionArrayEmpty(options: MatOption[] | any[]): boolean {
     return Array.isArray(options) && options.length === 0;
+  }
+
+  getColumnIdFromName(columnName) {
+    return columnName.toLowerCase().replace(/ /g, '_');
+  }
+
+  responseSetNameValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      console.log(this.allResponseSets)
+      const responseSetNames = this.allResponseSets?.map((responseSet) => {
+        return {
+          name: responseSet.name.toLowerCase(),
+          id: this.getColumnIdFromName(responseSet.name.toLowerCase())
+        }
+      }) || [];
+      const isResponseSetNameExists = responseSetNames.find((responseSetName) => responseSetName.name === control.value.toLowerCase() || this.getColumnIdFromName(control.value.toLowerCase()) === responseSetName.id)
+      return isResponseSetNameExists
+        ? { responseSetNameExists: true }
+        : null;
+    }
   }
 
   ngOnDestroy(): void {
