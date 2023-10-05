@@ -11,7 +11,8 @@ import {
   RDF_DEFAULT_COLUMN_CONFIG,
   RDF_FORM_LIST_FILTERS,
   RDF_TEMPLATE_DEFAULT_COLUMNS,
-  RDF_TEMPLATE_DEFAULT_COLUMN_CONFIG
+  RDF_TEMPLATE_DEFAULT_COLUMN_CONFIG,
+  RDF_TEMPLATE_LIST_FILTERS
 } from 'src/app/components/race-dynamic-form/race-dynamic-forms.constants';
 import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
 import { columnConfiguration } from 'src/app/interfaces/columnConfiguration';
@@ -115,6 +116,8 @@ export class ColumnConfigurationService {
     switch (moduleName) {
       case metadataFlatModuleNames.RACE_DYNAMIC_FORMS:
         return RDF_FORM_LIST_FILTERS;
+      case metadataFlatModuleNames.RDF_TEMPLATES:
+        return RDF_TEMPLATE_LIST_FILTERS;
       default:
         return [];
     }

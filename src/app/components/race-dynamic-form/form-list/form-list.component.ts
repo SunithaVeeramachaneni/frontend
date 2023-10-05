@@ -225,7 +225,7 @@ export class FormListComponent implements OnInit, OnDestroy {
     this.columnConfigService.moduleFilterConfiguration$
       .pipe(takeUntil(this.onDestroy$))
       .subscribe((res) => {
-        if (res) {
+        if (res && res[this.RDF_MODULE_NAME]) {
           this.filterJson = res[this.RDF_MODULE_NAME];
           this.setFilters();
           this.cdrf.detectChanges();
@@ -565,7 +565,9 @@ export class FormListComponent implements OnInit, OnDestroy {
             (value, index, self) => self.indexOf(value) === index && value
           )
           .sort();
-        this.tags = allTags[0]?.values;
+        allTags[0]?.values?.forEach((tag) => {
+          this.tags.add(tag);
+        });
         this.additionalDetailFilterData = additionDetailsData;
         this.setFilters();
       }

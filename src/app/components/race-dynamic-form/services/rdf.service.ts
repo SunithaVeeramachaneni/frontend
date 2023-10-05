@@ -247,7 +247,6 @@ export class RaceDynamicFormService {
       next: queryParams.next,
       ...omitBy(rawParams, isEmpty)
     });
-
     return this.appService
       ._getResp(environment.rdfApiUrl, 'forms?' + params.toString(), {
         displayToast: true,
@@ -882,19 +881,24 @@ export class RaceDynamicFormService {
         map((response) => (response === null ? inspectionDetail : response))
       );
 
-  fetchTemplates$ = (filter) =>
-    this.appService
-      ._getResp(
-        environment.rdfApiUrl,
-        'templates',
-        { displayToast: true, failureResponse: {} },
-        {
-          ...filter,
-          limit: 0,
-          skip: 0
-        }
-      )
+  fetchTemplates$ = (filter) => {
+    const rawParams = {
+      searchTerm: filter?.searchTerm,
+      limit: String(0),
+      isArchived: String(filter.isArchived),
+      isDeleted: String(filter.isDeleted),
+      ...filter
+    };
+    const params = new URLSearchParams({
+      ...omitBy(rawParams, isEmpty)
+    });
+    return this.appService
+      ._getResp(environment.rdfApiUrl, 'templates?' + params.toString(), {
+        displayToast: true,
+        failureResponse: {}
+      })
       .pipe(map((data) => this.formatGetRdfFormsResponse({ items: data })));
+  };
 
   fetchAllTemplateListNames$ = () =>
     this.appService._getResp(environment.rdfApiUrl, 'templates/name');

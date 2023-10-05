@@ -5,10 +5,21 @@ import {
   OnDestroy,
   OnInit
 } from '@angular/core';
-import { BehaviorSubject, Observable, Subject, Subscription, of } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+  ReplaySubject,
+  Subject,
+  Subscription,
+  combineLatest,
+  of
+} from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
+  filter,
+  map,
+  switchMap,
   takeUntil,
   tap
 } from 'rxjs/operators';
@@ -22,7 +33,14 @@ import {
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { MatTableDataSource } from '@angular/material/table';
 
-import { CellClickActionEvent, Permission, UserInfo } from 'src/app/interfaces';
+import {
+  CellClickActionEvent,
+  LoadEvent,
+  Permission,
+  SearchEvent,
+  TableEvent,
+  UserInfo
+} from 'src/app/interfaces';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { Router } from '@angular/router';
 import { slideInOut } from 'src/app/animations';
@@ -60,8 +78,12 @@ export class TemplateListComponent implements OnInit, OnDestroy {
   selectedTemplate: any = null;
   submissionSlider = 'out';
   isPopoverOpen = false;
-  status: any[] = ['Draft', 'Ready'];
   filterJson: any[] = [];
+  tags = new Set();
+  templates$: Observable<any>;
+  additionalDetailFilterData = {};
+  fetchTemplates$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
+    new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   partialColumns: Partial<Column>[] = [
     {
       id: 'name',
@@ -188,10 +210,10 @@ export class TemplateListComponent implements OnInit, OnDestroy {
       }
     }
   };
-  filter: any = {
-    status: '',
-    modifiedBy: '',
-    createdBy: ''
+  filters: any = {
+    formStatus: '',
+    lastPublishedBy: '',
+    author: ''
   };
   dataSource: MatTableDataSource<any>;
   allTemplates: any = [];
@@ -208,6 +230,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
   readonly perms = perms;
   fetchAllTemplatesSubscription: Subscription;
   userInfo$: Observable<UserInfo>;
+  searchTerm: string = '';
   RDF_TEMPLATE_MODULE_NAME = metadataFlatModuleNames.RDF_TEMPLATES;
   private onDestroy$ = new Subject();
 
@@ -226,6 +249,28 @@ export class TemplateListComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.fetchTemplates$.next({ data: 'load' });
+    this.getDisplayedTemplates();
+    this.populateFilter();
+    this.searchTemplates = new FormControl('');
+    this.headerService.setHeaderTitle(
+      this.translateService.instant('templates')
+    );
+    this.searchTemplates.valueChanges
+      .pipe(
+        debounceTime(500),
+        distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
+        tap((searchTerm) => {
+          this.searchTerm = searchTerm;
+          this.fetchTemplates$.next({ data: 'search' });
+        })
+      )
+      .subscribe();
+
+    this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
+      tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
+    );
     this.columnConfigService.moduleColumnConfiguration$
       .pipe(takeUntil(this.onDestroy$))
       .subscribe((res) => {
@@ -234,62 +279,26 @@ export class TemplateListComponent implements OnInit, OnDestroy {
           this.configOptions.allColumns = this.columns;
           this.cdrf.detectChanges();
         }
-        this.allTemplates.map((item) => {
-          return this.raceDynamicFormService.handleEmptyColumns(
+        this.allTemplates?.map((item) => {
+          item =
+            this.raceDynamicFormService.extractAdditionalDetailsToColumns(item);
+          item = this.raceDynamicFormService.handleEmptyColumns(
             item,
             this.columns
           );
+          return item;
         });
         this.dataSource = new MatTableDataSource(this.allTemplates);
       });
-
-    this.searchTemplates = new FormControl('');
-    this.headerService.setHeaderTitle(
-      this.translateService.instant('templates')
-    );
-
-    this.usersService.getUsersInfo$().subscribe(() => {
-      this.fetchAllTemplatesSubscription = this.raceDynamicFormService
-        .fetchTemplates$({ isArchived: false, isDeleted: false })
-        .subscribe((res: any) => {
-          this.templatesCount$ = of(res.rows.length);
-          this.allTemplates = res.rows.map((item) => ({
-            ...item,
-            author: this.usersService.getUserFullName(item.author),
-            displayFormsUsageCount:
-              item.formsUsageCount === 0 ? '_ _' : item.formsUsageCount,
-            lastPublishedBy: this.usersService.getUserFullName(
-              item.lastPublishedBy
-            )
-          }));
-          this.displayedTemplates = this.allTemplates;
-          this.displayedTemplates.map((item) => {
-            return this.raceDynamicFormService.handleEmptyColumns(
-              item,
-              this.columns
-            );
-          });
-          this.dataSource = new MatTableDataSource(this.allTemplates);
-          this.isLoading$.next(false);
-
-          this.initializeFilter();
-        });
-    });
-
-    this.searchTemplates.valueChanges
-      .pipe(
-        debounceTime(500),
-        distinctUntilChanged(),
-        takeUntil(this.onDestroy$),
-        tap((res) => {
-          this.applySearchAndFilter(res);
-        })
-      )
-      .subscribe(() => this.isLoading$.next(false));
-
-    this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
-      tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
-    );
+    this.columnConfigService.moduleFilterConfiguration$
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe((res) => {
+        if (res && res[this.RDF_TEMPLATE_MODULE_NAME]) {
+          this.filterJson = res[this.RDF_TEMPLATE_MODULE_NAME];
+          this.setFilters();
+          this.cdrf.detectChanges();
+        }
+      });
   }
 
   onCloseViewDetail() {
@@ -402,15 +411,69 @@ export class TemplateListComponent implements OnInit, OnDestroy {
     this.configOptions = { ...this.configOptions };
   }
 
-  initializeFilter() {
-    this.raceDynamicFormService.getTemplateFilter().subscribe((res) => {
-      this.filterJson = res;
+  getDisplayedTemplates() {
+    const templatesOnLoadSearch$ = this.fetchTemplates$.pipe(
+      filter(({ data }) => data === 'load' || data === 'search'),
+      switchMap(({ data }) => {
+        return this.getTemplates();
+      })
+    );
+    combineLatest(this.usersService.getUsersInfo$(), templatesOnLoadSearch$)
+      .pipe(
+        tap(([_, { count, rows, next }]) => {
+          rows = rows.map((item) => {
+            item =
+              this.raceDynamicFormService.extractAdditionalDetailsToColumns(
+                item
+              );
+            item = this.raceDynamicFormService.handleEmptyColumns(
+              item,
+              this.columns
+            );
+            const author = this.usersService.getUserFullName(item.author);
+            const lastPublishedBy = this.usersService.getUserFullName(
+              item.lastPublishedBy
+            );
+            const formsUsageCount =
+              item.formsUsageCount === 0 ? '_ _' : item.formsUsageCount;
+            console.log(author);
+            return {
+              ...item,
+              author,
+              displayFormsUsageCount: formsUsageCount,
+              lastPublishedBy
+            };
+          });
+          this.allTemplates = rows;
+        })
+      )
+      .subscribe(([_, res]) => {
+        this.templatesCount$ = of(res.rows.length);
+        this.displayedTemplates = this.allTemplates;
+        this.dataSource = new MatTableDataSource(this.allTemplates);
+        this.isLoading$.next(false);
+      });
+  }
+  getTemplates() {
+    return this.raceDynamicFormService.fetchTemplates$({
+      isArchived: 'false',
+      isDeleted: 'false',
+      searchTerm: this.searchTerm,
+      ...this.filters
+    });
+  }
 
+  populateFilter() {
+    combineLatest([
+      this.raceDynamicFormService.getDataSetsByType$('formTemplateHeaderTags'),
+      this.columnConfigService.moduleAdditionalDetailsFiltersData$
+    ]).subscribe(([allTags, additionalDetails]) => {
+      this.additionalDetailFilterData = additionalDetails;
       this.lastPublishedBy = Array.from(
         new Set(
           this.allTemplates
             .map((item: any) => item.lastPublishedBy)
-            .filter((item) => item != null)
+            .filter((item) => item != null && item !== '_ _')
         )
       ).sort();
 
@@ -421,62 +484,44 @@ export class TemplateListComponent implements OnInit, OnDestroy {
             .filter((item) => item != null)
         )
       ).sort();
-
-      this.filterJson.forEach((item) => {
-        if (item.column === 'status') {
-          item.items = this.status;
-        } else if (item.column === 'modifiedBy') {
-          item.items = this.lastPublishedBy;
-        } else if (item.column === 'createdBy') {
-          item.items = this.createdBy;
-        }
+      allTags[0]?.values?.forEach((tag) => {
+        this.tags.add(tag);
       });
+      this.setFilters();
     });
   }
 
-  applySearchAndFilter(searchTerm: string) {
+  setFilters() {
+    this.filterJson.forEach((item) => {
+      if (item.column === 'lastPublishedBy') {
+        item.items = this.lastPublishedBy;
+      } else if (item.column === 'author') {
+        item.items = this.createdBy;
+      } else if (item.column === 'tags') {
+        item.items = this.tags;
+      } else if (!item?.items?.length) {
+        item.items = this.additionalDetailFilterData[item.column]
+          ? this.additionalDetailFilterData[item.column]
+          : [];
+      }
+    });
+  }
+
+  applyFilter(data: any) {
+    for (const item of data) {
+      this.filters[item.column] = item.value;
+    }
     this.isLoading$.next(true);
-    this.displayedTemplates = this.allTemplates
-      .filter((item: any) =>
-        item.name.toLocaleLowerCase().startsWith(searchTerm.toLocaleLowerCase())
-      )
-      .filter((item: any) => {
-        if (
-          this.filter.status !== '' &&
-          this.filter.status !== item.formStatus
-        ) {
-          return false;
-        } else if (
-          this.filter.modifiedBy !== '' &&
-          this.filter.modifiedBy.indexOf(item.lastPublishedBy) === -1
-        ) {
-          return false;
-        } else if (
-          this.filter.createdBy !== '' &&
-          this.filter.createdBy.indexOf(item.author) === -1
-        ) {
-          return false;
-        }
-        return true;
-      });
-    this.dataSource.data = this.displayedTemplates;
-    this.isLoading$.next(false);
-  }
-
-  updateFilter(data: any) {
-    data.forEach((item) => {
-      this.filter[item.column] = item.value;
-    });
-    this.applySearchAndFilter(this.searchTemplates.value);
+    this.fetchTemplates$.next({ data: 'load' });
   }
 
   resetFilter() {
-    this.filter = {
-      status: '',
-      modifiedBy: '',
-      createdBy: ''
+    this.filters = {
+      formStatus: '',
+      lastPublishedBy: '',
+      author: ''
     };
-    this.applySearchAndFilter(this.searchTemplates.value);
+    this.fetchTemplates$.next({ data: 'load' });
   }
 
   copyTemplate(template) {
@@ -554,11 +599,16 @@ export class TemplateListComponent implements OnInit, OnDestroy {
                   newTemplate.lastPublishedBy
                 );
               this.allTemplates = [newTemplate, ...this.allTemplates];
-              this.allTemplates.map((item) => {
-                return this.raceDynamicFormService.handleEmptyColumns(
+              this.allTemplates?.map((item) => {
+                item =
+                  this.raceDynamicFormService.extractAdditionalDetailsToColumns(
+                    item
+                  );
+                item = this.raceDynamicFormService.handleEmptyColumns(
                   item,
                   this.columns
                 );
+                return item;
               });
               this.dataSource = new MatTableDataSource(this.allTemplates);
               this.cdrf.detectChanges();

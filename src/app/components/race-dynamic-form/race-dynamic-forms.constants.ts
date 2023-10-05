@@ -416,3 +416,34 @@ export const RDF_FORM_LIST_FILTERS = [
     value: ''
   }
 ];
+
+export const RDF_TEMPLATE_LIST_FILTERS = [
+  {
+    label: 'Status',
+    items: ['Draft', 'Ready'],
+    column: 'formStatus',
+    type: 'select',
+    value: ''
+  },
+  {
+    label: 'Modified By',
+    items: [],
+    column: 'lastPublishedBy',
+    type: 'multiple',
+    value: ''
+  },
+  {
+    label: 'Tags',
+    items: [],
+    column: 'tags',
+    type: 'multiple',
+    value: ''
+  },
+  {
+    label: 'Created By',
+    items: [],
+    column: 'author',
+    type: 'multiple',
+    value: ''
+  }
+];

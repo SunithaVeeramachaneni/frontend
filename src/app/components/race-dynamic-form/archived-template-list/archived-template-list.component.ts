@@ -187,7 +187,7 @@ export class ArchivedTemplateListComponent implements OnInit, OnDestroy {
 
     this.usersService.getUsersInfo$().subscribe(() => {
       this.fetchArchivedTemplatesSubscription = this.raceDynamicFormService
-        .fetchTemplates$({ isArchived: true, isDeleted: false })
+        .fetchTemplates$({ isArchived: 'true', isDeleted: 'false' })
         .subscribe((res: any) => {
           this.templatesCount$ = of(res.rows.length);
           this.archivedTemplates = res.rows.map((item) => ({

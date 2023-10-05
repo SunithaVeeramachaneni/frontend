@@ -121,6 +121,17 @@ export class ImportTemplateListComponent implements OnInit, OnDestroy {
           this.allTemplates.map((template) => {
             template.displayFormsUsageCount = template.formsUsageCount;
           });
+          this.allTemplates?.map((item) => {
+            item =
+              this.raceDynamicFormService.extractAdditionalDetailsToColumns(
+                item
+              );
+            item = this.raceDynamicFormService.handleEmptyColumns(
+              item,
+              this.columns
+            );
+            return item;
+          });
           this.dataSource = new MatTableDataSource(this.allTemplates);
           this.isLoading$.next(false);
           return this.allTemplates;

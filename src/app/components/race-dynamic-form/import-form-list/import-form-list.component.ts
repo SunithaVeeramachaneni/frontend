@@ -385,7 +385,9 @@ export class ImportFormListComponent implements OnInit, OnDestroy {
             (value, index, self) => self.indexOf(value) === index && value
           )
           .sort();
-        this.tags = allTags[0]?.values;
+        allTags[0]?.values?.forEach((tag) => {
+          this.tags.add(tag);
+        });
         this.additionalDetailFilterData = additionDetailsData;
         this.setFilters();
       }
