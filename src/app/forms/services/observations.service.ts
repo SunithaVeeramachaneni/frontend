@@ -584,10 +584,7 @@ export class ObservationsService {
           condition: true
         },
         dueDate:
-          item?.DUEDATE &&
-          this.dateUtilService.isValidDate(new Date(item?.DUEDATE))
-            ? format(new Date(item?.DUEDATE), 'dd MMM yyyy hh:mm a')
-            : '',
+          item?.DUEDATE,
         title: item.TITLE,
         description: item.DESCRIPTION,
         location,
