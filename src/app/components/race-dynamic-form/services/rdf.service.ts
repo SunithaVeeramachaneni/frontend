@@ -1125,7 +1125,7 @@ export class RaceDynamicFormService {
     return form;
   }
   handleEmptyColumns(row, columns: Column[]) {
-    columns.forEach((column) => {
+    columns?.forEach((column) => {
       if (
         column.id !== 'publishedDate' &&
         (!row[column.id] ||

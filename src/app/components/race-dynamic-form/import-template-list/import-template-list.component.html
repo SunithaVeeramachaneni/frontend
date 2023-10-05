@@ -1,7 +1,4 @@
-<div
-  class="import-template-list"
-  *ngIf="{ formMetadata: formMetadata$ | async }"
->
+<div class="import-template-list">
   <div class="custom-form-field-gray-color search">
     <mat-form-field class="width-100" appearance="outline">
       <mat-icon id="importTemplateListSearchIcon" matPrefix class="searchIcon"
@@ -20,15 +17,16 @@
         matSuffix
         icon="icon-filterIcon"
         class="filter-icon"
+        cdkOverlayOrigin
+        #trigger="cdkOverlayOrigin"
+        (click)="isPopoverOpen = !isPopoverOpen"
       ></svg-icon>
     </mat-form-field>
   </div>
 
   <div
     *ngIf="
-      (templates$ | async) &&
-      (isLoading$ | async) === false &&
-      (isLoadingColumns$ | async) === false
+      (isLoading$ | async) === false && (isLoadingColumns$ | async) === false
     "
   >
     <cwp-dynamictable
@@ -38,9 +36,26 @@
       class="width-100"
     ></cwp-dynamictable>
   </div>
+  <ng-template
+    cdkConnectedOverlay
+    cdkConnectedOverlayPanelClass="custom-popover"
+    cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+    [cdkConnectedOverlayHasBackdrop]="true"
+    [cdkConnectedOverlayOpen]="isPopoverOpen"
+    [cdkConnectedOverlayOrigin]="trigger"
+    cdkConnectedOverlayWidth="400px"
+    (backdropClick)="isPopoverOpen = false"
+  >
+    <app-filter
+      [json]="filterJson"
+      (close)="isPopoverOpen = false"
+      (apply)="applyFilter($event)"
+      (reset)="resetFilter()"
+    ></app-filter>
+  </ng-template>
 </div>
 
-<div *ngIf="isLoading$ | async">
+<div *ngIf="(isLoading$ | async) || (isLoadingColumns$ | async)">
   <div>
     <div *ngFor="let number of ghostLoading">
       <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">

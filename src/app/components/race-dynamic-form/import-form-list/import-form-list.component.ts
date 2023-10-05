@@ -147,7 +147,7 @@ export class ImportFormListComponent implements OnInit, OnDestroy {
     this.columnConfigService.moduleFilterConfiguration$
       .pipe(takeUntil(this.onDestroy$))
       .subscribe((res) => {
-        if (res) {
+        if (res && res[this.RDF_MODULE_NAME]) {
           this.filterJson = res[this.RDF_MODULE_NAME]?.filter(
             (item) => item.column !== 'formType'
           );
