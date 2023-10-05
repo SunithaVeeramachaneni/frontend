@@ -167,7 +167,7 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
       'additionalDetails'
     ) as FormArray;
     this.responseSetSerivce
-      .listResponseSetByModuleName$()
+      .fetchResponseSetByModuleName$()
       .subscribe((response) => {
         let responseSets = response.RDF_TEMPLATES;
         responseSets.forEach((responseSet) => {

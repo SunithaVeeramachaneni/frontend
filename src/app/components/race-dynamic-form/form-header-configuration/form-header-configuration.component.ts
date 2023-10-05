@@ -265,32 +265,34 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     this.additionalDetails = this.headerDataForm.get(
       'additionalDetails'
     ) as FormArray;
-    this.responseSetService.listResponseSetByModuleName$().subscribe((data) => {
-      let resposneSets = data.RDF;
-      resposneSets.forEach((responseSet) => {
-        let values = [];
+    this.responseSetService
+      .fetchResponseSetByModuleName$()
+      .subscribe((data) => {
+        let resposneSets = data.RDF;
+        resposneSets.forEach((responseSet) => {
+          let values = [];
 
-        JSON.parse(responseSet.values).forEach((val) => {
-          values.push(val.title);
+          JSON.parse(responseSet.values).forEach((val) => {
+            values.push(val.title);
+          });
+          let selectedValues = [];
+          if (this.data.formData) {
+            const obj = this.data.formData.additionalDetails.find(
+              (object) => object.FIELDLABEL === responseSet.name
+            );
+            selectedValues = obj ? obj.DEFAULTVALUE.split(',') : [];
+          }
+          this.additionalDetailMap[responseSet.name] = selectedValues;
+          const objFormGroup = this.fb.group({
+            label: [responseSet.name],
+            value: [values],
+            selectedValue: [selectedValues]
+          });
+          this.additionalDetails.push(objFormGroup);
         });
-        let selectedValues = [];
-        if (this.data.formData) {
-          const obj = this.data.formData.additionalDetails.find(
-            (object) => object.FIELDLABEL === responseSet.name
-          );
-          selectedValues = obj ? obj.DEFAULTVALUE.split(',') : [];
-        }
-        this.additionalDetailMap[responseSet.name] = selectedValues;
-        const objFormGroup = this.fb.group({
-          label: [responseSet.name],
-          value: [values],
-          selectedValue: [selectedValues]
-        });
-        this.additionalDetails.push(objFormGroup);
+        this.cdrf.detectChanges();
+        this.isLoading$.next(false);
       });
-      this.cdrf.detectChanges();
-      this.isLoading$.next(false);
-    });
   }
 
   handleEditorFocus(focus: boolean) {
@@ -993,5 +995,13 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   compareValues(value1: any, value2: any) {
     return value1 && value2 && value1.toLowerCase() === value2.toLowerCase();
   }
-  valueSearch(event, valueArray) {}
+  valueSearch(event, valueArray) {
+    const searchValue = event.target.value;
+    if (searchValue) {
+      valueArray = valueArray.filter(
+        (value) => value.toLowerCase().indexOf(searchValue.toLowerCase()) === 0
+      );
+    }
+    console.log('Value array :', valueArray);
+  }
 }

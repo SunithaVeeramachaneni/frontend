@@ -52,19 +52,6 @@ export class ResponseSetService {
     );
   }
 
-  listResponseSetByModuleName$ = () => {
-    const params = new URLSearchParams();
-    const info: ErrorInfo = {} as ErrorInfo;
-    const { displayToast, failureResponse = {} } = info;
-    return this._appService
-      ._getResp(
-        environment.masterConfigApiUrl,
-        `response-set/list/all-modules`,
-        { displayToast, failureResponse }
-      )
-      .pipe(shareReplay(1));
-  };
-
   fetchAllGlobalResponses$ = () => {
     const params = new URLSearchParams();
     params.set('limit', this.maxLimit);
