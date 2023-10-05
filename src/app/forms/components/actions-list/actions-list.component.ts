@@ -38,7 +38,6 @@ import { slideInOut } from 'src/app/animations';
 
 import {
   graphQLDefaultLimit,
-  dateTimeFormat2,
   permissions as perms,
   dateTimeFormat4
 } from 'src/app/app.constants';
@@ -352,7 +351,7 @@ export class ActionsListComponent implements OnInit, OnDestroy {
     const onScrollActions$ = this.observationsService.fetchActions$.pipe(
       filter(({ data }) => data !== 'load' && data !== 'search'),
       switchMap(({ data }) => {
-        if (data === 'infiniteScroll' && this.observationsService.actionsNextToken!==null ) {
+        if (data === 'infiniteScroll') {
           this.fetchType = 'infiniteScroll';
           return this.getActionsList();
         } else {

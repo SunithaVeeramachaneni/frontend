@@ -566,11 +566,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
           pdf: null
         };
         this.questionForm.get('value').setValue(instructionsValue);
-        if (this.questionForm.get('name').value) {
-          this.questionForm
-            .get('name')
-            .setValue('<p>' + this.questionForm.get('name').value + '</p>');
-        }
         break;
       default:
       // do nothing

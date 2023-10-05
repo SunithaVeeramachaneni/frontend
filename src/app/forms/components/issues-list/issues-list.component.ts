@@ -38,7 +38,6 @@ import { slideInOut } from 'src/app/animations';
 
 import {
   graphQLDefaultLimit,
-  dateTimeFormat2,
   permissions as perms,
   dateTimeFormat4
 } from 'src/app/app.constants';
@@ -353,7 +352,7 @@ export class IssuesListComponent implements OnInit, OnDestroy {
     const onScrollIssues$ = this.observationsService.fetchIssues$.pipe(
       filter(({ data }) => data !== 'load' && data !== 'search'),
       switchMap(({ data }) => {
-        if (data === 'infiniteScroll' && this.observationsService.issuesNextToken!==null) {
+        if (data === 'infiniteScroll') {
           this.fetchType = 'infiniteScroll';
           return this.getIssuesList();
         } else {

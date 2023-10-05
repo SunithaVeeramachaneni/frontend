@@ -315,7 +315,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
       .subscribe(() => this.isLoading$.next(true));
     this.getFilter();
     this.getDisplayedForms();
-    // this.getAllOperatorRounds();
+    this.getAllOperatorRounds();
     this.configOptions.allColumns = this.columns;
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
@@ -547,7 +547,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
         break;
 
       case 'edit':
-        this.router.navigate(['/operator-rounds/round-plans/edit', data.id]);
+        this.router.navigate(['/operator-rounds/edit', data.id]);
         break;
 
       case 'archive':
