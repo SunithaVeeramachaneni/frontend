@@ -10,7 +10,8 @@ import {
   EventEmitter,
   ChangeDetectionStrategy,
   ViewChild,
-  OnDestroy
+  OnDestroy,
+  ChangeDetectorRef
 } from '@angular/core';
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import {
@@ -56,6 +57,9 @@ import { Base64HelperService } from 'src/app/components/work-instructions/servic
 import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { operatorRounds } from 'src/app/app.constants';
+import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
+import { NgxImageCompressService } from 'ngx-image-compress';
+import { PDFDocument } from 'pdf-lib';
 @Component({
   selector: 'app-question',
   templateUrl: './question.component.html',
@@ -74,6 +78,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   @Input() isImported: boolean;
   @Input() tagDetailType: string;
   @Input() attributeDetailType: string;
+  base64result: string;
 
   @Input() set questionId(id: string) {
     this._id = id;
@@ -222,6 +227,10 @@ export class QuestionComponent implements OnInit, OnDestroy {
   unitOfMeasurementsAvailable: any[] = [];
   unitOfMeasurements = [];
   fetchUnitOfMeasurement: Observable<any>;
+  instructionsMedia = {
+    images: [],
+    pdf: null
+  };
 
   questionForm: FormGroup = this.fb.group({
     id: '',
@@ -280,7 +289,11 @@ export class QuestionComponent implements OnInit, OnDestroy {
     private responseSetService: ResponseSetService,
     private toast: ToastService,
     private translate: TranslateService,
-    private readonly commonService: CommonService
+    private rdfService: RaceDynamicFormService,
+    private operatorRoundsService: OperatorRoundsService,
+    private readonly commonService: CommonService,
+    private imageCompress: NgxImageCompressService,
+    private cdrf: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -398,6 +411,51 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
 
   updateQuestion() {
+    if (this.question.fieldType === 'INST') {
+      const { images, pdf } = this.question.value;
+      // FETCH BASE64 FOR INSTRUCTIONS
+      const imagesPromises = images.map((imageId) =>
+        this.moduleName === 'RDF'
+          ? this.rdfService.getAttachmentsById$(imageId).toPromise().then()
+          : this.operatorRoundsService
+              .getAttachmentsById$(imageId)
+              .toPromise()
+              .then()
+      );
+      const pdfPromises =
+        this.moduleName === 'RDF'
+          ? this.rdfService.getAttachmentsById$(pdf).toPromise().then()
+          : this.operatorRoundsService
+              .getAttachmentsById$(pdf)
+              .toPromise()
+              .then();
+
+      let imageArray = [];
+      Promise.all(imagesPromises).then((images) => {
+        console.log(images);
+        imageArray = images.map((img: any) => {
+          if (img?.id !== 'null') {
+            return `data:image/jpeg;base64,${img?.attachment}`;
+          } else {
+            return null;
+          }
+        });
+        this.instructionsMedia = {
+          ...this.instructionsMedia,
+          images: imageArray
+        };
+        console.log(this.instructionsMedia);
+      });
+      Promise.all([pdfPromises]).then(([pdf]) => {
+        console.log(pdf);
+        this.instructionsMedia = {
+          ...this.instructionsMedia,
+          pdf: pdf ? pdf.attachment : null
+        };
+        console.log(this.instructionsMedia);
+      });
+    }
+
     if (this.question.isOpen) {
       if (this.question.fieldType !== 'INST') {
         timer(0, asapScheduler).subscribe(() =>
@@ -890,6 +948,150 @@ export class QuestionComponent implements OnInit, OnDestroy {
       }
     });
   };
+
+  uploadAttachmentsForInstructions(event: Event) {
+    const target = event.target as HTMLInputElement;
+    const files = Array.from(target.files);
+    const reader = new FileReader();
+
+    if (files.length > 0 && files[0] instanceof File) {
+      const file: File = files[0];
+      const maxSize = 390000;
+      reader.readAsDataURL(file);
+      reader.onloadend = () => {
+        let originalValue = this.questionForm.get('value').value;
+        this.base64result = reader?.result as string;
+        if (this.base64result.includes('data:application/pdf;base64,')) {
+          this.resizePdf(this.base64result).then((compressedPdf) => {
+            const onlybase64 = compressedPdf.split(',')[1];
+            const resizedPdfSize = atob(onlybase64).length;
+            const pdf = {
+              fileInfo: { name: file.name, size: resizedPdfSize },
+              attachment: onlybase64
+            };
+            if (resizedPdfSize <= maxSize) {
+              this.operatorRoundsService
+                .uploadAttachments$({ file: pdf })
+                .pipe(
+                  tap((response) => {
+                    if (response) {
+                      this.instructionsMedia.pdf = file;
+                      const responsenew =
+                        response?.data?.createRoundPlanAttachments?.id;
+                      originalValue = cloneDeep({
+                        ...originalValue,
+                        pdf: responsenew
+                      });
+                      console.log(originalValue);
+                      this.questionForm.get('value').setValue(originalValue);
+                      this.cdrf.detectChanges();
+                      this.instructionsUpdateValue();
+                    }
+                  })
+                )
+                .subscribe();
+            } else {
+              this.toast.show({
+                type: 'warning',
+                text: 'File size should not exceed 390KB'
+              });
+            }
+          });
+        } else {
+          this.resizeImage(this.base64result).then((compressedImage) => {
+            const onlybase64 = compressedImage.split(',')[1];
+            const resizedImageSize = atob(onlybase64).length;
+            const image = {
+              fileInfo: { name: file.name, size: resizedImageSize },
+              attachment: onlybase64
+            };
+            if (resizedImageSize <= maxSize) {
+              this.operatorRoundsService
+                .uploadAttachments$({ file: image })
+                .pipe(
+                  tap((response) => {
+                    if (response) {
+                      const index = originalValue.images.findIndex(
+                        (image) => image === null
+                      );
+                      const responsenew =
+                        response?.data?.createRoundPlanAttachments?.id;
+                      console.log(responsenew);
+                      const images = [...originalValue.images];
+                      images[index] = responsenew;
+                      originalValue = cloneDeep({
+                        ...originalValue,
+                        images
+                      });
+                      console.log(originalValue);
+                      this.instructionsMedia.images = [
+                        ...this.instructionsMedia.images,
+                        onlybase64
+                      ];
+                      this.questionForm.get('value').setValue(originalValue);
+                      this.cdrf.detectChanges();
+                      this.instructionsUpdateValue();
+                    }
+                  })
+                )
+                .subscribe();
+            } else {
+              this.toast.show({
+                type: 'warning',
+                text: 'File size should not exceed 390KB'
+              });
+            }
+          });
+        }
+      };
+      console.log(this.instructionsMedia);
+    }
+  }
+
+  async resizeImage(base64result: string): Promise<string> {
+    const compressedImage = await this.imageCompress.compressFile(
+      base64result,
+      -1,
+      100,
+      800,
+      600
+    );
+    return compressedImage;
+  }
+
+  async resizePdf(base64Pdf: string): Promise<string> {
+    try {
+      const base64Data = base64Pdf.split(',')[1];
+      const binaryString = atob(base64Data);
+
+      const encoder = new TextEncoder();
+      const pdfBytes = encoder.encode(binaryString);
+
+      const pdfDoc = await PDFDocument.load(pdfBytes);
+
+      const currentSize = pdfBytes.length / 1024;
+      const desiredSize = 400 * 1024;
+      if (currentSize <= desiredSize) {
+        return base64Pdf;
+      }
+
+      const scalingFactor = Math.sqrt(desiredSize / currentSize);
+      const pages = pdfDoc.getPages();
+      pages.forEach((page) => {
+        const { width, height } = page.getSize();
+        page.setSize(width * scalingFactor, height * scalingFactor);
+      });
+
+      const modifiedPdfBytes = await pdfDoc.save();
+
+      const decoder = new TextDecoder();
+      const base64ModifiedPdf = btoa(decoder.decode(modifiedPdfBytes));
+
+      return base64ModifiedPdf;
+    } catch (error) {
+      throw error;
+    }
+  }
 
   sendFileToS3(file, params): void {
     const { isImage, index } = params;

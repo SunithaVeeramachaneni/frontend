@@ -144,7 +144,8 @@
                 color="primary"
                 class="addLogicBtn"
                 *ngIf="
-                  !isAskQuestion && questionForm.get('fieldType').value !== 'USR' &&
+                  !isAskQuestion &&
+                  questionForm.get('fieldType').value !== 'USR' &&
                   addLogicNotAppliedFields.indexOf(
                     questionForm.get('fieldType').value
                   ) < 0
@@ -168,10 +169,7 @@
               >
                 <div class="dis-flex">
                   <span
-                    *ngFor="
-                      let image of questionForm.get('value').value.images;
-                      index as i
-                    "
+                    *ngFor="let image of instructionsMedia.images; index as i"
                   >
                     <app-instruction-image
                       [image]="image"
@@ -183,9 +181,9 @@
                     ></app-instruction-image>
                   </span>
 
-                  <span *ngIf="questionForm.get('value').value.pdf !== null">
+                  <span *ngIf="instructionsMedia.pdf !== null">
                     <app-instruction-pdf
-                      [pdf]="questionForm.get('value').value.pdf"
+                      [pdf]="instructionsMedia.pdf"
                       [index]="'4'"
                       (indexEmitter)="instructionsFileDeleteHandler($event)"
                     >
@@ -197,7 +195,7 @@
                   type="file"
                   class="file-upload"
                   accept="image/jpeg,image/jpg,image/png,application/pdf"
-                  (change)="instructionsFileUploadHandler($event)"
+                  (change)="uploadAttachmentsForInstructions($event)"
                   [hidden]="true"
                   #instructionsFileUpload
                 />
