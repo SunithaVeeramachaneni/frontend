@@ -20,7 +20,7 @@ import {
   TableEvent
 } from '../../../interfaces';
 
-import { defaultLimit, metadataFlatModuleNames } from '../../../app.constants';
+import { defaultLimit, graphQLDefaultFilterLimit, metadataFlatModuleNames } from '../../../app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { getFormMetadata, State } from 'src/app/forms/state';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
@@ -33,6 +33,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ColumnConfigurationService } from 'src/app/forms/services/column-configuration.service';
 import { UsersService } from '../../user-management/services/users.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
+import { cloneDeep } from 'lodash-es';
 @Component({
   selector: 'app-import-form-list',
   templateUrl: './import-form-list.component.html',
@@ -207,11 +208,20 @@ export class ImportFormListComponent implements OnInit, OnDestroy {
     const filterData = {
       formType: this.data.isEmbeddedForm ? 'Embedded' : 'Standalone'
     };
+    const columnConfigFilter = cloneDeep(this.filter);
+    delete columnConfigFilter.plant;
+    delete columnConfigFilter.tags;
+    delete columnConfigFilter.lastPublishedBy;
+    delete columnConfigFilter.author;
+    delete columnConfigFilter.formStatus;
+
+    const hasColumnConfigFilter = Object.keys(columnConfigFilter)?.length || 0;
+
     return this.raceDynamicFormService
       .getFormsList$(
         {
           next: this.nextToken,
-          limit: this.limit,
+          limit: hasColumnConfigFilter ? graphQLDefaultFilterLimit : this.limit,
           searchKey: this.searchForm.value,
           fetchType: this.fetchType
         },
