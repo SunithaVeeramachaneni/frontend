@@ -394,7 +394,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
   userInfo$: Observable<UserInfo>;
   filterData$: Observable<any>;
   selectedForm: InspectionDetail;
-  selectedFormInfo: InspectionDetail;
+  selectedFormInfo: InspectionDetail = {} as InspectionDetail;
   selectedDate = null;
   zIndexDelay = 0;
   hideInspectionDetail: boolean;
@@ -1043,7 +1043,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
         .join(',');
     }
 
-    let { status } = this.selectedFormInfo;
+    let { status = '' } = this.selectedFormInfo;
 
     if (status.toLowerCase() === 'open' && assigneeType === 'user') {
       status = 'assigned';
@@ -1061,54 +1061,56 @@ export class InspectionComponent implements OnInit, OnDestroy {
       status = 'partly-open';
     }
 
-    this.raceDynamicFormService
-      .updateInspection$(
-        inspectionId,
-        {
-          ...rest,
+    if (inspectionId) {
+      this.raceDynamicFormService
+        .updateInspection$(
           inspectionId,
-          assignedTo,
-          previouslyAssignedTo,
-          assignmentType,
-          userGroupsIds,
-          status
-        },
-        'assigned-to'
-      )
-      .pipe(
-        tap((resp) => {
-          if (Object.keys(resp).length) {
-            this.dataSource.data = this.dataSource.data.map((data) => {
-              if (data.inspectionId === inspectionId) {
-                return {
-                  ...data,
-                  inspectionDBVersion: resp.inspectionDBVersion + 1,
-                  status,
-                  assignedTo: assignedTo?.length
-                    ? this.userService.getUserFullName(assignedTo)
-                    : '',
-                  assignmentType,
-                  userGroupsIds,
-                  assignedToDisplay: assignedTo?.length
-                    ? this.userService.getUserFullName(assignedTo)
-                    : userGroupsIds?.length
-                    ? this.userGroupsIdMap[userGroupsIds.split(',')[0]]?.name
-                    : '',
-                  assignedToEmail: assignedTo?.length ? assignedTo : ''
-                };
-              }
-              return data;
-            });
-            this.dataSource = new MatTableDataSource(this.dataSource.data);
-            this.cdrf.detectChanges();
-            this.toastService.show({
-              type: 'success',
-              text: 'Assigned to updated successfully'
-            });
-          }
-        })
-      )
-      .subscribe();
+          {
+            ...rest,
+            inspectionId,
+            assignedTo,
+            previouslyAssignedTo,
+            assignmentType,
+            userGroupsIds,
+            status
+          },
+          'assigned-to'
+        )
+        .pipe(
+          tap((resp) => {
+            if (Object.keys(resp).length) {
+              this.dataSource.data = this.dataSource.data.map((data) => {
+                if (data.inspectionId === inspectionId) {
+                  return {
+                    ...data,
+                    inspectionDBVersion: resp.inspectionDBVersion + 1,
+                    status,
+                    assignedTo: assignedTo?.length
+                      ? this.userService.getUserFullName(assignedTo)
+                      : '',
+                    assignmentType,
+                    userGroupsIds,
+                    assignedToDisplay: assignedTo?.length
+                      ? this.userService.getUserFullName(assignedTo)
+                      : userGroupsIds?.length
+                      ? this.userGroupsIdMap[userGroupsIds.split(',')[0]]?.name
+                      : '',
+                    assignedToEmail: assignedTo?.length ? assignedTo : ''
+                  };
+                }
+                return data;
+              });
+              this.dataSource = new MatTableDataSource(this.dataSource.data);
+              this.cdrf.detectChanges();
+              this.toastService.show({
+                type: 'success',
+                text: 'Assigned to updated successfully'
+              });
+            }
+          })
+        )
+        .subscribe();
+    }
     this.trigger.toArray()[0].closeMenu();
   }
 

@@ -67,7 +67,8 @@ const {
   globalResponse,
   roundPlanArchivedForms,
   roundPlanObservations,
-  rdfObservations
+  rdfObservations,
+  oprRounds
 } = routingUrls;
 
 @Component({
@@ -200,10 +201,10 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     },
     {
       title: myRoundPlans.title,
-      url: oprDashboard.url,
+      url: oprRounds.url,
       imageName: 'operator-rounds',
       showSubMenu: false,
-      permission: oprDashboard.permission,
+      permission: oprRounds.permission,
       disable: false,
       subPages: [
         {

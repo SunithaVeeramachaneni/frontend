@@ -587,7 +587,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   userInfo$: Observable<UserInfo>;
   filterData$: Observable<any>;
   selectedRound: RoundDetail;
-  selectedRoundInfo: RoundDetail;
+  selectedRoundInfo: RoundDetail = {} as RoundDetail;
   selectedDueDate = null;
   selectedStartDate = null;
   zIndexDelay = 0;
@@ -1240,7 +1240,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
         .join(',');
     }
 
-    let { status } = this.selectedRoundInfo;
+    let { status = '' } = this.selectedRoundInfo;
 
     if (status.toLowerCase() === 'open' && assigneeType === 'user') {
       status = 'assigned';
@@ -1258,53 +1258,55 @@ export class RoundsComponent implements OnInit, OnDestroy {
       status = 'partly-open';
     }
 
-    this.operatorRoundsService
-      .updateRound$(
-        roundId,
-        {
-          ...rest,
+    if (roundId) {
+      this.operatorRoundsService
+        .updateRound$(
           roundId,
-          assignedTo,
-          previouslyAssignedTo,
-          assignmentType,
-          userGroupsIds,
-          status
-        },
-        'assigned-to'
-      )
-      .pipe(
-        tap((resp) => {
-          if (Object.keys(resp).length) {
-            this.dataSource.data = this.dataSource.data.map((data) => {
-              if (data.roundId === roundId) {
-                return {
-                  ...data,
-                  assignedTo: assignedTo?.length
-                    ? this.userService.getUserFullName(assignedTo)
-                    : '',
-                  userGroupsIds,
-                  assignedToDisplay: assignedTo?.length
-                    ? this.userService.getUserFullName(assignedTo)
-                    : userGroupsIds?.length
-                    ? this.userGroupsIdMap[userGroupsIds?.split(',')[0]]?.name
-                    : '',
-                  status,
-                  roundDBVersion: resp.roundDBVersion + 1,
-                  assignedToEmail: assignedTo?.length ? assignedTo : ''
-                };
-              }
-              return data;
-            });
-            this.dataSource = new MatTableDataSource(this.dataSource.data);
-            this.cdrf.detectChanges();
-            this.toastService.show({
-              type: 'success',
-              text: 'Assigned to updated successfully'
-            });
-          }
-        })
-      )
-      .subscribe();
+          {
+            ...rest,
+            roundId,
+            assignedTo,
+            previouslyAssignedTo,
+            assignmentType,
+            userGroupsIds,
+            status
+          },
+          'assigned-to'
+        )
+        .pipe(
+          tap((resp) => {
+            if (Object.keys(resp).length) {
+              this.dataSource.data = this.dataSource.data.map((data) => {
+                if (data.roundId === roundId) {
+                  return {
+                    ...data,
+                    assignedTo: assignedTo?.length
+                      ? this.userService.getUserFullName(assignedTo)
+                      : '',
+                    userGroupsIds,
+                    assignedToDisplay: assignedTo?.length
+                      ? this.userService.getUserFullName(assignedTo)
+                      : userGroupsIds?.length
+                      ? this.userGroupsIdMap[userGroupsIds?.split(',')[0]]?.name
+                      : '',
+                    status,
+                    roundDBVersion: resp.roundDBVersion + 1,
+                    assignedToEmail: assignedTo?.length ? assignedTo : ''
+                  };
+                }
+                return data;
+              });
+              this.dataSource = new MatTableDataSource(this.dataSource.data);
+              this.cdrf.detectChanges();
+              this.toastService.show({
+                type: 'success',
+                text: 'Assigned to updated successfully'
+              });
+            }
+          })
+        )
+        .subscribe();
+    }
     this.trigger.toArray()[0].closeMenu();
   }
 
@@ -1383,15 +1385,18 @@ export class RoundsComponent implements OnInit, OnDestroy {
       );
       openDialogModalRef.afterClosed().subscribe((resp) => {
         if (resp) {
+          let changedDueDateToUTC;
           if (
             plantId &&
             this.plantTimezoneMap[plantId] &&
             this.plantTimezoneMap[plantId].timeZoneIdentifier
           ) {
-            changedDueDate = zonedTimeToUtc(
+            changedDueDateToUTC = zonedTimeToUtc(
               format(changedDueDate, dateTimeFormat5),
               this.plantTimezoneMap[plantId].timeZoneIdentifier
             );
+          } else {
+            changedDueDateToUTC = changedDueDate;
           }
           let changedStatus = status;
           if (status === this.statusMap.overdue) {
@@ -1424,7 +1429,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
                 plantId,
                 status: changedStatus,
                 roundId,
-                dueDate: changedDueDate,
+                dueDate: changedDueDateToUTC,
                 scheduledAt,
                 slotDetails: slot,
                 locationAndAssetTasksCompleted,
@@ -1442,7 +1447,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
                       return {
                         ...data,
                         scheduledAt,
-                        dueDate: changedDueDate,
+                        dueDate: changedDueDateToUTC,
                         dueDateDisplay: dueDateDisplayFormat,
                         status: changedStatus,
                         slotDetails: slot,
@@ -1554,15 +1559,18 @@ export class RoundsComponent implements OnInit, OnDestroy {
       );
       openDialogModalRef.afterClosed().subscribe((resp) => {
         if (resp) {
+          let changedScheduledAtToUTC;
           if (
             plantId &&
             this.plantTimezoneMap[plantId] &&
             this.plantTimezoneMap[plantId].timeZoneIdentifier
           ) {
-            changedScheduledAt = zonedTimeToUtc(
+            changedScheduledAtToUTC = zonedTimeToUtc(
               format(changedScheduledAt, dateTimeFormat5),
               this.plantTimezoneMap[plantId].timeZoneIdentifier
             );
+          } else {
+            changedScheduledAtToUTC = changedScheduledAt;
           }
           let changedStatus = status;
           if (status === this.statusMap.overdue) {
@@ -1595,7 +1603,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
                 roundId,
                 assignedTo,
                 slotDetails: slot,
-                scheduledAt: changedScheduledAt,
+                scheduledAt: changedScheduledAtToUTC,
                 dueDate,
                 assignmentType,
                 userGroupsIds
@@ -1609,7 +1617,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
                     if (data.roundId === roundId) {
                       return {
                         ...data,
-                        scheduledAt: changedScheduledAt,
+                        scheduledAt: changedScheduledAtToUTC,
                         status: changedStatus,
                         scheduledAtDisplay: startDateDisplayFormat,
                         slotDetails: slot,

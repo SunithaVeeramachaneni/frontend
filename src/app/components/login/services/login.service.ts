@@ -50,8 +50,8 @@ export class LoginService {
 
   checkUserHasPermission(permissions: Permission[], checkPermissions: string) {
     if (checkPermissions) {
-      const hasPermission = permissions.find((per) =>
-        checkPermissions.includes(per.name)
+      const hasPermission = permissions.find(
+        (per) => checkPermissions === per.name
       );
       return hasPermission ? true : false;
     }

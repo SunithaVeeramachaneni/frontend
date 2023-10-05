@@ -34,6 +34,9 @@ export const updatePDFBuilderConfiguration = createAction(
   '[Builder Configuration] updatePDFBuilderConfiguration',
   props<{
     pdfBuilderConfiguration: any;
+    formStatus: string;
+    formDetailPublishStatus: string;
+    formSaveStatus: string;
   }>()
 );
 
