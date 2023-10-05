@@ -1020,7 +1020,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   compareValues(value1: any, value2: any) {
     return value1 && value2 && value1.toLowerCase() === value2.toLowerCase();
   }
-  valueSearch(event, valueArray, label, index) {
+  valueSearch(event, label, index) {
     const searchValue = event.target.value;
     const parentValues = this.additionalDetailsMasterData[label].value;
     if (searchValue) {
