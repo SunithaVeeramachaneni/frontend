@@ -47,6 +47,7 @@
   .filter-icon {
     width: 15px;
     height: 15px;
+    cursor: pointer;
   }
 
   .no-of-forms {
@@ -92,9 +93,4 @@
     position: relative;
     top: -1px;
   }
-}
-
-.filter-icon {
-  height: 17px !important;
-  width: 17px !important;
 }

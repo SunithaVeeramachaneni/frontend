@@ -294,7 +294,7 @@ export const routingUrls = {
     permission: permissions.viewOPRReports
   },
   myRoundPlans: {
-    url: '/operator-rounds/round-plans',
+    url: '/operator-rounds',
     title: 'Round Plans',
     permission: permissions.viewORPlans
   },

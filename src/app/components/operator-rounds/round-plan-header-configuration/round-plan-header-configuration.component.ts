@@ -258,6 +258,23 @@ export class RoundPlanHeaderConfigurationComponent
           );
         }
       });
+
+    this.additionalDetails = this.headerDataForm.get(
+      'additionalDetails'
+    ) as FormArray;
+
+    if (this.additionalDetails) {
+      merge(
+        ...this.additionalDetails.controls.map(
+          (control: AbstractControl, index: number) =>
+            control.valueChanges.pipe(
+              map((value) => ({ rowIndex: index, value }))
+            )
+        )
+      ).subscribe((changes) => {
+        this.changedValues = changes.value;
+      });
+    }
   }
 
   getAllPlantsData() {
@@ -472,7 +489,7 @@ export class RoundPlanHeaderConfigurationComponent
             }
           })
         );
-        this.router.navigate(['/operator-rounds/round-plans/create']);
+        this.router.navigate(['/operator-rounds/create']);
         this.gotoNextStep.emit();
       } else if (this.roundData?.roundExists === true) {
         this.store.dispatch(
@@ -526,7 +543,7 @@ export class RoundPlanHeaderConfigurationComponent
 
   onCancel(): void {
     this.dialogRef.close();
-    this.router.navigate(['/operator-rounds/round-plans']);
+    this.router.navigate(['/operator-rounds']);
   }
 
   resetPlantSearchFilter = () => {
@@ -763,9 +780,6 @@ export class RoundPlanHeaderConfigurationComponent
   }
 
   addAdditionalDetails() {
-    this.additionalDetails = this.headerDataForm.get(
-      'additionalDetails'
-    ) as FormArray;
     this.additionalDetails.push(
       this.fb.group({
         label: [
