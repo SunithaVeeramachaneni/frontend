@@ -238,7 +238,7 @@ export class ResponsesListComponent implements OnInit, OnDestroy {
     this.allResponseSets$ = this.responseSetService.fetchAllGlobalResponses$();
     this.allResponseSets$.pipe(takeUntil(this.onDestroy$)).subscribe((data) => {
       this.allResponseSets = data?.items || [];
-    })
+    });
     this.responseSetCount$ = combineLatest([
       this.responseSetCount$,
       this.responseSetCountUpdate$
@@ -323,6 +323,10 @@ export class ResponsesListComponent implements OnInit, OnDestroy {
                   },
                   ...initial.data
                 ];
+                this.allResponseSets = this.allResponseSets.filter(
+                  (item) => item.id !== form.id
+                );
+                this.allResponseSets.push(form);
                 break;
               case 'update':
                 const updatedIdx = initial.data.findIndex(
@@ -334,9 +338,16 @@ export class ResponsesListComponent implements OnInit, OnDestroy {
                   responseCount: JSON.parse(form.values).length,
                   updatedAt: new Date().toISOString()
                 };
+                this.allResponseSets = this.allResponseSets.filter(
+                  (item) => item.id !== form.id
+                );
+                this.allResponseSets.push(form);
                 break;
               case 'delete':
                 initial.data = initial.data.filter(
+                  (item) => item.id !== form.id
+                );
+                this.allResponseSets = this.allResponseSets.filter(
                   (item) => item.id !== form.id
                 );
                 break;
@@ -431,9 +442,7 @@ export class ResponsesListComponent implements OnInit, OnDestroy {
         } else
           this.responseSetService
             .deleteResponseSet$({
-              id: data.id,
-              // eslint-disable-next-line no-underscore-dangle
-              _version: data._version
+              id: data.id
             })
             .subscribe(() => {
               this.addEditDeleteResponseSet = true;
