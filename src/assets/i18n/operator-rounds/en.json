@@ -470,5 +470,7 @@
   "recent": "Recent",
   "favorite": "Favorite",
   "allReports": "All",
-  "collapseAllSections": "Collapse All Sections"
+  "collapseAllSections": "Collapse All Sections",
+  "saveAs": "Save As",
+  "saveReportAs": "Save Report As"
 }
