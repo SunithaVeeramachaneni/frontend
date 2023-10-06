@@ -19,6 +19,7 @@ import {
   ErrorInfo
 } from '../../../../interfaces';
 import { DateUtilService } from 'src/app/shared/utils/dateUtils';
+import { metadataFlatModuleNames } from 'src/app/app.constants';
 
 @Injectable({
   providedIn: 'root'
@@ -167,7 +168,13 @@ export class ResponseSetService {
 
   fetchResponseSetByModuleName$ = () => {
     const info: ErrorInfo = {} as ErrorInfo;
-    const { displayToast, failureResponse = {} } = info;
+    const {
+      displayToast,
+      failureResponse = {
+        [metadataFlatModuleNames.RACE_DYNAMIC_FORMS]: [],
+        [metadataFlatModuleNames.RDF_TEMPLATES]: []
+      }
+    } = info;
     return this._appService._getResp(
       environment.masterConfigApiUrl,
       'response-set/list/all-modules',
