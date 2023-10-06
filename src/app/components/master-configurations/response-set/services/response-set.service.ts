@@ -98,7 +98,8 @@ export class ResponseSetService {
         description: responseSet?.description,
         refCount: responseSet.refCount,
         isMultiColumn: responseSet.isMultiColumn,
-        values: responseSet.values
+        values: responseSet.values,
+        moduleName: responseSet.moduleName
       }
     );
 
@@ -108,6 +109,7 @@ export class ResponseSetService {
       name: responseSet.name,
       description: responseSet.description,
       refCount: responseSet.refCount,
+      moduleName: responseSet.moduleName,
       isMultiColumn: responseSet.isMultiColumn,
       values: responseSet.values,
       createdBy: responseSet.createdBy,
@@ -162,6 +164,16 @@ export class ResponseSetService {
       body
     );
   }
+
+  fetchResponseSetByModuleName$ = () => {
+    const info: ErrorInfo = {} as ErrorInfo;
+    const { displayToast, failureResponse = {} } = info;
+    return this._appService._getResp(
+      environment.masterConfigApiUrl,
+      'response-set/list/all-modules',
+      { displayToast, failureResponse }
+    );
+  };
 
   private formatGraphQLocationResponse(resp) {
     let rows =

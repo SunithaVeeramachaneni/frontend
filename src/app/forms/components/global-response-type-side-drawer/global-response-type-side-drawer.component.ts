@@ -19,7 +19,10 @@ import {
   FormGroup,
   FormControl,
   FormArray,
-  Validators
+  Validators,
+  ValidationErrors,
+  ValidatorFn,
+  AbstractControl
 } from '@angular/forms';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import {
@@ -27,7 +30,8 @@ import {
   debounceTime,
   distinctUntilChanged,
   tap,
-  takeUntil
+  takeUntil,
+  startWith
 } from 'rxjs/operators';
 
 import { isEqual } from 'lodash-es';
@@ -39,6 +43,9 @@ import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-valid
 import { Subject, Subscription, timer } from 'rxjs';
 import { ValidationError } from 'src/app/interfaces';
 import { FormValidationUtil } from 'src/app/shared/utils/formValidationUtil';
+import { metadataModuleNames } from 'src/app/app.constants';
+import { MatSelect } from '@angular/material/select';
+import { MatOption } from '@angular/material/core';
 
 @Component({
   selector: 'app-global-response-type-side-drawer',
@@ -55,14 +62,17 @@ export class GlobalResponseTypeSideDrawerComponent
   @ViewChildren('globalResponses')
   private globalResponses: QueryList<ElementRef>;
   isCreate = false;
+  selectMetadataModuleNames = metadataModuleNames;
   public isViewMode: boolean;
   public responseForm: FormGroup = this.fb.group({
     name: new FormControl('', [
       Validators.required,
       Validators.minLength(3),
-      WhiteSpaceValidator.trimWhiteSpace
+      WhiteSpaceValidator.trimWhiteSpace,
+      this.responseSetNameValidator()
     ]),
     description: new FormControl('', [WhiteSpaceValidator.trimWhiteSpace]),
+    moduleName: new FormControl([]),
     responses: this.fb.array([])
   });
   errors: ValidationError = {};
@@ -79,6 +89,16 @@ export class GlobalResponseTypeSideDrawerComponent
     this.isViewMode = mode;
   }
 
+  @Input() set allResponseSets(allResponseSets) {
+    this._allResponseSets = allResponseSets;
+  }
+
+  get allResponseSets() {
+    return this._allResponseSets;
+  }
+
+  private _allResponseSets: any[] = [];
+
   constructor(
     private fb: FormBuilder,
     private responseSetService: ResponseSetService,
@@ -91,6 +111,7 @@ export class GlobalResponseTypeSideDrawerComponent
     this.responseForm.valueChanges
       .pipe(
         pairwise(),
+        startWith([null, this.responseForm.value]), // To detect changes on load
         debounceTime(500),
         distinctUntilChanged(),
         takeUntil(this.onDestroy$),
@@ -111,14 +132,15 @@ export class GlobalResponseTypeSideDrawerComponent
       )
       .subscribe();
   }
-
   ngOnChanges(changes: SimpleChanges): void {
+    this.cdrf.detectChanges();
     if (changes.globalResponseToBeEdited) {
       const response = changes.globalResponseToBeEdited.currentValue;
       if (response) {
         this.responseForm.reset();
         this.name.patchValue(response.name);
         this.description.patchValue(response.description);
+        this.moduleName.patchValue(response?.moduleName?.split(','));
         const globalresponseValues = JSON.parse(response.values);
         this.responses.clear();
         globalresponseValues.forEach((item) => {
@@ -167,6 +189,9 @@ export class GlobalResponseTypeSideDrawerComponent
 
   get description(): FormControl {
     return this.responseForm.get('description') as FormControl;
+  }
+  get moduleName() {
+    return this.responseForm.get('moduleName');
   }
 
   getResponseList() {
@@ -219,6 +244,7 @@ export class GlobalResponseTypeSideDrawerComponent
       name: this.name.value ? this.name.value : 'Untitled Response Set',
       responseType: 'globalResponse',
       isMultiColumn: false,
+      moduleName: this.moduleName.value.toString(),
       values: JSON.stringify(this.responses.value),
       description: this.description.value,
       refCount: 0
@@ -270,6 +296,37 @@ export class GlobalResponseTypeSideDrawerComponent
     this.slideInOut.next('out');
     this.cdrf.markForCheck();
   };
+
+  objectComparisonFunction(option, value): boolean {
+    return option === value;
+  }
+  closeSelect(select: MatSelect): void {
+    select.close();
+  }
+
+  isOptionArrayEmpty(options: MatOption[] | any[]): boolean {
+    return Array.isArray(options) && options.length === 0;
+  }
+
+  getColumnIdFromName(columnName) {
+    return columnName.toLowerCase().replace(/ /g, '_');
+  }
+
+  responseSetNameValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      console.log(this.allResponseSets)
+      const responseSetNames = this.allResponseSets?.map((responseSet) => {
+        return {
+          name: responseSet.name.toLowerCase(),
+          id: this.getColumnIdFromName(responseSet.name.toLowerCase())
+        }
+      }) || [];
+      const isResponseSetNameExists = responseSetNames.find((responseSetName) => responseSetName.name === control.value.toLowerCase() || this.getColumnIdFromName(control.value.toLowerCase()) === responseSetName.id)
+      return isResponseSetNameExists
+        ? { responseSetNameExists: true }
+        : null;
+    }
+  }
 
   ngOnDestroy(): void {
     this.onDestroy$.next();

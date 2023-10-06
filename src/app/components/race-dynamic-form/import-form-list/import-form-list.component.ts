@@ -20,7 +20,11 @@ import {
   TableEvent
 } from '../../../interfaces';
 
-import { defaultLimit } from '../../../app.constants';
+import {
+  defaultLimit,
+  graphQLDefaultFilterLimit,
+  metadataFlatModuleNames
+} from '../../../app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { getFormMetadata, State } from 'src/app/forms/state';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
@@ -30,6 +34,10 @@ import {
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { MatTableDataSource } from '@angular/material/table';
+import { ColumnConfigurationService } from 'src/app/forms/services/column-configuration.service';
+import { UsersService } from '../../user-management/services/users.service';
+import { PlantService } from '../../master-configurations/plants/services/plant.service';
+import { cloneDeep } from 'lodash-es';
 @Component({
   selector: 'app-import-form-list',
   templateUrl: './import-form-list.component.html',
@@ -49,104 +57,30 @@ export class ImportFormListComponent implements OnInit, OnDestroy {
   formMetadata: FormMetadata;
   ghostLoading = new Array(11).fill(0).map((v, i) => i);
   isLoading$ = new BehaviorSubject(true);
+  isLoadingColumns$: Observable<boolean> =
+    this.columnConfigService.isLoadingColumns$;
   selectedFormId = '';
-
+  rdfModuleName = metadataFlatModuleNames.RACE_DYNAMIC_FORMS;
+  tags = new Set();
   status: any[] = ['Draft', 'Published'];
-  columns: Column[] = [
-    {
-      id: 'name',
-      displayName: 'Name',
-      type: 'string',
-      controlType: 'string',
-      order: 1,
-      searchable: false,
-      sortable: false,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
-      titleStyle: {
-        'font-weight': '500',
-        'font-size': '100%',
-        color: '#000000',
-        'overflow-wrap': 'anywhere'
-      },
-      hasSubtitle: true,
-      showMenuOptions: false,
-      subtitleColumn: 'description',
-      subtitleStyle: {
-        'font-size': '80%',
-        color: 'darkgray',
-        display: 'block',
-        'white-space': 'wrap',
-        'max-width': '240px',
-        'overflow-wrap': 'anywhere'
-      },
-      hasPreTextImage: true,
-      hasPostTextImage: false
-    },
-    {
-      id: 'plant',
-      displayName: 'Plant',
-      type: 'string',
-      controlType: 'string',
-      order: 2,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
-      sortable: true,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
-    },
-    {
-      id: 'formStatus',
-      displayName: 'Status',
-      type: 'string',
-      controlType: 'string',
-      order: 3,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
-      sortable: true,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: true,
-      titleStyle: {
-        textTransform: 'capitalize',
-        fontWeight: 500,
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        position: 'relative',
-        top: '10px',
-        width: '80px',
-        height: '24px',
-        background: '#FEF3C7',
-        color: '#92400E',
-        borderRadius: '12px'
-      },
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false,
-      hasConditionalStyles: true
-    }
-  ];
+  columns: Column[] = [];
+  isPopoverOpen = false;
+  lastPublishedBy = [];
+  lastPublishedOn = [];
+  lastModifiedBy = [];
+  authoredBy = [];
+  plantsIdNameMap = {};
+  plants = [];
+  createdBy = [];
+  additionalDetailFilterData = {};
+  filterJson: any[] = [];
+  filter: any = {
+    formStatus: '',
+    author: '',
+    lastPublishedBy: '',
+    plant: '',
+    tags: ''
+  };
 
   configOptions: ConfigOptions = {
     tableID: 'formsTable',
@@ -181,7 +115,10 @@ export class ImportFormListComponent implements OnInit, OnDestroy {
     public dialogRef: MatDialogRef<ImportQuestionsModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data,
     private raceDynamicFormService: RaceDynamicFormService,
-    private store: Store<State>
+    private columnConfigService: ColumnConfigurationService,
+    private store: Store<State>,
+    private usersService: UsersService,
+    private plantService: PlantService
   ) {}
 
   ngOnInit(): void {
@@ -200,11 +137,29 @@ export class ImportFormListComponent implements OnInit, OnDestroy {
       .subscribe(() => this.isLoading$.next(true));
 
     this.getDisplayedForms();
-    this.configOptions.allColumns = this.columns;
 
     this.formMetadata$ = this.store
       .select(getFormMetadata)
       .pipe(tap((formMetadata) => (this.formMetadata = formMetadata)));
+    this.columnConfigService.moduleColumnConfiguration$
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe((res) => {
+        if (res && res[this.rdfModuleName]) {
+          this.columns = res[this.rdfModuleName];
+          this.configOptions.allColumns = this.columns;
+        }
+      });
+    this.columnConfigService.moduleFilterConfiguration$
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe((res) => {
+        if (res && res[this.rdfModuleName]) {
+          this.filterJson = res[this.rdfModuleName]?.filter(
+            (item) => item.column !== 'formType'
+          );
+          this.setFilters();
+        }
+      });
+    this.populateFilter();
   }
 
   getDisplayedForms(): void {
@@ -257,16 +212,25 @@ export class ImportFormListComponent implements OnInit, OnDestroy {
     const filterData = {
       formType: this.data.isEmbeddedForm ? 'Embedded' : 'Standalone'
     };
+    const columnConfigFilter = cloneDeep(this.filter);
+    delete columnConfigFilter.plant;
+    delete columnConfigFilter.tags;
+    delete columnConfigFilter.lastPublishedBy;
+    delete columnConfigFilter.author;
+    delete columnConfigFilter.formStatus;
+
+    const hasColumnConfigFilter = Object.keys(columnConfigFilter)?.length || 0;
+
     return this.raceDynamicFormService
       .getFormsList$(
         {
           next: this.nextToken,
-          limit: this.limit,
+          limit: hasColumnConfigFilter ? graphQLDefaultFilterLimit : this.limit,
           searchKey: this.searchForm.value,
           fetchType: this.fetchType
         },
         false,
-        filterData
+        { ...this.filter, ...filterData }
       )
       .pipe(
         mergeMap(({ count, rows, next }) => {
@@ -280,6 +244,9 @@ export class ImportFormListComponent implements OnInit, OnDestroy {
         }),
         map((data) =>
           data.map((item) => {
+            if (item?.tags) {
+              item.tags = item.tags.toString();
+            }
             if (item.plantId) {
               item = {
                 ...item,
@@ -288,6 +255,14 @@ export class ImportFormListComponent implements OnInit, OnDestroy {
             } else {
               item = { ...item, plant: '' };
             }
+            item =
+              this.raceDynamicFormService.extractAdditionalDetailsToColumns(
+                item
+              );
+            item = this.raceDynamicFormService.handleEmptyColumns(
+              item,
+              this.columns
+            );
             return item;
           })
         )
@@ -350,7 +325,98 @@ export class ImportFormListComponent implements OnInit, OnDestroy {
       default:
     }
   };
+  setFilters() {
+    for (const item of this.filterJson) {
+      switch (item.column) {
+        case 'lastPublishedBy':
+          item.items = this.lastPublishedBy;
+          break;
+        case 'plant':
+          item.items = this.plants;
+          break;
+        case 'author':
+          item.items = this.createdBy;
+          break;
+        case 'tags':
+          item.items = this.tags;
+          break;
+        default:
+          if (!item?.items?.length) {
+            item.items = this.additionalDetailFilterData[item.column]
+              ? this.additionalDetailFilterData[item.column]
+              : [];
+          }
+          break;
+      }
+    }
+  }
+  applyFilter(data: any) {
+    for (const item of data) {
+      if (item.column === 'plant') {
+        this.filter[item.column] = this.plantsIdNameMap[item.value];
+      } else {
+        this.filter[item.column] = item.value;
+      }
+    }
+    this.nextToken = '';
+    this.isLoading$.next(true);
+    this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
+  }
+  resetFilter() {
+    this.filter = {
+      status: '',
+      authoredBy: '',
+      lastModifiedOn: '',
+      plant: '',
+      publishedBy: ''
+    };
+    this.nextToken = '';
+    this.isLoading$.next(true);
+    this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
+  }
 
+  populateFilter() {
+    combineLatest([
+      this.usersService.getUsersInfo$(),
+      this.plantService.fetchAllPlants$(),
+      this.raceDynamicFormService.fetchAllFormsList$(),
+      this.raceDynamicFormService.getDataSetsByType$('formHeaderTags'),
+      this.columnConfigService.moduleAdditionalDetailsFiltersData$
+    ]).subscribe(
+      ([
+        usersList,
+        { items: plantsList },
+        formsList,
+        allTags,
+        additionDetailsData
+      ]) => {
+        this.createdBy = usersList
+          .map((user) => `${user.firstName} ${user.lastName}`)
+          .sort();
+        this.lastModifiedBy = usersList.map(
+          (user) => `${user.firstName} ${user.lastName}`
+        );
+        this.plants = plantsList
+          .map((plant) => {
+            this.plantsIdNameMap[`${plant.plantId} - ${plant.name}`] = plant.id;
+            return `${plant.plantId} - ${plant.name}`;
+          })
+          .sort();
+
+        this.lastPublishedBy = formsList.rows
+          .map((item) => item.lastPublishedBy)
+          .filter(
+            (value, index, self) => self.indexOf(value) === index && value
+          )
+          .sort();
+        allTags[0]?.values?.forEach((tag) => {
+          this.tags.add(tag);
+        });
+        this.additionalDetailFilterData = additionDetailsData;
+        this.setFilters();
+      }
+    );
+  }
   handleTableEvent = (event): void => {
     this.raceDynamicFormService.fetchForms$.next(event);
   };
