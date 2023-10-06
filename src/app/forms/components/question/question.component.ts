@@ -360,11 +360,13 @@ export class QuestionComponent implements OnInit, OnDestroy {
             ) {
               this.isINSTFieldChanged = true;
             } else {
-              if (
+              // Commented as part of SA-647. Refcount implementations needs to be fixed
+
+              /*if (
                 currValue?.type === 'globalResponse' ||
                 prevValue?.type === 'globalResponse'
               )
-                this.handleGlobalResponseRefCount(prevValue, currValue);
+                this.handleGlobalResponseRefCount(prevValue, currValue); */
 
               if (!isEqual(prev.rangeMetadata, curr.rangeMetadata))
                 this.rangeDisplayText = '';

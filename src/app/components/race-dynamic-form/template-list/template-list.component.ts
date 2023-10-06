@@ -131,7 +131,8 @@ export class TemplateListComponent implements OnInit, OnDestroy {
   readonly perms = perms;
   userInfo$: Observable<UserInfo>;
   searchTerm: string = '';
-  RDF_TEMPLATE_MODULE_NAME = metadataFlatModuleNames.RDF_TEMPLATES;
+  placeholder = '_ _';
+  rdfTemplateModuleName = metadataFlatModuleNames.RDF_TEMPLATES;
   private onDestroy$ = new Subject();
 
   constructor(
@@ -175,18 +176,17 @@ export class TemplateListComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.onDestroy$))
       .subscribe((res) => {
         if (res) {
-          this.columns = res[this.RDF_TEMPLATE_MODULE_NAME] || [];
+          this.columns = res[this.rdfTemplateModuleName] || [];
           this.configOptions.allColumns = this.columns;
           this.cdrf.detectChanges();
         }
-        this.allTemplates?.map((item) => {
+        this.allTemplates?.forEach((item) => {
           item =
             this.raceDynamicFormService.extractAdditionalDetailsToColumns(item);
           item = this.raceDynamicFormService.handleEmptyColumns(
             item,
             this.columns
           );
-          return item;
         });
         let reloadData = false;
         Object.values(this.filter).forEach((value) => {
@@ -200,8 +200,8 @@ export class TemplateListComponent implements OnInit, OnDestroy {
     this.columnConfigService.moduleFilterConfiguration$
       .pipe(takeUntil(this.onDestroy$))
       .subscribe((res) => {
-        if (res && res[this.RDF_TEMPLATE_MODULE_NAME]) {
-          this.filterJson = res[this.RDF_TEMPLATE_MODULE_NAME];
+        if (res && res[this.rdfTemplateModuleName]) {
+          this.filterJson = res[this.rdfTemplateModuleName];
           this.setFilters();
           this.cdrf.detectChanges();
         }
@@ -325,7 +325,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
         return this.getTemplates();
       })
     );
-    combineLatest(this.usersService.getUsersInfo$(), templatesOnLoadSearch$)
+    combineLatest([this.usersService.getUsersInfo$(), templatesOnLoadSearch$])
       .pipe(
         tap(([_, { count, rows, next }]) => {
           rows = rows.map((item) => {
@@ -343,7 +343,9 @@ export class TemplateListComponent implements OnInit, OnDestroy {
               item.lastPublishedBy
             );
             const formsUsageCount =
-              item.formsUsageCount === 0 ? '_ _' : item.formsUsageCount;
+              item.formsUsageCount === 0
+                ? this.placeholder
+                : item.formsUsageCount;
             return {
               ...item,
               author,
@@ -384,7 +386,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
         new Set(
           this.allTemplates
             .map((item: any) => item.lastPublishedBy)
-            .filter((item) => item != null && item !== '_ _')
+            .filter((item) => item != null && item !== this.placeholder)
         )
       ).sort();
 
@@ -403,19 +405,26 @@ export class TemplateListComponent implements OnInit, OnDestroy {
   }
 
   setFilters() {
-    this.filterJson.forEach((item) => {
-      if (item.column === 'lastPublishedBy') {
-        item.items = this.lastPublishedBy;
-      } else if (item.column === 'author') {
-        item.items = this.createdBy;
-      } else if (item.column === 'tags') {
-        item.items = this.tags;
-      } else if (!item?.items?.length) {
-        item.items = this.additionalDetailFilterData[item.column]
-          ? this.additionalDetailFilterData[item.column]
-          : [];
+    for (const item of this.filterJson) {
+      switch (item.column) {
+        case 'lastPublishedBy':
+          item.items = this.lastPublishedBy;
+          break;
+        case 'author':
+          item.items = this.createdBy;
+          break;
+        case 'tags':
+          item.items = this.tags;
+          break;
+        default:
+          if (!item?.items?.length) {
+            item.items = this.additionalDetailFilterData[item.column]
+              ? this.additionalDetailFilterData[item.column]
+              : [];
+          }
+          break;
       }
-    });
+    }
   }
 
   applyFilter(data: any) {
@@ -458,7 +467,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
             template.authoredFormTemplateDetails[0];
           const preTextImage = template.preTextImage;
           template.tags =
-            template.tags !== '_ _' ? template.tags.split(',') : [];
+            template.tags !== this.placeholder ? template.tags.split(',') : [];
           this.raceDynamicFormService
             .createTemplate$({
               ...omit(template, [
@@ -521,7 +530,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
                   newTemplate.lastPublishedBy
                 );
               this.allTemplates = [newTemplate, ...this.allTemplates];
-              this.allTemplates?.map((item) => {
+              this.allTemplates?.forEach((item) => {
                 item =
                   this.raceDynamicFormService.extractAdditionalDetailsToColumns(
                     item
@@ -530,7 +539,6 @@ export class TemplateListComponent implements OnInit, OnDestroy {
                   item,
                   this.columns
                 );
-                return item;
               });
               this.dataSource = new MatTableDataSource(this.allTemplates);
               this.cdrf.detectChanges();

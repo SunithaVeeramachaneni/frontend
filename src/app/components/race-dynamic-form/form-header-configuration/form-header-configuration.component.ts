@@ -271,34 +271,36 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     this.responseSetService
       .fetchResponseSetByModuleName$()
       .subscribe((data) => {
-        let resposneSets = data.RDF;
-        resposneSets.forEach((responseSet) => {
-          let values = [];
+        if (Object.keys(data).length) {
+          let resposneSets = data.RDF;
+          resposneSets.forEach((responseSet) => {
+            let values = [];
 
-          JSON.parse(responseSet.values).forEach((val) => {
-            values.push(val.title);
+            JSON.parse(responseSet.values).forEach((val) => {
+              values.push(val.title);
+            });
+            let selectedValues = [];
+            if (this.data.formData) {
+              const obj = this.data.formData.additionalDetails.find(
+                (object) => object.FIELDLABEL === responseSet.name
+              );
+              selectedValues = obj ? obj.DEFAULTVALUE.split(',') : [];
+            }
+            this.additionalDetailMap[responseSet.name] = selectedValues;
+            const objFormGroup = this.fb.group({
+              label: [responseSet.name],
+              value: [values],
+              selectedValue: [selectedValues]
+            });
+            this.additionalDetails.push(objFormGroup);
+            this.additionalDetailsMasterData[responseSet.name] = {
+              value: values,
+              selectedValue: selectedValues
+            };
           });
-          let selectedValues = [];
-          if (this.data.formData) {
-            const obj = this.data.formData.additionalDetails.find(
-              (object) => object.FIELDLABEL === responseSet.name
-            );
-            selectedValues = obj ? obj.DEFAULTVALUE.split(',') : [];
-          }
-          this.additionalDetailMap[responseSet.name] = selectedValues;
-          const objFormGroup = this.fb.group({
-            label: [responseSet.name],
-            value: [values],
-            selectedValue: [selectedValues]
-          });
-          this.additionalDetails.push(objFormGroup);
-          this.additionalDetailsMasterData[responseSet.name] = {
-            value: values,
-            selectedValue: selectedValues
-          };
-        });
-        this.cdrf.detectChanges();
-        this.isLoading$.next(false);
+          this.cdrf.detectChanges();
+          this.isLoading$.next(false);
+        }
       });
   }
 
@@ -441,19 +443,32 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     const additionalinfoArray = this.headerDataForm.get(
       'additionalDetails'
     ) as FormArray;
-    const updatedAdditionalDetails = additionalinfoArray.value.map(
-      (additionalinfo) => ({
-        FIELDLABEL: additionalinfo.label,
-        DEFAULTVALUE: this.additionalDetailMap[additionalinfo.label].reduce(
-          (accumulatedLable, current) => {
-            return accumulatedLable === ''
-              ? current
-              : accumulatedLable + ',' + current;
-          },
-          ''
-        ),
-        UIFIELDTYPE: 'LF'
-      })
+    let updatedAdditionalDetails = additionalinfoArray.value.map(
+      (additionalinfo) => {
+        this.additionalDetailMap[additionalinfo.label] =
+          this.additionalDetailMap[additionalinfo.label].filter(
+            (data) => !!data
+          );
+        if (this.additionalDetailMap[additionalinfo.label].length) {
+          return {
+            FIELDLABEL: additionalinfo.label,
+            DEFAULTVALUE: this.additionalDetailMap[additionalinfo.label].reduce(
+              (accumulatedLable, current) => {
+                return accumulatedLable === ''
+                  ? current
+                  : accumulatedLable + ',' + current;
+              },
+              ''
+            ),
+            UIFIELDTYPE: 'LF'
+          };
+        } else {
+          return {};
+        }
+      }
+    );
+    updatedAdditionalDetails = updatedAdditionalDetails.filter(
+      (data) => Object.keys(data).length !== 0
     );
 
     const newTags = [];

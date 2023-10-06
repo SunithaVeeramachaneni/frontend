@@ -65,7 +65,7 @@ export class ImportTemplateListComponent implements OnInit, OnDestroy {
   searchTerm: string = '';
   fetchTemplates$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
-  RDF_TEMPLATE_MODULE_NAME = metadataFlatModuleNames.RDF_TEMPLATES;
+  rdfTemplateModuleName = metadataFlatModuleNames.RDF_TEMPLATES;
   filter: any = {
     formStatus: '',
     lastPublishedBy: '',
@@ -99,7 +99,7 @@ export class ImportTemplateListComponent implements OnInit, OnDestroy {
       }
     }
   };
-
+  placeholder = '_ _';
   dataSource: MatTableDataSource<any>;
   private onDestroy$ = new Subject();
   displayedTemplates: any[];
@@ -134,7 +134,7 @@ export class ImportTemplateListComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.onDestroy$))
       .subscribe((res) => {
         if (res) {
-          this.columns = res[this.RDF_TEMPLATE_MODULE_NAME] || [];
+          this.columns = res[this.rdfTemplateModuleName] || [];
           this.configOptions.allColumns = this.columns;
           this.cdrf.detectChanges();
         }
@@ -159,8 +159,8 @@ export class ImportTemplateListComponent implements OnInit, OnDestroy {
     this.columnConfigService.moduleFilterConfiguration$
       .pipe(takeUntil(this.onDestroy$))
       .subscribe((res) => {
-        if (res && res[this.RDF_TEMPLATE_MODULE_NAME]) {
-          this.filterJson = res[this.RDF_TEMPLATE_MODULE_NAME]?.filter(
+        if (res && res[this.rdfTemplateModuleName]) {
+          this.filterJson = res[this.rdfTemplateModuleName]?.filter(
             (item) => item.column !== 'formType' && item.column !== 'formStatus'
           );
           this.setFilters();
@@ -176,7 +176,7 @@ export class ImportTemplateListComponent implements OnInit, OnDestroy {
         return this.getTemplates();
       })
     );
-    combineLatest(this.usersService.getUsersInfo$(), templatesOnLoadSearch$)
+    combineLatest([this.usersService.getUsersInfo$(), templatesOnLoadSearch$])
       .pipe(
         tap(([_, { count, rows, next }]) => {
           rows = rows.map((item) => {
@@ -194,7 +194,9 @@ export class ImportTemplateListComponent implements OnInit, OnDestroy {
               item.lastPublishedBy
             );
             const formsUsageCount =
-              item.formsUsageCount === 0 ? '_ _' : item.formsUsageCount;
+              item.formsUsageCount === 0
+                ? this.placeholder
+                : item.formsUsageCount;
             return {
               ...item,
               author,
@@ -236,7 +238,7 @@ export class ImportTemplateListComponent implements OnInit, OnDestroy {
         new Set(
           this.allTemplates
             .map((item: any) => item.lastPublishedBy)
-            .filter((item) => item != null && item !== '_ _')
+            .filter((item) => item != null && item !== this.placeholder)
         )
       ).sort();
 
@@ -255,19 +257,26 @@ export class ImportTemplateListComponent implements OnInit, OnDestroy {
   }
 
   setFilters() {
-    this.filterJson.forEach((item) => {
-      if (item.column === 'lastPublishedBy') {
-        item.items = this.lastPublishedBy;
-      } else if (item.column === 'author') {
-        item.items = this.createdBy;
-      } else if (item.column === 'tags') {
-        item.items = this.tags;
-      } else if (!item?.items?.length) {
-        item.items = this.additionalDetailFilterData[item.column]
-          ? this.additionalDetailFilterData[item.column]
-          : [];
+    for (const item of this.filterJson) {
+      switch (item.column) {
+        case 'lastPublishedBy':
+          item.items = this.lastPublishedBy;
+          break;
+        case 'author':
+          item.items = this.createdBy;
+          break;
+        case 'tags':
+          item.items = this.tags;
+          break;
+        default:
+          if (!item?.items?.length) {
+            item.items = this.additionalDetailFilterData[item.column]
+              ? this.additionalDetailFilterData[item.column]
+              : [];
+          }
+          break;
       }
-    });
+    }
   }
 
   applyFilter(data: any) {

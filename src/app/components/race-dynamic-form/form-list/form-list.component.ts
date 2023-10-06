@@ -140,8 +140,9 @@ export class FormListComponent implements OnInit, OnDestroy {
   additionalDetailFilterData = {};
   userInfo$: Observable<UserInfo>;
   triggerCountUpdate = false;
-  RDF_MODULE_NAME = metadataFlatModuleNames.RACE_DYNAMIC_FORMS;
+  rdfModuleName = metadataFlatModuleNames.RACE_DYNAMIC_FORMS;
   quickResponses = [];
+  placeholder = '_ _';
   readonly perms = perms;
   private onDestroy$ = new Subject();
 
@@ -198,10 +199,10 @@ export class FormListComponent implements OnInit, OnDestroy {
     this.columnConfigService.moduleColumnConfiguration$
       .pipe(takeUntil(this.onDestroy$))
       .subscribe((res) => {
-        if (res && res[this.RDF_MODULE_NAME]) {
-          this.columns = res[this.RDF_MODULE_NAME];
+        if (res && res[this.rdfModuleName]) {
+          this.columns = res[this.rdfModuleName];
           this.configOptions.allColumns = this.columns;
-          this.allForms?.map((item) => {
+          this.allForms?.forEach((item) => {
             item =
               this.raceDynamicFormService.extractAdditionalDetailsToColumns(
                 item
@@ -210,7 +211,6 @@ export class FormListComponent implements OnInit, OnDestroy {
               item,
               this.columns
             );
-            return item;
           });
           this.dataSource = new MatTableDataSource(this.allForms);
           let reloadData = false;
@@ -226,8 +226,8 @@ export class FormListComponent implements OnInit, OnDestroy {
     this.columnConfigService.moduleFilterConfiguration$
       .pipe(takeUntil(this.onDestroy$))
       .subscribe((res) => {
-        if (res && res[this.RDF_MODULE_NAME]) {
-          this.filterJson = res[this.RDF_MODULE_NAME];
+        if (res && res[this.rdfModuleName]) {
+          this.filterJson = res[this.rdfModuleName];
           this.setFilters();
           this.cdrf.detectChanges();
         }
@@ -394,7 +394,7 @@ export class FormListComponent implements OnInit, OnDestroy {
           }
         }
         this.allForms = initial.data;
-        this.allForms?.map((item) => {
+        this.allForms?.forEach((item) => {
           item.tags = item.tags?.toString();
           item =
             this.raceDynamicFormService.extractAdditionalDetailsToColumns(item);
@@ -402,7 +402,6 @@ export class FormListComponent implements OnInit, OnDestroy {
             item,
             this.columns
           );
-          return item;
         });
         this.dataSource = new MatTableDataSource(this.allForms);
         this.skip = this.allForms.length;
@@ -488,7 +487,7 @@ export class FormListComponent implements OnInit, OnDestroy {
       case 'copy':
         this.onCopyFormMetaData({
           ...data,
-          tags: data.tags !== '_ _' ? data.tags.split(',') : []
+          tags: data.tags !== this.placeholder ? data.tags.split(',') : []
         });
         break;
 
@@ -628,18 +627,26 @@ export class FormListComponent implements OnInit, OnDestroy {
   }
   setFilters() {
     for (const item of this.filterJson) {
-      if (item.column === 'lastPublishedBy') {
-        item.items = this.lastPublishedBy;
-      } else if (item.column === 'plant') {
-        item.items = this.plants;
-      } else if (item.column === 'author') {
-        item.items = this.createdBy;
-      } else if (item.column === 'tags') {
-        item.items = this.tags;
-      } else if (!item?.items?.length) {
-        item.items = this.additionalDetailFilterData[item.column]
-          ? this.additionalDetailFilterData[item.column]
-          : [];
+      switch (item.column) {
+        case 'lastPublishedBy':
+          item.items = this.lastPublishedBy;
+          break;
+        case 'plant':
+          item.items = this.plants;
+          break;
+        case 'author':
+          item.items = this.createdBy;
+          break;
+        case 'tags':
+          item.items = this.tags;
+          break;
+        default:
+          if (!item?.items?.length) {
+            item.items = this.additionalDetailFilterData[item.column]
+              ? this.additionalDetailFilterData[item.column]
+              : [];
+          }
+          break;
       }
     }
   }

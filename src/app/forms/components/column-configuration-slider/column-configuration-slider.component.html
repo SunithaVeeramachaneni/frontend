@@ -1,7 +1,7 @@
 <div id="opendetail" class="column-config-slider">
   <mat-card class="Card-header">
     <ng-container>
-      <div class="slider-close-container">
+      <div id="column-config-slider-header" class="slider-close-container">
         <svg-icon
           id="templateSliderCancelIcon"
           icon="icon-close"
@@ -21,12 +21,18 @@
         <h2 id="column-configuration-heading" class="detail-heading" translate>
           columnConfiguration
         </h2>
-        <button class="reset-view-btn" (click)="resetToDefault()" translate>
+        <button
+          id="column-config-reset-btn"
+          class="reset-view-btn"
+          (click)="resetToDefault()"
+          translate
+        >
           resetToDefault
         </button>
         <section class="column-select-all">
           <span>
             <mat-checkbox
+              id="column-config-select-all-btn"
               class="checkbox-margin"
               [checked]="allComplete"
               [indeterminate]="someComplete()"
@@ -45,7 +51,13 @@
                       icon="icon-six-dots"
                       class="drag-handle hidden"
                     ></svg-icon>
-                    <mat-checkbox [checked]="true" [disabled]="true">
+                    <mat-checkbox
+                      id="column-config-static-column-checkbox-{{
+                        column.columnId
+                      }}"
+                      [checked]="true"
+                      [disabled]="true"
+                    >
                       {{ column.columnName }}
                     </mat-checkbox>
                   </div>
@@ -70,6 +82,9 @@
                       cdkDragHandle
                     ></svg-icon>
                     <mat-checkbox
+                      id="column-config-dynamic-column-checkbox-{{
+                        column.columnId
+                      }}"
                       [(ngModel)]="column.selected"
                       (ngModelChange)="updateAllComplete()"
                       [disabled]="column.disabled"
@@ -90,7 +105,7 @@
         </section>
         <div class="column-config-footer">
           <button
-            id="cancelColumnConfigBtn"
+            id="column-config-cancel"
             mat-stroked-button
             class="cancel-button"
             translate="cancel"
