@@ -6,9 +6,7 @@ import {
   ChangeDetectionStrategy,
   Input,
   EventEmitter,
-  Output,
-  SimpleChanges,
-  OnChanges
+  Output
 } from '@angular/core';
 
 @Component({
@@ -17,15 +15,11 @@ import {
   styleUrls: ['./line-chart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LineChartComponent implements OnInit, OnChanges {
-  @Input() hasCustomColorScheme;
+export class LineChartComponent implements OnInit {
   @Output() chartClickEvent: EventEmitter<any> = new EventEmitter<any>();
 
   @Input() set chartConfig(chartConfig) {
     this.chartConfigurations = chartConfig;
-    if (this.hasCustomColorScheme && chartConfig.customColors) {
-      this.colorsByStatus = chartConfig.customColors;
-    }
     if (chartConfig.renderChart) {
       this.prepareChartDetails();
     }
@@ -41,7 +35,6 @@ export class LineChartComponent implements OnInit, OnChanges {
     return this._chartData;
   }
 
-  colorsByStatus: any = {};
   chartOptions: any = {
     title: {
       text: ''
@@ -126,7 +119,6 @@ export class LineChartComponent implements OnInit, OnChanges {
     },
     series: {
       name: '',
-      areaStyle: {},
       label: {
         show: false
       },
@@ -170,9 +162,13 @@ export class LineChartComponent implements OnInit, OnChanges {
       this.chartType = type;
       this.chartOptions.series.label.show = showValues;
       this.chartOptions.legend.show = showLegends;
-      this.chartOptions.xAxis.name = this.chartConfig.datasetFieldName;
+      this.chartConfig.datasetFields.filter((dataset) => {
+        if (dataset.name === this.chartConfig.datasetFieldName) {
+          this.chartOptions.xAxis.name = dataset.displayName;
+          this.chartOptions.series.name = dataset.displayName;
+        }
+      });
       this.chartOptions.yAxis.name = this.chartConfig.countFieldName;
-      this.chartOptions.series.name = this.chartConfig.datasetFieldName;
       this.countField = countFields.find((countField) => countField.visible);
       this.datasetField = datasetFields.find(
         (datasetField) => datasetField.visible
@@ -215,23 +211,5 @@ export class LineChartComponent implements OnInit, OnChanges {
     }
 
     this.chartOptions = newOptions;
-
-    this.chartOptions.series.forEach((series) => {
-      series.itemStyle = {
-        color: (param: any) =>
-          this.colorsByStatus[param.name]
-            ? this.colorsByStatus[param.name]
-            : '#c8c8c8'
-      };
-    });
   };
-
-  ngOnChanges(changes: SimpleChanges) {
-    if (!changes.firstChange && changes.chartConfig) {
-      const currValue = changes.chartConfig.currentValue;
-      if (currValue.customColors) {
-        this.colorsByStatus = currValue.customColors;
-      }
-    }
-  }
 }
