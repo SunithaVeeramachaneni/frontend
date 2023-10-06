@@ -126,6 +126,7 @@ export class GlobalResponseTypeSideDrawerComponent
             isEqual(JSON.parse(this.globalResponse.values), curr.responses)
           )
             this.isResponseFormUpdated = false;
+          else if(this.responseForm.get('name')?.errors?.responseSetNameExists) this.isResponseFormUpdated = false;
           else this.isResponseFormUpdated = true;
           this.cdrf.markForCheck();
         })
@@ -314,14 +315,13 @@ export class GlobalResponseTypeSideDrawerComponent
 
   responseSetNameValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      console.log(this.allResponseSets)
       const responseSetNames = this.allResponseSets?.map((responseSet) => {
         return {
           name: responseSet.name.toLowerCase(),
           id: this.getColumnIdFromName(responseSet.name.toLowerCase())
         }
       }) || [];
-      const isResponseSetNameExists = responseSetNames.find((responseSetName) => responseSetName.name === control.value.toLowerCase() || this.getColumnIdFromName(control.value.toLowerCase()) === responseSetName.id)
+      const isResponseSetNameExists = responseSetNames.find((responseSetName) => responseSetName.name === control?.value?.toLowerCase() || this.getColumnIdFromName(control?.value?.toLowerCase() || '') === responseSetName.id)
       return isResponseSetNameExists
         ? { responseSetNameExists: true }
         : null;
