@@ -411,49 +411,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
 
   updateQuestion() {
-    if (this.question.fieldType === 'INST') {
-      const { images, pdf } = this.question.value;
-      // FETCH BASE64 FOR INSTRUCTIONS
-      const imagesPromises = images.map((imageId) =>
-        this.moduleName === 'RDF'
-          ? this.rdfService.getAttachmentsById$(imageId).toPromise().then()
-          : this.operatorRoundsService
-              .getAttachmentsById$(imageId)
-              .toPromise()
-              .then()
-      );
-      const pdfPromises =
-        this.moduleName === 'RDF'
-          ? this.rdfService.getAttachmentsById$(pdf).toPromise().then()
-          : this.operatorRoundsService
-              .getAttachmentsById$(pdf)
-              .toPromise()
-              .then();
-
-      let imageArray = [];
-      Promise.all(imagesPromises).then((images) => {
-        imageArray = images.map((img: any) => {
-          console.log(img);
-          if (img?.id !== null) {
-            return `data:image/jpeg;base64,${img?.attachment}`;
-          } else {
-            return null;
-          }
-        });
-        this.instructionsMedia = {
-          ...this.instructionsMedia,
-          images: imageArray
-        };
-      });
-      Promise.all([pdfPromises]).then(([pdf]) => {
-        console.log(pdf);
-        this.instructionsMedia = {
-          ...this.instructionsMedia,
-          pdf: pdf ? pdf.attachment : null
-        };
-      });
-    }
-
     if (this.question.isOpen) {
       if (this.question.fieldType !== 'INST') {
         timer(0, asapScheduler).subscribe(() =>
@@ -487,6 +444,46 @@ export class QuestionComponent implements OnInit, OnDestroy {
     this.checkAskQuestionFeatures();
     this.rangeDisplayText = '';
     this.additionalDetailsText = '';
+    if (this.question.fieldType === 'INST') {
+      const { images, pdf } = this.question.value;
+      // FETCH BASE64 FOR INSTRUCTIONS
+      const imagesPromises = images.map((imageId) =>
+        this.moduleName === 'RDF'
+          ? this.rdfService.getAttachmentsById$(imageId).toPromise().then()
+          : this.operatorRoundsService
+              .getAttachmentsById$(imageId)
+              .toPromise()
+              .then()
+      );
+      const pdfPromises =
+        this.moduleName === 'RDF'
+          ? this.rdfService.getAttachmentsById$(pdf).toPromise().then()
+          : this.operatorRoundsService
+              .getAttachmentsById$(pdf)
+              .toPromise()
+              .then();
+
+      let imageArray = [];
+      Promise.all(imagesPromises).then((images) => {
+        imageArray = images.map((img: any) => {
+          if (img?.attachment) {
+            return `data:image/jpeg;base64,${img?.attachment}`;
+          } else {
+            return null;
+          }
+        });
+        this.instructionsMedia = {
+          ...this.instructionsMedia,
+          images: imageArray
+        };
+      });
+      Promise.all([pdfPromises]).then(([pdf]) => {
+        this.instructionsMedia = {
+          ...this.instructionsMedia,
+          pdf: pdf?.attachment ? JSON.parse(pdf?.fileInfo) : null
+        };
+      });
+    }
   }
 
   getRangeMetadata() {
