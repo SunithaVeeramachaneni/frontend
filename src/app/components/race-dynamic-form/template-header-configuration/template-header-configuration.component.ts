@@ -829,8 +829,15 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
   matSelectClosed(index, label, searchInput: HTMLInputElement) {
     const parentValueData = this.additionalDetailsMasterData[label].value;
     searchInput.value = '';
-    this.getAdditionalDetailList()
-      [index].get('value')
-      .setValue(parentValueData);
+    if (
+      !isEqual(
+        this.getAdditionalDetailList()[index].get('value').value,
+        parentValueData
+      )
+    ) {
+      this.getAdditionalDetailList()
+        [index].get('value')
+        .setValue(parentValueData);
+    }
   }
 }
