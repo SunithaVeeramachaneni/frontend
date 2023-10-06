@@ -59,24 +59,26 @@
                   type="text"
                   placeholder="Search Reports"
                   [(ngModel)]="searchValue"
-                  (keyup.enter)="debouncedSearchReports()"
+                  (keyup)="debouncedSearchReports()"
                   autocomplete="off"
                 />
               </mat-form-field>
             </div>
           </div>
-          <div
-            class="p-l-5 p-r-5"
-            *ngIf="reports$ | async as reports; else loadingReports"
-          >
-            <cwp-dynamictable
-              [dataSource]="dataSource"
-              [configOptions]="configOptions"
-              (fetchDataCallback)="handleTableEvent($event)"
-              (rowLevelActionHandler)="rowLevelActionHandler($event)"
-              (cellClickActionHandler)="cellClickActionHandler($event)"
-            ></cwp-dynamictable>
-          </div>
+          <div *ngIf="reports$ | async as reports">
+            <div
+              class="p-l-5 p-r-5"
+              *ngIf="(isLoading$ | async) === false; else loadingReports"
+            >
+              <cwp-dynamictable
+                [dataSource]="dataSource"
+                [configOptions]="configOptions"
+                (fetchDataCallback)="handleTableEvent($event)"
+                (rowLevelActionHandler)="rowLevelActionHandler($event)"
+                (cellClickActionHandler)="cellClickActionHandler($event)"
+              ></cwp-dynamictable>
+            </div>
+        </div>
         </div>
       </ng-container>
     </div>
