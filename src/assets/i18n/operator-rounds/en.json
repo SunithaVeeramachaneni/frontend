@@ -472,5 +472,11 @@
   "allReports": "All",
   "collapseAllSections": "Collapse All Sections",
   "saveAs": "Save As",
-  "saveReportAs": "Save Report As"
+  "saveReportAs": "Save Report As",
+  "values": "Values",
+  "addModuleNameHeading": "Add as Meta Data For",
+  "responseSetNameExists": "Response Set Name already exists",
+  "addVal": " + Add Value",
+  "valueTitle": "Value Title",
+  "editResponses": "Edit Responses"
 }

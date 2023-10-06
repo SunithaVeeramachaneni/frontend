@@ -70,13 +70,15 @@
       height: auto !important;
     }
 
-    ::ng-deep .mat-form-field-appearance-outline.mat-form-field-disabled,
-    ::ng-deep .mat-form-field-outline {
-      opacity: 0;
-    }
+    .instruction-question {
+      ::ng-deep .mat-form-field-appearance-outline.mat-form-field-disabled,
+      ::ng-deep .mat-form-field-outline {
+        opacity: 0;
+      }
 
-    ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
-      padding: 0 !important;
+      ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
+        padding: 0 !important;
+      }
     }
   }
 
