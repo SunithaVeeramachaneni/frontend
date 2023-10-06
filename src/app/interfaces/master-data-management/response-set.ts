@@ -15,5 +15,4 @@ export interface UpdateResponseSet extends CreateResponseSet {
 
 export interface DeleteResponseSet {
   id: string;
-  _version: number;
 }

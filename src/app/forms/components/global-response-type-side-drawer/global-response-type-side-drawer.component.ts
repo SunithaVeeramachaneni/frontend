@@ -126,7 +126,8 @@ export class GlobalResponseTypeSideDrawerComponent
             isEqual(JSON.parse(this.globalResponse.values), curr.responses)
           )
             this.isResponseFormUpdated = false;
-          else if(this.responseForm.get('name')?.errors?.responseSetNameExists) this.isResponseFormUpdated = false;
+          else if (this.responseForm.get('name')?.errors?.responseSetNameExists)
+            this.isResponseFormUpdated = false;
           else this.isResponseFormUpdated = true;
           this.cdrf.markForCheck();
         })
@@ -245,7 +246,7 @@ export class GlobalResponseTypeSideDrawerComponent
       name: this.name.value ? this.name.value : 'Untitled Response Set',
       responseType: 'globalResponse',
       isMultiColumn: false,
-      moduleName: this.moduleName.value.toString(),
+      moduleName: this.moduleName?.value?.toString(),
       values: JSON.stringify(this.responses.value),
       description: this.description.value,
       refCount: 0
@@ -315,17 +316,23 @@ export class GlobalResponseTypeSideDrawerComponent
 
   responseSetNameValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      const responseSetNames = this.allResponseSets?.map((responseSet) => {
-        return {
-          name: responseSet.name.toLowerCase(),
-          id: this.getColumnIdFromName(responseSet.name.toLowerCase())
-        }
-      }) || [];
-      const isResponseSetNameExists = responseSetNames.find((responseSetName) => responseSetName.name === control?.value?.toLowerCase() || this.getColumnIdFromName(control?.value?.toLowerCase() || '') === responseSetName.id)
-      return isResponseSetNameExists
-        ? { responseSetNameExists: true }
-        : null;
-    }
+      const responseSetNames =
+        this.allResponseSets?.map((responseSet) => {
+          return {
+            name: responseSet.name.toLowerCase(),
+            id: this.getColumnIdFromName(responseSet.name.toLowerCase())
+          };
+        }) || [];
+      const isResponseSetNameExists = responseSetNames.find(
+        (responseSetName) =>
+          control?.value?.toLowerCase() !==
+            this.globalResponse?.name?.toLowerCase() &&
+          (responseSetName.name === control?.value?.toLowerCase() ||
+            this.getColumnIdFromName(control?.value?.toLowerCase() || '') ===
+              responseSetName.id)
+      );
+      return isResponseSetNameExists ? { responseSetNameExists: true } : null;
+    };
   }
 
   ngOnDestroy(): void {
