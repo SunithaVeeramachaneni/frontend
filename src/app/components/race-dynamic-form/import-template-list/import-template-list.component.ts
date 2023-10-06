@@ -1,14 +1,30 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  Inject,
+  OnDestroy,
+  OnInit
+} from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+  ReplaySubject,
+  Subject,
+  combineLatest
+} from 'rxjs';
 import { graphQLDefaultMaxLimit } from 'src/app/app.constants';
-import { CellClickActionEvent, FormMetadata } from 'src/app/interfaces';
+import {
+  CellClickActionEvent,
+  FormMetadata,
+  LoadEvent,
+  SearchEvent,
+  TableEvent
+} from 'src/app/interfaces';
 import { ImportQuestionsModalComponent } from '../import-questions/import-questions-modal/import-questions-modal.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { RaceDynamicFormService } from '../services/rdf.service';
-import { Store } from '@ngrx/store';
-import { getFormMetadata, State } from 'src/app/forms/state';
 import {
   Column,
   ConfigOptions
@@ -16,11 +32,15 @@ import {
 import {
   debounceTime,
   distinctUntilChanged,
-  map,
+  filter,
+  switchMap,
   takeUntil,
   tap
 } from 'rxjs/operators';
-
+import { metadataFlatModuleNames } from 'src/app/app.constants';
+import { ColumnConfigurationService } from 'src/app/forms/services/column-configuration.service';
+import { columnConfiguration } from 'src/app/interfaces/columnConfiguration';
+import { UsersService } from '../../user-management/services/users.service';
 @Component({
   selector: 'app-import-template-list',
   templateUrl: './import-template-list.component.html',
@@ -28,74 +48,31 @@ import {
 })
 export class ImportTemplateListComponent implements OnInit, OnDestroy {
   searchTemplates: FormControl;
-  skip = 0;
-  limit = graphQLDefaultMaxLimit;
   selectedTemplate;
-  templates$: Observable<any>;
-  nextToken = '';
-  fetchType = 'load';
   formMetadata$: Observable<FormMetadata>;
   formMetadata: FormMetadata;
   ghostLoading = new Array(11).fill(0).map((v, i) => i);
   isLoading$ = new BehaviorSubject(true);
+  isLoadingColumns$: Observable<boolean> =
+    this.columnConfigService.isLoadingColumns$;
   allTemplates = [];
-
-  columns: Column[] = [
-    {
-      id: 'name',
-      displayName: 'Template Name',
-      type: 'string',
-      controlType: 'string',
-      order: 1,
-      searchable: false,
-      sortable: false,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
-      titleStyle: {
-        'font-weight': '500',
-        'font-size': '100%',
-        color: '#000000',
-        'overflow-wrap': 'anywhere'
-      },
-      hasSubtitle: true,
-      showMenuOptions: false,
-      subtitleColumn: 'description',
-      subtitleStyle: {
-        'font-size': '80%',
-        color: 'darkgray',
-        'overflow-wrap': 'anywhere'
-      },
-      hasPreTextImage: true,
-      hasPostTextImage: false
-    },
-    {
-      id: 'questionsCount',
-      displayName: 'Questions',
-      type: 'number',
-      controlType: 'string',
-      order: 2,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
-      sortable: true,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
-    }
-  ];
-
+  isPopoverOpen = false;
+  filterJson: any[] = [];
+  tags = new Set();
+  additionalDetailFilterData = {};
+  lastPublishedBy = [];
+  createdBy = [];
+  searchTerm: string = '';
+  fetchTemplates$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
+    new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
+  rdfTemplateModuleName = metadataFlatModuleNames.RDF_TEMPLATES;
+  filter: any = {
+    formStatus: '',
+    lastPublishedBy: '',
+    author: ''
+  };
+  columns: Column[];
+  additionalColumns: columnConfiguration[] = [];
   configOptions: ConfigOptions = {
     tableID: 'formsTable',
     rowsExpandable: false,
@@ -109,71 +86,227 @@ export class ImportTemplateListComponent implements OnInit, OnDestroy {
     groupByColumns: [],
     pageSizeOptions: [10, 25, 50, 75, 100],
     allColumns: [],
-    tableHeight: '492px',
-    groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957']
+    tableHeight: 'calc(100vh - 135px)',
+    groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
+    conditionalStyles: {
+      draft: {
+        'background-color': '#FFCC00',
+        color: '#000000'
+      },
+      ready: {
+        'background-color': '#2C9E53',
+        color: '#FFFFFF'
+      }
+    }
   };
-
+  placeholder = '_ _';
   dataSource: MatTableDataSource<any>;
   private onDestroy$ = new Subject();
+  displayedTemplates: any[];
 
   constructor(
     public dialogRef: MatDialogRef<ImportQuestionsModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data,
     private raceDynamicFormService: RaceDynamicFormService,
-    private store: Store<State>
+    private columnConfigService: ColumnConfigurationService,
+    private cdrf: ChangeDetectorRef,
+    private usersService: UsersService
   ) {}
 
   ngOnInit(): void {
+    this.fetchTemplates$.next({ data: 'load' });
+    this.getDisplayedTemplates();
+    this.populateFilter();
     this.searchTemplates = new FormControl('');
-
-    const filterData = {
-      formType: this.data.isEmbeddedForm ? 'Embedded' : 'Standalone'
-    };
-
-    this.templates$ = this.raceDynamicFormService
-      .fetchTemplates$({ isArchived: false, isDeleted: false })
-      .pipe(
-        map((res: any) => {
-          this.allTemplates =
-            res?.rows?.filter(
-              (item) =>
-                item.formType === filterData.formType &&
-                item.formStatus === 'Ready'
-            ) || [];
-          this.dataSource = new MatTableDataSource(this.allTemplates);
-          this.isLoading$.next(false);
-          return this.allTemplates;
-        })
-      );
-
     this.searchTemplates.valueChanges
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
         takeUntil(this.onDestroy$),
-        tap((res) => {
-          this.applySearch(res);
+        tap((searchTerm) => {
+          this.searchTerm = searchTerm;
+          this.fetchTemplates$.next({ data: 'search' });
         })
       )
-      .subscribe(() => this.isLoading$.next(false));
+      .subscribe();
 
-    this.configOptions.allColumns = this.columns;
-
-    this.formMetadata$ = this.store
-      .select(getFormMetadata)
-      .pipe(tap((formMetadata) => (this.formMetadata = formMetadata)));
+    this.columnConfigService.moduleColumnConfiguration$
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe((res) => {
+        if (res) {
+          this.columns = res[this.rdfTemplateModuleName] || [];
+          this.configOptions.allColumns = this.columns;
+          this.cdrf.detectChanges();
+        }
+        this.allTemplates?.map((item) => {
+          item =
+            this.raceDynamicFormService.extractAdditionalDetailsToColumns(item);
+          item = this.raceDynamicFormService.handleEmptyColumns(
+            item,
+            this.columns
+          );
+          return item;
+        });
+        let reloadData = false;
+        Object.values(this.filter).forEach((value) => {
+          if (value) {
+            reloadData = true;
+          }
+        });
+        if (reloadData) this.resetFilter();
+        this.dataSource = new MatTableDataSource(this.allTemplates);
+      });
+    this.columnConfigService.moduleFilterConfiguration$
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe((res) => {
+        if (res && res[this.rdfTemplateModuleName]) {
+          this.filterJson = res[this.rdfTemplateModuleName]?.filter(
+            (item) => item.column !== 'formType' && item.column !== 'formStatus'
+          );
+          this.setFilters();
+          this.cdrf.detectChanges();
+        }
+      });
   }
 
-  applySearch(searchTerm: string) {
-    this.isLoading$.next(true);
-    const filteredTemplates = this.allTemplates.filter((item: any) =>
-      item.name.toLocaleLowerCase().startsWith(searchTerm.toLocaleLowerCase())
+  getDisplayedTemplates() {
+    const templatesOnLoadSearch$ = this.fetchTemplates$.pipe(
+      filter(({ data }) => data === 'load' || data === 'search'),
+      switchMap(({ data }) => {
+        return this.getTemplates();
+      })
     );
-    this.dataSource.data = filteredTemplates;
-    this.isLoading$.next(false);
+    combineLatest([this.usersService.getUsersInfo$(), templatesOnLoadSearch$])
+      .pipe(
+        tap(([_, { count, rows, next }]) => {
+          rows = rows.map((item) => {
+            item.tags = item.tags.toString();
+            item =
+              this.raceDynamicFormService.extractAdditionalDetailsToColumns(
+                item
+              );
+            item = this.raceDynamicFormService.handleEmptyColumns(
+              item,
+              this.columns
+            );
+            const author = this.usersService.getUserFullName(item.author);
+            const lastPublishedBy = this.usersService.getUserFullName(
+              item.lastPublishedBy
+            );
+            const formsUsageCount =
+              item.formsUsageCount === 0
+                ? this.placeholder
+                : item.formsUsageCount;
+            return {
+              ...item,
+              author,
+              displayFormsUsageCount: formsUsageCount,
+              lastPublishedBy
+            };
+          });
+          this.allTemplates = rows;
+        })
+      )
+      .subscribe(([_, res]) => {
+        this.configOptions = {
+          ...this.configOptions,
+          tableHeight: 'calc(100vh - 130px)'
+        };
+        this.displayedTemplates = this.allTemplates;
+        this.dataSource = new MatTableDataSource(this.allTemplates);
+        this.isLoading$.next(false);
+      });
+  }
+  getTemplates() {
+    return this.raceDynamicFormService.fetchTemplates$({
+      isArchived: 'false',
+      isDeleted: 'false',
+      searchTerm: this.searchTerm,
+      ...this.filter,
+      formStatus: 'Ready',
+      formType: this.data.isEmbeddedForm ? 'Embedded' : 'Standalone'
+    });
+  }
+
+  populateFilter() {
+    combineLatest([
+      this.raceDynamicFormService.getDataSetsByType$('formTemplateHeaderTags'),
+      this.columnConfigService.moduleAdditionalDetailsFiltersData$
+    ]).subscribe(([allTags, additionalDetails]) => {
+      this.additionalDetailFilterData = additionalDetails;
+      this.lastPublishedBy = Array.from(
+        new Set(
+          this.allTemplates
+            .map((item: any) => item.lastPublishedBy)
+            .filter((item) => item != null && item !== this.placeholder)
+        )
+      ).sort();
+
+      this.createdBy = Array.from(
+        new Set(
+          this.allTemplates
+            .map((item: any) => item.author)
+            .filter((item) => item != null)
+        )
+      ).sort();
+      allTags[0]?.values?.forEach((tag) => {
+        this.tags.add(tag);
+      });
+      this.setFilters();
+    });
+  }
+
+  setFilters() {
+    for (const item of this.filterJson) {
+      switch (item.column) {
+        case 'lastPublishedBy':
+          item.items = this.lastPublishedBy;
+          break;
+        case 'author':
+          item.items = this.createdBy;
+          break;
+        case 'tags':
+          item.items = this.tags;
+          break;
+        default:
+          if (!item?.items?.length) {
+            item.items = this.additionalDetailFilterData[item.column]
+              ? this.additionalDetailFilterData[item.column]
+              : [];
+          }
+          break;
+      }
+    }
+  }
+
+  applyFilter(data: any) {
+    for (const item of data) {
+      if (item.column === 'author' || item.column === 'lastPublishedBy') {
+        this.filter[item.column] = Array.isArray(item.value)
+          ? item?.value?.reduce((acc, curr) => {
+              acc.push(this.usersService.getUserEmailByFullName(curr));
+              return acc;
+            }, [])
+          : [];
+      } else {
+        this.filter[item.column] = item.value;
+      }
+    }
+    this.isLoading$.next(true);
+    this.fetchTemplates$.next({ data: 'load' });
+  }
+
+  resetFilter() {
+    this.filter = {
+      formStatus: '',
+      lastPublishedBy: '',
+      author: ''
+    };
+    this.fetchTemplates$.next({ data: 'load' });
   }
 
   selectListItem(template) {
+    this.data.selectedFormId = template.id;
     this.data.selectedFormName = template.name;
     this.data.selectedFormData = template;
     this.data.openImportTemplateQuestionsSlider = true;

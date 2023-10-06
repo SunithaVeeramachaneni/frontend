@@ -69,11 +69,11 @@
   "reviewFailed": "Review Failed",
   "downloadExcel": "Download Excel",
   "globalMcqHeading": "Global Response Set",
-  "globalResponseHeading": "Global Responses",
-  "responseTitle": "Response Title",
+  "globalResponseHeading": "Create Global Response Set",
+  "valueTitle": "Value Title",
   "untitledDescription": " Untitled Description",
   "response": "Response",
-  "addRes": " + Add Response",
+  "addVal": " + Add Value",
   "createResponses": "Create Responses",
   "editResponses": "Edit Responses",
   "whiteSpace": "{name} is required",
@@ -97,5 +97,8 @@
   "shiftOverlapMsg1": "The selected Shifts has an Overlap Time.",
   "shiftOverlapMsg2": "Plant cannot be created with overlap Shift Timings.",
   "backToEditingBtn": "Back to Editing",
-  "searchId": "Search by Name/Id"
+  "searchId": "Search by Name/Id",
+  "values": "Values",
+  "addModuleNameHeading": "Add as Meta Data For",
+  "responseSetNameExists": "Response Set Name already exists"
 }
