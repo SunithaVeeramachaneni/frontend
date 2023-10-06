@@ -432,9 +432,9 @@ export class QuestionComponent implements OnInit, OnDestroy {
 
       let imageArray = [];
       Promise.all(imagesPromises).then((images) => {
-        console.log(images);
         imageArray = images.map((img: any) => {
-          if (img?.id !== 'null') {
+          console.log(img);
+          if (img?.id !== null) {
             return `data:image/jpeg;base64,${img?.attachment}`;
           } else {
             return null;
@@ -444,7 +444,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
           ...this.instructionsMedia,
           images: imageArray
         };
-        console.log(this.instructionsMedia);
       });
       Promise.all([pdfPromises]).then(([pdf]) => {
         console.log(pdf);
@@ -452,7 +451,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
           ...this.instructionsMedia,
           pdf: pdf ? pdf.attachment : null
         };
-        console.log(this.instructionsMedia);
       });
     }
 
@@ -900,55 +898,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
     this.isHyperLinkOpen = !this.isHyperLinkOpen;
   };
 
-  instructionsFileUploadHandler = (event: Event) => {
-    const target = event.target as HTMLInputElement;
-    const allowedFileTypes: string[] = [
-      'image/jpeg',
-      'image/jpg',
-      'image/png',
-      'application/pdf'
-    ];
-
-    Array.from(target.files).forEach((file) => {
-      const originalValue = this.questionForm.get('value').value;
-      if (allowedFileTypes.indexOf(file.type) === -1) {
-        this.toast.show({
-          text: 'Invalid file type, only JPG/JPEG/PNG/PDF accepted.',
-          type: 'warning'
-        });
-        return;
-      }
-
-      if (file.type === 'application/pdf') {
-        if (originalValue.pdf === null) {
-          this.sendFileToS3(file, {
-            originalValue,
-            isImage: false
-          });
-        } else {
-          this.toast.show({
-            text: 'Only 1 PDF can be attached to an instruction.',
-            type: 'warning'
-          });
-        }
-      } else {
-        const index = originalValue.images.findIndex((image) => image === null);
-        if (index !== -1) {
-          this.sendFileToS3(file, {
-            originalValue,
-            isImage: true,
-            index
-          });
-        } else {
-          this.toast.show({
-            text: 'Only upto 3 images can be attached to an instruction.',
-            type: 'warning'
-          });
-        }
-      }
-    });
-  };
-
   uploadAttachmentsForInstructions(event: Event) {
     const target = event.target as HTMLInputElement;
     const files = Array.from(target.files);
@@ -982,7 +931,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
                         ...originalValue,
                         pdf: responsenew
                       });
-                      console.log(originalValue);
                       this.questionForm.get('value').setValue(originalValue);
                       this.cdrf.detectChanges();
                       this.instructionsUpdateValue();
@@ -1016,17 +964,15 @@ export class QuestionComponent implements OnInit, OnDestroy {
                       );
                       const responsenew =
                         response?.data?.createRoundPlanAttachments?.id;
-                      console.log(responsenew);
                       const images = [...originalValue.images];
                       images[index] = responsenew;
                       originalValue = cloneDeep({
                         ...originalValue,
                         images
                       });
-                      console.log(originalValue);
                       this.instructionsMedia.images = [
                         ...this.instructionsMedia.images,
-                        onlybase64
+                        compressedImage
                       ];
                       this.questionForm.get('value').setValue(originalValue);
                       this.cdrf.detectChanges();
@@ -1044,7 +990,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
           });
         }
       };
-      console.log(this.instructionsMedia);
     }
   }
 
@@ -1093,36 +1038,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
     }
   }
 
-  sendFileToS3(file, params): void {
-    const { isImage, index } = params;
-    let { originalValue } = params;
-    this.formService
-      .uploadToS3$(`${this.moduleName}/${this.formMetadata?.id}`, file)
-      .subscribe((event) => {
-        const value: InstructionsFile = {
-          name: file.name,
-          size: file.size,
-          objectKey: event.message.objectKey,
-          objectURL: event.message.objectURL
-        };
-        if (isImage) {
-          const images = [...originalValue.images];
-          images[index] = value;
-          originalValue = cloneDeep({
-            ...originalValue,
-            images
-          });
-        } else {
-          originalValue = cloneDeep({
-            ...originalValue,
-            pdf: value
-          });
-        }
-        this.questionForm.get('value').setValue(originalValue);
-        this.instructionsUpdateValue();
-      });
-  }
-
   handleEditorFocus(focus: boolean) {
     if (!focus && this.isINSTFieldChanged) {
       this.instructionsUpdateValue();
@@ -1159,23 +1074,29 @@ export class QuestionComponent implements OnInit, OnDestroy {
     return doc.body.textContent || '';
   }
 
-  instructionsFileDeleteHandler(index: number) {
-    let originalValue = this.questionForm.get('value').value;
-    if (index < 3) {
-      this.formService.deleteFromS3(originalValue.images[index].objectKey);
-      const images = [...originalValue.images];
+  instructionsFileDeleteHandler(index: number, type: string) {
+    let originalValue = Object.assign({}, this.questionForm.get('value').value);
+    if (type === 'image') {
+      let images = [...originalValue.images];
       images[index] = null;
+      originalValue = {
+        ...originalValue,
+        images
+      };
+
+      this.instructionsMedia.images[index] = null;
       originalValue = cloneDeep({
         ...originalValue,
-        images: this.imagesArrayRemoveNullGaps(images)
+        images: this.imagesArrayRemoveNullGaps(originalValue.images)
       });
     } else {
-      this.formService.deleteFromS3(originalValue.pdf.objectKey);
+      this.instructionsMedia.pdf = null;
       originalValue = cloneDeep({
         ...originalValue,
         pdf: null
       });
     }
+    console.log(originalValue);
     this.questionForm.get('value').setValue(originalValue);
     this.instructionsUpdateValue();
   }
