@@ -584,6 +584,7 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
         this.selectedFormData = result.selectedFormData;
         this.allTemplates = result.allTemplates;
         this.selectedFormName = result.selectedFormName;
+        this.selectedFormId = result?.selectedFormId;
         this.authoredFormDetailSubscription =
           this.authoredFormDetail$.subscribe((pagesData) => {
             this.currentFormData = pagesData;

@@ -6,9 +6,7 @@ import {
   Input,
   ChangeDetectionStrategy,
   EventEmitter,
-  Output,
-  SimpleChanges,
-  OnChanges
+  Output
 } from '@angular/core';
 import { DatePipe } from '@angular/common';
 
@@ -18,15 +16,11 @@ import { DatePipe } from '@angular/common';
   styleUrls: ['./horizontal-stacked-chart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class HorizontalStackedChartComponent implements OnInit, OnChanges {
-  @Input() hasCustomColorScheme;
+export class HorizontalStackedChartComponent implements OnInit {
   @Output() chartClickEvent: EventEmitter<any> = new EventEmitter<any>();
 
   @Input() set chartConfig(chartConfig) {
     this.chartConfigurations = chartConfig;
-    if (this.hasCustomColorScheme && chartConfig.customColors) {
-      this.colorsByStatus = chartConfig.customColors;
-    }
     if (chartConfig.renderChart) {
       this.prepareChartDetails();
     }
@@ -42,7 +36,6 @@ export class HorizontalStackedChartComponent implements OnInit, OnChanges {
     return this._chartData;
   }
 
-  colorsByStatus: any = {};
   chartOptions: any = {
     title: {
       text: ''
@@ -144,6 +137,7 @@ export class HorizontalStackedChartComponent implements OnInit, OnChanges {
   preparedChartData: any;
   datasetField: any;
   countField: any;
+  colors = ['#FF1800', '#CADC42', '#FF8941', '#49C178', '#9E9E9E'];
   private chartConfigurations: any;
   private _chartData: any;
 
@@ -171,7 +165,11 @@ export class HorizontalStackedChartComponent implements OnInit, OnChanges {
       this.chartType = type;
       this.chartOptions.legend.show = showLegends;
       this.chartOptions.xAxis.name = this.chartConfig.countFieldName;
-      this.chartOptions.yAxis.name = this.chartConfig.datasetFieldName;
+      this.chartConfig.datasetFields.filter((dataset) => {
+        if (dataset.name === this.chartConfig.datasetFieldName) {
+          this.chartOptions.yAxis.name = dataset.displayName;
+        }
+      });
       this.countField = countFields.find((countField) => countField.visible);
       this.datasetField = datasetFields.find(
         (datasetField) => datasetField.visible
@@ -247,22 +245,12 @@ export class HorizontalStackedChartComponent implements OnInit, OnChanges {
       newOptions.series = [...newOptions.series];
     }
 
-    this.chartOptions = newOptions;
-    this.chartOptions.series.forEach((series) => {
+    newOptions.series.forEach((series, index) => {
       series.itemStyle = {
-        color: (param: any) =>
-          this.colorsByStatus[param.name]
-            ? this.colorsByStatus[param.name]
-            : '#c8c8c8'
+        color: this.colors[index]
       };
     });
+
+    this.chartOptions = newOptions;
   };
-  ngOnChanges(changes: SimpleChanges) {
-    if (!changes.firstChange && changes.chartConfig) {
-      const currValue = changes.chartConfig.currentValue;
-      if (currValue.customColors) {
-        this.colorsByStatus = currValue.customColors;
-      }
-    }
-  }
 }

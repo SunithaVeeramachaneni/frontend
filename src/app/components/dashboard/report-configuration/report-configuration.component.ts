@@ -463,6 +463,16 @@ export class ReportConfigurationComponent implements OnInit {
         };
         break;
 
+      case 'customColors':
+        this.reportConfiguration.chartDetails.customColors = value;
+        this.chartConfig = {
+          ...this.chartConfig,
+          customColors: value,
+          renderChart: !this.isFetchingChartData
+        };
+        this.cdrf.detectChanges();
+        break;
+
       default:
       // do nothing
     }
