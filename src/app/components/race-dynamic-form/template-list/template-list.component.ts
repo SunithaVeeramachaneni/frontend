@@ -81,6 +81,8 @@ export class TemplateListComponent implements OnInit, OnDestroy {
   filterJson: any[] = [];
   tags = new Set();
   additionalDetailFilterData = {};
+  allLoadedTemplates$: BehaviorSubject<any> = new BehaviorSubject<any>([]);
+  allLoadedTemplates: any[] = [];
   fetchTemplates$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   columns: Column[] = [];
@@ -165,6 +167,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
         tap((searchTerm) => {
           this.searchTerm = searchTerm;
           this.fetchTemplates$.next({ data: 'search' });
+          this.isLoading$.next(true);
         })
       )
       .subscribe();
@@ -327,6 +330,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
     );
     combineLatest([this.usersService.getUsersInfo$(), templatesOnLoadSearch$])
       .pipe(
+        takeUntil(this.onDestroy$),
         tap(([_, { count, rows, next }]) => {
           rows = rows.map((item) => {
             item.tags = item.tags.toString();
@@ -353,6 +357,10 @@ export class TemplateListComponent implements OnInit, OnDestroy {
               lastPublishedBy
             };
           });
+          if (this.allLoadedTemplates.length === 0) {
+            this.allLoadedTemplates = rows;
+            this.allLoadedTemplates$.next(this.allLoadedTemplates);
+          }
           this.allTemplates = rows;
         })
       )
@@ -379,12 +387,13 @@ export class TemplateListComponent implements OnInit, OnDestroy {
   populateFilter() {
     combineLatest([
       this.raceDynamicFormService.getDataSetsByType$('formTemplateHeaderTags'),
-      this.columnConfigService.moduleAdditionalDetailsFiltersData$
+      this.columnConfigService.moduleAdditionalDetailsFiltersData$,
+      this.allLoadedTemplates$
     ]).subscribe(([allTags, additionalDetails]) => {
       this.additionalDetailFilterData = additionalDetails;
       this.lastPublishedBy = Array.from(
         new Set(
-          this.allTemplates
+          this.allLoadedTemplates
             .map((item: any) => item.lastPublishedBy)
             .filter((item) => item != null && item !== this.placeholder)
         )
@@ -392,7 +401,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
 
       this.createdBy = Array.from(
         new Set(
-          this.allTemplates
+          this.allLoadedTemplates
             .map((item: any) => item.author)
             .filter((item) => item != null)
         )
