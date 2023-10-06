@@ -272,9 +272,9 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
       .fetchResponseSetByModuleName$()
       .subscribe((data) => {
         if (Object.keys(data).length) {
-          let resposneSets = data.RDF;
+          const resposneSets = data.RDF;
           resposneSets.forEach((responseSet) => {
-            let values = [];
+            const values = [];
 
             JSON.parse(responseSet.values).forEach((val) => {
               values.push(val.title);
@@ -475,10 +475,10 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
 
     this.headerDataForm
       .get('instructions.attachments')
-      .setValue(this.filteredMediaTypeIds.mediaIds);
+      .setValue(this.filteredMediaTypeIds.mediaIds, { emitEvent: false });
     this.headerDataForm
       .get('instructions.pdfDocs')
-      .setValue(this.filteredMediaPdfTypeIds);
+      .setValue(this.filteredMediaPdfTypeIds, { emitEvent: false });
     this.tags.forEach((selectedTag) => {
       if (this.originalTags.indexOf(selectedTag) < 0) {
         newTags.push(selectedTag);
@@ -1030,7 +1030,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     this.additionalDetailsMasterData[label].selectedValue = selectedArray;
     this.getAdditionalDetailList()
       [index].get('selectedValue')
-      .setValue(selectedArray);
+      .setValue(selectedArray, { emitEvent: false });
   }
   compareValues(value1: any, value2: any) {
     return value1 && value2 && value1.toLowerCase() === value2.toLowerCase();
@@ -1052,8 +1052,15 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   matSelectClosed(index, label, searchInput: HTMLInputElement) {
     const parentValueData = this.additionalDetailsMasterData[label].value;
     searchInput.value = '';
-    this.getAdditionalDetailList()
-      [index].get('value')
-      .setValue(parentValueData);
+    if (
+      !isEqual(
+        this.getAdditionalDetailList()[index].get('value').value,
+        parentValueData
+      )
+    ) {
+      this.getAdditionalDetailList()
+        [index].get('value')
+        .setValue(parentValueData);
+    }
   }
 }
