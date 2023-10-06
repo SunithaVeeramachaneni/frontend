@@ -139,6 +139,7 @@ export class MultiLineChartComponent implements OnInit {
   preparedChartData: any;
   datasetField: any;
   countField: any;
+  colors = ['#FF1800', '#CADC42', '#FF8941', '#49C178', '#9E9E9E'];
   private chartConfigurations: any;
   private _chartData: any;
 
@@ -253,6 +254,12 @@ export class MultiLineChartComponent implements OnInit {
     } else {
       newOptions.series = [...newOptions.series];
     }
+
+    newOptions.series.forEach((series, index) => {
+      series.itemStyle = {
+        color: this.colors[index]
+      };
+    });
 
     this.chartOptions = newOptions;
   };
