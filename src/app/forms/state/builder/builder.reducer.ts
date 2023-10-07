@@ -636,7 +636,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
             questionInstructionMediaMap:
               page.questionInstructionMediaMap.concat(
                 action.questions.map((question) => {
-                  return { questionId: question.id, media: {} };
+                  return { questionId: question.id, instructionMedia: {} };
                 })
               )
           };
