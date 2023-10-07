@@ -177,3 +177,8 @@
   background-color: $white;
   color: $blue-main;
 }
+
+.input-container {
+  height: calc(100vh - 150px);
+  overflow-y: auto;
+}
