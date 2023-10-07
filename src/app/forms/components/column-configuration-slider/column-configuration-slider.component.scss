@@ -93,6 +93,9 @@ ul {
     background-color: $blue-main;
     color: $white;
   }
+  .save-button:disabled {
+    background-color: $disabled-color !important;
+  }
 
   .cancel-button {
     width: 48%;
