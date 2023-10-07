@@ -86,11 +86,12 @@ export class ReportsComponent implements OnInit {
     tableHeight: 'calc(100vh - 150px)',
     groupLevelColors: []
   };
+  isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   dataSource: MatTableDataSource<any>;
   ghostLoading = new Array(11).fill(0).map((v, i) => i);
   skip = 0;
   limit = defaultLimit;
-  debouncedSearchReports = debounce(() => this.fetchReports(), 1);
+  debouncedSearchReports = debounce(() => this.fetchReports(), 500);
   userInfo$: Observable<UserInfo>;
   private fetchData$: BehaviorSubject<TableEvent> =
     new BehaviorSubject<TableEvent>({} as TableEvent);
@@ -108,6 +109,7 @@ export class ReportsComponent implements OnInit {
   ) {}
 
   fetchReports() {
+    this.isLoading$.next(true);
     this.reportsCount$ = combineLatest([
       this.reportService.getReportsCount$(),
       this.changeReportCount$
@@ -203,6 +205,7 @@ export class ReportsComponent implements OnInit {
           data.unshift(newReportConfiguration);
           this.dataSource = new MatTableDataSource(data);
         }
+        this.isLoading$.next(false);
         return { ...reports, data };
       })
     );

@@ -45,11 +45,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { UploadResponseModalComponent } from '../../../../shared/components/upload-response-modal/upload-response-modal.component';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { CommonService } from 'src/app/shared/services/common.service';
-
+import { slideInOut } from 'src/app/animations';
 @Component({
   selector: 'app-responses-list',
   templateUrl: './responses-list.component.html',
   styleUrls: ['./responses-list.component.scss'],
+  animations: [slideInOut],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ResponsesListComponent implements OnInit, OnDestroy {
@@ -235,6 +236,9 @@ export class ResponsesListComponent implements OnInit, OnDestroy {
     this.responseSetService.fetchResponses$.next({ data: 'load' });
     this.responseSetService.fetchResponses$.next({} as TableEvent);
     this.allResponseSets$ = this.responseSetService.fetchAllGlobalResponses$();
+    this.allResponseSets$.pipe(takeUntil(this.onDestroy$)).subscribe((data) => {
+      this.allResponseSets = data?.items || [];
+    });
     this.responseSetCount$ = combineLatest([
       this.responseSetCount$,
       this.responseSetCountUpdate$
@@ -319,6 +323,10 @@ export class ResponsesListComponent implements OnInit, OnDestroy {
                   },
                   ...initial.data
                 ];
+                this.allResponseSets = this.allResponseSets.filter(
+                  (item) => item.id !== form.id
+                );
+                this.allResponseSets.push(form);
                 break;
               case 'update':
                 const updatedIdx = initial.data.findIndex(
@@ -330,9 +338,16 @@ export class ResponsesListComponent implements OnInit, OnDestroy {
                   responseCount: JSON.parse(form.values).length,
                   updatedAt: new Date().toISOString()
                 };
+                this.allResponseSets = this.allResponseSets.filter(
+                  (item) => item.id !== form.id
+                );
+                this.allResponseSets.push(form);
                 break;
               case 'delete':
                 initial.data = initial.data.filter(
+                  (item) => item.id !== form.id
+                );
+                this.allResponseSets = this.allResponseSets.filter(
                   (item) => item.id !== form.id
                 );
                 break;
@@ -427,9 +442,7 @@ export class ResponsesListComponent implements OnInit, OnDestroy {
         } else
           this.responseSetService
             .deleteResponseSet$({
-              id: data.id,
-              // eslint-disable-next-line no-underscore-dangle
-              _version: data._version
+              id: data.id
             })
             .subscribe(() => {
               this.addEditDeleteResponseSet = true;

@@ -91,6 +91,7 @@ import { AffectedFormTemplateSliderComponent } from 'src/app/components/race-dyn
 import { QuillMaterialComponent } from 'src/app/shared/components/quill-material/quill-material.component';
 import { TemplateModalComponent } from './template-modal/template-modal.component';
 import { ConfirmModalPopupComponent } from './confirm-modal-popup/confirm-modal-popup/confirm-modal-popup.component';
+import { ColumnConfigurationSliderComponent } from 'src/app/forms/components/column-configuration-slider/column-configuration-slider.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/race-dynamic-forms/', '.json');
@@ -129,7 +130,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     AffectedFormTemplateSliderComponent,
     QuillMaterialComponent,
     ConfirmModalPopupComponent,
-    TemplateModalComponent
+    TemplateModalComponent,
+    ColumnConfigurationSliderComponent
   ],
   imports: [
     FormsModule,
