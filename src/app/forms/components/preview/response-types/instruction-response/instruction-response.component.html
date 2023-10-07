@@ -30,10 +30,12 @@
 
 <!-- Instructions Images -->
 <div>
-  <ng-container *ngFor="let image of instructionsMedia.images; index as i">
+  <ng-container
+    *ngFor="let image of (instructionsMedia$ | async).images; index as i"
+  >
     <img
       id="instructionResponseImg"
-      [src]="image"
+      [src]="image.data"
       alt="image"
       class="instruction-image-field"
       *ngIf="image !== null"
@@ -41,7 +43,9 @@
   </ng-container>
 </div>
 
-<ng-container *ngIf="instructionsMedia.pdf !== null">
-  <app-instruction-pdf-preview [pdf]="instructionsMedia.pdf">
+<ng-container *ngIf="(instructionsMedia$ | async).pdf !== null">
+  <app-instruction-pdf-preview
+    [pdf]="(instructionsMedia$ | async).pdf.data.fileInfo"
+  >
   </app-instruction-pdf-preview>
 </ng-container>

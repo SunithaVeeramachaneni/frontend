@@ -39,7 +39,8 @@ import {
 import {
   State,
   getFormMetadata,
-  getModuleName
+  getModuleName,
+  selectQuestionInstuctionsMediaMap
 } from 'src/app/forms/state/builder/builder-state.selectors';
 import { Store } from '@ngrx/store';
 import { FormService } from '../../services/form.service';
@@ -408,6 +409,20 @@ export class QuestionComponent implements OnInit, OnDestroy {
       '#000000';
     this.instructionTagTextColour[this.translate.instant('dangerTag')] =
       '#FFFFFF';
+
+    this.store
+      .select(
+        selectQuestionInstuctionsMediaMap(this.selectedNodeId, this.questionId)
+      )
+      .subscribe((map) => {
+        if (map && Object.keys(map?.instructionsMedia).length > 0)
+          this.instructionsMedia = map.instructionsMedia;
+        else
+          this.instructionsMedia = {
+            images: [null, null, null],
+            pdf: null
+          };
+      });
   }
 
   updateQuestion() {
@@ -444,46 +459,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
     this.checkAskQuestionFeatures();
     this.rangeDisplayText = '';
     this.additionalDetailsText = '';
-    if (this.question.fieldType === 'INST') {
-      const { images, pdf } = this.question.value;
-      // FETCH BASE64 FOR INSTRUCTIONS
-      const imagesPromises = images.map((imageId) =>
-        this.moduleName === 'RDF'
-          ? this.rdfService.getAttachmentsById$(imageId).toPromise().then()
-          : this.operatorRoundsService
-              .getAttachmentsById$(imageId)
-              .toPromise()
-              .then()
-      );
-      const pdfPromises =
-        this.moduleName === 'RDF'
-          ? this.rdfService.getAttachmentsById$(pdf).toPromise().then()
-          : this.operatorRoundsService
-              .getAttachmentsById$(pdf)
-              .toPromise()
-              .then();
-
-      let imageArray = [];
-      Promise.all(imagesPromises).then((images) => {
-        imageArray = images.map((img: any) => {
-          if (img?.attachment) {
-            return `data:image/jpeg;base64,${img?.attachment}`;
-          } else {
-            return null;
-          }
-        });
-        this.instructionsMedia = {
-          ...this.instructionsMedia,
-          images: imageArray
-        };
-      });
-      Promise.all([pdfPromises]).then(([pdf]) => {
-        this.instructionsMedia = {
-          ...this.instructionsMedia,
-          pdf: pdf?.attachment ? JSON.parse(pdf?.fileInfo) : null
-        };
-      });
-    }
   }
 
   getRangeMetadata() {
@@ -921,16 +896,29 @@ export class QuestionComponent implements OnInit, OnDestroy {
                 .pipe(
                   tap((response) => {
                     if (response) {
-                      this.instructionsMedia.pdf = file;
                       const responsenew =
                         response?.data?.createRoundPlanAttachments?.id;
+                      this.instructionsMedia = {
+                        ...this.instructionsMedia,
+                        pdf: {
+                          id: responsenew,
+                          data: pdf
+                        }
+                      };
                       originalValue = cloneDeep({
                         ...originalValue,
                         pdf: responsenew
                       });
                       this.questionForm.get('value').setValue(originalValue);
-                      this.cdrf.detectChanges();
                       this.instructionsUpdateValue();
+                      this.moduleName === 'RDF'
+                        ? this.rdfService.questionInstructionMediaMap$.next(
+                            this.instructionsMedia
+                          )
+                        : this.operatorRoundsService.questionInstructionMediaMap$.next(
+                            this.instructionsMedia
+                          );
+                      this.cdrf.detectChanges();
                     }
                   })
                 )
@@ -967,13 +955,27 @@ export class QuestionComponent implements OnInit, OnDestroy {
                         ...originalValue,
                         images
                       });
-                      this.instructionsMedia.images = [
-                        ...this.instructionsMedia.images,
-                        compressedImage
-                      ];
+                      this.instructionsMedia = {
+                        ...this.instructionsMedia,
+                        images: [
+                          ...this.instructionsMedia.images.slice(0, index),
+                          {
+                            id: responsenew,
+                            data: compressedImage
+                          },
+                          ...this.instructionsMedia.images.slice(index + 1)
+                        ]
+                      };
                       this.questionForm.get('value').setValue(originalValue);
-                      this.cdrf.detectChanges();
                       this.instructionsUpdateValue();
+                      this.moduleName === 'RDF'
+                        ? this.rdfService.questionInstructionMediaMap$.next(
+                            this.instructionsMedia
+                          )
+                        : this.operatorRoundsService.questionInstructionMediaMap$.next(
+                            this.instructionsMedia
+                          );
+                      this.cdrf.detectChanges();
                     }
                   })
                 )
@@ -1048,6 +1050,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
       sectionId: this.sectionId,
       question: this.questionForm.value,
       questionIndex: this.questionIndex,
+      instructionsMedia: this.instructionsMedia,
       type: 'update'
     });
   }
@@ -1071,8 +1074,10 @@ export class QuestionComponent implements OnInit, OnDestroy {
     return doc.body.textContent || '';
   }
 
-  instructionsFileDeleteHandler(index: number, type: string) {
+  instructionsFileDeleteHandler(index: number, data: any, type: string) {
     let originalValue = Object.assign({}, this.questionForm.get('value').value);
+    const { id: attachmentId } = data;
+
     if (type === 'image') {
       let images = [...originalValue.images];
       images[index] = null;
@@ -1081,21 +1086,38 @@ export class QuestionComponent implements OnInit, OnDestroy {
         images
       };
 
-      this.instructionsMedia.images[index] = null;
+      const updatedMediaImages = this.instructionsMedia.images.filter(
+        (image) => image.id !== attachmentId
+      );
+
+      this.instructionsMedia = {
+        ...this.instructionsMedia,
+        images: updatedMediaImages
+      };
       originalValue = cloneDeep({
         ...originalValue,
         images: this.imagesArrayRemoveNullGaps(originalValue.images)
       });
     } else {
-      this.instructionsMedia.pdf = null;
+      this.instructionsMedia = {
+        ...this.instructionsMedia,
+        pdf: null
+      };
       originalValue = cloneDeep({
         ...originalValue,
         pdf: null
       });
     }
-    console.log(originalValue);
     this.questionForm.get('value').setValue(originalValue);
     this.instructionsUpdateValue();
+    this.moduleName === 'RDF'
+      ? this.rdfService.questionInstructionMediaMap$.next(
+          this.instructionsMedia
+        )
+      : this.operatorRoundsService.questionInstructionMediaMap$.next(
+          this.instructionsMedia
+        );
+    this.cdrf.detectChanges();
   }
 
   imagesArrayRemoveNullGaps(images) {

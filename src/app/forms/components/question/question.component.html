@@ -172,10 +172,10 @@
                     *ngFor="let image of instructionsMedia.images; index as i"
                   >
                     <app-instruction-image
-                      [image]="image"
+                      [image]="image.data"
                       [index]="i"
                       (indexEmitter)="
-                        instructionsFileDeleteHandler($event, 'image')
+                        instructionsFileDeleteHandler($event, image, 'image')
                       "
                       *ngIf="image !== null"
                       class="m-r-10"
@@ -185,10 +185,14 @@
 
                   <span *ngIf="instructionsMedia.pdf !== null">
                     <app-instruction-pdf
-                      [pdf]="instructionsMedia.pdf"
+                      [pdf]="instructionsMedia.pdf.data.fileInfo"
                       [index]="'4'"
                       (indexEmitter)="
-                        instructionsFileDeleteHandler($event, 'pdf')
+                        instructionsFileDeleteHandler(
+                          $event,
+                          instructionsMedia.pdf,
+                          'pdf'
+                        )
                       "
                     >
                     </app-instruction-pdf>

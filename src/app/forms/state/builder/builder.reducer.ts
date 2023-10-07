@@ -632,7 +632,13 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
           ];
           return {
             ...page,
-            questions: [...sectionQuestions, ...remainingQuestions]
+            questions: [...sectionQuestions, ...remainingQuestions],
+            questionInstructionMediaMap:
+              page.questionInstructionMediaMap.concat(
+                action.questions.map((question) => {
+                  return { questionId: question.id, media: {} };
+                })
+              )
           };
         }
         return page;
@@ -683,10 +689,21 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
             action.question,
             ...sectionQuestions.slice(action.questionIndex + 1)
           ];
+          const questionInstructionMediaMap =
+            page.questionInstructionMediaMap.map((questionInstructionMedia) => {
+              if (questionInstructionMedia.questionId === action.question.id) {
+                return {
+                  ...questionInstructionMedia,
+                  instructionMedia: action.instructionsMedia
+                };
+              }
+              return questionInstructionMedia;
+            });
           return {
             ...page,
             questions: [...sectionQuestions, ...remainingQuestions],
-            logics: logics
+            logics: logics,
+            questionInstructionMediaMap
           };
         }
         return page;
@@ -816,9 +833,15 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
                 position: question.position - 1
               }))
           ];
+          const questionInstructionMediaMap =
+            page.questionInstructionMediaMap.filter(
+              (questionInstructionMedia) =>
+                questionInstructionMedia.questionId !== questionToBeDeleted
+            );
           return {
             ...page,
-            questions: [...sectionQuestions, ...remainingQuestions]
+            questions: [...sectionQuestions, ...remainingQuestions],
+            questionInstructionMediaMap
           };
         }
         return page;

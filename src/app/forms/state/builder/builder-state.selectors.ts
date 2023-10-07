@@ -416,3 +416,20 @@ export const getQuestionCounter = createSelector(
   selectFormConfigurationState,
   (state) => state.counter
 );
+
+export const selectQuestionInstuctionsMediaMap = (
+  subFormId: string,
+  questionId: string
+) =>
+  createSelector(selectFormConfigurationState, (state) => {
+    let key = 'pages';
+    if (subFormId) {
+      key = `${key}_${subFormId}`;
+    }
+    const questionInstuctionsMediaMap = state[
+      key
+    ]?.questionInstuctionsMediaMap?.filter(
+      (map) => map.questionId === questionId
+    );
+    return questionInstuctionsMediaMap;
+  });

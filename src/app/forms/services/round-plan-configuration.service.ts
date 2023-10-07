@@ -30,7 +30,8 @@ export class RoundPlanConfigurationService {
     subFormId: string,
     isEmbeddedForm: boolean,
     isTemplate: boolean,
-    sectionQuestionsList: SectionQuestions[] = []
+    sectionQuestionsList: SectionQuestions[] = [],
+    questionInstructionMediaMap: any[]
   ) {
     const { counter, ...page } = this.getPageObject(
       pageIndex,
@@ -40,7 +41,8 @@ export class RoundPlanConfigurationService {
       questionCounter,
       sectionQuestionsList,
       isEmbeddedForm,
-      isTemplate
+      isTemplate,
+      questionInstructionMediaMap
     );
     this.store.dispatch(
       BuilderConfigurationActions.addPage({
@@ -191,7 +193,8 @@ export class RoundPlanConfigurationService {
     questionCounter: number,
     sectionQuestionsList: SectionQuestions[],
     isEmbeddedForm: boolean,
-    isTemplate: boolean
+    isTemplate: boolean,
+    questionInstructionMediaMap: any[]
   ) {
     const { sections, questions, counter } = this.getSectionsObject(
       pageIndex,
@@ -204,6 +207,15 @@ export class RoundPlanConfigurationService {
       isTemplate
     );
 
+    questionInstructionMediaMap = questionInstructionMediaMap.concat(
+      questions.map((question) => {
+        return {
+          questionId: question.id,
+          instructionMedia: {}
+        };
+      })
+    );
+
     return {
       name: 'Page',
       position: pageIndex + 1,
@@ -211,7 +223,8 @@ export class RoundPlanConfigurationService {
       sections,
       questions,
       logics: [],
-      counter
+      counter,
+      questionInstructionMediaMap
     };
   }
 

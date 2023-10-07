@@ -47,6 +47,7 @@ export class RaceDynamicFormService {
   attachmentsMapping$ = new BehaviorSubject<any>({});
   pdfMapping$ = new BehaviorSubject<any>({});
   redirectToFormsList$ = new BehaviorSubject<boolean>(false);
+  questionInstructionMediaMap$ = new BehaviorSubject<any>({});
   embeddedFormId;
 
   constructor(

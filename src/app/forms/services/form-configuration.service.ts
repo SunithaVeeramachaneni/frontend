@@ -45,7 +45,8 @@ export class FormConfigurationService {
     addQuestions: number,
     pageWiseSectionIndexes: any,
     questionCounter: number,
-    sectionQuestionsList: SectionQuestions[] = []
+    sectionQuestionsList: SectionQuestions[] = [],
+    questionInstructionMediaMap: any[]
   ) {
     const { counter, ...page } = this.getPageObject(
       pageIndex,
@@ -53,7 +54,8 @@ export class FormConfigurationService {
       addQuestions,
       pageWiseSectionIndexes,
       questionCounter,
-      sectionQuestionsList
+      sectionQuestionsList,
+      questionInstructionMediaMap
     );
 
     this.store.dispatch(
@@ -197,7 +199,8 @@ export class FormConfigurationService {
     addQuestions: number,
     pageWiseSectionIndexes: any,
     questionCounter: number,
-    sectionQuestionsList: SectionQuestions[]
+    sectionQuestionsList: SectionQuestions[],
+    questionInstructionMediaMap: any[]
   ) {
     const { sections, questions, counter, logics } = this.getSectionsObject(
       pageIndex,
@@ -208,6 +211,15 @@ export class FormConfigurationService {
       sectionQuestionsList
     );
 
+    questionInstructionMediaMap = questionInstructionMediaMap.concat(
+      questions.map((question) => {
+        return {
+          questionId: question.id,
+          instructionMedia: {}
+        };
+      })
+    );
+
     return {
       name: 'Page',
       position: pageIndex + 1,
@@ -215,7 +227,8 @@ export class FormConfigurationService {
       sections,
       questions,
       logics,
-      counter
+      counter,
+      questionInstructionMediaMap
     };
   }
 

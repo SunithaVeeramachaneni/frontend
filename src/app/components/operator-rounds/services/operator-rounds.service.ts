@@ -51,6 +51,7 @@ export class OperatorRoundsService {
   private isRevisedSubject = new BehaviorSubject<boolean>(false);
   private scheduleErrorSubject = new BehaviorSubject<string>('');
 
+  questionInstructionMediaMap$ = new BehaviorSubject<any>({});
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   attachmentsMapping$ = new BehaviorSubject<any>({});

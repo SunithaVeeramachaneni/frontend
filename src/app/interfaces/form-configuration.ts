@@ -32,6 +32,7 @@ export interface Page {
   sections: Section[];
   questions: Question[];
   logics: any[];
+  questionInstructionMediaMap: any[];
 }
 
 export interface TaskLevelSchedulePage extends Page {
@@ -137,6 +138,7 @@ export interface QuestionEvent {
   questionIndex: number;
   type: 'add' | 'update' | 'delete';
   isAskQuestion?: boolean;
+  instructionsMedia?: any;
 }
 
 export interface InstructionsFile {
