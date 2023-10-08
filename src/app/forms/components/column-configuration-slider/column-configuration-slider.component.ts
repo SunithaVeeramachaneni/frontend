@@ -15,6 +15,7 @@ import { ResponseSetService } from 'src/app/components/master-configurations/res
 import { columnConfiguration } from 'src/app/interfaces/columnConfiguration';
 import { ColumnConfigurationService } from '../../services/column-configuration.service';
 import { Column } from '@innovapptive.com/dynamictable/lib/interfaces';
+import { cloneDeep } from 'lodash-es';
 import { UsersService } from 'src/app/components/user-management/services/users.service';
 import { ToastService } from 'src/app/shared/toast';
 @Component({
@@ -31,9 +32,11 @@ export class ColumnConfigurationSliderComponent implements OnInit {
   ghostLoading = new Array(15).fill(0).map((v, i) => i);
   additionalColumns: columnConfiguration[] = [];
   allColumns: columnConfiguration[] = [];
+  originalColumns: columnConfiguration[] = [];
   staticColumns: columnConfiguration[] = [];
   draggableColumns: columnConfiguration[] = [];
   allComplete: boolean = false;
+  saveIsDisabled: boolean = true;
   constructor(
     private userService: UsersService,
     private responseSetService: ResponseSetService,
@@ -48,10 +51,16 @@ export class ColumnConfigurationSliderComponent implements OnInit {
   }
 
   cancelForm() {
+    this.allColumns = cloneDeep(this.originalColumns);
+    this.extractDraggableColumns();
+    this.extractStaticColumns();
+    this.updateAllComplete();
+    this.saveIsDisabled = true;
     this.slideInOut.emit('in');
   }
 
   updateAllComplete() {
+    this.saveIsDisabled = false;
     this.allColumns = [...this.staticColumns, ...this.draggableColumns];
     this.allComplete = this.allColumns.every((t) => t.selected);
   }
@@ -92,8 +101,11 @@ export class ColumnConfigurationSliderComponent implements OnInit {
         this.allColumns = this.columnConfigService.getAllColumnConfigurations(
           this.moduleName
         );
+        this.originalColumns = cloneDeep(this.allColumns);
         this.extractStaticColumns();
         this.extractDraggableColumns();
+        this.updateAllComplete();
+        this.saveIsDisabled = true;
         this.isLoading$.next(false);
         this.cdrf.detectChanges();
       })
@@ -107,6 +119,7 @@ export class ColumnConfigurationSliderComponent implements OnInit {
       }
       return column;
     });
+    this.updateAllComplete();
   }
   extractStaticColumns() {
     this.staticColumns = this.allColumns.filter((column) => column.disabled);
@@ -119,6 +132,7 @@ export class ColumnConfigurationSliderComponent implements OnInit {
 
   //drop event after the elements which are not set as draggable
   drop(event: CdkDragDrop<string[]>) {
+    this.saveIsDisabled = false;
     const prevIndex = event.previousIndex;
     const currIndex = event.currentIndex;
     this.draggableColumns = this.array_move(
@@ -139,6 +153,7 @@ export class ColumnConfigurationSliderComponent implements OnInit {
   }
 
   onSave() {
+    this.saveIsDisabled = true;
     this.allColumns = [...this.staticColumns, ...this.draggableColumns];
     const columnIds = this.allColumns.reduce((acc, column) => {
       if (column.selected) {
@@ -169,6 +184,7 @@ export class ColumnConfigurationSliderComponent implements OnInit {
           this.columnConfigService.updateUserColumnConfig(this.moduleName);
           this.columnConfigService.updateFilterConfiguration();
         } else {
+          this.saveIsDisabled = false;
           this.toastService.show({
             type: 'warning',
             text: 'Unable to store column configuration'
