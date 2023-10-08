@@ -32,7 +32,10 @@ export class InstructionResponseComponent implements OnInit {
     this.store.select(getModuleName).subscribe((moduleName) => {
       this.moduleName = moduleName;
 
-      this.instructionsMedia$ = this.rdfService.questionInstructionMediaMap$;
+      this.instructionsMedia$ =
+        moduleName === 'RDF'
+          ? this.rdfService.questionInstructionMediaMap$
+          : this.operatorRoundsService.questionInstructionMediaMap$;
     });
   }
 

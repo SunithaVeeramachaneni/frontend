@@ -1087,7 +1087,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
       };
 
       const updatedMediaImages = this.instructionsMedia.images.filter(
-        (image) => image.id !== attachmentId
+        (image) => image?.id !== attachmentId
       );
 
       this.instructionsMedia = {

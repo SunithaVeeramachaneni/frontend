@@ -55,6 +55,10 @@ export class FormModalComponent implements OnInit, OnDestroy {
 
     this.totalSteps = this.steps.length;
 
+    this.store.dispatch(
+      BuilderConfigurationActions.updateModuleName({ moduleName: 'RDF' })
+    );
+
     this.authoredFormDetailSubscription = this.store
       .select(getFormDetails)
       .subscribe((formDetails) => {
