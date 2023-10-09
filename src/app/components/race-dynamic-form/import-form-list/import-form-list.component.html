@@ -14,14 +14,23 @@
       />
       <svg-icon
         id="importFormFilterIcon"
-        matSuffix
+        cdkOverlayOrigin
+        #trigger="cdkOverlayOrigin"
         icon="icon-filterIcon"
+        (click)="isPopoverOpen = !isPopoverOpen"
+        matSuffix
         class="filter-icon"
       ></svg-icon>
     </mat-form-field>
   </div>
 
-  <div *ngIf="(forms$ | async) && (isLoading$ | async) === false">
+  <div
+    *ngIf="
+      (forms$ | async) &&
+      (isLoading$ | async) === false &&
+      (isLoadingColumns$ | async) === false
+    "
+  >
     <cwp-dynamictable
       [dataSource]="dataSource"
       [configOptions]="configOptions"
@@ -30,9 +39,28 @@
       class="width-100"
     ></cwp-dynamictable>
   </div>
+
+  <ng-template
+    cdkConnectedOverlay
+    cdkConnectedOverlayPanelClass="custom-popover"
+    cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+    [cdkConnectedOverlayHasBackdrop]="true"
+    [cdkConnectedOverlayOpen]="isPopoverOpen"
+    [cdkConnectedOverlayOrigin]="trigger"
+    cdkConnectedOverlayWidth="400px"
+    (backdropClick)="isPopoverOpen = false"
+  >
+    <app-filter
+      *ngIf="(isLoadingColumns$ | async) === false"
+      [json]="filterJson"
+      (close)="isPopoverOpen = false"
+      (apply)="applyFilter($event)"
+      (reset)="resetFilter()"
+    ></app-filter>
+  </ng-template>
 </div>
 
-<div *ngIf="isLoading$ | async">
+<div *ngIf="(isLoading$ | async) || (isLoadingColumns$ | async)">
   <div>
     <div *ngFor="let number of ghostLoading">
       <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">

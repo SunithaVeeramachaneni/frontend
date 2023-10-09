@@ -200,7 +200,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       ]
     },
     {
-      title: myRoundPlans.title,
+      title: oprRounds.title,
       url: oprRounds.url,
       imageName: 'operator-rounds',
       showSubMenu: false,

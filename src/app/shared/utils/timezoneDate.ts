@@ -9,6 +9,7 @@ const {
 } = require('date-fns');
 
 export const localToTimezoneDate = (date, timezone, f) => {
+  if (isNaN(Date.parse(date))) return '';
   if (f === '') f = 'yyyy-MM-dd HH:mm:ss zzz';
   if (!timezone?.timeZoneIdentifier) return format(new Date(date), f);
   return formatInTimeZone(new Date(date), timezone.timeZoneIdentifier, f);

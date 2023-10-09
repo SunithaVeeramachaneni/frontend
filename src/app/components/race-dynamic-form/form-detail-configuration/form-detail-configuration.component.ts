@@ -580,19 +580,20 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      this.selectedFormData = result.selectedFormData;
-      this.allTemplates = result.allTemplates;
-      this.selectedFormName = result.selectedFormName;
-      this.selectedFormId = result?.selectedFormId;
-      this.authoredFormDetailSubscription = this.authoredFormDetail$.subscribe(
-        (pagesData) => {
-          this.currentFormData = pagesData;
-        }
-      );
-      this.openAppSider$ = of(result.openImportQuestionsSlider);
-      this.openImportTemplateSider$ = of(
-        result.openImportTemplateQuestionsSlider
-      );
+      if (result && Object.keys(result).length) {
+        this.selectedFormData = result.selectedFormData;
+        this.allTemplates = result.allTemplates;
+        this.selectedFormName = result.selectedFormName;
+        this.selectedFormId = result?.selectedFormId;
+        this.authoredFormDetailSubscription =
+          this.authoredFormDetail$.subscribe((pagesData) => {
+            this.currentFormData = pagesData;
+          });
+        this.openAppSider$ = of(result.openImportQuestionsSlider);
+        this.openImportTemplateSider$ = of(
+          result.openImportTemplateQuestionsSlider
+        );
+      }
       this.cdrf.markForCheck();
     });
   }

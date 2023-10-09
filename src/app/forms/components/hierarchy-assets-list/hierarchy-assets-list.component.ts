@@ -92,7 +92,7 @@ export class HierarchyAssetsListComponent implements OnInit {
       }, 0);
 
       const tempHierarchyList = cloneDeep(this.hierarchyList);
-      this.assetHierarchyUtil.toggleSearchSelectedNode(
+      this.hierarchyList = this.assetHierarchyUtil.toggleSearchSelectedNode(
         node.uid,
         tempHierarchyList
       );
@@ -102,7 +102,7 @@ export class HierarchyAssetsListComponent implements OnInit {
     }
 
     const searchedElement = document.getElementById(`Node-${node.uid}`);
-    searchedElement.scrollIntoView({
+    searchedElement?.scrollIntoView({
       behavior: 'smooth',
       block: 'start',
       inline: 'nearest'

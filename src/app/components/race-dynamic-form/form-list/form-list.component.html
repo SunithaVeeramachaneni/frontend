@@ -123,12 +123,12 @@
           mat-raised-button
           [matMenuTriggerFor]="moreMenu"
           class="more-btn"
-          *appCheckUserHasPermission="[perms.importForm]"
         >
           <mat-icon id="moreMenuIcon" class="menu-icon">more_horiz</mat-icon>
         </button>
         <mat-menu id="moreMenu" #moreMenu="matMenu">
           <button
+            *appCheckUserHasPermission="[perms.importForm]"
             id="templateMenuButton"
             mat-menu-item
             class="menu-buttons"
@@ -140,6 +140,22 @@
               class="menu-icons"
             ></svg-icon>
             <span id="downloadTemplateSpan" translate="downloadTemplate"></span>
+          </button>
+          <button
+            id="columnConfigurationBtn"
+            mat-menu-item
+            class="menu-buttons"
+            (click)="showColumnConfig()"
+          >
+            <svg-icon
+              id="excelIconMenu"
+              icon="column-configuration-icon"
+              class="menu-icons"
+            ></svg-icon>
+            <span
+              id="columnConfigurationSpan"
+              translate="columnConfiguration"
+            ></span>
           </button>
         </mat-menu>
         <mat-menu id="downloadTemplateMeny" #templateMenu="matMenu">
@@ -182,7 +198,13 @@
       </div>
     </div>
 
-    <div *ngIf="(forms$ | async) && (isLoading$ | async) === false">
+    <div
+      *ngIf="
+        (forms$ | async) &&
+        (isLoading$ | async) === false &&
+        (isLoadingColumns$ | async) === false
+      "
+    >
       <cwp-dynamictable
         [dataSource]="dataSource"
         [configOptions]="configOptions"
@@ -204,7 +226,14 @@
     ></app-form-detail>
   </ng-container>
 
-  <div *ngIf="isLoading$ | async">
+  <ng-container *ngIf="columnConfigMenuState">
+    <app-column-configuration-slider
+      [@slideInOut]="columnConfigMenuState"
+      (slideInOut)="onCloseColumnConfig()"
+      [moduleName]="rdfModuleName"
+    ></app-column-configuration-slider>
+  </ng-container>
+  <div *ngIf="(isLoading$ | async) || (isLoadingColumns$ | async)">
     <div class="ghost-loading">
       <div *ngFor="let number of ghostLoading">
         <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
@@ -224,6 +253,7 @@
     (backdropClick)="isPopoverOpen = false"
   >
     <app-filter
+      *ngIf="(isLoadingColumns$ | async) === false"
       [json]="filterJson"
       (close)="isPopoverOpen = false"
       (apply)="applyFilter($event)"

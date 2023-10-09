@@ -19,6 +19,7 @@ import {
   ErrorInfo
 } from '../../../../interfaces';
 import { DateUtilService } from 'src/app/shared/utils/dateUtils';
+import { metadataFlatModuleNames } from 'src/app/app.constants';
 
 @Injectable({
   providedIn: 'root'
@@ -98,7 +99,8 @@ export class ResponseSetService {
         description: responseSet?.description,
         refCount: responseSet.refCount,
         isMultiColumn: responseSet.isMultiColumn,
-        values: responseSet.values
+        values: responseSet.values,
+        moduleName: responseSet.moduleName
       }
     );
 
@@ -108,6 +110,7 @@ export class ResponseSetService {
       name: responseSet.name,
       description: responseSet.description,
       refCount: responseSet.refCount,
+      moduleName: responseSet.moduleName,
       isMultiColumn: responseSet.isMultiColumn,
       values: responseSet.values,
       createdBy: responseSet.createdBy,
@@ -162,6 +165,22 @@ export class ResponseSetService {
       body
     );
   }
+
+  fetchResponseSetByModuleName$ = () => {
+    const info: ErrorInfo = {} as ErrorInfo;
+    const {
+      displayToast,
+      failureResponse = {
+        [metadataFlatModuleNames.RACE_DYNAMIC_FORMS]: [],
+        [metadataFlatModuleNames.RDF_TEMPLATES]: []
+      }
+    } = info;
+    return this._appService._getResp(
+      environment.masterConfigApiUrl,
+      'response-set/list/all-modules',
+      { displayToast, failureResponse }
+    );
+  };
 
   private formatGraphQLocationResponse(resp) {
     let rows =

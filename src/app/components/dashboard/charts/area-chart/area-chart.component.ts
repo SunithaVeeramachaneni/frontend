@@ -183,9 +183,13 @@ export class AreaChartComponent implements OnInit, OnChanges {
       this.chartType = type;
       newOptions.series.label.show = showValues;
       newOptions.legend.show = showLegends;
-      newOptions.xAxis.name = this.chartConfig.datasetFieldName;
+      this.chartConfig.datasetFields.filter((dataset) => {
+        if (dataset.name === this.chartConfig.datasetFieldName) {
+          newOptions.xAxis.name = dataset.displayName;
+          newOptions.series.name = dataset.displayName;
+        }
+      });
       newOptions.yAxis.name = this.chartConfig.countFieldName;
-      newOptions.series.name = this.chartConfig.datasetFieldName;
       this.countField = countFields.find((countField) => countField.visible);
       this.datasetField = datasetFields.find(
         (datasetField) => datasetField.visible

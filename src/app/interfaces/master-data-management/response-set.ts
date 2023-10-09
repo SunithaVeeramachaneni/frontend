@@ -4,6 +4,7 @@ export interface CreateResponseSet {
   refCount: number;
   isMultiColumn: boolean;
   values: string;
+  moduleName: string;
 }
 
 export interface UpdateResponseSet extends CreateResponseSet {
@@ -14,5 +15,4 @@ export interface UpdateResponseSet extends CreateResponseSet {
 
 export interface DeleteResponseSet {
   id: string;
-  _version: number;
 }
