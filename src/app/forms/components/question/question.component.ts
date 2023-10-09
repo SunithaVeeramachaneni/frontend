@@ -240,13 +240,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   fetchUnitOfMeasurement: Observable<any>;
   instructionsMedia = {
     images: [],
-    pdf: {
-      id: null,
-      data: {
-        fileInfo: null,
-        attachment: null
-      }
-    }
+    pdf: null
   };
 
   questionForm: FormGroup = this.fb.group({
@@ -705,13 +699,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
             colour: null
           },
           images: [null, null, null],
-          pdf: {
-            id: null,
-            data: {
-              fileInfo: null,
-              attachment: null
-            }
-          }
+          pdf: null
         };
         this.questionForm.get('value').setValue(instructionsValue);
         break;
@@ -1015,39 +1003,46 @@ export class QuestionComponent implements OnInit, OnDestroy {
                 ? this.rdfService.uploadAttachments$({ file: pdf })
                 : this.operatorRoundsService.uploadAttachments$({ file: pdf });
             if (resizedPdfSize <= maxSize) {
-              pdfObservable
-                .pipe(
-                  tap((response) => {
-                    if (response) {
-                      const responsenew =
+              if (originalValue.pdf === null) {
+                pdfObservable
+                  .pipe(
+                    tap((response) => {
+                      if (response) {
+                        const responsenew =
+                          this.moduleName === 'RDF'
+                            ? response?.data?.createFormAttachments?.id
+                            : response?.data?.createRoundPlanAttachments?.id;
+                        this.instructionsMedia = {
+                          ...this.instructionsMedia,
+                          pdf: {
+                            id: responsenew,
+                            data: pdf
+                          }
+                        };
+                        originalValue = cloneDeep({
+                          ...originalValue,
+                          pdf: responsenew
+                        });
+                        this.questionForm.get('value').setValue(originalValue);
+                        this.instructionsUpdateValue();
                         this.moduleName === 'RDF'
-                          ? response?.data?.createFormAttachments?.id
-                          : response?.data?.createRoundPlanAttachments?.id;
-                      this.instructionsMedia = {
-                        ...this.instructionsMedia,
-                        pdf: {
-                          id: responsenew,
-                          data: pdf
-                        }
-                      };
-                      originalValue = cloneDeep({
-                        ...originalValue,
-                        pdf: responsenew
-                      });
-                      this.questionForm.get('value').setValue(originalValue);
-                      this.instructionsUpdateValue();
-                      this.moduleName === 'RDF'
-                        ? this.rdfService.questionInstructionMediaMap$.next(
-                            this.instructionsMedia
-                          )
-                        : this.operatorRoundsService.questionInstructionMediaMap$.next(
-                            this.instructionsMedia
-                          );
-                      this.cdrf.detectChanges();
-                    }
-                  })
-                )
-                .subscribe();
+                          ? this.rdfService.questionInstructionMediaMap$.next(
+                              this.instructionsMedia
+                            )
+                          : this.operatorRoundsService.questionInstructionMediaMap$.next(
+                              this.instructionsMedia
+                            );
+                        this.cdrf.detectChanges();
+                      }
+                    })
+                  )
+                  .subscribe();
+              } else {
+                this.toast.show({
+                  text: 'Only 1 PDF can be attached to an instruction.',
+                  type: 'warning'
+                });
+              }
             } else {
               this.toast.show({
                 type: 'warning',
@@ -1070,48 +1065,55 @@ export class QuestionComponent implements OnInit, OnDestroy {
                   : this.operatorRoundsService.uploadAttachments$({
                       file: image
                     });
-              imageObservable
-                .pipe(
-                  tap((response) => {
-                    if (response) {
-                      const index = originalValue.images.findIndex(
-                        (image) => image === null
-                      );
-                      const responsenew =
+              const index = originalValue.images.findIndex(
+                (image) => image === null
+              );
+              if (index !== -1) {
+                imageObservable
+                  .pipe(
+                    tap((response) => {
+                      if (response) {
+                        const responsenew =
+                          this.moduleName === 'RDF'
+                            ? response?.data?.createFormAttachments?.id
+                            : response?.data?.createRoundPlanAttachments?.id;
+                        const images = [...originalValue.images];
+                        images[index] = responsenew;
+                        originalValue = cloneDeep({
+                          ...originalValue,
+                          images
+                        });
+                        this.instructionsMedia = {
+                          ...this.instructionsMedia,
+                          images: [
+                            ...this.instructionsMedia.images.slice(0, index),
+                            {
+                              id: responsenew,
+                              data: compressedImage
+                            },
+                            ...this.instructionsMedia.images.slice(index + 1)
+                          ]
+                        };
+                        this.questionForm.get('value').setValue(originalValue);
+                        this.instructionsUpdateValue();
                         this.moduleName === 'RDF'
-                          ? response?.data?.createFormAttachments?.id
-                          : response?.data?.createRoundPlanAttachments?.id;
-                      const images = [...originalValue.images];
-                      images[index] = responsenew;
-                      originalValue = cloneDeep({
-                        ...originalValue,
-                        images
-                      });
-                      this.instructionsMedia = {
-                        ...this.instructionsMedia,
-                        images: [
-                          ...this.instructionsMedia.images.slice(0, index),
-                          {
-                            id: responsenew,
-                            data: compressedImage
-                          },
-                          ...this.instructionsMedia.images.slice(index + 1)
-                        ]
-                      };
-                      this.questionForm.get('value').setValue(originalValue);
-                      this.instructionsUpdateValue();
-                      this.moduleName === 'RDF'
-                        ? this.rdfService.questionInstructionMediaMap$.next(
-                            this.instructionsMedia
-                          )
-                        : this.operatorRoundsService.questionInstructionMediaMap$.next(
-                            this.instructionsMedia
-                          );
-                      this.cdrf.detectChanges();
-                    }
-                  })
-                )
-                .subscribe();
+                          ? this.rdfService.questionInstructionMediaMap$.next(
+                              this.instructionsMedia
+                            )
+                          : this.operatorRoundsService.questionInstructionMediaMap$.next(
+                              this.instructionsMedia
+                            );
+                        this.cdrf.detectChanges();
+                      }
+                    })
+                  )
+                  .subscribe();
+              } else {
+                this.toast.show({
+                  text: 'Only upto 3 images can be attached to an instruction.',
+                  type: 'warning'
+                });
+              }
             } else {
               this.toast.show({
                 type: 'warning',
@@ -1243,13 +1245,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
       };
       originalValue = cloneDeep({
         ...originalValue,
-        pdf: {
-          id: null,
-          data: {
-            fileInfo: null,
-            attachment: null
-          }
-        }
+        pdf: null
       });
     }
     this.questionForm.get('value').setValue(originalValue);
