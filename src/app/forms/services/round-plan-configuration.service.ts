@@ -211,7 +211,7 @@ export class RoundPlanConfigurationService {
       questions.map((question) => {
         return {
           questionId: question.id,
-          instructionMedia: {}
+          instructionsMedia: {}
         };
       })
     );

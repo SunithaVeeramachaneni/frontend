@@ -636,7 +636,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
             questionInstructionMediaMap:
               page.questionInstructionMediaMap.concat(
                 action.questions.map((question) => {
-                  return { questionId: question.id, instructionMedia: {} };
+                  return { questionId: question.id, instructionsMedia: {} };
                 })
               )
           };
@@ -694,7 +694,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
               if (questionInstructionMedia.questionId === action.question.id) {
                 return {
                   ...questionInstructionMedia,
-                  instructionMedia: action.instructionsMedia
+                  instructionsMedia: action.instructionsMedia
                 };
               }
               return questionInstructionMedia;
@@ -1256,6 +1256,50 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
         formDetailPublishStatus: 'Draft',
         formSaveStatus: 'Saving',
         skipAuthoredDetail: false
+      };
+    }
+  ),
+  on(
+    BuilderConfigurationActions.addInstructionMediaMap,
+    (state, action): FormConfigurationState => {
+      let key = 'pages';
+      const subFormId = action.subFormId;
+      if (subFormId) {
+        key = `${key}_${subFormId}`;
+      }
+      const pages = state[key].map((page) => {
+        if (page.position === action.pageIndex + 1) {
+          let questionInstructionMediaMap = Object.assign(
+            [],
+            page?.questionInstructionMediaMap || []
+          );
+          const index = questionInstructionMediaMap.findIndex(
+            (q) => q.questionId === action.questionId
+          );
+          console.log(index);
+          if (index !== -1) {
+            questionInstructionMediaMap[index] = {
+              questionId: action.questionId,
+              instructionsMedia: action.instructionsMedia
+            };
+          } else {
+            questionInstructionMediaMap.push({
+              questionId: action.questionId,
+              instructionsMedia: action.instructionsMedia
+            });
+          }
+          return {
+            ...page,
+            questionInstructionMediaMap
+          };
+        } else {
+          return page;
+        }
+      });
+
+      return {
+        ...state,
+        pages
       };
     }
   )

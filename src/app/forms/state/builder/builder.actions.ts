@@ -399,3 +399,13 @@ export const updateAllSectionState = createAction(
     subFormId: string;
   }>()
 );
+
+export const addInstructionMediaMap = createAction(
+  '[Builder Configuration] addInstructionMediaMap',
+  props<{
+    subFormId: string;
+    pageIndex: number;
+    questionId: string;
+    instructionsMedia: any;
+  }>()
+);

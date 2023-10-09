@@ -390,17 +390,27 @@ export class RaceDynamicFormService {
   }
 
   createAuthoredFormDetail$(formDetails) {
+    const pages = [];
+    formDetails.pages.forEach((page) => {
+      const { questionInstructionMediaMap, ...pageData } = page;
+      pages.push(pageData);
+    });
     return this.appService._postData(environment.rdfApiUrl, `forms/authored`, {
       formStatus: formDetails.formStatus,
       formDetailPublishStatus: formDetails.formDetailPublishStatus,
       formlistID: formDetails.formListId,
-      pages: JSON.stringify(formDetails.pages),
+      pages: JSON.stringify(pages),
       counter: formDetails.counter,
       version: formDetails.authoredFormDetailVersion.toString()
     });
   }
 
   updateAuthoredFormDetail$(formDetails) {
+    const pages = [];
+    formDetails.pages.forEach((page) => {
+      const { questionInstructionMediaMap, ...pageData } = page;
+      pages.push(pageData);
+    });
     return this.appService.patchData(
       environment.rdfApiUrl,
       `forms/authored/${formDetails.authoredFormDetailId}`,
@@ -408,7 +418,7 @@ export class RaceDynamicFormService {
         formStatus: formDetails.formStatus,
         formDetailPublishStatus: formDetails.formDetailPublishStatus,
         formlistID: formDetails.formListId,
-        pages: JSON.stringify(formDetails.pages),
+        pages: JSON.stringify(pages),
         pdfBuilderConfiguration: formDetails.pdfBuilderConfiguration,
         counter: formDetails.counter,
         id: formDetails.authoredFormDetailId,

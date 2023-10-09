@@ -31,6 +31,16 @@ export class FormEditViewComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.route.data.subscribe((data) => {
       if (data.form && Object.keys(data.form).length) {
+        data.form.pages.forEach((page) => {
+          let questionInstructionMediaMap = [];
+          page.questions.forEach((question) => {
+            questionInstructionMediaMap.push({
+              questionId: question.id,
+              instructionsMedia: {}
+            });
+          });
+          page.questionInstructionMediaMap = questionInstructionMediaMap;
+        });
         this.store.dispatch(
           BuilderConfigurationActions.updateFormConfiguration({
             formConfiguration: data.form

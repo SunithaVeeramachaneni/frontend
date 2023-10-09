@@ -437,11 +437,15 @@ export class OperatorRoundsService {
       hierarchy,
       subForms,
       counter,
-      pages,
       formListId,
       formDetailPublishStatus,
       formStatus
     } = formDetails;
+    const pages = [];
+    formDetails.pages.forEach((page) => {
+      const { questionInstructionMediaMap, ...pageData } = page;
+      pages.push(pageData);
+    });
     const flatHierarchy = this.assetHierarchyUtil.convertHierarchyToFlatList(
       cloneDeep(hierarchy),
       0
@@ -490,11 +494,15 @@ export class OperatorRoundsService {
       hierarchy,
       subForms,
       counter,
-      pages,
       formListId,
       formDetailPublishStatus,
       formStatus
     } = formDetails;
+    const pages = [];
+    formDetails.pages.forEach((page) => {
+      const { questionInstructionMediaMap, ...pageData } = page;
+      pages.push(pageData);
+    });
     const flatHierarchy = this.assetHierarchyUtil.convertHierarchyToFlatList(
       cloneDeep(hierarchy),
       0

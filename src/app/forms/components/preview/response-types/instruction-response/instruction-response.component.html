@@ -38,14 +38,14 @@
       [src]="image.data"
       alt="image"
       class="instruction-image-field"
-      *ngIf="image !== null"
+      *ngIf="image !== null && image.id !== null"
     />
   </ng-container>
 </div>
 
-<ng-container *ngIf="(instructionsMedia$ | async).pdf !== null">
+<ng-container *ngIf="(instructionsMedia$ | async).pdf?.data.fileInfo !== null">
   <app-instruction-pdf-preview
-    [pdf]="(instructionsMedia$ | async).pdf.data.fileInfo"
+    [pdf]="(instructionsMedia$ | async).pdf?.data.fileInfo"
   >
   </app-instruction-pdf-preview>
 </ng-container>

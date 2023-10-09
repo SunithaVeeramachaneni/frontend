@@ -215,7 +215,7 @@ export class FormConfigurationService {
       questions.map((question) => {
         return {
           questionId: question.id,
-          instructionMedia: {}
+          instructionsMedia: {}
         };
       })
     );

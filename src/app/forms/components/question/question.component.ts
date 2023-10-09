@@ -17,12 +17,22 @@ import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import {
   debounceTime,
   distinctUntilChanged,
+  map,
   pairwise,
   startWith,
+  switchMap,
   takeUntil,
   tap
 } from 'rxjs/operators';
-import { Observable, Subject, asapScheduler, timer } from 'rxjs';
+import {
+  Observable,
+  Subject,
+  asapScheduler,
+  combineLatest,
+  forkJoin,
+  of,
+  timer
+} from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 
 import { ImageUtils } from 'src/app/shared/utils/imageUtils';
@@ -230,7 +240,13 @@ export class QuestionComponent implements OnInit, OnDestroy {
   fetchUnitOfMeasurement: Observable<any>;
   instructionsMedia = {
     images: [],
-    pdf: null
+    pdf: {
+      id: null,
+      data: {
+        fileInfo: null,
+        attachment: null
+      }
+    }
   };
 
   questionForm: FormGroup = this.fb.group({
@@ -266,6 +282,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   instructionTagTextColour = {};
   formMetadata$: Observable<FormMetadata>;
   moduleName$: Observable<string>;
+  instructionMediaMap$: Observable<any>;
   uom$: Observable<UnitOfMeasurement[]>;
   embeddedFormId = '';
 
@@ -305,9 +322,12 @@ export class QuestionComponent implements OnInit, OnDestroy {
         this.embeddedFormId = event?.embeddedFormId;
       })
     );
-    this.moduleName$ = this.store
-      .select(getModuleName)
-      .pipe(tap((event) => (this.moduleName = event)));
+    this.moduleName$ = this.store.select(getModuleName).pipe(
+      tap((event) => {
+        this.moduleName = event;
+        this.setQuestionInstructionMediaMap();
+      })
+    );
 
     this.uom$ = this.store.select(getUnitOfMeasurementList).pipe(
       tap((unitOfMeasurements) => {
@@ -409,10 +429,13 @@ export class QuestionComponent implements OnInit, OnDestroy {
       '#000000';
     this.instructionTagTextColour[this.translate.instant('dangerTag')] =
       '#FFFFFF';
-
     this.store
       .select(
-        selectQuestionInstuctionsMediaMap(this.selectedNodeId, this.questionId)
+        selectQuestionInstuctionsMediaMap(
+          this.selectedNodeId,
+          this.questionId,
+          this.pageIndex
+        )
       )
       .subscribe((map) => {
         if (map && Object.keys(map?.instructionsMedia).length > 0)
@@ -420,9 +443,100 @@ export class QuestionComponent implements OnInit, OnDestroy {
         else
           this.instructionsMedia = {
             images: [null, null, null],
-            pdf: null
+            pdf: {
+              id: null,
+              data: {
+                fileInfo: null,
+                attachment: null
+              }
+            }
           };
+
+        this.moduleName === 'RDF'
+          ? this.rdfService.questionInstructionMediaMap$.next(
+              this.instructionsMedia
+            )
+          : this.operatorRoundsService.questionInstructionMediaMap$.next(
+              this.instructionsMedia
+            );
       });
+  }
+
+  setQuestionInstructionMediaMap() {
+    let instructionsMedia = {
+      images: [null, null, null],
+      pdf: {
+        id: null,
+        data: {
+          fileInfo: null,
+          attachment: null
+        }
+      }
+    };
+    if (this.question.fieldType === 'INST') {
+      const { images, pdf } = this.question.value;
+      const imageObservables = images.map((image) => {
+        const getAttachmentsById$ =
+          this.moduleName === 'RDF'
+            ? this.rdfService.getAttachmentsById$(image)
+            : this.operatorRoundsService.getAttachmentsById$(image);
+        return getAttachmentsById$.pipe(
+          map((data) => ({
+            id: image,
+            data: data?.attachment
+              ? `data:image/jpeg;base64,${data?.attachment}`
+              : null
+          }))
+        );
+      });
+      const getAttachmentsById$ =
+        this.moduleName === 'RDF'
+          ? this.rdfService.getAttachmentsById$(pdf)
+          : this.operatorRoundsService.getAttachmentsById$(pdf);
+      const pdfObservable = getAttachmentsById$.pipe(
+        map((data) => ({
+          id: pdf,
+          data: {
+            fileInfo: data?.fileInfo ? JSON.parse(data.fileInfo) : null,
+            attachment: data?.attachment
+              ? `data:application/pdf;base64,${data?.attachment}`
+              : null
+          }
+        }))
+      );
+
+      forkJoin([...imageObservables, pdfObservable])
+        .pipe(
+          switchMap((results) => {
+            // Process the results here
+            return of(results);
+          })
+        )
+        .subscribe((data) => {
+          const imageArray = [];
+          let pdf = null;
+          data.forEach((element: any) => {
+            if (typeof element.data === 'string' || element.data === null) {
+              imageArray.push(element);
+            } else {
+              pdf = element;
+            }
+          });
+          instructionsMedia = {
+            ...instructionsMedia,
+            images: imageArray,
+            pdf
+          };
+          this.store.dispatch(
+            BuilderConfigurationActions.addInstructionMediaMap({
+              subFormId: this.selectedNodeId,
+              questionId: this.questionId,
+              pageIndex: this.pageIndex,
+              instructionsMedia
+            })
+          );
+        });
+    }
   }
 
   updateQuestion() {
@@ -591,7 +705,13 @@ export class QuestionComponent implements OnInit, OnDestroy {
             colour: null
           },
           images: [null, null, null],
-          pdf: null
+          pdf: {
+            id: null,
+            data: {
+              fileInfo: null,
+              attachment: null
+            }
+          }
         };
         this.questionForm.get('value').setValue(instructionsValue);
         break;
@@ -890,14 +1010,19 @@ export class QuestionComponent implements OnInit, OnDestroy {
               fileInfo: { name: file.name, size: resizedPdfSize },
               attachment: onlybase64
             };
+            const pdfObservable =
+              this.moduleName === 'RDF'
+                ? this.rdfService.uploadAttachments$({ file: pdf })
+                : this.operatorRoundsService.uploadAttachments$({ file: pdf });
             if (resizedPdfSize <= maxSize) {
-              this.operatorRoundsService
-                .uploadAttachments$({ file: pdf })
+              pdfObservable
                 .pipe(
                   tap((response) => {
                     if (response) {
                       const responsenew =
-                        response?.data?.createRoundPlanAttachments?.id;
+                        this.moduleName === 'RDF'
+                          ? response?.data?.createFormAttachments?.id
+                          : response?.data?.createRoundPlanAttachments?.id;
                       this.instructionsMedia = {
                         ...this.instructionsMedia,
                         pdf: {
@@ -939,8 +1064,13 @@ export class QuestionComponent implements OnInit, OnDestroy {
               attachment: onlybase64
             };
             if (resizedImageSize <= maxSize) {
-              this.operatorRoundsService
-                .uploadAttachments$({ file: image })
+              const imageObservable =
+                this.moduleName === 'RDF'
+                  ? this.rdfService.uploadAttachments$({ file: image })
+                  : this.operatorRoundsService.uploadAttachments$({
+                      file: image
+                    });
+              imageObservable
                 .pipe(
                   tap((response) => {
                     if (response) {
@@ -948,7 +1078,9 @@ export class QuestionComponent implements OnInit, OnDestroy {
                         (image) => image === null
                       );
                       const responsenew =
-                        response?.data?.createRoundPlanAttachments?.id;
+                        this.moduleName === 'RDF'
+                          ? response?.data?.createFormAttachments?.id
+                          : response?.data?.createRoundPlanAttachments?.id;
                       const images = [...originalValue.images];
                       images[index] = responsenew;
                       originalValue = cloneDeep({
@@ -1074,7 +1206,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     return doc.body.textContent || '';
   }
 
-  instructionsFileDeleteHandler(index: number, data: any, type: string) {
+  instructionsFileDeleteHandler(index: number, type: string, data: any = {}) {
     let originalValue = Object.assign({}, this.questionForm.get('value').value);
     const { id: attachmentId } = data;
 
@@ -1101,11 +1233,23 @@ export class QuestionComponent implements OnInit, OnDestroy {
     } else {
       this.instructionsMedia = {
         ...this.instructionsMedia,
-        pdf: null
+        pdf: {
+          id: null,
+          data: {
+            fileInfo: null,
+            attachment: null
+          }
+        }
       };
       originalValue = cloneDeep({
         ...originalValue,
-        pdf: null
+        pdf: {
+          id: null,
+          data: {
+            fileInfo: null,
+            attachment: null
+          }
+        }
       });
     }
     this.questionForm.get('value').setValue(originalValue);

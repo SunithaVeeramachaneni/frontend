@@ -175,24 +175,20 @@
                       [image]="image.data"
                       [index]="i"
                       (indexEmitter)="
-                        instructionsFileDeleteHandler($event, image, 'image')
+                        instructionsFileDeleteHandler($event, 'image', image)
                       "
-                      *ngIf="image !== null"
+                      *ngIf="image !== null && image.id !== null"
                       class="m-r-10"
                       (click)="openPreviewDialog()"
                     ></app-instruction-image>
                   </span>
 
-                  <span *ngIf="instructionsMedia.pdf !== null">
+                  <span *ngIf="instructionsMedia.pdf.data.fileInfo !== null">
                     <app-instruction-pdf
                       [pdf]="instructionsMedia.pdf.data.fileInfo"
                       [index]="'4'"
                       (indexEmitter)="
-                        instructionsFileDeleteHandler(
-                          $event,
-                          instructionsMedia.pdf,
-                          'pdf'
-                        )
+                        instructionsFileDeleteHandler($event, 'pdf')
                       "
                     >
                     </app-instruction-pdf>
