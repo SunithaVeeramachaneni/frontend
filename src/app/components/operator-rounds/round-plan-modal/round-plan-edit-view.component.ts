@@ -80,6 +80,20 @@ export class RoundPlanEditViewComponent implements OnInit, OnDestroy {
         formConfigurationState &&
         Object.keys(formConfigurationState).length
       ) {
+        Object.keys(formConfigurationState)
+          .filter((k) => k.startsWith('pages_'))
+          .forEach((key) => {
+            formConfigurationState[key].forEach((page) => {
+              let questionInstructionMediaMap = [];
+              page.questions.forEach((question) => {
+                questionInstructionMediaMap.push({
+                  questionId: question.id,
+                  instructionsMedia: {}
+                });
+              });
+              page.questionInstructionMediaMap = questionInstructionMediaMap;
+            });
+          });
         this.store.dispatch(
           BuilderConfigurationActions.updateFormConfiguration({
             formConfiguration: formConfigurationState

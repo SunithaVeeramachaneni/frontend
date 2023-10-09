@@ -1276,7 +1276,6 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
           const index = questionInstructionMediaMap.findIndex(
             (q) => q.questionId === action.questionId
           );
-          console.log(index);
           if (index !== -1) {
             questionInstructionMediaMap[index] = {
               questionId: action.questionId,
@@ -1299,7 +1298,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
 
       return {
         ...state,
-        pages
+        [key]: pages
       };
     }
   )

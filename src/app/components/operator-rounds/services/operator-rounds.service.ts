@@ -435,16 +435,22 @@ export class OperatorRoundsService {
   createAuthoredFormDetail$(formDetails) {
     const {
       hierarchy,
-      subForms,
       counter,
       formListId,
+      pages,
       formDetailPublishStatus,
       formStatus
     } = formDetails;
-    const pages = [];
-    formDetails.pages.forEach((page) => {
-      const { questionInstructionMediaMap, ...pageData } = page;
-      pages.push(pageData);
+    let subForms = {};
+    Object.keys(formDetails.subForms).forEach((key) => {
+      const pages = formDetails.subForms[key].map((page) => {
+        const { questionInstructionMediaMap, ...pageData } = page;
+        return pageData;
+      });
+      subForms = {
+        ...subForms,
+        [key]: pages
+      };
     });
     const flatHierarchy = this.assetHierarchyUtil.convertHierarchyToFlatList(
       cloneDeep(hierarchy),
@@ -492,17 +498,24 @@ export class OperatorRoundsService {
   updateAuthoredFormDetail$(formDetails) {
     const {
       hierarchy,
-      subForms,
       counter,
+      pages,
       formListId,
       formDetailPublishStatus,
       formStatus
     } = formDetails;
-    const pages = [];
-    formDetails.pages.forEach((page) => {
-      const { questionInstructionMediaMap, ...pageData } = page;
-      pages.push(pageData);
+    let subForms = {};
+    Object.keys(formDetails.subForms).forEach((key) => {
+      const pages = formDetails.subForms[key].map((page) => {
+        const { questionInstructionMediaMap, ...pageData } = page;
+        return pageData;
+      });
+      subForms = {
+        ...subForms,
+        [key]: pages
+      };
     });
+
     const flatHierarchy = this.assetHierarchyUtil.convertHierarchyToFlatList(
       cloneDeep(hierarchy),
       0
