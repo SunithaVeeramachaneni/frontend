@@ -6,11 +6,10 @@ import {
   Input,
   ChangeDetectionStrategy,
   EventEmitter,
-  Output,
-  OnChanges,
-  SimpleChanges
+  Output
 } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { colorsByStatus } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-multi-line-chart',
@@ -18,15 +17,12 @@ import { DatePipe } from '@angular/common';
   styleUrls: ['./multi-line-chart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MultiLineChartComponent implements OnInit, OnChanges {
+export class MultiLineChartComponent implements OnInit {
   @Input() hasCustomColorScheme;
   @Output() chartClickEvent: EventEmitter<any> = new EventEmitter<any>();
 
   @Input() set chartConfig(chartConfig) {
     this.chartConfigurations = chartConfig;
-    if (this.hasCustomColorScheme && chartConfig.customColors) {
-      this.colorsByStatus = chartConfig.customColors;
-    }
     if (chartConfig.renderChart) {
       this.prepareChartDetails();
     }
@@ -42,7 +38,6 @@ export class MultiLineChartComponent implements OnInit, OnChanges {
     return this._chartData;
   }
 
-  colorsByStatus: any = {};
   chartOptions: any = {
     title: {
       text: ''
@@ -144,12 +139,19 @@ export class MultiLineChartComponent implements OnInit, OnChanges {
   preparedChartData: any;
   datasetField: any;
   countField: any;
+  colors = ['#FF1800', '#CADC42', '#FF8941', '#49C178', '#9E9E9E'];
   private chartConfigurations: any;
   private _chartData: any;
 
   constructor(private datePipe: DatePipe) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if (this.hasCustomColorScheme) {
+      this.chartOptions.series.itemStyle = {
+        color: (param: any) => colorsByStatus[param.name]
+      };
+    }
+  }
 
   onChartClickHandler(event) {
     this.chartClickEvent.emit(event);
@@ -170,7 +172,11 @@ export class MultiLineChartComponent implements OnInit, OnChanges {
       this.chartTitle = title;
       this.chartType = type;
       this.chartOptions.legend.show = showLegends;
-      this.chartOptions.xAxis.name = this.chartConfig.datasetFieldName;
+      this.chartConfig.datasetFields.filter((dataset) => {
+        if (dataset.name === this.chartConfig.datasetFieldName) {
+          this.chartOptions.xAxis.name = dataset.displayName;
+        }
+      });
       this.chartOptions.yAxis.name = this.chartConfig.countFieldName;
 
       this.countField = countFields.find((countField) => countField.visible);
@@ -249,24 +255,12 @@ export class MultiLineChartComponent implements OnInit, OnChanges {
       newOptions.series = [...newOptions.series];
     }
 
-    this.chartOptions = newOptions;
-
-    this.chartOptions.series.forEach((series) => {
+    newOptions.series.forEach((series, index) => {
       series.itemStyle = {
-        color: (param: any) =>
-          this.colorsByStatus[param.name]
-            ? this.colorsByStatus[param.name]
-            : '#c8c8c8'
+        color: this.colors[index]
       };
     });
-  };
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (!changes.firstChange && changes.chartConfig) {
-      const currValue = changes.chartConfig.currentValue;
-      if (currValue.customColors) {
-        this.colorsByStatus = currValue.customColors;
-      }
-    }
-  }
+    this.chartOptions = newOptions;
+  };
 }

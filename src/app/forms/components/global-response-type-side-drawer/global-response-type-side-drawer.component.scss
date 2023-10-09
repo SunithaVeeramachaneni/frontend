@@ -31,12 +31,14 @@
   ::ng-deep .mat-card {
     box-shadow: none !important;
   }
+  .close-btn {
+    cursor: pointer;
+  }
 
   .mcq-heading {
     font-size: 1.2rem;
-    border-bottom: 1px solid $border-color;
     padding: 15px;
-    font-weight: 600;
+    font-weight: 500;
     padding-left: 0;
   }
 
@@ -51,7 +53,7 @@
   }
 
   .response-list {
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid $border-color;
     height: 45px;
     position: relative;
   }
@@ -94,7 +96,7 @@
     float: right;
     padding: 0;
     min-width: 40px;
-    margin-top: 3px;
+    margin-top: 10px;
     color: $delete-response-icon-grey;
 
     .delete-btn-icon {
@@ -152,14 +154,31 @@
   background: none;
   font-size: 130%;
   font-weight: 500;
-  color: #000000;
+  color: $black;
 }
 
 .global_response_description_input {
   border: none;
   background: none;
-  font-size: 90%;
-  font-weight: 200;
-  color: #000000;
+  font-size: 100%;
+  color: $black;
   height: 24px;
+}
+
+.multiple-header {
+  height: 16px;
+  padding: 12px;
+  border-radius: 4px;
+}
+
+.done-filters-btn {
+  border: 0;
+  float: right;
+  background-color: $white;
+  color: $blue-main;
+}
+
+.input-container {
+  height: calc(100vh - 150px);
+  overflow-y: auto;
 }

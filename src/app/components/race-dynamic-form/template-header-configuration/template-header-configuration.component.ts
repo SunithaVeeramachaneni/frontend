@@ -61,6 +61,7 @@ import { FormUpdateProgressService } from 'src/app/forms/services/form-update-pr
 import { ToastService } from 'src/app/shared/toast';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
 import { MatChipInputEvent } from '@angular/material/chips';
+import { ResponseSetService } from '../../master-configurations/response-set/services/response-set.service';
 @Component({
   selector: 'app-template-header-configuration',
   templateUrl: './template-header-configuration.component.html',
@@ -100,6 +101,11 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
   originalTags: string[] = [];
   formMetadataSubscription: Subscription;
   hasFormChanges = false;
+  additionalDetailMap = {};
+  isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  ghostLoading = new Array(3).fill(0).map((v, i) => i);
+  additionalDetailsMasterData = {};
+  currentValuesArray = [];
   private destroy$ = new Subject();
 
   constructor(
@@ -112,7 +118,8 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
     private cdrf: ChangeDetectorRef,
     private formProgressService: FormUpdateProgressService,
     private toastService: ToastService,
-    private operatorRoundService: OperatorRoundsService
+    private operatorRoundService: OperatorRoundsService,
+    private responseSetSerivce: ResponseSetService
   ) {}
 
   ngOnInit(): void {
@@ -158,6 +165,46 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
       additionalDetails: this.fb.array([])
     });
     this.retrieveDetails();
+    this.additionalDetails = this.headerDataForm.get(
+      'additionalDetails'
+    ) as FormArray;
+    this.responseSetSerivce
+      .fetchResponseSetByModuleName$()
+      .subscribe((response) => {
+        if (Object.keys(response).length) {
+          let responseSets = response.RDF_TEMPLATES;
+          responseSets.forEach((responseSet) => {
+            let values = [];
+
+            JSON.parse(responseSet.values).forEach((val) => {
+              values.push(val.title);
+            });
+            let selectedValues = [];
+            if (Object.keys(this.templateData.formMetadata).length) {
+              const obj = this.templateData.formMetadata.additionalDetails.find(
+                (object) => object.FIELDLABEL === responseSet.name
+              );
+              selectedValues = obj ? obj.DEFAULTVALUE.split(',') : [];
+            }
+            this.additionalDetailMap[responseSet.name] = selectedValues;
+            const objFormGroup = this.fb.group({
+              label: [responseSet.name],
+              value: [values],
+              selectedValue: [selectedValues]
+            });
+            this.additionalDetails.push(objFormGroup);
+            this.additionalDetailsMasterData[responseSet.name] = {
+              value: values,
+              selectedValue: selectedValues
+            };
+          });
+          this.headerDataForm.setControl(
+            'additionalDetails',
+            this.additionalDetails
+          );
+          this.isLoading$.next(false);
+        }
+      });
 
     this.formMetadataSubscription = this.store
       .select(getFormMetadata)
@@ -316,12 +363,32 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
     const additionalinfoArray = this.headerDataForm.get(
       'additionalDetails'
     ) as FormArray;
-    const updatedAdditionalDetails = additionalinfoArray.value.map(
-      (additionalinfo) => ({
-        FIELDLABEL: additionalinfo.label,
-        DEFAULTVALUE: additionalinfo.value,
-        UIFIELDTYPE: 'LF'
-      })
+    let updatedAdditionalDetails = additionalinfoArray.value.map(
+      (additionalinfo) => {
+        this.additionalDetailMap[additionalinfo.label] =
+          this.additionalDetailMap[additionalinfo.label].filter(
+            (data) => !!data
+          );
+        if (this.additionalDetailMap[additionalinfo.label].length) {
+          return {
+            FIELDLABEL: additionalinfo.label,
+            DEFAULTVALUE: this.additionalDetailMap[additionalinfo.label].reduce(
+              (accumulatedLable, current) => {
+                return accumulatedLable === ''
+                  ? current
+                  : accumulatedLable + ',' + current;
+              },
+              ''
+            ),
+            UIFIELDTYPE: 'LF'
+          };
+        } else {
+          return {};
+        }
+      }
+    );
+    updatedAdditionalDetails = updatedAdditionalDetails.filter(
+      (data) => Object.keys(data).length !== 0
     );
     const newTags = [];
     this.tags.forEach((selectedTag) => {
@@ -717,5 +784,60 @@ export class TemplateHeaderConfigurationComponent implements OnInit, OnDestroy {
     this.formMetadataSubscription.unsubscribe();
     this.destroy$.next();
     this.destroy$.complete();
+  }
+  onSelectionChange(event, label, index) {
+    let selectedArray = [...this.additionalDetailMap[label]];
+    const eventValue = event.value;
+    const valuesArray =
+      this.getAdditionalDetailList()[index].get('value').value;
+    valuesArray.forEach((val) => {
+      if (eventValue.includes(val)) {
+        selectedArray.push(val);
+      } else {
+        selectedArray = selectedArray.filter((value) => value !== val);
+      }
+    });
+    selectedArray = selectedArray.filter(
+      (value, arrIndex, self) => value && self.indexOf(value) === arrIndex
+    );
+    this.additionalDetailMap[label] = selectedArray;
+    this.additionalDetailsMasterData[label].selectedValue = selectedArray;
+    this.getAdditionalDetailList()
+      [index].get('selectedValue')
+      .setValue(selectedArray);
+  }
+  compareValues(value1: any, value2: any) {
+    return value1 && value2 && value1.toLowerCase() === value2.toLowerCase();
+  }
+  closeSelect(matSelect) {
+    matSelect.close();
+  }
+  valueSearch(event, label, index) {
+    const searchValue = event.target.value;
+    const parentValues = this.additionalDetailsMasterData[label].value;
+    if (searchValue) {
+      this.currentValuesArray = parentValues.filter(
+        (value) => value.toLowerCase().indexOf(searchValue.toLowerCase()) === 0
+      );
+    } else {
+      this.currentValuesArray = [...parentValues];
+    }
+    this.getAdditionalDetailList()
+      [index].get('value')
+      .setValue(this.currentValuesArray);
+  }
+  matSelectClosed(index, label, searchInput: HTMLInputElement) {
+    const parentValueData = this.additionalDetailsMasterData[label].value;
+    searchInput.value = '';
+    if (
+      !isEqual(
+        this.getAdditionalDetailList()[index].get('value').value,
+        parentValueData
+      )
+    ) {
+      this.getAdditionalDetailList()
+        [index].get('value')
+        .setValue(parentValueData);
+    }
   }
 }

@@ -242,19 +242,12 @@ export class RaceDynamicFormService {
       searchTerm: queryParams?.searchKey,
       limit: queryParams?.limit.toString(),
       isArchived: String(isArchived),
-      formStatus: filterData?.status,
-      modifiedBy: filterData?.modifiedBy,
-      createdBy: filterData?.createdBy,
-      lastModifiedOn: filterData?.lastModifiedOn,
-      plantId: filterData?.plant,
-      formType: filterData?.formType,
-      publishedBy: filterData.publishedBy
+      ...filterData
     };
     const params = new URLSearchParams({
       next: queryParams.next,
       ...omitBy(rawParams, isEmpty)
     });
-
     return this.appService
       ._getResp(environment.rdfApiUrl, 'forms?' + params.toString(), {
         displayToast: true,
@@ -766,10 +759,6 @@ export class RaceDynamicFormService {
       .pipe(map((res) => this.formatGetRdfFormsResponse(res)));
   };
 
-  getFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
-    return this.appService._getLocal('', '/assets/json/rdf-filter.json', info);
-  }
-
   getInspectionFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
     return this.appService._getLocal(
       '',
@@ -903,19 +892,25 @@ export class RaceDynamicFormService {
         map((response) => (response === null ? inspectionDetail : response))
       );
 
-  fetchTemplates$ = (filter) =>
-    this.appService
-      ._getResp(
-        environment.rdfApiUrl,
-        'templates',
-        { displayToast: true, failureResponse: {} },
-        {
-          ...filter,
-          limit: 0,
-          skip: 0
-        }
-      )
+  fetchTemplates$ = (filter) => {
+    const rawParams = {
+      searchTerm: filter?.searchTerm,
+      limit: String(0),
+      skip: String(0),
+      isArchived: String(filter.isArchived),
+      isDeleted: String(filter.isDeleted),
+      ...filter
+    };
+    const params = new URLSearchParams({
+      ...omitBy(rawParams, isEmpty)
+    });
+    return this.appService
+      ._getResp(environment.rdfApiUrl, 'templates?' + params.toString(), {
+        displayToast: true,
+        failureResponse: {}
+      })
       .pipe(map((data) => this.formatGetRdfFormsResponse({ items: data })));
+  };
 
   fetchAllTemplateListNames$ = () =>
     this.appService._getResp(environment.rdfApiUrl, 'templates/name');
@@ -1128,7 +1123,32 @@ export class RaceDynamicFormService {
       requestId
     );
   };
+  getColumnIdFromName(columnName: string): string {
+    return columnName.toLowerCase().replace(/ /g, '_');
+  }
 
+  extractAdditionalDetailsToColumns(form: any) {
+    const additionalDetails = JSON.parse(form?.additionalDetails);
+    if(additionalDetails && Array.isArray(additionalDetails)) {
+      additionalDetails.forEach((detail) => {
+        form[this.getColumnIdFromName(detail?.FIELDLABEL)] = detail?.DEFAULTVALUE;
+      });
+    }
+
+    return form;
+  }
+  handleEmptyColumns(row, columns: Column[]) {
+    columns?.forEach((column) => {
+      if (
+        column.id !== 'publishedDate' &&
+        (!row[column.id] ||
+          (column.id === 'tags' && row[column.id].length === 0))
+      ) {
+        row[column.id] = '_ _';
+      }
+    });
+    return row;
+  }
   updateConfigOptionsFromColumns(columns: Partial<Column>[]) {
     const allColumns: Column[] = columns.map((column, index) => {
       const defaultColumn: Column = {

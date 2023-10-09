@@ -6,9 +6,7 @@ import {
   Input,
   ChangeDetectionStrategy,
   EventEmitter,
-  Output,
-  SimpleChanges,
-  OnChanges
+  Output
 } from '@angular/core';
 
 import { DatePipe } from '@angular/common';
@@ -19,15 +17,11 @@ import { DatePipe } from '@angular/common';
   styleUrls: ['./vertical-stacked-chart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class VerticalStackedChartComponent implements OnInit, OnChanges {
-  @Input() hasCustomColorScheme;
+export class VerticalStackedChartComponent implements OnInit {
   @Output() chartClickEvent: EventEmitter<any> = new EventEmitter<any>();
 
   @Input() set chartConfig(chartConfig) {
     this.chartConfigurations = chartConfig;
-    if (this.hasCustomColorScheme && chartConfig.customColors) {
-      this.colorsByStatus = chartConfig.customColors;
-    }
     if (chartConfig.renderChart) {
       this.prepareChartDetails();
     }
@@ -43,7 +37,6 @@ export class VerticalStackedChartComponent implements OnInit, OnChanges {
     return this._chartData;
   }
 
-  colorsByStatus: any = {};
   chartOptions: any = {
     title: {
       text: ''
@@ -145,6 +138,7 @@ export class VerticalStackedChartComponent implements OnInit, OnChanges {
   preparedChartData: any;
   datasetField: any;
   countField: any;
+  colors = ['#FF1800', '#CADC42', '#FF8941', '#49C178', '#9E9E9E'];
   private chartConfigurations: any;
   private _chartData: any;
 
@@ -171,13 +165,16 @@ export class VerticalStackedChartComponent implements OnInit, OnChanges {
       this.chartTitle = title;
       this.chartType = type;
       this.chartOptions.legend.show = showLegends;
-      this.chartOptions.xAxis.name = this.chartConfig.datasetFieldName;
+      this.chartConfig.datasetFields.filter((dataset) => {
+        if (dataset.name === this.chartConfig.datasetFieldName) {
+          this.chartOptions.xAxis.name = dataset.displayName;
+        }
+      });
       this.chartOptions.yAxis.name = this.chartConfig.countFieldName;
       this.countField = countFields.find((countField) => countField.visible);
       this.datasetField = datasetFields.find(
         (datasetField) => datasetField.visible
       );
-
       this.prepareChartData(showValues);
     }
   };
@@ -249,23 +246,12 @@ export class VerticalStackedChartComponent implements OnInit, OnChanges {
       newOptions.series = [...newOptions.series];
     }
 
-    this.chartOptions = newOptions;
-    this.chartOptions.series.forEach((series) => {
+    newOptions.series.forEach((series, index) => {
       series.itemStyle = {
-        color: (param: any) =>
-          this.colorsByStatus[param.name]
-            ? this.colorsByStatus[param.name]
-            : '#c8c8c8'
+        color: this.colors[index]
       };
     });
-  };
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (!changes.firstChange && changes.chartConfig) {
-      const currValue = changes.chartConfig.currentValue;
-      if (currValue.customColors) {
-        this.colorsByStatus = currValue.customColors;
-      }
-    }
-  }
+    this.chartOptions = newOptions;
+  };
 }

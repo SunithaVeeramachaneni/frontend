@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   OnDestroy,
   OnInit
@@ -33,12 +34,13 @@ import {
 import {
   formConfigurationStatus,
   permissions as perms,
-  graphQLDefaultLimit
+  graphQLDefaultLimit,
+  graphQLDefaultFilterLimit
 } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { Router } from '@angular/router';
-import { omit } from 'lodash-es';
+import { cloneDeep, omit } from 'lodash-es';
 import { generateCopyNumber, generateCopyRegex } from '../utils/utils';
 import { slideInOut } from 'src/app/animations';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
@@ -49,6 +51,8 @@ import { UsersService } from '../../user-management/services/users.service';
 import { downloadFile } from 'src/app/shared/utils/fileUtils';
 import { UploadResponseModalComponent } from '../../../shared/components/upload-response-modal/upload-response-modal.component';
 import { FormModalComponent } from '../form-modal/form-modal.component';
+import { metadataFlatModuleNames } from '../../../app.constants';
+import { ColumnConfigurationService } from 'src/app/forms/services/column-configuration.service';
 
 @Component({
   selector: 'app-form-list',
@@ -59,108 +63,11 @@ import { FormModalComponent } from '../form-modal/form-modal.component';
 })
 export class FormListComponent implements OnInit, OnDestroy {
   public menuState = 'out';
+  public columnConfigMenuState = 'out';
   submissionSlider = 'out';
   isPopoverOpen = false;
-  status: any[] = ['Draft', 'Published'];
   filterJson: any[] = [];
-  partialColumns: Partial<Column>[] = [
-    {
-      id: 'name',
-      displayName: 'Name',
-      type: 'string',
-      controlType: 'string',
-      visible: true,
-      titleStyle: {
-        'font-weight': '500',
-        'font-size': '100%',
-        color: '#000000',
-        'overflow-wrap': 'anywhere'
-      },
-      hasSubtitle: true,
-      subtitleColumn: 'description',
-      subtitleStyle: {
-        'font-size': '80%',
-        color: 'darkgray',
-        display: 'block',
-        'white-space': 'wrap',
-        'max-width': '350px',
-        'overflow-wrap': 'anywhere'
-      },
-      hasPreTextImage: true
-    },
-    {
-      id: 'formStatus',
-      displayName: 'Status',
-      type: 'string',
-      controlType: 'string',
-      sortable: true,
-      visible: true,
-      groupable: true,
-      titleStyle: {
-        textTransform: 'capitalize',
-        fontWeight: 500,
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        position: 'relative',
-        top: '10px',
-        width: '80px',
-        height: '24px',
-        background: '#FEF3C7',
-        color: '#92400E',
-        borderRadius: '12px'
-      },
-      hasConditionalStyles: true
-    },
-    {
-      id: 'plant',
-      displayName: 'Plant',
-      type: 'string',
-      controlType: 'string',
-      sortable: true,
-      visible: true,
-      groupable: true
-    },
-    {
-      id: 'formType',
-      displayName: 'Form Type',
-      type: 'string',
-      controlType: 'string',
-      sortable: true,
-      visible: true,
-      groupable: true
-    },
-    {
-      id: 'lastPublishedBy',
-      displayName: 'Last Published By',
-      type: 'number',
-      controlType: 'string',
-      sortable: true,
-      visible: true,
-      groupable: true
-    },
-    {
-      id: 'publishedDate',
-      displayName: 'Last Published',
-      type: 'timeAgo',
-      controlType: 'string',
-      sortable: true,
-      reverseSort: true,
-      visible: true,
-      groupable: true
-    },
-    {
-      id: 'author',
-      displayName: 'Created By',
-      type: 'number',
-      controlType: 'string',
-      isMultiValued: true,
-      sortable: true,
-      visible: true,
-      titleStyle: { color: '' }
-    }
-  ];
+
   columns: Column[] = [];
 
   configOptions: ConfigOptions = {
@@ -190,11 +97,11 @@ export class FormListComponent implements OnInit, OnDestroy {
     }
   };
   filter: any = {
-    status: '',
-    authoredBy: '',
-    lastModifiedOn: '',
-    publishedBy: '',
-    plant: ''
+    formStatus: '',
+    author: '',
+    lastPublishedBy: '',
+    plant: '',
+    tags: ''
   };
   dataSource: MatTableDataSource<any>;
   forms$: Observable<any>;
@@ -205,6 +112,7 @@ export class FormListComponent implements OnInit, OnDestroy {
     });
   skip = 0;
   limit = graphQLDefaultLimit;
+  tags = new Set();
   searchForm: FormControl;
   addCopyFormCount = false;
   formsListCount$: Observable<number>;
@@ -218,7 +126,10 @@ export class FormListComponent implements OnInit, OnDestroy {
   selectedForm: GetFormList = null;
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  isLoadingColumns$: Observable<boolean> =
+    this.columnConfigService.isLoadingColumns$;
   formsList$: Observable<any>;
+  allForms = [];
   lastPublishedBy = [];
   lastPublishedOn = [];
   lastModifiedBy = [];
@@ -226,26 +137,28 @@ export class FormListComponent implements OnInit, OnDestroy {
   plantsIdNameMap = {};
   plants = [];
   createdBy = [];
+  additionalDetailFilterData = {};
   userInfo$: Observable<UserInfo>;
   triggerCountUpdate = false;
+  rdfModuleName = metadataFlatModuleNames.RACE_DYNAMIC_FORMS;
   quickResponses = [];
+  placeholder = '_ _';
   readonly perms = perms;
   private onDestroy$ = new Subject();
 
   constructor(
     private readonly toast: ToastService,
     private readonly raceDynamicFormService: RaceDynamicFormService,
+    private columnConfigService: ColumnConfigurationService,
     private router: Router,
     private dialog: MatDialog,
     private loginService: LoginService,
     private usersService: UsersService,
-    private plantService: PlantService
+    private plantService: PlantService,
+    private cdrf: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
-    this.columns = this.raceDynamicFormService.updateConfigOptionsFromColumns(
-      this.partialColumns
-    );
     this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
     this.raceDynamicFormService.fetchForms$.next({} as TableEvent);
     this.searchForm = new FormControl('');
@@ -260,9 +173,7 @@ export class FormListComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe(() => this.isLoading$.next(true));
-    this.getFilter();
 
-    this.populateFilter();
     this.getDisplayedForms();
     this.raceDynamicFormService
       .getDataSetsByType$('quickResponses')
@@ -270,7 +181,6 @@ export class FormListComponent implements OnInit, OnDestroy {
         this.quickResponses = responses;
       });
 
-    this.configOptions.allColumns = this.columns;
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
     );
@@ -286,6 +196,43 @@ export class FormListComponent implements OnInit, OnDestroy {
         return count;
       })
     );
+    this.columnConfigService.moduleColumnConfiguration$
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe((res) => {
+        if (res && res[this.rdfModuleName]) {
+          this.columns = res[this.rdfModuleName];
+          this.configOptions.allColumns = this.columns;
+          this.allForms?.forEach((item) => {
+            item =
+              this.raceDynamicFormService.extractAdditionalDetailsToColumns(
+                item
+              );
+            item = this.raceDynamicFormService.handleEmptyColumns(
+              item,
+              this.columns
+            );
+          });
+          this.dataSource = new MatTableDataSource(this.allForms);
+          let reloadData = false;
+          Object.values(this.filter).forEach((value) => {
+            if (value) {
+              reloadData = true;
+            }
+          });
+          if (reloadData) this.resetFilter();
+          this.cdrf.detectChanges();
+        }
+      });
+    this.columnConfigService.moduleFilterConfiguration$
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe((res) => {
+        if (res && res[this.rdfModuleName]) {
+          this.filterJson = res[this.rdfModuleName];
+          this.setFilters();
+          this.cdrf.detectChanges();
+        }
+      });
+    this.populateFilter();
   }
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
@@ -337,7 +284,7 @@ export class FormListComponent implements OnInit, OnDestroy {
               }
               if (
                 authoredFormDetail &&
-                Object.keys(authoredFormDetail).length
+                Object.keys(authoredFormDetail)?.length
               ) {
                 this.raceDynamicFormService
                   .createAuthoredFormDetail$({
@@ -367,7 +314,10 @@ export class FormListComponent implements OnInit, OnDestroy {
                   ...newRecord,
                   name: createdForm.newName,
                   preTextImage: (form as any)?.preTextImage,
-                  oldId: form.id
+                  oldId: form.id,
+                  plant: Object.keys(this.plantsIdNameMap).find(
+                    (key) => this.plantsIdNameMap[key] === newRecord.plantId
+                  )
                 } as any
               });
             });
@@ -443,20 +393,38 @@ export class FormListComponent implements OnInit, OnDestroy {
             initial.data = initial.data.concat(scrollData);
           }
         }
-
-        this.skip = initial.data.length;
-        this.dataSource = new MatTableDataSource(initial.data);
+        this.allForms = initial.data;
+        this.allForms?.forEach((item) => {
+          item.tags = item.tags?.toString();
+          item =
+            this.raceDynamicFormService.extractAdditionalDetailsToColumns(item);
+          item = this.raceDynamicFormService.handleEmptyColumns(
+            item,
+            this.columns
+          );
+        });
+        this.dataSource = new MatTableDataSource(this.allForms);
+        this.skip = this.allForms.length;
         return initial;
       })
     );
   }
 
   getForms() {
+    const columnConfigFilter = cloneDeep(this.filter);
+    delete columnConfigFilter.plant;
+    delete columnConfigFilter.tags;
+    delete columnConfigFilter.lastPublishedBy;
+    delete columnConfigFilter.author;
+    delete columnConfigFilter.formStatus;
+
+    const hasColumnConfigFilter = Object.keys(columnConfigFilter)?.length || 0;
+
     return this.raceDynamicFormService
       .getFormsList$(
         {
           next: this.nextToken,
-          limit: this.limit,
+          limit: hasColumnConfigFilter ? graphQLDefaultFilterLimit : this.limit,
           searchKey: this.searchForm.value,
           fetchType: this.fetchType
         },
@@ -517,7 +485,10 @@ export class FormListComponent implements OnInit, OnDestroy {
   rowLevelActionHandler = ({ data, action }): void => {
     switch (action) {
       case 'copy':
-        this.onCopyFormMetaData(data);
+        this.onCopyFormMetaData({
+          ...data,
+          tags: data.tags !== this.placeholder ? data.tags.split(',') : []
+        });
         break;
 
       case 'edit':
@@ -568,6 +539,9 @@ export class FormListComponent implements OnInit, OnDestroy {
     this.selectedForm = null;
     this.menuState = 'out';
   }
+  onCloseColumnConfig() {
+    this.columnConfigMenuState = 'out';
+  }
   formDetailActionHandler() {
     this.router.navigate([`/forms/edit/${this.selectedForm.id}`]);
   }
@@ -576,49 +550,43 @@ export class FormListComponent implements OnInit, OnDestroy {
     combineLatest([
       this.usersService.getUsersInfo$(),
       this.plantService.fetchAllPlants$(),
-      this.raceDynamicFormService.fetchAllFormsList$()
-    ]).subscribe(([usersList, { items: plantsList }, formsList]) => {
-      this.createdBy = usersList
-        .map((user) => `${user.firstName} ${user.lastName}`)
-        .sort();
-      this.lastModifiedBy = usersList.map(
-        (user) => `${user.firstName} ${user.lastName}`
-      );
-      this.plants = plantsList
-        .map((plant) => {
-          this.plantsIdNameMap[`${plant.plantId} - ${plant.name}`] = plant.id;
-          return `${plant.plantId} - ${plant.name}`;
-        })
-        .sort();
+      this.raceDynamicFormService.fetchAllFormsList$(),
+      this.raceDynamicFormService.getDataSetsByType$('formHeaderTags'),
+      this.columnConfigService.moduleAdditionalDetailsFiltersData$
+    ]).subscribe(
+      ([
+        usersList,
+        { items: plantsList },
+        formsList,
+        allTags,
+        additionDetailsData
+      ]) => {
+        this.createdBy = usersList
+          .map((user) => `${user.firstName} ${user.lastName}`)
+          .sort();
+        this.lastModifiedBy = usersList.map(
+          (user) => `${user.firstName} ${user.lastName}`
+        );
+        this.plants = plantsList
+          .map((plant) => {
+            this.plantsIdNameMap[`${plant.plantId} - ${plant.name}`] = plant.id;
+            return `${plant.plantId} - ${plant.name}`;
+          })
+          .sort();
 
-      this.lastPublishedBy = formsList.rows
-        .map((item) => item.lastPublishedBy)
-        .filter((value, index, self) => self.indexOf(value) === index && value)
-        .sort();
-
-      for (const item of this.filterJson) {
-        if (item.column === 'status') {
-          item.items = this.status;
-        } else if (item.column === 'publishedBy') {
-          item.items = this.lastPublishedBy;
-        } else if (item.column === 'plant') {
-          item.items = this.plants;
-        } else if (item.column === 'createdBy') {
-          item.items = this.createdBy;
-        } else if (item.column === 'formType') {
-          item.items = [
-            formConfigurationStatus.embedded,
-            formConfigurationStatus.standalone
-          ];
-        }
+        this.lastPublishedBy = formsList.rows
+          .map((item) => item.lastPublishedBy)
+          .filter(
+            (value, index, self) => self.indexOf(value) === index && value
+          )
+          .sort();
+        allTags[0]?.values?.forEach((tag) => {
+          this.tags.add(tag);
+        });
+        this.additionalDetailFilterData = additionDetailsData;
+        this.setFilters();
       }
-    });
-  }
-
-  getFilter() {
-    this.raceDynamicFormService.getFilter().subscribe((res) => {
-      this.filterJson = res;
-    });
+    );
   }
 
   applyFilter(data: any) {
@@ -630,6 +598,7 @@ export class FormListComponent implements OnInit, OnDestroy {
       }
     }
     this.nextToken = '';
+    this.isLoading$.next(true);
     this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
   }
 
@@ -649,14 +618,38 @@ export class FormListComponent implements OnInit, OnDestroy {
     });
     dialogRef.afterClosed().subscribe((result) => {
       const formData = result.data === undefined ? {} : result;
-      if (Object.keys(formData.data).length !== 0) {
+      if (Object.keys(formData.data)?.length !== 0) {
         this.isLoading$.next(true);
         this.raceDynamicFormService.fetchForms$.next({ data: 'search' });
         this.formsListCountUpdate$.next(1);
       }
     });
   }
-
+  setFilters() {
+    for (const item of this.filterJson) {
+      switch (item.column) {
+        case 'lastPublishedBy':
+          item.items = this.lastPublishedBy;
+          break;
+        case 'plant':
+          item.items = this.plants;
+          break;
+        case 'author':
+          item.items = this.createdBy;
+          break;
+        case 'tags':
+          item.items = this.tags;
+          break;
+        default:
+          if (!item?.items?.length) {
+            item.items = this.additionalDetailFilterData[item.column]
+              ? this.additionalDetailFilterData[item.column]
+              : [];
+          }
+          break;
+      }
+    }
+  }
   resetFilter() {
     this.filter = {
       status: '',
@@ -666,6 +659,7 @@ export class FormListComponent implements OnInit, OnDestroy {
       publishedBy: ''
     };
     this.nextToken = '';
+    this.isLoading$.next(true);
     this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
   }
 
@@ -739,16 +733,14 @@ export class FormListComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy(): void {
-    this.onDestroy$.next();
-    this.onDestroy$.complete();
-  }
-
   private showFormDetail(row: GetFormList): void {
     this.selectedForm = row;
     this.menuState = 'in';
   }
 
+  showColumnConfig(): void {
+    this.columnConfigMenuState = 'in';
+  }
   private generateCopyFormName(form: GetFormList, rows: GetFormList[]) {
     if (rows?.length > 0) {
       const listCopyNumbers: number[] = [];
@@ -766,5 +758,9 @@ export class FormListComponent implements OnInit, OnDestroy {
       };
     }
     return null;
+  }
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 }

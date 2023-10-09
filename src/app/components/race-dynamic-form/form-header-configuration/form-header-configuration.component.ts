@@ -55,6 +55,7 @@ import {
   formConfigurationStatus,
   raceDynamicForms
 } from 'src/app/app.constants';
+import { ResponseSetService } from '../../master-configurations/response-set/services/response-set.service';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
@@ -109,7 +110,8 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   deletedLabel = '';
   isDisabled = false;
   isOpen = new FormControl(false);
-
+  additionalDetailMap = {};
+  additionalDetailMapPreSelect = {};
   plantFilterInput = '';
   readonly formConfigurationStatus = formConfigurationStatus;
   additionalDetails: FormArray;
@@ -121,6 +123,12 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   base64result: string;
   pdfFiles: any = { mediaType: [] };
   hasFormChanges = false;
+  allValue: any;
+  isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  ghostLoading = new Array(3).fill(0).map((v, i) => i);
+  filteredValues = [];
+  currentValuesArray = [];
+  additionalDetailsMasterData = {};
   private destroy$ = new Subject();
 
   constructor(
@@ -135,7 +143,8 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     private operatorRoundService: OperatorRoundsService,
     public dialog: MatDialog,
     private imageCompress: NgxImageCompressService,
-    private router: Router
+    private router: Router,
+    private responseSetService: ResponseSetService
   ) {}
 
   maxLengthWithoutBulletPoints(maxLength: number): ValidatorFn {
@@ -256,6 +265,43 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
+    this.additionalDetails = this.headerDataForm.get(
+      'additionalDetails'
+    ) as FormArray;
+    this.responseSetService
+      .fetchResponseSetByModuleName$()
+      .subscribe((data) => {
+        if (Object.keys(data).length) {
+          const resposneSets = data.RDF;
+          resposneSets.forEach((responseSet) => {
+            const values = [];
+
+            JSON.parse(responseSet.values).forEach((val) => {
+              values.push(val.title);
+            });
+            let selectedValues = [];
+            if (this.data.formData) {
+              const obj = this.data.formData.additionalDetails.find(
+                (object) => object.FIELDLABEL === responseSet.name
+              );
+              selectedValues = obj ? obj.DEFAULTVALUE.split(',') : [];
+            }
+            this.additionalDetailMap[responseSet.name] = selectedValues;
+            const objFormGroup = this.fb.group({
+              label: [responseSet.name],
+              value: [values],
+              selectedValue: [selectedValues]
+            });
+            this.additionalDetails.push(objFormGroup);
+            this.additionalDetailsMasterData[responseSet.name] = {
+              value: values,
+              selectedValue: selectedValues
+            };
+          });
+          this.cdrf.detectChanges();
+          this.isLoading$.next(false);
+        }
+      });
   }
 
   handleEditorFocus(focus: boolean) {
@@ -285,12 +331,12 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
         { emitEvent: false }
       );
 
-      const additionalDetailsArray = this.data.formData.additionalDetails;
-
       const tagsValue = this.data.formData.tags;
-
-      this.updateAdditionalDetailsArray(additionalDetailsArray);
       this.patchTags(tagsValue);
+      this.data.formData.additionalDetails.forEach((additionalDetail) => {
+        this.additionalDetailMapPreSelect[additionalDetail.FIELDLABEL] =
+          additionalDetail.DEFAULTVALUE.split(',');
+      });
 
       this.headerDataForm.markAsDirty();
     }
@@ -305,7 +351,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
       const formGroups = values?.map((value) =>
         this.fb.group({
           label: [value.FIELDLABEL],
-          value: [value.DEFAULTVALUE]
+          value: [value.DEFAULTVALUE.split(',')]
         })
       );
       const formArray = this.fb.array(formGroups);
@@ -397,22 +443,42 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     const additionalinfoArray = this.headerDataForm.get(
       'additionalDetails'
     ) as FormArray;
-    const updatedAdditionalDetails = additionalinfoArray.value.map(
-      (additionalinfo) => ({
-        FIELDLABEL: additionalinfo.label,
-        DEFAULTVALUE: additionalinfo.value,
-        UIFIELDTYPE: 'LF'
-      })
+    let updatedAdditionalDetails = additionalinfoArray.value.map(
+      (additionalinfo) => {
+        this.additionalDetailMap[additionalinfo.label] =
+          this.additionalDetailMap[additionalinfo.label].filter(
+            (data) => !!data
+          );
+        if (this.additionalDetailMap[additionalinfo.label].length) {
+          return {
+            FIELDLABEL: additionalinfo.label,
+            DEFAULTVALUE: this.additionalDetailMap[additionalinfo.label].reduce(
+              (accumulatedLable, current) => {
+                return accumulatedLable === ''
+                  ? current
+                  : accumulatedLable + ',' + current;
+              },
+              ''
+            ),
+            UIFIELDTYPE: 'LF'
+          };
+        } else {
+          return {};
+        }
+      }
+    );
+    updatedAdditionalDetails = updatedAdditionalDetails.filter(
+      (data) => Object.keys(data).length !== 0
     );
 
     const newTags = [];
 
     this.headerDataForm
       .get('instructions.attachments')
-      .setValue(this.filteredMediaTypeIds.mediaIds);
+      .setValue(this.filteredMediaTypeIds.mediaIds, { emitEvent: false });
     this.headerDataForm
       .get('instructions.pdfDocs')
-      .setValue(this.filteredMediaPdfTypeIds);
+      .setValue(this.filteredMediaPdfTypeIds, { emitEvent: false });
     this.tags.forEach((selectedTag) => {
       if (this.originalTags.indexOf(selectedTag) < 0) {
         newTags.push(selectedTag);
@@ -743,70 +809,6 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     return !touched || this.errors[controlName] === null ? false : true;
   }
 
-  addAdditionalDetails() {
-    this.additionalDetails = this.headerDataForm.get(
-      'additionalDetails'
-    ) as FormArray;
-    this.additionalDetails.push(
-      this.fb.group({
-        label: [
-          '',
-          [
-            Validators.maxLength(25),
-            WhiteSpaceValidator.trimWhiteSpace,
-            WhiteSpaceValidator.whiteSpace
-          ]
-        ],
-        value: [
-          '',
-          [
-            Validators.maxLength(40),
-            WhiteSpaceValidator.trimWhiteSpace,
-            WhiteSpaceValidator.whiteSpace
-          ]
-        ]
-      })
-    );
-
-    if (this.additionalDetails) {
-      merge(
-        ...this.additionalDetails.controls.map(
-          (control: AbstractControl, index: number) =>
-            control.valueChanges.pipe(
-              map((value) => ({ rowIndex: index, value }))
-            )
-        )
-      ).subscribe((changes) => {
-        this.changedValues = changes.value;
-        if (this.changedValues.label) {
-          this.filteredLabels$ = of(
-            Object.keys(this.labels).filter(
-              (label) =>
-                label
-                  .toLowerCase()
-                  .indexOf(this.changedValues.label.toLowerCase()) === 0
-            )
-          );
-        } else {
-          this.filteredLabels$ = of([]);
-        }
-
-        if (this.changedValues.value && this.labels[this.changedValues.label]) {
-          this.filteredValues$ = of(
-            this.labels[this.changedValues.label]?.filter(
-              (value) =>
-                value
-                  .toLowerCase()
-                  .indexOf(this.changedValues.value.toLowerCase()) === 0
-            )
-          );
-        } else {
-          this.filteredValues$ = of([]);
-        }
-      });
-    }
-  }
-
   deleteAdditionalDetails(index: number) {
     const add = this.headerDataForm.get('additionalDetails') as FormArray;
     add.removeAt(index);
@@ -1004,5 +1006,61 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   }
   clearAttachmentUpload() {
     this.formFileUpload.nativeElement.value = '';
+  }
+
+  closeSelect(matSelect) {
+    matSelect.close();
+  }
+  onSelectionChange(event, label, index) {
+    let selectedArray = [...this.additionalDetailMap[label]];
+    const eventValue = event.value;
+    const valuesArray =
+      this.getAdditionalDetailList()[index].get('value').value;
+    valuesArray.forEach((val) => {
+      if (eventValue.includes(val)) {
+        selectedArray.push(val);
+      } else {
+        selectedArray = selectedArray.filter((value) => value !== val);
+      }
+    });
+    selectedArray = selectedArray.filter(
+      (value, arrIndex, self) => value && self.indexOf(value) === arrIndex
+    );
+    this.additionalDetailMap[label] = selectedArray;
+    this.additionalDetailsMasterData[label].selectedValue = selectedArray;
+    this.getAdditionalDetailList()
+      [index].get('selectedValue')
+      .setValue(selectedArray, { emitEvent: false });
+  }
+  compareValues(value1: any, value2: any) {
+    return value1 && value2 && value1.toLowerCase() === value2.toLowerCase();
+  }
+  valueSearch(event, label, index) {
+    const searchValue = event.target.value;
+    const parentValues = this.additionalDetailsMasterData[label].value;
+    if (searchValue) {
+      this.currentValuesArray = parentValues.filter(
+        (value) => value.toLowerCase().indexOf(searchValue.toLowerCase()) === 0
+      );
+    } else {
+      this.currentValuesArray = [...parentValues];
+    }
+    this.getAdditionalDetailList()
+      [index].get('value')
+      .setValue(this.currentValuesArray);
+  }
+  matSelectClosed(index, label, searchInput: HTMLInputElement) {
+    const parentValueData = this.additionalDetailsMasterData[label].value;
+    searchInput.value = '';
+    if (
+      !isEqual(
+        this.getAdditionalDetailList()[index].get('value').value,
+        parentValueData
+      )
+    ) {
+      this.getAdditionalDetailList()
+        [index].get('value')
+        .setValue(parentValueData);
+    }
   }
 }

@@ -372,6 +372,7 @@ export const defaultCategoryName = 'Unassigned';
 export const defaultLanguage = 'en';
 export const defaultLimit = 25;
 export const graphQLDefaultLimit = 100;
+export const graphQLDefaultFilterLimit = 500;
 export const graphQLPlanLimit = 200;
 export const graphQLDefaultMaxLimit = 10000;
 export const graphQLRoundsOrInspectionsLimit = 10000;
@@ -834,4 +835,32 @@ export const colorsByStatus = {
   Completed: '#CDDC39',
   Incomplete: '#FF3B30',
   Created: '#F6685E'
+};
+
+export const metadataModuleNames = [
+  {
+    moduleId: 'RDF',
+    moduleName: 'Forms'
+  },
+  {
+    moduleId: 'RDF_TEMPLATES',
+    moduleName: 'Form Templates'
+  }
+];
+
+export const metadataFlatModuleNames = {
+  RACE_DYNAMIC_FORMS: 'RDF',
+  RDF_TEMPLATES: 'RDF_TEMPLATES',
+  OPERATOR_ROUNDS: 'OR'
+};
+
+export const additionalDetailColumnConfig = {
+  id: '',
+  displayName: '',
+  type: 'string',
+  controlType: 'string',
+  sortable: true,
+  reverseSort: true,
+  visible: true,
+  groupable: true
 };

@@ -38,8 +38,8 @@ import { slideInOut } from 'src/app/animations';
 
 import {
   graphQLDefaultLimit,
-  dateTimeFormat2,
-  permissions as perms
+  permissions as perms,
+  dateTimeFormat4
 } from 'src/app/app.constants';
 import {
   AssigneeDetails,
@@ -424,10 +424,10 @@ export class IssuesListComponent implements OnInit, OnDestroy {
       return localToTimezoneDate(
         date,
         this.plantTimezoneMap[issue.plantId],
-        dateTimeFormat2
+        dateTimeFormat4
       );
     }
-    return format(new Date(date), dateTimeFormat2);
+    return format(new Date(date), dateTimeFormat4);
   }
 
   getIssuesList() {
@@ -533,7 +533,7 @@ export class IssuesListComponent implements OnInit, OnDestroy {
                 : this.placeHolder,
               priority,
               dueDate: dueDate
-                ? format(new Date(dueDate), 'dd MMM, yyyy hh:mm a')
+                ? format(new Date(dueDate), 'MMM dd, yyyy hh:mm a')
                 : '',
               assignedToDisplay: assignedToDisplay || '',
               assignedTo: assignedTo || ''
