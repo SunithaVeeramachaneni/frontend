@@ -427,8 +427,10 @@ export const selectQuestionInstuctionsMediaMap = (
     if (subFormId) {
       key = `${key}_${subFormId}`;
     }
-    const questionInstuctionsMediaMap = state[key]
+    const questionInstructionMediaMap = state[key]
       .find((page) => page.position === pageIndex + 1)
-      .questionInstructionMediaMap.find((map) => map.questionId === questionId);
-    return questionInstuctionsMediaMap;
+      ?.questionInstructionMediaMap.find(
+        (map) => map.questionId === questionId
+      );
+    return questionInstructionMediaMap;
   });
