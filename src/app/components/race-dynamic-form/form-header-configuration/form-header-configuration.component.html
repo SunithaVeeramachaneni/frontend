@@ -290,212 +290,164 @@
             id="additionalDetailsHeading"
             class="additional-details-text"
           ></p>
-          <button
-            *ngIf="
-              headerDataForm.get('additionalDetails')['controls'].length < 5
-            "
-            class="add-button"
-            (click)="addAdditionalDetails()"
-            id="additionalDetailsBtn"
-          >
-            {{ 'add' | translate }}
-          </button>
         </div>
-        <div
-          class="label-value-text"
-          *ngIf="
-            headerDataForm.get('additionalDetails')['controls']?.length > 0
-          "
-        >
-          <div class="width-45 label" id="labelHeading">
-            {{ 'label' | translate }}
-          </div>
-          <div class="width-45 m-l-20 value" id="valueHeading">
-            {{ 'value' | translate }}
+        <div class="m-t-15" *ngIf="isLoading$ | async">
+          <div class="ghost-loading">
+            <div *ngFor="let number of ghostLoading">
+              <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+              </ngx-shimmer-loading>
+            </div>
           </div>
         </div>
-        <div formArrayName="additionalDetails">
+        <div *ngIf="(isLoading$ | async) === false">
           <div
-            *ngFor="
-              let additionalDetails of getAdditionalDetailList();
-              let i = index
+            class="label-value-text"
+            *ngIf="
+              headerDataForm.get('additionalDetails')['controls']?.length > 0
             "
           >
-            <div [formGroupName]="i" class="dis-flex">
-              <div class="width-45">
-                <mat-form-field
-                  appearance="outline"
-                  class="m-l-5 symbol m-b-10 width-100"
-                >
-                  <input
-                    id="labelValueText"
-                    #labelInput
-                    matInput
-                    type="text"
-                    formControlName="label"
-                    class="example-input"
-                    [matAutocomplete]="autolabel"
-                    (click)="labelOptionClick(i)"
-                  />
-                  <mat-autocomplete #autolabel="matAutocomplete">
-                    <mat-option
-                      id="labelOption"
-                      *ngFor="let label of filteredLabels$ | async"
-                      [value]="label"
-                    >
-                      {{ label }}
-                      <button
-                        id="removeBtn"
-                        mat-button
-                        class="remove-btn"
-                        (click)="removeLabel(label, i)"
-                      >
-                        <span>{{ 'removeBtn' | translate }}</span>
-                      </button>
-                    </mat-option>
-                    <mat-option
-                      *ngIf="
-                        headerDataForm.get('additionalDetails')['controls'][i]
-                          .value.label
+            <div class="width-45 label" id="labelHeading">
+              {{ 'label' | translate }}
+            </div>
+            <div class="width-45 m-l-20 value" id="valueHeading">
+              {{ 'value' | translate }}
+            </div>
+          </div>
+          <div formArrayName="additionalDetails">
+            <div
+              *ngFor="
+                let additionalDetails of getAdditionalDetailList();
+                let i = index
+              "
+            >
+              <div [formGroupName]="i" class="dis-flex">
+                <div class="width-45">
+                  <p class="formtype-formfield">
+                    {{ additionalDetails.value.label }}
+                  </p>
+                </div>
+
+                <div class="width-45">
+                  <mat-form-field
+                    appearance="outline"
+                    class="m-l-20 symbol m-b-10 width-100 value-field"
+                  >
+                    <mat-label id="filterStatusLabel">Select</mat-label>
+                    <mat-select
+                      id="additional-detail-select"
+                      #matSelect
+                      multiple
+                      formControlName="selectedValue"
+                      name="showStatus"
+                      placeholder="Select"
+                      (closed)="
+                        matSelectClosed(
+                          i,
+                          additionalDetails.value.label,
+                          searchInput
+                        )
+                      "
+                      [compareWith]="compareValues"
+                      (selectionChange)="
+                        onSelectionChange(
+                          $event,
+                          additionalDetails.value.label,
+                          i
+                        )
                       "
                     >
-                      <ng-container>
-                        <button
-                          id="labelBtn"
-                          mat-button
-                          color="primary"
-                          class="p-0 add-new-button"
-                          (click)="storeDetails(i)"
-                          [disabled]="
-                            headerDataForm.get('additionalDetails')['controls'][
-                              i
-                            ].invalid ||
-                            headerDataForm.get('additionalDetails')['controls'][
-                              i
-                            ].pristine
+                      <div class="scroll-headers">
+                        <div class="multiple-header">
+                          <span id="doneLabel" translate>select</span>
+                          <button
+                            id="filterDoneBtn"
+                            class="done-filters-btn"
+                            (click)="closeSelect(matSelect)"
+                          >
+                            {{ 'done' | translate }}
+                          </button>
+                        </div>
+                        <div class="custom-form-field-gray-color">
+                          <mat-form-field
+                            appearance="outline"
+                            class="search-form-field"
+                          >
+                            <mat-icon
+                              id="ValueSearchIcon"
+                              matPrefix
+                              class="searchIcon"
+                              >search</mat-icon
+                            >
+                            <input
+                              id="valueSearchText"
+                              #searchInput
+                              matInput
+                              type="text"
+                              [placeholder]="
+                                'additionalDetailsSearch' | translate
+                              "
+                              autocomplete="off"
+                              (keyup)="
+                                valueSearch(
+                                  $event,
+                                  additionalDetails.value.label,
+                                  i
+                                )
+                              "
+                              (keydown)="$event.stopPropagation()"
+                            />
+                          </mat-form-field>
+                        </div>
+                      </div>
+                      <mat-select-trigger>
+                        {{
+                          additionalDetails?.value.value.length > 0 &&
+                          additionalDetailMap[additionalDetails.value?.label]
+                            .length !==
+                            additionalDetails['value']['value'].length
+                            ? additionalDetails.value.selectedValue[0]
+                            : ''
+                        }}
+                        <span
+                          *ngIf="
+                            additionalDetailMap[additionalDetails.value.label]
+                              .length > 1 &&
+                            additionalDetailMap[additionalDetails.value.label]
+                              .length !==
+                              additionalDetails['value']['value'].length
                           "
                         >
-                          <mat-icon class="m-r-5" id="addLabelIcon"
-                            >add</mat-icon
-                          >
-
-                          <span id="LabelText"
-                            >{{ 'addNew' | translate }} ({{
-                              headerDataForm.get('additionalDetails')[
-                                'controls'
-                              ][i].value.label
-                            }})</span
-                          >
-                        </button>
-                      </ng-container>
-                    </mat-option>
-                  </mat-autocomplete>
-
-                  <mat-error
-                    id="labelError"
-                    *ngIf="processValidationErrorsAdditionalDetails(i, 'label')"
-                    class="m-t-5 error-fields"
-                  >
-                    {{
-                      errors?.label?.name
-                        | translate
-                          : {
-                              name: 'label' | translate,
-                              length: errors?.label?.length
-                            }
-                    }}
-                  </mat-error>
-                </mat-form-field>
-              </div>
-
-              <div class="width-45">
-                <mat-form-field
-                  appearance="outline"
-                  class="m-l-20 symbol m-b-10 width-100 value-field"
-                >
-                  <input
-                    id="valueText"
-                    #valueInput
-                    matInput
-                    type="text"
-                    formControlName="value"
-                    [matAutocomplete]="autoValue"
-                    class="example-input"
-                    (click)="valueOptionClick(i)"
-                  />
-                  <mat-autocomplete #autoValue="matAutocomplete">
-                    <mat-option
-                      id="valueOptions"
-                      *ngFor="let value of filteredValues$ | async"
-                      [value]="value"
-                    >
-                      {{ value }}
-                      <button
-                        id="removeValueBtn"
-                        mat-button
-                        class="remove-btn"
-                        (click)="removeValue(value, i)"
-                      >
-                        <span>{{ 'removeBtn' | translate }}</span>
-                      </button>
-                    </mat-option>
-
-                    <mat-option
-                      *ngIf="
-                        headerDataForm.get('additionalDetails')['controls'][i][
-                          'value'
-                        ].value
-                      "
-                    >
-                      <button
-                        id="addValueBtn"
-                        mat-button
-                        color="primary"
-                        class="p-0 add-new-button"
-                        (click)="storeValueDetails(i)"
-                        [disabled]="
-                          headerDataForm.get('additionalDetails')['controls'][i]
-                            .invalid ||
-                          headerDataForm.get('additionalDetails')['controls'][i]
-                            .pristine
-                        "
-                      >
-                        <mat-icon id="addValueIcon" class="m-r-5">add</mat-icon>
-
-                        <span id="addValue"
-                          >{{ 'addNew' | translate }} ({{
-                            headerDataForm.get('additionalDetails')['controls'][
-                              i
-                            ]['value'].value
-                          }})</span
+                          (+{{
+                            additionalDetailMap[additionalDetails.value.label]
+                              .length - 1
+                          }}
+                          {{
+                            additionalDetailMap[additionalDetails.value.label]
+                              .length === 2
+                              ? 'other'
+                              : 'others'
+                          }})
+                        </span>
+                        <span
+                          *ngIf="
+                            additionalDetailMap[additionalDetails.value.label]
+                              .length ===
+                            additionalDetails['value']['value']?.length
+                          "
+                          >All
+                        </span>
+                      </mat-select-trigger>
+                      <div class="scrollable-area">
+                        <mat-option
+                          *ngFor="let addValue of additionalDetails.value.value"
+                          [value]="addValue"
                         >
-                      </button>
-                    </mat-option>
-                  </mat-autocomplete>
-
-                  <mat-error
-                    id="valueError"
-                    *ngIf="processValidationErrorsAdditionalDetails(i, 'value')"
-                    class="m-t-5 error-fields"
-                  >
-                    {{
-                      errors?.value?.name
-                        | translate
-                          : {
-                              name: 'value' | translate,
-                              length: errors?.value?.length
-                            }
-                    }}
-                  </mat-error>
-                </mat-form-field>
-              </div>
-              <div class="width-10 cancel-icon">
-                <svg-icon
-                  id="closeIcon"
-                  icon="icon-closeIcon"
-                  class="close-icon cursor-pointer"
-                  (click)="deleteAdditionalDetails(i)"
-                ></svg-icon>
+                          {{ addValue }}
+                        </mat-option>
+                      </div>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
               </div>
             </div>
           </div>

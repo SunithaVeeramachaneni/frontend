@@ -360,11 +360,13 @@ export class QuestionComponent implements OnInit, OnDestroy {
             ) {
               this.isINSTFieldChanged = true;
             } else {
-              if (
+              // Commented as part of SA-647. Refcount implementations needs to be fixed
+
+              /*if (
                 currValue?.type === 'globalResponse' ||
                 prevValue?.type === 'globalResponse'
               )
-                this.handleGlobalResponseRefCount(prevValue, currValue);
+                this.handleGlobalResponseRefCount(prevValue, currValue); */
 
               if (!isEqual(prev.rangeMetadata, curr.rangeMetadata))
                 this.rangeDisplayText = '';
@@ -566,11 +568,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
           pdf: null
         };
         this.questionForm.get('value').setValue(instructionsValue);
-        if (this.questionForm.get('name').value) {
-          this.questionForm
-            .get('name')
-            .setValue('<p>' + this.questionForm.get('name').value + '</p>');
-        }
         break;
       default:
       // do nothing
@@ -650,6 +647,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
       name: responseSet?.name,
       description: responseSet?.description,
       isMultiColumn: responseSet?.isMultiColumn,
+      moduleName: responseSet?.moduleName,
       refCount: responseSet?.refCount + (actionType === 'deselected' ? -1 : 1),
       values: JSON.stringify(responseSet?.value),
       createdBy: responseSet?.createdBy,

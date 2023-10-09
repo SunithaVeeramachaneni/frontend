@@ -4,8 +4,9 @@
 >
   <ng-container
     *ngIf="
+      _isOpen &&
       currentRouteUrl.split('/')[1] ===
-      routingUrls.raceDynamicForms.url.split('/')[1]
+        routingUrls.raceDynamicForms.url.split('/')[1]
     "
   >
     <div class="total-progress-container">

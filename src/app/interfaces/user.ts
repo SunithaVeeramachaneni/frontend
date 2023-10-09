@@ -12,6 +12,9 @@ export interface UserProfile {
   profileImage: string;
   profileImageFileName?: string;
 }
+export interface UserPreferences {
+  columnConfigurations?: string;
+}
 
 export interface UserDetails {
   id: number;
@@ -37,6 +40,7 @@ export interface UserDetails {
   plantId: string;
   displayRoles?: string;
   displayUsergroup?: string;
+  columnConfigurations?: any;
 }
 
 export interface UserInfo extends UserDetails {

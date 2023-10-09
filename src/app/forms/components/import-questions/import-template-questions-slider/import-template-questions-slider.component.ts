@@ -29,6 +29,7 @@ import { AddPageOrSelectExistingPageModalComponent } from '../add-page-or-select
 import { FormControl } from '@angular/forms';
 import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
 import { ToastService } from 'src/app/shared/toast/toast.service';
+import { QuickResponseActions } from 'src/app/forms/state/actions';
 
 @Component({
   selector: 'app-import-template-questions-slider',
@@ -45,6 +46,7 @@ export class ImportTemplateQuestionsSliderComponent
   @Input() isEmbeddedForm;
   @Input() currentFormData;
   @Input() allTemplates;
+  @Input() selectedTemplateId;
 
   @Output() cancelSliderEvent: EventEmitter<boolean> = new EventEmitter();
   @Output() backEvent: EventEmitter<boolean> = new EventEmitter();
@@ -64,6 +66,9 @@ export class ImportTemplateQuestionsSliderComponent
   getFormTemplateUsageSubscription: Subscription;
   updateFormTemplateUsageByFormIdSubscription: Subscription;
   updateformTemplateListSuscription: Subscription;
+  quickResponses: any[] = [];
+  currentFormQuickResponses: any[] = [];
+  formId: any;
   private onDestroy$ = new Subject();
 
   constructor(
@@ -75,6 +80,17 @@ export class ImportTemplateQuestionsSliderComponent
   ) {}
 
   ngOnInit(): void {
+    this.formId = this.currentFormData?.formMetadata?.id;
+    this.raceDynamicFormService
+      .getDataSetsByType$('quickResponses')
+      .subscribe((responses) => {
+        this.quickResponses = responses.filter(
+          (response) => response?.formId === this.selectedTemplateId
+        );
+        this.currentFormQuickResponses = responses.filter(
+          (response) => response?.formId === this.formId
+        );
+      });
     this.searchSections.valueChanges
       .pipe(
         debounceTime(500),
@@ -369,6 +385,31 @@ export class ImportTemplateQuestionsSliderComponent
             sectionCounters: res.sectionCounters
           });
         });
+      this.quickResponses = this.quickResponses
+        .map((response) => {
+          if (!this.checkQuickResponseAlreadyPresent(response)) {
+            response.formId = this.formId;
+            delete response.id;
+            return response;
+          }
+        })
+        .filter((response) => response);
+      if (this.quickResponses?.length) {
+        this.raceDynamicFormService
+          .createDataSetMultiple$(this.quickResponses, {
+            displayToast: true,
+            failureResponse: []
+          })
+          .subscribe((res) => {
+            if (Object.keys(res).length > 0) {
+              this.store.dispatch(
+                QuickResponseActions.addFormSpecificQuickResponses({
+                  formSpecificResponses: res
+                })
+              );
+            }
+          });
+      }
       this.cancelSliderEvent.emit(false);
       this.toast.show({
         text: 'Questions Imported successfully!',
@@ -401,5 +442,12 @@ export class ImportTemplateQuestionsSliderComponent
     }
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  checkQuickResponseAlreadyPresent(response) {
+    return this.currentFormQuickResponses.some(
+      (quickResponse) =>
+        JSON.stringify(quickResponse.values) === JSON.stringify(response.values)
+    );
   }
 }

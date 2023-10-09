@@ -573,6 +573,7 @@
           <mat-form-field appearance="outline">
             <mat-select
               formControlName="priority"
+              [disabled]="data?.type === 'issue'"
               (selectionChange)="
                 updateIssueOrAction({ field: 'priority', value: $event.value })
               "

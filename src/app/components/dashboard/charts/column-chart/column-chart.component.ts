@@ -170,7 +170,11 @@ export class ColumnChartComponent implements OnInit, OnChanges {
       newOptions.series.label.show = showValues;
       newOptions.legend.show = showLegends;
       newOptions.xAxis.name = this.chartConfig.countFieldName;
-      newOptions.yAxis.name = this.chartConfig.datasetFieldName;
+      this.chartConfig.datasetFields.filter((dataset) => {
+        if (dataset.name === this.chartConfig.datasetFieldName) {
+          newOptions.yAxis.name = dataset.displayName;
+        }
+      });
       newOptions.series.name = this.chartConfig.countFieldName;
       this.countField = countFields.find((countField) => countField.visible);
       this.datasetField = datasetFields.find(

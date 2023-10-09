@@ -48,7 +48,7 @@ export class RoundPlanModalComponent implements OnInit, OnDestroy {
   }
 
   goBack(): void {
-    this.router.navigate(['/operator-rounds/round-plans']);
+    this.router.navigate(['/operator-rounds']);
     this.dialogRef.close(this.roundData.formMetadata);
   }
 
