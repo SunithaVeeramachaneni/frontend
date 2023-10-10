@@ -65,11 +65,11 @@
               </mat-form-field>
             </div>
           </div>
-          <div *ngIf="reports$ | async as reports">
             <div
               class="p-l-5 p-r-5"
-              *ngIf="(isLoading$ | async) === false; else loadingReports"
+              *ngIf="reports$ | async as reports; else loadingReports"
             >
+            <ng-container *ngIf="(isLoading$ | async) === false">
               <cwp-dynamictable
                 [dataSource]="dataSource"
                 [configOptions]="configOptions"
@@ -77,8 +77,8 @@
                 (rowLevelActionHandler)="rowLevelActionHandler($event)"
                 (cellClickActionHandler)="cellClickActionHandler($event)"
               ></cwp-dynamictable>
+            </ng-container>
             </div>
-        </div>
         </div>
       </ng-container>
     </div>
