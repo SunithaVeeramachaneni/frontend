@@ -1162,13 +1162,7 @@ export class ScheduleConfigurationComponent
       this.scheduleByDates = [
         ...this.scheduleByDates,
         {
-          date: new Date(
-            localToTimezoneDate(
-              new Date(date),
-              this.plantTimezoneMap[this.selectedDetails?.plantId],
-              ''
-            )
-          ),
+          date,
           scheduled: false
         }
       ];
@@ -1558,7 +1552,9 @@ export class ScheduleConfigurationComponent
         .patchValue({ value, displayValue });
     }
     this.schedulerConfigForm.markAsDirty();
-    this.menuTrigger.closeMenu();
+    if (this.menuTrigger) {
+      this.menuTrigger.closeMenu();
+    }
   }
 
   processValidationErrors(controlName: string): boolean {
