@@ -47,6 +47,7 @@ export class RaceDynamicFormService {
   attachmentsMapping$ = new BehaviorSubject<any>({});
   pdfMapping$ = new BehaviorSubject<any>({});
   redirectToFormsList$ = new BehaviorSubject<boolean>(false);
+  questionInstructionMediaMap$ = new BehaviorSubject<any>({});
   embeddedFormId;
 
   constructor(
@@ -382,17 +383,27 @@ export class RaceDynamicFormService {
   }
 
   createAuthoredFormDetail$(formDetails) {
+    const pages = [];
+    formDetails.pages.forEach((page) => {
+      const { questionInstructionMediaMap, ...pageData } = page;
+      pages.push(pageData);
+    });
     return this.appService._postData(environment.rdfApiUrl, `forms/authored`, {
       formStatus: formDetails.formStatus,
       formDetailPublishStatus: formDetails.formDetailPublishStatus,
       formlistID: formDetails.formListId,
-      pages: JSON.stringify(formDetails.pages),
+      pages: JSON.stringify(pages),
       counter: formDetails.counter,
       version: formDetails.authoredFormDetailVersion.toString()
     });
   }
 
   updateAuthoredFormDetail$(formDetails) {
+    const pages = [];
+    formDetails.pages.forEach((page) => {
+      const { questionInstructionMediaMap, ...pageData } = page;
+      pages.push(pageData);
+    });
     return this.appService.patchData(
       environment.rdfApiUrl,
       `forms/authored/${formDetails.authoredFormDetailId}`,
@@ -400,7 +411,7 @@ export class RaceDynamicFormService {
         formStatus: formDetails.formStatus,
         formDetailPublishStatus: formDetails.formDetailPublishStatus,
         formlistID: formDetails.formListId,
-        pages: JSON.stringify(formDetails.pages),
+        pages: JSON.stringify(pages),
         pdfBuilderConfiguration: formDetails.pdfBuilderConfiguration,
         counter: formDetails.counter,
         id: formDetails.authoredFormDetailId,
@@ -1118,9 +1129,10 @@ export class RaceDynamicFormService {
 
   extractAdditionalDetailsToColumns(form: any) {
     const additionalDetails = JSON.parse(form?.additionalDetails);
-    if(additionalDetails && Array.isArray(additionalDetails)) {
+    if (additionalDetails && Array.isArray(additionalDetails)) {
       additionalDetails.forEach((detail) => {
-        form[this.getColumnIdFromName(detail?.FIELDLABEL)] = detail?.DEFAULTVALUE;
+        form[this.getColumnIdFromName(detail?.FIELDLABEL)] =
+          detail?.DEFAULTVALUE;
       });
     }
 

@@ -48,6 +48,7 @@ import {
 } from 'src/app/forms/state/actions';
 import {
   DEFAULT_PDF_BUILDER_CONFIG,
+  fileUploadSizeToastMessage,
   formConfigurationStatus
 } from 'src/app/app.constants';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
@@ -623,7 +624,7 @@ export class RoundPlanHeaderConfigurationComponent
             } else {
               this.toastService.show({
                 type: 'warning',
-                text: 'File size should not exceed 390KB'
+                text: fileUploadSizeToastMessage
               });
             }
           });
@@ -663,7 +664,7 @@ export class RoundPlanHeaderConfigurationComponent
             } else {
               this.toastService.show({
                 type: 'warning',
-                text: 'File size should not exceed 390KB'
+                text: fileUploadSizeToastMessage
               });
             }
           });

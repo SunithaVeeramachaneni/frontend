@@ -283,6 +283,7 @@ export const updateQuestion = createAction(
     formDetailPublishStatus: string;
     formSaveStatus: string;
     subFormId: string;
+    instructionsMedia: any;
   }>()
 );
 
@@ -396,5 +397,15 @@ export const updateAllSectionState = createAction(
   props<{
     isCollapse: boolean;
     subFormId: string;
+  }>()
+);
+
+export const addInstructionMediaMap = createAction(
+  '[Builder Configuration] addInstructionMediaMap',
+  props<{
+    subFormId: string;
+    pageIndex: number;
+    questionId: string;
+    instructionsMedia: any;
   }>()
 );
