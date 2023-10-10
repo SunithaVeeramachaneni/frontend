@@ -138,7 +138,8 @@ export class ImportQuestionsSliderComponent implements OnInit {
           questionsCount,
           this.sectionIndexes,
           this.questionCounter,
-          this.importSectionQuestions
+          this.importSectionQuestions,
+          []
         );
       } else if (data.selectedPageOption === 'existing') {
         this.formConfigurationService.addSections(

@@ -396,7 +396,8 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
             4,
             this.sectionIndexes,
             this.formConf.counter.value,
-            [{ section, questions }]
+            [{ section, questions }],
+            []
           );
         }
       })

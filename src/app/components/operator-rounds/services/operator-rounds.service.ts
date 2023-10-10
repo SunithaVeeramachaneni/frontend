@@ -51,6 +51,7 @@ export class OperatorRoundsService {
   private isRevisedSubject = new BehaviorSubject<boolean>(false);
   private scheduleErrorSubject = new BehaviorSubject<string>('');
 
+  questionInstructionMediaMap$ = new BehaviorSubject<any>({});
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   attachmentsMapping$ = new BehaviorSubject<any>({});
@@ -434,13 +435,23 @@ export class OperatorRoundsService {
   createAuthoredFormDetail$(formDetails) {
     const {
       hierarchy,
-      subForms,
       counter,
-      pages,
       formListId,
+      pages,
       formDetailPublishStatus,
       formStatus
     } = formDetails;
+    let subForms = {};
+    Object.keys(formDetails.subForms).forEach((key) => {
+      const pages = formDetails.subForms[key].map((page) => {
+        const { questionInstructionMediaMap, ...pageData } = page;
+        return pageData;
+      });
+      subForms = {
+        ...subForms,
+        [key]: pages
+      };
+    });
     const flatHierarchy = this.assetHierarchyUtil.convertHierarchyToFlatList(
       cloneDeep(hierarchy),
       0
@@ -487,13 +498,24 @@ export class OperatorRoundsService {
   updateAuthoredFormDetail$(formDetails) {
     const {
       hierarchy,
-      subForms,
       counter,
       pages,
       formListId,
       formDetailPublishStatus,
       formStatus
     } = formDetails;
+    let subForms = {};
+    Object.keys(formDetails.subForms).forEach((key) => {
+      const pages = formDetails.subForms[key].map((page) => {
+        const { questionInstructionMediaMap, ...pageData } = page;
+        return pageData;
+      });
+      subForms = {
+        ...subForms,
+        [key]: pages
+      };
+    });
+
     const flatHierarchy = this.assetHierarchyUtil.convertHierarchyToFlatList(
       cloneDeep(hierarchy),
       0
