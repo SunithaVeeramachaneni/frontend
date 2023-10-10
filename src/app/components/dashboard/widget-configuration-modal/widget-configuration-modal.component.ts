@@ -286,8 +286,7 @@ export class WidgetConfigurationModalComponent implements OnInit {
     this.configOptions =
       this.reportConfigService.updateConfigOptionsFromReportConfiguration(
         this.reportConfigurationForTable,
-        this.configOptions,
-        false
+        this.configOptions
       );
     this.chartVarient = this.selectedReport.groupBy?.length
       ? `${type}${indexAxis ? `_${indexAxis}` : ``}`
