@@ -1129,9 +1129,10 @@ export class RaceDynamicFormService {
 
   extractAdditionalDetailsToColumns(form: any) {
     const additionalDetails = JSON.parse(form?.additionalDetails);
-    if(additionalDetails && Array.isArray(additionalDetails)) {
+    if (additionalDetails && Array.isArray(additionalDetails)) {
       additionalDetails.forEach((detail) => {
-        form[this.getColumnIdFromName(detail?.FIELDLABEL)] = detail?.DEFAULTVALUE;
+        form[this.getColumnIdFromName(detail?.FIELDLABEL)] =
+          detail?.DEFAULTVALUE;
       });
     }
 

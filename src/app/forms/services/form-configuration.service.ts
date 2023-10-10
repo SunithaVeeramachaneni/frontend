@@ -5,6 +5,7 @@ import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
 import {
   NumberRangeMetadata,
   Question,
+  QuestionInstructionMediaMap,
   Section,
   SectionQuestions
 } from 'src/app/interfaces';
@@ -46,7 +47,7 @@ export class FormConfigurationService {
     pageWiseSectionIndexes: any,
     questionCounter: number,
     sectionQuestionsList: SectionQuestions[] = [],
-    questionInstructionMediaMap: any[]
+    questionInstructionMediaMap: QuestionInstructionMediaMap[]
   ) {
     const { counter, ...page } = this.getPageObject(
       pageIndex,
@@ -200,7 +201,7 @@ export class FormConfigurationService {
     pageWiseSectionIndexes: any,
     questionCounter: number,
     sectionQuestionsList: SectionQuestions[],
-    questionInstructionMediaMap: any[]
+    questionInstructionMediaMap: QuestionInstructionMediaMap[]
   ) {
     const { sections, questions, counter, logics } = this.getSectionsObject(
       pageIndex,

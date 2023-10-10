@@ -152,3 +152,8 @@ export interface FormUploadFile {
   size: number;
   objectKey: string;
 }
+
+export interface QuestionInstructionMediaMap {
+  questionId: string;
+  instructionsMedia: any;
+}

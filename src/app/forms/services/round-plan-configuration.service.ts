@@ -5,6 +5,7 @@ import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
 import {
   NumberRangeMetadata,
   Question,
+  QuestionInstructionMediaMap,
   Section,
   SectionQuestions
 } from 'src/app/interfaces';
@@ -31,7 +32,7 @@ export class RoundPlanConfigurationService {
     isEmbeddedForm: boolean,
     isTemplate: boolean,
     sectionQuestionsList: SectionQuestions[] = [],
-    questionInstructionMediaMap: any[]
+    questionInstructionMediaMap: QuestionInstructionMediaMap[]
   ) {
     const { counter, ...page } = this.getPageObject(
       pageIndex,
@@ -194,7 +195,7 @@ export class RoundPlanConfigurationService {
     sectionQuestionsList: SectionQuestions[],
     isEmbeddedForm: boolean,
     isTemplate: boolean,
-    questionInstructionMediaMap: any[]
+    questionInstructionMediaMap: QuestionInstructionMediaMap[]
   ) {
     const { sections, questions, counter } = this.getSectionsObject(
       pageIndex,

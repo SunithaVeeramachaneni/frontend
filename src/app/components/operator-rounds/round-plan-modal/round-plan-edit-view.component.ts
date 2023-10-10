@@ -18,6 +18,7 @@ import { getFormMetadata } from 'src/app/forms/state';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { Observable, Subscription } from 'rxjs';
 import { FormService } from 'src/app/forms/services/form.service';
+import { QuestionInstructionMediaMap } from 'src/app/interfaces';
 
 @Component({
   selector: 'app-round-plan-view',
@@ -84,7 +85,8 @@ export class RoundPlanEditViewComponent implements OnInit, OnDestroy {
           .filter((k) => k.startsWith('pages_'))
           .map((key) => {
             return formConfigurationState[key].map((page) => {
-              let questionInstructionMediaMap = [];
+              let questionInstructionMediaMap: QuestionInstructionMediaMap[] =
+                [];
               page.questions.forEach((question) => {
                 questionInstructionMediaMap.push({
                   questionId: question.id,
