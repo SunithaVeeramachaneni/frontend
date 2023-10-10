@@ -64,7 +64,7 @@
   "maxlength": "{name} must not exceed {length} characters",
   "review": "Review",
   "successfullyUpload": "Successfully uploaded",
-  "failedUpload": "Failed to uploaded",
+  "failedUpload": " Items failed to upload. Refer to Excel file for failure reasons.",
   "closeBtn": "Close",
   "reviewFailed": "Review Failed",
   "downloadExcel": "Download Excel",
