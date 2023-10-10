@@ -140,11 +140,10 @@
             <div class="questionActionsRow">
               <button
                 id="questionAddLogicBtn"
-                mat-button
-                color="primary"
                 class="addLogicBtn"
                 *ngIf="
-                  !isAskQuestion && questionForm.get('fieldType').value !== 'USR' &&
+                  !isAskQuestion &&
+                  questionForm.get('fieldType').value !== 'USR' &&
                   addLogicNotAppliedFields.indexOf(
                     questionForm.get('fieldType').value
                   ) < 0
