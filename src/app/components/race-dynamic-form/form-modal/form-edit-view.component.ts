@@ -31,7 +31,7 @@ export class FormEditViewComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.route.data.subscribe((data) => {
       if (data.form && Object.keys(data.form).length) {
-        data.form.pages.forEach((page) => {
+        data.form.pages = data.form.pages.map((page) => {
           let questionInstructionMediaMap = [];
           page.questions.forEach((question) => {
             questionInstructionMediaMap.push({
@@ -40,6 +40,7 @@ export class FormEditViewComponent implements OnInit, OnDestroy {
             });
           });
           page.questionInstructionMediaMap = questionInstructionMediaMap;
+          return page;
         });
         this.store.dispatch(
           BuilderConfigurationActions.updateFormConfiguration({

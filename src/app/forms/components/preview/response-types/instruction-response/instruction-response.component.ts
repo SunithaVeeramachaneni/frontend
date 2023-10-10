@@ -19,7 +19,6 @@ export class InstructionResponseComponent implements OnInit {
   @Input() question: Question;
   moduleName: string;
   instructionsMedia$: BehaviorSubject<any>;
-  onDestroy$ = new Subject<void>();
 
   constructor(
     private translate: TranslateService,
@@ -41,10 +40,5 @@ export class InstructionResponseComponent implements OnInit {
 
   getNoneTag() {
     return this.translate.instant('noneTag');
-  }
-
-  ngOnDestroy(): void {
-    this.onDestroy$.next();
-    this.onDestroy$.complete();
   }
 }

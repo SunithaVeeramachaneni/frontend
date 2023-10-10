@@ -9,10 +9,10 @@
   <mat-card class="slider-images-container">
     <div class="slide-wrapper">
       <ng-container *ngIf="data.type === 'forms'">
-        <ng-container *ngFor="let image of data.images; let i = index">
+        <ng-container *ngFor="let image of data; let i = index">
           <img
             id="slideshowImg"
-            [src]="getImageSrc(image)"
+            [src]="image"
             *ngIf="i === currentIndex"
             class="slide-images"
           />
@@ -41,7 +41,7 @@
         >
           <img
             id="slideshowFormImg"
-            [src]="getImageSrc(image)"
+            [src]="image"
             width="70"
             height="70"
             (click)="currentIndex = i"

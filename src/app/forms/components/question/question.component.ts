@@ -433,6 +433,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
           this.pageIndex
         )
       )
+      .pipe(takeUntil(this.onDestroy$))
       .subscribe((map) => {
         if (map && Object.keys(map?.instructionsMedia).length > 0)
           this.instructionsMedia = map.instructionsMedia;
@@ -1274,12 +1275,10 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
 
   openPreviewDialog() {
-    const attachments = this.questionForm.get('value').value.images;
-    const filteredMedia = [...attachments];
     const slideshowImages = [];
-    filteredMedia.forEach((media) => {
-      if (media) {
-        slideshowImages.push(media.objectURL);
+    this.instructionsMedia.images.forEach((image) => {
+      if (image?.data) {
+        slideshowImages.push(image.data);
       }
     });
     if (slideshowImages) {

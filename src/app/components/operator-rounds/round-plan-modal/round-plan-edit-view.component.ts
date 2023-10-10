@@ -82,8 +82,8 @@ export class RoundPlanEditViewComponent implements OnInit, OnDestroy {
       ) {
         Object.keys(formConfigurationState)
           .filter((k) => k.startsWith('pages_'))
-          .forEach((key) => {
-            formConfigurationState[key].forEach((page) => {
+          .map((key) => {
+            return formConfigurationState[key].map((page) => {
               let questionInstructionMediaMap = [];
               page.questions.forEach((question) => {
                 questionInstructionMediaMap.push({
@@ -92,6 +92,7 @@ export class RoundPlanEditViewComponent implements OnInit, OnDestroy {
                 });
               });
               page.questionInstructionMediaMap = questionInstructionMediaMap;
+              return page;
             });
           });
         this.store.dispatch(
