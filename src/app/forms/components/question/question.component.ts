@@ -67,7 +67,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { Base64HelperService } from 'src/app/components/work-instructions/services/base64-helper.service';
 import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
 import { CommonService } from 'src/app/shared/services/common.service';
-import { operatorRounds } from 'src/app/app.constants';
+import {
+  fileUploadSizeToastMessage,
+  operatorRounds
+} from 'src/app/app.constants';
 import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
 import { NgxImageCompressService } from 'ngx-image-compress';
 import { PDFDocument } from 'pdf-lib';
@@ -1069,7 +1072,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
               } else {
                 this.toast.show({
                   type: 'warning',
-                  text: 'File size should not exceed 390KB'
+                  text: fileUploadSizeToastMessage
                 });
               }
             })
@@ -1146,7 +1149,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
             } else {
               this.toast.show({
                 type: 'warning',
-                text: 'File size should not exceed 390KB'
+                text: fileUploadSizeToastMessage
               });
             }
           });

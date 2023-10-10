@@ -864,3 +864,5 @@ export const additionalDetailColumnConfig = {
   visible: true,
   groupable: true
 };
+
+export const fileUploadSizeToastMessage = 'Compressed Image exceeding 390KB';
