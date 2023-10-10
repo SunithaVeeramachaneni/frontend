@@ -78,6 +78,7 @@ export class GlobalResponseTypeSideDrawerComponent
   errors: ValidationError = {};
   public isResponseFormUpdated = false;
   public globalResponse: any;
+  sortingApplied = false;
   private onDestroy$ = new Subject();
 
   @Input() set globalResponseToBeEdited(response: any) {
@@ -333,6 +334,21 @@ export class GlobalResponseTypeSideDrawerComponent
       );
       return isResponseSetNameExists ? { responseSetNameExists: true } : null;
     };
+  }
+
+  sortResponseSetValue() {
+    this.sortingApplied = !this.sortingApplied;
+    const direction = this.sortingApplied ? 'asc' : 'desc';
+    const formArray = this.responseForm.get('responses') as FormArray;
+    formArray.controls.sort((a, b) => {
+      const nameA = a.get('title').value.toLowerCase();
+      const nameB = b.get('title').value.toLowerCase();
+      if (direction === 'asc') {
+        return nameA.localeCompare(nameB);
+      } else {
+        return nameB.localeCompare(nameA);
+      }
+    });
   }
 
   ngOnDestroy(): void {
