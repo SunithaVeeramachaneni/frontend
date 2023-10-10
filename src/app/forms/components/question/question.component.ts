@@ -1009,65 +1009,76 @@ export class QuestionComponent implements OnInit, OnDestroy {
         let originalValue = this.questionForm.get('value').value;
         this.base64result = reader?.result as string;
         if (this.base64result.includes('data:application/pdf;base64,')) {
-          this.resizePdf(this.base64result).then((compressedPdf) => {
-            const onlybase64 = compressedPdf.split(',')[1];
-            const resizedPdfSize = atob(onlybase64).length;
-            const pdf = {
-              fileInfo: { name: file.name, size: resizedPdfSize },
-              attachment: onlybase64
-            };
-            const pdfObservable =
-              this.moduleName === 'RDF'
-                ? this.rdfService.uploadAttachments$({ file: pdf })
-                : this.operatorRoundsService.uploadAttachments$({ file: pdf });
-            if (resizedPdfSize <= maxSize) {
-              if (originalValue.pdf === null) {
-                pdfObservable
-                  .pipe(
-                    tap((response) => {
-                      if (response) {
-                        const responsenew =
+          this.resizePdf(this.base64result)
+            .then((compressedPdf) => {
+              const onlybase64 = compressedPdf.split(',')[1];
+              const resizedPdfSize = atob(onlybase64).length;
+              const pdf = {
+                fileInfo: { name: file.name, size: resizedPdfSize },
+                attachment: onlybase64
+              };
+              const pdfObservable =
+                this.moduleName === 'RDF'
+                  ? this.rdfService.uploadAttachments$({ file: pdf })
+                  : this.operatorRoundsService.uploadAttachments$({
+                      file: pdf
+                    });
+              if (resizedPdfSize <= maxSize) {
+                if (originalValue.pdf === null) {
+                  pdfObservable
+                    .pipe(
+                      tap((response) => {
+                        if (response) {
+                          const responsenew =
+                            this.moduleName === 'RDF'
+                              ? response?.data?.createFormAttachments?.id
+                              : response?.data?.createRoundPlanAttachments?.id;
+                          this.instructionsMedia = {
+                            ...this.instructionsMedia,
+                            pdf: {
+                              id: responsenew,
+                              data: pdf
+                            }
+                          };
+                          originalValue = cloneDeep({
+                            ...originalValue,
+                            pdf: responsenew
+                          });
+                          this.questionForm
+                            .get('value')
+                            .setValue(originalValue);
+                          this.instructionsUpdateValue();
                           this.moduleName === 'RDF'
-                            ? response?.data?.createFormAttachments?.id
-                            : response?.data?.createRoundPlanAttachments?.id;
-                        this.instructionsMedia = {
-                          ...this.instructionsMedia,
-                          pdf: {
-                            id: responsenew,
-                            data: pdf
-                          }
-                        };
-                        originalValue = cloneDeep({
-                          ...originalValue,
-                          pdf: responsenew
-                        });
-                        this.questionForm.get('value').setValue(originalValue);
-                        this.instructionsUpdateValue();
-                        this.moduleName === 'RDF'
-                          ? this.rdfService.questionInstructionMediaMap$.next(
-                              this.instructionsMedia
-                            )
-                          : this.operatorRoundsService.questionInstructionMediaMap$.next(
-                              this.instructionsMedia
-                            );
-                        this.cdrf.detectChanges();
-                      }
-                    })
-                  )
-                  .subscribe();
+                            ? this.rdfService.questionInstructionMediaMap$.next(
+                                this.instructionsMedia
+                              )
+                            : this.operatorRoundsService.questionInstructionMediaMap$.next(
+                                this.instructionsMedia
+                              );
+                          this.cdrf.detectChanges();
+                        }
+                      })
+                    )
+                    .subscribe();
+                } else {
+                  this.toast.show({
+                    text: 'Only 1 PDF can be attached to an instruction.',
+                    type: 'warning'
+                  });
+                }
               } else {
                 this.toast.show({
-                  text: 'Only 1 PDF can be attached to an instruction.',
-                  type: 'warning'
+                  type: 'warning',
+                  text: 'File size should not exceed 390KB'
                 });
               }
-            } else {
+            })
+            .catch(() => {
               this.toast.show({
                 type: 'warning',
-                text: 'File size should not exceed 390KB'
+                text: 'Error while uploading PDF'
               });
-            }
-          });
+            });
         } else {
           this.resizeImage(this.base64result).then((compressedImage) => {
             const onlybase64 = compressedImage.split(',')[1];
