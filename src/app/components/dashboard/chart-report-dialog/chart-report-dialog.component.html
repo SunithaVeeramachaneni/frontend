@@ -41,16 +41,22 @@
       <span
         class="filter-item"
         *ngIf="
-          data.filters && data.filters.plantId && data.filters.plantId.length
+          data.filters &&
+          data.filters.locationId &&
+          data.filters.locationId.length
         "
-        ><b>{{ 'plantTxt' | translate }} </b> {{ data.filters.plantId }}</span
       >
+        <b>{{ 'locationTxt' | translate }} </b>
+        {{ data.filters.locationId }}
+      </span>
       <span
         class="filter-item"
         *ngIf="
-          data.filters && data.filters.shiftId && data.filters.shiftId.length
+          data.filters && data.filters.assetId && data.filters.assetId.length
         "
-        ><b>{{ 'shiftsTxt' | translate }} </b> {{ data.filters.shiftId }}
+      >
+        <b>{{ 'assetTxt' | translate }} </b>
+        {{ data.filters.assetId }}
       </span>
     </div>
   </div>
