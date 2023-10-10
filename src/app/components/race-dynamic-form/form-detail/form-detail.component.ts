@@ -205,6 +205,7 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   cancelForm() {
     this.slideInOut.emit('in');
     this.selectedFormDetail$ = null;
+    this.store.dispatch(BuilderConfigurationActions.resetFormConfiguration());
   }
 
   openMenu(page): void {
