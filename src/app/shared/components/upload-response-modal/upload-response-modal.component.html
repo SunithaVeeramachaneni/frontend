@@ -40,7 +40,13 @@
         mode="determinate"
         value="100"
       ></mat-progress-bar>
-      <div id="uploadResponseMessage" class="sub-heading">{{ message }}</div>
+      <div id="uploadResponseMessage" class="sub-heading">
+        {{
+          this.dialogData?.type !== 'response-set'
+            ? message
+            : 'Adding Response Set'
+        }}
+      </div>
       <button
         id="uploadResponseCancelBtn"
         mat-stroked-button
@@ -80,7 +86,7 @@
             class="upload-icon"
             id="uploadOnlyFailureResponseIcon"
           ></svg-icon>
-          <p>{{ failedCount }} {{ type }} {{ 'failedUpload' | translate }}</p>
+          <p>{{ failedCount }} {{ 'failedUpload' | translate }}</p>
         </div>
       </div>
       <div class="success-message" *ngIf="successCount > 0 && failedCount > 0">
@@ -98,7 +104,7 @@
             icon="icon-upload-error"
             class="upload-icon"
           ></svg-icon>
-          {{ failedCount }} {{ type }} {{ 'failedUpload' | translate }}
+          {{ failedCount }} {{ 'failedUpload' | translate }}
         </div>
       </div>
       <div
