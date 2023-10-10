@@ -986,9 +986,23 @@ export class QuestionComponent implements OnInit, OnDestroy {
     const target = event.target as HTMLInputElement;
     const files = Array.from(target.files);
     const reader = new FileReader();
+    const allowedFileTypes: string[] = [
+      'image/jpeg',
+      'image/jpg',
+      'image/png',
+      'application/pdf'
+    ];
 
     if (files.length > 0 && files[0] instanceof File) {
       const file: File = files[0];
+      if (allowedFileTypes.indexOf(file.type) === -1) {
+        this.toast.show({
+          text: 'Invalid file type, only JPG/JPEG/PNG/PDF accepted.',
+          type: 'warning'
+        });
+        return;
+      }
+
       const maxSize = 390000;
       reader.readAsDataURL(file);
       reader.onloadend = () => {
