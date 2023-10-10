@@ -1040,7 +1040,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     const parentValues = this.additionalDetailsMasterData[label].value;
     if (searchValue) {
       this.currentValuesArray = parentValues.filter(
-        (value) => value.toLowerCase().indexOf(searchValue.toLowerCase()) === 0
+        (value) => value.toLowerCase().includes(searchValue.toLowerCase())
       );
     } else {
       this.currentValuesArray = [...parentValues];
