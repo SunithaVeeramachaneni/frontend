@@ -14,21 +14,23 @@
     top: 10px;
   }
 
-  .pdf-text {
-    font-size: 85%;
-    margin-left: 14px;
-    word-wrap: break-word;
-    font-weight: 500;
-    letter-spacing: -0.24px;
-    color: $active-blue;
-  }
+  .pdf-container {
+    margin-left: 5px;
 
-  .pdf-sub-text {
-    font-size: 75%;
-    margin-left: 14px;
-    word-wrap: break-word;
-    font-weight: 400;
-    letter-spacing: 0.066px;
-    color: $active-blue;
+    .pdf-text {
+      font-size: 85%;
+      font-weight: 500;
+      letter-spacing: -0.24px;
+      color: $active-blue;
+      overflow-wrap: anywhere;
+    }
+
+    .pdf-sub-text {
+      font-size: 75%;
+      word-wrap: break-word;
+      font-weight: 400;
+      letter-spacing: 0.066px;
+      color: $active-blue;
+    }
   }
 }

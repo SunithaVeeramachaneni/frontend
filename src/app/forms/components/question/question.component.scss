@@ -124,14 +124,14 @@
       overflow-x: auto;
       width: 100%;
       overflow-y: hidden;
-      height: 35px;
+      min-height: 35px;
       .addLogicBtn {
         color: $blue-main;
         background-color: $white;
         border: none;
         font-weight: 400;
         margin-right: 10px;
-        width: 85px;
+        min-width: 85px;
         white-space: nowrap;
         line-height: 32px;
         height: 30px;

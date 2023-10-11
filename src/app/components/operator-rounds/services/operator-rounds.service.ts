@@ -51,7 +51,6 @@ export class OperatorRoundsService {
   private isRevisedSubject = new BehaviorSubject<boolean>(false);
   private scheduleErrorSubject = new BehaviorSubject<string>('');
 
-  questionInstructionMediaMap$ = new BehaviorSubject<any>({});
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   attachmentsMapping$ = new BehaviorSubject<any>({});
@@ -476,6 +475,17 @@ export class OperatorRoundsService {
   publishRoundPlan$(roundPlanDetails) {
     roundPlanDetails.authoredFormDetail.formStatus =
       roundPlanDetails.form.formStatus;
+    let subForms = roundPlanDetails.authoredFormDetail.subForms;
+    Object.keys(subForms).forEach((key) => {
+      const pages = subForms[key].map((page) => {
+        const { questionInstructionMediaMap, ...pageData } = page;
+        return pageData;
+      });
+      subForms = {
+        ...subForms,
+        [key]: pages
+      };
+    });
     const { hierarchy } = roundPlanDetails.authoredFormDetail;
     const flatHierarchy = this.assetHierarchyUtil.convertHierarchyToFlatList(
       cloneDeep(hierarchy),
@@ -488,7 +498,8 @@ export class OperatorRoundsService {
         ...roundPlanDetails,
         authoredFormDetail: {
           ...roundPlanDetails.authoredFormDetail,
-          flatHierarchy
+          flatHierarchy,
+          subForms
         },
         isEdit: roundPlanDetails.isEdit
       }
