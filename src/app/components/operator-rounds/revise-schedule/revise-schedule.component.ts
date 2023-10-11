@@ -354,6 +354,7 @@ export class ReviseScheduleComponent implements OnInit, OnDestroy {
       ];
       this.shiftsSelected.patchValue(this.allSlots);
     }
+    this.reviseScheduleConfigForm.markAsDirty();
   }
 
   cancel() {
