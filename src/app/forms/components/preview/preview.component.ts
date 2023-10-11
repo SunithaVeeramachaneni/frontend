@@ -63,7 +63,13 @@ export class PreviewComponent implements OnInit, OnChanges {
                   const questionsArray = [];
                   page.questions.forEach((question) => {
                     if (section.id === question.sectionId) {
-                      questionsArray.push(question);
+                      if (question.fieldType === 'INST')
+                        questionsArray.push({
+                          ...question,
+                          pageIndex: this.pageIndex,
+                          subFormId: this.subFormId
+                        });
+                      else questionsArray.push(question);
                     }
                   });
                   return { ...section, questions: questionsArray };
