@@ -64,7 +64,7 @@
   "maxlength": "{name} must not exceed {length} characters",
   "review": "Review",
   "successfullyUpload": "Successfully uploaded",
-  "failedUpload": "Failed to uploaded",
+  "failedUpload": " Items failed to upload. Refer to Excel file for failure reasons.",
   "closeBtn": "Close",
   "reviewFailed": "Review Failed",
   "downloadExcel": "Download Excel",
@@ -99,6 +99,7 @@
   "backToEditingBtn": "Back to Editing",
   "searchId": "Search by Name/Id",
   "values": "Values",
+  "sort": "Sort",
   "addModuleNameHeading": "Add as Meta Data For",
   "responseSetNameExists": "Response Set Name already exists"
 }
