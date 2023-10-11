@@ -18,7 +18,6 @@ import { Question, QuestionPageIndexNodeMap } from 'src/app/interfaces';
 export class InstructionResponseComponent implements OnInit {
   @Input() question: QuestionPageIndexNodeMap;
   moduleName: string;
-  instructionsMedia: any;
   instructionsMedia$: Observable<any>;
   private onDestroy$ = new Subject();
 
