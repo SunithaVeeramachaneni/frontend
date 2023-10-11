@@ -226,7 +226,9 @@ export class QuestionComponent implements OnInit, OnDestroy {
     'Engine',
     'Wheels',
     'Bonnet',
-    'Brakes & Clutch'
+    'Brakes & Clutch',
+    'Left Hand Final Drive',
+    'Right Hand Final Drive'
   ];
 
   samplingPoints: string[] = [
