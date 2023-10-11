@@ -94,7 +94,6 @@
   <div
     *ngIf="
       (filteredRoundPlans$ | async) &&
-      (filterData$ | async) &&
       (isLoading$ | async) === false
     "
     class="plans-list"
@@ -111,6 +110,7 @@
       class="width-100"
     ></cwp-dynamictable>
   </div>
+  <ng-container *ngIf="(filterData$ | async)"></ng-container>
 
   <div *ngIf="isLoading$ | async">
     <div class="padding-lr-20">
