@@ -31,7 +31,10 @@
 <!-- Instructions Images -->
 <div>
   <ng-container
-    *ngFor="let image of (instructionsMedia$ | async).images; index as i"
+    *ngFor="
+      let image of (instructionsMedia$ | async)?.instructionsMedia.images;
+      index as i
+    "
   >
     <img
       id="instructionResponseImg"
@@ -43,9 +46,13 @@
   </ng-container>
 </div>
 
-<ng-container *ngIf="(instructionsMedia$ | async).pdf?.data.fileInfo !== null">
+<ng-container
+  *ngIf="
+    (instructionsMedia$ | async)?.instructionsMedia.pdf?.data.fileInfo !== null
+  "
+>
   <app-instruction-pdf-preview
-    [pdf]="(instructionsMedia$ | async).pdf?.data.fileInfo"
+    [pdf]="(instructionsMedia$ | async)?.instructionsMedia.pdf?.data.fileInfo"
   >
   </app-instruction-pdf-preview>
 </ng-container>

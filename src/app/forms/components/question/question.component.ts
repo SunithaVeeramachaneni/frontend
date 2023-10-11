@@ -451,14 +451,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
               }
             }
           };
-
-        this.moduleName === 'RDF'
-          ? this.rdfService.questionInstructionMediaMap$.next(
-              this.instructionsMedia
-            )
-          : this.operatorRoundsService.questionInstructionMediaMap$.next(
-              this.instructionsMedia
-            );
       });
   }
 
@@ -1051,13 +1043,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
                             .get('value')
                             .setValue(originalValue);
                           this.instructionsUpdateValue();
-                          this.moduleName === 'RDF'
-                            ? this.rdfService.questionInstructionMediaMap$.next(
-                                this.instructionsMedia
-                              )
-                            : this.operatorRoundsService.questionInstructionMediaMap$.next(
-                                this.instructionsMedia
-                              );
                           this.cdrf.detectChanges();
                         }
                       })
@@ -1128,13 +1113,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
                         };
                         this.questionForm.get('value').setValue(originalValue);
                         this.instructionsUpdateValue();
-                        this.moduleName === 'RDF'
-                          ? this.rdfService.questionInstructionMediaMap$.next(
-                              this.instructionsMedia
-                            )
-                          : this.operatorRoundsService.questionInstructionMediaMap$.next(
-                              this.instructionsMedia
-                            );
                         this.cdrf.detectChanges();
                       }
                     })
@@ -1282,13 +1260,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
     }
     this.questionForm.get('value').setValue(originalValue);
     this.instructionsUpdateValue();
-    this.moduleName === 'RDF'
-      ? this.rdfService.questionInstructionMediaMap$.next(
-          this.instructionsMedia
-        )
-      : this.operatorRoundsService.questionInstructionMediaMap$.next(
-          this.instructionsMedia
-        );
     this.cdrf.detectChanges();
   }
 
