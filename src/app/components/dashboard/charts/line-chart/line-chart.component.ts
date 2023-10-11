@@ -159,22 +159,32 @@ export class LineChartComponent implements OnInit {
         datasetFields,
         countFields
       } = this.chartConfig;
+      const newOptions = { ...this.chartOptions };
       this.chartTitle = title;
       this.chartType = type;
-      this.chartOptions.series.label.show = showValues;
-      this.chartOptions.legend.show = showLegends;
+      newOptions.series.label.show = showValues;
+      newOptions.legend.show = showLegends;
       this.chartConfig.datasetFields.filter((dataset) => {
         if (dataset.name === this.chartConfig.datasetFieldName) {
-          this.chartOptions.xAxis.name = dataset.displayName;
-          this.chartOptions.series.name = dataset.displayName;
+          newOptions.xAxis.name = dataset.displayName;
+          newOptions.series.name = dataset.displayName;
         }
       });
-      this.chartOptions.yAxis.name = this.chartConfig.countFieldName;
+      newOptions.yAxis.name = this.chartConfig.countFieldName;
       this.countField = countFields.find((countField) => countField.visible);
       this.datasetField = datasetFields.find(
         (datasetField) => datasetField.visible
       );
-      this.prepareChartData();
+      this.chartOptions.title.text = this.chartTitle;
+      this.preparedChartData = this.prepareChartData();
+      newOptions.series.data = this.preparedChartData.data;
+      newOptions.legend.data = this.preparedChartData.labels;
+      if (!Array.isArray(newOptions.series)) {
+        newOptions.series = [newOptions.series];
+      } else {
+        newOptions.series = [...newOptions.series];
+      }
+      this.chartOptions = newOptions;
     }
   };
 
@@ -203,20 +213,16 @@ export class LineChartComponent implements OnInit {
       }, {});
 
     newOptions.xAxis.data = Object.keys(sortedObject);
-    newOptions.series.data = Object.values(sortedObject);
 
-    if (!Array.isArray(newOptions.series)) {
-      newOptions.series = [newOptions.series];
-    } else {
-      newOptions.series = [...newOptions.series];
-    }
+    const labels = Object.keys(sortedObject);
+    const converted = Object.entries(sortedObject).map(([key, value]) => ({
+      name: key,
+      value
+    }));
 
-    newOptions.series.forEach((series, index) => {
-      series.itemStyle = {
-        color: this.colors[index]
-      };
-    });
-
-    this.chartOptions = newOptions;
+    return {
+      labels,
+      data: converted
+    };
   };
 }
