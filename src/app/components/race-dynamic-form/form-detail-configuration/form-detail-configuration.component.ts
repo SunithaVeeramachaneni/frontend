@@ -532,15 +532,7 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
           displayToast: true,
           failureResponse: {}
         })
-        .subscribe((response) => {
-          if (Object.keys(response)?.length === 0) {
-            this.store.dispatch(
-              BuilderConfigurationActions.updateFormPublishStatus({
-                formDetailPublishStatus: formConfigurationStatus.draft
-              })
-            );
-          }
-        });
+        .subscribe();
     }
   }
 
@@ -643,6 +635,7 @@ export class FormDetailConfigurationComponent implements OnInit, OnDestroy {
     if (this.getFormMetadataSubscription) {
       this.getFormMetadataSubscription.unsubscribe();
     }
+    
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }
