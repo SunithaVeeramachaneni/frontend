@@ -475,6 +475,17 @@ export class OperatorRoundsService {
   publishRoundPlan$(roundPlanDetails) {
     roundPlanDetails.authoredFormDetail.formStatus =
       roundPlanDetails.form.formStatus;
+    let subForms = roundPlanDetails.authoredFormDetail.subForms;
+    Object.keys(subForms).forEach((key) => {
+      const pages = subForms[key].map((page) => {
+        const { questionInstructionMediaMap, ...pageData } = page;
+        return pageData;
+      });
+      subForms = {
+        ...subForms,
+        [key]: pages
+      };
+    });
     const { hierarchy } = roundPlanDetails.authoredFormDetail;
     const flatHierarchy = this.assetHierarchyUtil.convertHierarchyToFlatList(
       cloneDeep(hierarchy),
@@ -487,7 +498,8 @@ export class OperatorRoundsService {
         ...roundPlanDetails,
         authoredFormDetail: {
           ...roundPlanDetails.authoredFormDetail,
-          flatHierarchy
+          flatHierarchy,
+          subForms
         },
         isEdit: roundPlanDetails.isEdit
       }

@@ -424,10 +424,27 @@ export class RaceDynamicFormService {
   }
 
   publishAuthoredFormDetail$(formDetails) {
+    let { updateAuthoredForm, createAuthoredForm } = formDetails;
+    const createPages = JSON.parse(createAuthoredForm.pages).map((page) => {
+      const { questionInstructionMediaMap, ...pageData } = page;
+      return pageData;
+    });
+    const updatePages = JSON.parse(updateAuthoredForm.pages).map((page) => {
+      const { questionInstructionMediaMap, ...pageData } = page;
+      return pageData;
+    });
+    createAuthoredForm = {
+      ...createAuthoredForm,
+      pages: JSON.stringify(createPages)
+    };
+    updateAuthoredForm = {
+      ...updateAuthoredForm,
+      pages: JSON.stringify(updatePages)
+    };
     return this.appService.patchData(
       environment.rdfApiUrl,
       `forms/authored/publish/${formDetails.formlistID}`,
-      formDetails
+      { ...formDetails, createAuthoredForm, updateAuthoredForm }
     );
   }
 
