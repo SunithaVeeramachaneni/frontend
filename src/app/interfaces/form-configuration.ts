@@ -67,6 +67,10 @@ export interface TaskLevelScheduleSection extends Section {
   partiallyChecked: boolean;
 }
 
+export interface QuestionPageIndexNodeMap extends Question {
+  pageIndex: number;
+  subFormId: string;
+}
 export interface Question {
   id: string;
   sectionId: string;

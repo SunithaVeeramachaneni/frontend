@@ -2,13 +2,13 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
-import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
+import { takeUntil } from 'rxjs/operators';
 import {
   State,
-  getModuleName
+  getModuleName,
+  selectQuestionInstuctionsMediaMap
 } from 'src/app/forms/state/builder/builder-state.selectors';
-import { Question } from 'src/app/interfaces';
+import { Question, QuestionPageIndexNodeMap } from 'src/app/interfaces';
 
 @Component({
   selector: 'app-instruction-response',
@@ -16,29 +16,36 @@ import { Question } from 'src/app/interfaces';
   styleUrls: ['./instruction-response.component.scss']
 })
 export class InstructionResponseComponent implements OnInit {
-  @Input() question: Question;
+  @Input() question: QuestionPageIndexNodeMap;
   moduleName: string;
-  instructionsMedia$: BehaviorSubject<any>;
+  instructionsMedia$: Observable<any>;
+  private onDestroy$ = new Subject();
 
   constructor(
     private translate: TranslateService,
-    private rdfService: RaceDynamicFormService,
-    private operatorRoundsService: OperatorRoundsService,
     private store: Store<State>
   ) {}
 
   ngOnInit(): void {
     this.store.select(getModuleName).subscribe((moduleName) => {
       this.moduleName = moduleName;
-
-      this.instructionsMedia$ =
-        moduleName === 'RDF'
-          ? this.rdfService.questionInstructionMediaMap$
-          : this.operatorRoundsService.questionInstructionMediaMap$;
     });
+
+    this.instructionsMedia$ = this.store.select(
+      selectQuestionInstuctionsMediaMap(
+        this.question.subFormId,
+        this.question.id,
+        this.question.pageIndex - 1
+      )
+    );
   }
 
   getNoneTag() {
     return this.translate.instant('noneTag');
+  }
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 }
