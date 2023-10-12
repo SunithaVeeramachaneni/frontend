@@ -174,7 +174,16 @@ export class HorizontalStackedChartComponent implements OnInit {
       this.datasetField = datasetFields.find(
         (datasetField) => datasetField.visible
       );
-      this.prepareChartData(showValues);
+      this.preparedChartData = this.prepareChartData(showValues);
+      this.chartOptions.series.data = this.preparedChartData.data;
+      this.chartOptions.legend.data = this.preparedChartData.labels;
+      if (!Array.isArray(this.chartOptions.series)) {
+        this.chartOptions.series = [this.chartOptions.series];
+      } else {
+        this.chartOptions.series = [...this.chartOptions.series];
+      }
+
+      console.log(this.preparedChartData);
     }
   };
 
@@ -222,6 +231,20 @@ export class HorizontalStackedChartComponent implements OnInit {
         stackName !== 'null' && stackField.type === 'date'
           ? this.datePipe.transform(stackName, 'short')
           : stackName;
+
+      const newObject = [];
+
+      // const converted = [];
+
+      datasetObject[stackName].countArray.forEach((val) => {
+        newObject.push({
+          name: newLabel,
+          value: val
+        });
+      });
+
+      //converted.push(newObject)
+
       const dataset = {
         name: newLabel,
         type: 'bar',
@@ -232,7 +255,7 @@ export class HorizontalStackedChartComponent implements OnInit {
         emphasis: {
           focus: 'series'
         },
-        data: datasetObject[stackName].countArray
+        data: newObject
       };
       return dataset;
     });
@@ -252,5 +275,16 @@ export class HorizontalStackedChartComponent implements OnInit {
     });
 
     this.chartOptions = newOptions;
+
+    const labels = Object.keys(datasetObject);
+    const converted = Object.entries(datasets).map(([key, value]) => ({
+      name: value.data[0].name,
+      value: value.data
+    }));
+
+    return {
+      labels,
+      data: converted
+    };
   };
 }
