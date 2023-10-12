@@ -55,7 +55,6 @@ import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-valid
 import { ValidationError } from 'src/app/interfaces';
 import { LoginService } from '../../login/services/login.service';
 import { fieldTypesMock } from 'src/app/forms/components/response-type/response-types.mock';
-import { fi } from 'date-fns/locale';
 
 @Component({
   selector: 'app-report-configuration',
