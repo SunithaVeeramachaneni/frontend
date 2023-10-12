@@ -218,7 +218,7 @@ export class WidgetConfigurationModalComponent implements OnInit {
         this.skip = loadFilter.reportData
         ? loadFilter.reportData.length
         : this.skip;
-        this.dataSource = new MatTableDataSource(loadFilter.reportData);
+                this.dataSource = new MatTableDataSource(loadFilter.reportData);
         return loadFilter;
       })
     );
@@ -427,9 +427,6 @@ export class WidgetConfigurationModalComponent implements OnInit {
           this.selectedReport.chartDetails = {
             ...this.selectedReport.chartDetails,
             type: 'table',
-            stackFieldName: '',
-            indexAxis: 'x',
-            datasetFieldName: ''
           }
         }
         this.chartConfig = this.reportConfigService.updateChartConfig(
