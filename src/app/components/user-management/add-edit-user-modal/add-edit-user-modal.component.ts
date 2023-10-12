@@ -53,7 +53,7 @@ export class AddEditUserModalComponent implements OnInit {
   userForm = this.fb.group({
     firstName: new FormControl('', [
       Validators.required,
-      Validators.minLength(3),
+      Validators.minLength(1),
       Validators.maxLength(100),
       Validators.pattern('^[a-zA-Z0-9 ]+$'),
       WhiteSpaceValidator.whiteSpace,
@@ -61,7 +61,7 @@ export class AddEditUserModalComponent implements OnInit {
     ]),
     lastName: new FormControl('', [
       Validators.required,
-      Validators.minLength(2),
+      Validators.minLength(1),
       Validators.maxLength(100),
       Validators.pattern('^[a-zA-Z0-9 ]+$'),
       WhiteSpaceValidator.whiteSpace,

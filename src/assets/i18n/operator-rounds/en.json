@@ -423,6 +423,8 @@
   "noReportObjectsFound": "No Report Objects Found",
   "plantTxt": "Plant: ",
   "shiftsTxt": "Shifts:",
+  "locationTxt": "Location: ",
+  "assetTxt": "Asset:",
   "newWidget": "Create Widget",
   "reportConfiguration": "Report Configuration",
   "widgetConfiguration": "Widget Configuration",

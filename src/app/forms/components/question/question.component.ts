@@ -10,18 +10,29 @@ import {
   EventEmitter,
   ChangeDetectionStrategy,
   ViewChild,
-  OnDestroy
+  OnDestroy,
+  ChangeDetectorRef
 } from '@angular/core';
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import {
   debounceTime,
   distinctUntilChanged,
+  map,
   pairwise,
   startWith,
+  switchMap,
   takeUntil,
   tap
 } from 'rxjs/operators';
-import { Observable, Subject, asapScheduler, timer } from 'rxjs';
+import {
+  Observable,
+  Subject,
+  asapScheduler,
+  combineLatest,
+  forkJoin,
+  of,
+  timer
+} from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 
 import { ImageUtils } from 'src/app/shared/utils/imageUtils';
@@ -38,7 +49,8 @@ import {
 import {
   State,
   getFormMetadata,
-  getModuleName
+  getModuleName,
+  selectQuestionInstuctionsMediaMap
 } from 'src/app/forms/state/builder/builder-state.selectors';
 import { Store } from '@ngrx/store';
 import { FormService } from '../../services/form.service';
@@ -55,7 +67,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { Base64HelperService } from 'src/app/components/work-instructions/services/base64-helper.service';
 import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
 import { CommonService } from 'src/app/shared/services/common.service';
-import { operatorRounds } from 'src/app/app.constants';
+import {
+  fileUploadSizeToastMessage,
+  operatorRounds
+} from 'src/app/app.constants';
+import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
+import { NgxImageCompressService } from 'ngx-image-compress';
+import { PDFDocument } from 'pdf-lib';
 @Component({
   selector: 'app-question',
   templateUrl: './question.component.html',
@@ -74,6 +92,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   @Input() isImported: boolean;
   @Input() tagDetailType: string;
   @Input() attributeDetailType: string;
+  base64result: string;
 
   @Input() set questionId(id: string) {
     this._id = id;
@@ -222,6 +241,10 @@ export class QuestionComponent implements OnInit, OnDestroy {
   unitOfMeasurementsAvailable: any[] = [];
   unitOfMeasurements = [];
   fetchUnitOfMeasurement: Observable<any>;
+  instructionsMedia = {
+    images: [],
+    pdf: null
+  };
 
   questionForm: FormGroup = this.fb.group({
     id: '',
@@ -256,6 +279,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   instructionTagTextColour = {};
   formMetadata$: Observable<FormMetadata>;
   moduleName$: Observable<string>;
+  instructionMediaMap$: Observable<any>;
   uom$: Observable<UnitOfMeasurement[]>;
   embeddedFormId = '';
 
@@ -280,7 +304,11 @@ export class QuestionComponent implements OnInit, OnDestroy {
     private responseSetService: ResponseSetService,
     private toast: ToastService,
     private translate: TranslateService,
-    private readonly commonService: CommonService
+    private rdfService: RaceDynamicFormService,
+    private operatorRoundsService: OperatorRoundsService,
+    private readonly commonService: CommonService,
+    private imageCompress: NgxImageCompressService,
+    private cdrf: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -291,9 +319,12 @@ export class QuestionComponent implements OnInit, OnDestroy {
         this.embeddedFormId = event?.embeddedFormId;
       })
     );
-    this.moduleName$ = this.store
-      .select(getModuleName)
-      .pipe(tap((event) => (this.moduleName = event)));
+    this.moduleName$ = this.store.select(getModuleName).pipe(
+      tap((event) => {
+        this.moduleName = event;
+        this.setQuestionInstructionMediaMap();
+      })
+    );
 
     this.uom$ = this.store.select(getUnitOfMeasurementList).pipe(
       tap((unitOfMeasurements) => {
@@ -397,6 +428,107 @@ export class QuestionComponent implements OnInit, OnDestroy {
       '#000000';
     this.instructionTagTextColour[this.translate.instant('dangerTag')] =
       '#FFFFFF';
+    this.store
+      .select(
+        selectQuestionInstuctionsMediaMap(
+          this.selectedNodeId,
+          this.questionId,
+          this.pageIndex
+        )
+      )
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe((map) => {
+        if (map && Object.keys(map?.instructionsMedia).length > 0)
+          this.instructionsMedia = map.instructionsMedia;
+        else
+          this.instructionsMedia = {
+            images: [null, null, null],
+            pdf: {
+              id: null,
+              data: {
+                fileInfo: null,
+                attachment: null
+              }
+            }
+          };
+      });
+  }
+
+  setQuestionInstructionMediaMap() {
+    let instructionsMedia = {
+      images: [null, null, null],
+      pdf: {
+        id: null,
+        data: {
+          fileInfo: null,
+          attachment: null
+        }
+      }
+    };
+    if (this.question.fieldType === 'INST') {
+      const { images, pdf } = this.question.value;
+      const imageObservables = images.map((image) => {
+        const getAttachmentsById$ =
+          this.moduleName === 'RDF'
+            ? this.rdfService.getAttachmentsById$(image)
+            : this.operatorRoundsService.getAttachmentsById$(image);
+        return getAttachmentsById$.pipe(
+          map((data) => ({
+            id: image,
+            data: data?.attachment
+              ? `data:image/jpeg;base64,${data?.attachment}`
+              : null
+          }))
+        );
+      });
+      const getAttachmentsById$ =
+        this.moduleName === 'RDF'
+          ? this.rdfService.getAttachmentsById$(pdf)
+          : this.operatorRoundsService.getAttachmentsById$(pdf);
+      const pdfObservable = getAttachmentsById$.pipe(
+        map((data) => ({
+          id: pdf,
+          data: {
+            fileInfo: data?.fileInfo ? JSON.parse(data.fileInfo) : null,
+            attachment: data?.attachment
+              ? `data:application/pdf;base64,${data?.attachment}`
+              : null
+          }
+        }))
+      );
+
+      forkJoin([...imageObservables, pdfObservable])
+        .pipe(
+          switchMap((results) => {
+            // Process the results here
+            return of(results);
+          })
+        )
+        .subscribe((data) => {
+          const imageArray = [];
+          let pdf = null;
+          data.forEach((element: any) => {
+            if (typeof element.data === 'string' || element.data === null) {
+              imageArray.push(element);
+            } else {
+              pdf = element;
+            }
+          });
+          instructionsMedia = {
+            ...instructionsMedia,
+            images: imageArray,
+            pdf
+          };
+          this.store.dispatch(
+            BuilderConfigurationActions.addInstructionMediaMap({
+              subFormId: this.selectedNodeId,
+              questionId: this.questionId,
+              pageIndex: this.pageIndex,
+              instructionsMedia
+            })
+          );
+        });
+    }
   }
 
   updateQuestion() {
@@ -845,8 +977,10 @@ export class QuestionComponent implements OnInit, OnDestroy {
     this.isHyperLinkOpen = !this.isHyperLinkOpen;
   };
 
-  instructionsFileUploadHandler = (event: Event) => {
+  uploadAttachmentsForInstructions(event: Event) {
     const target = event.target as HTMLInputElement;
+    const files = Array.from(target.files);
+    const reader = new FileReader();
     const allowedFileTypes: string[] = [
       'image/jpeg',
       'image/jpg',
@@ -854,8 +988,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
       'application/pdf'
     ];
 
-    Array.from(target.files).forEach((file) => {
-      const originalValue = this.questionForm.get('value').value;
+    if (files.length > 0 && files[0] instanceof File) {
+      const file: File = files[0];
       if (allowedFileTypes.indexOf(file.type) === -1) {
         this.toast.show({
           text: 'Invalid file type, only JPG/JPEG/PNG/PDF accepted.',
@@ -864,64 +998,187 @@ export class QuestionComponent implements OnInit, OnDestroy {
         return;
       }
 
-      if (file.type === 'application/pdf') {
-        if (originalValue.pdf === null) {
-          this.sendFileToS3(file, {
-            originalValue,
-            isImage: false
-          });
+      const maxSize = 390000;
+      reader.readAsDataURL(file);
+      reader.onloadend = () => {
+        let originalValue = this.questionForm.get('value').value;
+        this.base64result = reader?.result as string;
+        if (this.base64result.includes('data:application/pdf;base64,')) {
+          this.resizePdf(this.base64result)
+            .then((compressedPdf) => {
+              const onlybase64 = compressedPdf.split(',')[1];
+              const resizedPdfSize = atob(onlybase64).length;
+              const pdf = {
+                fileInfo: { name: file.name, size: resizedPdfSize },
+                attachment: onlybase64
+              };
+              const pdfObservable =
+                this.moduleName === 'RDF'
+                  ? this.rdfService.uploadAttachments$({ file: pdf })
+                  : this.operatorRoundsService.uploadAttachments$({
+                      file: pdf
+                    });
+              if (resizedPdfSize <= maxSize) {
+                if (originalValue.pdf === null) {
+                  pdfObservable
+                    .pipe(
+                      tap((response) => {
+                        if (response) {
+                          const responsenew =
+                            this.moduleName === 'RDF'
+                              ? response?.data?.createFormAttachments?.id
+                              : response?.data?.createRoundPlanAttachments?.id;
+                          this.instructionsMedia = {
+                            ...this.instructionsMedia,
+                            pdf: {
+                              id: responsenew,
+                              data: pdf
+                            }
+                          };
+                          originalValue = cloneDeep({
+                            ...originalValue,
+                            pdf: responsenew
+                          });
+                          this.questionForm
+                            .get('value')
+                            .setValue(originalValue);
+                          this.instructionsUpdateValue();
+                          this.cdrf.detectChanges();
+                        }
+                      })
+                    )
+                    .subscribe();
+                } else {
+                  this.toast.show({
+                    text: 'Only 1 PDF can be attached to an instruction.',
+                    type: 'warning'
+                  });
+                }
+              } else {
+                this.toast.show({
+                  type: 'warning',
+                  text: fileUploadSizeToastMessage
+                });
+              }
+            })
+            .catch(() => {
+              this.toast.show({
+                type: 'warning',
+                text: 'Error while uploading PDF'
+              });
+            });
         } else {
-          this.toast.show({
-            text: 'Only 1 PDF can be attached to an instruction.',
-            type: 'warning'
+          this.resizeImage(this.base64result).then((compressedImage) => {
+            const onlybase64 = compressedImage.split(',')[1];
+            const resizedImageSize = atob(onlybase64).length;
+            const image = {
+              fileInfo: { name: file.name, size: resizedImageSize },
+              attachment: onlybase64
+            };
+            if (resizedImageSize <= maxSize) {
+              const imageObservable =
+                this.moduleName === 'RDF'
+                  ? this.rdfService.uploadAttachments$({ file: image })
+                  : this.operatorRoundsService.uploadAttachments$({
+                      file: image
+                    });
+              const index = originalValue.images.findIndex(
+                (image) => image === null
+              );
+              if (index !== -1) {
+                imageObservable
+                  .pipe(
+                    tap((response) => {
+                      if (response) {
+                        const responsenew =
+                          this.moduleName === 'RDF'
+                            ? response?.data?.createFormAttachments?.id
+                            : response?.data?.createRoundPlanAttachments?.id;
+                        const images = [...originalValue.images];
+                        images[index] = responsenew;
+                        originalValue = cloneDeep({
+                          ...originalValue,
+                          images
+                        });
+                        this.instructionsMedia = {
+                          ...this.instructionsMedia,
+                          images: [
+                            ...this.instructionsMedia.images.slice(0, index),
+                            {
+                              id: responsenew,
+                              data: compressedImage
+                            },
+                            ...this.instructionsMedia.images.slice(index + 1)
+                          ]
+                        };
+                        this.questionForm.get('value').setValue(originalValue);
+                        this.instructionsUpdateValue();
+                        this.cdrf.detectChanges();
+                      }
+                    })
+                  )
+                  .subscribe();
+              } else {
+                this.toast.show({
+                  text: 'Only upto 3 images can be attached to an instruction.',
+                  type: 'warning'
+                });
+              }
+            } else {
+              this.toast.show({
+                type: 'warning',
+                text: fileUploadSizeToastMessage
+              });
+            }
           });
         }
-      } else {
-        const index = originalValue.images.findIndex((image) => image === null);
-        if (index !== -1) {
-          this.sendFileToS3(file, {
-            originalValue,
-            isImage: true,
-            index
-          });
-        } else {
-          this.toast.show({
-            text: 'Only upto 3 images can be attached to an instruction.',
-            type: 'warning'
-          });
-        }
-      }
-    });
-  };
+      };
+    }
+  }
 
-  sendFileToS3(file, params): void {
-    const { isImage, index } = params;
-    let { originalValue } = params;
-    this.formService
-      .uploadToS3$(`${this.moduleName}/${this.formMetadata?.id}`, file)
-      .subscribe((event) => {
-        const value: InstructionsFile = {
-          name: file.name,
-          size: file.size,
-          objectKey: event.message.objectKey,
-          objectURL: event.message.objectURL
-        };
-        if (isImage) {
-          const images = [...originalValue.images];
-          images[index] = value;
-          originalValue = cloneDeep({
-            ...originalValue,
-            images
-          });
-        } else {
-          originalValue = cloneDeep({
-            ...originalValue,
-            pdf: value
-          });
-        }
-        this.questionForm.get('value').setValue(originalValue);
-        this.instructionsUpdateValue();
+  async resizeImage(base64result: string): Promise<string> {
+    const compressedImage = await this.imageCompress.compressFile(
+      base64result,
+      -1,
+      100,
+      800,
+      600
+    );
+    return compressedImage;
+  }
+
+  async resizePdf(base64Pdf: string): Promise<string> {
+    try {
+      const base64Data = base64Pdf.split(',')[1];
+      const binaryString = atob(base64Data);
+
+      const encoder = new TextEncoder();
+      const pdfBytes = encoder.encode(binaryString);
+
+      const pdfDoc = await PDFDocument.load(pdfBytes);
+
+      const currentSize = pdfBytes.length / 1024;
+      const desiredSize = 400 * 1024;
+      if (currentSize <= desiredSize) {
+        return base64Pdf;
+      }
+
+      const scalingFactor = Math.sqrt(desiredSize / currentSize);
+      const pages = pdfDoc.getPages();
+      pages.forEach((page) => {
+        const { width, height } = page.getSize();
+        page.setSize(width * scalingFactor, height * scalingFactor);
       });
+
+      const modifiedPdfBytes = await pdfDoc.save();
+
+      const decoder = new TextDecoder();
+      const base64ModifiedPdf = btoa(decoder.decode(modifiedPdfBytes));
+
+      return base64ModifiedPdf;
+    } catch (error) {
+      throw error;
+    }
   }
 
   handleEditorFocus(focus: boolean) {
@@ -937,6 +1194,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
       sectionId: this.sectionId,
       question: this.questionForm.value,
       questionIndex: this.questionIndex,
+      instructionsMedia: this.instructionsMedia,
       type: 'update'
     });
   }
@@ -960,18 +1218,41 @@ export class QuestionComponent implements OnInit, OnDestroy {
     return doc.body.textContent || '';
   }
 
-  instructionsFileDeleteHandler(index: number) {
-    let originalValue = this.questionForm.get('value').value;
-    if (index < 3) {
-      this.formService.deleteFromS3(originalValue.images[index].objectKey);
-      const images = [...originalValue.images];
+  instructionsFileDeleteHandler(index: number, type: string, data: any = {}) {
+    let originalValue = Object.assign({}, this.questionForm.get('value').value);
+    const { id: attachmentId } = data;
+
+    if (type === 'image') {
+      let images = [...originalValue.images];
       images[index] = null;
+      originalValue = {
+        ...originalValue,
+        images
+      };
+
+      const updatedMediaImages = this.instructionsMedia.images.filter(
+        (image) => image?.id !== attachmentId
+      );
+
+      this.instructionsMedia = {
+        ...this.instructionsMedia,
+        images: updatedMediaImages
+      };
       originalValue = cloneDeep({
         ...originalValue,
-        images: this.imagesArrayRemoveNullGaps(images)
+        images: this.imagesArrayRemoveNullGaps(originalValue.images)
       });
     } else {
-      this.formService.deleteFromS3(originalValue.pdf.objectKey);
+      this.instructionsMedia = {
+        ...this.instructionsMedia,
+        pdf: {
+          id: null,
+          data: {
+            fileInfo: null,
+            attachment: null
+          }
+        }
+      };
       originalValue = cloneDeep({
         ...originalValue,
         pdf: null
@@ -979,6 +1260,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     }
     this.questionForm.get('value').setValue(originalValue);
     this.instructionsUpdateValue();
+    this.cdrf.detectChanges();
   }
 
   imagesArrayRemoveNullGaps(images) {
@@ -992,12 +1274,10 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
 
   openPreviewDialog() {
-    const attachments = this.questionForm.get('value').value.images;
-    const filteredMedia = [...attachments];
     const slideshowImages = [];
-    filteredMedia.forEach((media) => {
-      if (media) {
-        slideshowImages.push(media.objectURL);
+    this.instructionsMedia.images.forEach((image) => {
+      if (image?.data) {
+        slideshowImages.push(image.data);
       }
     });
     if (slideshowImages) {

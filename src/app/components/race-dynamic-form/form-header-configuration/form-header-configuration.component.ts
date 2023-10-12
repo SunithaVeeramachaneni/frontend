@@ -52,6 +52,7 @@ import { State, getFormMetadata } from 'src/app/forms/state';
 import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
 import {
   DEFAULT_PDF_BUILDER_CONFIG,
+  fileUploadSizeToastMessage,
   formConfigurationStatus,
   raceDynamicForms
 } from 'src/app/app.constants';
@@ -659,7 +660,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
             } else {
               this.toastService.show({
                 type: 'warning',
-                text: 'File size should not exceed 390KB'
+                text: fileUploadSizeToastMessage
               });
             }
           });
@@ -699,7 +700,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
             } else {
               this.toastService.show({
                 type: 'warning',
-                text: 'File size should not exceed 390KB'
+                text: fileUploadSizeToastMessage
               });
             }
           });
@@ -1040,7 +1041,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     const parentValues = this.additionalDetailsMasterData[label].value;
     if (searchValue) {
       this.currentValuesArray = parentValues.filter(
-        (value) => value.toLowerCase().indexOf(searchValue.toLowerCase()) === 0
+        (value) => value.toLowerCase().includes(searchValue.toLowerCase())
       );
     } else {
       this.currentValuesArray = [...parentValues];

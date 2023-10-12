@@ -351,7 +351,7 @@ export class ActionsListComponent implements OnInit, OnDestroy {
     const onScrollActions$ = this.observationsService.fetchActions$.pipe(
       filter(({ data }) => data !== 'load' && data !== 'search'),
       switchMap(({ data }) => {
-        if (data === 'infiniteScroll') {
+        if (data === 'infiniteScroll' && this.observationsService.actionsNextToken!==null ) {
           this.fetchType = 'infiniteScroll';
           return this.getActionsList();
         } else {

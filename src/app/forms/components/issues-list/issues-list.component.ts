@@ -352,7 +352,7 @@ export class IssuesListComponent implements OnInit, OnDestroy {
     const onScrollIssues$ = this.observationsService.fetchIssues$.pipe(
       filter(({ data }) => data !== 'load' && data !== 'search'),
       switchMap(({ data }) => {
-        if (data === 'infiniteScroll') {
+        if (data === 'infiniteScroll' && this.observationsService.issuesNextToken!==null ) {
           this.fetchType = 'infiniteScroll';
           return this.getIssuesList();
         } else {

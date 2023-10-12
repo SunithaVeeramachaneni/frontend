@@ -216,9 +216,9 @@ export class WidgetConfigurationModalComponent implements OnInit {
         }
 
         this.skip = loadFilter.reportData
-          ? loadFilter.reportData.length
-          : this.skip;
-        this.dataSource = new MatTableDataSource(loadFilter.reportData);
+        ? loadFilter.reportData.length
+        : this.skip;
+                this.dataSource = new MatTableDataSource(loadFilter.reportData);
         return loadFilter;
       })
     );
@@ -281,15 +281,14 @@ export class WidgetConfigurationModalComponent implements OnInit {
     this.selectedReport.tableDetails?.forEach((col) => {
       this.reportColumns = this.reportColumns.concat(col.columns);
     });
-    this.reportConfigurationForTable.groupBy = [];
+    this.reportConfigurationForTable.groupBy = type !== 'table' ? [] : [...(this.selectedReport?.groupBy || [])];
     this.configOptions.tableID = `${this.configOptions.tableID}${this.reportConfigurationForTable.id}`;
     this.configOptions =
       this.reportConfigService.updateConfigOptionsFromReportConfiguration(
         this.reportConfigurationForTable,
-        this.configOptions,
-        false
+        this.configOptions
       );
-    this.chartVarient = this.selectedReport.groupBy?.length
+    this.chartVarient = this.selectedReport.groupBy?.length && type !== 'table'
       ? `${type}${indexAxis ? `_${indexAxis}` : ``}`
       : 'table';
     this.chartVarient$.next(this.chartVarient);
@@ -424,13 +423,18 @@ export class WidgetConfigurationModalComponent implements OnInit {
             type,
             indexAxis
           };
-          this.chartConfig = this.reportConfigService.updateChartConfig(
-            this.selectedReport,
-            this.chartConfig,
-            this.data.mode === 'edit' ? false : true,
-            false
-          );
+        }else {
+          this.selectedReport.chartDetails = {
+            ...this.selectedReport.chartDetails,
+            type: 'table',
+          }
         }
+        this.chartConfig = this.reportConfigService.updateChartConfig(
+          this.selectedReport,
+          this.chartConfig,
+          this.data.mode === 'edit' ? false : true,
+          false
+        );
         this.chartVarient = value;
         this.chartVarient$.next(value);
         break;

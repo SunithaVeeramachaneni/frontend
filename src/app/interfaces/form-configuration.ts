@@ -32,6 +32,7 @@ export interface Page {
   sections: Section[];
   questions: Question[];
   logics: any[];
+  questionInstructionMediaMap: any[];
 }
 
 export interface TaskLevelSchedulePage extends Page {
@@ -66,6 +67,10 @@ export interface TaskLevelScheduleSection extends Section {
   partiallyChecked: boolean;
 }
 
+export interface QuestionPageIndexNodeMap extends Question {
+  pageIndex: number;
+  subFormId: string;
+}
 export interface Question {
   id: string;
   sectionId: string;
@@ -137,6 +142,7 @@ export interface QuestionEvent {
   questionIndex: number;
   type: 'add' | 'update' | 'delete';
   isAskQuestion?: boolean;
+  instructionsMedia?: any;
 }
 
 export interface InstructionsFile {
@@ -149,4 +155,9 @@ export interface FormUploadFile {
   name: string;
   size: number;
   objectKey: string;
+}
+
+export interface QuestionInstructionMediaMap {
+  questionId: string;
+  instructionsMedia: any;
 }

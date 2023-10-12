@@ -11,6 +11,7 @@ import { Store } from '@ngrx/store';
 import { State, getFormMetadata } from 'src/app/forms/state';
 import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
 import { Subscription } from 'rxjs';
+import { QuestionInstructionMediaMap } from 'src/app/interfaces';
 
 @Component({
   selector: 'app-form-edit-view',
@@ -31,6 +32,17 @@ export class FormEditViewComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.route.data.subscribe((data) => {
       if (data.form && Object.keys(data.form).length) {
+        data.form.pages = data.form.pages.map((page) => {
+          let questionInstructionMediaMap: QuestionInstructionMediaMap[] = [];
+          page.questions.forEach((question) => {
+            questionInstructionMediaMap.push({
+              questionId: question.id,
+              instructionsMedia: {}
+            });
+          });
+          page.questionInstructionMediaMap = questionInstructionMediaMap;
+          return page;
+        });
         this.store.dispatch(
           BuilderConfigurationActions.updateFormConfiguration({
             formConfiguration: data.form

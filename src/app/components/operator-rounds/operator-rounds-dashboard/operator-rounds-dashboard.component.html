@@ -1,36 +1,68 @@
-<div *ngIf="currentRouteUrl$ | async as currentRouteUrl" class="dashboard-container">
+<div
+  *ngIf="currentRouteUrl$ | async as currentRouteUrl"
+  class="dashboard-container"
+>
   <ng-container *ngIf="currentRouteUrl === routingUrls.oprDashboard.url">
     <div class="dis-flex dashboard-filters">
       <div class="toggle-btns" [formGroup]="dashboardForm">
         <div class="date-segment">
           <mat-button-toggle-group (change)="dateChanged($event)">
-            <mat-button-toggle value="last_day" class="toogle-btn-text" [ngClass]="{
-              'selected':dashboardForm.value.timePeriod ==='last_day'
-            }">
-              {{'lastDay' | translate}}
+            <mat-button-toggle
+              value="last_day"
+              class="toogle-btn-text"
+              [ngClass]="{
+                selected: dashboardForm.value.timePeriod === 'last_day'
+              }"
+            >
+              {{ 'lastDay' | translate }}
             </mat-button-toggle>
-            <mat-button-toggle value="last_week" class="toogle-btn-text" [ngClass]="{
-              'selected':dashboardForm.value.timePeriod ==='last_week'
-            }">
-              {{'lastWeek' | translate}}
+            <mat-button-toggle
+              value="last_week"
+              class="toogle-btn-text"
+              [ngClass]="{
+                selected: dashboardForm.value.timePeriod === 'last_week'
+              }"
+            >
+              {{ 'lastWeek' | translate }}
             </mat-button-toggle>
-            <mat-button-toggle value="last_month" class="toogle-btn-text" [ngClass]="{
-              'selected':dashboardForm.value.timePeriod ==='last_month'
-            }">
-              {{'lastMonth' | translate}}
+            <mat-button-toggle
+              value="last_month"
+              class="toogle-btn-text"
+              [ngClass]="{
+                selected: dashboardForm.value.timePeriod === 'last_month'
+              }"
+            >
+              {{ 'lastMonth' | translate }}
             </mat-button-toggle>
-            <mat-button-toggle value="last_3_months" class="toogle-btn-text" [ngClass]="{
-              'selected':dashboardForm.value.timePeriod ==='last_3_months'
-            }">
-              {{'last3Months' | translate}}
+            <mat-button-toggle
+              value="last_3_months"
+              class="toogle-btn-text"
+              [ngClass]="{
+                selected: dashboardForm.value.timePeriod === 'last_3_months'
+              }"
+            >
+              {{ 'last3Months' | translate }}
             </mat-button-toggle>
-            <mat-button-toggle value="last_6_months" class="toogle-btn-text" [ngClass]="{
-              'selected':dashboardForm.value.timePeriod ==='last_6_months'
-            }">
-              {{'last6Months' | translate}}
+            <mat-button-toggle
+              value="last_6_months"
+              class="toogle-btn-text"
+              [ngClass]="{
+                selected: dashboardForm.value.timePeriod === 'last_6_months'
+              }"
+            >
+              {{ 'last6Months' | translate }}
             </mat-button-toggle>
-            <mat-button-toggle id="dateSegmentCustomText" value="custom" (click)="rangePicker.open()"
-              class="toogle-btn-text">{{ customText | translate }}</mat-button-toggle>
+            <mat-button-toggle
+              id="dateSegmentCustomText"
+              value="custom"
+              (click)="rangePicker.open()"
+              class="toogle-btn-text"
+              [ngClass]="{
+                selected: dashboardForm.value.timePeriod === 'custom'
+              }"
+            >
+              {{ customText | translate }}
+            </mat-button-toggle>
           </mat-button-toggle-group>
           <mat-form-field appearance="fill" class="date-range-form-field">
             <mat-date-range-input [rangePicker]="rangePicker">
@@ -39,132 +71,280 @@
             </mat-date-range-input>
             <mat-date-range-picker #rangePicker>
               <mat-date-range-picker-actions>
-                <button id="dateSegmentCancelBtn" mat-button matDateRangePickerCancel>
+                <button
+                  id="dateSegmentCancelBtn"
+                  mat-button
+                  matDateRangePickerCancel
+                >
                   {{ 'cancel' | translate }}
                 </button>
-                <button id="dateSegmentApplyBtn" mat-raised-button color="primary" matDateRangePickerApply
-                  (click)="appliedDateRange(dashboardForm.value.startDate, dashboardForm.value.endDate)">
+                <button
+                  id="dateSegmentApplyBtn"
+                  mat-raised-button
+                  color="primary"
+                  matDateRangePickerApply
+                  (click)="
+                    appliedDateRange(
+                      dashboardForm.value.startDate,
+                      dashboardForm.value.endDate
+                    )
+                  "
+                >
                   {{ 'apply' | translate }}
                 </button>
               </mat-date-range-picker-actions>
             </mat-date-range-picker>
           </mat-form-field>
         </div>
-        <mat-form-field appearance="outline" class="filter-field custom-form-field-white-color">
+        <mat-form-field
+          appearance="outline"
+          class="filter-field custom-form-field-white-color"
+        >
           <mat-label id="addEditAssetsPlant" translate="plant"></mat-label>
-          <mat-select (valueChange)="onSelectPlant($event)" formControlName="plantId">
-            <input class="searchable-input" [placeholder]="'searchTxt' | translate" (keyup)="onKeyPlant($event)"
-              #searchInput />
+          <mat-select
+            (valueChange)="onSelectPlant($event)"
+            formControlName="plantId"
+          >
+            <input
+              class="searchable-input"
+              [placeholder]="'searchTxt' | translate"
+              (keyup)="onKeyPlant($event)"
+              #searchInput
+            />
             <div class="scrollable-area">
-              <mat-option value="">{{'allTxt' | translate}}</mat-option>
-              <mat-option id="addEditAssetsPlantOptions" [value]="plant.plantId" *ngFor="let plant of allPlantsData">{{
-                plant.plantId }} - {{ plant.name }}</mat-option>
+              <mat-option value="">{{ 'allTxt' | translate }}</mat-option>
+              <mat-option
+                id="addEditAssetsPlantOptions"
+                [value]="plant.plantId"
+                *ngFor="let plant of allPlantsData"
+                >{{ plant.plantId }} - {{ plant.name }}</mat-option
+              >
             </div>
           </mat-select>
         </mat-form-field>
-        <mat-form-field appearance="outline" class="filter-field custom-form-field-white-color">
+        <mat-form-field
+          appearance="outline"
+          class="filter-field custom-form-field-white-color"
+        >
           <mat-label id="addEditAssetsPlant" translate="shift"></mat-label>
-          <mat-select (valueChange)="onSelectShift($event)" formControlName="shiftId">
-            <input class="searchable-input" [placeholder]="'searchTxt' | translate" #searchInput />
+          <mat-select
+            (valueChange)="onSelectShift($event)"
+            formControlName="shiftId"
+          >
+            <input
+              class="searchable-input"
+              [placeholder]="'searchTxt' | translate"
+              #searchInput
+            />
             <div class="scrollable-area">
-              <mat-option value="">{{'allTxt' | translate}}</mat-option>
-              <mat-option id="addEditAssetsPlantOptions" [value]="shift.startAndEndTime"
-                *ngFor="let shift of selectedPlantShifts">
-                {{shift.name }}
+              <mat-option value="">{{ 'allTxt' | translate }}</mat-option>
+              <mat-option
+                id="addEditAssetsPlantOptions"
+                [value]="shift.startAndEndTime"
+                *ngFor="let shift of selectedPlantShifts"
+              >
+                {{ shift.name }}
               </mat-option>
             </div>
           </mat-select>
         </mat-form-field>
 
-        <mat-form-field appearance="outline" class="filter-field custom-form-field-white-color"
-          *ngIf="dashboardForm.value.plantId && dashboardForm.value.plantId.length">
+        <mat-form-field
+          appearance="outline"
+          class="filter-field custom-form-field-white-color"
+          *ngIf="
+            dashboardForm.value.plantId && dashboardForm.value.plantId.length
+          "
+        >
           <mat-label id="locationSelect" translate="location"></mat-label>
-          <mat-select (valueChange)="onSelectLocation($event)" formControlName="locationId">
-            <input class="searchable-input" [placeholder]="'searchTxt' | translate" (keyup)="onKeyLocation($event)"
-              #searchInput />
+          <mat-select
+            (valueChange)="onSelectLocation($event)"
+            formControlName="locationId"
+          >
+            <input
+              class="searchable-input"
+              [placeholder]="'searchTxt' | translate"
+              (keyup)="onKeyLocation($event)"
+              #searchInput
+            />
             <div class="scrollable-area">
-              <mat-option value="">{{'allTxt' | translate}}</mat-option>
-              <mat-option id="addEditAssetsPlantOptions" [value]="location.locationId"
-                *ngFor="let location of allLocationsData">{{
-                location.locationId }} - {{ location.name }}</mat-option>
+              <mat-option value="">{{ 'allTxt' | translate }}</mat-option>
+              <mat-option
+                id="addEditAssetsPlantOptions"
+                [value]="location.locationId"
+                *ngFor="let location of allLocationsData"
+                >{{ location.locationId }} - {{ location.name }}</mat-option
+              >
             </div>
           </mat-select>
         </mat-form-field>
-        <mat-form-field appearance="outline" class="filter-field custom-form-field-white-color"
-          *ngIf="dashboardForm.value.plantId && dashboardForm.value.plantId.length">
+        <mat-form-field
+          appearance="outline"
+          class="filter-field custom-form-field-white-color"
+          *ngIf="
+            dashboardForm.value.plantId && dashboardForm.value.plantId.length
+          "
+        >
           <mat-label id="assetSelect" translate="asset"></mat-label>
-          <mat-select (valueChange)="onSelectAsset($event)" formControlName="assetId">
-            <input class="searchable-input" [placeholder]="'searchTxt' | translate" (keyup)="onKeyAsset($event)"
-              #searchInput />
+          <mat-select
+            (valueChange)="onSelectAsset($event)"
+            formControlName="assetId"
+          >
+            <input
+              class="searchable-input"
+              [placeholder]="'searchTxt' | translate"
+              (keyup)="onKeyAsset($event)"
+              #searchInput
+            />
             <div class="scrollable-area">
-              <mat-option value="">{{'allTxt' | translate}}</mat-option>
-              <mat-option id="addEditAssetsPlantOptions" [value]="asset.assetsId" *ngFor="let asset of allAssetsData">{{
-                asset.assetsId }} - {{ asset.name }}</mat-option>
+              <mat-option value="">{{ 'allTxt' | translate }}</mat-option>
+              <mat-option
+                id="addEditAssetsPlantOptions"
+                [value]="asset.assetsId"
+                *ngFor="let asset of allAssetsData"
+                >{{ asset.assetsId }} - {{ asset.name }}</mat-option
+              >
             </div>
           </mat-select>
         </mat-form-field>
-
       </div>
       <div class="undo-redo-btns">
-        <button mat-stroked-button color="primary" class="report-button" matTooltip="Undo" matTooltipClass=""
-          (click)="undo($event)" [disabled]="!undoRedoUtil.undoSize()" aria-label="Undo">
-          <mat-icon class="icon" [ngClass]="{'active':undoRedoUtil.undoSize()}">undo</mat-icon>
-        </button>
-        <button mat-stroked-button color="primary" class="report-button" (click)="redo($event)" matTooltip="Redo"
-          matTooltipClass="" [disabled]="!undoRedoUtil.redoSize()" aria-label="Redo">
-          <mat-icon class="icon" [ngClass]="{'active':undoRedoUtil.redoSize()}">redo</mat-icon>
-        </button>
-        <button mat-stroked-button color="primary" class="report-button" aria-label="share" (click)="openEmailDialog()">
+        <!-- <button
+          mat-stroked-button
+          color="primary"
+          class="report-button"
+          matTooltip="Undo"
+          matTooltipClass=""
+          (click)="undo($event)"
+          [disabled]="!undoRedoUtil.undoSize()"
+          aria-label="Undo"
+        >
+          <mat-icon class="icon" [ngClass]="{ active: undoRedoUtil.undoSize() }"
+            >undo</mat-icon
+          >
+        </button> -->
+        <!-- <button
+          mat-stroked-button
+          color="primary"
+          class="report-button"
+          (click)="redo($event)"
+          matTooltip="Redo"
+          matTooltipClass=""
+          [disabled]="!undoRedoUtil.redoSize()"
+          aria-label="Redo"
+        >
+          <mat-icon class="icon" [ngClass]="{ active: undoRedoUtil.redoSize() }"
+            >redo</mat-icon
+          >
+        </button> -->
+        <button
+          mat-stroked-button
+          color="primary"
+          class="report-button"
+          aria-label="share"
+          (click)="openEmailDialog()"
+        >
           <mat-icon class="icon active">forward_to_inbox</mat-icon>
         </button>
-        <button mat-stroked-button color="primary" class="report-button" [ngClass]="{'t-minus4':downloadInProgress}"
-          aria-label="share" (click)="downloadDashboardAsImage()" [disabled]="downloadInProgress">
-          <mat-progress-spinner [mode]="'indeterminate'" [diameter]="25"
-            *ngIf="downloadInProgress"></mat-progress-spinner>
-          <mat-icon class="icon active" *ngIf="!downloadInProgress">picture_as_pdf</mat-icon>
+        <button
+          mat-stroked-button
+          color="primary"
+          class="report-button"
+          [ngClass]="{ 't-minus4': downloadInProgress }"
+          aria-label="share"
+          (click)="downloadDashboardAsImage()"
+          [disabled]="downloadInProgress"
+        >
+          <mat-progress-spinner
+            [mode]="'indeterminate'"
+            [diameter]="25"
+            *ngIf="downloadInProgress"
+          ></mat-progress-spinner>
+          <mat-icon class="icon active" *ngIf="!downloadInProgress"
+            >picture_as_pdf</mat-icon
+          >
         </button>
-        <button class="new-widget-btn" translate="newWidget"
-          *appCheckUserHasPermission="[permissions.createOPRDashboard]" (click)="createWidget()"></button>
+        <button
+          class="new-widget-btn"
+          translate="newWidget"
+          *appCheckUserHasPermission="[permissions.createOPRDashboard]"
+          (click)="createWidget()"
+        ></button>
       </div>
-
     </div>
     <mat-divider></mat-divider>
     <ng-container>
       <div id="gridster-container" #gridsterContainer>
         <gridster [options]="options">
           <ng-container *ngIf="widgetsData$ | async as widgetsData">
-            <gridster-item [item]="widget.config" *ngFor="let widget of widgetsData.data">
-              <div id="{{widget.id}}">
+            <gridster-item
+              [item]="widget.config"
+              *ngFor="let widget of widgetsData.data"
+            >
+              <div id="{{ widget.id }}">
                 <div class="dis-flex widget-header">
-                  <div class="gridster-item-content widget-title" matTooltip="{{ widget.name }}" matTooltipClass="">
+                  <div
+                    class="gridster-item-content widget-title"
+                    matTooltip="{{ widget.name }}"
+                    matTooltipClass=""
+                  >
                     {{ widget.name }}
                   </div>
-                  <button [matMenuTriggerFor]="widgetMenu" class="more-icon" *appCheckUserHasPermission="[
-                    permissions.updateOPRDashboard,
-                    permissions.copyOPRDashboard,
-                    permissions.deleteOPRDashboard
-                  ]" aria-label="More Options">
-                    <svg-icon icon="icon-more" class="more-icon-no-color"></svg-icon>
+                  <button
+                    [matMenuTriggerFor]="widgetMenu"
+                    class="more-icon"
+                    *appCheckUserHasPermission="[
+                      permissions.updateOPRDashboard,
+                      permissions.copyOPRDashboard,
+                      permissions.deleteOPRDashboard
+                    ]"
+                    aria-label="More Options"
+                  >
+                    <svg-icon
+                      icon="icon-more"
+                      class="more-icon-no-color"
+                    ></svg-icon>
                   </button>
                   <mat-menu #widgetMenu="matMenu">
-                    <button mat-menu-item (click)="editWidget(widget)"
-                      *appCheckUserHasPermission="[permissions.updateOPRDashboard]">
+                    <button
+                      mat-menu-item
+                      (click)="editWidget(widget)"
+                      *appCheckUserHasPermission="[
+                        permissions.updateOPRDashboard
+                      ]"
+                    >
                       <span translate>editWidget</span>
                     </button>
-                    <button mat-menu-item (click)="copyWidget(widget)"
-                      *appCheckUserHasPermission="[permissions.copyOPRDashboard]">
+                    <button
+                      mat-menu-item
+                      (click)="copyWidget(widget)"
+                      *appCheckUserHasPermission="[
+                        permissions.copyOPRDashboard
+                      ]"
+                    >
                       <span translate>copyWidget</span>
                     </button>
-                    <button mat-menu-item (click)="deleteWidget(widget)" class="text-red"
-                      *appCheckUserHasPermission="[permissions.deleteOPRDashboard]">
+                    <button
+                      mat-menu-item
+                      (click)="deleteWidget(widget)"
+                      class="text-red"
+                      *appCheckUserHasPermission="[
+                        permissions.deleteOPRDashboard
+                      ]"
+                    >
                       <span translate>deleteWidget</span>
                     </button>
                   </mat-menu>
                 </div>
                 <div class="widget-body">
-                  <app-widget [widget]="widget" [height]="widgetHeights[widget.id]" [width]="widgetWidths[widget.id]"
-                    (widgetAction)="widgetActionHandler($event)" [filters]="dashboardForm.value"
-                    [hasCustomColorScheme]="true"></app-widget>
+                  <app-widget
+                    [widget]="widget"
+                    [height]="widgetHeights[widget.id]"
+                    [width]="widgetWidths[widget.id]"
+                    (widgetAction)="widgetActionHandler($event)"
+                    [filters]="dashboardForm.value"
+                    [hasCustomColorScheme]="true"
+                  ></app-widget>
                 </div>
               </div>
             </gridster-item>
@@ -174,7 +354,11 @@
 
       <ng-container *ngIf="applyingFilters$ | async" class="spinnerContainer">
         <div class="overlay"></div>
-        <mat-progress-spinner [mode]="'indeterminate'" [diameter]="175" [strokeWidth]="10"></mat-progress-spinner>
+        <mat-progress-spinner
+          [mode]="'indeterminate'"
+          [diameter]="175"
+          [strokeWidth]="10"
+        ></mat-progress-spinner>
       </ng-container>
     </ng-container>
   </ng-container>

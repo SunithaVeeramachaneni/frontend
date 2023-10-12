@@ -30,18 +30,29 @@
 
 <!-- Instructions Images -->
 <div>
-  <ng-container *ngFor="let image of question.value.images; index as i">
+  <ng-container
+    *ngFor="
+      let image of (instructionsMedia$ | async)?.instructionsMedia.images;
+      index as i
+    "
+  >
     <img
       id="instructionResponseImg"
-      src="{{ image.objectURL }}"
+      [src]="image.data"
       alt="image"
       class="instruction-image-field"
-      *ngIf="image !== null"
+      *ngIf="image !== null && image.id !== null"
     />
   </ng-container>
 </div>
 
-<ng-container *ngIf="question.value.pdf !== null">
-  <app-instruction-pdf-preview [pdf]="question.value.pdf">
+<ng-container
+  *ngIf="
+    (instructionsMedia$ | async)?.instructionsMedia.pdf?.data.fileInfo !== null
+  "
+>
+  <app-instruction-pdf-preview
+    [pdf]="(instructionsMedia$ | async)?.instructionsMedia.pdf?.data.fileInfo"
+  >
   </app-instruction-pdf-preview>
 </ng-container>

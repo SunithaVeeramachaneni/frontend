@@ -259,7 +259,8 @@ export class ReportConfigurationService {
     const {
       datasetFieldName = '',
       countFieldName = '',
-      stackFieldName = ''
+      stackFieldName = '',
+      type
     } = chartDetails;
     let tableColumns: TableColumn[] = [];
     tableDetails.forEach(
@@ -300,16 +301,18 @@ export class ReportConfigurationService {
       newCountFields[0].visible = true;
       newCountFieldName = newCountFields[0].name;
     }
-    for (const groupField of groupBy) {
-      const column = tableColumns.find(
-        (tableColumn) => tableColumn.name === groupField
-      );
-      newDatasetFields.push({
-        name: groupField,
-        displayName: column?.displayName,
-        type: column?.type,
-        visible: false
-      });
+    if(type !== 'table') {
+      for (const groupField of groupBy) {
+        const column = tableColumns.find(
+          (tableColumn) => tableColumn.name === groupField
+        );
+        newDatasetFields.push({
+          name: groupField,
+          displayName: column?.displayName,
+          type: column?.type,
+          visible: false
+        });
+      }
     }
 
     newDatasetFields = newDatasetFields.map((datasetField) => {

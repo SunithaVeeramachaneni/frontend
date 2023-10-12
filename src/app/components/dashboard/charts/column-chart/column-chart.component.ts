@@ -167,7 +167,14 @@ export class ColumnChartComponent implements OnInit, OnChanges {
       const newOptions = { ...this.chartOptions };
       this.chartTitle = title;
       this.chartType = type;
-      newOptions.series.label.show = showValues;
+      if (
+        newOptions.series &&
+        newOptions.series.label &&
+        newOptions.series.label
+      ) {
+        newOptions.series.label.show = showValues;
+      }
+
       newOptions.legend.show = showLegends;
       newOptions.xAxis.name = this.chartConfig.countFieldName;
       this.chartConfig.datasetFields.filter((dataset) => {
@@ -180,8 +187,26 @@ export class ColumnChartComponent implements OnInit, OnChanges {
       this.datasetField = datasetFields.find(
         (datasetField) => datasetField.visible
       );
-      this.prepareChartData();
+      this.chartOptions.title.text = this.chartTitle;
+      this.preparedChartData = this.prepareChartData();
+      newOptions.series.data = this.preparedChartData.data;
+      newOptions.legend.data = this.preparedChartData.labels;
+      if (!Array.isArray(newOptions.series)) {
+        newOptions.series = [newOptions.series];
+      } else {
+        newOptions.series = [...newOptions.series];
+      }
+
       this.chartOptions = newOptions;
+
+      this.chartOptions.series.forEach((series) => {
+        series.itemStyle = {
+          color: (param: any) =>
+            this.colorsByStatus[param.name]
+              ? this.colorsByStatus[param.name]
+              : '#c8c8c8'
+        };
+      });
     }
   };
 
@@ -210,23 +235,17 @@ export class ColumnChartComponent implements OnInit, OnChanges {
       }, {});
 
     newOptions.yAxis.data = Object.keys(sortedObject);
-    newOptions.series.data = Object.values(sortedObject);
-    if (!Array.isArray(newOptions.series)) {
-      newOptions.series = [newOptions.series];
-    } else {
-      newOptions.series = [...newOptions.series];
-    }
 
-    this.chartOptions = newOptions;
+    const labels = Object.keys(sortedObject);
+    const converted = Object.entries(sortedObject).map(([key, value]) => ({
+      name: key,
+      value
+    }));
 
-    this.chartOptions.series.forEach((series) => {
-      series.itemStyle = {
-        color: (param: any) =>
-          this.colorsByStatus[param.name]
-            ? this.colorsByStatus[param.name]
-            : '#c8c8c8'
-      };
-    });
+    return {
+      labels,
+      data: converted
+    };
   };
 
   ngOnChanges(changes: SimpleChanges) {
