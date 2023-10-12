@@ -151,7 +151,7 @@ export class ChartVariantComponent implements OnInit, OnDestroy {
     let chartVarient: string;
     if (isStacked) chartVarient = `stacked_${type}_${indexAxis}`;
     else
-      chartVarient = groupBy?.length
+      chartVarient = groupBy?.length && type !== 'table'
         ? `${type}${indexAxis ? `_${indexAxis}` : ``}`
         : 'table';
     this.chartVarientForm.patchValue({
