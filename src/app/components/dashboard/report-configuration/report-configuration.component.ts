@@ -54,6 +54,7 @@ import { HeaderService } from 'src/app/shared/services/header.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { ValidationError } from 'src/app/interfaces';
 import { LoginService } from '../../login/services/login.service';
+import { fieldTypesMock } from 'src/app/forms/components/response-type/response-types.mock';
 
 @Component({
   selector: 'app-report-configuration',
@@ -141,6 +142,7 @@ export class ReportConfigurationComponent implements OnInit {
   subscription: any;
   isExportInProgress = false;
   showPreview: boolean;
+  isScroll: boolean = false;
   readonly permissions = permissions;
 
   reportTitleUpdate = new Subject();
@@ -280,6 +282,7 @@ export class ReportConfigurationComponent implements OnInit {
           loadFilter.reportData = filterData;
         } else {
           const { reportData: scrollData = [] } = scroll;
+          this.isScroll = true;
           loadFilter.reportData = loadFilter.reportData.concat(scrollData);
         }
         this.reportTitleUpdate.next(this.reportConfiguration.name);
@@ -311,14 +314,20 @@ export class ReportConfigurationComponent implements OnInit {
   formatReportData = (reportData) => {
     reportData = reportData.map((data) => {
       if (data.taskType === 'NF') {
-        if (data?.exception > 0) {
+        if (data?.exception > 0 || data?.exception === 'True') {
           data.exception = 'True';
-        } else if (data?.exception === 0) {
+        } else if (data?.exception === 0 || data?.exception === 'False') {
           data.exception = 'False';
         } else {
           data.exception = '';
         }
       }
+      data.taskType = fieldTypesMock.fieldTypes.find((fieldType) => {
+        return (
+          fieldType.type === data.taskType ||
+          fieldType.description === data.taskType
+        );
+      })?.description;
     });
   };
 
@@ -707,6 +716,25 @@ export class ReportConfigurationComponent implements OnInit {
   }
 
   applyFilter(filtersObj: any) {
+    filtersObj.filters = filtersObj.filters.map((filter) => {
+      if (filter.column === 'taskType') {
+        const filtersArray = filter.filters.map((f) => {
+          f = {
+            ...f,
+            operand: fieldTypesMock.fieldTypes.find(
+              (fieldType) => fieldType.description === f.operand
+            ).type
+          };
+          return f;
+        });
+        return {
+          ...filter,
+          filters: filtersArray
+        };
+      } else {
+        return filter;
+      }
+    });
     const filtersApplied: FilterApplied[] = filtersObj.filters;
     this.searchKey = filtersObj.searchKey;
     if (filtersApplied) {
