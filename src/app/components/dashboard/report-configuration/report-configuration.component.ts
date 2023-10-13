@@ -299,7 +299,7 @@ export class ReportConfigurationComponent implements OnInit {
         this.skip = loadFilter.reportData
           ? loadFilter.reportData.length
           : this.skip;
-        this.formatReportData(loadFilter.reportData);
+        this.reportConfigService.formatReportData(loadFilter.reportData, this.userEmailToName);
         this.dataSource = new MatTableDataSource(loadFilter.reportData);
         return loadFilter;
       })
@@ -320,29 +320,6 @@ export class ReportConfigurationComponent implements OnInit {
     const moduleName = `operator-rounds`;
     this.router.navigate([`/${moduleName}/reports`]);
   }
-  formatReportData = (reportData) => {
-    reportData = reportData.map((data) => {
-      if (data.taskType === 'NF') {
-        if (data?.exception > 0 || data?.exception === 'True') {
-          data.exception = 'True';
-        } else if (data?.exception === 0 || data?.exception === 'False') {
-          data.exception = 'False';
-        } else {
-          data.exception = '';
-        }
-      }
-      if(data.assignedTo) data.assignedToDisplay = this.userEmailToName[data.assignedTo];
-      if(data.raisedBy) data.raisedByDisplay = this.userEmailToName[data.raisedBy];
-      if(data.roundSubmittedBy) data.roundSubmittedByDisplay = this.userEmailToName[data.roundSubmittedBy];
-      if(data.taskCompletedBy) data.taskCompletedByDisplay = this.userEmailToName[data.taskCompletedBy];
-      data.taskType = fieldTypesMock.fieldTypes.find((fieldType) => {
-        return (
-          fieldType.type === data.taskType ||
-          fieldType.description === data.taskType
-        );
-      })?.description;
-    });
-  };
 
   toggleReportInputField = () => {
     this.reportNameDisabled = !this.reportNameDisabled;
