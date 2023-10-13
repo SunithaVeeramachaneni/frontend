@@ -441,9 +441,11 @@ export class FormsComponent implements OnInit, OnDestroy {
         map(
           ([forms, scrollData, formScheduleConfigurations, shifts, plants]) => {
             this.isLoading$.next(false);
-            shifts?.items?.forEach((shift) => {
-              this.shiftIdNameMap[shift.id] = shift.name;
-            });
+            shifts?.items
+              ?.filter((s) => s?.isActive)
+              ?.forEach((shift) => {
+                this.shiftIdNameMap[shift.id] = shift.name;
+              });
             this.allPlants = plants;
             this.allShifts = shifts?.items?.filter((s) => s?.isActive) || [];
 
