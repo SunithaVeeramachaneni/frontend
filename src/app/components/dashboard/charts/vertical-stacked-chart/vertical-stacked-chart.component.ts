@@ -147,6 +147,10 @@ export class VerticalStackedChartComponent implements OnInit {
   ngOnInit(): void {}
 
   onChartClickHandler(event) {
+    const additionalData = {};
+    additionalData[this.chartConfigurations.stackFieldName] = event.seriesName;
+    additionalData[this.chartConfigurations.datasetFieldName] = event.name;
+    event.data = {value: event.data, name: event.seriesName, additionalData};
     this.chartClickEvent.emit(event);
   }
 
