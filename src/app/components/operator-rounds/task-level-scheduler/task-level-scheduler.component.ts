@@ -393,13 +393,13 @@ export class TaskLevelSchedulerComponent implements OnInit {
   prepareScheduleByDates(scheduleByDates) {
     return scheduleByDates.map((scheduleByDate) => {
       let dateByPlantTimezone = new Date(
-        format(scheduleByDate.date, dateTimeFormat3)
+        format(new Date(scheduleByDate.date), dateTimeFormat3)
       );
       if (
         this.plantTimezoneMap[this.roundPlanData?.plantId]?.timeZoneIdentifier
       ) {
         dateByPlantTimezone = zonedTimeToUtc(
-          format(scheduleByDate.date, dateTimeFormat3),
+          format(new Date(scheduleByDate.date), dateTimeFormat3),
           this.plantTimezoneMap[this.roundPlanData?.plantId]?.timeZoneIdentifier
         );
       }
