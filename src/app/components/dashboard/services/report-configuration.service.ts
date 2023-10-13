@@ -165,6 +165,12 @@ export class ReportConfigurationService {
     );
   };
 
+  getId = (id) => {
+    const ids = new Set(['assignedTo', 'raisedBy', 'roundSubmittedBy', 'taskCompletedBy']);
+    if(ids.has(id)) return `${id}Display`;
+    return id;
+  }
+
   updateConfigOptionsFromReportConfiguration(
     reportConfiguration: ReportConfiguration,
     configOptions: ConfigOptions,
@@ -180,7 +186,7 @@ export class ReportConfigurationService {
     const allColumns: Column[] = tableColumns.map((column) => {
       const { order, visible, sticky, displayName, name: id, type } = column;
       return {
-        id,
+        id: this.getId(id),
         displayName,
         type,
         controlType: 'string',
