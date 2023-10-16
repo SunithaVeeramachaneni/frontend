@@ -468,7 +468,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
       this.raceDynamicFormService.fetchAllInspections$()
     ]).pipe(
       tap(([, , formsList]) => {
-        this.isLoading$.next(false);
         const objectKeys = Object.keys(formsList);
         if (objectKeys.length > 0) {
           const uniqueSchedules = formsList

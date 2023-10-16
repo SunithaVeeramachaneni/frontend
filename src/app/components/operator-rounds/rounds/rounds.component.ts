@@ -652,7 +652,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
       this.operatorRoundsService.fetchAllRounds$()
     ]).pipe(
       tap(([, , formsList]) => {
-        this.isLoading$.next(false);
         const objectKeys = Object.keys(formsList);
         if (objectKeys.length > 0) {
           const uniqueSchedules = formsList
