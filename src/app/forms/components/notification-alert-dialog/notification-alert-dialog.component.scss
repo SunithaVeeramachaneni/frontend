@@ -9,18 +9,28 @@
   border-radius: 4px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-content: center;
   justify-content: flex-start;
 }
 .heading {
   color: $gray-bg;
-  font-size: 110%;
-  font-weight: 600;
+  font-size: 130%;
+  font-weight: 900;
   margin: 0;
+  float: left;
+  margin-top: 10px;
+  margin-bottom: 15px;
+
+  .alert-span {
+    margin-left: 5px;
+  }
 }
 .alertSpan {
   color: $gray-bg;
   text-align: left;
+}
+.body {
+  padding: 0px 5px;
 }
 
 .buttons {
@@ -31,7 +41,8 @@
 }
 
 #showBtn {
-  margin: 10px 0px;
+  margin-top: 15px;
+  margin-bottom: 5px;
   width: auto;
   height: 40px;
   border-radius: 4px;
@@ -48,5 +59,7 @@
   color: $blue;
   font-weight: 400;
   cursor: pointer;
-  margin-top: 5px;
+}
+:hover {
+  background: none;
 }
