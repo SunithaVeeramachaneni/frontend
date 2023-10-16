@@ -490,6 +490,13 @@ export class AssetsListComponent implements OnInit, OnDestroy {
       });
     }
 
+    if (this.loginService.checkUserHasPermission(permissions, 'COPY_ASSET')) {
+      menuActions.push({
+        title: 'Copy',
+        action: 'copy'
+      });
+    }
+
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
     this.configOptions = { ...this.configOptions };
@@ -502,11 +509,15 @@ export class AssetsListComponent implements OnInit, OnDestroy {
   rowLevelActionHandler = ({ data, action }): void => {
     switch (action) {
       case 'edit':
-        this.assetsEditData = { assetData: data };
+        this.assetsEditData = { assetData: data, isCopy: false };
         this.assetsAddOrEditOpenState = 'in';
         break;
       case 'delete':
         this.deleteAsset(data);
+        break;
+      case 'copy':
+        this.assetsEditData = { assetData: data, isCopy: true };
+        this.assetsAddOrEditOpenState = 'in';
         break;
       default:
     }

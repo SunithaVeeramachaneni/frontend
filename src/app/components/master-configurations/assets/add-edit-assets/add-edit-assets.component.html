@@ -241,7 +241,7 @@
       mat-raised-button
       class="create-btn"
       type="submit"
-      [disabled]="assetForm.invalid"
+      [disabled]="assetForm.invalid && assetIdValidated"
       (click)="create()"
     >
       {{ assetButton }}
