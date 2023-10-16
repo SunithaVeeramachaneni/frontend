@@ -17,6 +17,10 @@
     height: 35px;
   }
 
+  ::ng-deep .mat-button-toggle-disabled .mat-button-toggle-button {
+    cursor: not-allowed;
+  }
+
   ::ng-deep .mat-button-toggle-group-appearance-standard {
     border: none;
   }
@@ -26,7 +30,7 @@
   }
 
   ::ng-deep .mat-button-toggle-disabled.mat-button-toggle-appearance-standard {
-    background: $white2;
+    background: $gray14;
   }
 
   ::ng-deep .mat-button-toggle-checked.mat-button-toggle-appearance-standard {
