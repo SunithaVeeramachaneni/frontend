@@ -25,7 +25,7 @@ import {
   skipWhile
 } from 'rxjs/operators';
 import {
-  graphQLDefaultLimit,
+  defaultLimit,
   permissions as perms
 } from 'src/app/app.constants';
 import {
@@ -271,9 +271,8 @@ export class PlantListComponent implements OnInit, OnDestroy {
   selectedPlant;
 
   skip = 0;
-  limit = graphQLDefaultLimit;
+  limit = defaultLimit;
   fetchType = 'load';
-  nextToken = '';
   parentInformation: any;
   private onDestroy$ = new Subject();
 
@@ -331,7 +330,6 @@ export class PlantListComponent implements OnInit, OnDestroy {
       switchMap(({ data }) => {
         this.skip = 0;
         this.fetchType = data;
-        this.nextToken = '';
         return this.getPlants();
       })
     );
@@ -361,7 +359,7 @@ export class PlantListComponent implements OnInit, OnDestroy {
       )
     ]).pipe(
       map(([rows, { form, action }, scrollData, plantMasterData]) => {
-        if (this.skip === 0) {
+        if (this.fetchType === 'load') {
           this.configOptions = {
             ...this.configOptions,
             tableHeight: 'calc(100vh - 140px)'
@@ -369,7 +367,6 @@ export class PlantListComponent implements OnInit, OnDestroy {
           initial.data = rows.map((row) =>
             this.formatTimeZoneMapping(row, plantMasterData)
           );
-          initial.data = rows;
         } else if (this.addEditCopyDeletePlants) {
           switch (action) {
             case 'delete':
@@ -400,8 +397,6 @@ export class PlantListComponent implements OnInit, OnDestroy {
           );
           initial.data = initial.data.concat(scrollData);
         }
-
-        this.skip = initial.data.length;
         this.dataSource = new MatTableDataSource(initial.data);
         return initial;
       })
@@ -411,15 +406,15 @@ export class PlantListComponent implements OnInit, OnDestroy {
   getPlants() {
     return this.plantService
       .getPlantsList$({
-        next: this.nextToken,
+        skip: this.skip,
         limit: this.limit,
         searchTerm: this.searchPlant.value,
         fetchType: this.fetchType
       })
       .pipe(
-        mergeMap(({ count, rows, next }) => {
+        mergeMap(({ count, rows, skip }) => {
           this.plantsCount$ = of({ count });
-          this.nextToken = next;
+          this.skip = skip;
           this.isLoading$.next(false);
           return of(rows);
         }),

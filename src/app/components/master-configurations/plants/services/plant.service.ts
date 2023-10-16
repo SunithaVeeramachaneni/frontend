@@ -71,7 +71,7 @@ export class PlantService {
   };
 
   getPlantsList$(queryParams: {
-    next?: string;
+    skip?: number;
     limit: number;
     searchTerm: string;
     fetchType: string;
@@ -79,7 +79,7 @@ export class PlantService {
     if (
       ['load', 'search'].includes(queryParams.fetchType) ||
       (['infiniteScroll'].includes(queryParams.fetchType) &&
-        queryParams.next !== null)
+        queryParams.skip !== null)
     ) {
       return this._appService
         ._getResp(
@@ -93,7 +93,7 @@ export class PlantService {
       return of({
         count: 0,
         rows: [],
-        next: null
+        skip: null
       });
     }
   }
@@ -185,12 +185,12 @@ export class PlantService {
       return r;
     });
     const count = resp?.items.length || 0;
-    const next = resp?.next;
+    const skip = resp?.skip;
     rows = rows.filter((o: any) => !o._deleted);
     return {
       count,
       rows,
-      next
+      skip
     };
   }
 }

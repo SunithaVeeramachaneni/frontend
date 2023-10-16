@@ -55,7 +55,7 @@ export type PlantsResponse = {
     image?: string;
     createdAt: string;
   } | null>;
-  next?: string;
+  skip?: number;
 };
 
 export interface FilterInput {
