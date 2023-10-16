@@ -359,7 +359,7 @@ export class PlantListComponent implements OnInit, OnDestroy {
       )
     ]).pipe(
       map(([rows, { form, action }, scrollData, plantMasterData]) => {
-        if (this.fetchType === 'load') {
+        if (this.fetchType !== 'infiniteScroll') {
           this.configOptions = {
             ...this.configOptions,
             tableHeight: 'calc(100vh - 140px)'
