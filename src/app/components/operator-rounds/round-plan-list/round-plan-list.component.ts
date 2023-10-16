@@ -685,7 +685,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
         this.filter.scheduleStartDate = item.value[0];
         this.filter.scheduleEndDate = item.value[1];
       } else if (item.column === 'plant') {
-        const id = item.value.split('-')[0].trim();
+        const id = item.value.split(' - ')[0].trim();
         const plantId = this.plantsIdNameMap[id];
         this.filter[item.column] = plantId;
       } else {
