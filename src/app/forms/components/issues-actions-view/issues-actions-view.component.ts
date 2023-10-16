@@ -47,6 +47,7 @@ import {
   dateFormat2,
   timeFormat
 } from 'src/app/app.constants';
+import { NotificationAlertDialogComponent } from '../notification-alert-dialog/notification-alert-dialog.component';
 
 @Directive({
   selector: '[appScrollToBottom]'
@@ -566,6 +567,20 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     return JSON.stringify(data);
   }
 
+  openNotificationAlertDialog() {
+    const notificationsAlertRef = this.dialog.open(
+      NotificationAlertDialogComponent,
+      {
+        data: { moduleName: this.moduleName }
+      }
+    );
+    notificationsAlertRef.afterClosed().subscribe((data) => {
+      if (data?.createNotification) {
+        this.createNotification();
+      }
+    });
+  }
+
   createNotification() {
     this.isCreateNotification = true;
     if (this.data.category !== this.placeholder) {
@@ -592,7 +607,11 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   selectedAssigneeHandler({ user, checked }: SelectedAssignee) {
-    this.updateIssueOrAction({ field: 'assignee', value: user.email, checked });
+    this.updateIssueOrAction({
+      field: 'assignee',
+      value: user?.email,
+      checked
+    });
   }
 
   createIssueOrActionHistory() {

@@ -1,0 +1,16 @@
+<div class="issuesListContainer" id="main-container">
+  <mat-toolbar class="toolbar" id="toolbar-top">
+    <button class="issuesListBackBtn" id="backBtn" (click)="dialogRefClose()">
+      <svg-icon
+        id="issuesActionsViewBackArrow"
+        icon="icon-back-arrow"
+        class="back-arrow"
+      ></svg-icon>
+    </button>
+  </mat-toolbar>
+  <app-issues-list
+    [users$]="users$"
+    [moduleName]="moduleName"
+    [isNotificationAlert]="isNotificationAlert"
+  ></app-issues-list>
+</div>

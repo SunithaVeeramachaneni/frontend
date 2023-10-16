@@ -78,6 +78,7 @@ export class IssuesListComponent implements OnInit, OnDestroy {
     return this._users$;
   }
   @Input() moduleName;
+  @Input() isNotificationAlert;
   assigneeDetails: AssigneeDetails;
   partialColumns: Partial<Column>[] = [
     {
@@ -307,6 +308,12 @@ export class IssuesListComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.configOptions = {
+      ...this.configOptions,
+      tableHeight: this.isNotificationAlert
+        ? 'calc(100vh - 115px)'
+        : 'calc(100vh - 435px)'
+    };
     this.columns = this.observationsService.updateConfigOptionsFromColumns(
       this.partialColumns
     );
@@ -352,7 +359,10 @@ export class IssuesListComponent implements OnInit, OnDestroy {
     const onScrollIssues$ = this.observationsService.fetchIssues$.pipe(
       filter(({ data }) => data !== 'load' && data !== 'search'),
       switchMap(({ data }) => {
-        if (data === 'infiniteScroll' && this.observationsService.issuesNextToken!==null ) {
+        if (
+          data === 'infiniteScroll' &&
+          this.observationsService.issuesNextToken !== null
+        ) {
           this.fetchType = 'infiniteScroll';
           return this.getIssuesList();
         } else {
@@ -374,7 +384,9 @@ export class IssuesListComponent implements OnInit, OnDestroy {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
-            tableHeight: 'calc(100vh - 435px)'
+            tableHeight: this.isNotificationAlert
+              ? 'calc(100vh - 115px)'
+              : 'calc(100vh - 435px)'
           };
           this.initial.data = this.formatIssues(rows);
         } else {

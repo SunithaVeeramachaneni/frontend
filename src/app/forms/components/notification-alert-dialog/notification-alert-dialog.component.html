@@ -1,0 +1,40 @@
+<div class="notificationAlertDialogcontainer" id="dialog-container">
+  <div class="heading" id="heading-container">
+    <span class="alert-span">Alert</span>
+  </div>
+  <div class="body" id="body-buttons">
+    <div class="message" id="message-container">
+      <span
+        >{{ notificationCount }} active Notifications from
+        {{ notificationCount }} Issues already exists for this Asset. Do you
+        want to create a new Notification?</span
+      >
+    </div>
+    <div class="buttons" id="buttons-container">
+      <button
+        id="showBtn"
+        mat-raised-button
+        color="primary"
+        (click)="viewIssuesList()"
+      >
+        Show Issues with Notifications
+      </button>
+      <button
+        mat-stroked-button
+        color="primary"
+        id="createBtn"
+        (click)="createNotification()"
+      >
+        Create New Notification Anyway
+      </button>
+      <button
+        mat-stroked-button
+        color="primary"
+        id="cancelBtn"
+        (click)="dialogClose()"
+      >
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>

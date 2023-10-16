@@ -1,0 +1,20 @@
+@import '../../../../scss/colors.scss';
+
+.issuesListContainer {
+}
+
+.back-arrow {
+  height: 17px;
+  width: 17px;
+}
+
+.toolbar {
+  height: 65px;
+  background-color: $white;
+  border-bottom: 1px solid $border-color;
+}
+
+.issuesListBackBtn {
+  border: none;
+  background-color: transparent;
+}

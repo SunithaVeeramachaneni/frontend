@@ -715,7 +715,7 @@
             *ngIf="!isNotificationNumber(data.notificationInfo)"
             mat-raised-button
             color="primary"
-            (click)="createNotification()"
+            (click)="openNotificationAlertDialog()"
           >
             {{ 'create' | translate }}
           </button>
