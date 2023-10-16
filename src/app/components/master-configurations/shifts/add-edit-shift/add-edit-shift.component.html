@@ -147,7 +147,7 @@
       mat-raised-button
       class="create-btn"
       type="submit"
-      [disabled]="shiftForm.invalid || isCreateUpdateInprogress"
+      [disabled]="shiftForm?.invalid || shiftForm?.pristine"
       (click)="create()"
       *ngIf="shiftMode !== 'VIEW'"
     >

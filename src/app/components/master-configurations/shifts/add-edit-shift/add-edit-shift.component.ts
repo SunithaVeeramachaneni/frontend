@@ -13,9 +13,11 @@ import {
   FormGroup,
   Validators
 } from '@angular/forms';
+
 import { ValidationError } from 'src/app/interfaces';
 import { ShiftService } from '../services/shift.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
+import { FormValidationUtil } from 'src/app/shared/utils/formValidationUtil';
 
 @Component({
   selector: 'app-add-edit-shift',
@@ -71,9 +73,6 @@ export class AddEditShiftComponent implements OnInit {
 
   checked = false;
   disabled = false;
-
-  isCreateUpdateInprogress = false;
-
   errors: ValidationError = {};
   shiftStatus;
   shiftTitle;
@@ -85,7 +84,11 @@ export class AddEditShiftComponent implements OnInit {
   private shiftsEditData;
   private mode;
 
-  constructor(private fb: FormBuilder, private shiftService: ShiftService) {}
+  constructor(
+    private fb: FormBuilder,
+    private shiftService: ShiftService,
+    private readonly formValidationUtilService: FormValidationUtil
+  ) {}
 
   ngOnInit(): void {
     this.shiftForm = this.fb.group({
@@ -106,68 +109,63 @@ export class AddEditShiftComponent implements OnInit {
         WhiteSpaceValidator.whiteSpace,
         WhiteSpaceValidator.trimWhiteSpace
       ]),
-      isActive: new FormControl('', [])
+      isActive: new FormControl(false, [])
     });
   }
 
   create() {
     if (this.shiftStatus === 'add') {
-      this.isCreateUpdateInprogress = true;
-      const { id, ...payload } = this.shiftForm.value;
-      this.shiftService.createShift$(payload).subscribe((res) => {
-        this.isCreateUpdateInprogress = false;
-        this.createdShiftData.emit({
-          status: this.shiftStatus,
-          data: {
-            ...payload,
-            startAndEndTime: `${payload?.startTime} - ${payload?.endTime}`
+      const { id: _, ...payload } = this.shiftForm.value;
+      this.shiftService
+        .createShift$({ ...payload, isActive: payload.isActive ?? false })
+        .subscribe((result) => {
+          if (Object.keys(result).length > 0) {
+            this.createdShiftData.emit({
+              status: this.shiftStatus,
+              data: {
+                ...result,
+                startAndEndTime: `${result?.startTime} - ${result?.endTime}`
+              }
+            });
+            this.slideInOut.emit('out');
+            this.shiftForm?.reset();
           }
         });
-        this.slideInOut.emit('out');
-        this.shiftForm?.reset();
-      });
     } else if (this.shiftStatus === 'edit') {
-      this.isCreateUpdateInprogress = true;
       this.shiftService
-        .updateShift$({
-          ...this.shiftForm.getRawValue(),
-          _version: this.shiftsEditData._version,
-          id: this.shiftsEditData?.id
-        })
-        .subscribe((res) => {
-          this.isCreateUpdateInprogress = false;
-          this.createdShiftData.emit({
-            status: this.shiftStatus,
-            data: {
-              ...this.shiftForm.getRawValue(),
-              _version: this.shiftsEditData._version,
-              id: this.shiftsEditData?.id,
-              startAndEndTime: `${this.shiftsEditData?.startTime} - ${this.shiftsEditData?.endTime}`
-            }
-          });
-          this.slideInOut.emit('out');
+        .updateShift$(
+          this.shiftForm.getRawValue(),
+          this.shiftsEditData?.id as string
+        )
+        .subscribe((result) => {
+          if (Object.keys(result).length > 0) {
+            this.createdShiftData.emit({
+              status: this.shiftStatus,
+              data: {
+                ...this.shiftForm.getRawValue(),
+                id: this.shiftsEditData?.id,
+                startAndEndTime: `${this.shiftsEditData?.startTime} - ${this.shiftsEditData?.endTime}`
+              }
+            });
+            this.slideInOut.emit('out');
+          }
         });
     }
   }
+
   cancel() {
     this.slideInOut.emit('out');
   }
+
   goToEditMode() {
     this.shiftModeUpdated.emit({ mode: 'EDIT', data: this.shiftEditData });
   }
 
   processValidationErrors(controlName: string): boolean {
-    const touched = this.shiftForm.get(controlName).touched;
-    const errors = this.shiftForm.get(controlName).errors;
-    this.errors[controlName] = null;
-    if (touched && errors) {
-      Object.keys(errors).forEach((messageKey) => {
-        this.errors[controlName] = {
-          name: messageKey,
-          length: errors[messageKey]?.requiredLength
-        };
-      });
-    }
-    return !touched || this.errors[controlName] === null ? false : true;
+    return this.formValidationUtilService.processValidationErrors(
+      controlName,
+      this.shiftForm,
+      this.errors
+    );
   }
 }

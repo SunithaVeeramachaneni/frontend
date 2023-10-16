@@ -12,7 +12,14 @@ import {
   Column,
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
-import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
+import {
+  BehaviorSubject,
+  combineLatest,
+  Observable,
+  of,
+  ReplaySubject,
+  Subject
+} from 'rxjs';
 import {
   catchError,
   debounceTime,
@@ -31,7 +38,9 @@ import {
 } from 'src/app/app.constants';
 import {
   CellClickActionEvent,
+  LoadEvent,
   Permission,
+  SearchEvent,
   TableEvent,
   UserInfo
 } from 'src/app/interfaces';
@@ -39,7 +48,6 @@ import { ToastService } from 'src/app/shared/toast';
 import { LoginService } from 'src/app/components/login/services/login.service';
 import { ShiftService } from '../services/shift.service';
 import { slideInOut } from 'src/app/animations';
-import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { HeaderService } from 'src/app/shared/services/header.service';
 @Component({
@@ -157,19 +165,19 @@ export class ShiftListComponent implements OnInit, OnDestroy {
 
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
-
+  fetchShifts$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
+    new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   shifts$: Observable<any>;
 
   addEditCopyDeleteShifts = false;
   addEditCopyDeleteShifts$: BehaviorSubject<any> = new BehaviorSubject<any>({
     action: null,
-    form: {} as any
+    shift: {} as any
   });
   selectedShift;
 
   skip = 0;
   limit = defaultLimit;
-  fetchType = 'load';
   nextToken = '';
   parentInformation: any;
   private onDestroy$ = new Subject();
@@ -187,8 +195,8 @@ export class ShiftListComponent implements OnInit, OnDestroy {
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
       tap(() => this.headerService.setHeaderTitle(routingUrls.shifts.title))
     );
-    this.shiftService.fetchShifts$.next({ data: 'load' });
-    this.shiftService.fetchShifts$.next({} as TableEvent);
+    this.fetchShifts$.next({ data: 'load' });
+    this.fetchShifts$.next({} as TableEvent);
     this.searchShift = new FormControl('');
 
     this.searchShift.valueChanges
@@ -197,7 +205,7 @@ export class ShiftListComponent implements OnInit, OnDestroy {
         distinctUntilChanged(),
         takeUntil(this.onDestroy$),
         tap(() => {
-          this.shiftService.fetchShifts$.next({ data: 'search' });
+          this.fetchShifts$.next({ data: 'search' });
         })
       )
       .subscribe(() => this.isLoading$.next(true));
@@ -209,21 +217,19 @@ export class ShiftListComponent implements OnInit, OnDestroy {
   }
 
   getDisplayedShifts(): void {
-    const shiftsOnLoadSearch$ = this.shiftService.fetchShifts$.pipe(
+    const shiftsOnLoadSearch$ = this.fetchShifts$.pipe(
       filter(({ data }) => data === 'load' || data === 'search'),
-      switchMap(({ data }) => {
+      switchMap(() => {
         this.skip = 0;
-        this.fetchType = data;
         this.nextToken = '';
         return this.getShifts();
       })
     );
 
-    const onScrollShifts$ = this.shiftService.fetchShifts$.pipe(
+    const onScrollShifts$ = this.fetchShifts$.pipe(
       filter(({ data }) => data !== 'load' && data !== 'search'),
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
-          this.fetchType = 'infiniteScroll';
           return this.getShifts();
         } else {
           return of([]);
@@ -240,7 +246,7 @@ export class ShiftListComponent implements OnInit, OnDestroy {
       this.addEditCopyDeleteShifts$,
       onScrollShifts$
     ]).pipe(
-      map(([rows, { form, action }, scrollData]) => {
+      map(([rows, { shift, action }, scrollData]) => {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
@@ -250,12 +256,12 @@ export class ShiftListComponent implements OnInit, OnDestroy {
         } else if (this.addEditCopyDeleteShifts) {
           switch (action) {
             case 'add':
-              initial.data = [form, ...initial.data];
+              initial.data = [shift, ...initial.data];
               break;
             case 'edit':
               initial.data = [
-                form,
-                ...initial.data.filter((item) => item.id !== form.id)
+                shift,
+                ...initial.data.filter((item) => item.id !== shift.id)
               ];
               break;
             default:
@@ -278,14 +284,13 @@ export class ShiftListComponent implements OnInit, OnDestroy {
       .getShiftsList$({
         next: this.nextToken,
         limit: this.limit,
-        searchKey: this.searchShift.value,
-        fetchType: this.fetchType
+        searchTerm: this.searchShift.value
       })
       .pipe(
-        mergeMap(({ count, rows, next }) => {
+        mergeMap(({ items, next }) => {
           this.nextToken = next;
           this.isLoading$.next(false);
-          return of(rows);
+          return of(items);
         }),
         catchError(() => {
           this.isLoading$.next(false);
@@ -295,36 +300,27 @@ export class ShiftListComponent implements OnInit, OnDestroy {
   }
 
   addOrUpdateShift(shiftData) {
-    if (shiftData.status === 'add') {
+    if (shiftData?.status === 'add') {
       this.addEditCopyDeleteShifts = true;
-      if (this.searchShift.value) {
-        this.shiftService.fetchShifts$.next({ data: 'search' });
-      } else {
-        this.addEditCopyDeleteShifts$.next({
-          action: 'add',
-          form: shiftData.data
-        });
-      }
+      this.addEditCopyDeleteShifts$.next({
+        action: 'add',
+        shift: shiftData?.data
+      });
       this.toast.show({
         text: 'Shift created successfully!',
         type: 'success'
       });
-    } else if (shiftData.status === 'edit') {
+    } else if (shiftData?.status === 'edit') {
       this.addEditCopyDeleteShifts = true;
-      if (this.searchShift.value) {
-        this.shiftService.fetchShifts$.next({ data: 'search' });
-      } else {
-        this.addEditCopyDeleteShifts$.next({
-          action: 'edit',
-          form: shiftData.data
-        });
-        this.toast.show({
-          text: 'Shift updated successfully!',
-          type: 'success'
-        });
-      }
+      this.addEditCopyDeleteShifts$.next({
+        action: 'edit',
+        shift: shiftData?.data
+      });
+      this.toast.show({
+        text: 'Shift updated successfully!',
+        type: 'success'
+      });
     }
-    this.shiftService.fetchShifts$.next({ data: 'load' });
   }
 
   prepareMenuActions(permissions: Permission[]) {
@@ -343,7 +339,7 @@ export class ShiftListComponent implements OnInit, OnDestroy {
   }
 
   handleTableEvent = (event): void => {
-    this.shiftService.fetchShifts$.next(event);
+    this.fetchShifts$.next(event);
   };
 
   rowLevelActionHandler = (event): void => {
@@ -384,7 +380,7 @@ export class ShiftListComponent implements OnInit, OnDestroy {
     this.shiftMode = 'CREATE';
   }
 
-  showShiftDetail(row: GetFormList): void {
+  showShiftDetail(row): void {
     this.shiftMode = 'VIEW';
     this.selectedShift = row;
     this.openShiftDetailedView = 'in';
@@ -410,28 +406,31 @@ export class ShiftListComponent implements OnInit, OnDestroy {
 
   onToggleChangeHandler(event) {
     const shiftData = {
-      id: this.selectedShift.id,
       name: this.selectedShift.name,
       startTime: this.selectedShift.startTime,
       endTime: this.selectedShift.endTime,
-      isActive: event,
-      _version: this.selectedShift._version
+      isActive: event
     };
-    this.shiftService.updateShift$(shiftData).subscribe((res) => {
-      this.addEditCopyDeleteShifts = true;
-      this.addEditCopyDeleteShifts$.next({
-        action: 'edit',
-        form: {
-          ...this.selectedShift,
-          isActive: event,
-          startAndEndTime: `${this.selectedShift.startTime} - ${this.selectedShift.endTime}`
+    this.shiftService
+      .updateShift$(shiftData, this.selectedShift.id)
+      .subscribe((result) => {
+        if (Object.keys(result).length > 0) {
+          this.addEditCopyDeleteShifts = true;
+          this.addEditCopyDeleteShifts$.next({
+            action: 'edit',
+            shift: {
+              ...result,
+              ...this.selectedShift,
+              isActive: event,
+              startAndEndTime: `${this.selectedShift.startTime} - ${this.selectedShift.endTime}`
+            }
+          });
+          this.toast.show({
+            text: 'Shift updated successfully!',
+            type: 'success'
+          });
         }
       });
-      this.toast.show({
-        text: 'Shift updated successfully!',
-        type: 'success'
-      });
-    });
   }
 
   ngOnDestroy(): void {

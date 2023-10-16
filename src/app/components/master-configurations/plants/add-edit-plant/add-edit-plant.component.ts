@@ -194,19 +194,14 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
     });
 
     this.activeShifts$ = this.shiftService
-      .getShiftsList$(
-        {
-          next: '',
-          limit: 100000,
-          searchKey: '',
-          fetchType: 'load'
-        },
-        { isActive: 'true' }
-      )
+      .getShiftsList$({
+        limit: null,
+        isActive: true
+      })
       .pipe(
-        map(({ rows }) => {
-          this.allShiftsMaster = rows;
-          return rows;
+        map(({ items }) => {
+          this.allShiftsMaster = items;
+          return items;
         }),
         catchError(() => of([]))
       );

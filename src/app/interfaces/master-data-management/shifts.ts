@@ -26,3 +26,15 @@ export interface FilterInput {
   contains?: string;
   notContains?: string;
 }
+
+export interface Shift {
+  id: string;
+  name: string;
+  startTime: string;
+  endTime: string;
+  isActive: boolean;
+  searchTerm?: string;
+  createdBy?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}

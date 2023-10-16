@@ -506,10 +506,8 @@ export class PlansComponent implements OnInit, OnDestroy {
         (data) => (this.plantTimezoneMap = data)
       );
     this.activeShifts$ = this.shiftService.getShiftsList$({
-      next: '',
-      limit: graphQLDefaultLimit,
-      searchKey: '',
-      fetchType: 'load'
+      limit: null,
+      isActive: true
     });
     this.planCategory = new FormControl('all');
     this.fetchPlans$.next({} as TableEvent);
