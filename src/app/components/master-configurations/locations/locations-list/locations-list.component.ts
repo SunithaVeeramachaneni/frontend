@@ -516,6 +516,15 @@ export class LocationsListComponent implements OnInit, OnDestroy {
       });
     }
 
+    if (
+      this.loginService.checkUserHasPermission(permissions, 'COPY_LOCATION')
+    ) {
+      menuActions.push({
+        title: 'Copy',
+        action: 'copy'
+      });
+    }
+
     // if (
     //   this.loginService.checkUserHasPermission(permissions, 'DELETE_LOCATION')
     // ) {
@@ -537,11 +546,15 @@ export class LocationsListComponent implements OnInit, OnDestroy {
   rowLevelActionHandler = ({ data, action }): void => {
     switch (action) {
       case 'edit':
-        this.locationEditData = { locationData: data };
+        this.locationEditData = { locationData: data, isCopy: false };
         this.locationAddOrEditOpenState = 'in';
         break;
       case 'delete':
         this.deleteLocation(data);
+        break;
+      case 'copy':
+        this.locationEditData = { locationData: data, isCopy: true };
+        this.locationAddOrEditOpenState = 'in';
         break;
       default:
     }

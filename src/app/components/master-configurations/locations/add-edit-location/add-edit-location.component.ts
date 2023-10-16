@@ -7,9 +7,12 @@ import {
   Output,
   ChangeDetectionStrategy,
   ViewChild,
-  ElementRef
+  ElementRef,
+  ChangeDetectorRef
 } from '@angular/core';
 import {
+  AbstractControl,
+  AsyncValidatorFn,
   FormBuilder,
   FormControl,
   FormGroup,
@@ -20,6 +23,13 @@ import { ValidationError } from 'src/app/interfaces';
 import { LocationService } from '../services/location.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { FormValidationUtil } from 'src/app/shared/utils/formValidationUtil';
+import {
+  delay,
+  distinctUntilChanged,
+  switchMap,
+  map,
+  first
+} from 'rxjs/operators';
 
 @Component({
   selector: 'app-add-edit-location',
@@ -45,12 +55,14 @@ export class AddEditLocationComponent implements OnInit {
   @Input() set locationEditData(location) {
     this.locEditData = location?.locationData;
     if (!this.locEditData) {
+      this.locationIdValidated = true;
       this.locationStatus = 'add';
       this.locationTitle = 'Create Location';
       this.locationButton = 'Create';
       this.locationImage = '';
       this.locationForm?.reset();
     } else {
+      this.isCopy = location?.isCopy;
       this.locationStatus = 'edit';
       this.locationTitle = 'Edit Location';
       this.locationButton = 'Update';
@@ -58,6 +70,12 @@ export class AddEditLocationComponent implements OnInit {
         this.locEditData && this.locEditData.image
           ? this.locEditData.image
           : '';
+      if (this.isCopy) {
+        this.locationStatus = 'add';
+        this.locationTitle = 'Create Location';
+        this.locationButton = 'Create';
+        this.locationIdValidated = false;
+      }
       const locdata = {
         id: this.locEditData?.id,
         image: this.locEditData?.image,
@@ -69,6 +87,9 @@ export class AddEditLocationComponent implements OnInit {
         plantsID: this.locEditData?.plantsID
       };
       this.locationForm?.patchValue(locdata);
+      if (!this.isCopy) {
+        this.locationForm.get('locationId').disable();
+      }
     }
   }
   get locationEditData() {
@@ -87,14 +108,50 @@ export class AddEditLocationComponent implements OnInit {
   plantInformation;
   allParentsData;
   allPlantsData;
+
+  locationIdExists = false;
+  locationIdValidated = false;
+  isCopy = false;
+
   private locEditData;
   private _locations;
 
   constructor(
     private fb: FormBuilder,
     private locationService: LocationService,
-    private formValidationUtil: FormValidationUtil
+    private formValidationUtil: FormValidationUtil,
+    private cdfr: ChangeDetectorRef
   ) {}
+
+  checkLocationIdExists(): AsyncValidatorFn {
+    return (control: AbstractControl): Observable<ValidationError | null> => {
+      control.markAsTouched();
+      return control.valueChanges.pipe(
+        delay(500),
+        distinctUntilChanged(),
+        switchMap((value) => {
+          this.locationIdExists = false;
+          this.locationIdValidated = false;
+          return this.locationService.verifyLocationId$(value);
+        }),
+        map((response) => {
+          this.locationIdValidated = true;
+          if (response.alreadyExists) {
+            this.locationIdExists = true;
+          } else {
+            this.locationIdExists = false;
+          }
+          this.cdfr.markForCheck();
+          return this.locationStatus !== 'edit'
+            ? !this.locationIdExists
+              ? null
+              : { alreadyExists: true }
+            : null;
+        }),
+        first()
+      );
+    };
+  }
 
   ngOnInit(): void {
     this.locationForm = this.fb.group({
@@ -104,11 +161,15 @@ export class AddEditLocationComponent implements OnInit {
         WhiteSpaceValidator.whiteSpace,
         WhiteSpaceValidator.trimWhiteSpace
       ]),
-      locationId: new FormControl('', [
-        Validators.required,
-        WhiteSpaceValidator.whiteSpace,
-        WhiteSpaceValidator.trimWhiteSpace
-      ]),
+      locationId: new FormControl(
+        '',
+        [
+          Validators.required,
+          WhiteSpaceValidator.whiteSpace,
+          WhiteSpaceValidator.trimWhiteSpace
+        ],
+        [this.checkLocationIdExists()]
+      ),
       model: '',
       description: new FormControl('', [WhiteSpaceValidator.trimWhiteSpace]),
       parentId: '',
