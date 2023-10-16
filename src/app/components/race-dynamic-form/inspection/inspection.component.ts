@@ -564,10 +564,12 @@ export class InspectionComponent implements OnInit, OnDestroy {
       this.userGroups$,
       this.shiftService.fetchAllShifts$().pipe(
         tap((shifts) => {
-          shifts?.items?.map((shift) => {
-            this.shiftObj[shift.id] = shift;
-            this.shiftNameMap[shift.id] = shift.name;
-          });
+          shifts?.items
+            ?.filter((s) => s?.isActive)
+            ?.map((shift) => {
+              this.shiftObj[shift.id] = shift;
+              this.shiftNameMap[shift.id] = shift.name;
+            });
         })
       ),
       this.plantService.fetchAllPlants$().pipe(
