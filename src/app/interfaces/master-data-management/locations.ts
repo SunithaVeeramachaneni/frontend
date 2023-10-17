@@ -23,7 +23,7 @@ export interface LocationsResponse {
     image?: string;
     createdAt: string;
   } | null>;
-  next?: string;
+  skip?: number;
   count?: string;
 }
 

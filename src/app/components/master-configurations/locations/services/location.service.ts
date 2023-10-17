@@ -41,7 +41,7 @@ export class LocationService {
 
   getLocationsList$(
     queryParams: {
-      next?: string;
+      skip?: number;
       limit: number;
       searchTerm: string;
       fetchType: string;
@@ -51,7 +51,7 @@ export class LocationService {
     if (
       ['load', 'search'].includes(queryParams.fetchType) ||
       (['infiniteScroll'].includes(queryParams.fetchType) &&
-        queryParams.next !== null)
+        queryParams.skip !== null)
     ) {
       const { plant: plantId } = filterData;
       return this._appService
@@ -68,7 +68,7 @@ export class LocationService {
     } else {
       return of({
         rows: [],
-        next: null
+        skip: null
       });
     }
   }
@@ -189,7 +189,7 @@ export class LocationService {
     return {
       count: resp?.count,
       rows,
-      next: resp?.next
+      skip: resp?.skip
     };
   }
 }

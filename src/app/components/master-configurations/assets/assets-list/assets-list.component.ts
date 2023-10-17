@@ -24,7 +24,7 @@ import {
   tap
 } from 'rxjs/operators';
 import {
-  graphQLDefaultLimit,
+  defaultLimit,
   permissions as perms,
   routingUrls
 } from 'src/app/app.constants';
@@ -237,9 +237,8 @@ export class AssetsListComponent implements OnInit, OnDestroy {
   selectedAsset;
 
   skip = 0;
-  limit = graphQLDefaultLimit;
+  limit = defaultLimit;
   fetchType = 'load';
-  nextToken = '';
   userInfo$: Observable<UserInfo>;
   allPlants: any[];
 
@@ -322,7 +321,6 @@ export class AssetsListComponent implements OnInit, OnDestroy {
       switchMap(({ data }) => {
         this.skip = 0;
         this.fetchType = data;
-        this.nextToken = '';
         return this.getAssets();
       })
     );
@@ -369,7 +367,7 @@ export class AssetsListComponent implements OnInit, OnDestroy {
           );
           this.dataLoadingComplete = true;
 
-          if (this.skip === 0) {
+          if (this.fetchType !== 'infiniteScroll') {
             this.configOptions = {
               ...this.configOptions,
               tableHeight: 'calc(100vh - 140px)'
@@ -423,7 +421,7 @@ export class AssetsListComponent implements OnInit, OnDestroy {
     return (
       this.assetService.getAssetsList$(
         {
-          next: this.nextToken,
+          skip: this.skip,
           limit: this.limit,
           searchTerm: this.searchAssets.value,
           fetchType: this.fetchType
@@ -431,8 +429,8 @@ export class AssetsListComponent implements OnInit, OnDestroy {
         this.filter
       ) as Observable<any>
     ).pipe(
-      map(({ count, rows, next }) => {
-        this.nextToken = next;
+      map(({ count, rows, skip }) => {
+        this.skip = skip;
         if (count !== undefined) {
           this.reloadAssetCount(count);
         }
@@ -588,7 +586,7 @@ export class AssetsListComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe((res) => {
       if (res.data) {
         this.getAllAssets();
-        this.nextToken = '';
+        this.skip = 0;
         this.addEditCopyDeleteAssets = true;
         this.isLoading$.next(true);
         this.assetsCountUpdate$.next(res.successCount);
@@ -627,7 +625,7 @@ export class AssetsListComponent implements OnInit, OnDestroy {
         this.filter[item.column] = plantsID;
       }
     }
-    this.nextToken = '';
+    this.skip = 0;
     this.assetService.fetchAssets$.next({ data: 'load' });
   }
 

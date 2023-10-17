@@ -26,7 +26,7 @@ import {
 import { uniqBy } from 'lodash-es';
 
 import {
-  graphQLDefaultLimit,
+  defaultLimit,
   permissions as perms,
   routingUrls
 } from 'src/app/app.constants';
@@ -244,9 +244,8 @@ export class LocationsListComponent implements OnInit, OnDestroy {
   selectedLocation;
 
   skip = 0;
-  limit = graphQLDefaultLimit;
+  limit = defaultLimit;
   fetchType = 'load';
-  nextToken = '';
   userInfo$: Observable<UserInfo>;
   parentInformation: any;
 
@@ -324,7 +323,6 @@ export class LocationsListComponent implements OnInit, OnDestroy {
       switchMap(({ data }) => {
         this.skip = 0;
         this.fetchType = data;
-        this.nextToken = '';
         return this.getLocations();
       })
     );
@@ -366,7 +364,7 @@ export class LocationsListComponent implements OnInit, OnDestroy {
             'id'
           ).filter((location) => !location._deleted);
           this.dataFetchingComplete = true;
-          if (this.skip === 0) {
+          if (this.fetchType !== 'infiniteScroll') {
             this.configOptions = {
               ...this.configOptions,
               tableHeight: 'calc(100vh - 140px)'
@@ -425,7 +423,7 @@ export class LocationsListComponent implements OnInit, OnDestroy {
         this.filter[item.column] = plantsID;
       }
     }
-    this.nextToken = '';
+    this.skip = 0;
     this.locationService.fetchLocations$.next({ data: 'load' });
   }
 
@@ -442,7 +440,7 @@ export class LocationsListComponent implements OnInit, OnDestroy {
     return (
       this.locationService.getLocationsList$(
         {
-          next: this.nextToken,
+          skip: this.skip,
           limit: this.limit,
           searchTerm: this.searchLocation.value,
           fetchType: this.fetchType
@@ -450,8 +448,8 @@ export class LocationsListComponent implements OnInit, OnDestroy {
         this.filter
       ) as Observable<any>
     ).pipe(
-      map(({ count, rows, next }) => {
-        this.nextToken = next;
+      map(({ count, rows, skip }) => {
+        this.skip = skip;
         if (count !== undefined && count !== null) {
           this.reloadLocationCount(count);
         }
@@ -500,7 +498,7 @@ export class LocationsListComponent implements OnInit, OnDestroy {
         });
       }
     }
-    this.nextToken = '';
+    this.skip = 0;
     this.locationService.fetchLocations$.next({ data: 'load' });
   }
 
@@ -638,7 +636,7 @@ export class LocationsListComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe((res) => {
       if (res.data) {
         this.getAllLocations();
-        this.nextToken = '';
+        this.skip = 0;
         this.addEditCopyDeleteLocations = true;
         this.isLoading$.next(true);
         this.locationsCountUpdate$.next(res.successCount);
