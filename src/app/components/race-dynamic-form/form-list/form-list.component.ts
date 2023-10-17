@@ -549,18 +549,12 @@ export class FormListComponent implements OnInit, OnDestroy {
   populateFilter() {
     combineLatest([
       this.usersService.getUsersInfo$(),
-      this.plantService.fetchAllPlants$(),
+      this.plantService.fetchLoggedInUserPlants$(),
       this.raceDynamicFormService.fetchAllFormsList$(),
       this.raceDynamicFormService.getDataSetsByType$('formHeaderTags'),
       this.columnConfigService.moduleAdditionalDetailsFiltersData$
     ]).subscribe(
-      ([
-        usersList,
-        { items: plantsList },
-        formsList,
-        allTags,
-        additionDetailsData
-      ]) => {
+      ([usersList, plantsList, formsList, allTags, additionDetailsData]) => {
         this.createdBy = usersList
           .map((user) => `${user.firstName} ${user.lastName}`)
           .sort();

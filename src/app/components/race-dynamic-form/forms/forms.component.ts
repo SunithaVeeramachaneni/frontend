@@ -414,15 +414,15 @@ export class FormsComponent implements OnInit, OnDestroy {
       onScrollForms$,
       formScheduleConfigurations$,
       this.shiftService.fetchAllShifts$(),
-      this.plantService.fetchAllPlants$().pipe(
+      this.plantService.fetchLoggedInUserPlants$().pipe(
         tap((plants) => {
-          plants.items.forEach((plant) => {
+          plants.forEach((plant) => {
             this.plantsIdNameMap[`${plant.plantId} - ${plant.name}`] = plant.id;
           });
 
           for (const item of filterJson) {
             if (item.column === 'plant') {
-              item.items = plants.items
+              item.items = plants
                 .map((plant) => `${plant.plantId} - ${plant.name}`)
                 .sort();
             }
@@ -441,11 +441,9 @@ export class FormsComponent implements OnInit, OnDestroy {
         map(
           ([forms, scrollData, formScheduleConfigurations, shifts, plants]) => {
             this.isLoading$.next(false);
-            shifts?.items
-              ?.filter((s) => s?.isActive)
-              ?.forEach((shift) => {
-                this.shiftIdNameMap[shift.id] = shift.name;
-              });
+            shifts?.items?.forEach((shift) => {
+              this.shiftIdNameMap[shift.id] = shift.name;
+            });
             this.allPlants = plants;
             this.allShifts = shifts?.items?.filter((s) => s?.isActive) || [];
 

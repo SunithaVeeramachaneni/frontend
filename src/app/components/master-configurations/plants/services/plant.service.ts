@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, of, ReplaySubject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of, ReplaySubject } from 'rxjs';
+import { filter, map, shareReplay, switchMap } from 'rxjs/operators';
 import {
   ErrorInfo,
   LoadEvent,
@@ -17,6 +17,7 @@ import {
   PlantsResponse
 } from 'src/app/interfaces/master-data-management/plants';
 import { formatDistance } from 'date-fns';
+import { UsersService } from 'src/app/components/user-management/services/users.service';
 
 @Injectable({
   providedIn: 'root'
@@ -28,10 +29,15 @@ export class PlantService {
   plantTimeZoneMapping$ = new BehaviorSubject<any>({});
   plantMasterData$ = new BehaviorSubject<any>({});
 
+  private userAssignedPlants$: Observable<any>;
+
   // eslint-disable-next-line @typescript-eslint/naming-convention
   private MAX_FETCH_LIMIT = '1000000';
 
-  constructor(private _appService: AppService) {}
+  constructor(
+    private _appService: AppService,
+    private _usersService: UsersService
+  ) {}
 
   fetchAllPlants$ = () => {
     const params: URLSearchParams = new URLSearchParams();
@@ -40,6 +46,26 @@ export class PlantService {
       environment.masterConfigApiUrl,
       'plants/list?' + params.toString()
     );
+  };
+
+  fetchLoggedInUserPlants$ = () => {
+    if (!this.userAssignedPlants$) {
+      this.userAssignedPlants$ = this.fetchAllPlants$().pipe(
+        switchMap((plants: any) =>
+          this._usersService
+            .getLoggedInUser$()
+            .pipe(
+              map((user: any) =>
+                plants.items.filter((item: any) =>
+                  user.plantId.split(',').includes(item.id)
+                )
+              )
+            )
+        ),
+        shareReplay(1)
+      );
+    }
+    return this.userAssignedPlants$;
   };
 
   getPlantTimeZoneMapping = () => {

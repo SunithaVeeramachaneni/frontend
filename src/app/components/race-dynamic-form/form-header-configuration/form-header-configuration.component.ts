@@ -311,8 +311,8 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     }
   }
   getAllPlantsData() {
-    this.plantService.fetchAllPlants$().subscribe((plants) => {
-      this.allPlantsData = plants.items || [];
+    this.plantService.fetchLoggedInUserPlants$().subscribe((plants) => {
+      this.allPlantsData = plants || [];
       this.plantInformation = this.allPlantsData;
       const plantId = this.data?.formData?.plantId;
       if (plantId !== undefined) {
