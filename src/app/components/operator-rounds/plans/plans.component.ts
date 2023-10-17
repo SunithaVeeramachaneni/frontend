@@ -629,9 +629,11 @@ export class PlansComponent implements OnInit, OnDestroy {
           plants,
           shifts
         ]) => {
-          shifts?.items?.forEach((value) => {
-            this.activeShiftIdMap[value.id] = value.name;
-          });
+          shifts?.items
+            ?.filter((s) => s?.isActive)
+            ?.forEach((value) => {
+              this.activeShiftIdMap[value.id] = value.name;
+            });
           this.allPlants = plants;
           this.allShifts = shifts.items.filter((s) => s.isActive);
           this.isLoading$.next(false);
