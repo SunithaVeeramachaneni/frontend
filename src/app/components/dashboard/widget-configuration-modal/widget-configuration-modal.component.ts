@@ -52,6 +52,8 @@ import { ReportService } from '../services/report.service';
 import { cloneDeep } from 'lodash-es';
 import { LoginService } from '../../login/services/login.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
+import { UsersService } from '../../user-management/services/users.service';
+import { fieldTypesMock } from 'src/app/forms/components/response-type/response-types.mock';
 
 export interface WidgetConfigurationModalData {
   dashboard: Dashboard;
@@ -97,6 +99,8 @@ export class WidgetConfigurationModalComponent implements OnInit {
     tableHeight: 'calc(100vh - 173px)',
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957']
   };
+  userEmailToName = {};
+  userNameToEmail = {};
   dataSource: MatTableDataSource<any>;
   dataCount$: Observable<Count>;
   reportDetailsOnChartVarientFilter$: Observable<ReportDetails>;
@@ -131,6 +135,7 @@ export class WidgetConfigurationModalComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA)
     public data: WidgetConfigurationModalData,
     private fb: FormBuilder,
+    private usersService: UsersService,
     private loginService: LoginService,
     private cdrf: ChangeDetectorRef
   ) {}
@@ -204,9 +209,14 @@ export class WidgetConfigurationModalComponent implements OnInit {
 
     this.reportDetails$ = combineLatest([
       this.reportDetailsOnChartVarientFilter$,
-      this.reportDetailsOnScroll$
+      this.reportDetailsOnScroll$,
+      this.usersService.getUsersInfo$()
     ]).pipe(
-      map(([loadFilter, scroll]) => {
+      map(([loadFilter, scroll, usersList]) => {
+        usersList.forEach((user) => {
+          this.userEmailToName[user.email] = `${user.firstName} ${user.lastName}`;
+          this.userNameToEmail[`${user.firstName} ${user.lastName}`] = user.email;
+        })
         if (this.skip === 0 && this.filtersApplied) {
           const { reportData: filterData = [] } = loadFilter;
           loadFilter.reportData = filterData;
@@ -216,9 +226,10 @@ export class WidgetConfigurationModalComponent implements OnInit {
         }
 
         this.skip = loadFilter.reportData
-        ? loadFilter.reportData.length
-        : this.skip;
-                this.dataSource = new MatTableDataSource(loadFilter.reportData);
+          ? loadFilter.reportData.length
+          : this.skip;
+        this.reportConfigService.formatReportData(loadFilter.reportData, this.userEmailToName);
+        this.dataSource = new MatTableDataSource(loadFilter.reportData);
         return loadFilter;
       })
     );
