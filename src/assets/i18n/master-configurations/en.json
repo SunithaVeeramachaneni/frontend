@@ -101,5 +101,7 @@
   "values": "Values",
   "sort": "Sort",
   "addModuleNameHeading": "Add as Meta Data For",
-  "responseSetNameExists": "Response Set Name already exists"
+  "responseSetNameExists": "Response Set Name already exists",
+  "forms": "Forms",
+  "formTemplate": "Form Templates"
 }
