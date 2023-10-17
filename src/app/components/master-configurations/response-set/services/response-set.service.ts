@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject, of } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 
 import { formatDistance } from 'date-fns';
@@ -15,7 +15,6 @@ import {
   TableEvent,
   CreateResponseSet,
   UpdateResponseSet,
-  DeleteResponseSet,
   ErrorInfo
 } from '../../../../interfaces';
 import { DateUtilService } from 'src/app/shared/utils/dateUtils';
@@ -27,15 +26,11 @@ import { metadataFlatModuleNames } from 'src/app/app.constants';
 export class ResponseSetService {
   fetchResponses$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
-
   addOrEditResponseSet$: BehaviorSubject<any> = new BehaviorSubject<any>({
     data: {} as UpdateResponseSet,
     actionType: '' as string
   });
   usersInfoByEmail = {};
-
-  private maxLimit = '1000000';
-
   constructor(
     private _appService: AppService,
     private readonly dateUtilService: DateUtilService
@@ -54,16 +49,14 @@ export class ResponseSetService {
   }
 
   fetchAllGlobalResponses$ = () => {
-    const params = new URLSearchParams();
-    params.set('limit', this.maxLimit);
-    params.set('next', '');
     const info: ErrorInfo = {} as ErrorInfo;
     const { displayToast, failureResponse = {} } = info;
     return this._appService
       ._getResp(
         environment.masterConfigApiUrl,
-        'response-set/list?' + params.toString(),
-        { displayToast, failureResponse }
+        'response-set/list',
+        { displayToast, failureResponse },
+        { isActive: true }
       )
       .pipe(shareReplay(1));
   };
@@ -72,26 +65,36 @@ export class ResponseSetService {
     next?: string;
     limit: number;
     searchTerm?: string;
-    fetchType: string;
+    isActive?: boolean;
   }) => {
-    if (
-      ['load', 'search'].includes(queryParams.fetchType) ||
-      (['infiniteScroll'].includes(queryParams.fetchType) &&
-        queryParams.next !== null)
-    ) {
+    const info: ErrorInfo = {
+      displayToast: true,
+      failureResponse: {}
+    };
+    if (queryParams.next !== null) {
       return this._appService
         ._getResp(
           environment.masterConfigApiUrl,
           'response-set/list',
-          { displayToast: true, failureResponse: {} },
+          info,
           queryParams
         )
         .pipe(map((res) => this.formatGraphQLocationResponse(res)));
+    } else {
+      return of({
+        count: null,
+        rows: [],
+        next: null
+      });
     }
   };
 
-  createResponseSet$ = (responseSet: CreateResponseSet) =>
-    this._appService._postData(
+  createResponseSet$ = (responseSet: CreateResponseSet) => {
+    const info: ErrorInfo = {
+      displayToast: true,
+      failureResponse: 'throwError'
+    };
+    return this._appService._postData(
       environment.masterConfigApiUrl,
       'response-set/create',
       {
@@ -101,35 +104,50 @@ export class ResponseSetService {
         isMultiColumn: responseSet.isMultiColumn,
         values: responseSet.values,
         moduleName: responseSet.moduleName
-      }
+      },
+      info
     );
+  };
 
   updateResponseSet$ = (responseSet: UpdateResponseSet) => {
+    const info: ErrorInfo = {
+      displayToast: true,
+      failureResponse: 'throwError'
+    };
     const updatePayload = {
-      id: responseSet.id,
       name: responseSet.name,
       description: responseSet.description,
       refCount: responseSet.refCount,
       moduleName: responseSet.moduleName,
       isMultiColumn: responseSet.isMultiColumn,
       values: responseSet.values,
-      createdBy: responseSet.createdBy,
-      _version: responseSet.version
+      createdBy: responseSet.createdBy
     };
     return this._appService
       .patchData(
         environment.masterConfigApiUrl,
         `response-set/update/${responseSet.id}`,
-        updatePayload
+        updatePayload,
+        info
       )
-      .pipe(map((response) => (response === null ? updatePayload : {})));
+      .pipe(
+        map((response) =>
+          response === null ? { id: responseSet.id, ...updatePayload } : {}
+        )
+      );
   };
 
-  deleteResponseSet$ = (deleteResponsePayload: DeleteResponseSet) =>
-    this._appService._removeData(
+  deleteResponseSet$ = (id: string) => {
+    const info: ErrorInfo = {
+      displayToast: true,
+      failureResponse: 'throwError'
+    };
+    return this._appService._removeData(
       environment.masterConfigApiUrl,
-      `response-set/delete/${JSON.stringify(deleteResponsePayload)}`
+      `response-set/delete/${id}`,
+      info
     );
+  };
 
   downloadSampleResponseSetTemplate(
     info: ErrorInfo = {} as ErrorInfo
@@ -141,16 +159,6 @@ export class ResponseSetService {
       true,
       {}
     );
-  }
-  getResponseSetCount$(): Observable<number> {
-    const params: URLSearchParams = new URLSearchParams();
-    params.set('limit', this.maxLimit);
-    return this._appService
-      ._getResp(
-        environment.masterConfigApiUrl,
-        'response-set/list?' + params.toString()
-      )
-      .pipe(map((res) => res.items.length || 0));
   }
 
   downloadFailure(
@@ -183,37 +191,31 @@ export class ResponseSetService {
   };
 
   private formatGraphQLocationResponse(resp) {
-    let rows =
-      resp.items
-        .sort(
-          (a, b) =>
-            new Date(b?.createdAt).getTime() - new Date(a.createdAt).getTime()
-        )
-        ?.map((p) => ({
-          ...p,
-          preTextImage: {
-            image: p?.image,
-            style: {
-              width: '40px',
-              height: '40px',
-              marginRight: '10px'
-            },
-            condition: true
+    const rows =
+      resp.items?.map((p) => ({
+        ...p,
+        preTextImage: {
+          image: p?.image,
+          style: {
+            width: '40px',
+            height: '40px',
+            marginRight: '10px'
           },
-          archivedAt: p.createdAt
-            ? formatDistance(new Date(p.createdAt), new Date(), {
-                addSuffix: true
-              })
-            : '',
-          updatedAt:
-            p?.updatedAt &&
-            this.dateUtilService.isValidDate(new Date(p?.updatedAt))
-              ? p?.updatedAt
-              : ''
-        })) || [];
-    const count = resp?.items.length || 0;
+          condition: true
+        },
+        archivedAt: p.createdAt
+          ? formatDistance(new Date(p.createdAt), new Date(), {
+              addSuffix: true
+            })
+          : '',
+        updatedAt:
+          p?.updatedAt &&
+          this.dateUtilService.isValidDate(new Date(p?.updatedAt))
+            ? p?.updatedAt
+            : ''
+      })) || [];
+    const count = resp?.count || 0;
     const next = resp?.next;
-    rows = rows.filter((o: any) => !o._deleted);
     return {
       count,
       rows,

@@ -782,8 +782,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
       moduleName: responseSet?.moduleName,
       refCount: responseSet?.refCount + (actionType === 'deselected' ? -1 : 1),
       values: JSON.stringify(responseSet?.value),
-      createdBy: responseSet?.createdBy,
-      version: responseSet?._version
+      createdBy: responseSet?.createdBy
     });
 
   updateIsOpen(isOpen: boolean) {

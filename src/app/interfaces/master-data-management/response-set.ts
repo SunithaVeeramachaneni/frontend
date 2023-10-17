@@ -10,7 +10,6 @@ export interface CreateResponseSet {
 export interface UpdateResponseSet extends CreateResponseSet {
   id: string;
   createdBy: string;
-  version: number;
 }
 
 export interface DeleteResponseSet {

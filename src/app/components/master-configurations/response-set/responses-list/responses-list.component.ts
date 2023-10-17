@@ -207,12 +207,11 @@ export class ResponsesListComponent implements OnInit, OnDestroy {
   private addEditDeleteResponseSet$: BehaviorSubject<any> =
     new BehaviorSubject<any>({
       action: null,
-      form: {} as any
+      responseSet: {} as any
     });
 
   private skip = 0;
   private limit = defaultLimit;
-  private fetchType = 'load';
   private nextToken = '';
   private onDestroy$ = new Subject();
 
@@ -267,10 +266,9 @@ export class ResponsesListComponent implements OnInit, OnDestroy {
     const responseSetOnLoadSearch$ =
       this.responseSetService.fetchResponses$.pipe(
         filter(({ data }) => data === 'load' || data === 'search'),
-        switchMap(({ data }) => {
+        switchMap(() => {
           this.skip = 0;
           this.nextToken = '';
-          this.fetchType = data;
           return this.getResponseSets();
         })
       );
@@ -279,7 +277,6 @@ export class ResponsesListComponent implements OnInit, OnDestroy {
       filter(({ data }) => data !== 'load' && data !== 'search'),
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
-          this.fetchType = 'infiniteScroll';
           return this.getResponseSets();
         } else {
           return of([]);
@@ -311,44 +308,54 @@ export class ResponsesListComponent implements OnInit, OnDestroy {
           }));
         } else {
           if (this.addEditDeleteResponseSet) {
-            const { form } = addEditData;
+            const { responseSet } = addEditData;
             switch (addEditData.action) {
               case 'create':
                 initial.data = [
                   {
-                    ...form,
-                    responseCount: JSON.parse(form.values).length,
+                    ...responseSet,
+                    responseCount: JSON.parse(responseSet.values).length,
                     creator:
-                      this.usersService.getUserFullName(form?.createdBy) ?? ''
+                      this.usersService.getUserFullName(
+                        responseSet?.createdBy
+                      ) ?? ''
                   },
                   ...initial.data
                 ];
                 this.allResponseSets = this.allResponseSets.filter(
-                  (item) => item.id !== form.id
+                  (item) => item.id !== responseSet.id
                 );
-                this.allResponseSets.push(form);
+                this.allResponseSets.push(responseSet);
                 break;
               case 'update':
                 const updatedIdx = initial.data.findIndex(
-                  (item) => item.id === form.id
+                  (item) => item?.id === responseSet?.id
                 );
-                initial.data[updatedIdx] = {
-                  ...form,
-                  creator: this.usersService.getUserFullName(form.createdBy),
-                  responseCount: JSON.parse(form.values).length,
-                  updatedAt: new Date().toISOString()
-                };
-                this.allResponseSets = this.allResponseSets.filter(
-                  (item) => item.id !== form.id
-                );
-                this.allResponseSets.push(form);
+                if (updatedIdx !== -1) {
+                  initial.data[updatedIdx] = {
+                    ...initial.data[updatedIdx],
+                    ...responseSet,
+                    creator: this.usersService.getUserFullName(
+                      responseSet.createdBy
+                    ),
+                    responseCount: JSON.parse(responseSet.values).length,
+                    updatedAt: new Date().toISOString()
+                  };
+                }
+                if (responseSet?.id) {
+                  this.allResponseSets = this.allResponseSets.filter(
+                    (item) => item.id !== responseSet.id
+                  );
+                  this.allResponseSets.push(responseSet);
+                }
+
                 break;
               case 'delete':
                 initial.data = initial.data.filter(
-                  (item) => item.id !== form.id
+                  (item) => item.id !== responseSet.id
                 );
                 this.allResponseSets = this.allResponseSets.filter(
-                  (item) => item.id !== form.id
+                  (item) => item.id !== responseSet.id
                 );
                 break;
               default:
@@ -379,11 +386,13 @@ export class ResponsesListComponent implements OnInit, OnDestroy {
         next: this.nextToken,
         limit: this.limit,
         searchTerm: this.searchResponseSet.value,
-        fetchType: this.fetchType
+        isActive: true
       })
       .pipe(
         mergeMap(({ count, rows, next }) => {
-          this.responseSetCount$ = of(count);
+          if (count !== null) {
+            this.responseSetCount$ = of(count);
+          }
           this.nextToken = next;
           this.isLoading$.next(false);
           return of(rows);
@@ -412,7 +421,7 @@ export class ResponsesListComponent implements OnInit, OnDestroy {
     if (action !== 'cancel') {
       this.addEditDeleteResponseSet$.next({
         action,
-        form: responseSet
+        responseSet
       });
     }
   };
@@ -440,21 +449,17 @@ export class ResponsesListComponent implements OnInit, OnDestroy {
             type: 'warning'
           });
         } else
-          this.responseSetService
-            .deleteResponseSet$({
-              id: data.id
-            })
-            .subscribe(() => {
-              this.addEditDeleteResponseSet = true;
-              this.addEditDeleteResponseSet$.next({
-                action: 'delete',
-                form: data
-              });
-              this.toast.show({
-                text: 'Global Response Set deleted successfully!',
-                type: 'success'
-              });
+          this.responseSetService.deleteResponseSet$(data?.id).subscribe(() => {
+            this.addEditDeleteResponseSet = true;
+            this.addEditDeleteResponseSet$.next({
+              action: 'delete',
+              responseSet: data
             });
+            this.toast.show({
+              text: 'Global Response Set deleted successfully!',
+              type: 'success'
+            });
+          });
         break;
       default:
     }
@@ -538,12 +543,10 @@ export class ResponsesListComponent implements OnInit, OnDestroy {
     });
 
     deleteReportRef.afterClosed().subscribe((res) => {
-      if (res.data) {
-        this.getResponseSets();
+      if (res?.data) {
         this.addEditDeleteResponseSet = true;
         this.nextToken = '';
         this.responseSetService.fetchResponses$.next({ data: 'load' });
-        this.responseSetCount$ = this.responseSetService.getResponseSetCount$();
         this.toast.show({
           text: 'Response Set  uploaded successfully!',
           type: 'success'

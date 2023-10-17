@@ -278,7 +278,6 @@ export class GlobalResponseTypeSideDrawerComponent
         .updateResponseSet$({
           ...responseSetPayload,
           id: this.globalResponse.id,
-          version: this.globalResponse._version,
           refCount: this.globalResponse.refCount,
           createdBy: this.globalResponse.createdBy
         })
@@ -339,12 +338,10 @@ export class GlobalResponseTypeSideDrawerComponent
   responseSetNameValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const responseSetNames =
-        this.allResponseSets?.map((responseSet) => {
-          return {
-            name: responseSet.name.toLowerCase(),
-            id: this.getColumnIdFromName(responseSet.name.toLowerCase())
-          };
-        }) || [];
+        this.allResponseSets?.map((responseSet) => ({
+          name: responseSet.name.toLowerCase(),
+          id: this.getColumnIdFromName(responseSet.name.toLowerCase())
+        })) || [];
       const isResponseSetNameExists = responseSetNames.find(
         (responseSetName) =>
           control?.value?.toLowerCase() !==
