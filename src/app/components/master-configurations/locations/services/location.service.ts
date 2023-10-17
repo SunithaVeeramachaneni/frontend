@@ -169,6 +169,18 @@ export class LocationService {
     );
   }
 
+  downloadExportedLocations(
+    plantId: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    return this._appService.downloadFile(
+      environment.masterConfigApiUrl,
+      `location/download/export/${plantId}`,
+      info,
+      true
+    );
+  }
+
   private formatGraphQLocationResponse(resp: LocationsResponse) {
     let rows =
       resp.items

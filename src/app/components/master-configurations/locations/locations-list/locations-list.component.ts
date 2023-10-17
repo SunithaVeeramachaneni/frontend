@@ -261,6 +261,7 @@ export class LocationsListComponent implements OnInit, OnDestroy {
   plants = [];
   plantsIdNameMap = {};
   currentRouteUrl$: Observable<string>;
+  currentUserPlantId: string;
   readonly routingUrls = routingUrls;
   private onDestroy$ = new Subject();
 
@@ -314,7 +315,10 @@ export class LocationsListComponent implements OnInit, OnDestroy {
     this.getDisplayedLocations();
     this.configOptions.allColumns = this.columns;
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
-      tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
+      tap(({ permissions = [], plantId }) => {
+        this.currentUserPlantId = plantId;
+        this.prepareMenuActions(permissions);
+      })
     );
   }
 
@@ -622,6 +626,34 @@ export class LocationsListComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
+  }
+
+  downloadExportedLocations(): void {
+    this.toast.show({
+      type: 'info',
+      text: 'Preparing Data for Export, might take upto 1 min...'
+    });
+    this.locationService
+      .downloadExportedLocations(this.currentUserPlantId)
+      .pipe(
+        tap((data) => {
+          downloadFile(data, 'Exported_Locations');
+        })
+      )
+      .subscribe(
+        () => {
+          this.toast.show({
+            type: 'success',
+            text: 'Data Exported Successfully!'
+          });
+        },
+        () => {
+          this.toast.show({
+            type: 'warning',
+            text: 'Error while exporting data!'
+          });
+        }
+      );
   }
 
   getAllLocations() {

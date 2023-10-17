@@ -139,6 +139,20 @@
                   translate="downloadTemplate"
                 ></span>
               </button>
+              <button
+                id="assetsListExportDataExcelBtn"
+                mat-menu-item
+                (click)="downloadExportedAssets()"
+                class="menu-buttons"
+              >
+                <svg-icon
+                  id="assetsListExportIconExcel"
+                  matSuffix
+                  icon="icon-export-data"
+                  class="menu-icons"
+                ></svg-icon>
+                <span id="assetsListExportData" translate="exportData"></span>
+              </button>
             </mat-menu>
             <input
               id="assetsListUploadFile"

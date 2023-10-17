@@ -209,4 +209,14 @@ export class AssetsService {
       info
     );
   }
+
+  downloadExportedAssets(plantId: string, info: ErrorInfo = {} as ErrorInfo) {
+    return this._appService.downloadFile(
+      environment.masterConfigApiUrl,
+      `assets/download/export/${plantId}`,
+      info,
+      true,
+      {}
+    );
+  }
 }

@@ -254,6 +254,7 @@ export class AssetsListComponent implements OnInit, OnDestroy {
   plantsIdNameMap = {};
   plants = [];
   currentRouteUrl$: Observable<string>;
+  currentUserPlantId: string;
   readonly routingUrls = routingUrls;
   dataLoadingComplete = false;
   private onDestroy$ = new Subject();
@@ -312,7 +313,10 @@ export class AssetsListComponent implements OnInit, OnDestroy {
 
     this.configOptions.allColumns = this.columns;
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
-      tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
+      tap(({ permissions = [], plantId }) => {
+        this.currentUserPlantId = plantId;
+        this.prepareMenuActions(permissions);
+      })
     );
   }
 
@@ -576,6 +580,34 @@ export class AssetsListComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
+  }
+
+  downloadExportedAssets(): void {
+    this.toast.show({
+      type: 'info',
+      text: 'Preparing Data for Export, might take upto 1 min...'
+    });
+    this.assetService
+      .downloadExportedAssets(this.currentUserPlantId)
+      .pipe(
+        tap((data) => {
+          downloadFile(data, 'Exported_Assets');
+        })
+      )
+      .subscribe(
+        () => {
+          this.toast.show({
+            type: 'success',
+            text: 'Data Exported Successfully!'
+          });
+        },
+        () => {
+          this.toast.show({
+            type: 'warning',
+            text: 'Error while exporting data!'
+          });
+        }
+      );
   }
 
   onCloseAssetsDetailedView(event) {
