@@ -259,10 +259,13 @@ export class ShiftListComponent implements OnInit, OnDestroy {
               initial.data = [shift, ...initial.data];
               break;
             case 'edit':
-              initial.data = [
-                shift,
-                ...initial.data.filter((item) => item.id !== shift.id)
-              ];
+              const idx = initial.data.findIndex((d) => d?.id === shift?.id);
+              if (idx !== -1) {
+                initial.data[idx] = {
+                  ...initial.data[idx],
+                  ...shift
+                };
+              }
               break;
             default:
             // Do nothing
@@ -419,7 +422,6 @@ export class ShiftListComponent implements OnInit, OnDestroy {
           this.addEditCopyDeleteShifts$.next({
             action: 'edit',
             shift: {
-              ...result,
               ...this.selectedShift,
               isActive: event,
               startAndEndTime: `${this.selectedShift.startTime} - ${this.selectedShift.endTime}`
