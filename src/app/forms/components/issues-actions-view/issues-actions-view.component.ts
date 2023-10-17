@@ -443,6 +443,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
       this.data;
     const { field, value, checked } = event;
     let { previouslyAssignedTo = '' } = this.data;
+    let dueDateOrSubmittedDate = {};
 
     const updatedIssueData = this.updateIssueOrActionData(
       issueData,
@@ -458,17 +459,32 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
       },
       checked
     );
-    if (field === 'assignee') {
-      if (checked && previouslyAssignedTo?.includes(value)) {
-        previouslyAssignedTo = previouslyAssignedTo
-          .split(',')
-          .filter((email) => email !== value)
-          .join(',');
-      }
 
-      if (!checked) {
-        previouslyAssignedTo += previouslyAssignedTo ? `,${value}` : value;
-      }
+    switch (field) {
+      case 'assignee':
+        if (checked && previouslyAssignedTo?.includes(value)) {
+          previouslyAssignedTo = previouslyAssignedTo
+            .split(',')
+            .filter((email) => email !== value)
+            .join(',');
+        }
+
+        if (!checked) {
+          previouslyAssignedTo += previouslyAssignedTo ? `,${value}` : value;
+        }
+        break;
+      case 'dueDate':
+        dueDateOrSubmittedDate = { [field]: value };
+        break;
+
+      case 'status':
+        dueDateOrSubmittedDate = {
+          submittedDate: value === 'Resolved' ? new Date().toISOString() : ''
+        };
+        break;
+
+      default:
+      // do nothing
     }
 
     if (type === 'issue') {
@@ -493,7 +509,8 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
               [field.toUpperCase()]: value,
               assignmentType: checked ? 'add' : 'remove'
             })
-          }
+          },
+          ...dueDateOrSubmittedDate
         },
         type,
         this.moduleName

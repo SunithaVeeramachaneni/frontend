@@ -652,7 +652,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
       this.operatorRoundsService.fetchAllRounds$()
     ]).pipe(
       tap(([, , formsList]) => {
-        this.isLoading$.next(false);
         const objectKeys = Object.keys(formsList);
         if (objectKeys.length > 0) {
           const uniqueSchedules = formsList
@@ -747,10 +746,12 @@ export class RoundsComponent implements OnInit, OnDestroy {
       this.userGroups$,
       this.shiftSevice.fetchAllShifts$().pipe(
         tap((shifts) => {
-          shifts?.items?.map((shift) => {
-            this.shiftObj[shift.id] = shift;
-            this.shiftNameMap[shift.id] = shift.name;
-          });
+          shifts?.items
+            ?.filter((s) => s?.isActive)
+            ?.map((shift) => {
+              this.shiftObj[shift.id] = shift;
+              this.shiftNameMap[shift.id] = shift.name;
+            });
         })
       ),
       this.plantService.fetchAllPlants$().pipe(

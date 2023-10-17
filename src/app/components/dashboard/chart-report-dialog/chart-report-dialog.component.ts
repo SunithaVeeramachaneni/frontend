@@ -108,24 +108,7 @@ export class ChartReportDialog implements OnInit {
     }
 
     this.selectedReport = this.data?.widgetData;
-    const { chartData } = this.data;
-    if (
-      chartData.name &&
-      this.selectedReport.report &&
-      this.selectedReport.report?.groupBy?.length
-    ) {
-      const filterObj = {
-        column: this.selectedReport.report.groupBy[0],
-        type: chartData?.name.includes('Total') ? 'default' : 'string',
-        filters: [
-          {
-            operation: 'equals',
-            operand: chartData.name
-          }
-        ]
-      };
-      this.selectedReport.report.filtersApplied = [filterObj];
-    }
+    
 
     if (
       this.selectedReport &&
@@ -147,7 +130,16 @@ export class ChartReportDialog implements OnInit {
       col.displayName = col?.displayName || col?.name;
       this.reportColumns = this.reportColumns.concat(col);
     });
-
+    const filtersApplied = this.getFiltersApplied();
+    if (
+      this.selectedReport.report &&
+      this.selectedReport.report.filtersApplied
+    ) {
+      this.selectedReport.report.filtersApplied = [
+        ...this.selectedReport.report.filtersApplied,
+        ...filtersApplied
+      ];
+    }
     this.fetchReport$.next({ data: 'load' });
     this.fetchReport$.next({} as TableEvent);
     this.getDisplayedForms();
@@ -308,21 +300,44 @@ export class ChartReportDialog implements OnInit {
         ]
       });
     }
+    const { chartData } = this.data;
+    if(chartData.additionalData &&
+      this.selectedReport.report &&
+      this.selectedReport.report?.groupBy?.length) {
+      this.selectedReport.report.groupBy.forEach((groupByFieldName) => {
+        const filterObj = {
+          column: groupByFieldName,
+          type: 'string',
+          filters: [
+            {
+              operation: 'equals',
+              operand: chartData.additionalData[groupByFieldName]
+            }
+          ]
+        };
+        filtersApplied.push(filterObj);
+      });
+    } else if (
+      chartData.name &&
+      this.selectedReport.report &&
+      this.selectedReport.report?.groupBy?.length
+    ) {
+      const filterObj = {
+        column: this.selectedReport.report.groupBy[0],
+        type: chartData?.name.includes('Total') ? 'default' : 'string',
+        filters: [
+          {
+            operation: 'equals',
+            operand: chartData.name
+          }
+        ]
+      };
+      filtersApplied.push(filterObj)
+    }
     return filtersApplied;
   };
 
   getReportData = () => {
-    const filtersApplied = this.getFiltersApplied();
-    if (
-      this.selectedReport.report &&
-      this.selectedReport.report.filtersApplied
-    ) {
-      this.selectedReport.report.filtersApplied = [
-        ...this.selectedReport.report.filtersApplied,
-        ...filtersApplied
-      ];
-    }
-
     return this.reportConfigService.getReportData$(
       this.selectedReport?.report,
       {
