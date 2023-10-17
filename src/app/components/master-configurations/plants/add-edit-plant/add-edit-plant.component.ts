@@ -232,7 +232,7 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
       this.plantForm.patchValue({ state: null, timeZone: null });
       if (countryCode) {
         this.selectedCountry = this.plantMasterData[countryCode];
-        if (!this.selectedCountry.states.length) {
+        if (!this.selectedCountry?.states?.length) {
           this.plantForm.get('state').disable();
           this.noState = true;
         } else {
@@ -240,12 +240,12 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
           this.noState = false;
         }
         [this.states, this.countryAllStates] = [
-          this.selectedCountry.states,
-          this.selectedCountry.states
+          this.selectedCountry?.states,
+          this.selectedCountry?.states
         ];
         [this.timeZones, this.countryAllTimeZones] = [
-          this.selectedCountry.timeZones,
-          this.selectedCountry.timeZones
+          this.selectedCountry?.timeZones,
+          this.selectedCountry?.timeZones
         ];
         this.plantForm.get('timeZone').enable();
       }

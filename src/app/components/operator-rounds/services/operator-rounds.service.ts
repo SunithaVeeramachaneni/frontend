@@ -54,6 +54,7 @@ export class OperatorRoundsService {
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   attachmentsMapping$ = new BehaviorSubject<any>({});
+  currentShownHierarchyNode$ = new BehaviorSubject<any>({});
   pdfMapping$ = new BehaviorSubject<any>({});
   selectedNode$ = this.selectedNodeSubject.asObservable();
   hierarchyMode$ = this.hierarchyModeSubject.asObservable();
