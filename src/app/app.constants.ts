@@ -371,7 +371,7 @@ export const defaultCategoryId = '_UnassignedCategory_';
 export const defaultCategoryName = 'Unassigned';
 export const defaultLanguage = 'en';
 export const defaultLimit = 25;
-export const graphQLDefaultLimit = 100;
+export const graphQLDefaultLimit = 250;
 export const graphQLDefaultFilterLimit = 500;
 export const graphQLPlanLimit = 200;
 export const graphQLDefaultMaxLimit = 10000;
@@ -840,11 +840,11 @@ export const colorsByStatus = {
 export const metadataModuleNames = [
   {
     moduleId: 'RDF',
-    moduleName: 'Forms'
+    moduleName: 'forms'
   },
   {
     moduleId: 'RDF_TEMPLATES',
-    moduleName: 'Form Templates'
+    moduleName: 'formTemplate'
   }
 ];
 

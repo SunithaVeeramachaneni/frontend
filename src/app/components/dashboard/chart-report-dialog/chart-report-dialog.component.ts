@@ -32,6 +32,8 @@ import { DateUtilService } from 'src/app/shared/utils/dateUtils';
 import { downloadFile } from 'src/app/shared/utils/fileUtils';
 import { ToastService } from 'src/app/shared/toast';
 import { format } from 'date-fns';
+import { UsersService } from '../../user-management/services/users.service';
+import { fieldTypesMock } from 'src/app/forms/components/response-type/response-types.mock';
 @Component({
   selector: 'app-chart-report-dialog',
   templateUrl: './chart-report-dialog.component.html',
@@ -78,6 +80,8 @@ export class ChartReportDialog implements OnInit {
     startDate: '',
     endDate: ''
   };
+  userEmailToName = {};
+  userNameToEmail = {};
 
   constructor(
     private dialogRef: MatDialogRef<any>,
@@ -86,7 +90,8 @@ export class ChartReportDialog implements OnInit {
     private reportConfigService: ReportConfigurationService,
     private dateUtilService: DateUtilService,
     private cdrf: ChangeDetectorRef,
-    private toast: ToastService
+    private toast: ToastService,
+    private usersService: UsersService
   ) {}
 
   ngOnInit() {
@@ -108,24 +113,7 @@ export class ChartReportDialog implements OnInit {
     }
 
     this.selectedReport = this.data?.widgetData;
-    const { chartData } = this.data;
-    if (
-      chartData.name &&
-      this.selectedReport.report &&
-      this.selectedReport.report?.groupBy?.length
-    ) {
-      const filterObj = {
-        column: this.selectedReport.report.groupBy[0],
-        type: chartData?.name.includes('Total') ? 'default' : 'string',
-        filters: [
-          {
-            operation: 'equals',
-            operand: chartData.name
-          }
-        ]
-      };
-      this.selectedReport.report.filtersApplied = [filterObj];
-    }
+    
 
     if (
       this.selectedReport &&
@@ -142,15 +130,30 @@ export class ChartReportDialog implements OnInit {
 
     this.reportColumns = [];
     this.configOptions.allColumns?.forEach((col: any) => {
-      col.id = col.name;
+      col.id = this.getId(col.name);
       col.controlType = 'string';
       col.displayName = col?.displayName || col?.name;
       this.reportColumns = this.reportColumns.concat(col);
     });
-
+    const filtersApplied = this.getFiltersApplied();
+    if (
+      this.selectedReport.report &&
+      this.selectedReport.report.filtersApplied
+    ) {
+      this.selectedReport.report.filtersApplied = [
+        ...this.selectedReport.report.filtersApplied,
+        ...filtersApplied
+      ];
+    }
     this.fetchReport$.next({ data: 'load' });
     this.fetchReport$.next({} as TableEvent);
     this.getDisplayedForms();
+  }
+
+  getId = (id) => {
+    const ids = new Set(['assignedTo', 'raisedBy', 'roundSubmittedBy', 'taskCompletedBy']);
+    if(ids.has(id)) return `${id}Display`;
+    return id;
   }
 
   downloadReport = () => {
@@ -213,9 +216,14 @@ export class ChartReportDialog implements OnInit {
     };
     this.reportDetails$ = combineLatest([
       formsOnLoadSearch$,
-      onScrollForms$
+      onScrollForms$,
+      this.usersService.getUsersInfo$()
     ]).pipe(
-      map(([rows, scrollData]) => {
+      map(([rows, scrollData, usersList]) => {
+        usersList.forEach((user) => {
+          this.userEmailToName[user.email] = `${user.firstName} ${user.lastName}`;
+          this.userNameToEmail[`${user.firstName} ${user.lastName}`] = user.email;
+        })
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
@@ -226,6 +234,7 @@ export class ChartReportDialog implements OnInit {
           initial.data = initial.data.concat(scrollData.reportData);
         }
         this.skip = initial.data.length;
+        this.reportConfigService.formatReportData(initial.data, this.userEmailToName);
         this.dataSource = new MatTableDataSource(initial.data);
         return initial;
       })
@@ -308,21 +317,44 @@ export class ChartReportDialog implements OnInit {
         ]
       });
     }
+    const { chartData } = this.data;
+    if(chartData.additionalData &&
+      this.selectedReport.report &&
+      this.selectedReport.report?.groupBy?.length) {
+      this.selectedReport.report.groupBy.forEach((groupByFieldName) => {
+        const filterObj = {
+          column: groupByFieldName,
+          type: 'string',
+          filters: [
+            {
+              operation: 'equals',
+              operand: chartData.additionalData[groupByFieldName]
+            }
+          ]
+        };
+        filtersApplied.push(filterObj);
+      });
+    } else if (
+      chartData.name &&
+      this.selectedReport.report &&
+      this.selectedReport.report?.groupBy?.length
+    ) {
+      const filterObj = {
+        column: this.selectedReport.report.groupBy[0],
+        type: chartData?.name.includes('Total') ? 'default' : 'string',
+        filters: [
+          {
+            operation: 'equals',
+            operand: chartData.name
+          }
+        ]
+      };
+      filtersApplied.push(filterObj)
+    }
     return filtersApplied;
   };
 
   getReportData = () => {
-    const filtersApplied = this.getFiltersApplied();
-    if (
-      this.selectedReport.report &&
-      this.selectedReport.report.filtersApplied
-    ) {
-      this.selectedReport.report.filtersApplied = [
-        ...this.selectedReport.report.filtersApplied,
-        ...filtersApplied
-      ];
-    }
-
     return this.reportConfigService.getReportData$(
       this.selectedReport?.report,
       {

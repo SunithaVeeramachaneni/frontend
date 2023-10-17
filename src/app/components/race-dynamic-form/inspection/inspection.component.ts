@@ -468,7 +468,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
       this.raceDynamicFormService.fetchAllInspections$()
     ]).pipe(
       tap(([, , formsList]) => {
-        this.isLoading$.next(false);
         const objectKeys = Object.keys(formsList);
         if (objectKeys.length > 0) {
           const uniqueSchedules = formsList
@@ -565,10 +564,12 @@ export class InspectionComponent implements OnInit, OnDestroy {
       this.userGroups$,
       this.shiftService.fetchAllShifts$().pipe(
         tap((shifts) => {
-          shifts?.items?.map((shift) => {
-            this.shiftObj[shift.id] = shift;
-            this.shiftNameMap[shift.id] = shift.name;
-          });
+          shifts?.items
+            ?.filter((s) => s?.isActive)
+            ?.map((shift) => {
+              this.shiftObj[shift.id] = shift;
+              this.shiftNameMap[shift.id] = shift.name;
+            });
         })
       ),
       this.plantService.fetchAllPlants$().pipe(
