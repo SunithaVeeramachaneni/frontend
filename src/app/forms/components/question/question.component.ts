@@ -1014,9 +1014,15 @@ export class QuestionComponent implements OnInit, OnDestroy {
               };
               const pdfObservable =
                 this.moduleName === 'RDF'
-                  ? this.rdfService.uploadAttachments$({ file: pdf })
+                  ? this.rdfService.uploadAttachments$({
+                      file: pdf,
+                      objectId: this.formId,
+                      plantId: this.formMetadata?.plantId
+                    })
                   : this.operatorRoundsService.uploadAttachments$({
-                      file: pdf
+                      file: pdf,
+                      objectId: this.formId,
+                      plantId: this.formMetadata?.plantId
                     });
               if (resizedPdfSize <= maxSize) {
                 if (originalValue.pdf === null) {
@@ -1078,9 +1084,15 @@ export class QuestionComponent implements OnInit, OnDestroy {
             if (resizedImageSize <= maxSize) {
               const imageObservable =
                 this.moduleName === 'RDF'
-                  ? this.rdfService.uploadAttachments$({ file: image })
+                  ? this.rdfService.uploadAttachments$({
+                      file: image,
+                      objectId: this.formId,
+                      plantId: this.formMetadata?.plantId
+                    })
                   : this.operatorRoundsService.uploadAttachments$({
-                      file: image
+                      file: image,
+                      objectId: this.formId,
+                      plantId: this.formMetadata?.plantId
                     });
               const index = originalValue.images.findIndex(
                 (image) => image === null
