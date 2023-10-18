@@ -117,6 +117,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   notificationsCount = 0;
   notificationsArrived = false;
   isLogHistoryDataLoaded$: Observable<any>;
+  locationAsset: string;
   private totalCount = 0;
   private allData = [];
   private amplifySubscription$: Subscription[] = [];
@@ -144,6 +145,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   ngOnInit(): void {
+    this.locationAsset = this.data?.locationAsset;
     this.plantMapSubscription =
       this.plantService.plantTimeZoneMapping$.subscribe(
         (data) => (this.plantTimezoneMap = data)
@@ -599,7 +601,8 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
           moduleName: this.moduleName,
           entityId: this.entityId,
           entityType: this.entityType,
-          notificationsCount: this.notificationsCount
+          notificationsCount: this.notificationsCount,
+          locationAssest: this.locationAsset
         }
       }
     );
@@ -734,6 +737,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
       this.isPreviousEnabled = false;
       this.entityId = previousRecord?.entityId;
       this.entityType = previousRecord?.entityType;
+      this.locationAsset = previousRecord?.locationAsset;
       this.notificationsCount = 0;
       this.notificationsArrived = false;
       if (currentIdx !== -1 && this.allData[currentIdx - 1]) {
@@ -776,6 +780,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
       );
       this.entityId = nextRecord?.entityId;
       this.entityType = nextRecord?.entityType;
+      this.locationAsset = nextRecord?.locationAsset;
       this.notificationsCount = 0;
       this.notificationsArrived = false;
       this.isPreviousEnabled = true;
@@ -890,7 +895,8 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
           moduleName: this.moduleName,
           entityId: this.entityId,
           entityType: this.entityType,
-          notificationsCount: this.notificationsCount
+          notificationsCount: this.notificationsCount,
+          locationAsset: this.locationAsset
         }
       }
     );

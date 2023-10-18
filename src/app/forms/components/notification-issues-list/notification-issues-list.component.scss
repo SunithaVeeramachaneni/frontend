@@ -19,7 +19,7 @@
   position: absolute;
   left: 20px;
   top: 82px;
-  color: #1e40af;
+  color: $blue-primary;
   width: auto;
   height: 50px;
   border: none;
@@ -31,4 +31,8 @@
 .entity-name-text {
   display: flex;
   width: auto;
+}
+
+.entity-name-text {
+  color: $blue-label;
 }

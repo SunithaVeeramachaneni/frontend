@@ -37,8 +37,9 @@ export class NotificationAlertDialogComponent implements OnInit {
         maxWidth: '100vw',
         data: {
           moduleName: this.moduleName,
-          entityId: this.data.entityId,
-          entityType: this.data.entityType
+          entityId: this.data?.entityId,
+          entityType: this.data?.entityType,
+          locationAsset: this.data?.locationAsset
         }
       }
     );
