@@ -102,6 +102,8 @@
   "sort": "Sort",
   "addModuleNameHeading": "Add as Meta Data For",
   "responseSetNameExists": "Response Set Name already exists",
+  "alreadyExists": "{name} already exists",
+  "exportData": "Export Data as Excel",
   "forms": "Forms",
   "formTemplate": "Form Templates"
 }

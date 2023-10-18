@@ -158,6 +158,29 @@ export class LocationService {
     );
   }
 
+  verifyLocationId$(
+    locationId: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    return this._appService._getResp(
+      environment.masterConfigApiUrl,
+      `location/verify/${locationId}`,
+      info
+    );
+  }
+
+  downloadExportedLocations(
+    plantId: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    return this._appService.downloadFile(
+      environment.masterConfigApiUrl,
+      `location/download/export/${plantId}`,
+      info,
+      true
+    );
+  }
+
   private formatGraphQLocationResponse(resp: LocationsResponse) {
     let rows =
       resp.items
