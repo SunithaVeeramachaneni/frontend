@@ -84,6 +84,7 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
         this.plantTitle = 'Create Plant';
         this.plantButton = 'Create';
         this.plantIdValidated = false;
+        this.plantForm?.get('plantId').enable();
       }
 
       const plantdata = {

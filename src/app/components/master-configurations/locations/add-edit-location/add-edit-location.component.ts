@@ -75,6 +75,7 @@ export class AddEditLocationComponent implements OnInit {
         this.locationTitle = 'Create Location';
         this.locationButton = 'Create';
         this.locationIdValidated = false;
+        this.locationForm.get('locationId').enable();
       }
       const locdata = {
         id: this.locEditData?.id,
@@ -141,7 +142,15 @@ export class AddEditLocationComponent implements OnInit {
           } else {
             this.locationIdExists = false;
           }
+          console.log(this.locationIdExists);
           this.cdfr.markForCheck();
+          console.log(
+            this.locationStatus !== 'edit'
+              ? !this.locationIdExists
+                ? null
+                : { alreadyExists: true }
+              : null
+          );
           return this.locationStatus !== 'edit'
             ? !this.locationIdExists
               ? null

@@ -67,6 +67,7 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
     this.assetEditData = asset?.assetData || null;
     if (this.assetEditData === null) {
       this.assetStatus = 'add';
+      this.assetIdValidated = true;
       this.assetTitle = 'Create Asset';
       this.assetButton = 'Create';
       this.assetImage = '';
@@ -83,6 +84,7 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
         this.assetTitle = 'Create Asset';
         this.assetButton = 'Create';
         this.assetIdValidated = false;
+        this.assetForm.get('assetsId').enable();
       }
       const assetData = {
         id: this.assetEditData?.id,
