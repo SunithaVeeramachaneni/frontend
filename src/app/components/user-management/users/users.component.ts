@@ -444,7 +444,7 @@ export class UsersComponent implements OnInit {
     });
     openDeleteUserModalRef.afterClosed().subscribe((resp) => {
       if (!resp) return;
-      this.usersService.deactivateUser$(user.id).subscribe((deletedUser) => {
+      this.usersService.deactivateUser$(user).subscribe((deletedUser) => {
         this.addEditDeactivateUser = true;
         this.addEditDeactivateUser$.next({
           action: 'deactivate',

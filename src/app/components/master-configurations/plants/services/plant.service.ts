@@ -173,6 +173,14 @@ export class PlantService {
     );
   }
 
+  verifyPlantId$(plantId: string, info: ErrorInfo = {} as ErrorInfo) {
+    return this._appService._getResp(
+      environment.masterConfigApiUrl,
+      `plants/verify/${plantId}`,
+      info
+    );
+  }
+
   private formatPlantResponse(resp: PlantsResponse) {
     let rows =
       resp.items
