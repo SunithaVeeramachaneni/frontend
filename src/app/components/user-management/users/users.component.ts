@@ -509,7 +509,9 @@ export class UsersComponent implements OnInit {
                 this.skip += 1;
                 this.addDeactivateUserCount = true;
                 this.userCountUpdate$.next(+1);
-                initial.data = initial.data.concat(scrollData);
+                initial.data = initial.data.concat(
+                  this.formatUsers(scrollData)
+                );
                 if (user) {
                   initial.data = [user, ...initial.data];
                   initial.data[0].plantIdPlaceholder =
@@ -548,7 +550,7 @@ export class UsersComponent implements OnInit {
             }
             this.addEditDeactivateUser = false;
           } else {
-            initial.data = initial.data.concat(scrollData);
+            initial.data = initial.data.concat(this.formatUsers(scrollData));
           }
         }
         initial?.data?.map((data) => {
