@@ -216,7 +216,10 @@ export class WidgetConfigurationModalComponent implements OnInit {
         this.skip = loadFilter.reportData
           ? loadFilter.reportData.length
           : this.skip;
-        this.reportConfigService.formatReportData(loadFilter.reportData, this.userEmailToName);
+        this.reportConfigService.formatReportData(
+          loadFilter.reportData,
+          this.userEmailToName
+        );
         this.dataSource = new MatTableDataSource(loadFilter.reportData);
         return loadFilter;
       })
@@ -324,16 +327,18 @@ export class WidgetConfigurationModalComponent implements OnInit {
     this.selectedReport.tableDetails?.forEach((col) => {
       this.reportColumns = this.reportColumns.concat(col.columns);
     });
-    this.reportConfigurationForTable.groupBy = type !== 'table' ? [] : [...(this.selectedReport?.groupBy || [])];
+    this.reportConfigurationForTable.groupBy =
+      type !== 'table' ? [] : [...(this.selectedReport?.groupBy || [])];
     this.configOptions.tableID = `${this.configOptions.tableID}${this.reportConfigurationForTable.id}`;
     this.configOptions =
       this.reportConfigService.updateConfigOptionsFromReportConfiguration(
         this.reportConfigurationForTable,
         this.configOptions
       );
-    this.chartVarient = this.selectedReport.groupBy?.length && type !== 'table'
-      ? `${type}${indexAxis ? `_${indexAxis}` : ``}`
-      : 'table';
+    this.chartVarient =
+      this.selectedReport.groupBy?.length && type !== 'table'
+        ? `${type}${indexAxis ? `_${indexAxis}` : ``}`
+        : 'table';
     this.chartVarient$.next(this.chartVarient);
     this.setGroupByCountQueryParams(countFieldName);
     this.fetchChartData$.next(true);
@@ -348,7 +353,7 @@ export class WidgetConfigurationModalComponent implements OnInit {
     const { id: dashboardId } = this.data.dashboard;
     const createdBy = this.loginService.getLoggedInUserName();
     const isTable = this.chartVarient === 'table' ? true : false;
-    const groupBy = this.reportConfigurationForTable.groupBy;
+    const groupBy = this.selectedReport.groupBy;
     const columns: Column[] = this.configOptions.allColumns;
     const tableColumns: TableColumn[] = columns
       .map((column) => {
@@ -417,11 +422,10 @@ export class WidgetConfigurationModalComponent implements OnInit {
       case 'REFRESH_CONFIG':
         this.configOptions = { ...event.data };
         if (
-          this.reportConfigurationForTable.groupBy.length !==
+          this.selectedReport.groupBy.length !==
           this.configOptions.groupByColumns.length
         ) {
-          this.reportConfigurationForTable.groupBy =
-            this.configOptions.groupByColumns;
+          this.selectedReport.groupBy = this.configOptions.groupByColumns;
         }
         break;
 
@@ -466,11 +470,11 @@ export class WidgetConfigurationModalComponent implements OnInit {
             type,
             indexAxis
           };
-        }else {
+        } else {
           this.selectedReport.chartDetails = {
             ...this.selectedReport.chartDetails,
-            type: 'table',
-          }
+            type: 'table'
+          };
         }
         this.chartConfig = this.reportConfigService.updateChartConfig(
           this.selectedReport,
