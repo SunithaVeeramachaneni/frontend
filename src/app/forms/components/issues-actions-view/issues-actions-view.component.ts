@@ -45,7 +45,8 @@ import {
 import {
   dateTimeFormat2,
   dateFormat2,
-  timeFormat
+  timeFormat,
+  defaultLimit
 } from 'src/app/app.constants';
 import { NotificationAlertDialogComponent } from '../notification-alert-dialog/notification-alert-dialog.component';
 import { NotificationIssuesListComponent } from '../notification-issues-list/notification-issues-list.component';
@@ -904,7 +905,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   getObservations() {
     const issuesObj = {
       next: '',
-      limit: 100,
+      limit: defaultLimit,
       searchKey: '',
       type: 'issue',
       moduleName: this.moduleName
