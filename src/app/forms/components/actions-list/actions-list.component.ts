@@ -38,6 +38,7 @@ import { slideInOut } from 'src/app/animations';
 
 import {
   graphQLDefaultLimit,
+  defaultLimit,
   permissions as perms,
   dateTimeFormat4
 } from 'src/app/app.constants';
@@ -268,7 +269,7 @@ export class ActionsListComponent implements OnInit, OnDestroy {
     data: any[];
   }>;
   skip = 0;
-  limit = graphQLDefaultLimit;
+  limit = defaultLimit;
   plantMapSubscription: Subscription;
   searchAction: FormControl;
   actionsCount$: Observable<number>;
@@ -351,7 +352,10 @@ export class ActionsListComponent implements OnInit, OnDestroy {
     const onScrollActions$ = this.observationsService.fetchActions$.pipe(
       filter(({ data }) => data !== 'load' && data !== 'search'),
       switchMap(({ data }) => {
-        if (data === 'infiniteScroll' && this.observationsService.actionsNextToken!==null ) {
+        if (
+          data === 'infiniteScroll' &&
+          this.observationsService.actionsNextToken !== null
+        ) {
           this.fetchType = 'infiniteScroll';
           return this.getActionsList();
         } else {

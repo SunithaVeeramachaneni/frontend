@@ -709,30 +709,44 @@
           class="titles m-t-10"
           translate="erpnotification"
         ></div>
-        <div class="values" *ngIf="!isCreateNotification">
-          <button
-            id="issuesActionsViewCreateNotification"
-            *ngIf="!isNotificationNumber(data.notificationInfo)"
-            mat-raised-button
-            color="primary"
-            (click)="openNotificationAlertDialog()"
-          >
-            {{ 'create' | translate }}
-          </button>
-          <span
-            id="issuesActionsViewNotifInfo"
-            *ngIf="isNotificationNumber(data.notificationInfo)"
-            >{{ data.notificationInfo }}</span
-          >
-        </div>
-        <div class="values" *ngIf="isCreateNotification">
-          <span id="issuesActionsViewNotifCreation">{{
-            'notificationCreation' | translate
-          }}</span>
+        <div *ngIf="notificationsArrived; else loadingNotifications">
+          <div class="values" *ngIf="!isCreateNotification">
+            <button
+              id="issuesActionsViewCreateNotification"
+              *ngIf="!isNotificationNumber(data.notificationInfo)"
+              mat-raised-button
+              color="primary"
+              (click)="notificationCreateSelector()"
+            >
+              {{ 'create' | translate }}
+            </button>
+            <div
+              *ngIf="isNotificationNumber(data.notificationInfo)"
+              id="issuesActionsViewDetailRound"
+              class="values round-title"
+              (click)="openNotificationIssues()"
+            >
+              <span
+                >+{{ notificationsCount - 1 }} more Related Notifications</span
+              >
+            </div>
+          </div>
+          <div class="values" *ngIf="isCreateNotification">
+            <span id="issuesActionsViewNotifCreation">{{
+              'notificationCreation' | translate
+            }}</span>
+          </div>
         </div>
       </div>
       <hr class="line" />
-
+      <ng-template #loadingNotifications>
+        <ngx-shimmer-loading
+          class="loading-notifications"
+          [width]="'100%'"
+          [height]="'35px'"
+        >
+        </ngx-shimmer-loading>
+      </ng-template>
       <div class="right-div p-5-0">
         <div class="titles" translate="raisedBy"></div>
         <div id="issuesActionsViewRaisedBy" class="values">

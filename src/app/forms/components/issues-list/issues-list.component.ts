@@ -39,7 +39,8 @@ import { slideInOut } from 'src/app/animations';
 import {
   graphQLDefaultLimit,
   permissions as perms,
-  dateTimeFormat4
+  dateTimeFormat4,
+  defaultLimit
 } from 'src/app/app.constants';
 import {
   AssigneeDetails,
@@ -79,6 +80,8 @@ export class IssuesListComponent implements OnInit, OnDestroy {
   }
   @Input() moduleName;
   @Input() isNotificationAlert;
+  @Input() entityId;
+  @Input() entityType;
   assigneeDetails: AssigneeDetails;
   partialColumns: Partial<Column>[] = [
     {
@@ -268,7 +271,7 @@ export class IssuesListComponent implements OnInit, OnDestroy {
   }>;
   skip = 0;
   plantMapSubscription: Subscription;
-  limit = graphQLDefaultLimit;
+  limit = defaultLimit;
   searchIssue: FormControl;
   menuState = 'out';
   ghostLoading = new Array(11).fill(0).map((v, i) => i);
@@ -450,7 +453,12 @@ export class IssuesListComponent implements OnInit, OnDestroy {
       type: 'issue',
       moduleName: this.moduleName
     };
-    return this.observationsService.getObservations$(obj, this.filter).pipe(
+    const filterObj = { entityId: '', entityType: '', ...this.filter };
+    if (this.entityId && this.entityType) {
+      filterObj.entityType = this.entityType;
+      filterObj.entityId = this.entityId;
+    }
+    return this.observationsService.getObservations$(obj, filterObj).pipe(
       mergeMap(({ rows, next, count, filters }) => {
         this.observationsService.issuesNextToken = next;
         this.isLoading$.next(false);

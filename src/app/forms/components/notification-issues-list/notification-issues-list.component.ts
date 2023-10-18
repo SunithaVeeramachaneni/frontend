@@ -12,6 +12,9 @@ export class NotificationIssuesListComponent implements OnInit {
   users$: Observable<any>;
   moduleName = this.data.moduleName;
   isNotificationAlert = true;
+  entityId = this.data.entityId;
+  entityType = this.data.entityType;
+  entityName = 'Name';
   constructor(
     public usersService: UsersService,
     public dialogRef: MatDialogRef<NotificationIssuesListComponent>,

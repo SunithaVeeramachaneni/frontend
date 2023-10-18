@@ -1,14 +1,16 @@
 <div class="notificationAlertDialogcontainer" id="dialog-container">
   <div class="heading" id="heading-container">
-    <span class="alert-span">Alert</span>
+    <span class="alert-span">{{ 'alert' | translate }}</span>
   </div>
   <div class="body" id="body-buttons">
     <div class="message" id="message-container">
-      <span class="message-body"
-        >{{ notificationCount }} active Notifications from
-        {{ notificationCount }} Issues already exists for this Asset. Do you
-        want to create a new Notification?</span
-      >
+      <span class="message-body">{{
+        'notificationsAlertDialog'
+          | translate
+            : {
+                count: notificationCount
+              }
+      }}</span>
     </div>
     <div class="buttons" id="buttons-container">
       <button
@@ -17,7 +19,7 @@
         color="primary"
         (click)="viewIssuesList()"
       >
-        Show Issues with Notifications
+        {{ 'showNotifications' | translate }}
       </button>
       <button
         mat-stroked-button
@@ -25,7 +27,7 @@
         id="createBtn"
         (click)="createNotification()"
       >
-        Create New Notification Anyway
+        {{ 'createNotificationAnyway' | translate }}
       </button>
       <button
         mat-stroked-button
@@ -33,7 +35,7 @@
         id="cancelBtn"
         (click)="dialogClose()"
       >
-        Cancel
+        {{ 'cancel' | translate }}
       </button>
     </div>
   </div>

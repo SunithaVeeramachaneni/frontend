@@ -209,6 +209,7 @@
       overflow-y: auto;
 
       .right-div {
+        align-items: center;
         display: flex;
         justify-content: space-between;
 
@@ -317,4 +318,15 @@
   justify-content: center;
   margin-top: 10px;
   margin-bottom: 10px;
+}
+.loading-notifications {
+  width: 20%;
+  height: 35px;
+  border-radius: 5px;
+  position: relative;
+  right: 17px;
+}
+#issuesActionsViewNotification {
+  position: relative;
+  top: -2px;
 }

@@ -1,8 +1,5 @@
 @import '../../../../scss/colors.scss';
 
-.issuesListContainer {
-}
-
 .back-arrow {
   height: 17px;
   width: 17px;
@@ -18,6 +15,20 @@
   border: none;
   background-color: transparent;
 }
-.issues-list {
-  padding: 0px 10px;
+.entity-name {
+  position: absolute;
+  left: 20px;
+  top: 82px;
+  color: #1e40af;
+  width: auto;
+  height: 50px;
+  border: none;
+  display: flex;
+  flex-direction: row;
+}
+
+.fixed-text,
+.entity-name-text {
+  display: flex;
+  width: auto;
 }

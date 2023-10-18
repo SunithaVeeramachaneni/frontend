@@ -11,17 +11,16 @@ import { NotificationIssuesListComponent } from '../notification-issues-list/not
   styleUrls: ['./notification-alert-dialog.component.scss']
 })
 export class NotificationAlertDialogComponent implements OnInit {
-  notificationCount = 0;
+  notificationCount = this.data?.notificationsCount;
   moduleName = this.data.moduleName;
+
   constructor(
     public dialogRef: MatDialogRef<NotificationAlertDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     public matDialog: MatDialog
   ) {}
 
-  ngOnInit(): void {
-    console.log('module name in notification alert dialog :', this.moduleName);
-  }
+  ngOnInit(): void {}
 
   dialogClose(): void {
     this.dialogRef.close();
@@ -36,7 +35,11 @@ export class NotificationAlertDialogComponent implements OnInit {
         width: '100vw',
         height: '100vh',
         maxWidth: '100vw',
-        data: { moduleName: this.moduleName }
+        data: {
+          moduleName: this.moduleName,
+          entityId: this.data.entityId,
+          entityType: this.data.entityType
+        }
       }
     );
     issuesListDialogRef.afterClosed().subscribe((result) => {

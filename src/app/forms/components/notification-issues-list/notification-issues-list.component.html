@@ -8,9 +8,17 @@
       ></svg-icon>
     </button>
   </mat-toolbar>
+  <div class="entity-name" id="entityNameFil">
+    <span class="fixed-text" id="entityFixedText"
+      >{{ 'fixedTitleHeader' | translate }}
+    </span>
+    <span class="entity-name-text"> {{ entityName }}</span>
+  </div>
   <app-issues-list
     [users$]="users$"
     [moduleName]="moduleName"
+    [entityId]="entityId"
+    [entityType]="entityType"
     [isNotificationAlert]="isNotificationAlert"
   ></app-issues-list>
 </div>
