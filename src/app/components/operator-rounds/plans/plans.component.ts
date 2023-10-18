@@ -468,7 +468,6 @@ export class PlansComponent implements OnInit, OnDestroy {
   selectedRoundConfig: any;
   shiftObj: any = {};
 
-  allPlants: any;
   allShifts: any;
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
@@ -526,17 +525,6 @@ export class PlansComponent implements OnInit, OnDestroy {
       tap(([, , plansList]) => {
         const objectKeys = Object.keys(plansList);
         if (objectKeys.length > 0) {
-          const uniquePlants = plansList.rows
-            .map((item) => {
-              if (item.plant) {
-                this.plantsIdNameMap[item.plant] = item.plantId;
-                return item.plant;
-              }
-              return '';
-            })
-            .filter((value, index, self) => self.indexOf(value) === index);
-          this.plants = [...uniquePlants];
-
           const uniqueSchedules = plansList.rows
             ?.map((item) => item?.schedule)
             .filter((value, index, self) => self?.indexOf(value) === index);
@@ -549,9 +537,6 @@ export class PlansComponent implements OnInit, OnDestroy {
             });
           }
           for (const item of filterJson) {
-            if (item.column === 'plant') {
-              item.items = this.plants;
-            }
             if (item.column === 'assignedToDisplay') {
               item.items = this.assignedTo.sort();
             }
@@ -618,7 +603,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       roundPlansOnLoadSearch$,
       onScrollRoundPlans$,
       roundPlanScheduleConfigurations$,
-      this.plantService.fetchAllPlants$(),
+      this.plantService.fetchLoggedInUserPlants$(),
       this.shiftService.fetchAllShifts$(),
       this.users$,
       this.userGroups$
@@ -636,7 +621,18 @@ export class PlansComponent implements OnInit, OnDestroy {
             ?.forEach((value) => {
               this.activeShiftIdMap[value.id] = value.name;
             });
-          this.allPlants = plants;
+
+          this.plants = plants;
+          plants.forEach((plant) => {
+            this.plantsIdNameMap[`${plant.plantId} - ${plant.name}`] = plant.id;
+          });
+          for (const item of this.filterJson) {
+            if (item.column === 'plant') {
+              item.items = plants
+                .map((plant) => `${plant.plantId} - ${plant.name}`)
+                .sort();
+            }
+          }
           this.allShifts = shifts.items.filter((s) => s.isActive);
           this.isLoading$.next(false);
           if (this.skip === 0) {
@@ -819,7 +815,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   };
 
   prepareActiveShifts(plan: any) {
-    const selectedPlant = this.allPlants?.items?.find(
+    const selectedPlant = this.plants?.find(
       (plant) => plant.id === plan.plantId
     );
     const selectedShifts = selectedPlant?.shifts

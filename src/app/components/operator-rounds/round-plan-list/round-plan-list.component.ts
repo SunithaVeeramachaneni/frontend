@@ -394,17 +394,20 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
       formsOnLoadSearch$,
       this.addEditCopyForm$,
       onScrollForms$,
-      this.plantService.fetchAllPlants$().pipe(
-        tap(
-          ({ items: plants }) =>
-            (this.plantsObject = plants?.reduce((acc, curr) => {
-              acc[curr.id] = `${curr.plantId} - ${curr.name}`;
-              return acc;
-            }, {}))
-        )
-      )
+      this.plantService.fetchLoggedInUserPlants$()
     ]).pipe(
-      map(([rows, form, scrollData]) => {
+      map(([rows, form, scrollData, plants]) => {
+        plants.forEach((plant) => {
+          this.plantsIdNameMap[`${plant.plantId} - ${plant.name}`] = plant.id;
+        });
+        for (const item of this.filterJson) {
+          if (item.column === 'plant') {
+            item.items = plants
+              .map((plant) => `${plant.plantId} - ${plant.name}`)
+              .sort();
+          }
+        }
+
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
@@ -641,21 +644,6 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
             .map((item) => item.author)
             .filter((value, index, self) => self.indexOf(value) === index)
             .sort();
-
-          this.plants = formsList.rows
-            .map((item) => {
-              if (item.plant) {
-                this.plantsIdNameMap[item.plant.plantId] = item.plant.id;
-                return `${item.plant.plantId} - ${item.plant.name}`;
-              }
-              return null;
-            })
-            .filter(
-              (value, index, self) =>
-                self.indexOf(value) === index && value !== null
-            )
-            .sort();
-
           for (const item of this.filterJson) {
             if (item.column === 'status') {
               item.items = this.status;
@@ -663,8 +651,6 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
               item.items = this.lastPublishedBy;
             } else if (item.column === 'authoredBy') {
               item.items = this.authoredBy;
-            } else if (item.column === 'plant') {
-              item.items = this.plants;
             } else if (item.column === 'createdBy') {
               item.items = this.createdBy;
             }
@@ -685,9 +671,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
         this.filter.scheduleStartDate = item.value[0];
         this.filter.scheduleEndDate = item.value[1];
       } else if (item.column === 'plant') {
-        const id = item.value.split(' - ')[0].trim();
-        const plantId = this.plantsIdNameMap[id];
-        this.filter[item.column] = plantId;
+        this.filter[item.column] = this.plantsIdNameMap[item.value] ?? '';
       } else {
         this.filter[item.column] = item.value;
       }
