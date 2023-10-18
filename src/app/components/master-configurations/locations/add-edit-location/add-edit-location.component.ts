@@ -61,6 +61,7 @@ export class AddEditLocationComponent implements OnInit {
       this.locationButton = 'Create';
       this.locationImage = '';
       this.locationForm?.reset();
+      this.locationForm?.get('locationId').enable();
     } else {
       this.isCopy = location?.isCopy;
       this.locationStatus = 'edit';
@@ -142,15 +143,7 @@ export class AddEditLocationComponent implements OnInit {
           } else {
             this.locationIdExists = false;
           }
-          console.log(this.locationIdExists);
           this.cdfr.markForCheck();
-          console.log(
-            this.locationStatus !== 'edit'
-              ? !this.locationIdExists
-                ? null
-                : { alreadyExists: true }
-              : null
-          );
           return this.locationStatus !== 'edit'
             ? !this.locationIdExists
               ? null

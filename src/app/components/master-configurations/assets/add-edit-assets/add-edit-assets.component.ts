@@ -73,6 +73,7 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
       this.assetImage = '';
       this.assetForm?.reset();
       this.assetForm?.get('parentType').setValue('location');
+      this.assetForm?.get('assetsId').enable();
     } else {
       this.isCopy = asset?.isCopy;
       this.assetStatus = 'edit';
