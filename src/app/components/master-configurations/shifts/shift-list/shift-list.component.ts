@@ -252,7 +252,11 @@ export class ShiftListComponent implements OnInit, OnDestroy {
             ...this.configOptions,
             tableHeight: 'calc(100vh - 140px)'
           };
-          initial.data = rows;
+          if (this.addEditCopyDeleteShifts && action === 'add') {
+            initial.data = [shift, ...initial.data];
+          } else {
+            initial.data = rows;
+          }
         } else if (this.addEditCopyDeleteShifts) {
           switch (action) {
             case 'add':

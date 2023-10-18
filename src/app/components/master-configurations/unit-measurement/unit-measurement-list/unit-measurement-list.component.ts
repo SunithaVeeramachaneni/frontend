@@ -38,10 +38,11 @@ import {
   Permission,
   TableEvent,
   UserInfo,
-  UnitOfMeasurement
+  UnitOfMeasurement,
+  ErrorInfo
 } from 'src/app/interfaces';
 import {
-  graphQLDefaultLimit,
+  defaultLimit,
   permissions as perms,
   routingUrls
 } from 'src/app/app.constants';
@@ -57,8 +58,15 @@ import { HeaderService } from 'src/app/shared/services/header.service';
 import { CommonService } from 'src/app/shared/services/common.service';
 
 export interface FormTableUpdate {
-  action: 'add' | 'delete' | 'edit' | 'setAsDefault' | 'status' | null;
-  form: UnitOfMeasurement;
+  action:
+    | 'add'
+    | 'delete'
+    | 'edit'
+    | 'editAll'
+    | 'setAsDefault'
+    | 'status'
+    | null;
+  unit: UnitOfMeasurement;
 }
 
 @Component({
@@ -225,17 +233,16 @@ export class UnitMeasurementListComponent implements OnInit, OnDestroy {
   };
   dataSource: MatTableDataSource<any>;
   formsCount$: Observable<Count>;
-  addEditCopyForm$: BehaviorSubject<FormTableUpdate> =
+  addEditCopyUnit$: BehaviorSubject<FormTableUpdate> =
     new BehaviorSubject<FormTableUpdate>({
       action: null,
-      form: {} as any
+      unit: {} as UnitOfMeasurement
     });
   skip = 0;
-  limit = graphQLDefaultLimit;
+  limit = defaultLimit;
   searchUom: FormControl;
   ghostLoading = new Array(16).fill(0).map((v, i) => i);
   nextToken = '';
-  fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   unitOfMeasurements$: Observable<{
     columns: Column[];
@@ -322,7 +329,6 @@ export class UnitMeasurementListComponent implements OnInit, OnDestroy {
       switchMap(({ data }) => {
         this.skip = 0;
         this.nextToken = '';
-        this.fetchType = data;
         return this.getUnitOfMeasurementList();
       })
     );
@@ -331,7 +337,6 @@ export class UnitMeasurementListComponent implements OnInit, OnDestroy {
       filter(({ data }) => data !== 'load' && data !== 'search'),
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
-          this.fetchType = 'infiniteScroll';
           return this.getUnitOfMeasurementList();
         } else {
           return of([] as UnitOfMeasurement[]);
@@ -345,61 +350,109 @@ export class UnitMeasurementListComponent implements OnInit, OnDestroy {
     };
     this.unitOfMeasurements$ = combineLatest([
       formsOnLoadSearch$,
-      this.addEditCopyForm$,
+      this.addEditCopyUnit$,
       onScrollForms$
     ]).pipe(
-      map(([rows, form, scrollData]) => {
+      map(([rows, unitResult, scrollData]) => {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
             tableHeight: 'calc(100vh - 140px)'
           };
-          initial.data = rows;
+          if (unitResult.action === 'add') {
+            const { units } = unitResult.unit;
+            initial.data = this.prepareCreateUpdateResponse(
+              [...units, ...initial.data],
+              unitResult
+            );
+            unitResult.action = null;
+          } else {
+            initial.data = rows;
+          }
         } else {
-          if (form.action === 'delete') {
-            initial.data = initial.data.filter((d) => d.id !== form.form.id);
+          if (unitResult.action === 'delete') {
+            initial.data = initial.data.filter(
+              (d) => d.id !== unitResult.unit.id
+            );
             this.toast.show({
               text: 'UOM deleted successfully!',
               type: 'success'
             });
-            form.action = null;
-          } else if (form.action === 'edit' || form.action === 'status') {
-            const idx = initial?.data?.findIndex(
-              (d) => d?.id === form?.form?.id
+            unitResult.action = null;
+          } else if (
+            unitResult.action === 'edit' ||
+            unitResult.action === 'status'
+          ) {
+            const { id } = unitResult.unit;
+            const updatedData = initial.data.reduce((result, acc) => {
+              result.push(acc.id === id ? { ...acc, ...unitResult.unit } : acc);
+              return result;
+            }, []);
+            initial.data = this.prepareCreateUpdateResponse(
+              updatedData,
+              unitResult
             );
-            const obj = {
-              ...initial?.data[idx],
-              ...form?.form
-            };
-            if (idx !== -1) {
-              initial.data[idx] = obj;
-            }
-            form.action = null;
-          } else if (form.action === 'setAsDefault') {
-            const uomArray = form?.form as unknown as any[];
-            if (uomArray?.length > 0) {
-              uomArray?.forEach((u) => {
-                const idx = initial?.data?.findIndex((d) => d?.id === u?.id);
-                if (idx !== -1) {
-                  const foundObj = initial?.data[idx];
-                  if (foundObj) {
-                    initial.data[idx] = {
-                      ...foundObj,
-                      ...u,
-                      isDefaultText: u?.isDefault ? 'Default' : '',
-                      isDefault: u?.isDefault
-                    };
+            unitResult.action = null;
+          } else if (unitResult.action === 'setAsDefault') {
+            const { unitType, id } = unitResult?.unit;
+            initial.data = initial.data.reduce((result, acc) => {
+              const isMatchingUnitType = acc?.unitType === unitType;
+              const isMatchingId = id === acc?.id;
+              result.push({
+                ...acc,
+                isDefaultText: isMatchingUnitType
+                  ? isMatchingId
+                    ? 'Default'
+                    : ''
+                  : acc?.isDefaultText,
+                isDefault: isMatchingUnitType ? isMatchingId : acc?.isDefault
+              });
+              return result;
+            }, []);
+
+            unitResult.action = null;
+          } else if (unitResult.action === 'add') {
+            const { units } = unitResult.unit;
+            initial.data = this.prepareCreateUpdateResponse(
+              [...units, ...initial.data],
+              unitResult
+            );
+            unitResult.action = null;
+          } else if (unitResult.action === 'editAll') {
+            const { units } = unitResult.unit;
+            // Create a map to track existing records by their IDs
+            const existingMap = new Map(
+              initial?.data.map((record) => [record?.id, record])
+            );
+            // Filter and update records from newRecords
+            const updatedArray = units?.reduce(
+              (result, newRecord) => {
+                if (!existingMap.has(newRecord.id)) {
+                  result.push(newRecord);
+                } else {
+                  const matchingUpdateItem = initial?.data?.find(
+                    (updateItem) => updateItem?.id === newRecord?.id
+                  );
+                  if (matchingUpdateItem) {
+                    const idx = result.findIndex(
+                      (r) => r?.id === matchingUpdateItem?.id
+                    );
+                    if (idx !== -1) {
+                      result[idx] = {
+                        ...matchingUpdateItem,
+                        ...newRecord
+                      };
+                    }
                   }
                 }
-              });
-            }
-            form.action = null;
-          } else if (form.action === 'add') {
-            this.toast.show({
-              text: 'UOM set as default successfully!',
-              type: 'success'
-            });
-            form.action = null;
+                return result;
+              },
+              [...initial?.data]
+            );
+            initial.data = this.prepareCreateUpdateResponse(
+              updatedArray,
+              unitResult
+            );
           } else {
             initial.data = initial.data.concat(scrollData);
           }
@@ -418,8 +471,7 @@ export class UnitMeasurementListComponent implements OnInit, OnDestroy {
         {
           next: this.nextToken,
           limit: this.limit,
-          searchKey: this.searchUom.value,
-          fetchType: this.fetchType
+          searchTerm: this.searchUom.value
         },
         this.filter
       )
@@ -488,10 +540,10 @@ export class UnitMeasurementListComponent implements OnInit, OnDestroy {
 
   showUnitDetail(row: UnitOfMeasurement): void {
     const result: UnitOfMeasurement[] = this.allUnitData?.filter(
-      (d) => d?.unitlistID === row?.unitlistID
+      (d) => d?.unitType === row?.unitType
     );
     this.unitEditData = {
-      unitList: row?.unitList,
+      unitType: row?.unitType,
       rows: result
     };
     this.unitAddOrEditOpenState = 'in';
@@ -505,19 +557,25 @@ export class UnitMeasurementListComponent implements OnInit, OnDestroy {
 
   addOrUpdateUnit(data): void {
     if (data?.status === 'create') {
+      this.addEditCopyUnit$.next({
+        unit: data?.response,
+        action: 'add'
+      });
       this.toast.show({
         text: 'UOM added successfully!',
         type: 'success'
       });
     } else if (data?.status === 'edit') {
+      this.addEditCopyUnit$.next({
+        unit: data?.response,
+        action: 'editAll'
+      });
       this.toast.show({
         text: 'UOM edited successfully!',
         type: 'success'
       });
     }
     this.unitAddOrEditOpenState = 'out';
-    this.nextToken = '';
-    this.fetchUOM$.next({ data: 'load' });
   }
 
   exportAsXLSX(): void {
@@ -585,6 +643,9 @@ export class UnitMeasurementListComponent implements OnInit, OnDestroy {
   }
 
   private prepareFilters(filters): void {
+    if (!filters) {
+      return;
+    }
     this.filterJson?.forEach((item) => {
       if (item?.column === 'status') {
         item.items = filters?.status || [];
@@ -628,14 +689,22 @@ export class UnitMeasurementListComponent implements OnInit, OnDestroy {
     if (this.allUnitData?.length === 0) {
       return;
     }
+    const info: ErrorInfo = {
+      displayToast: true,
+      failureResponse: 'throwError'
+    };
     this.unitMeasurementService
-      .setAsDefault$(unit?.id, {
-        unitlistID: unit?.unitlistID
-      })
+      .setAsDefault$(
+        unit?.id,
+        {
+          unitType: unit.unitType
+        },
+        info
+      )
       .subscribe((response) => {
         if (Object.keys(response)?.length) {
-          this.addEditCopyForm$.next({
-            form: response,
+          this.addEditCopyUnit$.next({
+            unit,
             action: 'setAsDefault'
           });
           this.toast.show({
@@ -663,8 +732,8 @@ export class UnitMeasurementListComponent implements OnInit, OnDestroy {
             })
             .subscribe((response) => {
               if (Object.keys(response)?.length) {
-                this.addEditCopyForm$.next({
-                  form: response,
+                this.addEditCopyUnit$.next({
+                  unit: res,
                   action: 'edit'
                 });
                 this.toast.show({
@@ -679,15 +748,15 @@ export class UnitMeasurementListComponent implements OnInit, OnDestroy {
   }
 
   private onChangeStatus(unit: UnitOfMeasurement): void {
+    const payload = {
+      isActive: unit?.isActive ? false : true
+    };
     this.unitMeasurementService
-      .onChangeUomStatus$(unit?.id, {
-        isActive: unit?.isActive ? false : true,
-        _version: unit?._version
-      })
+      .editUnitOfMeasurement$(unit?.id, payload)
       .subscribe((response) => {
         if (Object.keys(response)?.length) {
-          this.addEditCopyForm$.next({
-            form: response,
+          this.addEditCopyUnit$.next({
+            unit: { ...unit, ...payload },
             action: 'status'
           });
           this.toast.show({
@@ -696,5 +765,19 @@ export class UnitMeasurementListComponent implements OnInit, OnDestroy {
           });
         }
       });
+  }
+
+  private prepareCreateUpdateResponse(data, unitResult) {
+    const { unitType } = unitResult?.unit;
+    const noOfUnits =
+      data?.filter((d) => d?.unitType === unitType)?.length ?? 0;
+    let order = 0;
+    data = this.unitMeasurementService.formatUOMByOrder(data);
+    return data.map((d) => ({
+      ...d,
+      noOfUnits: d?.unitType === unitType ? noOfUnits : d.noOfUnits,
+      order: d?.unitType === unitType ? order++ : d.order,
+      isDefaultText: d?.isDefault ? 'Default' : ''
+    }));
   }
 }

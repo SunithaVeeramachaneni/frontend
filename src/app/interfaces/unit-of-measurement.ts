@@ -11,6 +11,7 @@ export interface UnitOfMeasurement {
   isDefault?: boolean | null;
   isDeleted?: boolean | null;
   unitlistID: string;
+  unitType?: string;
   searchTerm?: string | null;
   unitList?: {
     id: string;
@@ -24,4 +25,5 @@ export interface UnitOfMeasurement {
   createdAt: string;
   updatedAt: string;
   _version: number;
+  units: any[];
 }

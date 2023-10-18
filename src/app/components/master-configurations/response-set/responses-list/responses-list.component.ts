@@ -300,12 +300,29 @@ export class ResponsesListComponent implements OnInit, OnDestroy {
             ...this.configOptions,
             tableHeight: 'calc(100vh - 140px)'
           };
-          initial.data = rows.map((item) => ({
-            ...item,
-            responseCount: JSON.parse(item?.values)?.length,
-            createdBy: item?.createdBy || '',
-            creator: this.usersService.getUserFullName(item?.createdBy) ?? ''
-          }));
+          if (
+            this.addEditDeleteResponseSet &&
+            addEditData.action === 'create'
+          ) {
+            const { responseSet } = addEditData;
+            initial.data = [
+              {
+                ...responseSet,
+                responseCount: JSON.parse(responseSet.values).length,
+                creator:
+                  this.usersService.getUserFullName(responseSet?.createdBy) ??
+                  ''
+              },
+              ...initial.data
+            ];
+          } else {
+            initial.data = rows.map((item) => ({
+              ...item,
+              responseCount: JSON.parse(item?.values)?.length,
+              createdBy: item?.createdBy || '',
+              creator: this.usersService.getUserFullName(item?.createdBy) ?? ''
+            }));
+          }
         } else {
           if (this.addEditDeleteResponseSet) {
             const { responseSet } = addEditData;

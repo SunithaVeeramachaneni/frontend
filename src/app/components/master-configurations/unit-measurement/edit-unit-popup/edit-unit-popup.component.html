@@ -24,9 +24,9 @@
           <mat-option
             id="editUnitOptions"
             *ngFor="let unit of unitList"
-            [value]="unit?.name"
+            [value]="unit?.unitType"
           >
-            {{ unit?.name }}
+            {{ unit?.unitType }}
           </mat-option>
         </mat-select>
         <mat-error

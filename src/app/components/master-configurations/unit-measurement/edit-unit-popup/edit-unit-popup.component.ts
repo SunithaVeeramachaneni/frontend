@@ -11,6 +11,7 @@ import {
 
 import { ValidationError } from 'src/app/interfaces';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
+import { FormValidationUtil } from 'src/app/shared/utils/formValidationUtil';
 
 @Component({
   selector: 'app-edit-unit-popup',
@@ -50,11 +51,12 @@ export class EditUnitPopupComponent implements OnInit {
     ],
     isActive: [false, [Validators.required]]
   });
-  public unitList: any[] = [];
+  public unitList: { unitType: string }[] = [];
   constructor(
     private readonly dialogRef: MatDialogRef<EditUnitPopupComponent>,
     @Inject(MAT_DIALOG_DATA) public formData: any,
-    private readonly formBuilder: FormBuilder
+    private readonly formBuilder: FormBuilder,
+    private readonly formValidationUtilService: FormValidationUtil
   ) {}
 
   ngOnInit(): void {
@@ -101,17 +103,10 @@ export class EditUnitPopupComponent implements OnInit {
   }
 
   processValidationErrors(controlName: string): boolean {
-    const touched = this.unitForm?.get(controlName)?.touched;
-    const errors = this.unitForm?.get(controlName)?.errors;
-    this.errors[controlName] = null;
-    if (touched && errors) {
-      Object.keys(errors)?.forEach((messageKey) => {
-        this.errors[controlName] = {
-          name: messageKey,
-          length: errors[messageKey]?.requiredLength
-        };
-      });
-    }
-    return !touched || this.errors[controlName] === null ? false : true;
+    return this.formValidationUtilService.processValidationErrors(
+      controlName,
+      this.unitForm,
+      this.errors
+    );
   }
 }

@@ -34,36 +34,24 @@ export class UnitMeasurementService {
     queryParams: {
       next?: string;
       limit: any;
-      searchKey: string;
-      fetchType: string;
+      searchTerm?: string;
     },
     filter?: { [x: string]: string },
     info: ErrorInfo = {} as ErrorInfo
   ) {
-    if (
-      ['load', 'search'].includes(queryParams?.fetchType) ||
-      (['infiniteScroll'].includes(queryParams?.fetchType) &&
-        queryParams?.next !== null)
-    ) {
-      const params: URLSearchParams = new URLSearchParams();
-      params.set('searchTerm', queryParams?.searchKey);
-      params.set('limit', queryParams?.limit);
-      params.set('next', queryParams?.next);
-      params.set('fetchType', queryParams?.fetchType);
-      params.set('status', filter?.status ?? '');
-      params.set('symbol', filter?.symbol ?? '');
-      params.set('unitType', filter?.unitType ?? '');
-      const {
-        displayToast,
-        failureResponse = { items: [], next: null, filters: {} }
-      } = info;
+    if (queryParams?.next !== null) {
+      const { displayToast = true, failureResponse = {} } = info;
       return this._appService
         ._getResp(
           environment.masterConfigApiUrl,
-          'unit-of-measurement?' + params.toString(),
+          'unit-of-measurement',
           {
             displayToast,
             failureResponse
+          },
+          {
+            ...queryParams,
+            ...filter
           }
         )
         .pipe(map((data) => this.formatUnitOfMeasurementResponse(data)));
@@ -109,21 +97,6 @@ export class UnitMeasurementService {
     );
   }
 
-  onChangeUomStatus$(
-    unitMeasurementId: string,
-    values,
-    info: ErrorInfo = {} as ErrorInfo
-  ) {
-    return this._appService
-      .patchData(
-        environment.masterConfigApiUrl,
-        `unit-of-measurement/${unitMeasurementId}/status`,
-        { ...values },
-        info
-      )
-      .pipe(map((response) => (response === null ? values : response)));
-  }
-
   setAsDefault$(
     unitMeasurementId: string,
     values,
@@ -149,15 +122,11 @@ export class UnitMeasurementService {
     );
   }
 
-  updateUnitType$(
-    unitTypeId: string,
-    values,
-    info: ErrorInfo = {} as ErrorInfo
-  ) {
+  updateUnitType$(values, info: ErrorInfo = {} as ErrorInfo) {
     return this._appService
       .patchData(
         environment.masterConfigApiUrl,
-        `unit-of-measurement/types/${unitTypeId}`,
+        `unit-of-measurement/types`,
         { ...values },
         info
       )
@@ -221,21 +190,24 @@ export class UnitMeasurementService {
     });
   }
 
-  private formatUOMByOrder(rows) {
+  formatUOMByOrder(rows) {
     let order = 0;
     const formattedRows = [];
-    const groupedRows = groupBy(rows, 'unitList.name');
-    Object.values(groupedRows).forEach((value) => {
+    const groupedData = groupBy(rows, 'unitType');
+    Object.values(groupedData).forEach((value) => {
       if (value?.length > 0) {
         const sortedRows = value
           .sort(
             (a, b) =>
-              new Date(a?.createdAt).getTime() -
-              new Date(b?.createdAt).getTime()
+              new Date(b?.createdAt).getTime() -
+              new Date(a?.createdAt).getTime()
           )
           .map((row) => ({
             ...row,
-            order: order++
+            order: order++,
+            noOfUnits: groupedData[row?.unitType]?.length ?? 0,
+            unitType: row?.unitType,
+            isDefaultText: row?.isDefault ? 'Default' : ''
           }));
         formattedRows.push(...sortedRows);
       }
@@ -244,20 +216,7 @@ export class UnitMeasurementService {
   }
 
   private formatUnitOfMeasurementResponse(resp) {
-    const groupedData = groupBy(resp?.items, 'unitList.name');
-    const rows = this.formatUOMByOrder(
-      resp?.items
-        ?.sort(
-          (a, b) =>
-            new Date(b?.createdAt).getTime() - new Date(a?.createdAt).getTime()
-        )
-        ?.map((item: any) => ({
-          ...item,
-          noOfUnits: groupedData[item?.unitList?.name]?.length ?? 0,
-          unitType: item?.unitList?.name,
-          isDefaultText: item?.isDefault ? 'Default' : ''
-        }))
-    );
+    const rows = this.formatUOMByOrder(resp?.items);
     const count = rows?.length || 0;
     const next = resp?.next;
     const filters = resp?.filters;

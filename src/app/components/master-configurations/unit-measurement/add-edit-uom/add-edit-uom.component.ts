@@ -19,7 +19,11 @@ import {
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 
-import { ValidationError, UnitOfMeasurement } from 'src/app/interfaces';
+import {
+  ValidationError,
+  UnitOfMeasurement,
+  ErrorInfo
+} from 'src/app/interfaces';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { UnitMeasurementService } from '../services';
 import { UnitOfMeasurementDeleteModalComponent } from '../uom-delete-modal/uom-delete-modal.component';
@@ -34,10 +38,10 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Output() createUnitData: EventEmitter<any> = new EventEmitter();
   @Input() unitEditData: {
-    unitList: any;
+    unitType: string;
     rows: UnitOfMeasurement[];
   } = {
-    unitList: null,
+    unitType: null,
     rows: []
   };
   public unitType = '';
@@ -62,15 +66,14 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
     if (this.unitEditData?.rows?.length > 0) {
       this.initForm();
       this.unitType = '';
-      this.unitType = this.unitEditData?.unitList?.name || '';
+      this.unitType = this.unitEditData.unitType || '';
       const units = this.unitMeasurementForm.get('units') as FormArray;
       this.unitEditData?.rows?.forEach(() => this.addNewUmo());
       this.unitEditData?.rows?.forEach((row, idx) => {
         units?.at(idx)?.patchValue({
           description: row?.description || '',
           symbol: row?.symbol || '',
-          id: row?.id,
-          version: row?._version
+          id: row?.id
         });
       });
     }
@@ -114,32 +117,58 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
       return;
     }
     const unitType = isAddNewUnit ? this.newUnitType : this.unitType;
+    const info: ErrorInfo = {
+      displayToast: true,
+      failureResponse: 'throwError'
+    };
     if (this.isEditForm) {
       this.unitOfMeasurementService
-        .updateUnitType$(this.unitEditData?.unitList?.id, {
-          unitType,
-          units: this.unitMeasurementForm?.get('units')?.value
-        })
-        .subscribe((response) => {
-          if (Object.keys(response).length) {
-            this.resetFormState();
-            this.createUnitData.emit({
-              status: 'edit'
-            });
-          }
-        });
+        .updateUnitType$(
+          {
+            unitType,
+            units: this.unitMeasurementForm?.get('units')?.value
+          },
+          info
+        )
+        .subscribe(
+          (response) => {
+            if (Object.keys(response).length > 0) {
+              this.resetFormState();
+              this.createUnitData.emit({
+                status: 'edit',
+                response: {
+                  unitType,
+                  units: response
+                }
+              });
+            }
+          },
+          () => (this.isSubmittedForm = false)
+        );
     } else {
       this.unitOfMeasurementService
-        .createUnitType$({
-          unitType,
-          units: this.unitMeasurementForm?.get('units')?.value
-        })
-        .subscribe(() => {
-          this.resetFormState();
-          this.createUnitData.emit({
-            status: 'create'
-          });
-        });
+        .createUnitType$(
+          {
+            unitType,
+            units: this.unitMeasurementForm?.get('units')?.value
+          },
+          info
+        )
+        .subscribe(
+          (response) => {
+            if (Object.keys(response).length > 0) {
+              this.resetFormState();
+              this.createUnitData.emit({
+                status: 'create',
+                response: {
+                  unitType,
+                  units: response
+                }
+              });
+            }
+          },
+          () => (this.isSubmittedForm = false)
+        );
     }
   }
 
@@ -157,7 +186,6 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
   createUnit(): FormGroup {
     return this.formBuilder.group({
       id: [null],
-      version: [null],
       description: [
         '',
         [
@@ -236,7 +264,7 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
     deleteReportRef.afterClosed().subscribe((res) => {
       if (res === 'delete') {
         this.unitOfMeasurementService
-          .deleteUnitType$(this.unitEditData?.unitList?.id)
+          .deleteUnitType$(this.unitEditData.unitType) // FIXME:
           .subscribe((response) => {
             if (Object.keys(response).length) {
               this.resetFormState();
