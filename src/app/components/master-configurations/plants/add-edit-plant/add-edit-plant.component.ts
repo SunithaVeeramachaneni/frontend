@@ -8,9 +8,12 @@ import {
   ChangeDetectionStrategy,
   ElementRef,
   ViewChild,
-  OnDestroy
+  OnDestroy,
+  ChangeDetectorRef
 } from '@angular/core';
 import {
+  AbstractControl,
+  AsyncValidatorFn,
   FormBuilder,
   FormControl,
   FormGroup,
@@ -21,7 +24,14 @@ import { PlantService } from '../services/plant.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { ShiftService } from '../../shifts/services/shift.service';
 import { Observable, Subscription, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import {
+  catchError,
+  delay,
+  distinctUntilChanged,
+  first,
+  map,
+  switchMap
+} from 'rxjs/operators';
 import { ShiftOverlapModalComponent } from '../shift-overlap-modal/shift-overlap-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { FormValidationUtil } from 'src/app/shared/utils/formValidationUtil';
@@ -50,6 +60,7 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
       this.plantForm?.reset();
       this.plantForm?.get('plantId').enable();
     } else {
+      this.isCopy = plant?.isCopy;
       this.plantStatus = 'edit';
       this.plantTitle = 'Edit Plant';
       this.plantButton = 'Update';
@@ -68,6 +79,14 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
         }
       });
 
+      if (this.isCopy) {
+        this.plantStatus = 'add';
+        this.plantTitle = 'Create Plant';
+        this.plantButton = 'Create';
+        this.plantIdValidated = false;
+        this.plantForm?.get('plantId').enable();
+      }
+
       const plantdata = {
         id: this.plantsEditData?.id,
         image: this.plantsEditData?.image,
@@ -83,7 +102,9 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
       };
 
       this.plantForm?.patchValue(plantdata);
-      this.plantForm?.get('plantId').disable();
+      if (!this.isCopy) {
+        this.plantForm?.get('plantId').disable();
+      }
     }
   }
   get plantEditData() {
@@ -111,6 +132,9 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
   plantForm: FormGroup;
   parentInformation;
   allParentsData;
+  isCopy = false;
+  plantIdExists = false;
+  plantIdValidated = false;
 
   activeShifts$: Observable<any>;
   private plantsEditData;
@@ -119,8 +143,39 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
     private plantService: PlantService,
     private shiftService: ShiftService,
     private dialog: MatDialog,
-    private formValidationUtil: FormValidationUtil
+    private formValidationUtil: FormValidationUtil,
+    private cdfr: ChangeDetectorRef
   ) {}
+
+  checkPlantIdExists(): AsyncValidatorFn {
+    return (control: AbstractControl): Observable<ValidationError | null> => {
+      control.markAsTouched();
+      return control.valueChanges.pipe(
+        delay(500),
+        distinctUntilChanged(),
+        switchMap((value) => {
+          this.plantIdExists = false;
+          this.plantIdValidated = false;
+          return this.plantService.verifyPlantId$(value);
+        }),
+        map((response) => {
+          this.plantIdValidated = true;
+          if (response.alreadyExists) {
+            this.plantIdExists = true;
+          } else {
+            this.plantIdExists = false;
+          }
+          this.cdfr.markForCheck();
+          return this.plantStatus !== 'edit'
+            ? !this.plantIdExists
+              ? null
+              : { alreadyExists: true }
+            : null;
+        }),
+        first()
+      );
+    };
+  }
 
   ngOnInit(): void {
     this.plantMapSubscription = this.plantService.plantMasterData$.subscribe(
@@ -139,11 +194,15 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
         WhiteSpaceValidator.whiteSpace,
         WhiteSpaceValidator.trimWhiteSpace
       ]),
-      plantId: new FormControl('', [
-        Validators.required,
-        WhiteSpaceValidator.whiteSpace,
-        WhiteSpaceValidator.trimWhiteSpace
-      ]),
+      plantId: new FormControl(
+        '',
+        [
+          Validators.required,
+          WhiteSpaceValidator.whiteSpace,
+          WhiteSpaceValidator.trimWhiteSpace
+        ],
+        [this.checkPlantIdExists()]
+      ),
       country: new FormControl('', [
         Validators.required,
         WhiteSpaceValidator.whiteSpace,
@@ -174,7 +233,7 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
       this.plantForm.patchValue({ state: null, timeZone: null });
       if (countryCode) {
         this.selectedCountry = this.plantMasterData[countryCode];
-        if (!this.selectedCountry.states.length) {
+        if (!this.selectedCountry?.states?.length) {
           this.plantForm.get('state').disable();
           this.noState = true;
         } else {
@@ -182,12 +241,12 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
           this.noState = false;
         }
         [this.states, this.countryAllStates] = [
-          this.selectedCountry.states,
-          this.selectedCountry.states
+          this.selectedCountry?.states,
+          this.selectedCountry?.states
         ];
         [this.timeZones, this.countryAllTimeZones] = [
-          this.selectedCountry.timeZones,
-          this.selectedCountry.timeZones
+          this.selectedCountry?.timeZones,
+          this.selectedCountry?.timeZones
         ];
         this.plantForm.get('timeZone').enable();
       }

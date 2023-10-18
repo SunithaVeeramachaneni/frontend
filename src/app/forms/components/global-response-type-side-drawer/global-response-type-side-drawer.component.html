@@ -124,7 +124,7 @@
               *ngFor="let module of selectMetadataModuleNames"
               [value]="module.moduleId"
             >
-              {{ module.moduleName }}
+              {{ module.moduleName | translate }}
             </mat-option>
           </div>
         </mat-select>

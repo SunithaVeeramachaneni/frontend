@@ -298,6 +298,8 @@ export class IssuesListComponent implements OnInit, OnDestroy {
     dueDate: '',
     assignedTo: ''
   };
+  plants = [];
+  plantsIdNameMap: any = {};
   private _users$: Observable<UserDetails[]>;
   private onDestroy$ = new Subject();
 
@@ -468,6 +470,12 @@ export class IssuesListComponent implements OnInit, OnDestroy {
           filters,
           this.filterJson
         );
+
+        for (const item of this.filterJson) {
+          if (item.column === 'plant') {
+            item.items = this.plants;
+          }
+        }
         return of(rows as any[]);
       }),
       catchError(() => {
@@ -596,7 +604,9 @@ export class IssuesListComponent implements OnInit, OnDestroy {
       this.searchIssue.patchValue('');
     }
     for (const item of data) {
-      if (item.type === 'date' && item.value) {
+      if (item.column === 'plant') {
+        this.filter[item.column] = this.plantsIdNameMap[item.value];
+      } else if (item.type === 'date' && item.value) {
         this.filter[item.column] = item.value.toISOString();
       } else if (item.column === 'assignedTo' && item.value) {
         this.filter[item.column] = this.getFullNameToEmailArray(item.value);
@@ -634,6 +644,21 @@ export class IssuesListComponent implements OnInit, OnDestroy {
   private getFilter(): void {
     this.observationsService
       .getFormsFilter()
-      .subscribe((res) => (this.filterJson = res));
+      .pipe(
+        switchMap((res: any) => {
+          this.filterJson = res;
+          return this.plantService.fetchLoggedInUserPlants$().pipe(
+            tap((plants) => {
+              this.plants = plants
+                .map((plant) => {
+                  this.plantsIdNameMap[`${plant.plantId}`] = plant.plantId;
+                  return `${plant.plantId}`;
+                })
+                .sort();
+            })
+          );
+        })
+      )
+      .subscribe();
   }
 }
