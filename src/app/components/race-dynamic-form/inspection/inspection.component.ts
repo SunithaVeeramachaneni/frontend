@@ -403,7 +403,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
   plantTimezoneMap = {};
   selectedStartDate;
   selectedDueDate;
-  plants = [];
   plantsIdNameMap = {};
   openMenuStateDueDate = false;
   openMenuStateStartDate = false;
@@ -465,7 +464,22 @@ export class InspectionComponent implements OnInit, OnDestroy {
           }
         })
       ),
-      this.raceDynamicFormService.fetchAllInspections$()
+      this.raceDynamicFormService.fetchAllInspections$(),
+      this.plantService.fetchLoggedInUserPlants$().pipe(
+        tap((plants) => {
+          plants.forEach((plant) => {
+            this.plantsIdNameMap[`${plant.plantId} - ${plant.name}`] = plant.id;
+          });
+
+          for (const item of filterJson) {
+            if (item.column === 'plant') {
+              item.items = plants
+                .map((plant) => `${plant.plantId} - ${plant.name}`)
+                .sort();
+            }
+          }
+        })
+      )
     ]).pipe(
       tap(([, , formsList]) => {
         const objectKeys = Object.keys(formsList);
@@ -481,22 +495,9 @@ export class InspectionComponent implements OnInit, OnDestroy {
               }
             });
           }
-          this.plants = formsList
-            .map((item) => {
-              if (item.plant) {
-                this.plantsIdNameMap[item.plant] = item.plantId;
-                return item.plant;
-              }
-              return '';
-            })
-            .filter((value, index, self) => self.indexOf(value) === index)
-            .sort();
-
           for (const item of filterJson) {
             if (item.column === 'assignedToDisplay') {
               item.items = this.assignedTo.sort();
-            } else if (item.column === 'plant') {
-              item.items = this.plants;
             } else if (item.column === 'schedule') {
               item.items = this.schedules.sort();
             } else if (item.column === 'shiftId') {
@@ -570,15 +571,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
               this.shiftObj[shift.id] = shift;
               this.shiftNameMap[shift.id] = shift.name;
             });
-        })
-      ),
-      this.plantService.fetchAllPlants$().pipe(
-        tap((plants) => {
-          plants?.items?.map((plant) => {
-            if (this.commonService.isJson(plant.shifts) && plant.shifts) {
-              this.plantShiftObj[plant.id] = JSON.parse(plant.shifts);
-            }
-          });
         })
       )
     ]).pipe(
