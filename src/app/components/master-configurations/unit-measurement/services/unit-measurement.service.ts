@@ -148,21 +148,21 @@ export class UnitMeasurementService {
       .pipe(map((response) => (response === null ? values : response)));
   }
 
-  deleteUnitType$(id: string, info: ErrorInfo = {} as ErrorInfo) {
+  deleteUnitType$(unitType: string, info: ErrorInfo = {} as ErrorInfo) {
     return this._appService
       ._removeData(
         environment.masterConfigApiUrl,
-        `unit-of-measurement/types/${id}`,
+        `unit-of-measurement/types/${unitType}`,
         info
       )
-      .pipe(map((response) => (response === null ? id : response)));
+      .pipe(map((response) => (response === null ? unitType : response)));
   }
 
   deleteUnitOfMeasurement$(id: string, info: ErrorInfo = {} as ErrorInfo) {
     return this._appService
       ._removeData(
         environment.masterConfigApiUrl,
-        `unit-of-measurement/types/${id}`,
+        `unit-of-measurement/${id}`,
         info
       )
       .pipe(map((response) => (response === null ? id : response)));

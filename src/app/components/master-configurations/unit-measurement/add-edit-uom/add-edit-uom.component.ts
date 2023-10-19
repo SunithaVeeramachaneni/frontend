@@ -264,12 +264,15 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
     deleteReportRef.afterClosed().subscribe((res) => {
       if (res === 'delete') {
         this.unitOfMeasurementService
-          .deleteUnitType$(this.unitEditData.unitType) // FIXME:
+          .deleteUnitType$(this.unitEditData.unitType)
           .subscribe((response) => {
             if (Object.keys(response).length) {
               this.resetFormState();
               this.createUnitData.emit({
-                status: 'delete'
+                status: 'delete',
+                response: {
+                  unitType: response
+                }
               });
             }
           });

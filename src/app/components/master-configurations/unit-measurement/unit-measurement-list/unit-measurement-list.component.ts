@@ -61,6 +61,7 @@ export interface FormTableUpdate {
   action:
     | 'add'
     | 'delete'
+    | 'deleteUnit'
     | 'edit'
     | 'editAll'
     | 'setAsDefault'
@@ -374,10 +375,6 @@ export class UnitMeasurementListComponent implements OnInit, OnDestroy {
             initial.data = initial.data.filter(
               (d) => d.id !== unitResult.unit.id
             );
-            this.toast.show({
-              text: 'UOM deleted successfully!',
-              type: 'success'
-            });
             unitResult.action = null;
           } else if (
             unitResult.action === 'edit' ||
@@ -453,6 +450,11 @@ export class UnitMeasurementListComponent implements OnInit, OnDestroy {
               updatedArray,
               unitResult
             );
+          } else if (unitResult.action === 'deleteUnit') {
+            initial.data = initial.data.filter(
+              (d) => d?.unitType !== unitResult?.unit?.unitType
+            );
+            unitResult.action = null;
           } else {
             initial.data = initial.data.concat(scrollData);
           }
@@ -574,6 +576,15 @@ export class UnitMeasurementListComponent implements OnInit, OnDestroy {
         text: 'UOM edited successfully!',
         type: 'success'
       });
+    } else if (data?.status === 'delete') {
+      this.addEditCopyUnit$.next({
+        unit: data?.response,
+        action: 'deleteUnit'
+      });
+      this.toast.show({
+        text: 'UOM deleted successfully!',
+        type: 'success'
+      });
     }
     this.unitAddOrEditOpenState = 'out';
   }
@@ -673,8 +684,10 @@ export class UnitMeasurementListComponent implements OnInit, OnDestroy {
           .deleteUnitOfMeasurement$(data?.id)
           .subscribe((response) => {
             if (Object.keys(response)?.length) {
-              this.nextToken = '';
-              this.fetchUOM$.next({ data: 'load' });
+              this.addEditCopyUnit$.next({
+                unit: data,
+                action: 'delete'
+              });
               this.toast.show({
                 text: 'UOM deleted successfully!',
                 type: 'success'
