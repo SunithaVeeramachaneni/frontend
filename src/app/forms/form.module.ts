@@ -121,6 +121,8 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { UploadImagePreviewComponent } from './components/upload-image-preview/upload-image-preview.component';
 import { FormUpdateDeleteProgressComponent } from './components/form-update-delete-progress/form-update-delete-progress.component';
 import { HideSectionsDialogComponent } from './components/add-logic/hide-sections-dialog/hide-sections-dialog.component';
+import { NotificationAlertDialogComponent } from './components/notification-alert-dialog/notification-alert-dialog.component';
+import { NotificationIssuesListComponent } from './components/notification-issues-list/notification-issues-list.component';
 @NgModule({
   declarations: [
     PageComponent,
@@ -196,7 +198,9 @@ import { HideSectionsDialogComponent } from './components/add-logic/hide-section
     DynamicStepperComponent,
     FormUpdateDeleteProgressComponent,
     StepsHeaderComponent,
-    HideSectionsDialogComponent
+    HideSectionsDialogComponent,
+    NotificationAlertDialogComponent,
+    NotificationIssuesListComponent
   ],
   imports: [
     SharedModule,

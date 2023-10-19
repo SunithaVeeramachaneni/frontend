@@ -98,6 +98,7 @@ export class ObservationsComponent implements OnInit {
   };
   users$: Observable<UserDetails[]>;
   currentRouteUrl$: Observable<string>;
+  isNotificationAlert = false;
   readonly routingUrls = routingUrls;
   constructor(
     private readonly observationsService: ObservationsService,

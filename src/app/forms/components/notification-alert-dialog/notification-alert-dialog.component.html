@@ -1,0 +1,42 @@
+<div class="notificationAlertDialogcontainer" id="dialog-container">
+  <div class="heading" id="heading-container">
+    <span class="alert-span">{{ 'alert' | translate }}</span>
+  </div>
+  <div class="body" id="body-buttons">
+    <div class="message" id="message-container">
+      <span class="message-body">{{
+        'notificationsAlertDialog'
+          | translate
+            : {
+                count: notificationCount
+              }
+      }}</span>
+    </div>
+    <div class="buttons" id="buttons-container">
+      <button
+        id="showBtn"
+        mat-raised-button
+        color="primary"
+        (click)="viewIssuesList()"
+      >
+        {{ 'showNotifications' | translate }}
+      </button>
+      <button
+        mat-stroked-button
+        color="primary"
+        id="createBtn"
+        (click)="createNotification()"
+      >
+        {{ 'createNotificationAnyway' | translate }}
+      </button>
+      <button
+        mat-stroked-button
+        color="primary"
+        id="cancelBtn"
+        (click)="dialogClose()"
+      >
+        {{ 'cancel' | translate }}
+      </button>
+    </div>
+  </div>
+</div>

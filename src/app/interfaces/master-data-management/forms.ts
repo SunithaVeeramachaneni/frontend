@@ -28,6 +28,8 @@ export type GetFormList = {
   pdfTemplateConfiguration?: any;
   instructions?: any;
   additionalDetails?: string | null;
+  entityId: string | null;
+  entityType: string | null;
 };
 
 export type UpdateAuthoredFormDetail = {
