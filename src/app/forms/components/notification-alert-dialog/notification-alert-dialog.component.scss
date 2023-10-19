@@ -1,0 +1,65 @@
+@import '../../../../scss/colors.scss';
+
+.notificationAlertDialogcontainer {
+  width: 400px;
+  height: auto;
+  overflow: hidden;
+  padding: 10px;
+  background: $white;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  justify-content: flex-start;
+}
+.heading {
+  color: $gray-bg;
+  font-size: 130%;
+  font-weight: 900;
+  margin: 0;
+  float: left;
+  margin-top: 10px;
+  margin-bottom: 15px;
+
+  .alert-span {
+    margin-left: 5px;
+  }
+}
+.alertSpan {
+  color: $gray-bg;
+  text-align: left;
+}
+.body {
+  padding: 0px 5px;
+}
+
+.buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+}
+
+#showBtn {
+  margin-top: 15px;
+  margin-bottom: 5px;
+  width: auto;
+  height: 40px;
+  border-radius: 4px;
+  background-color: $blue;
+}
+
+#createBtn,
+#cancelBtn {
+  width: auto;
+  height: 40px;
+  border-radius: 4px;
+  border: none;
+  background: none;
+  color: $blue;
+  font-weight: 400;
+  cursor: pointer;
+}
+:hover {
+  background: none;
+}

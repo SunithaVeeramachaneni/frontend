@@ -78,6 +78,9 @@ export class IssuesListComponent implements OnInit, OnDestroy {
     return this._users$;
   }
   @Input() moduleName;
+  @Input() isNotificationAlert;
+  @Input() entityId;
+  @Input() entityType;
   assigneeDetails: AssigneeDetails;
   partialColumns: Partial<Column>[] = [
     {
@@ -270,7 +273,7 @@ export class IssuesListComponent implements OnInit, OnDestroy {
   limit = graphQLDefaultLimit;
   searchIssue: FormControl;
   menuState = 'out';
-  ghostLoading = new Array(12).fill(0).map((v, i) => i);
+  ghostLoading = new Array(11).fill(0).map((v, i) => i);
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   userInfo$: Observable<UserInfo>;
@@ -309,6 +312,12 @@ export class IssuesListComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.configOptions = {
+      ...this.configOptions,
+      tableHeight: this.isNotificationAlert
+        ? 'calc(100vh - 115px)'
+        : 'calc(100vh - 435px)'
+    };
     this.columns = this.observationsService.updateConfigOptionsFromColumns(
       this.partialColumns
     );
@@ -379,7 +388,9 @@ export class IssuesListComponent implements OnInit, OnDestroy {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
-            tableHeight: 'calc(100vh - 435px)'
+            tableHeight: this.isNotificationAlert
+              ? 'calc(100vh - 115px)'
+              : 'calc(100vh - 435px)'
           };
           this.initial.data = this.formatIssues(rows);
         } else {
@@ -443,7 +454,12 @@ export class IssuesListComponent implements OnInit, OnDestroy {
       type: 'issue',
       moduleName: this.moduleName
     };
-    return this.observationsService.getObservations$(obj, this.filter).pipe(
+    const filterObj = { entityId: '', entityType: '', ...this.filter };
+    if (this.entityId && this.entityType) {
+      filterObj.entityType = this.entityType;
+      filterObj.entityId = this.entityId;
+    }
+    return this.observationsService.getObservations$(obj, filterObj).pipe(
       mergeMap(({ rows, next, count, filters }) => {
         this.observationsService.issuesNextToken = next;
         this.isLoading$.next(false);
