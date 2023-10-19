@@ -78,7 +78,7 @@ export class WidgetConfigurationModalComponent implements OnInit {
     false
   );
   isFetchingChartData = false;
-  chartData$: Observable<AppChartData[]>;
+  chartData$: Observable<any>;
   chartVarient: string;
   chartVarient$: BehaviorSubject<string> = new BehaviorSubject<string>('');
   isChartVarientFormValid = true;
@@ -100,7 +100,6 @@ export class WidgetConfigurationModalComponent implements OnInit {
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957']
   };
   userEmailToName = {};
-  userNameToEmail = {};
   dataSource: MatTableDataSource<any>;
   dataCount$: Observable<Count>;
   reportDetailsOnChartVarientFilter$: Observable<ReportDetails>;
@@ -172,16 +171,6 @@ export class WidgetConfigurationModalComponent implements OnInit {
       })
     );
 
-    this.chartData$ = this.fetchChartData$.pipe(
-      filter((fetchChartData) => fetchChartData === true),
-      tap(() => (this.isFetchingChartData = true)),
-      switchMap(() =>
-        this.getGroupByCountDetails().pipe(
-          tap(() => (this.isFetchingChartData = false))
-        )
-      )
-    );
-
     this.reportDetailsOnChartVarientFilter$ = combineLatest([
       this.chartVarient$.pipe(
         filter((chartVarient) => chartVarient === 'table')
@@ -213,10 +202,9 @@ export class WidgetConfigurationModalComponent implements OnInit {
       this.usersService.getUsersInfo$()
     ]).pipe(
       map(([loadFilter, scroll, usersList]) => {
-        usersList.forEach((user) => {
-          this.userEmailToName[user.email] = `${user.firstName} ${user.lastName}`;
-          this.userNameToEmail[`${user.firstName} ${user.lastName}`] = user.email;
-        })
+        if (Object.keys(this.userEmailToName).length === 0) {
+          this.userEmailToName = this.getUserEmailAndNameObject(usersList);  
+        }
         if (this.skip === 0 && this.filtersApplied) {
           const { reportData: filterData = [] } = loadFilter;
           loadFilter.reportData = filterData;
@@ -228,7 +216,10 @@ export class WidgetConfigurationModalComponent implements OnInit {
         this.skip = loadFilter.reportData
           ? loadFilter.reportData.length
           : this.skip;
-        this.reportConfigService.formatReportData(loadFilter.reportData, this.userEmailToName);
+        this.reportConfigService.formatReportData(
+          loadFilter.reportData,
+          this.userEmailToName
+        );
         this.dataSource = new MatTableDataSource(loadFilter.reportData);
         return loadFilter;
       })
@@ -273,6 +264,48 @@ export class WidgetConfigurationModalComponent implements OnInit {
     return report ? report.name : undefined;
   }
 
+  getUserEmailAndNameObject = (userData) => {
+    
+    return userData.reduce((userObj, user) => {
+      userObj[user.email] = `${user.firstName} ${user.lastName}`;
+      return userObj;
+    }, {});
+  };
+  getChartData$ = (datasetFieldName) => {
+    const combinedChartData$ = combineLatest([
+      this.fetchChartData$.pipe(
+        filter((fetchChartData) => fetchChartData === true),
+        tap(() => (this.isFetchingChartData = true)),
+        switchMap(() =>
+          this.getGroupByCountDetails().pipe(
+            tap(() => (this.isFetchingChartData = false))
+          )
+        )
+      ),
+
+      this.usersService.getUsersInfo$()
+    ]).pipe(
+      map(([chartData, users]) => {
+        this.userEmailToName = this.getUserEmailAndNameObject(users);
+        if (datasetFieldName === 'assignedTo') {
+          return chartData.reduce((arrayOfData, data) => {
+            if (this.userEmailToName[data.assignedTo]) {
+              arrayOfData.push({
+                ...data,
+                assignedTo: this.userEmailToName[data.assignedTo]
+              });
+            }
+            return arrayOfData;
+          }, []);
+        } else {
+          return chartData;
+        }
+      })
+    );
+
+    return combinedChartData$;
+  };
+
   onReportSelection = (report: ReportConfiguration) => {
     this.selectedReport = cloneDeep({ ...report });
     this.reportConfigurationForTable = { ...this.selectedReport };
@@ -288,20 +321,24 @@ export class WidgetConfigurationModalComponent implements OnInit {
       false,
       false
     );
+    this.chartData$ = this.getChartData$(this.chartConfig.datasetFieldName);
+
     this.reportColumns = [];
     this.selectedReport.tableDetails?.forEach((col) => {
       this.reportColumns = this.reportColumns.concat(col.columns);
     });
-    this.reportConfigurationForTable.groupBy = type !== 'table' ? [] : [...(this.selectedReport?.groupBy || [])];
+    this.reportConfigurationForTable.groupBy =
+      type !== 'table' ? [] : [...(this.selectedReport?.groupBy || [])];
     this.configOptions.tableID = `${this.configOptions.tableID}${this.reportConfigurationForTable.id}`;
     this.configOptions =
       this.reportConfigService.updateConfigOptionsFromReportConfiguration(
         this.reportConfigurationForTable,
         this.configOptions
       );
-    this.chartVarient = this.selectedReport.groupBy?.length && type !== 'table'
-      ? `${type}${indexAxis ? `_${indexAxis}` : ``}`
-      : 'table';
+    this.chartVarient =
+      this.selectedReport.groupBy?.length && type !== 'table'
+        ? `${type}${indexAxis ? `_${indexAxis}` : ``}`
+        : 'table';
     this.chartVarient$.next(this.chartVarient);
     this.setGroupByCountQueryParams(countFieldName);
     this.fetchChartData$.next(true);
@@ -316,7 +353,7 @@ export class WidgetConfigurationModalComponent implements OnInit {
     const { id: dashboardId } = this.data.dashboard;
     const createdBy = this.loginService.getLoggedInUserName();
     const isTable = this.chartVarient === 'table' ? true : false;
-    const groupBy = this.reportConfigurationForTable.groupBy;
+    const groupBy = this.selectedReport.groupBy;
     const columns: Column[] = this.configOptions.allColumns;
     const tableColumns: TableColumn[] = columns
       .map((column) => {
@@ -385,11 +422,10 @@ export class WidgetConfigurationModalComponent implements OnInit {
       case 'REFRESH_CONFIG':
         this.configOptions = { ...event.data };
         if (
-          this.reportConfigurationForTable.groupBy.length !==
+          this.selectedReport.groupBy.length !==
           this.configOptions.groupByColumns.length
         ) {
-          this.reportConfigurationForTable.groupBy =
-            this.configOptions.groupByColumns;
+          this.selectedReport.groupBy = this.configOptions.groupByColumns;
         }
         break;
 
@@ -434,11 +470,11 @@ export class WidgetConfigurationModalComponent implements OnInit {
             type,
             indexAxis
           };
-        }else {
+        } else {
           this.selectedReport.chartDetails = {
             ...this.selectedReport.chartDetails,
-            type: 'table',
-          }
+            type: 'table'
+          };
         }
         this.chartConfig = this.reportConfigService.updateChartConfig(
           this.selectedReport,
