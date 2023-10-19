@@ -200,6 +200,7 @@ export class RoundPlanHeaderConfigurationComponent
     this.formMetadataSubscrption = this.store
       .select(getFormMetadata)
       .subscribe((res) => {
+        this.formMetadata = res;
         this.headerDataForm.patchValue({
           name: res.name,
           description: res.description ? res.description : ''
@@ -605,7 +606,11 @@ export class RoundPlanHeaderConfigurationComponent
             };
             if (resizedPdfSize <= maxSize) {
               this.operatorRoundsService
-                .uploadAttachments$({ file: pdf })
+                .uploadAttachments$({
+                  file: pdf,
+                  objectId: this.formMetadata?.id,
+                  plantId: this.formMetadata?.plantId
+                })
                 .pipe(
                   tap((response) => {
                     if (response) {
@@ -638,7 +643,11 @@ export class RoundPlanHeaderConfigurationComponent
             };
             if (resizedImageSize <= maxSize) {
               this.operatorRoundsService
-                .uploadAttachments$({ file: image })
+                .uploadAttachments$({
+                  file: image,
+                  objectId: this.formMetadata?.id,
+                  plantId: this.formMetadata?.plantId
+                })
                 .pipe(
                   tap((response) => {
                     if (response) {
