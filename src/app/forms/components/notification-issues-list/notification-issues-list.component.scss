@@ -1,0 +1,38 @@
+@import '../../../../scss/colors.scss';
+
+.back-arrow {
+  height: 17px;
+  width: 17px;
+}
+
+.toolbar {
+  height: 65px;
+  background-color: $white;
+  border-bottom: 1px solid $border-color;
+}
+
+.issuesListBackBtn {
+  border: none;
+  background-color: transparent;
+}
+.entity-name {
+  position: absolute;
+  left: 20px;
+  top: 82px;
+  color: $blue-primary;
+  width: auto;
+  height: 50px;
+  border: none;
+  display: flex;
+  flex-direction: row;
+}
+
+.fixed-text,
+.entity-name-text {
+  display: flex;
+  width: auto;
+}
+
+.entity-name-text {
+  color: $blue-label;
+}

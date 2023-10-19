@@ -229,8 +229,8 @@ export class OperatorRoundsDashboardComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
-    this.plantService.fetchAllPlants$().subscribe((plants) => {
-      this.allPlantsData = plants.items || [];
+    this.plantService.fetchLoggedInUserPlants$().subscribe((plants) => {
+      this.allPlantsData = plants || [];
       this.plantInformation = this.allPlantsData;
       this.cdrf.detectChanges();
     });

@@ -207,12 +207,13 @@ export class UsersService {
       (email) => this.usersInfoByEmail[email]?.fullName === fullName
     );
   }
-  deactivateUser$ = (userID, info: ErrorInfo = {} as ErrorInfo) => {
-    const deactivateUser = { isActive: false };
+  deactivateUser$ = (user, info: ErrorInfo = {} as ErrorInfo) => {
+    console.log(user);
+    const deactivateUser = { email: user.email, isActive: false };
     return this.appService
       .patchData(
         environment.userRoleManagementApiUrl,
-        `users/${userID}`,
+        `users/${user.id}`,
         deactivateUser,
         info
       )

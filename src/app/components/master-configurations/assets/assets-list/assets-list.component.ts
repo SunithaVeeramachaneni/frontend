@@ -254,6 +254,7 @@ export class AssetsListComponent implements OnInit, OnDestroy {
   plantsIdNameMap = {};
   plants = [];
   currentRouteUrl$: Observable<string>;
+  currentUserPlantId: string;
   readonly routingUrls = routingUrls;
   dataLoadingComplete = false;
   private onDestroy$ = new Subject();
@@ -274,8 +275,8 @@ export class AssetsListComponent implements OnInit, OnDestroy {
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
       tap(() => this.headerService.setHeaderTitle(routingUrls.assets.title))
     );
-    this.allPlants$ = this.plantsService.fetchAllPlants$().pipe(
-      tap(({ items: allPlants = [] }) => {
+    this.allPlants$ = this.plantsService.fetchLoggedInUserPlants$().pipe(
+      tap((allPlants = []) => {
         this.plants = allPlants.map((plant) => {
           const { id, name, plantId } = plant;
           this.plantsIdNameMap[`${plantId} - ${name}`] = id;
@@ -312,7 +313,10 @@ export class AssetsListComponent implements OnInit, OnDestroy {
 
     this.configOptions.allColumns = this.columns;
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
-      tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
+      tap(({ permissions = [], plantId }) => {
+        this.currentUserPlantId = plantId;
+        this.prepareMenuActions(permissions);
+      })
     );
   }
 
@@ -356,7 +360,7 @@ export class AssetsListComponent implements OnInit, OnDestroy {
           rows,
           { form, action },
           scrollData,
-          { items: allPlants = [] },
+          allPlants = [],
           { items: allLocations = [] },
           { items: allAssets = [] }
         ]) => {
@@ -490,6 +494,13 @@ export class AssetsListComponent implements OnInit, OnDestroy {
       });
     }
 
+    if (this.loginService.checkUserHasPermission(permissions, 'COPY_ASSET')) {
+      menuActions.push({
+        title: 'Copy',
+        action: 'copy'
+      });
+    }
+
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
     this.configOptions = { ...this.configOptions };
@@ -502,11 +513,15 @@ export class AssetsListComponent implements OnInit, OnDestroy {
   rowLevelActionHandler = ({ data, action }): void => {
     switch (action) {
       case 'edit':
-        this.assetsEditData = { assetData: data };
+        this.assetsEditData = { assetData: data, isCopy: false };
         this.assetsAddOrEditOpenState = 'in';
         break;
       case 'delete':
         this.deleteAsset(data);
+        break;
+      case 'copy':
+        this.assetsEditData = { assetData: data, isCopy: true };
+        this.assetsAddOrEditOpenState = 'in';
         break;
       default:
     }
@@ -565,6 +580,34 @@ export class AssetsListComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
+  }
+
+  downloadExportedAssets(): void {
+    this.toast.show({
+      type: 'info',
+      text: 'Preparing Data for Export, might take upto 1 min...'
+    });
+    this.assetService
+      .downloadExportedAssets(this.currentUserPlantId)
+      .pipe(
+        tap((data) => {
+          downloadFile(data, 'Exported_Assets');
+        })
+      )
+      .subscribe(
+        () => {
+          this.toast.show({
+            type: 'success',
+            text: 'Data Exported Successfully!'
+          });
+        },
+        () => {
+          this.toast.show({
+            type: 'warning',
+            text: 'Error while exporting data!'
+          });
+        }
+      );
   }
 
   onCloseAssetsDetailedView(event) {

@@ -150,6 +150,19 @@
                   translate="downloadTemplate"
                 ></span>
               </button>
+              <button
+                id="locationListExportDataExcel"
+                (click)="downloadExportedLocations()"
+                mat-menu-item
+                class="menu-buttons"
+              >
+                <svg-icon
+                  id="locationListIconExportExcel"
+                  icon="icon-export-data"
+                  class="menu-icons"
+                ></svg-icon>
+                <span id="locationListExportData" translate="exportData"></span>
+              </button>
             </mat-menu>
             <input
               id="locationListUploadFile"
