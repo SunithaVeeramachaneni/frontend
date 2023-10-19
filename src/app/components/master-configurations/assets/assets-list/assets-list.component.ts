@@ -275,8 +275,8 @@ export class AssetsListComponent implements OnInit, OnDestroy {
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
       tap(() => this.headerService.setHeaderTitle(routingUrls.assets.title))
     );
-    this.allPlants$ = this.plantsService.fetchAllPlants$().pipe(
-      tap(({ items: allPlants = [] }) => {
+    this.allPlants$ = this.plantsService.fetchLoggedInUserPlants$().pipe(
+      tap((allPlants = []) => {
         this.plants = allPlants.map((plant) => {
           const { id, name, plantId } = plant;
           this.plantsIdNameMap[`${plantId} - ${name}`] = id;
@@ -360,7 +360,7 @@ export class AssetsListComponent implements OnInit, OnDestroy {
           rows,
           { form, action },
           scrollData,
-          { items: allPlants = [] },
+          allPlants = [],
           { items: allLocations = [] },
           { items: allAssets = [] }
         ]) => {

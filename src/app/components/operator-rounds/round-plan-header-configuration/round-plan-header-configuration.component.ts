@@ -279,8 +279,8 @@ export class RoundPlanHeaderConfigurationComponent
   }
 
   getAllPlantsData() {
-    this.plantService.fetchAllPlants$().subscribe((plants) => {
-      this.allPlantsData = plants.items || [];
+    this.plantService.fetchLoggedInUserPlants$().subscribe((plants) => {
+      this.allPlantsData = plants || [];
       this.plantInformation = this.allPlantsData;
       const plantId = this.roundData?.formMetadata?.plantId;
       if (plantId !== undefined) {
