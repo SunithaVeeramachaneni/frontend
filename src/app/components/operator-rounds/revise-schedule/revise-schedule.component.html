@@ -173,8 +173,8 @@
               [matDatepicker]="startDate"
               formControlName="startDatePicker"
               (dateChange)="updateDate($event, 'startDate')"
-              [min]="this.reviseScheduleConfig.startDatePicker"
-              [max]="this.reviseScheduleConfig.endDatePicker"
+              [min]="this.reviseScheduleConfig.startDate"
+              [max]="this.reviseScheduleConfig.endDate"
               hidden
             />
             <mat-datepicker-toggle matIconSuffix [for]="startDate">
@@ -201,8 +201,8 @@
               [matDatepicker]="endDate"
               formControlName="endDatePicker"
               (dateChange)="updateDate($event, 'endDate')"
-              [min]="this.reviseScheduleConfig.startDatePicker"
-              [max]="this.reviseScheduleConfig.endDatePicker"
+              [min]="this.reviseScheduleConfig.startDate"
+              [max]="this.reviseScheduleConfig.endDate"
               hidden
             />
             <mat-datepicker-toggle matIconSuffix [for]="endDate">
