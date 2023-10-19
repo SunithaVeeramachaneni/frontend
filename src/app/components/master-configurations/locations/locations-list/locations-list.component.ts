@@ -282,9 +282,9 @@ export class LocationsListComponent implements OnInit, OnDestroy {
     );
     this.locationService.fetchLocations$.next({ data: 'load' });
     this.locationService.fetchLocations$.next({} as TableEvent);
-    this.allPlants$ = this.plantsService.fetchAllPlants$().pipe(
-      tap(({ items: allPlants = [] }) => {
-        this.plants = allPlants.map((plant) => {
+    this.allPlants$ = this.plantsService.fetchLoggedInUserPlants$().pipe(
+      tap((plants) => {
+        this.plants = plants.map((plant) => {
           const { id, name, plantId } = plant;
           this.plantsIdNameMap[`${plantId} - ${name}`] = id;
           return `${plantId} - ${name}`;
@@ -362,7 +362,7 @@ export class LocationsListComponent implements OnInit, OnDestroy {
           { form, action },
           scrollData,
           { items: allLocations = [] },
-          { items: allPlants = [] }
+          allPlants = []
         ]) => {
           this.allPlants = allPlants.filter((plant) => !plant._deleted);
           this.allParentsLocations.data = uniqBy(
