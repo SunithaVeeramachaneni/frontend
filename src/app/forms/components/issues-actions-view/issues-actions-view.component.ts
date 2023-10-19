@@ -46,7 +46,8 @@ import {
   dateTimeFormat2,
   dateFormat2,
   timeFormat,
-  defaultLimit
+  defaultLimit,
+  roundObservations
 } from 'src/app/app.constants';
 import { NotificationAlertDialogComponent } from '../notification-alert-dialog/notification-alert-dialog.component';
 import { NotificationIssuesListComponent } from '../notification-issues-list/notification-issues-list.component';
@@ -119,6 +120,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   notificationsArrived = false;
   isLogHistoryDataLoaded$: Observable<any>;
   locationAsset: string;
+  module = roundObservations;
   private totalCount = 0;
   private allData = [];
   private amplifySubscription$: Subscription[] = [];
@@ -628,7 +630,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
             const { notificationInfo } = value;
             this.data.notificationInfo = notificationInfo;
           }
-          if (this.moduleName === 'round-observations') {
+          if (this.moduleName === roundObservations) {
             this.getObservations();
           } else {
             this.isCreateNotification = false;
@@ -1038,7 +1040,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
           }
         })
       );
-    if (this.moduleName === 'round-observations') {
+    if (this.moduleName === roundObservations) {
       this.getObservations();
     }
   }

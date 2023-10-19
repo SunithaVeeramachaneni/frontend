@@ -709,7 +709,7 @@
           class="titles m-t-10"
           translate="erpnotification"
         ></div>
-        <div *ngIf="moduleName === 'round-observations'">
+        <div *ngIf="moduleName === module">
           <div *ngIf="notificationsArrived; else loadingNotifications">
             <div class="values" *ngIf="!isCreateNotification">
               <button
@@ -748,7 +748,7 @@
           >
           </ngx-shimmer-loading>
         </ng-template>
-        <div *ngIf="moduleName !== 'round-observations'">
+        <div *ngIf="moduleName !== module">
           <div class="values" *ngIf="!isCreateNotification">
             <button
               id="issuesActionsViewCreateNotification"

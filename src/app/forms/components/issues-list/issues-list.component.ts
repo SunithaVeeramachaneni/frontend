@@ -39,8 +39,7 @@ import { slideInOut } from 'src/app/animations';
 import {
   graphQLDefaultLimit,
   permissions as perms,
-  dateTimeFormat4,
-  defaultLimit
+  dateTimeFormat4
 } from 'src/app/app.constants';
 import {
   AssigneeDetails,
@@ -271,7 +270,7 @@ export class IssuesListComponent implements OnInit, OnDestroy {
   }>;
   skip = 0;
   plantMapSubscription: Subscription;
-  limit = defaultLimit;
+  limit = graphQLDefaultLimit;
   searchIssue: FormControl;
   menuState = 'out';
   ghostLoading = new Array(11).fill(0).map((v, i) => i);
