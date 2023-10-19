@@ -89,7 +89,7 @@
 
               <input
                 id="addLogicValue"
-                type="text"
+                [type]="fieldType === 'NF' ? 'number' : 'text'"
                 class="logicValue"
                 formControlName="operand2"
                 (input)="operand2Changed(logic.value, $event, i)"

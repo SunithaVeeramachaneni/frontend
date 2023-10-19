@@ -38,7 +38,7 @@ export class AssetsService {
     }
     return this._appService._getResp(
       environment.masterConfigApiUrl,
-      'asset/listAll',
+      'assets/listAll',
       { displayToast: true, failureResponse: {} },
       queryParamaters
     );
@@ -62,7 +62,7 @@ export class AssetsService {
       return this._appService
         ._getResp(
           environment.masterConfigApiUrl,
-          'asset/list',
+          'assets/list',
           { displayToast: true, failureResponse: {} },
           {
             ...queryParams,
@@ -93,7 +93,7 @@ export class AssetsService {
   ) {
     return this._appService._postData(
       environment.masterConfigApiUrl,
-      'asset/create',
+      'assets/create',
       {
         data: {
           ...formAssetsQuery,
@@ -108,7 +108,7 @@ export class AssetsService {
   updateAssets$(assetData) {
     return this._appService.patchData(
       environment.masterConfigApiUrl,
-      `asset/${assetData.id}/update`,
+      `assets/${assetData.id}/update`,
       {
         data: {
           ...assetData,
@@ -123,7 +123,7 @@ export class AssetsService {
   deleteAssets$(values: DeleteAssets) {
     return this._appService._removeData(
       environment.masterConfigApiUrl,
-      `asset/${JSON.stringify(values)}/delete`
+      `assets/${JSON.stringify(values)}/delete`
     );
   }
 
@@ -196,6 +196,27 @@ export class AssetsService {
       'assets/upload',
       form,
       info
+    );
+  }
+
+  verifyAssetsId$(
+    assetsId: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    return this._appService._getResp(
+      environment.masterConfigApiUrl,
+      `assets/verify/${assetsId}`,
+      info
+    );
+  }
+
+  downloadExportedAssets(plantId: string, info: ErrorInfo = {} as ErrorInfo) {
+    return this._appService.downloadFile(
+      environment.masterConfigApiUrl,
+      `assets/download/export/${plantId}`,
+      info,
+      true,
+      {}
     );
   }
 }

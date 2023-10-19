@@ -55,6 +55,7 @@ import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-valid
 import { ValidationError } from 'src/app/interfaces';
 import { LoginService } from '../../login/services/login.service';
 import { fieldTypesMock } from 'src/app/forms/components/response-type/response-types.mock';
+import { UsersService } from '../../user-management/services/users.service';
 
 @Component({
   selector: 'app-report-configuration',
@@ -104,6 +105,8 @@ export class ReportConfigurationComponent implements OnInit {
     tableHeight: 'calc(100vh - 160px)',
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e6d9d9']
   };
+  userEmailToName = {};
+  userNameToEmail = {};
   dummy = '';
   skip = 0;
   searchKey = '';
@@ -163,7 +166,8 @@ export class ReportConfigurationComponent implements OnInit {
     public dialog: MatDialog,
     private breadcrumbService: BreadcrumbService,
     private headerService: HeaderService,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private usersService: UsersService,
   ) {}
 
   ngOnInit() {
@@ -240,9 +244,14 @@ export class ReportConfigurationComponent implements OnInit {
 
     this.reportDetails$ = combineLatest([
       this.reportDetailsOnLoadFilter$,
-      this.reportDetailsOnScroll$
+      this.reportDetailsOnScroll$,
+      this.usersService.getUsersInfo$()
     ]).pipe(
-      map(([loadFilter, scroll]) => {
+      map(([loadFilter, scroll, usersList]) => {
+        usersList.forEach((user) => {
+          this.userEmailToName[user.email] = `${user.firstName} ${user.lastName}`;
+          this.userNameToEmail[`${user.firstName} ${user.lastName}`] = user.email;
+        })
         if (this.skip === 0 && !this.filtersApplied) {
           const { report } = loadFilter;
           this.reportConfiguration = report
@@ -290,7 +299,7 @@ export class ReportConfigurationComponent implements OnInit {
         this.skip = loadFilter.reportData
           ? loadFilter.reportData.length
           : this.skip;
-        this.formatReportData(loadFilter.reportData);
+        this.reportConfigService.formatReportData(loadFilter.reportData, this.userEmailToName);
         this.dataSource = new MatTableDataSource(loadFilter.reportData);
         return loadFilter;
       })
@@ -311,25 +320,6 @@ export class ReportConfigurationComponent implements OnInit {
     const moduleName = `operator-rounds`;
     this.router.navigate([`/${moduleName}/reports`]);
   }
-  formatReportData = (reportData) => {
-    reportData = reportData.map((data) => {
-      if (data.taskType === 'NF') {
-        if (data?.exception > 0 || data?.exception === 'True') {
-          data.exception = 'True';
-        } else if (data?.exception === 0 || data?.exception === 'False') {
-          data.exception = 'False';
-        } else {
-          data.exception = '';
-        }
-      }
-      data.taskType = fieldTypesMock.fieldTypes.find((fieldType) => {
-        return (
-          fieldType.type === data.taskType ||
-          fieldType.description === data.taskType
-        );
-      })?.description;
-    });
-  };
 
   toggleReportInputField = () => {
     this.reportNameDisabled = !this.reportNameDisabled;
@@ -731,8 +721,23 @@ export class ReportConfigurationComponent implements OnInit {
           ...filter,
           filters: filtersArray
         };
-      } else {
-        return filter;
+      }
+      else {
+        const ids = new Set(['assignedTo', 'raisedBy', 'roundSubmittedBy', 'taskCompletedBy']);
+        if(ids.has(filter.column)) {
+          const filtersArray = filter.filters.map((f) =>
+            f = {
+              ...f,
+              operand: this.userNameToEmail[f.operand] || f.operand.replace(' ', '.')
+            }
+          )
+          return {
+            ...filter,
+            filters: filtersArray
+          };
+        }else {
+          return filter;
+        }
       }
     });
     const filtersApplied: FilterApplied[] = filtersObj.filters;

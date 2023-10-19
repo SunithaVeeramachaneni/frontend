@@ -840,11 +840,11 @@ export const colorsByStatus = {
 export const metadataModuleNames = [
   {
     moduleId: 'RDF',
-    moduleName: 'Forms'
+    moduleName: 'forms'
   },
   {
     moduleId: 'RDF_TEMPLATES',
-    moduleName: 'Form Templates'
+    moduleName: 'formTemplate'
   }
 ];
 

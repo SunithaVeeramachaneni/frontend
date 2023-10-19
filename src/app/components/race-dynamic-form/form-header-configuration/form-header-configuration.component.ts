@@ -311,8 +311,8 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     }
   }
   getAllPlantsData() {
-    this.plantService.fetchAllPlants$().subscribe((plants) => {
-      this.allPlantsData = plants.items || [];
+    this.plantService.fetchLoggedInUserPlants$().subscribe((plants) => {
+      this.allPlantsData = plants || [];
       this.plantInformation = this.allPlantsData;
       const plantId = this.data?.formData?.plantId;
       if (plantId !== undefined) {
@@ -641,7 +641,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
             };
             if (resizedPdfSize <= maxSize) {
               this.rdfService
-                .uploadAttachments$({ file: pdf })
+                .uploadAttachments$({ file: pdf, plantId: this.data?.plantId })
                 .pipe(
                   tap((response) => {
                     if (response) {
@@ -1040,8 +1040,8 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     const searchValue = event.target.value;
     const parentValues = this.additionalDetailsMasterData[label].value;
     if (searchValue) {
-      this.currentValuesArray = parentValues.filter(
-        (value) => value.toLowerCase().includes(searchValue.toLowerCase())
+      this.currentValuesArray = parentValues.filter((value) =>
+        value.toLowerCase().includes(searchValue.toLowerCase())
       );
     } else {
       this.currentValuesArray = [...parentValues];

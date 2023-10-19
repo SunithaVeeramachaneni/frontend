@@ -479,6 +479,13 @@ export class PlantListComponent implements OnInit, OnDestroy {
       });
     }
 
+    if (this.loginService.checkUserHasPermission(permissions, 'COPY_PLANT')) {
+      menuActions.push({
+        title: 'Copy',
+        action: 'copy'
+      });
+    }
+
     // if (
     //   this.loginService.checkUserHasPermission(permissions, 'DELETE_PLANT')
     // ) {
@@ -500,11 +507,15 @@ export class PlantListComponent implements OnInit, OnDestroy {
   rowLevelActionHandler = ({ data, action }): void => {
     switch (action) {
       case 'edit':
-        this.plantEditData = { plantData: data };
+        this.plantEditData = { plantData: data, isCopy: false };
         this.plantAddOrEditOpenState = 'in';
         break;
       case 'delete':
         this.deletePlant(data);
+        break;
+      case 'copy':
+        this.plantEditData = { plantData: data, isCopy: true };
+        this.plantAddOrEditOpenState = 'in';
         break;
       default:
     }
