@@ -320,11 +320,12 @@
   margin-bottom: 10px;
 }
 .loading-notifications {
-  width: 20%;
+  display: flex;
+  width: 90px;
   height: 35px;
   border-radius: 5px;
   position: relative;
-  right: 17px;
+  right: 22px;
 }
 #issuesActionsViewNotification {
   position: relative;

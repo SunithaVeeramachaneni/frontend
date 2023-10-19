@@ -413,5 +413,6 @@
   "fixedTitleHeader": "Issues with Notifications : ",
   "createNotificationAnyway": "Create New Notification Anyway",
   "showNotifications": "Show Issues with Notifications",
-  "notificationsAlertDialog": "{ count } active Notifications from { count } Issues already exists for this Asset. Do you want to create a new Notification?"
+  "notificationsAlertDialog": "{ count } active Notifications from { count } Issues already exists for this Asset. Do you want to create a new Notification?",
+  "notificationCreation": "Notification Creation In-Progress"
 }

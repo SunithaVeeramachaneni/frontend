@@ -628,7 +628,11 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
             const { notificationInfo } = value;
             this.data.notificationInfo = notificationInfo;
           }
-          this.getObservations();
+          if (this.moduleName === 'round-observations') {
+            this.getObservations();
+          } else {
+            this.isCreateNotification = false;
+          }
         });
     } else {
       this.toastService.show({
@@ -1034,7 +1038,9 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
           }
         })
       );
-    this.getObservations();
+    if (this.moduleName === 'round-observations') {
+      this.getObservations();
+    }
   }
 
   private prepareSubscriptionResponse(data) {
