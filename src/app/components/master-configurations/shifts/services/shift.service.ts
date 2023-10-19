@@ -75,12 +75,7 @@ export class ShiftService {
     return this._appService._postData(
       environment.masterConfigApiUrl,
       `shifts`,
-      {
-        ...formShiftQuery,
-        searchTerm: `${formShiftQuery.name.toLowerCase()} ${formShiftQuery.startTime?.toLowerCase()} ${
-          formShiftQuery.endTime?.toLowerCase() || ''
-        }`
-      },
+      formShiftQuery,
       info
     );
   }
@@ -95,13 +90,7 @@ export class ShiftService {
       .patchData(
         environment.masterConfigApiUrl,
         `shifts/${shiftId}`,
-        {
-          ...payload,
-          searchTerm: `${payload.name.toLowerCase()} ${payload.startTime?.toLowerCase()} ${
-            payload.endTime?.toLowerCase() || ''
-          }
-        `
-        },
+        payload,
         info
       )
       .pipe(map((response) => (response === null ? shiftData : response)));
