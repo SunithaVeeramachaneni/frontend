@@ -33,7 +33,7 @@ export class UnitMeasurementService {
   getUnitOfMeasurementList$(
     queryParams: {
       next?: string;
-      limit: any;
+      limit?: any;
       searchTerm?: string;
     },
     filter?: { [x: string]: string },

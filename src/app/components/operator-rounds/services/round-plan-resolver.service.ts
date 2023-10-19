@@ -170,12 +170,7 @@ export class RoundPlanResolverService
     }
     this.store.dispatch(
       UnitOfMeasurementActions.fetchUnitOfMeasurementList({
-        queryParams: {
-          next: '',
-          limit: graphQLDefaultMaxLimit,
-          searchKey: '',
-          fetchType: 'load'
-        }
+        queryParams: {}
       })
     );
     this.store.dispatch(QuickResponseActions.fetchDefaultQuickResponses());

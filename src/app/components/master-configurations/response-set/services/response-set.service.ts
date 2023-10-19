@@ -48,7 +48,7 @@ export class ResponseSetService {
     );
   }
 
-  fetchAllGlobalResponses$ = () => {
+  fetchAllGlobalResponses$ = (isActive = true) => {
     const info: ErrorInfo = {} as ErrorInfo;
     const { displayToast, failureResponse = {} } = info;
     return this._appService
@@ -56,7 +56,7 @@ export class ResponseSetService {
         environment.masterConfigApiUrl,
         'response-set/list',
         { displayToast, failureResponse },
-        { isActive: true }
+        { isActive }
       )
       .pipe(shareReplay(1));
   };
