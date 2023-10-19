@@ -26,7 +26,7 @@ export class ShiftService {
 
   getShiftsList$(queryParams: {
     next?: string;
-    limit: number | null;
+    limit: any;
     searchTerm?: string;
     isActive?: boolean;
   }) {

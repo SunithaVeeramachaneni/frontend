@@ -254,8 +254,9 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
 
     this.activeShifts$ = this.shiftService
       .getShiftsList$({
-        limit: null,
-        isActive: true
+        limit: '',
+        isActive: true,
+        next: ''
       })
       .pipe(
         map(({ items }) => {
