@@ -78,7 +78,6 @@ export class ReportConfigurationComponent implements OnInit {
   reportNameDisabled = true;
   title = 'Report Configuration';
   isPopoverOpen = false;
-  hasCustomColorScheme = true;
   reportDetailsOnLoadFilter$: Observable<ReportDetails>;
   reportDetailsOnScroll$: Observable<ReportDetails>;
   isChartVariantApplyDisabled = false;
