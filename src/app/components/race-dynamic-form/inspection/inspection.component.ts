@@ -471,7 +471,9 @@ export class InspectionComponent implements OnInit, OnDestroy {
           }
         })
       ),
-      this.raceDynamicFormService.fetchAllInspections$(),
+      this.raceDynamicFormService.fetchAllInspections$({
+        plantId: this.plantService.getUserPlantIds()
+      }),
       this.plantService.fetchLoggedInUserPlants$().pipe(
         tap((plants) => {
           plants.forEach((plant) => {

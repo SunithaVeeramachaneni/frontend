@@ -790,7 +790,7 @@ export class RaceDynamicFormService {
       info
     );
   }
-  fetchAllInspections$ = () =>
+  fetchAllInspections$ = ({ plantId }) =>
     this.appService
       ._getResp(
         environment.rdfApiUrl,
@@ -799,7 +799,7 @@ export class RaceDynamicFormService {
           displayToast: true,
           failureResponse: {}
         },
-        { limit: graphQLDefaultMaxLimit, next: '' }
+        { limit: graphQLDefaultMaxLimit, next: '', plant: plantId }
       )
       .pipe(map((res) => this.formatInspections(res.items || [])));
 
