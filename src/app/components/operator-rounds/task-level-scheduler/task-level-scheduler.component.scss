@@ -67,6 +67,13 @@
       flex-direction: column;
       width: 250px;
       gap: 6px;
+
+      .shift-data {
+        white-space: nowrap;
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
     }
 
     .row1 {
