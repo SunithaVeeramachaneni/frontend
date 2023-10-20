@@ -244,12 +244,16 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
         tap(() => this.fetchForms$.next({ data: 'search' }))
       )
       .subscribe(() => this.isLoading$.next(true));
+    this.getFilter();
     this.getDisplayedForms();
     this.configOptions.allColumns = this.columns;
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
-      tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
+      tap(({ permissions = [], plantId = null }) => {
+        this.plantService.setUserPlantIds(plantId);
+        this.filter.plant = plantId;
+        this.prepareMenuActions(permissions);
+      })
     );
-    this.getFilter();
     this.archivedFormsListCount$ = combineLatest([
       this.archivedFormsListCountRaw$,
       this.archivedFormsListCountUpdate$
@@ -461,7 +465,7 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
   resetFilter() {
     this.isPopoverOpen = false;
     this.filter = {
-      plant: ''
+      plant: this.plantService.getUserPlantIds()
     };
     this.nextToken = '';
     this.fetchForms$.next({ data: 'load' });

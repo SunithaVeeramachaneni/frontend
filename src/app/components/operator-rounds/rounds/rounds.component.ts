@@ -637,6 +637,13 @@ export class RoundsComponent implements OnInit, OnDestroy {
     this.fetchRounds$.next({} as TableEvent);
     this.searchForm = new FormControl('');
     let filterJson = [];
+    this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
+      tap(({ permissions = [], plantId = null }) => {
+        this.plantService.setUserPlantIds(plantId);
+        this.filter.plant = plantId;
+        this.prepareMenuActions(permissions);
+      })
+    );
     this.filterData$ = combineLatest([
       this.users$,
       this.operatorRoundsService.getRoundFilter().pipe(
@@ -649,7 +656,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
           }
         })
       ),
-      this.operatorRoundsService.fetchAllRounds$(),
+      this.operatorRoundsService.fetchAllRounds$({
+        plantId: this.plantService.getUserPlantIds()
+      }),
       this.plantService.fetchLoggedInUserPlants$()
     ]).pipe(
       tap(([, , formsList, plants]) => {
@@ -705,9 +714,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
-    this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
-      tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
-    );
 
     const roundsOnLoadSearch$ = this.fetchRounds$.pipe(
       filter(({ data }) => data === 'load' || data === 'search'),
@@ -1168,7 +1174,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       schedule: '',
       assignedToDisplay: '',
       dueDate: '',
-      plant: '',
+      plant: this.plantService.getUserPlantIds(),
       scheduledAt: '',
       shiftId: ''
     };

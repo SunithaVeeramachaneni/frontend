@@ -617,7 +617,7 @@ export class RaceDynamicFormService {
     );
   }
 
-  fetchAllFormsList$() {
+  fetchAllFormsList$({ plantId }) {
     const params: URLSearchParams = new URLSearchParams();
     params.set('searchTerm', '');
     params.set('limit', '2000000');
@@ -625,6 +625,7 @@ export class RaceDynamicFormService {
     params.set('fetchType', '');
     params.set('formStatus', 'All');
     params.set('isArchived', 'false');
+    params.set('plant', plantId);
     return this.appService
       ._getResp(environment.rdfApiUrl, 'forms?' + params.toString(), {
         displayToast: true,

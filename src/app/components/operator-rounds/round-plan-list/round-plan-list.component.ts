@@ -318,7 +318,11 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
     this.getAllOperatorRounds();
     this.configOptions.allColumns = this.columns;
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
-      tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
+      tap(({ permissions = [], plantId = null }) => {
+        this.plantService.setUserPlantIds(plantId);
+        this.filter.plant = plantId;
+        this.prepareMenuActions(permissions);
+      })
     );
     this.formsListCount$ = combineLatest([
       this.formsListCountRaw$,
@@ -607,7 +611,9 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
 
   getAllOperatorRounds() {
     this.operatorRoundsService
-      .fetchAllOperatorRounds$()
+      .fetchAllOperatorRounds$({
+        plantId: this.plantService.getUserPlantIds()
+      })
       .subscribe((formsList: any) => {
         const objectKeys = Object.keys(formsList);
         if (objectKeys.length > 0) {
@@ -707,7 +713,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
       lastModifiedOn: '',
       scheduleStartDate: '',
       scheduleEndDate: '',
-      plant: '',
+      plant: this.plantService.getUserPlantIds(),
       publishedBy: ''
     };
     this.nextToken = '';

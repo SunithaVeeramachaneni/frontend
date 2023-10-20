@@ -297,6 +297,10 @@ export class OperatorRoundsService {
       if (filterData) {
         queryParameters = { ...rest, plantId: filterData.plant };
       }
+      console.log(
+        '🚀 ~ file: operator-rounds.service.ts:303 ~ OperatorRoundsService ~ queryParameters:',
+        queryParameters
+      );
       const { displayToast, failureResponse = {} } = info;
       return this.appService
         ._getResp(
@@ -758,7 +762,7 @@ export class OperatorRoundsService {
     return rows;
   }
 
-  fetchAllOperatorRounds$ = () => {
+  fetchAllOperatorRounds$ = (query) => {
     const params: URLSearchParams = new URLSearchParams();
     params.set('searchTerm', '');
     params.set('limit', '2000000');
@@ -766,6 +770,7 @@ export class OperatorRoundsService {
     params.set('fetchType', '');
     params.set('formStatus', 'All');
     params.set('isArchived', 'false');
+    params.set('plant', query?.plantId);
     return this.appService
       ._getResp(
         environment.operatorRoundsApiUrl,
@@ -775,17 +780,17 @@ export class OperatorRoundsService {
       .pipe(map((res) => this.formateGetRoundPlanResponse(res)));
   };
 
-  fetchAllRounds$ = () =>
+  fetchAllRounds$ = ({ plantId }) =>
     this.appService
       ._getResp(
         environment.operatorRoundsApiUrl,
         'rounds',
         { displayToast: true, failureResponse: {} },
-        { limit: graphQLDefaultMaxLimit, next: '' }
+        { limit: graphQLDefaultMaxLimit, next: '', plant: plantId }
       )
       .pipe(map((res) => this.formatRounds(res?.items || [])));
 
-  fetchAllPlansList$ = () => {
+  fetchAllPlansList$ = ({ plantId }) => {
     const params: URLSearchParams = new URLSearchParams();
     params.set('searchTerm', '');
     params.set('limit', '2000000');
@@ -794,7 +799,7 @@ export class OperatorRoundsService {
     params.set('status', '');
     params.set('assignedTo', '');
     params.set('dueDate', '');
-
+    params.set('plant', plantId);
     return this.appService
       ._getResp(
         environment.operatorRoundsApiUrl,

@@ -513,6 +513,13 @@ export class PlansComponent implements OnInit, OnDestroy {
     this.planCategory = new FormControl('all');
     this.fetchPlans$.next({} as TableEvent);
     let filterJson = [];
+    this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
+      tap(({ permissions = [], plantId = null }) => {
+        this.plantService.setUserPlantIds(plantId);
+        this.filter.plant = plantId;
+        this.prepareMenuActions(permissions);
+      })
+    );
     this.filterData$ = combineLatest([
       this.users$,
       this.operatorRoundsService.getPlanFilter().pipe(
@@ -520,7 +527,9 @@ export class PlansComponent implements OnInit, OnDestroy {
           filterJson = res;
         })
       ),
-      this.operatorRoundsService.fetchAllPlansList$()
+      this.operatorRoundsService.fetchAllPlansList$({
+        plantId: this.plantService.getUserPlantIds()
+      })
     ]).pipe(
       tap(([, , plansList]) => {
         const objectKeys = Object.keys(plansList);
@@ -560,10 +569,6 @@ export class PlansComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
-
-    this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
-      tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
-    );
 
     const roundPlanScheduleConfigurations$ = this.rpscService
       .fetchRoundPlanScheduleConfigurations$()
@@ -1387,7 +1392,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   resetFilter(): void {
     this.isPopoverOpen = false;
     this.filter = {
-      plant: '',
+      plant: this.plantService.getUserPlantIds(),
       schedule: '',
       assignedToDisplay: '',
       scheduledAt: '',
