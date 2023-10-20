@@ -317,6 +317,8 @@ export class LocationsListComponent implements OnInit, OnDestroy {
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [], plantId }) => {
         this.currentUserPlantId = plantId;
+        this.plantsService.setUserPlantIds(plantId);
+        this.filter.plant = plantId;
         this.prepareMenuActions(permissions);
       })
     );
@@ -437,7 +439,7 @@ export class LocationsListComponent implements OnInit, OnDestroy {
     this.isLoading$.next(true);
     this.isPopoverOpen = false;
     this.filter = {
-      plant: ''
+      plant: this.plantsService.getUserPlantIds()
     };
     this.locationService.fetchLocations$.next({ data: 'load' });
   }
