@@ -438,7 +438,9 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
 
   onCancel(): void {
     this.observations
-      .getObservationChartCounts$(this.moduleName)
+      .getObservationChartCounts$(this.moduleName, {
+        plant: this.plantService.getUserPlantIds()
+      })
       .subscribe(() => {
         this.dialogRef.close({
           data: {

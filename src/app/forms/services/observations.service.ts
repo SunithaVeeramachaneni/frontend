@@ -127,9 +127,16 @@ export class ObservationsService {
       );
   }
 
-  getObservationChartCounts$(param) {
+  getObservationChartCounts$(param, { plant }) {
     return this.appService
-      ._getResp(environment.operatorRoundsApiUrl, `${param}/chart-data`)
+      ._getResp(
+        environment.operatorRoundsApiUrl,
+        `${param}/chart-data`,
+        { displayToast: false, failureResponse: {} },
+        {
+          plant
+        }
+      )
       .pipe(map((result) => this.observationChartCounts$.next(result)));
   }
 
@@ -583,8 +590,7 @@ export class ObservationsService {
           },
           condition: true
         },
-        dueDate:
-          item?.DUEDATE,
+        dueDate: item?.DUEDATE,
         title: item.TITLE,
         description: item.DESCRIPTION,
         location,

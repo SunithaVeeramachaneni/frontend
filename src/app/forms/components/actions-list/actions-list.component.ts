@@ -290,7 +290,8 @@ export class ActionsListComponent implements OnInit, OnDestroy {
     priority: '',
     status: '',
     dueDate: '',
-    assignedTo: ''
+    assignedTo: '',
+    userPlant: ''
   };
   plants = [];
   plantsIdNameMap: any = {};
@@ -334,7 +335,7 @@ export class ActionsListComponent implements OnInit, OnDestroy {
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [], plantId = null }) => {
         this.plantService.setUserPlantIds(plantId);
-        this.filter.plant = plantId;
+        this.filter.userPlant = plantId;
         this.prepareMenuActions(permissions);
       })
     );
@@ -572,8 +573,8 @@ export class ActionsListComponent implements OnInit, OnDestroy {
         this.filter[item.column] = item.value ?? '';
       }
     }
-    if (!this.filter.plant) {
-      this.filter.plant = this.plantService.getUserPlantIds();
+    if (!this.filter.userPlant) {
+      this.filter.userPlant = this.plantService.getUserPlantIds();
     }
     this.observationsService.actionsNextToken = '';
     this.observationsService.fetchActions$.next({ data: 'load' });
@@ -589,7 +590,8 @@ export class ActionsListComponent implements OnInit, OnDestroy {
       title: '',
       location: '',
       asset: '',
-      plant: this.plantService.getUserPlantIds(),
+      userPlant: this.plantService.getUserPlantIds(),
+      plant: '',
       priority: '',
       status: '',
       dueDate: '',
