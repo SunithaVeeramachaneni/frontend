@@ -297,10 +297,6 @@ export class OperatorRoundsService {
       if (filterData) {
         queryParameters = { ...rest, plantId: filterData.plant };
       }
-      console.log(
-        '🚀 ~ file: operator-rounds.service.ts:303 ~ OperatorRoundsService ~ queryParameters:',
-        queryParameters
-      );
       const { displayToast, failureResponse = {} } = info;
       return this.appService
         ._getResp(
