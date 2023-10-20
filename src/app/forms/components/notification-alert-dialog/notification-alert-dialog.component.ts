@@ -13,6 +13,7 @@ import { NotificationIssuesListComponent } from '../notification-issues-list/not
 export class NotificationAlertDialogComponent implements OnInit {
   notificationCount = this.data?.notificationsCount;
   moduleName = this.data.moduleName;
+  entityType = this.data?.entityType;
 
   constructor(
     public dialogRef: MatDialogRef<NotificationAlertDialogComponent>,
@@ -23,7 +24,7 @@ export class NotificationAlertDialogComponent implements OnInit {
   ngOnInit(): void {}
 
   dialogClose(): void {
-    this.dialogRef.close();
+    this.dialogRef.close({ event: 'close' });
   }
   createNotification() {
     this.dialogRef.close({ createNotification: true });
