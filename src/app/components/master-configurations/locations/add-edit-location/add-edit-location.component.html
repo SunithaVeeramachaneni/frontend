@@ -197,7 +197,9 @@
       mat-raised-button
       class="create-btn"
       type="submit"
-      [disabled]="locationForm.invalid && locationIdValidated"
+      [disabled]="
+        locationForm.invalid || (!locationForm.pristine && locationForm.pending)
+      "
       (click)="create()"
     >
       {{ locationButton }}
