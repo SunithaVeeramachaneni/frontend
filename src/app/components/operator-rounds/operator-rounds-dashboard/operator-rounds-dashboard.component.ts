@@ -426,8 +426,10 @@ export class OperatorRoundsDashboardComponent implements OnInit, OnDestroy {
     }
 
     for (let i = 0; i < this.widgets.length; i++) {
-      const imgData: any = await this.getWidgetImage(this.widgets[i].id);
-      bodyFormData.append('image', imgData);
+      if(!this.widgets[i]?.isTable) {
+        const imgData: any = await this.getWidgetImage(this.widgets[i].id);
+        bodyFormData.append('image', imgData);
+      }
     }
     const info: ErrorInfo = {
       displayToast: true,
