@@ -1162,7 +1162,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
         this.filter[item.column] = item.value;
       }
     }
-
+    if (!this.filter.plant) {
+      this.filter.plant = this.plantService.getUserPlantIds();
+    }
     this.nextToken = '';
     this.fetchRounds$.next({ data: 'load' });
   }

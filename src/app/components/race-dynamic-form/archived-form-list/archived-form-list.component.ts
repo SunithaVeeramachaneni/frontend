@@ -432,6 +432,9 @@ export class ArchivedFormListComponent implements OnInit, OnDestroy {
         this.filter[item.column] = item.value;
       }
     }
+    if (!this.filter.plant) {
+      this.filter.plant = this.plantService.getUserPlantIds();
+    }
     this.nextToken = '';
     this.fetchForms$.next({ data: 'load' });
   }

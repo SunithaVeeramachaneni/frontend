@@ -572,6 +572,9 @@ export class ActionsListComponent implements OnInit, OnDestroy {
         this.filter[item.column] = item.value ?? '';
       }
     }
+    if (!this.filter.plant) {
+      this.filter.plant = this.plantService.getUserPlantIds();
+    }
     this.observationsService.actionsNextToken = '';
     this.observationsService.fetchActions$.next({ data: 'load' });
   }

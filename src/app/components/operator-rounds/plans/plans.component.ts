@@ -1385,6 +1385,9 @@ export class PlansComponent implements OnInit, OnDestroy {
         }
       }
     }
+    if (!this.filter.plant) {
+      this.filter.plant = this.plantService.getUserPlantIds();
+    }
     this.nextToken = '';
     this.fetchPlans$.next({ data: 'load' });
   }

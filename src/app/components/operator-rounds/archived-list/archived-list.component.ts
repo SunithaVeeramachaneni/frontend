@@ -458,6 +458,9 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
         this.filter[item.column] = this.plantsIdNameMap[item.value];
       }
     }
+    if (!this.filter.plant) {
+      this.filter.plant = this.plantService.getUserPlantIds();
+    }
     this.nextToken = '';
     this.fetchForms$.next({ data: 'load' });
   }

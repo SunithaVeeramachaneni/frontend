@@ -673,6 +673,9 @@ export class AssetsListComponent implements OnInit, OnDestroy {
         this.filter[item.column] = plantsID;
       }
     }
+    if (!this.filter.plant) {
+      this.filter.plant = this.plantsService.getUserPlantIds();
+    }
     this.nextToken = '';
     this.assetService.fetchAssets$.next({ data: 'load' });
   }

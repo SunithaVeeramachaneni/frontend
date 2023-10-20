@@ -619,6 +619,9 @@ export class IssuesListComponent implements OnInit, OnDestroy {
         this.filter[item.column] = item.value ?? '';
       }
     }
+    if (!this.filter.plant) {
+      this.filter.plant = this.plantService.getUserPlantIds();
+    }
     this.observationsService.issuesNextToken = '';
     this.observationsService.fetchIssues$.next({ data: 'load' });
   }
