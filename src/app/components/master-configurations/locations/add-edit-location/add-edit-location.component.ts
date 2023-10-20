@@ -55,7 +55,6 @@ export class AddEditLocationComponent implements OnInit {
   @Input() set locationEditData(location) {
     this.locEditData = location?.locationData;
     if (!this.locEditData) {
-      this.locationIdValidated = true;
       this.locationStatus = 'add';
       this.locationTitle = 'Create Location';
       this.locationButton = 'Create';
@@ -75,7 +74,6 @@ export class AddEditLocationComponent implements OnInit {
         this.locationStatus = 'add';
         this.locationTitle = 'Create Location';
         this.locationButton = 'Create';
-        this.locationIdValidated = false;
         this.locationForm.get('locationId').enable();
       }
       const locdata = {
@@ -112,7 +110,6 @@ export class AddEditLocationComponent implements OnInit {
   allPlantsData;
 
   locationIdExists = false;
-  locationIdValidated = false;
   isCopy = false;
 
   private locEditData;
@@ -133,11 +130,9 @@ export class AddEditLocationComponent implements OnInit {
         distinctUntilChanged(),
         switchMap((value) => {
           this.locationIdExists = false;
-          this.locationIdValidated = false;
           return this.locationService.verifyLocationId$(value);
         }),
         map((response) => {
-          this.locationIdValidated = true;
           if (response.alreadyExists) {
             this.locationIdExists = true;
           } else {

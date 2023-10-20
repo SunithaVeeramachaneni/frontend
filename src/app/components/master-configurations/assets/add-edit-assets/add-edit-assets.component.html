@@ -132,11 +132,7 @@
         </mat-form-field>
       </p>
       <p class="m-0 select-field">
-        <mat-form-field
-          appearance="outline"
-          class="plant-input-field"
-          class="width-100"
-        >
+        <mat-form-field appearance="outline" class="width-100">
           <mat-label
             id="addEditAssetsPlant"
             translate="plantMandatory"
@@ -194,9 +190,9 @@
           </mat-radio-button>
         </mat-radio-group>
       </p>
-      <p class="m-0">
+      <p class="m-0 select-field">
         <mat-form-field appearance="outline" class="width-100 m-b-10">
-          <mat-label translate="parent"></mat-label>
+          <mat-label translate="parentMandatory"></mat-label>
           <mat-select
             formControlName="parentId"
             (valueChange)="onSelectLocation($event)"
@@ -223,6 +219,19 @@
               </mat-option>
             </div>
           </mat-select>
+          <mat-error
+            id="addEditAssetsParentError"
+            *ngIf="processValidationErrors('parentId')"
+            class="m-t-5 error-fields"
+          >
+            {{
+              errors.parentId.name
+                | translate
+                  : {
+                      name: 'parent' | translate
+                    }
+            }}
+          </mat-error>
         </mat-form-field>
       </p>
     </div>
@@ -241,7 +250,9 @@
       mat-raised-button
       class="create-btn"
       type="submit"
-      [disabled]="assetForm.invalid && assetIdValidated"
+      [disabled]="
+        assetForm.invalid || (!assetForm.pristine && assetForm.pending)
+      "
       (click)="create()"
     >
       {{ assetButton }}

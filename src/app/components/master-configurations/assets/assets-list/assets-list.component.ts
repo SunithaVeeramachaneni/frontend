@@ -315,6 +315,8 @@ export class AssetsListComponent implements OnInit, OnDestroy {
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [], plantId }) => {
         this.currentUserPlantId = plantId;
+        this.plantsService.setUserPlantIds(plantId);
+        this.filter.plant = plantId;
         this.prepareMenuActions(permissions);
       })
     );
@@ -663,6 +665,7 @@ export class AssetsListComponent implements OnInit, OnDestroy {
   }
 
   applyFilters(data: any) {
+    this.isLoading$.next(true);
     this.isPopoverOpen = false;
     for (const item of data) {
       if (item.column === 'plant') {
@@ -670,14 +673,18 @@ export class AssetsListComponent implements OnInit, OnDestroy {
         this.filter[item.column] = plantsID;
       }
     }
+    if (!this.filter.plant) {
+      this.filter.plant = this.plantsService.getUserPlantIds();
+    }
     this.nextToken = '';
     this.assetService.fetchAssets$.next({ data: 'load' });
   }
 
   clearFilters() {
+    this.isLoading$.next(true);
     this.isPopoverOpen = false;
     this.filter = {
-      plant: ''
+      plant: this.plantsService.getUserPlantIds()
     };
     this.assetService.fetchAssets$.next({ data: 'load' });
   }

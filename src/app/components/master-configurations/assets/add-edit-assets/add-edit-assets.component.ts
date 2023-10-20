@@ -67,7 +67,6 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
     this.assetEditData = asset?.assetData || null;
     if (this.assetEditData === null) {
       this.assetStatus = 'add';
-      this.assetIdValidated = true;
       this.assetTitle = 'Create Asset';
       this.assetButton = 'Create';
       this.assetImage = '';
@@ -84,7 +83,6 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
         this.assetStatus = 'add';
         this.assetTitle = 'Create Asset';
         this.assetButton = 'Create';
-        this.assetIdValidated = false;
         this.assetForm.get('assetsId').enable();
       }
       const assetData = {
@@ -135,7 +133,6 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
   allParentsData$: BehaviorSubject<any> = new BehaviorSubject<any>([]);
   allPlantsData;
   isCopy = false;
-  assetIdValidated = false;
   assetIdExists = false;
 
   private _allAssets;
@@ -157,11 +154,9 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
         distinctUntilChanged(),
         switchMap((value) => {
           this.assetIdExists = false;
-          this.assetIdValidated = false;
           return this.assetService.verifyAssetsId$(value);
         }),
         map((response) => {
-          this.assetIdValidated = true;
           if (response.alreadyExists) {
             this.assetIdExists = true;
           } else {
@@ -199,7 +194,7 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
       model: new FormControl('', [WhiteSpaceValidator.trimWhiteSpace]),
       description: new FormControl('', [WhiteSpaceValidator.trimWhiteSpace]),
       parentType: 'location',
-      parentId: '',
+      parentId: ['', Validators.required],
       locationId: '',
       plantsID: new FormControl('', [Validators.required])
     });

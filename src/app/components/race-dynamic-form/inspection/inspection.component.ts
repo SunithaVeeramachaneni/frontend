@@ -452,6 +452,13 @@ export class InspectionComponent implements OnInit, OnDestroy {
     this.fetchInspection$.next({} as TableEvent);
     this.searchForm = new FormControl('');
     let filterJson = [];
+    this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
+      tap(({ permissions = [], plantId = null }) => {
+        this.plantService.setUserPlantIds(plantId);
+        this.filter.plant = plantId;
+        this.prepareMenuActions(permissions);
+      })
+    );
     this.filterData$ = combineLatest([
       this.users$,
       this.raceDynamicFormService.getInspectionFilter().pipe(
@@ -464,7 +471,9 @@ export class InspectionComponent implements OnInit, OnDestroy {
           }
         })
       ),
-      this.raceDynamicFormService.fetchAllInspections$(),
+      this.raceDynamicFormService.fetchAllInspections$({
+        plantId: this.plantService.getUserPlantIds()
+      }),
       this.plantService.fetchLoggedInUserPlants$().pipe(
         tap((plants) => {
           plants.forEach((plant) => {
@@ -521,9 +530,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
-    this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
-      tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
-    );
 
     const inspectionsOnLoadSearch$ = this.fetchInspection$.pipe(
       filter(({ data }) => data === 'load' || data === 'search'),
@@ -969,6 +975,9 @@ export class InspectionComponent implements OnInit, OnDestroy {
         this.filter[item.column] = item.value;
       }
     }
+    if (!this.filter.plant) {
+      this.filter.plant = this.plantService.getUserPlantIds();
+    }
     this.nextToken = '';
     this.fetchInspection$.next({ data: 'load' });
   }
@@ -980,7 +989,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
       schedule: '',
       assignedToDisplay: '',
       dueDate: '',
-      plant: '',
+      plant: this.plantService.getUserPlantIds(),
       shiftId: '',
       scheduledAt: ''
     };

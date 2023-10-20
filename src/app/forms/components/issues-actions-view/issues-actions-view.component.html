@@ -721,15 +721,22 @@
               >
                 {{ 'create' | translate }}
               </button>
-              <div
-                *ngIf="isNotificationNumber(data.notificationInfo)"
-                id="issuesActionsViewDetailRound"
-                class="values round-title"
-                (click)="openNotificationIssues()"
-              >
+              <div *ngIf="isNotificationNumber(data.notificationInfo)">
+                <div
+                  *ngIf="!fromNotificationsList"
+                  id="issuesActionsViewDetailRound"
+                  class="values round-title"
+                  (click)="openNotificationIssues()"
+                >
+                  <span
+                    >+{{ notificationsCount - 1 }} more Related
+                    Notifications</span
+                  >
+                </div>
                 <span
-                  >+{{ notificationsCount - 1 }} more Related
-                  Notifications</span
+                  id="issuesActionsViewNotifInfo"
+                  *ngIf="fromNotificationsList"
+                  >{{ data.notificationInfo }}</span
                 >
               </div>
             </div>

@@ -167,7 +167,7 @@ export class ReportConfigurationComponent implements OnInit {
     private breadcrumbService: BreadcrumbService,
     private headerService: HeaderService,
     private loginService: LoginService,
-    private usersService: UsersService,
+    private usersService: UsersService
   ) {}
 
   ngOnInit() {
@@ -249,9 +249,12 @@ export class ReportConfigurationComponent implements OnInit {
     ]).pipe(
       map(([loadFilter, scroll, usersList]) => {
         usersList.forEach((user) => {
-          this.userEmailToName[user.email] = `${user.firstName} ${user.lastName}`;
-          this.userNameToEmail[`${user.firstName} ${user.lastName}`] = user.email;
-        })
+          this.userEmailToName[
+            user.email
+          ] = `${user.firstName} ${user.lastName}`;
+          this.userNameToEmail[`${user.firstName} ${user.lastName}`] =
+            user.email;
+        });
         if (this.skip === 0 && !this.filtersApplied) {
           const { report } = loadFilter;
           this.reportConfiguration = report
@@ -299,7 +302,10 @@ export class ReportConfigurationComponent implements OnInit {
         this.skip = loadFilter.reportData
           ? loadFilter.reportData.length
           : this.skip;
-        this.reportConfigService.formatReportData(loadFilter.reportData, this.userEmailToName);
+        this.reportConfigService.formatReportData(
+          loadFilter.reportData,
+          this.userEmailToName
+        );
         this.dataSource = new MatTableDataSource(loadFilter.reportData);
         return loadFilter;
       })
@@ -572,14 +578,19 @@ export class ReportConfigurationComponent implements OnInit {
       acc[val.id] = val;
       return acc;
     }, {});
-    this.reportConfiguration.tableDetails = tableDetails.map((table) => {
-      const columns = table.columns.map((column) => {
-        const {
-          order = null,
-          visible = false,
-          sticky = false
-        } = columnsObj[column.name];
-        return { ...column, visible, order, sticky };
+    this.reportConfiguration.tableDetails = tableDetails?.map((table) => {
+      const columns = table?.columns?.map((column) => {
+        if (columnsObj[column?.name]) {
+          const {
+            order = null,
+            visible = false,
+            sticky = false
+          } = columnsObj[column.name];
+          return { ...column, visible, order, sticky };
+        }
+        return {
+          ...column
+        };
       });
       return { ...table, columns };
     });
@@ -721,21 +732,27 @@ export class ReportConfigurationComponent implements OnInit {
           ...filter,
           filters: filtersArray
         };
-      }
-      else {
-        const ids = new Set(['assignedTo', 'raisedBy', 'roundSubmittedBy', 'taskCompletedBy']);
-        if(ids.has(filter.column)) {
-          const filtersArray = filter.filters.map((f) =>
-            f = {
-              ...f,
-              operand: this.userNameToEmail[f.operand] || f.operand.replace(' ', '.')
-            }
-          )
+      } else {
+        const ids = new Set([
+          'assignedTo',
+          'raisedBy',
+          'roundSubmittedBy',
+          'taskCompletedBy'
+        ]);
+        if (ids.has(filter.column)) {
+          const filtersArray = filter.filters.map(
+            (f) =>
+              (f = {
+                ...f,
+                operand:
+                  this.userNameToEmail[f.operand] || f.operand.replace(' ', '.')
+              })
+          );
           return {
             ...filter,
             filters: filtersArray
           };
-        }else {
+        } else {
           return filter;
         }
       }

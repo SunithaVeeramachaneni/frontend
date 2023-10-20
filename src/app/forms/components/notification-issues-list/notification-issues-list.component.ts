@@ -15,6 +15,7 @@ export class NotificationIssuesListComponent implements OnInit {
   entityId = this.data.entityId;
   entityType = this.data.entityType;
   entityName = this.data?.locationAsset;
+  fromNotificationsList = true;
   constructor(
     public usersService: UsersService,
     public dialogRef: MatDialogRef<NotificationIssuesListComponent>,
