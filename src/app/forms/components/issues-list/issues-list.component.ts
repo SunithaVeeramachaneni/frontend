@@ -81,6 +81,7 @@ export class IssuesListComponent implements OnInit, OnDestroy {
   @Input() isNotificationAlert;
   @Input() entityId;
   @Input() entityType;
+  @Input() fromNotificationsList;
   assigneeDetails: AssigneeDetails;
   partialColumns: Partial<Column>[] = [
     {
@@ -533,7 +534,8 @@ export class IssuesListComponent implements OnInit, OnDestroy {
         allData: this.initial?.data || [],
         next: this.observationsService.issuesNextToken,
         limit: this.limit,
-        moduleName: this.moduleName
+        moduleName: this.moduleName,
+        fromNotificationsList: this.fromNotificationsList
       },
       maxWidth: '100vw',
       maxHeight: '100vh',

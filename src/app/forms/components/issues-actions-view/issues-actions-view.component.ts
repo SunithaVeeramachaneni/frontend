@@ -121,6 +121,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   isLogHistoryDataLoaded$: Observable<any>;
   locationAsset: string;
   module = roundObservations;
+  fromNotificationsList = this.data?.fromNotificationsList;
   private totalCount = 0;
   private allData = [];
   private amplifySubscription$: Subscription[] = [];
@@ -605,7 +606,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
           entityId: this.entityId,
           entityType: this.entityType,
           notificationsCount: this.notificationsCount,
-          locationAssest: this.locationAsset
+          locationAsset: this.locationAsset
         }
       }
     );
@@ -907,6 +908,9 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
         }
       }
     );
+    notificationsAlertRef.afterClosed().subscribe(() => {
+      this.getObservations();
+    });
   }
   getObservations() {
     const issuesObj = {
@@ -916,6 +920,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
       type: 'issue',
       moduleName: this.moduleName
     };
+    this.notificationsArrived = false;
     this.observations
       .getObservations$(issuesObj, {
         entityId: this.entityId,
