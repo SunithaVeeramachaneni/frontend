@@ -331,3 +331,14 @@
   position: relative;
   top: -2px;
 }
+.notification-count {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: end;
+  height: 40px;
+}
+.notification-issues-route {
+  position: relative;
+  left: 22px;
+}

@@ -425,6 +425,9 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
               (d) => d?.id === obj?.oldId
             );
             const newIdx = oldIdx !== -1 ? oldIdx : 0;
+            const plantData: any = Object.entries(this.plantsIdNameMap).filter(
+              ([value, id]) => id === obj?.plantId
+            )[0][0];
             initial.data.splice(newIdx, 0, {
               ...obj,
               publishedDate: '',
@@ -437,7 +440,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
                 },
                 condition: true
               },
-              plant: this.plantsObject[obj.plantId]
+              plant: plantData
             });
             form.action = 'add';
             this.triggerCountUpdate = true;
