@@ -162,7 +162,8 @@ export class RoundPlanHeaderConfigurationComponent
       startWith(null),
       map((tag: string | null) =>
         tag ? this.filter(tag) : this.allTags.slice()
-      )
+      ),
+      map((tagsArray) => tagsArray.filter((tag) => !!tag))
     );
     this.headerDataForm = this.fb.group({
       name: [
