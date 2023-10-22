@@ -338,13 +338,13 @@
         formControlName="plantId"
       >
         <mat-select-trigger id="addEditUserGroupsPlantName">
-          {{ plant?.value[0]?.plantId }}
+          {{ getPlantId() }}
           <span
             id="addEditUserGroupLength"
-            *ngIf="plant.value?.length > 1"
+            *ngIf="plant?.value?.length > 1"
             class="example-additional-selection"
           >
-            ( + {{ plant.value.length - 1 }} more )
+            ( + {{ plant?.value?.length - 1 }} more )
           </span>
         </mat-select-trigger>
         <mat-option

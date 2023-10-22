@@ -637,6 +637,13 @@ export class RoundsComponent implements OnInit, OnDestroy {
     this.fetchRounds$.next({} as TableEvent);
     this.searchForm = new FormControl('');
     let filterJson = [];
+    this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
+      tap(({ permissions = [], plantId = null }) => {
+        this.plantService.setUserPlantIds(plantId);
+        this.filter.plant = plantId;
+        this.prepareMenuActions(permissions);
+      })
+    );
     this.filterData$ = combineLatest([
       this.users$,
       this.operatorRoundsService.getRoundFilter().pipe(
@@ -649,10 +656,22 @@ export class RoundsComponent implements OnInit, OnDestroy {
           }
         })
       ),
-      this.operatorRoundsService.fetchAllRounds$()
+      this.operatorRoundsService.fetchAllRounds$({
+        plantId: this.plantService.getUserPlantIds()
+      }),
+      this.plantService.fetchLoggedInUserPlants$()
     ]).pipe(
-      tap(([, , formsList]) => {
-        this.isLoading$.next(false);
+      tap(([, , formsList, plants]) => {
+        plants.forEach((plant) => {
+          this.plantsIdNameMap[`${plant.plantId} - ${plant.name}`] = plant.id;
+        });
+        for (const item of filterJson) {
+          if (item.column === 'plant') {
+            item.items = plants
+              .map((plant) => `${plant.plantId} - ${plant.name}`)
+              .sort();
+          }
+        }
         const objectKeys = Object.keys(formsList);
         if (objectKeys.length > 0) {
           const uniqueSchedules = formsList
@@ -666,23 +685,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
               }
             });
           }
-
-          this.plants = formsList
-            .map((item) => {
-              if (item.plant) {
-                this.plantsIdNameMap[item.plant] = item.plantId;
-                return item.plant;
-              }
-              return '';
-            })
-            .filter((value, index, self) => self.indexOf(value) === index)
-            .sort();
-
           for (const item of filterJson) {
             if (item.column === 'assignedToDisplay') {
               item.items = this.assignedTo.sort();
-            } else if (item['column'] === 'plant') {
-              item.items = this.plants;
             }
             if (item.column === 'schedule') {
               item.items = this.schedules.sort();
@@ -709,9 +714,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
-    this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
-      tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
-    );
 
     const roundsOnLoadSearch$ = this.fetchRounds$.pipe(
       filter(({ data }) => data === 'load' || data === 'search'),
@@ -747,19 +749,12 @@ export class RoundsComponent implements OnInit, OnDestroy {
       this.userGroups$,
       this.shiftSevice.fetchAllShifts$().pipe(
         tap((shifts) => {
-          shifts?.items?.map((shift) => {
-            this.shiftObj[shift.id] = shift;
-            this.shiftNameMap[shift.id] = shift.name;
-          });
-        })
-      ),
-      this.plantService.fetchAllPlants$().pipe(
-        tap((plants) => {
-          plants?.items?.map((plant) => {
-            if (this.commonService.isJson(plant.shifts) && plant.shifts) {
-              this.plantShiftObj[plant.id] = JSON.parse(plant.shifts);
-            }
-          });
+          shifts?.items
+            ?.filter((s) => s?.isActive)
+            ?.map((shift) => {
+              this.shiftObj[shift.id] = shift;
+              this.shiftNameMap[shift.id] = shift.name;
+            });
         })
       )
     ]).pipe(
@@ -1167,7 +1162,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
         this.filter[item.column] = item.value;
       }
     }
-
+    if (!this.filter.plant) {
+      this.filter.plant = this.plantService.getUserPlantIds();
+    }
     this.nextToken = '';
     this.fetchRounds$.next({ data: 'load' });
   }
@@ -1179,7 +1176,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       schedule: '',
       assignedToDisplay: '',
       dueDate: '',
-      plant: '',
+      plant: this.plantService.getUserPlantIds(),
       scheduledAt: '',
       shiftId: ''
     };

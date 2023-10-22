@@ -9,9 +9,12 @@ import {
   ChangeDetectionStrategy,
   OnDestroy,
   ViewChild,
-  ElementRef
+  ElementRef,
+  ChangeDetectorRef
 } from '@angular/core';
 import {
+  AbstractControl,
+  AsyncValidatorFn,
   FormBuilder,
   FormControl,
   FormGroup,
@@ -21,7 +24,14 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { ValidationError } from 'src/app/interfaces';
 import { AssetsService } from '../services/assets.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
-import { takeUntil } from 'rxjs/operators';
+import {
+  delay,
+  distinctUntilChanged,
+  first,
+  map,
+  switchMap,
+  takeUntil
+} from 'rxjs/operators';
 import { FormValidationUtil } from 'src/app/shared/utils/formValidationUtil';
 
 @Component({
@@ -62,11 +72,19 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
       this.assetImage = '';
       this.assetForm?.reset();
       this.assetForm?.get('parentType').setValue('location');
+      this.assetForm?.get('assetsId').enable();
     } else {
+      this.isCopy = asset?.isCopy;
       this.assetStatus = 'edit';
       this.assetTitle = 'Edit Asset';
       this.assetButton = 'Update';
       this.assetImage = this.assetEditData.image;
+      if (this.isCopy) {
+        this.assetStatus = 'add';
+        this.assetTitle = 'Create Asset';
+        this.assetButton = 'Create';
+        this.assetForm.get('assetsId').enable();
+      }
       const assetData = {
         id: this.assetEditData?.id,
         image: this.assetEditData?.image,
@@ -80,6 +98,9 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
       };
       this.parentType = this.assetEditData.parentType?.toLowerCase();
       this.assetForm?.patchValue(assetData);
+      if (!this.isCopy) {
+        this.assetForm.get('assetsId').disable();
+      }
     }
     if (
       this.assetEditData === null ||
@@ -111,6 +132,9 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
   allParentsData;
   allParentsData$: BehaviorSubject<any> = new BehaviorSubject<any>([]);
   allPlantsData;
+  isCopy = false;
+  assetIdExists = false;
+
   private _allAssets;
   private _allLocations;
   private onDestroy$ = new Subject();
@@ -118,8 +142,37 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private assetService: AssetsService,
-    private formValidationUtil: FormValidationUtil
+    private formValidationUtil: FormValidationUtil,
+    private cdfr: ChangeDetectorRef
   ) {}
+
+  checkAssetsIdExists(): AsyncValidatorFn {
+    return (control: AbstractControl): Observable<ValidationError | null> => {
+      control.markAsTouched();
+      return control.valueChanges.pipe(
+        delay(500),
+        distinctUntilChanged(),
+        switchMap((value) => {
+          this.assetIdExists = false;
+          return this.assetService.verifyAssetsId$(value);
+        }),
+        map((response) => {
+          if (response.alreadyExists) {
+            this.assetIdExists = true;
+          } else {
+            this.assetIdExists = false;
+          }
+          this.cdfr.markForCheck();
+          return this.assetStatus !== 'edit'
+            ? !this.assetIdExists
+              ? null
+              : { alreadyExists: true }
+            : null;
+        }),
+        first()
+      );
+    };
+  }
 
   ngOnInit(): void {
     this.assetForm = this.fb.group({
@@ -129,15 +182,19 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
         WhiteSpaceValidator.whiteSpace,
         WhiteSpaceValidator.trimWhiteSpace
       ]),
-      assetsId: new FormControl('', [
-        Validators.required,
-        WhiteSpaceValidator.whiteSpace,
-        WhiteSpaceValidator.trimWhiteSpace
-      ]),
+      assetsId: new FormControl(
+        '',
+        [
+          Validators.required,
+          WhiteSpaceValidator.whiteSpace,
+          WhiteSpaceValidator.trimWhiteSpace
+        ],
+        [this.checkAssetsIdExists()]
+      ),
       model: new FormControl('', [WhiteSpaceValidator.trimWhiteSpace]),
       description: new FormControl('', [WhiteSpaceValidator.trimWhiteSpace]),
       parentType: 'location',
-      parentId: '',
+      parentId: ['', Validators.required],
       locationId: '',
       plantsID: new FormControl('', [Validators.required])
     });

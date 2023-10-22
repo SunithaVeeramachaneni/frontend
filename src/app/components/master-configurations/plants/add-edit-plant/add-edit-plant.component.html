@@ -342,7 +342,9 @@
       mat-raised-button
       class="create-btn"
       type="submit"
-      [disabled]="plantForm.invalid"
+      [disabled]="
+        plantForm.invalid || (!plantForm.pristine && plantForm.pending)
+      "
       (click)="create()"
     >
       {{ plantButton }}

@@ -45,7 +45,7 @@ import {
   ValidatorFn,
   Validators
 } from '@angular/forms';
-import { ValidationError } from 'src/app/interfaces';
+import { FormMetadata, ValidationError } from 'src/app/interfaces';
 import { LoginService } from '../../login/services/login.service';
 import { Store } from '@ngrx/store';
 import { State, getFormMetadata } from 'src/app/forms/state';
@@ -130,6 +130,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   filteredValues = [];
   currentValuesArray = [];
   additionalDetailsMasterData = {};
+  formMetadata: FormMetadata;
   private destroy$ = new Subject();
 
   constructor(
@@ -177,7 +178,8 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
       startWith(null),
       map((tag: string | null) =>
         tag ? this.filter(tag) : this.allTags.slice()
-      )
+      ),
+      map((tagsArray) => tagsArray.filter((tag) => !!tag))
     );
     this.headerDataForm = this.fb.group({
       name: [
@@ -215,6 +217,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     this.formMetaDataSubscription = this.store
       .select(getFormMetadata)
       .subscribe((res) => {
+        this.formMetadata = res;
         this.headerDataForm.patchValue({
           name: res.name,
           description: res.description ? res.description : '',
@@ -311,8 +314,8 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     }
   }
   getAllPlantsData() {
-    this.plantService.fetchAllPlants$().subscribe((plants) => {
-      this.allPlantsData = plants.items || [];
+    this.plantService.fetchLoggedInUserPlants$().subscribe((plants) => {
+      this.allPlantsData = plants || [];
       this.plantInformation = this.allPlantsData;
       const plantId = this.data?.formData?.plantId;
       if (plantId !== undefined) {
@@ -641,7 +644,11 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
             };
             if (resizedPdfSize <= maxSize) {
               this.rdfService
-                .uploadAttachments$({ file: pdf })
+                .uploadAttachments$({
+                  file: pdf,
+                  plantId: this.formMetadata?.plantId,
+                  objectId: this.formMetadata?.id
+                })
                 .pipe(
                   tap((response) => {
                     if (response) {
@@ -674,7 +681,11 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
             };
             if (resizedImageSize <= maxSize) {
               this.rdfService
-                .uploadAttachments$({ file: image })
+                .uploadAttachments$({
+                  file: image,
+                  plantId: this.formMetadata?.plantId,
+                  objectId: this.formMetadata?.id
+                })
                 .pipe(
                   tap((response) => {
                     if (response) {
@@ -1040,8 +1051,8 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     const searchValue = event.target.value;
     const parentValues = this.additionalDetailsMasterData[label].value;
     if (searchValue) {
-      this.currentValuesArray = parentValues.filter(
-        (value) => value.toLowerCase().includes(searchValue.toLowerCase())
+      this.currentValuesArray = parentValues.filter((value) =>
+        value.toLowerCase().includes(searchValue.toLowerCase())
       );
     } else {
       this.currentValuesArray = [...parentValues];

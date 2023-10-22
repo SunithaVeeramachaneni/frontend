@@ -46,6 +46,7 @@ import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { LoginService } from '../../login/services/login.service';
+import { PlantService } from '../../master-configurations/plants/services/plant.service';
 
 interface FormTableUpdate {
   action: 'restore' | 'delete' | null;
@@ -220,7 +221,8 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
     private readonly operatorRoundsService: OperatorRoundsService,
     private commonService: CommonService,
     private headerService: HeaderService,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private plantService: PlantService
   ) {}
 
   ngOnInit(): void {
@@ -242,13 +244,16 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
         tap(() => this.fetchForms$.next({ data: 'search' }))
       )
       .subscribe(() => this.isLoading$.next(true));
+    this.getFilter();
     this.getDisplayedForms();
     this.configOptions.allColumns = this.columns;
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
-      tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
+      tap(({ permissions = [], plantId = null }) => {
+        this.plantService.setUserPlantIds(plantId);
+        this.filter.plant = plantId;
+        this.prepareMenuActions(permissions);
+      })
     );
-    this.getFilter();
-    this.getAllArchivedRoundPlans();
     this.archivedFormsListCount$ = combineLatest([
       this.archivedFormsListCountRaw$,
       this.archivedFormsListCountUpdate$
@@ -419,47 +424,42 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
     }
   };
 
-  getAllArchivedRoundPlans() {
-    this.operatorRoundsService
-      .fetchAllArchivedPlansList$()
-      .subscribe((plansList) => {
-        const objectKeys = Object.keys(plansList);
-
-        if (objectKeys.length > 0) {
-          this.plants = plansList.rows
-            .map((item) => {
-              if (item?.plant) {
-                this.plantsIdNameMap[item?.plant?.plantId] = item?.plant?.id;
-                return `${item?.plant?.plantId} - ${item?.plant?.name}`;
-              }
-              return '';
-            })
-            .filter((value, index, self) => self.indexOf(value) === index)
-            .sort();
-
-          for (const item of this.filterJson) {
-            if (item.column === 'plant') {
-              item.items = this.plants;
-            }
-          }
-        }
-      });
-  }
-
   getFilter() {
-    this.operatorRoundsService.getArchivedFilter().subscribe((res) => {
-      this.filterJson = res;
-    });
+    this.operatorRoundsService
+      .getArchivedFilter()
+      .pipe(
+        switchMap((res: any) => {
+          this.filterJson = res;
+          return this.plantService.fetchLoggedInUserPlants$().pipe(
+            tap((plants) => {
+              this.plants = plants
+                .map((plant) => {
+                  this.plantsIdNameMap[`${plant.plantId} - ${plant.name}`] =
+                    plant.id;
+                  return `${plant.plantId} - ${plant.name}`;
+                })
+                .sort();
+              for (const item of this.filterJson) {
+                if (item.column === 'plant') {
+                  item.items = this.plants;
+                }
+              }
+            })
+          );
+        })
+      )
+      .subscribe();
   }
 
   applyFilters(data: any) {
     this.isPopoverOpen = false;
     for (const item of data) {
       if (item.column === 'plant') {
-        const id = item.value.split('-')[0].trim();
-        const plantId = this.plantsIdNameMap[id];
-        this.filter[item.column] = plantId;
+        this.filter[item.column] = this.plantsIdNameMap[item.value];
       }
+    }
+    if (!this.filter.plant) {
+      this.filter.plant = this.plantService.getUserPlantIds();
     }
     this.nextToken = '';
     this.fetchForms$.next({ data: 'load' });
@@ -468,7 +468,7 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
   resetFilter() {
     this.isPopoverOpen = false;
     this.filter = {
-      plant: ''
+      plant: this.plantService.getUserPlantIds()
     };
     this.nextToken = '';
     this.fetchForms$.next({ data: 'load' });

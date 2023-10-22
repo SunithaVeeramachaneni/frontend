@@ -371,7 +371,11 @@ export class FormsComponent implements OnInit, OnDestroy {
       .subscribe();
 
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
-      tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
+      tap(({ permissions = [], plantId = null }) => {
+        this.plantService.setUserPlantIds(plantId);
+        this.filter.plant = plantId;
+        this.prepareMenuActions(permissions);
+      })
     );
 
     const formScheduleConfigurations$ = this.formScheduleConfigurationService
@@ -414,15 +418,15 @@ export class FormsComponent implements OnInit, OnDestroy {
       onScrollForms$,
       formScheduleConfigurations$,
       this.shiftService.fetchAllShifts$(),
-      this.plantService.fetchAllPlants$().pipe(
+      this.plantService.fetchLoggedInUserPlants$().pipe(
         tap((plants) => {
-          plants.items.forEach((plant) => {
+          plants.forEach((plant) => {
             this.plantsIdNameMap[`${plant.plantId} - ${plant.name}`] = plant.id;
           });
 
           for (const item of filterJson) {
             if (item.column === 'plant') {
-              item.items = plants.items
+              item.items = plants
                 .map((plant) => `${plant.plantId} - ${plant.name}`)
                 .sort();
             }
@@ -1092,13 +1096,16 @@ export class FormsComponent implements OnInit, OnDestroy {
         this.filter[item.column] = item.value ?? '';
       }
     }
+    if (!this.filter.plant) {
+      this.filter.plant = this.plantService.getUserPlantIds();
+    }
     this.nextToken = '';
     this.fetchForms$.next({ data: 'load' });
   }
   clearFilters(): void {
     this.isPopoverOpen = false;
     this.filter = {
-      plant: '',
+      plant: this.plantService.getUserPlantIds(),
       schedule: '',
       assignedToDisplay: '',
       scheduledAt: '',

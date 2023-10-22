@@ -45,8 +45,12 @@ import {
 import {
   dateTimeFormat2,
   dateFormat2,
-  timeFormat
+  timeFormat,
+  defaultLimit,
+  roundObservations
 } from 'src/app/app.constants';
+import { NotificationAlertDialogComponent } from '../notification-alert-dialog/notification-alert-dialog.component';
+import { NotificationIssuesListComponent } from '../notification-issues-list/notification-issues-list.component';
 
 @Directive({
   selector: '[appScrollToBottom]'
@@ -109,6 +113,15 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   moduleName: string;
   plantTimezoneMap: any;
   plantMapSubscription: Subscription;
+  issuesWithNotifications = [];
+  entityId: string;
+  entityType: string;
+  notificationsCount = 0;
+  notificationsArrived = false;
+  isLogHistoryDataLoaded$: Observable<any>;
+  locationAsset: string;
+  module = roundObservations;
+  fromNotificationsList = this.data?.fromNotificationsList;
   private totalCount = 0;
   private allData = [];
   private amplifySubscription$: Subscription[] = [];
@@ -136,6 +149,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   ngOnInit(): void {
+    this.locationAsset = this.data?.locationAsset;
     this.plantMapSubscription =
       this.plantService.plantTimeZoneMapping$.subscribe(
         (data) => (this.plantTimezoneMap = data)
@@ -424,7 +438,9 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
 
   onCancel(): void {
     this.observations
-      .getObservationChartCounts$(this.moduleName)
+      .getObservationChartCounts$(this.moduleName, {
+        plant: this.plantService.getUserPlantIds()
+      })
       .subscribe(() => {
         this.dialogRef.close({
           data: {
@@ -442,6 +458,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
       this.data;
     const { field, value, checked } = event;
     let { previouslyAssignedTo = '' } = this.data;
+    let dueDateOrSubmittedDate = {};
 
     const updatedIssueData = this.updateIssueOrActionData(
       issueData,
@@ -457,17 +474,32 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
       },
       checked
     );
-    if (field === 'assignee') {
-      if (checked && previouslyAssignedTo?.includes(value)) {
-        previouslyAssignedTo = previouslyAssignedTo
-          .split(',')
-          .filter((email) => email !== value)
-          .join(',');
-      }
 
-      if (!checked) {
-        previouslyAssignedTo += previouslyAssignedTo ? `,${value}` : value;
-      }
+    switch (field) {
+      case 'assignee':
+        if (checked && previouslyAssignedTo?.includes(value)) {
+          previouslyAssignedTo = previouslyAssignedTo
+            .split(',')
+            .filter((email) => email !== value)
+            .join(',');
+        }
+
+        if (!checked) {
+          previouslyAssignedTo += previouslyAssignedTo ? `,${value}` : value;
+        }
+        break;
+      case 'dueDate':
+        dueDateOrSubmittedDate = { [field]: value };
+        break;
+
+      case 'status':
+        dueDateOrSubmittedDate = {
+          submittedDate: value === 'Resolved' ? new Date().toISOString() : ''
+        };
+        break;
+
+      default:
+      // do nothing
     }
 
     if (type === 'issue') {
@@ -492,7 +524,8 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
               [field.toUpperCase()]: value,
               assignmentType: checked ? 'add' : 'remove'
             })
-          }
+          },
+          ...dueDateOrSubmittedDate
         },
         type,
         this.moduleName
@@ -566,6 +599,26 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     return JSON.stringify(data);
   }
 
+  openNotificationAlertDialog() {
+    const notificationsAlertRef = this.dialog.open(
+      NotificationAlertDialogComponent,
+      {
+        data: {
+          moduleName: this.moduleName,
+          entityId: this.entityId,
+          entityType: this.entityType,
+          notificationsCount: this.notificationsCount,
+          locationAsset: this.locationAsset
+        }
+      }
+    );
+    notificationsAlertRef.afterClosed().subscribe((data) => {
+      if (data?.createNotification) {
+        this.createNotification();
+      }
+    });
+  }
+
   createNotification() {
     this.isCreateNotification = true;
     if (this.data.category !== this.placeholder) {
@@ -580,7 +633,11 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
             const { notificationInfo } = value;
             this.data.notificationInfo = notificationInfo;
           }
-          this.isCreateNotification = false;
+          if (this.moduleName === roundObservations) {
+            this.getObservations();
+          } else {
+            this.isCreateNotification = false;
+          }
         });
     } else {
       this.toastService.show({
@@ -592,7 +649,11 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   selectedAssigneeHandler({ user, checked }: SelectedAssignee) {
-    this.updateIssueOrAction({ field: 'assignee', value: user.email, checked });
+    this.updateIssueOrAction({
+      field: 'assignee',
+      value: user?.email,
+      checked
+    });
   }
 
   createIssueOrActionHistory() {
@@ -684,6 +745,11 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
         (a) => a?.id === previousRecord?.id
       );
       this.isPreviousEnabled = false;
+      this.entityId = previousRecord?.entityId;
+      this.entityType = previousRecord?.entityType;
+      this.locationAsset = previousRecord?.locationAsset;
+      this.notificationsCount = 0;
+      this.notificationsArrived = false;
       if (currentIdx !== -1 && this.allData[currentIdx - 1]) {
         this.isPreviousEnabled = true;
       }
@@ -722,6 +788,11 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
       const currentIdx = this.allData?.findIndex(
         (a) => a?.id === nextRecord?.id
       );
+      this.entityId = nextRecord?.entityId;
+      this.entityType = nextRecord?.entityType;
+      this.locationAsset = nextRecord?.locationAsset;
+      this.notificationsCount = 0;
+      this.notificationsArrived = false;
       this.isPreviousEnabled = true;
       this.isNextEnabled = false;
       if (currentIdx !== -1 && this.allData[currentIdx + 1]) {
@@ -816,6 +887,54 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     }
     this.attachmentsSubscriptionData = [];
   }
+  notificationCreateSelector() {
+    if (this.notificationsCount === 0) {
+      this.createNotification();
+    } else {
+      this.openNotificationAlertDialog();
+    }
+  }
+  openNotificationIssues() {
+    const notificationsAlertRef = this.dialog.open(
+      NotificationIssuesListComponent,
+      {
+        width: '100vw',
+        height: '100vh',
+        maxWidth: '100vw',
+        data: {
+          moduleName: this.moduleName,
+          entityId: this.entityId,
+          entityType: this.entityType,
+          notificationsCount: this.notificationsCount,
+          locationAsset: this.locationAsset
+        }
+      }
+    );
+    notificationsAlertRef.afterClosed().subscribe(() => {
+      this.getObservations();
+    });
+  }
+  getObservations() {
+    const issuesObj = {
+      next: '',
+      limit: defaultLimit,
+      searchKey: '',
+      type: 'issue',
+      moduleName: this.moduleName
+    };
+    this.notificationsArrived = false;
+    this.observations
+      .getObservations$(issuesObj, {
+        entityId: this.entityId,
+        entityType: this.entityType,
+        isNotificationSuccess: true
+      })
+      .subscribe((data) => {
+        this.notificationsCount = data?.count;
+        this.notificationsArrived = true;
+        this.isCreateNotification = false;
+      });
+  }
 
   private getIssuesActionsList(data): void {
     let observable: Observable<{ count: number; next: string; rows: any[] }>;
@@ -861,7 +980,17 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
 
   private init(): void {
     this.attachmentsSubscriptionData = [];
-    const { id, type, dueDate, dueDateDisplay, notificationInfo } = this.data;
+    const {
+      id,
+      type,
+      dueDate,
+      dueDateDisplay,
+      notificationInfo,
+      entityId,
+      entityType
+    } = this.data;
+    this.entityId = entityId;
+    this.entityType = entityType;
     const idx = this.allData?.findIndex((a) => a?.id === id);
     if (idx === -1) {
       this.isPreviousEnabled = false;
@@ -918,6 +1047,9 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
           }
         })
       );
+    if (this.moduleName === roundObservations) {
+      this.getObservations();
+    }
   }
 
   private prepareSubscriptionResponse(data) {

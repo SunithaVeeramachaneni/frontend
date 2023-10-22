@@ -25,6 +25,7 @@
   "location": "Location",
   "asset": "Asset",
   "parent": "Parent",
+  "parentMandatory": "Parent *",
   "cancelBtn": "Cancel",
   "search": "Search by Name/Description",
   "editBtn": "Edit",
@@ -101,5 +102,9 @@
   "values": "Values",
   "sort": "Sort",
   "addModuleNameHeading": "Add as Meta Data For",
-  "responseSetNameExists": "Response Set Name already exists"
+  "responseSetNameExists": "Response Set Name already exists",
+  "alreadyExists": "{name} already exists",
+  "exportData": "Export Data as Excel",
+  "forms": "Forms",
+  "formTemplate": "Form Templates"
 }

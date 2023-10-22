@@ -209,6 +209,7 @@
       overflow-y: auto;
 
       .right-div {
+        align-items: center;
         display: flex;
         justify-content: space-between;
 
@@ -317,4 +318,27 @@
   justify-content: center;
   margin-top: 10px;
   margin-bottom: 10px;
+}
+.loading-notifications {
+  display: flex;
+  width: 90px;
+  height: 35px;
+  border-radius: 5px;
+  position: relative;
+  right: 22px;
+}
+#issuesActionsViewNotification {
+  position: relative;
+  top: -2px;
+}
+.notification-count {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: end;
+  height: 40px;
+}
+.notification-issues-route {
+  position: relative;
+  left: 22px;
 }

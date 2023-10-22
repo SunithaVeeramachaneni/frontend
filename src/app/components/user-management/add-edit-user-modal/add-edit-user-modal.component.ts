@@ -414,4 +414,8 @@ export class AddEditUserModalComponent implements OnInit {
   }
   checkPermissions = (permission) =>
     this.loginService.checkUserHasPermission(this.permissionsArray, permission);
+
+  getPlantId() {
+    return this.plant?.value?.[0]?.plantId;
+  }
 }

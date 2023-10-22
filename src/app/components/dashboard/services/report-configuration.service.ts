@@ -24,6 +24,7 @@ import {
   Column
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { defaultCountFieldName } from 'src/app/app.constants';
+import { fieldTypesMock } from 'src/app/forms/components/response-type/response-types.mock';
 
 @Injectable({
   providedIn: 'root'
@@ -165,6 +166,36 @@ export class ReportConfigurationService {
     );
   };
 
+  formatReportData = (reportData, userEmailToName) => {
+    reportData = reportData.map((data) => {
+      if (data.taskType === 'NF') {
+        if (data?.exception > 0 || data?.exception === 'True') {
+          data.exception = 'True';
+        } else if (data?.exception === 0 || data?.exception === 'False') {
+          data.exception = 'False';
+        } else {
+          data.exception = '';
+        }
+      }
+      if(data.assignedTo) data.assignedToDisplay = userEmailToName[data.assignedTo];
+      if(data.raisedBy) data.raisedByDisplay = userEmailToName[data.raisedBy];
+      if(data.roundSubmittedBy) data.roundSubmittedByDisplay = userEmailToName[data.roundSubmittedBy];
+      if(data.taskCompletedBy) data.taskCompletedByDisplay = userEmailToName[data.taskCompletedBy];
+      data.taskType = fieldTypesMock.fieldTypes.find((fieldType) => {
+        return (
+          fieldType.type === data.taskType ||
+          fieldType.description === data.taskType
+        );
+      })?.description;
+    });
+  };
+
+  getId = (id) => {
+    const ids = new Set(['assignedTo', 'raisedBy', 'roundSubmittedBy', 'taskCompletedBy']);
+    if(ids.has(id)) return `${id}Display`;
+    return id;
+  }
+
   updateConfigOptionsFromReportConfiguration(
     reportConfiguration: ReportConfiguration,
     configOptions: ConfigOptions,
@@ -180,7 +211,7 @@ export class ReportConfigurationService {
     const allColumns: Column[] = tableColumns.map((column) => {
       const { order, visible, sticky, displayName, name: id, type } = column;
       return {
-        id,
+        id: this.getId(id),
         displayName,
         type,
         controlType: 'string',

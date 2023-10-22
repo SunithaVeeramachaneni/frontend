@@ -74,8 +74,9 @@ import {
   dateFormat3,
   dateFormat4,
   dateFormat5,
-  dateTimeFormat3,
-  hourFormat
+  hourFormat,
+  dateTimeFormat5,
+  dateTimeFormat3
 } from 'src/app/app.constants';
 import { ScheduleConfigurationService } from 'src/app/forms/services/schedule.service';
 import { isEqual } from 'lodash-es';
@@ -134,6 +135,7 @@ export class ScheduleConfigurationComponent
   currentDate: Date;
   startDatePickerMinDate: Date;
   scheduleEndOnPickerMinDate: Date;
+  scheduleByDatePicker: String[] = [];
   scheduleByDates: ScheduleByDate[];
   disableSchedule = false;
   roundPlanScheduleConfigurations: RoundPlanScheduleConfigurationObj[];
@@ -495,17 +497,12 @@ export class ScheduleConfigurationComponent
             if (!this.scheduleByDates?.length) {
               this.scheduleByDates = [
                 {
-                  date: new Date(
-                    localToTimezoneDate(
-                      new Date(),
-                      this.plantTimezoneMap[this.selectedDetails?.plantId],
-                      dateTimeFormat3
-                    )
-                  ),
+                  date: new Date(new Date().setHours(0, 0, 0, 0)),
                   scheduled: false
                 }
               ];
             }
+            this.scheduleByDatePicker.push(format(new Date(), dateTimeFormat3));
             this.schedulerConfigForm.get('repeatEvery').patchValue('none');
             this.updateAdvanceRoundsCountValidation(12);
             break;
@@ -1157,23 +1154,19 @@ export class ScheduleConfigurationComponent
   }
 
   updateScheduleByDates(date: Date) {
-    const index = this.findDate(date);
+    const index = this.findDate(format(date, dateTimeFormat3));
     if (index === -1) {
       this.scheduleByDates = [
         ...this.scheduleByDates,
         {
-          date: new Date(
-            localToTimezoneDate(
-              new Date(date),
-              this.plantTimezoneMap[this.selectedDetails?.plantId],
-              ''
-            )
-          ),
+          date: date,
           scheduled: false
         }
       ];
+      this.scheduleByDatePicker.push(format(date, dateTimeFormat3));
     } else {
       this.scheduleByDates.splice(index, 1);
+      this.scheduleByDatePicker.splice(index, 1);
     }
     this.schedulerConfigForm.markAsDirty();
     this.calendar.updateTodaysDate();
@@ -1240,16 +1233,23 @@ export class ScheduleConfigurationComponent
                 )
               )
             };
-            this.scheduleByDates = scheduleByDates?.map((scheduleByDate) => ({
-              ...scheduleByDate,
-              date: new Date(
+            this.scheduleByDates = scheduleByDates?.map((scheduleByDate) => {
+              this.scheduleByDatePicker.push(
                 localToTimezoneDate(
                   new Date(scheduleByDate.date),
                   this.plantTimezoneMap[this.selectedDetails?.plantId],
-                  ''
+                  dateTimeFormat3
                 )
-              )
-            }));
+              );
+              return {
+                ...scheduleByDate,
+                date: localToTimezoneDate(
+                  scheduleByDate.date,
+                  this.plantTimezoneMap[this.selectedDetails?.plantId],
+                  dateTimeFormat3
+                )
+              };
+            });
             if (config?.shiftDetails) {
               if (Object.keys(config.shiftDetails)[0] !== 'null') {
                 config['shiftsSelected'] = Object.keys(config.shiftDetails);
@@ -1438,16 +1438,24 @@ export class ScheduleConfigurationComponent
               )
             };
 
-            this.scheduleByDates = scheduleByDates?.map((scheduleByDate) => ({
-              ...scheduleByDate,
-              date: new Date(
+            this.scheduleByDates = scheduleByDates?.map((scheduleByDate) => {
+              this.scheduleByDatePicker.push(
                 localToTimezoneDate(
                   new Date(scheduleByDate.date),
                   this.plantTimezoneMap[this.selectedDetails?.plantId],
                   dateTimeFormat3
                 )
-              )
-            }));
+              );
+
+              return {
+                ...scheduleByDate,
+                date: localToTimezoneDate(
+                  new Date(scheduleByDate.date),
+                  this.plantTimezoneMap[this.selectedDetails?.plantId],
+                  dateTimeFormat3
+                )
+              };
+            });
             if (config?.shiftDetails) {
               this.shiftApiResponse = this.prepareShiftDetailsPayload(
                 config?.shiftDetails,
@@ -1471,14 +1479,14 @@ export class ScheduleConfigurationComponent
       .subscribe();
   }
 
-  findDate(date: Date): number {
-    return this.scheduleByDates
-      ?.map((scheduleByDate) => +scheduleByDate.date)
-      .indexOf(+date);
+  findDate(date: String): number {
+    return this.scheduleByDatePicker
+      ?.map((scheduleByDate) => scheduleByDate)
+      .indexOf(date);
   }
 
   dateClass = (date: Date) => {
-    if (this.findDate(date) !== -1) {
+    if (this.findDate(format(date, dateTimeFormat3)) !== -1) {
       return ['selected'];
     }
     return [];
@@ -1487,13 +1495,13 @@ export class ScheduleConfigurationComponent
   prepareScheduleByDates() {
     return this.scheduleByDates.map((scheduleByDate) => {
       let dateByPlantTimezone = new Date(
-        format(scheduleByDate.date, dateTimeFormat3)
+        format(new Date(scheduleByDate.date), dateTimeFormat5)
       );
       if (
         this.plantTimezoneMap[this.selectedDetails?.plantId]?.timeZoneIdentifier
       ) {
         dateByPlantTimezone = zonedTimeToUtc(
-          format(scheduleByDate.date, dateTimeFormat3),
+          format(new Date(scheduleByDate.date), dateTimeFormat5),
           this.plantTimezoneMap[this.selectedDetails?.plantId]
             ?.timeZoneIdentifier
         );
@@ -1558,7 +1566,9 @@ export class ScheduleConfigurationComponent
         .patchValue({ value, displayValue });
     }
     this.schedulerConfigForm.markAsDirty();
-    this.menuTrigger.closeMenu();
+    if (this.menuTrigger) {
+      this.menuTrigger.closeMenu();
+    }
   }
 
   processValidationErrors(controlName: string): boolean {

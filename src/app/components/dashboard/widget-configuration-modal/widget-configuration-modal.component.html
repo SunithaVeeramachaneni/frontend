@@ -61,13 +61,16 @@
               }}
             </mat-error>
           </mat-form-field>
-          <app-chart-variant
-            [report]="selectedReport"
-            [chartConfig]="chartConfig"
-            [configOptions]="configOptions"
-            [displayTableVarient]="true"
-            (chartVarientChanges)="onChartVarientChanges($event)"
-          ></app-chart-variant>
+          <ng-container  *ngIf="chartData$ | async as data; else loadingChartData">
+            <app-chart-variant
+              [chartData] = "data"
+              [report]="selectedReport"
+              [chartConfig]="chartConfig"
+              [configOptions]="configOptions"
+              [displayTableVarient]="true"
+              (chartVarientChanges)="onChartVarientChanges($event)"
+            ></app-chart-variant>
+          </ng-container>
         </ng-container>
       </form>
       <div class="width-50">

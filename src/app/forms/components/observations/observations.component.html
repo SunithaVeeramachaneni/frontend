@@ -1,80 +1,83 @@
-<ng-container *ngIf="currentRouteUrl$ | async as currentRouteUrl">
-  <div
-    class="observations-container"
-    *ngIf="
-      currentRouteUrl === routingUrls.roundPlanObservations.url ||
-      currentRouteUrl === routingUrls.rdfObservations.url
-    "
-  >
-    <div class="dis-flex charts">
-      <div class="width-50 chart m-r-10" *ngIf="priorityData && statusData">
-        <h3 id="observationOpenIssues" translate="openIssues"></h3>
-        <div class="dis-flex">
-          <div class="width-50">
-            <p id="observationPriority" class="center">
-              {{ 'priority' | translate }}
-            </p>
-            <app-donut-chart
-              class="issue-chart"
-              [options]="priorityData?.issues"
-            ></app-donut-chart>
+<ng-container *ngIf="userInfo$ | async">
+  <ng-container *ngIf="currentRouteUrl$ | async as currentRouteUrl">
+    <div
+      class="observations-container"
+      *ngIf="
+        currentRouteUrl === routingUrls.roundPlanObservations.url ||
+        currentRouteUrl === routingUrls.rdfObservations.url
+      "
+    >
+      <div class="dis-flex charts">
+        <div class="width-50 chart m-r-10" *ngIf="priorityData && statusData">
+          <h3 id="observationOpenIssues" translate="openIssues"></h3>
+          <div class="dis-flex">
+            <div class="width-50">
+              <p id="observationPriority" class="center">
+                {{ 'priority' | translate }}
+              </p>
+              <app-donut-chart
+                class="issue-chart"
+                [options]="priorityData?.issues"
+              ></app-donut-chart>
+            </div>
+            <div class="width-50">
+              <p id="observationStatus" class="center">
+                {{ 'status' | translate }}
+              </p>
+              <app-donut-chart
+                class="issue-chart"
+                [options]="statusData?.issues"
+              ></app-donut-chart>
+            </div>
           </div>
-          <div class="width-50">
-            <p id="observationStatus" class="center">
-              {{ 'status' | translate }}
-            </p>
-            <app-donut-chart
-              class="issue-chart"
-              [options]="statusData?.issues"
-            ></app-donut-chart>
+        </div>
+        <div class="width-50 chart m-l-10" *ngIf="priorityData && statusData">
+          <h3 id="observationOpenAction" translate="openActions"></h3>
+          <div class="dis-flex">
+            <div class="width-50">
+              <p id="observationActionPriority" class="center">
+                {{ 'priority' | translate }}
+              </p>
+              <app-donut-chart
+                class="issue-chart"
+                [options]="priorityData?.actions"
+              ></app-donut-chart>
+            </div>
+            <div class="width-50">
+              <p id="observationActionStatus" class="center">
+                {{ 'status' | translate }}
+              </p>
+              <app-donut-chart
+                class="issue-chart"
+                [options]="statusData?.actions"
+              ></app-donut-chart>
+            </div>
           </div>
         </div>
       </div>
-      <div class="width-50 chart m-l-10" *ngIf="priorityData && statusData">
-        <h3 id="observationOpenAction" translate="openActions"></h3>
-        <div class="dis-flex">
-          <div class="width-50">
-            <p id="observationActionPriority" class="center">
-              {{ 'priority' | translate }}
-            </p>
-            <app-donut-chart
-              class="issue-chart"
-              [options]="priorityData?.actions"
-            ></app-donut-chart>
-          </div>
-          <div class="width-50">
-            <p id="observationActionStatus" class="center">
-              {{ 'status' | translate }}
-            </p>
-            <app-donut-chart
-              class="issue-chart"
-              [options]="statusData?.actions"
-            ></app-donut-chart>
-          </div>
-        </div>
+      <div class="tabs-header">
+        <mat-tab-group animationDuration="0ms">
+          <mat-tab>
+            <ng-template id="observationIssues" mat-tab-label>{{
+              'issues' | translate
+            }}</ng-template>
+            <app-issues-list
+              [users$]="users$"
+              [moduleName]="moduleName"
+              [isNotificationAlert]="isNotificationAlert"
+            ></app-issues-list>
+          </mat-tab>
+          <mat-tab>
+            <ng-template id="observationActions" mat-tab-label>{{
+              'actions' | translate
+            }}</ng-template>
+            <app-actions-list
+              [users$]="users$"
+              [moduleName]="moduleName"
+            ></app-actions-list>
+          </mat-tab>
+        </mat-tab-group>
       </div>
     </div>
-    <div class="tabs-header">
-      <mat-tab-group animationDuration="0ms">
-        <mat-tab>
-          <ng-template id="observationIssues" mat-tab-label>{{
-            'issues' | translate
-          }}</ng-template>
-          <app-issues-list
-            [users$]="users$"
-            [moduleName]="moduleName"
-          ></app-issues-list>
-        </mat-tab>
-        <mat-tab>
-          <ng-template id="observationActions" mat-tab-label>{{
-            'actions' | translate
-          }}</ng-template>
-          <app-actions-list
-            [users$]="users$"
-            [moduleName]="moduleName"
-          ></app-actions-list>
-        </mat-tab>
-      </mat-tab-group>
-    </div>
-  </div>
+  </ng-container>
 </ng-container>

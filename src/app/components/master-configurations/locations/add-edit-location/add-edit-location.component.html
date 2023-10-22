@@ -64,7 +64,9 @@
           />
           <mat-error
             id="addEditLocIdError"
-            *ngIf="processValidationErrors('locationId')"
+            *ngIf="
+              locationStatus !== 'edit' && processValidationErrors('locationId')
+            "
             class="m-t-5 error-fields"
           >
             {{
@@ -195,7 +197,9 @@
       mat-raised-button
       class="create-btn"
       type="submit"
-      [disabled]="locationForm.invalid"
+      [disabled]="
+        locationForm.invalid || (!locationForm.pristine && locationForm.pending)
+      "
       (click)="create()"
     >
       {{ locationButton }}
