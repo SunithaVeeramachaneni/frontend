@@ -243,7 +243,6 @@ export class SelectUserUsergroupModalComponent implements OnInit {
           users.rows.map((user) => {
             this.activeUserMap[user.email] = user.isActive;
           });
-          return users;
         })
       )
     ]).pipe(
