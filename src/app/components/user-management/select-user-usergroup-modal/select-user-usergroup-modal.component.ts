@@ -37,6 +37,7 @@ import {
 } from 'rxjs/operators';
 import { UserGroupService } from '../services/user-group.service';
 import { DomSanitizer } from '@angular/platform-browser';
+import { UsersService } from '../services/users.service';
 @Component({
   selector: 'app-select-user-usergroup-modal',
   templateUrl: './select-user-usergroup-modal.component.html',
@@ -141,6 +142,7 @@ export class SelectUserUsergroupModalComponent implements OnInit {
   permissionsList$: Observable<any>;
   rolesList$: Observable<Role[]>;
   fetchUserGroupUsers$: Observable<any>;
+  fetchUserFromMysql$: Observable<any>;
   selectedUserCountUpdate$: BehaviorSubject<number> =
     new BehaviorSubject<number>(0);
   initialSelectedUserCount$: Observable<number>;
@@ -159,11 +161,13 @@ export class SelectUserUsergroupModalComponent implements OnInit {
   initialUsers = [];
   disableBtn: any;
   preselectedUsers = [];
+  activeUserMap = {};
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<SelectUserUsergroupModalComponent>,
     private userGroupService: UserGroupService,
+    private userService: UsersService,
     private roleService: RolesPermissionsService,
     private sant: DomSanitizer
   ) {}
@@ -171,6 +175,7 @@ export class SelectUserUsergroupModalComponent implements OnInit {
   ngOnInit() {
     this.fetchUsers$.next({ data: 'load' });
     this.fetchUsers$.next({} as TableEvent);
+    this.fetchUserFromMysql$ = this.userService.getUsers$({});
     if (this.data?.type === 'update') {
       this.type = 'update';
       this.fetchUserGroupUsers$ = this.userGroupService.getAllUsersUserGroup(
@@ -232,9 +237,18 @@ export class SelectUserUsergroupModalComponent implements OnInit {
     this.users$ = combineLatest([
       usersOnLoadSearch$,
       onScrollUsers$,
-      this.fetchUserGroupUsers$
+      this.fetchUserGroupUsers$,
+      this.fetchUserFromMysql$.pipe(
+        map((users) => {
+          users.rows.map((user) => {
+            this.activeUserMap[user.email] = user.isActive;
+          });
+          return users;
+        })
+      )
     ]).pipe(
       map(([users, scrollData, groupUsers]) => {
+        users = this.filterInActiveUsers(users);
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
@@ -291,6 +305,9 @@ export class SelectUserUsergroupModalComponent implements OnInit {
         return initial;
       })
     );
+  }
+  filterInActiveUsers(users) {
+    return users.filter((user) => this.activeUserMap[user.email]);
   }
 
   getUsersList = () =>
