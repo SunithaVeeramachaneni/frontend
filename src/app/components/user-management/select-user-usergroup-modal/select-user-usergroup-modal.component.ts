@@ -239,7 +239,7 @@ export class SelectUserUsergroupModalComponent implements OnInit {
       onScrollUsers$,
       this.fetchUserGroupUsers$,
       this.fetchUserFromMysql$.pipe(
-        map((users) => {
+        tap((users) => {
           users.rows.map((user) => {
             this.activeUserMap[user.email] = user.isActive;
           });
