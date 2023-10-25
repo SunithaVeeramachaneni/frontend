@@ -15,18 +15,18 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ShiftMenuItemComponent implements OnInit {
+  @Input() set allPlants(allPlants) {
+    this._allPlants = allPlants;
+  }
+  get allPlants(): any {
+    return this._allPlants;
+  }
   @Input()
   set plantId(plantId) {
     this._plantId = plantId;
   }
   get plantId(): any {
     return this._plantId;
-  }
-  @Input() set plantShiftObj(plantShiftObj) {
-    this._plantShiftObj = plantShiftObj;
-  }
-  get plantShiftObj(): any {
-    return this._plantShiftObj;
   }
 
   @Input() set dropdownPosition(dropdownPosition) {
@@ -39,7 +39,7 @@ export class ShiftMenuItemComponent implements OnInit {
   @Output() shiftChange: EventEmitter<any> = new EventEmitter<any>();
 
   private _dropdownPosition: any;
-  private _plantShiftObj: any;
+  private _allPlants: any;
   private _plantId: any;
 
   constructor() {}

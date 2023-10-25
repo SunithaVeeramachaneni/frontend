@@ -149,7 +149,7 @@
     ></button>
     <mat-menu #shiftMenu="matMenu">
       <app-shift-menu-item
-        [plantShiftObj]="plantToShift"
+        [allPlants]="allPlants"
         [plantId]="plantSelected"
         [dropdownPosition]="shiftPosition"
         (shiftChange)="shiftChangeHandler($event)"

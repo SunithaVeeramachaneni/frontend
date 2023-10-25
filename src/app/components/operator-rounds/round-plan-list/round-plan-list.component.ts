@@ -283,7 +283,6 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
   plants = [];
   plantsIdNameMap = {};
   createdBy = [];
-  plantsObject: { [key: string]: PlantsResponse } = {};
   userInfo$: Observable<UserInfo>;
   triggerCountUpdate = false;
   readonly perms = perms;
@@ -394,17 +393,9 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
       formsOnLoadSearch$,
       this.addEditCopyForm$,
       onScrollForms$,
-      this.plantService.fetchAllPlants$().pipe(
-        tap(
-          ({ items: plants }) =>
-            (this.plantsObject = plants?.reduce((acc, curr) => {
-              acc[curr.id] = `${curr.plantId} - ${curr.name}`;
-              return acc;
-            }, {}))
-        )
-      )
+      this.plantService.fetchAllPlants$()
     ]).pipe(
-      map(([rows, form, scrollData]) => {
+      map(([rows, form, scrollData, allPlants]) => {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
@@ -430,7 +421,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
                 },
                 condition: true
               },
-              plant: this.plantsObject[obj.plantId]
+              plant: `${allPlants[obj.plantId].plantId} - ${allPlants[obj.plantId].name}`,
             });
             form.action = 'add';
             this.triggerCountUpdate = true;

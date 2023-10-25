@@ -100,7 +100,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   filteredValues$: Observable<any>;
   allTags: string[] = [];
   originalTags: string[] = [];
-  allPlantsData = [];
+  allPlantsData = {};
   plantInformation = [];
   changedValues: any;
   addNewShow = new BehaviorSubject<boolean>(false);
@@ -312,8 +312,8 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   }
   getAllPlantsData() {
     this.plantService.fetchAllPlants$().subscribe((plants) => {
-      this.allPlantsData = plants.items || [];
-      this.plantInformation = this.allPlantsData;
+      this.allPlantsData = plants || {};
+      this.plantInformation = Object.values(this.allPlantsData);
       const plantId = this.data?.formData?.plantId;
       if (plantId !== undefined) {
         this.headerDataForm.patchValue({ plantId }, { emitEvent: false });
@@ -362,15 +362,15 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
 
   resetPlantSearchFilter = () => {
     this.plantFilterInput = '';
-    this.plantInformation = this.allPlantsData;
+    this.plantInformation = Object.values(this.allPlantsData);
   };
 
   onKeyPlant(event) {
     this.plantFilterInput = event.target.value.trim() || '';
 
     if (this.plantFilterInput) {
-      this.plantInformation = this.allPlantsData.filter(
-        (plant) =>
+      this.plantInformation = Object.values(this.allPlantsData).filter(
+        (plant: any) =>
           plant.name
             .toLowerCase()
             .indexOf(this.plantFilterInput.toLowerCase()) !== -1 ||
@@ -379,7 +379,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
             .indexOf(this.plantFilterInput.toLowerCase()) !== -1
       );
     } else {
-      this.plantInformation = this.allPlantsData;
+      this.plantInformation = Object.values(this.allPlantsData);
     }
   }
 
@@ -495,9 +495,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
       });
     }
 
-    const plant = this.allPlantsData.find(
-      (p) => p.id === this.headerDataForm.get('plantId').value
-    );
+    const plant = this.allPlantsData[this.headerDataForm.get('plantId').value];
 
     if (this.headerDataForm.valid) {
       this.store.dispatch(

@@ -55,7 +55,6 @@ export class AffectedFormTemplateSliderComponent
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   formLoaded$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   ghostLoading = new Array(13).fill(0).map((_, i) => i);
-  plantsObject: { [key: string]: PlantsResponse } = {};
   nextToken = '';
   fetchType = 'load';
   archived = 'Archived';
@@ -250,17 +249,9 @@ export class AffectedFormTemplateSliderComponent
     this.forms$ = combineLatest([
       formsOnLoadSearch$,
       onScrollForms$,
-      this.plantService.fetchAllPlants$().pipe(
-        tap(
-          ({ items: plants }) =>
-            (this.plantsObject = plants.reduce((acc, curr) => {
-              acc[curr.id] = `${curr.plantId} - ${curr.name}`;
-              return acc;
-            }, {}))
-        )
-      )
+      this.plantService.fetchAllPlants$()
     ]).pipe(
-      map(([rows, scrollData]) => {
+      map(([rows, scrollData, allPlants]) => {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
@@ -268,7 +259,7 @@ export class AffectedFormTemplateSliderComponent
           };
           rows.map((item) => {
             item.plant = '';
-            if (item?.plantId) item.plant = this.plantsObject[item.plantId];
+            if (item?.plantId) item.plant = `${allPlants[item.plantId].plantId} - ${allPlants[item.plantId].name}`;
             if (item.isArchived) item.displayFormStatus = this.archived;
             else item.displayFormStatus = item.formStatus;
             item.preTextImage = {
@@ -285,7 +276,7 @@ export class AffectedFormTemplateSliderComponent
         } else {
           scrollData.map((item) => {
             item.plant = '';
-            if (item?.plantId) item.plant = this.plantsObject[item.plantId];
+            if (item?.plantId) item.plant = `${allPlants[item.plantId].plantId} - ${allPlants[item.plantId].name}`;
             item.preTextImage = {
               image: item?.formLogo,
               style: {

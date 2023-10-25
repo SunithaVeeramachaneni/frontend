@@ -819,9 +819,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   };
 
   prepareActiveShifts(plan: any) {
-    const selectedPlant = this.allPlants?.items?.find(
-      (plant) => plant.id === plan.plantId
-    );
+    const selectedPlant = this.allPlants[plan.plantId];
     const selectedShifts = selectedPlant?.shifts
       ? JSON.parse(selectedPlant?.shifts)
       : [];

@@ -134,7 +134,7 @@ export class FormListComponent implements OnInit, OnDestroy {
   lastPublishedOn = [];
   lastModifiedBy = [];
   authoredBy = [];
-  plantsIdNameMap = {};
+  allPlants = {};
   plants = [];
   createdBy = [];
   additionalDetailFilterData = {};
@@ -556,7 +556,7 @@ export class FormListComponent implements OnInit, OnDestroy {
     ]).subscribe(
       ([
         usersList,
-        { items: plantsList },
+        allPlants,
         formsList,
         allTags,
         additionDetailsData
@@ -567,10 +567,12 @@ export class FormListComponent implements OnInit, OnDestroy {
         this.lastModifiedBy = usersList.map(
           (user) => `${user.firstName} ${user.lastName}`
         );
-        this.plants = plantsList
-          .map((plant) => {
-            this.plantsIdNameMap[`${plant.plantId} - ${plant.name}`] = plant.id;
-            return `${plant.plantId} - ${plant.name}`;
+        this.plants = Object.values(allPlants)
+          .map((plant: any) => {
+            return {
+              display: `${plant.plantId} - ${plant.name}`,
+              value: plant.id
+            };
           })
           .sort();
 
@@ -592,7 +594,7 @@ export class FormListComponent implements OnInit, OnDestroy {
   applyFilter(data: any) {
     for (const item of data) {
       if (item.column === 'plant') {
-        this.filter[item.column] = this.plantsIdNameMap[item.value];
+        this.filter[item.column] = this.allPlants[item.value].plantId;
       } else {
         this.filter[item.column] = item.value;
       }

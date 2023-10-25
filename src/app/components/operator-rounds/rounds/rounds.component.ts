@@ -602,9 +602,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
   roundId = '';
   sliceCount = 100;
   plantTimezoneMap = {};
-  plantShiftObj: any = {};
+  allPlants = {};
   plantSelected: any;
-  plantToShift: any;
   selectedRoundConfig: any;
   openMenuStateDueDate = false;
   openMenuStateStartDate = false;
@@ -742,6 +741,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
     this.rounds$ = combineLatest([
       roundsOnLoadSearch$,
       onScrollRounds$,
+      this.plantService.fetchAllPlants$(),
       this.users$,
       this.userGroups$,
       this.shiftSevice.fetchAllShifts$().pipe(
@@ -753,18 +753,10 @@ export class RoundsComponent implements OnInit, OnDestroy {
               this.shiftNameMap[shift.id] = shift.name;
             });
         })
-      ),
-      this.plantService.fetchAllPlants$().pipe(
-        tap((plants) => {
-          plants?.items?.map((plant) => {
-            if (this.commonService.isJson(plant.shifts) && plant.shifts) {
-              this.plantShiftObj[plant.id] = JSON.parse(plant.shifts);
-            }
-          });
-        })
       )
     ]).pipe(
-      map(([rounds, scrollData]) => {
+      map(([rounds, scrollData, allPlants]) => {
+        this.allPlants = allPlants;
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
@@ -948,7 +940,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
           top: `${pos?.top - 17}px`,
           left: `${pos?.left - 15}px`
         };
-        this.plantToShift = this.plantShiftObj;
         this.plantSelected = row.plantId;
         if (row.status !== 'submitted') this.trigger.toArray()[1].openMenu();
         this.selectedRoundInfo = row;

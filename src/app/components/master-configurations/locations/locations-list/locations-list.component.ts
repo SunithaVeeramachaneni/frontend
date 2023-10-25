@@ -258,7 +258,6 @@ export class LocationsListComponent implements OnInit, OnDestroy {
   dataFetchingComplete = false;
 
   plants = [];
-  plantsIdNameMap = {};
   currentRouteUrl$: Observable<string>;
   readonly routingUrls = routingUrls;
   private onDestroy$ = new Subject();
@@ -281,18 +280,23 @@ export class LocationsListComponent implements OnInit, OnDestroy {
     this.locationService.fetchLocations$.next({ data: 'load' });
     this.locationService.fetchLocations$.next({} as TableEvent);
     this.allPlants$ = this.plantsService.fetchAllPlants$().pipe(
-      tap(({ items: allPlants = [] }) => {
-        this.plants = allPlants.map((plant) => {
-          const { id, name, plantId } = plant;
-          this.plantsIdNameMap[`${plantId} - ${name}`] = id;
-          return `${plantId} - ${name}`;
-        });
+      tap((allPlants = {}) => {
+        this.plants = [];
+        for(const key in allPlants) {
+          if(allPlants.hasOwnProperty(key)) {
+            const { id, plantId, name } = allPlants[key];
+            this.plants.push({
+              display: `${plantId} - ${name}`,
+              value: id
+            })
+          }
+        }
         this.filterJson = [
           {
             column: 'plant',
             items: this.plants,
             label: 'Plant',
-            type: 'select',
+            type: 'plant',
             value: ''
           }
         ];
@@ -356,9 +360,9 @@ export class LocationsListComponent implements OnInit, OnDestroy {
           { form, action },
           scrollData,
           { items: allLocations = [] },
-          { items: allPlants = [] }
+          allPlants
         ]) => {
-          this.allPlants = allPlants.filter((plant) => !plant._deleted);
+          this.allPlants = allPlants;
           this.allParentsLocations.data = uniqBy(
             [...(this.allParentsLocations?.data || []), ...allLocations],
             'id'
@@ -419,7 +423,7 @@ export class LocationsListComponent implements OnInit, OnDestroy {
     this.isPopoverOpen = false;
     for (const item of data) {
       if (item.column === 'plant') {
-        const plantsID = this.plantsIdNameMap[item.value];
+        const plantsID = item.value;
         this.filter[item.column] = plantsID;
       }
     }
@@ -656,7 +660,7 @@ export class LocationsListComponent implements OnInit, OnDestroy {
 
   injectPlantAndParentInfo = (scrollData, allPlants) => {
     const tableData = scrollData.map((data) => {
-      const plantInfo = allPlants.find((plant) => plant.id === data.plantsID);
+      const plantInfo = allPlants[data.plantsID];
       if (plantInfo) {
         Object.assign(data, {
           plant: plantInfo.name,

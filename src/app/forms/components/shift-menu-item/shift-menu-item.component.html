@@ -6,8 +6,8 @@
     id="shiftMenuItemBtn"
     mat-menu-item
     (click)="optionClick(item)"
-    *ngFor="let item of plantShiftObj[plantId]"
+    *ngFor="let item of ((allPlants[plantId]?.shifts || '[]') | jsonparse)"
   >
-    {{ item.name }}
+    {{ item?.name }}
   </button>
 </div>

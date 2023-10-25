@@ -96,7 +96,7 @@ export class RoundPlanHeaderConfigurationComponent
   allTags: string[] = [];
   originalTags: string[] = [];
   selectedOption: string;
-  allPlantsData = [];
+  allPlantsData = {};
   plantInformation = [];
   changedValues: any;
   headerDataForm: FormGroup;
@@ -280,8 +280,8 @@ export class RoundPlanHeaderConfigurationComponent
 
   getAllPlantsData() {
     this.plantService.fetchAllPlants$().subscribe((plants) => {
-      this.allPlantsData = plants.items || [];
-      this.plantInformation = this.allPlantsData;
+      this.allPlantsData = plants || {};
+      this.plantInformation = Object.values(this.allPlantsData);
       const plantId = this.roundData?.formMetadata?.plantId;
       if (plantId !== undefined) {
         this.headerDataForm.patchValue({ plantId });
@@ -453,9 +453,7 @@ export class RoundPlanHeaderConfigurationComponent
       });
     }
 
-    const plant = this.allPlantsData.find(
-      (p) => p.id === this.headerDataForm.get('plantId').value
-    );
+    const plant = this.allPlantsData[this.headerDataForm.get('plantId').value];
 
     if (this.headerDataForm.valid) {
       const userName = this.loginService.getLoggedInUserName();
@@ -549,14 +547,14 @@ export class RoundPlanHeaderConfigurationComponent
 
   resetPlantSearchFilter = () => {
     this.plantFilterInput = '';
-    this.plantInformation = this.allPlantsData;
+    this.plantInformation = Object.values(this.allPlantsData);
   };
 
   onKeyPlant(event) {
     this.plantFilterInput = event.target.value.trim() || '';
     if (this.plantFilterInput) {
-      this.plantInformation = this.allPlantsData.filter(
-        (plant) =>
+      this.plantInformation = Object.values(this.allPlantsData).filter(
+        (plant: any) =>
           plant.name
             .toLowerCase()
             .indexOf(this.plantFilterInput.toLowerCase()) !== -1 ||
@@ -565,7 +563,7 @@ export class RoundPlanHeaderConfigurationComponent
             .indexOf(this.plantFilterInput.toLowerCase()) !== -1
       );
     } else {
-      this.plantInformation = this.allPlantsData;
+      this.plantInformation = Object.values(this.allPlantsData);
     }
   }
 

@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, of, ReplaySubject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { exhaustMap, map, pluck, reduce, scan, switchMap, tap } from 'rxjs/operators';
 import {
   ErrorInfo,
   LoadEvent,
@@ -27,6 +27,7 @@ export class PlantService {
 
   plantTimeZoneMapping$ = new BehaviorSubject<any>({});
   plantMasterData$ = new BehaviorSubject<any>({});
+  allPlants$ = new BehaviorSubject<any>({});
 
   // eslint-disable-next-line @typescript-eslint/naming-convention
   private MAX_FETCH_LIMIT = '1000000';
@@ -34,23 +35,32 @@ export class PlantService {
   constructor(private _appService: AppService) {}
 
   fetchAllPlants$ = () => {
-    const params: URLSearchParams = new URLSearchParams();
-    params.set('limit', this.MAX_FETCH_LIMIT);
-    return this._appService._getResp(
-      environment.masterConfigApiUrl,
-      'plants/list?' + params.toString()
-    );
+    if(!Object.keys(this.allPlants$.value).length) {
+      const params: URLSearchParams = new URLSearchParams();
+      params.set('limit', this.MAX_FETCH_LIMIT);
+      return this._appService._getResp(
+        environment.masterConfigApiUrl,
+        'plants/list?' + params.toString()
+      ).pipe(exhaustMap(res => {
+        return res.items;
+      }), reduce((allPlants, plant: any) => {
+        allPlants[plant.id] = plant;
+        return allPlants;
+      }, {}));
+    }else {
+      return of(this.allPlants$.value);
+    }
   };
 
   getPlantTimeZoneMapping = () => {
     if (!Object.keys(this.plantTimeZoneMapping$.value).length) {
       this.fetchAllPlants$().subscribe((res) => {
         const timeZoneMapping = {};
-        if (res?.items?.length > 0) {
-          for (const plant of res.items) {
-            if (plant.id && plant.timeZone) {
-              if (Object.keys(plant.timeZone).length !== 0) {
-                timeZoneMapping[plant.id] = plant.timeZone;
+        if (Object.keys(res).length) {
+          for (const key in res) {
+            if (res[key]?.id && res[key]?.timeZone) {
+              if (Object.keys(res[key].timeZone).length !== 0) {
+                timeZoneMapping[res[key].id] = res[key].timeZone;
               }
             }
           }

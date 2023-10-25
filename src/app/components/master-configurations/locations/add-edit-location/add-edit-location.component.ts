@@ -116,7 +116,7 @@ export class AddEditLocationComponent implements OnInit {
     });
     this.parentInformation = this.allLocations;
     this.allParentsData = this.parentInformation;
-    this.plantInformation = this.allPlants;
+    this.plantInformation = Object.values(this.allPlants);
     this.allPlantsData = this.plantInformation;
   }
 

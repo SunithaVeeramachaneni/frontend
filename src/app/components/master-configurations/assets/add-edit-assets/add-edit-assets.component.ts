@@ -35,7 +35,7 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
   searchInput: ElementRef<HTMLInputElement> = null;
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Output() createdAssetsData: EventEmitter<any> = new EventEmitter();
-  @Input() allPlants: any[];
+  @Input() allPlants = {};
   @Input() set allLocations(locations) {
     this._allLocations = locations.data;
   }
@@ -142,8 +142,8 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
       plantsID: new FormControl('', [Validators.required])
     });
 
-    this.allPlantsData = this.allPlants;
-    this.plantInformation = this.allPlants;
+    this.plantInformation = Object.values(this.allPlants);
+    this.allPlantsData = this.plantInformation;
     this.parentInformation = this.allLocations;
     this.allParentsData = this.allLocations;
     this.assetForm
@@ -273,7 +273,7 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
   searchPlant(value: string) {
     const searchValue = value.toLowerCase();
     return this.plantInformation.filter(
-      (plant) =>
+      (plant: any) =>
         (plant.name && plant.name.toLowerCase().indexOf(searchValue) !== -1) ||
         (plant.plantId &&
           plant.plantId.toLowerCase().indexOf(searchValue) !== -1)

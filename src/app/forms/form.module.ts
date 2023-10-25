@@ -121,6 +121,7 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { UploadImagePreviewComponent } from './components/upload-image-preview/upload-image-preview.component';
 import { FormUpdateDeleteProgressComponent } from './components/form-update-delete-progress/form-update-delete-progress.component';
 import { HideSectionsDialogComponent } from './components/add-logic/hide-sections-dialog/hide-sections-dialog.component';
+import { JsonParsePipe } from '../shared/pipes/jsonparse.pipe';
 @NgModule({
   declarations: [
     PageComponent,
@@ -196,7 +197,8 @@ import { HideSectionsDialogComponent } from './components/add-logic/hide-section
     DynamicStepperComponent,
     FormUpdateDeleteProgressComponent,
     StepsHeaderComponent,
-    HideSectionsDialogComponent
+    HideSectionsDialogComponent,
+    JsonParsePipe
   ],
   imports: [
     SharedModule,
@@ -285,7 +287,8 @@ import { HideSectionsDialogComponent } from './components/add-logic/hide-section
     StepsHeaderComponent,
     InstructionPdfComponent,
     ShiftMenuItemComponent,
-    FormUpdateDeleteProgressComponent
+    FormUpdateDeleteProgressComponent,
+    JsonParsePipe
   ]
 })
 export class FormModule {}

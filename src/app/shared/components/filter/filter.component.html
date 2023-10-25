@@ -29,6 +29,18 @@
         </mat-select>
       </mat-form-field>
       <mat-form-field
+        *ngIf="item.type === 'plant'"
+        appearance="outline"
+        class="mat-field"
+      >
+        <mat-label id="filterLabel">{{ item.label }}</mat-label>
+        <mat-select [(ngModel)]="item.value" name="showStatus">
+          <mat-option *ngFor="let plant of item.items" [value]="plant.value">
+            {{ plant.display }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field
         *ngIf="item.type === 'multiple'"
         appearance="outline"
         class="mat-field"
