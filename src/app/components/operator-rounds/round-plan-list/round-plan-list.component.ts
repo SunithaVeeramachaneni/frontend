@@ -332,6 +332,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
         if (this.triggerCountUpdate) {
           count += update;
           this.triggerCountUpdate = false;
+          this.formsListCountRaw$.next(count);
         }
         return count;
       })
