@@ -59,7 +59,6 @@ import {
   dateTimeFormat4,
   permissions as perms,
   statusColors,
-  dateTimeFormat5,
   dateFormat6,
   timeFormat,
   graphQLDefaultLimit
@@ -925,7 +924,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
             formatInTimeZone(
               row.dueDate,
               this.plantTimezoneMap[row.plantId].timeZoneIdentifier,
-              dateTimeFormat5
+              dateTimeFormat4
             )
           );
           this.selectedDueDate = { ...this.selectedDueDate, date: dueDate };
@@ -957,7 +956,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
             formatInTimeZone(
               row.scheduledAt,
               this.plantTimezoneMap[row.plantId].timeZoneIdentifier,
-              dateTimeFormat5
+              dateTimeFormat4
             )
           );
           this.selectedStartDate = {
@@ -1389,7 +1388,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
             this.plantTimezoneMap[plantId].timeZoneIdentifier
           ) {
             changedDueDateToUTC = zonedTimeToUtc(
-              format(changedDueDate, dateTimeFormat5),
+              format(changedDueDate, dateTimeFormat4),
               this.plantTimezoneMap[plantId].timeZoneIdentifier
             );
           } else {
@@ -1563,7 +1562,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
             this.plantTimezoneMap[plantId].timeZoneIdentifier
           ) {
             changedScheduledAtToUTC = zonedTimeToUtc(
-              format(changedScheduledAt, dateTimeFormat5),
+              format(changedScheduledAt, dateTimeFormat4),
               this.plantTimezoneMap[plantId].timeZoneIdentifier
             );
           } else {
@@ -1734,11 +1733,11 @@ export class RoundsComponent implements OnInit, OnDestroy {
           this.plantTimezoneMap[plantId].timeZoneIdentifier
         ) {
           shiftStartDateAndTime = zonedTimeToUtc(
-            format(shiftStartDateAndTime, dateTimeFormat5),
+            format(shiftStartDateAndTime, dateTimeFormat4),
             this.plantTimezoneMap[plantId].timeZoneIdentifier
           );
           shiftEndDateAndTime = zonedTimeToUtc(
-            format(shiftEndDateAndTime, dateTimeFormat5),
+            format(shiftEndDateAndTime, dateTimeFormat4),
             this.plantTimezoneMap[plantId].timeZoneIdentifier
           );
         }

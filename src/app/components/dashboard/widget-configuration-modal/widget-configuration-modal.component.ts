@@ -203,7 +203,7 @@ export class WidgetConfigurationModalComponent implements OnInit {
     ]).pipe(
       map(([loadFilter, scroll, usersList]) => {
         if (Object.keys(this.userEmailToName).length === 0) {
-          this.userEmailToName = this.getUserEmailAndNameObject(usersList);  
+          this.userEmailToName = this.getUserEmailAndNameObject(usersList);
         }
         if (this.skip === 0 && this.filtersApplied) {
           const { reportData: filterData = [] } = loadFilter;
@@ -265,7 +265,6 @@ export class WidgetConfigurationModalComponent implements OnInit {
   }
 
   getUserEmailAndNameObject = (userData) => {
-    
     return userData.reduce((userObj, user) => {
       userObj[user.email] = `${user.firstName} ${user.lastName}`;
       return userObj;
