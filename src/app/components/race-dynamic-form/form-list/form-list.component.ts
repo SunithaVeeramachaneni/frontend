@@ -195,6 +195,7 @@ export class FormListComponent implements OnInit, OnDestroy {
       map(([count, update]) => {
         if (this.triggerCountUpdate) {
           count += update;
+          this.formsListCountRaw$.next(count);
           this.triggerCountUpdate = false;
         }
         return count;

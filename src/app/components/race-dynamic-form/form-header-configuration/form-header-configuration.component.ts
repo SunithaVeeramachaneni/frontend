@@ -773,7 +773,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
         height: '100%',
         panelClass: 'slideshow-container',
         backdropClass: 'slideshow-backdrop',
-        data: { images: slideshowImages, type: 'forms' }
+        data: { images: slideshowImages, type: 'base64' }
       });
     }
   }
