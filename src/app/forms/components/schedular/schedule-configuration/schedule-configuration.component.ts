@@ -82,6 +82,7 @@ import { ScheduleConfigurationService } from 'src/app/forms/services/schedule.se
 import { isEqual } from 'lodash-es';
 import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
 import { ErrorHandlerService } from 'src/app/shared/error-handler/error-handler.service';
+import { TranslateService } from '@ngx-translate/core';
 
 export interface ScheduleConfigEvent {
   slideInOut: 'out' | 'in';
@@ -178,7 +179,8 @@ export class ScheduleConfigurationComponent
     private operatorRoundService: OperatorRoundsService,
     @Inject(MAT_DIALOG_DATA)
     public data: any,
-    private errorHandlerService: ErrorHandlerService
+    private errorHandlerService: ErrorHandlerService,
+    private translateService: TranslateService
   ) {}
 
   initDetails(): void {
@@ -799,8 +801,46 @@ export class ScheduleConfigurationComponent
       )
     );
 
+    this.schedulerConfigForm
+      .get('scheduleEndOnPicker')
+      .valueChanges.pipe(takeUntil(this.onDestroy$))
+      .subscribe((scheduleEndOnPicker) => {
+        const { roundCount } =
+          this.getAdvanceAllowedRoundCount(scheduleEndOnPicker);
+        const thirty = 30;
+        const twentyNine = 29;
+        const count =
+          roundCount >= thirty
+            ? thirty
+            : roundCount >= twentyNine
+            ? twentyNine
+            : roundCount;
+        this.updateAdvanceRoundsCountValidation(count);
+      });
+
     this.setMonthlyDaysOfWeek();
     this.schedulerConfigForm.markAsDirty();
+  }
+
+  getAdvanceRoundCountError(key: 'min' | 'max') {
+    const { roundCount } = this.getAdvanceAllowedRoundCount();
+    const countLookup = {
+      min: this.roundsGeneration.min,
+      max: this.roundsGeneration.max
+    };
+    const count = countLookup[key] || 0;
+    const thirty = 30;
+    const twentyNine = 29;
+    const result =
+      key === 'max'
+        ? roundCount >= thirty || roundCount >= twentyNine
+          ? 'maxDate'
+          : 'validEndDate'
+        : key;
+    return this.translateService.instant(result, {
+      count,
+      name: 'Days'
+    });
   }
 
   setMonthlyDaysOfWeek() {
@@ -1788,5 +1828,23 @@ export class ScheduleConfigurationComponent
       shiftSlots.markAsDirty();
       shiftsSelected.markAsDirty();
     }
+  }
+
+  private getAdvanceAllowedRoundCount(scheduleEndOnPicker = null) {
+    const startDate = localToTimezoneDate(
+      new Date(this.schedulerConfigForm.value.startDatePicker),
+      this.plantTimezoneMap[this.selectedDetails?.plantId],
+      dateTimeFormat5
+    );
+    const endDate = localToTimezoneDate(
+      new Date(
+        scheduleEndOnPicker ||
+          this.schedulerConfigForm.value.scheduleEndOnPicker
+      ),
+      this.plantTimezoneMap[this.selectedDetails?.plantId],
+      dateTimeFormat5
+    );
+    const roundCount = differenceInDays(new Date(endDate), new Date(startDate));
+    return { roundCount };
   }
 }
