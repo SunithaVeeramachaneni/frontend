@@ -18,8 +18,8 @@ import {
 import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import {
-  dateFormat6,
-  dateTimeFormat4,
+  dateFormat5,
+  dateTimeFormat3,
   hourFormat
 } from 'src/app/app.constants';
 import {
@@ -393,14 +393,14 @@ export class TaskLevelSchedulerComponent implements OnInit {
   prepareScheduleByDates(scheduleByDates) {
     return scheduleByDates.map((scheduleByDate) => {
       let dateByPlantTimezone = new Date(
-        format(new Date(scheduleByDate.date), dateTimeFormat4)
+        format(new Date(scheduleByDate.date), dateTimeFormat3)
       );
       if (
         this.plantTimezoneMap[this.roundPlanData.roundPlanDetail.plantId]
           ?.timeZoneIdentifier
       ) {
         dateByPlantTimezone = zonedTimeToUtc(
-          format(new Date(scheduleByDate.date), dateTimeFormat4),
+          format(new Date(scheduleByDate.date), dateTimeFormat3),
           this.plantTimezoneMap[this.roundPlanData.roundPlanDetail.plantId]
             ?.timeZoneIdentifier
         );
@@ -491,13 +491,13 @@ export class TaskLevelSchedulerComponent implements OnInit {
           );
 
           startDateByPlantTimezone = zonedTimeToUtc(
-            format(new Date(startDate), dateFormat6) + ` ${time}`,
+            format(new Date(startDate), dateFormat5) + ` ${time}`,
             this.plantTimezoneMap[this.roundPlanData?.plantId]
               ?.timeZoneIdentifier
           ).toISOString();
 
           endDateByPlantTimezone = zonedTimeToUtc(
-            format(new Date(endDate), dateFormat6) + ` ${time}`,
+            format(new Date(endDate), dateFormat5) + ` ${time}`,
             this.plantTimezoneMap[this.roundPlanData?.plantId]
               ?.timeZoneIdentifier
           ).toISOString();
@@ -563,14 +563,14 @@ export class TaskLevelSchedulerComponent implements OnInit {
       ...this.payload,
       scheduleByDates: this.payload.scheduleByDates.map((scheduleByDate) => {
         let dateByPlantTimezone = new Date(
-          format(new Date(scheduleByDate.date), dateTimeFormat4)
+          format(new Date(scheduleByDate.date), dateTimeFormat3)
         );
         if (
           this.plantTimezoneMap[this.roundPlanData.roundPlanDetail.plantId]
             ?.timeZoneIdentifier
         ) {
           dateByPlantTimezone = zonedTimeToUtc(
-            format(new Date(scheduleByDate.date), dateTimeFormat4),
+            format(new Date(scheduleByDate.date), dateTimeFormat3),
             this.plantTimezoneMap[this.roundPlanData.roundPlanDetail.plantId]
               ?.timeZoneIdentifier
           );
