@@ -1831,7 +1831,7 @@ export class ScheduleConfigurationComponent
     const startDate = localToTimezoneDate(
       new Date(this.schedulerConfigForm.value.startDatePicker),
       this.plantTimezoneMap[this.selectedDetails?.plantId],
-      dateTimeFormat5
+      dateTimeFormat4
     );
     const endDate = localToTimezoneDate(
       new Date(
@@ -1839,7 +1839,7 @@ export class ScheduleConfigurationComponent
           this.schedulerConfigForm.value.scheduleEndOnPicker
       ),
       this.plantTimezoneMap[this.selectedDetails?.plantId],
-      dateTimeFormat5
+      dateTimeFormat4
     );
     const roundCount = differenceInDays(new Date(endDate), new Date(startDate));
     return { roundCount };
