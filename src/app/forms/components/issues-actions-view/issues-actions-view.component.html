@@ -709,26 +709,79 @@
           class="titles m-t-10"
           translate="erpnotification"
         ></div>
-        <div class="values" *ngIf="!isCreateNotification">
-          <button
-            id="issuesActionsViewCreateNotification"
-            *ngIf="!isNotificationNumber(data.notificationInfo)"
-            mat-raised-button
-            color="primary"
-            (click)="createNotification()"
-          >
-            {{ 'create' | translate }}
-          </button>
-          <span
-            id="issuesActionsViewNotifInfo"
-            *ngIf="isNotificationNumber(data.notificationInfo)"
-            >{{ data.notificationInfo }}</span
-          >
+        <div *ngIf="moduleName === module">
+          <div *ngIf="notificationsArrived; else loadingNotifications">
+            <div class="values" *ngIf="!isCreateNotification">
+              <button
+                id="issuesActionsViewCreateNotification"
+                *ngIf="!isNotificationNumber(data.notificationInfo)"
+                mat-raised-button
+                color="primary"
+                (click)="notificationCreateSelector()"
+              >
+                {{ 'create' | translate }}
+              </button>
+              <div *ngIf="isNotificationNumber(data.notificationInfo)">
+                <div class="notification-count">
+                  <span class="issuesActionsViewNotifInfo">{{
+                    data.notificationInfo
+                  }}</span>
+                  <div
+                    *ngIf="!fromNotificationsList"
+                    id="issuesActionsViewDetailRound"
+                    class="values round-title"
+                    (click)="openNotificationIssues()"
+                  >
+                    <span class="notification-issues-route"
+                      >+{{ notificationsCount - 1 }} more Related
+                      Notifications</span
+                    >
+                  </div>
+                </div>
+                <span
+                  id="issuesActionsViewNotifInfo"
+                  *ngIf="fromNotificationsList"
+                  >{{ data.notificationInfo }}</span
+                >
+              </div>
+            </div>
+            <div class="values" *ngIf="isCreateNotification">
+              <span id="issuesActionsViewNotifCreation">{{
+                'notificationCreation' | translate
+              }}</span>
+            </div>
+          </div>
         </div>
-        <div class="values" *ngIf="isCreateNotification">
-          <span id="issuesActionsViewNotifCreation">{{
-            'notificationCreation' | translate
-          }}</span>
+        <ng-template #loadingNotifications>
+          <ngx-shimmer-loading
+            class="loading-notifications"
+            [width]="'100%'"
+            [height]="'35px'"
+          >
+          </ngx-shimmer-loading>
+        </ng-template>
+        <div *ngIf="moduleName !== module">
+          <div class="values" *ngIf="!isCreateNotification">
+            <button
+              id="issuesActionsViewCreateNotification"
+              *ngIf="!isNotificationNumber(data.notificationInfo)"
+              mat-raised-button
+              color="primary"
+              (click)="createNotification()"
+            >
+              {{ 'create' | translate }}
+            </button>
+            <span
+              id="issuesActionsViewNotifInfo"
+              *ngIf="isNotificationNumber(data.notificationInfo)"
+              >{{ data.notificationInfo }}</span
+            >
+          </div>
+          <div class="values" *ngIf="isCreateNotification">
+            <span id="issuesActionsViewNotifCreation">{{
+              'notificationCreation' | translate
+            }}</span>
+          </div>
         </div>
       </div>
       <hr class="line" />

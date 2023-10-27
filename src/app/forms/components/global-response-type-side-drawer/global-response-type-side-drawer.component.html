@@ -124,16 +124,22 @@
               *ngFor="let module of selectMetadataModuleNames"
               [value]="module.moduleId"
             >
-              {{ module.moduleName }}
+              {{ module.moduleName | translate }}
             </mat-option>
           </div>
         </mat-select>
       </mat-form-field>
-      <div
-        id="globalResponse"
-        class="margin response-heading"
-        translate="values"
-      ></div>
+      <div class="response-set-row margin">
+        <div
+          id="globalResponse"
+          class="response-heading"
+          translate="values"
+        ></div>
+        <div class="sort-div" (click)="sortResponseSetValue()">
+          <svg-icon icon="icon-sort-icon" class="sort-icon"></svg-icon>
+          <div translate="sort"></div>
+        </div>
+      </div>
       <mat-card-content>
         <div
           class="width-100 response-drop-list"
@@ -150,6 +156,13 @@
             <div *ngFor="let response of getResponseList(); let i = index">
               <div [formGroupName]="i" cdkDrag>
                 <div class="dis-flex width-100">
+                  <div id="globalResponseDrag" class="drag-btn" cdkDragHandle>
+                    <svg-icon
+                      id="globalResponseDragIcon"
+                      icon="icon-drag-icon"
+                      class="drag-btn-icon"
+                    ></svg-icon>
+                  </div>
                   <mat-form-field appearance="outline" class="width-90">
                     <input
                       id="globalResponseTitle"
@@ -162,22 +175,22 @@
                     />
                   </mat-form-field>
 
-                  <button
+                  <div
                     id="globalResponseDelete"
-                    mat-flat-button
-                    (click)="deleteResponse(i)"
                     class="delete-btn"
+                    (click)="deleteResponse(i)"
                   >
                     <svg-icon
                       id="globalResponseDeleteIcon"
                       icon="icon-delete-icon"
                       class="delete-btn-icon"
                     ></svg-icon>
-                  </button>
+                  </div>
                 </div>
                 <mat-error
                   id="addEditTitleError"
                   *ngIf="processValidationErrorsFormArrays('responses', i)"
+                  class="ml-3"
                 >
                   {{
                     errors.responses.name

@@ -11,11 +11,12 @@ import { tap } from 'rxjs/operators';
 
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { CommonService } from 'src/app/shared/services/common.service';
-import { UserDetails } from 'src/app/interfaces';
+import { UserDetails, UserInfo } from 'src/app/interfaces';
 import { routingUrls } from 'src/app/app.constants';
 import { ObservationsService } from 'src/app/forms/services/observations.service';
 import { UsersService } from 'src/app/components/user-management/services/users.service';
 import { PlantService } from 'src/app/components/master-configurations/plants/services/plant.service';
+import { LoginService } from 'src/app/components/login/services/login.service';
 
 interface IPriority {
   high: number;
@@ -98,14 +99,18 @@ export class ObservationsComponent implements OnInit {
   };
   users$: Observable<UserDetails[]>;
   currentRouteUrl$: Observable<string>;
+  isNotificationAlert = false;
+  userInfo$: Observable<UserInfo>;
   readonly routingUrls = routingUrls;
+  private plantId = null;
   constructor(
     private readonly observationsService: ObservationsService,
     private userService: UsersService,
     private headerService: HeaderService,
     private commonService: CommonService,
     private cdrf: ChangeDetectorRef,
-    private plantService: PlantService
+    private plantService: PlantService,
+    private readonly loginService: LoginService
   ) {}
 
   ngOnInit(): void {
@@ -118,9 +123,16 @@ export class ObservationsComponent implements OnInit {
       )
     );
     this.users$ = this.userService.getUsersInfo$();
-    this.observationsService
-      .getObservationChartCounts$(this.moduleName)
-      .subscribe();
+    this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
+      tap(({ plantId = null }) => {
+        this.plantService.setUserPlantIds(plantId);
+        this.observationsService
+          .getObservationChartCounts$(this.moduleName, {
+            plant: plantId
+          })
+          .subscribe();
+      })
+    );
 
     this.observationsService.observationChartCounts$.subscribe((result) => {
       if (result) {

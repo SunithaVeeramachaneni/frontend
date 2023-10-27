@@ -35,6 +35,12 @@ export class RoundPlanModalComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.totalSteps = this.steps.length;
 
+    this.store.dispatch(
+      BuilderConfigurationActions.updateModuleName({
+        moduleName: 'OPERATOR_ROUNDS'
+      })
+    );
+
     this.authoredRoundPlanDetailSubscription = this.store
       .select(getFormDetails)
       .subscribe((formDetails) => {

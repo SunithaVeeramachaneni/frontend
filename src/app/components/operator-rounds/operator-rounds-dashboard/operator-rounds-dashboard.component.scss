@@ -204,7 +204,7 @@ mat-progress-spinner {
 }
 .selected {
   font-weight: 500;
-  color: black;
+  color: $black !important;
 }
 .report-button {
   background: rgba(61, 90, 254, 0.08);
@@ -216,7 +216,6 @@ mat-progress-spinner {
   width: 45px;
   .icon {
     margin-top: -5px;
-    color: $gray;
   }
 }
 .active {
@@ -279,7 +278,7 @@ mat-progress-spinner {
   border: none;
   z-index: 10;
   .more-icon-no-color {
-    color: #757575;
+    color: $light-gray;
   }
   ::ng-deep svg {
     width: 17px !important;

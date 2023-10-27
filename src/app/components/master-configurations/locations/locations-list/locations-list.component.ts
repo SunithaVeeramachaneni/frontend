@@ -261,6 +261,7 @@ export class LocationsListComponent implements OnInit, OnDestroy {
   plants = [];
   plantsIdNameMap = {};
   currentRouteUrl$: Observable<string>;
+  currentUserPlantId: string;
   readonly routingUrls = routingUrls;
   private onDestroy$ = new Subject();
 
@@ -281,9 +282,9 @@ export class LocationsListComponent implements OnInit, OnDestroy {
     );
     this.locationService.fetchLocations$.next({ data: 'load' });
     this.locationService.fetchLocations$.next({} as TableEvent);
-    this.allPlants$ = this.plantsService.fetchAllPlants$().pipe(
-      tap(({ items: allPlants = [] }) => {
-        this.plants = allPlants.map((plant) => {
+    this.allPlants$ = this.plantsService.fetchLoggedInUserPlants$().pipe(
+      tap((plants) => {
+        this.plants = plants.map((plant) => {
           const { id, name, plantId } = plant;
           this.plantsIdNameMap[`${plantId} - ${name}`] = id;
           return `${plantId} - ${name}`;
@@ -314,7 +315,12 @@ export class LocationsListComponent implements OnInit, OnDestroy {
     this.getDisplayedLocations();
     this.configOptions.allColumns = this.columns;
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
-      tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
+      tap(({ permissions = [], plantId }) => {
+        this.currentUserPlantId = plantId;
+        this.plantsService.setUserPlantIds(plantId);
+        this.filter.plant = plantId;
+        this.prepareMenuActions(permissions);
+      })
     );
   }
 
@@ -358,7 +364,7 @@ export class LocationsListComponent implements OnInit, OnDestroy {
           { form, action },
           scrollData,
           { items: allLocations = [] },
-          { items: allPlants = [] }
+          allPlants = []
         ]) => {
           this.allPlants = allPlants.filter((plant) => !plant._deleted);
           this.allParentsLocations.data = uniqBy(
@@ -425,6 +431,9 @@ export class LocationsListComponent implements OnInit, OnDestroy {
         this.filter[item.column] = plantsID;
       }
     }
+    if (!this.filter.plant) {
+      this.filter.plant = this.plantsService.getUserPlantIds();
+    }
     this.nextToken = '';
     this.locationService.fetchLocations$.next({ data: 'load' });
   }
@@ -433,7 +442,7 @@ export class LocationsListComponent implements OnInit, OnDestroy {
     this.isLoading$.next(true);
     this.isPopoverOpen = false;
     this.filter = {
-      plant: ''
+      plant: this.plantsService.getUserPlantIds()
     };
     this.locationService.fetchLocations$.next({ data: 'load' });
   }
@@ -516,6 +525,15 @@ export class LocationsListComponent implements OnInit, OnDestroy {
       });
     }
 
+    if (
+      this.loginService.checkUserHasPermission(permissions, 'COPY_LOCATION')
+    ) {
+      menuActions.push({
+        title: 'Copy',
+        action: 'copy'
+      });
+    }
+
     // if (
     //   this.loginService.checkUserHasPermission(permissions, 'DELETE_LOCATION')
     // ) {
@@ -537,11 +555,15 @@ export class LocationsListComponent implements OnInit, OnDestroy {
   rowLevelActionHandler = ({ data, action }): void => {
     switch (action) {
       case 'edit':
-        this.locationEditData = { locationData: data };
+        this.locationEditData = { locationData: data, isCopy: false };
         this.locationAddOrEditOpenState = 'in';
         break;
       case 'delete':
         this.deleteLocation(data);
+        break;
+      case 'copy':
+        this.locationEditData = { locationData: data, isCopy: true };
+        this.locationAddOrEditOpenState = 'in';
         break;
       default:
     }
@@ -609,6 +631,34 @@ export class LocationsListComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
+  }
+
+  downloadExportedLocations(): void {
+    this.toast.show({
+      type: 'info',
+      text: 'Preparing Data for Export, might take upto 1 min...'
+    });
+    this.locationService
+      .downloadExportedLocations(this.currentUserPlantId)
+      .pipe(
+        tap((data) => {
+          downloadFile(data, 'Exported_Locations');
+        })
+      )
+      .subscribe(
+        () => {
+          this.toast.show({
+            type: 'success',
+            text: 'Data Exported Successfully!'
+          });
+        },
+        () => {
+          this.toast.show({
+            type: 'warning',
+            text: 'Error while exporting data!'
+          });
+        }
+      );
   }
 
   getAllLocations() {

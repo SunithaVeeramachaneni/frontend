@@ -48,6 +48,7 @@ import {
 } from 'src/app/forms/state/actions';
 import {
   DEFAULT_PDF_BUILDER_CONFIG,
+  fileUploadSizeToastMessage,
   formConfigurationStatus
 } from 'src/app/app.constants';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
@@ -161,7 +162,8 @@ export class RoundPlanHeaderConfigurationComponent
       startWith(null),
       map((tag: string | null) =>
         tag ? this.filter(tag) : this.allTags.slice()
-      )
+      ),
+      map((tagsArray) => tagsArray.filter((tag) => !!tag))
     );
     this.headerDataForm = this.fb.group({
       name: [
@@ -199,6 +201,7 @@ export class RoundPlanHeaderConfigurationComponent
     this.formMetadataSubscrption = this.store
       .select(getFormMetadata)
       .subscribe((res) => {
+        this.formMetadata = res;
         this.headerDataForm.patchValue({
           name: res.name,
           description: res.description ? res.description : ''
@@ -278,8 +281,8 @@ export class RoundPlanHeaderConfigurationComponent
   }
 
   getAllPlantsData() {
-    this.plantService.fetchAllPlants$().subscribe((plants) => {
-      this.allPlantsData = plants.items || [];
+    this.plantService.fetchLoggedInUserPlants$().subscribe((plants) => {
+      this.allPlantsData = plants || [];
       this.plantInformation = this.allPlantsData;
       const plantId = this.roundData?.formMetadata?.plantId;
       if (plantId !== undefined) {
@@ -604,7 +607,11 @@ export class RoundPlanHeaderConfigurationComponent
             };
             if (resizedPdfSize <= maxSize) {
               this.operatorRoundsService
-                .uploadAttachments$({ file: pdf })
+                .uploadAttachments$({
+                  file: pdf,
+                  objectId: this.formMetadata?.id,
+                  plantId: this.formMetadata?.plantId
+                })
                 .pipe(
                   tap((response) => {
                     if (response) {
@@ -623,7 +630,7 @@ export class RoundPlanHeaderConfigurationComponent
             } else {
               this.toastService.show({
                 type: 'warning',
-                text: 'File size should not exceed 390KB'
+                text: fileUploadSizeToastMessage
               });
             }
           });
@@ -637,7 +644,11 @@ export class RoundPlanHeaderConfigurationComponent
             };
             if (resizedImageSize <= maxSize) {
               this.operatorRoundsService
-                .uploadAttachments$({ file: image })
+                .uploadAttachments$({
+                  file: image,
+                  objectId: this.formMetadata?.id,
+                  plantId: this.formMetadata?.plantId
+                })
                 .pipe(
                   tap((response) => {
                     if (response) {
@@ -663,7 +674,7 @@ export class RoundPlanHeaderConfigurationComponent
             } else {
               this.toastService.show({
                 type: 'warning',
-                text: 'File size should not exceed 390KB'
+                text: fileUploadSizeToastMessage
               });
             }
           });

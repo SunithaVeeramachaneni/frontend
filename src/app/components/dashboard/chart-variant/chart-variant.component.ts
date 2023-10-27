@@ -51,6 +51,7 @@ export class ChartVariantComponent implements OnInit, OnDestroy {
   @Input() chartConfig: AppChartConfig;
   @Input() configOptions: ConfigOptions;
   @Input() displayTableVarient: boolean;
+  @Input() chartData: AppChartData[];
 
   @Output() chartVarientChanges: EventEmitter<ChartVariantChanges> =
     new EventEmitter<ChartVariantChanges>();
@@ -73,9 +74,6 @@ export class ChartVariantComponent implements OnInit, OnDestroy {
     showLegends: new FormControl(false)
   });
   errors: ValidationError = {};
-
-  chartData$: Observable<AppChartData[]>;
-  chartData: AppChartData[];
   countType: string;
   countField: string;
 
@@ -95,17 +93,11 @@ export class ChartVariantComponent implements OnInit, OnDestroy {
       colors: this.fb.array([])
     });
 
-    this.reportConfigService
-      .getGroupByCountDetails$(this.report, {
-        type: this.countType,
-        field: this.countField
-      })
-      .subscribe((chartData) => {
         const datasetFieldKeyName = this.chartConfig.datasetFieldName;
         const data = [];
         const colorsArr = [];
-
-        chartData.forEach((d) => {
+  
+        this.chartData.forEach((d) => {
           const colorConfig = this.chartConfig.customColors;
           if (colorConfig) {
             const key = d[datasetFieldKeyName];
@@ -131,7 +123,6 @@ export class ChartVariantComponent implements OnInit, OnDestroy {
 
         this.chartData = data;
         this.cdrf.detectChanges();
-      });
 
     const {
       chartDetails: {
@@ -151,7 +142,7 @@ export class ChartVariantComponent implements OnInit, OnDestroy {
     let chartVarient: string;
     if (isStacked) chartVarient = `stacked_${type}_${indexAxis}`;
     else
-      chartVarient = groupBy?.length
+      chartVarient = groupBy?.length && type !== 'table'
         ? `${type}${indexAxis ? `_${indexAxis}` : ``}`
         : 'table';
     this.chartVarientForm.patchValue({

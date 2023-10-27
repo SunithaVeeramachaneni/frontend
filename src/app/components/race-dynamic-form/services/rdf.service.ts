@@ -382,17 +382,27 @@ export class RaceDynamicFormService {
   }
 
   createAuthoredFormDetail$(formDetails) {
+    const pages = [];
+    formDetails.pages.forEach((page) => {
+      const { questionInstructionMediaMap, ...pageData } = page;
+      pages.push(pageData);
+    });
     return this.appService._postData(environment.rdfApiUrl, `forms/authored`, {
       formStatus: formDetails.formStatus,
       formDetailPublishStatus: formDetails.formDetailPublishStatus,
       formlistID: formDetails.formListId,
-      pages: JSON.stringify(formDetails.pages),
+      pages: JSON.stringify(pages),
       counter: formDetails.counter,
       version: formDetails.authoredFormDetailVersion.toString()
     });
   }
 
   updateAuthoredFormDetail$(formDetails) {
+    const pages = [];
+    formDetails.pages.forEach((page) => {
+      const { questionInstructionMediaMap, ...pageData } = page;
+      pages.push(pageData);
+    });
     return this.appService.patchData(
       environment.rdfApiUrl,
       `forms/authored/${formDetails.authoredFormDetailId}`,
@@ -400,7 +410,7 @@ export class RaceDynamicFormService {
         formStatus: formDetails.formStatus,
         formDetailPublishStatus: formDetails.formDetailPublishStatus,
         formlistID: formDetails.formListId,
-        pages: JSON.stringify(formDetails.pages),
+        pages: JSON.stringify(pages),
         pdfBuilderConfiguration: formDetails.pdfBuilderConfiguration,
         counter: formDetails.counter,
         id: formDetails.authoredFormDetailId,
@@ -414,10 +424,27 @@ export class RaceDynamicFormService {
   }
 
   publishAuthoredFormDetail$(formDetails) {
+    let { updateAuthoredForm, createAuthoredForm } = formDetails;
+    const createPages = JSON.parse(createAuthoredForm.pages).map((page) => {
+      const { questionInstructionMediaMap, ...pageData } = page;
+      return pageData;
+    });
+    const updatePages = JSON.parse(updateAuthoredForm.pages).map((page) => {
+      const { questionInstructionMediaMap, ...pageData } = page;
+      return pageData;
+    });
+    createAuthoredForm = {
+      ...createAuthoredForm,
+      pages: JSON.stringify(createPages)
+    };
+    updateAuthoredForm = {
+      ...updateAuthoredForm,
+      pages: JSON.stringify(updatePages)
+    };
     return this.appService.patchData(
       environment.rdfApiUrl,
       `forms/authored/publish/${formDetails.formlistID}`,
-      formDetails
+      { ...formDetails, createAuthoredForm, updateAuthoredForm }
     );
   }
 
@@ -590,7 +617,7 @@ export class RaceDynamicFormService {
     );
   }
 
-  fetchAllFormsList$() {
+  fetchAllFormsList$({ plantId }) {
     const params: URLSearchParams = new URLSearchParams();
     params.set('searchTerm', '');
     params.set('limit', '2000000');
@@ -598,6 +625,7 @@ export class RaceDynamicFormService {
     params.set('fetchType', '');
     params.set('formStatus', 'All');
     params.set('isArchived', 'false');
+    params.set('plant', plantId);
     return this.appService
       ._getResp(environment.rdfApiUrl, 'forms?' + params.toString(), {
         displayToast: true,
@@ -762,7 +790,7 @@ export class RaceDynamicFormService {
       info
     );
   }
-  fetchAllInspections$ = () =>
+  fetchAllInspections$ = ({ plantId }) =>
     this.appService
       ._getResp(
         environment.rdfApiUrl,
@@ -771,7 +799,7 @@ export class RaceDynamicFormService {
           displayToast: true,
           failureResponse: {}
         },
-        { limit: graphQLDefaultMaxLimit, next: '' }
+        { limit: graphQLDefaultMaxLimit, next: '', plant: plantId }
       )
       .pipe(map((res) => this.formatInspections(res.items || [])));
 
@@ -1118,9 +1146,10 @@ export class RaceDynamicFormService {
 
   extractAdditionalDetailsToColumns(form: any) {
     const additionalDetails = JSON.parse(form?.additionalDetails);
-    if(additionalDetails && Array.isArray(additionalDetails)) {
+    if (additionalDetails && Array.isArray(additionalDetails)) {
       additionalDetails.forEach((detail) => {
-        form[this.getColumnIdFromName(detail?.FIELDLABEL)] = detail?.DEFAULTVALUE;
+        form[this.getColumnIdFromName(detail?.FIELDLABEL)] =
+          detail?.DEFAULTVALUE;
       });
     }
 

@@ -54,6 +54,8 @@ import { HeaderService } from 'src/app/shared/services/header.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { ValidationError } from 'src/app/interfaces';
 import { LoginService } from '../../login/services/login.service';
+import { fieldTypesMock } from 'src/app/forms/components/response-type/response-types.mock';
+import { UsersService } from '../../user-management/services/users.service';
 
 @Component({
   selector: 'app-report-configuration',
@@ -103,6 +105,8 @@ export class ReportConfigurationComponent implements OnInit {
     tableHeight: 'calc(100vh - 160px)',
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e6d9d9']
   };
+  userEmailToName = {};
+  userNameToEmail = {};
   dummy = '';
   skip = 0;
   searchKey = '';
@@ -141,6 +145,7 @@ export class ReportConfigurationComponent implements OnInit {
   subscription: any;
   isExportInProgress = false;
   showPreview: boolean;
+  isScroll: boolean = false;
   readonly permissions = permissions;
 
   reportTitleUpdate = new Subject();
@@ -161,7 +166,8 @@ export class ReportConfigurationComponent implements OnInit {
     public dialog: MatDialog,
     private breadcrumbService: BreadcrumbService,
     private headerService: HeaderService,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private usersService: UsersService
   ) {}
 
   ngOnInit() {
@@ -238,9 +244,17 @@ export class ReportConfigurationComponent implements OnInit {
 
     this.reportDetails$ = combineLatest([
       this.reportDetailsOnLoadFilter$,
-      this.reportDetailsOnScroll$
+      this.reportDetailsOnScroll$,
+      this.usersService.getUsersInfo$()
     ]).pipe(
-      map(([loadFilter, scroll]) => {
+      map(([loadFilter, scroll, usersList]) => {
+        usersList.forEach((user) => {
+          this.userEmailToName[
+            user.email
+          ] = `${user.firstName} ${user.lastName}`;
+          this.userNameToEmail[`${user.firstName} ${user.lastName}`] =
+            user.email;
+        });
         if (this.skip === 0 && !this.filtersApplied) {
           const { report } = loadFilter;
           this.reportConfiguration = report
@@ -280,6 +294,7 @@ export class ReportConfigurationComponent implements OnInit {
           loadFilter.reportData = filterData;
         } else {
           const { reportData: scrollData = [] } = scroll;
+          this.isScroll = true;
           loadFilter.reportData = loadFilter.reportData.concat(scrollData);
         }
         this.reportTitleUpdate.next(this.reportConfiguration.name);
@@ -287,7 +302,10 @@ export class ReportConfigurationComponent implements OnInit {
         this.skip = loadFilter.reportData
           ? loadFilter.reportData.length
           : this.skip;
-        this.formatReportData(loadFilter.reportData);
+        this.reportConfigService.formatReportData(
+          loadFilter.reportData,
+          this.userEmailToName
+        );
         this.dataSource = new MatTableDataSource(loadFilter.reportData);
         return loadFilter;
       })
@@ -308,19 +326,6 @@ export class ReportConfigurationComponent implements OnInit {
     const moduleName = `operator-rounds`;
     this.router.navigate([`/${moduleName}/reports`]);
   }
-  formatReportData = (reportData) => {
-    reportData = reportData.map((data) => {
-      if (data.taskType === 'NF') {
-        if (data?.exception > 0) {
-          data.exception = 'True';
-        } else if (data?.exception === 0) {
-          data.exception = 'False';
-        } else {
-          data.exception = '';
-        }
-      }
-    });
-  };
 
   toggleReportInputField = () => {
     this.reportNameDisabled = !this.reportNameDisabled;
@@ -573,14 +578,19 @@ export class ReportConfigurationComponent implements OnInit {
       acc[val.id] = val;
       return acc;
     }, {});
-    this.reportConfiguration.tableDetails = tableDetails.map((table) => {
-      const columns = table.columns.map((column) => {
-        const {
-          order = null,
-          visible = false,
-          sticky = false
-        } = columnsObj[column.name];
-        return { ...column, visible, order, sticky };
+    this.reportConfiguration.tableDetails = tableDetails?.map((table) => {
+      const columns = table?.columns?.map((column) => {
+        if (columnsObj[column?.name]) {
+          const {
+            order = null,
+            visible = false,
+            sticky = false
+          } = columnsObj[column.name];
+          return { ...column, visible, order, sticky };
+        }
+        return {
+          ...column
+        };
       });
       return { ...table, columns };
     });
@@ -707,6 +717,46 @@ export class ReportConfigurationComponent implements OnInit {
   }
 
   applyFilter(filtersObj: any) {
+    filtersObj.filters = filtersObj.filters.map((filter) => {
+      if (filter.column === 'taskType') {
+        const filtersArray = filter.filters.map((f) => {
+          f = {
+            ...f,
+            operand: fieldTypesMock.fieldTypes.find(
+              (fieldType) => fieldType.description === f.operand
+            ).type
+          };
+          return f;
+        });
+        return {
+          ...filter,
+          filters: filtersArray
+        };
+      } else {
+        const ids = new Set([
+          'assignedTo',
+          'raisedBy',
+          'roundSubmittedBy',
+          'taskCompletedBy'
+        ]);
+        if (ids.has(filter.column)) {
+          const filtersArray = filter.filters.map(
+            (f) =>
+              (f = {
+                ...f,
+                operand:
+                  this.userNameToEmail[f.operand] || f.operand.replace(' ', '.')
+              })
+          );
+          return {
+            ...filter,
+            filters: filtersArray
+          };
+        } else {
+          return filter;
+        }
+      }
+    });
     const filtersApplied: FilterApplied[] = filtersObj.filters;
     this.searchKey = filtersObj.searchKey;
     if (filtersApplied) {

@@ -423,6 +423,8 @@
   "noReportObjectsFound": "No Report Objects Found",
   "plantTxt": "Plant: ",
   "shiftsTxt": "Shifts:",
+  "locationTxt": "Location: ",
+  "assetTxt": "Asset:",
   "newWidget": "Create Widget",
   "reportConfiguration": "Report Configuration",
   "widgetConfiguration": "Widget Configuration",
@@ -479,5 +481,9 @@
   "responseSetNameExists": "Response Set Name already exists",
   "addVal": " + Add Value",
   "valueTitle": "Value Title",
-  "editResponses": "Edit Responses"
+  "editResponses": "Edit Responses",
+  "fixedTitleHeader": "Issues with Notifications : ",
+  "createNotificationAnyway": "Create New Notification Anyway",
+  "showNotifications": "Show Issues with Notifications",
+  "notificationsAlertDialog": "{ count } active Notifications from { count } Issues already exists for this { entityName }. Do you want to create a new Notification?"
 }

@@ -290,8 +290,11 @@ export class ActionsListComponent implements OnInit, OnDestroy {
     priority: '',
     status: '',
     dueDate: '',
-    assignedTo: ''
+    assignedTo: '',
+    userPlant: ''
   };
+  plants = [];
+  plantsIdNameMap: any = {};
   readonly perms = perms;
   private _users$: Observable<UserDetails[]>;
   private onDestroy$ = new Subject();
@@ -330,7 +333,11 @@ export class ActionsListComponent implements OnInit, OnDestroy {
       )
       .subscribe();
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
-      tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
+      tap(({ permissions = [], plantId = null }) => {
+        this.plantService.setUserPlantIds(plantId);
+        this.filter.userPlant = plantId;
+        this.prepareMenuActions(permissions);
+      })
     );
     this.getFilter();
     this.displayActions();
@@ -351,7 +358,10 @@ export class ActionsListComponent implements OnInit, OnDestroy {
     const onScrollActions$ = this.observationsService.fetchActions$.pipe(
       filter(({ data }) => data !== 'load' && data !== 'search'),
       switchMap(({ data }) => {
-        if (data === 'infiniteScroll') {
+        if (
+          data === 'infiniteScroll' &&
+          this.observationsService.actionsNextToken !== null
+        ) {
           this.fetchType = 'infiniteScroll';
           return this.getActionsList();
         } else {
@@ -434,6 +444,11 @@ export class ActionsListComponent implements OnInit, OnDestroy {
           filters,
           this.filterJson
         );
+        for (const item of this.filterJson) {
+          if (item.column === 'plant') {
+            item.items = this.plants;
+          }
+        }
         return of(rows as any[]);
       }),
       catchError(() => {
@@ -548,13 +563,18 @@ export class ActionsListComponent implements OnInit, OnDestroy {
     this.isLoading$.next(true);
     this.isPopoverOpen = false;
     for (const item of data) {
-      if (item.type === 'date' && item.value) {
+      if (item.column === 'plant') {
+        this.filter[item.column] = this.plantsIdNameMap[item.value];
+      } else if (item.type === 'date' && item.value) {
         this.filter[item.column] = item.value.toISOString();
       } else if (item.column === 'assignedTo' && item.value) {
         this.filter[item.column] = this.getFullNameToEmailArray(item.value);
       } else {
         this.filter[item.column] = item.value ?? '';
       }
+    }
+    if (!this.filter.userPlant) {
+      this.filter.userPlant = this.plantService.getUserPlantIds();
     }
     this.observationsService.actionsNextToken = '';
     this.observationsService.fetchActions$.next({ data: 'load' });
@@ -570,6 +590,7 @@ export class ActionsListComponent implements OnInit, OnDestroy {
       title: '',
       location: '',
       asset: '',
+      userPlant: this.plantService.getUserPlantIds(),
       plant: '',
       priority: '',
       status: '',
@@ -589,6 +610,21 @@ export class ActionsListComponent implements OnInit, OnDestroy {
   private getFilter(): void {
     this.observationsService
       .getFormsFilter()
-      .subscribe((res) => (this.filterJson = res));
+      .pipe(
+        switchMap((res: any) => {
+          this.filterJson = res;
+          return this.plantService.fetchLoggedInUserPlants$().pipe(
+            tap((plants) => {
+              this.plants = plants
+                .map((plant) => {
+                  this.plantsIdNameMap[`${plant.plantId}`] = plant.plantId;
+                  return `${plant.plantId}`;
+                })
+                .sort();
+            })
+          );
+        })
+      )
+      .subscribe();
   }
 }

@@ -1,5 +1,11 @@
 <div *ngIf="userInfo$ | async" class="issues-list">
-  <span class="no-of-issues" *ngIf="issuesCount$ | async as totalCount">
+  <span
+    [ngClass]="{
+      'no-of-issues': !isNotificationAlert,
+      'no-of-issues-notification': isNotificationAlert
+    }"
+    *ngIf="issuesCount$ | async as totalCount"
+  >
     <span id="issuesListCount" class="issues-count">
       {{ totalCount | count }}
     </span>
@@ -14,7 +20,13 @@
     </span>
   </span>
   <span class="custom-form-field-gray-color">
-    <mat-form-field appearance="outline" class="issues-search">
+    <mat-form-field
+      appearance="outline"
+      [ngClass]="{
+        'issues-search': !isNotificationAlert,
+        'issues-search-notification': isNotificationAlert
+      }"
+    >
       <mat-icon id="issuesListSearchIcon" matPrefix class="searchIcon"
         >search</mat-icon
       >
@@ -56,7 +68,10 @@
     </ng-template>
   </span>
 
-  <div *ngIf="(issues$ | async) && (isLoading$ | async) === false">
+  <div
+    *ngIf="(issues$ | async) && (isLoading$ | async) === false"
+    [ngClass]="{ 'dynamic-table-height': isNotificationAlert }"
+  >
     <cwp-dynamictable
       [dataSource]="dataSource"
       [configOptions]="configOptions"
@@ -68,7 +83,12 @@
   </div>
 
   <div *ngIf="isLoading$ | async">
-    <div class="padding-lr-20">
+    <div
+      [ngClass]="{
+        'padding-lr-20': !isNotificationAlert,
+        'padding-lr-20-notification': isNotificationAlert
+      }"
+    >
       <div *ngFor="let number of ghostLoading">
         <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
         </ngx-shimmer-loading>

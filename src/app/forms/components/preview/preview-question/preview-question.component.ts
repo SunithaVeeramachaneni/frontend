@@ -8,7 +8,7 @@ import {
   ViewContainerRef,
   EventEmitter
 } from '@angular/core';
-import { Question } from 'src/app/interfaces';
+import { QuestionPageIndexNodeMap } from 'src/app/interfaces';
 import { DynamicPreviewResponseTypeLoaderDirective } from '../directives/dynamic-preview-response-type-loader.directive';
 import { ReadOnlyResponseComponent } from '../response-types/read-only-response/read-only-response.component';
 import { InstructionResponseComponent } from '../response-types/instruction-response/instruction-response.component';
@@ -39,7 +39,7 @@ export class PreviewQuestionComponent implements OnInit {
   @ViewChild('dynamicResponseView', { read: ViewContainerRef })
   dynamicResponseView!: ViewContainerRef;
 
-  @Input() question: Question;
+  @Input() question: QuestionPageIndexNodeMap;
   @Input() moduleType: string;
   @Output() isOpenBottomSheet = new EventEmitter();
 
