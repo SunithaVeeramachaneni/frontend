@@ -181,8 +181,24 @@ export class BarChartComponent implements OnInit, OnChanges {
       this.datasetField = datasetFields.find(
         (datasetField) => datasetField.visible
       );
-      this.prepareChartData();
+      this.chartOptions.title.text = this.chartTitle;
+      this.preparedChartData = this.prepareChartData();
+      newOptions.series.data = this.preparedChartData.data;
+      newOptions.legend.data = this.preparedChartData.labels;
+      if (!Array.isArray(newOptions.series)) {
+        newOptions.series = [newOptions.series];
+      } else {
+        newOptions.series = [...newOptions.series];
+      }
       this.chartOptions = newOptions;
+      this.chartOptions.series.forEach((series) => {
+        series.itemStyle = {
+          color: (param: any) =>
+            this.colorsByStatus[param.name]
+              ? this.colorsByStatus[param.name]
+              : '#c8c8c8'
+        };
+      });
     }
   };
 
@@ -211,24 +227,17 @@ export class BarChartComponent implements OnInit, OnChanges {
       }, {});
 
     newOptions.xAxis.data = Object.keys(sortedObject);
-    newOptions.series.data = Object.values(sortedObject);
 
-    if (!Array.isArray(newOptions.series)) {
-      newOptions.series = [newOptions.series];
-    } else {
-      newOptions.series = [...newOptions.series];
-    }
+    const labels = Object.keys(sortedObject);
+    const converted = Object.entries(sortedObject).map(([key, value]) => ({
+      name: key,
+      value
+    }));
 
-    this.chartOptions = newOptions;
-
-    this.chartOptions.series.forEach((series) => {
-      series.itemStyle = {
-        color: (param: any) =>
-          this.colorsByStatus[param.name]
-            ? this.colorsByStatus[param.name]
-            : '#c8c8c8'
-      };
-    });
+    return {
+      labels,
+      data: converted
+    };
   };
 
   ngOnChanges(changes: SimpleChanges) {

@@ -28,7 +28,7 @@ import { format } from 'date-fns';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { takeUntil, tap } from 'rxjs/operators';
 import { cloneDeep, isEqual } from 'lodash-es';
-import { dateFormat4 } from 'src/app/app.constants';
+import { dateFormat4, dateTimeFormat3 } from 'src/app/app.constants';
 import { ScheduleByDate, TaskLevelScheduleSubForm } from 'src/app/interfaces';
 import { Observable, Subject } from 'rxjs';
 import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
@@ -89,6 +89,7 @@ export class ReviseScheduleComponent implements OnInit, OnDestroy {
   locationListToTask$: any;
   locationIdToTaskcount = new Map<string, string>();
   locationIdToTaskcountArr: [string, string][] = [];
+  taskLevelScheduleByDatesPicker: String[] = [];
   _nodeIdToNodeName: any;
   scheduleConfig: any;
   configurations = [];
@@ -167,6 +168,11 @@ export class ReviseScheduleComponent implements OnInit, OnDestroy {
         this.reviseScheduleConfig.scheduleByDates
       );
       const scheduleDate = this.reviseScheduleConfig.scheduleByDates;
+      this.reviseScheduleConfig.scheduleByDates.forEach((scheduleByDate) =>
+        this.taskLevelScheduleByDatesPicker.push(
+          format(new Date(scheduleByDate.date), dateTimeFormat3)
+        )
+      );
       this.minDate = new Date(
         Math.min(...scheduleDate.map((item) => item.date))
       );
@@ -297,7 +303,7 @@ export class ReviseScheduleComponent implements OnInit, OnDestroy {
   }
 
   dateClass = (date: Date) => {
-    if (this.findDate(date) !== -1) {
+    if (this.findDate(format(date, dateTimeFormat3)) !== -1) {
       return ['selected'];
     }
     return [];
@@ -308,30 +314,26 @@ export class ReviseScheduleComponent implements OnInit, OnDestroy {
       ({ date: sDate }) => +sDate === +date
     );
 
-  findDate(date: Date): number {
-    return this.taskLevelScheduleByDates
-      ?.map((scheduleByDate) => +scheduleByDate.date)
-      .indexOf(+date);
+  findDate(date: String): number {
+    return this.taskLevelScheduleByDatesPicker
+      ?.map((scheduleByDate) => scheduleByDate)
+      .indexOf(date);
   }
 
   updateScheduleByDates(date: Date) {
-    const index = this.findDate(date);
+    const index = this.findDate(format(date, dateTimeFormat3));
     if (index === -1) {
       this.taskLevelScheduleByDates = [
         ...this.taskLevelScheduleByDates,
         {
-          date: new Date(
-            localToTimezoneDate(
-              new Date(date),
-              this.plantTimezoneMap[this.roundPlanData.plantId],
-              ''
-            )
-          ),
+          date: date,
           scheduled: false
         }
       ];
+      this.taskLevelScheduleByDatesPicker.push(format(date, dateTimeFormat3));
     } else {
       this.taskLevelScheduleByDates.splice(index, 1);
+      this.taskLevelScheduleByDatesPicker.splice(index, 1);
     }
     this.reviseScheduleConfigForm.markAsDirty();
     this.calendar.updateTodaysDate();
@@ -354,6 +356,7 @@ export class ReviseScheduleComponent implements OnInit, OnDestroy {
       ];
       this.shiftsSelected.patchValue(this.allSlots);
     }
+    this.reviseScheduleConfigForm.markAsDirty();
   }
 
   cancel() {

@@ -47,6 +47,24 @@
     margin-bottom: 0.5rem;
   }
 
+  .response-set-row {
+    display: flex;
+    justify-content: space-between;
+    .sort-div {
+      display: flex;
+      margin-left: auto;
+      padding-right: 5px;
+      cursor: pointer;
+      .sort-icon {
+        height: 17px;
+        width: 17px;
+      }
+      &:hover {
+        opacity: 0.6;
+      }
+    }
+  }
+
   .response-heading {
     padding-left: 2px;
     font-weight: bold;
@@ -92,13 +110,27 @@
     border: none;
   }
 
-  .delete-btn {
-    float: right;
-    padding: 0;
-    min-width: 40px;
-    margin-top: 10px;
+  .drag-btn {
+    min-width: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: $delete-response-icon-grey;
+    cursor: pointer;
+    .drag-btn-icon {
+      height: 17px;
+      width: 17px;
+    }
+  }
 
+  .delete-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    margin-left: 5px;
+    color: $delete-response-icon-grey;
+    cursor: pointer;
     .delete-btn-icon {
       height: 17px;
       width: 17px;
@@ -142,6 +174,9 @@
     background-color: $blue-main;
     color: $white;
   }
+  .ml-3 {
+    margin-left: 30px;
+  }
 }
 
 ::ng-deep .error_div {
@@ -181,4 +216,42 @@
 .input-container {
   height: calc(100vh - 150px);
   overflow-y: auto;
+}
+.cdk-drag-preview {
+  .delete-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    margin-left: 5px;
+    color: $delete-response-icon-grey;
+    cursor: pointer;
+    .delete-btn-icon {
+      height: 17px;
+      width: 17px;
+    }
+  }
+  .drag-btn {
+    min-width: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $delete-response-icon-grey;
+    cursor: pointer;
+    .drag-btn-icon {
+      height: 17px;
+      width: 17px;
+    }
+  }
+  .ml-3 {
+    margin-left: 30px;
+  }
+}
+
+.cdk-drag-placeholder {
+  opacity: 0;
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }

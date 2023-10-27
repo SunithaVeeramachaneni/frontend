@@ -11,6 +11,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ConfigOptions } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
+import { cloneDeep } from 'lodash-es';
 import { defaultCountFieldName, defaultLimit } from 'src/app/app.constants';
 import {
   AppChartConfig,
@@ -243,7 +244,7 @@ export class WidgetComponent implements OnInit {
       height: '95%',
       data: {
         chartData: event.data,
-        widgetData: this.widget,
+        widgetData: cloneDeep(this.widget),
         filters
       }
     });

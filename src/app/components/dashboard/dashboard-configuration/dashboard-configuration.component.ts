@@ -64,6 +64,7 @@ interface CreateUpdateDeleteWidget {
 })
 export class DashboardConfigurationComponent implements OnInit {
   @ViewChild('gridsterContainer', { static: false })
+  gridsterContainer: ElementRef;
   @Output()
   dashboardActionHandler: EventEmitter<any> = new EventEmitter<any>();
 
@@ -82,8 +83,6 @@ export class DashboardConfigurationComponent implements OnInit {
   get dashboardDisplayMode(): string {
     return this._dashboardDisplayMode;
   }
-
-  gridsterContainer: ElementRef;
   dashboards$: Observable<Dashboard[]>;
   showAllDashboards = false;
 

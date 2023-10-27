@@ -78,6 +78,12 @@ export class NodeComponent implements OnInit {
         }
       })
     );
+
+    this.operatorRoundsService.currentShownHierarchyNode$.subscribe((node) => {
+      if (node.id !== this.node.id) {
+        this.togglePopover = false;
+      }
+    });
   }
 
   getTasksCountByNode(node) {
@@ -151,6 +157,9 @@ export class NodeComponent implements OnInit {
     };
     this.nodeSelectedForShowHierarchy = node;
     this.togglePopover = !this.togglePopover;
+    if (this.togglePopover) {
+      this.operatorRoundsService.currentShownHierarchyNode$.next(node);
+    }
   };
 
   toggleCheckBox(checked, node) {

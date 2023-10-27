@@ -53,6 +53,7 @@ import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { LoginService } from '../../login/services/login.service';
+import { PlantService } from '../../master-configurations/plants/services/plant.service';
 
 interface FormTableUpdate {
   action: 'restore' | 'delete' | null;
@@ -167,7 +168,7 @@ export class ArchivedFormListComponent implements OnInit, OnDestroy {
     plant: ''
   };
   plants = [];
-  plantsIdNameMap = {};
+  plantsIdNameMap: any = {};
   triggerCountUpdate = false;
   readonly routingUrls = routingUrls;
   userInfo$: Observable<UserInfo>;
@@ -177,7 +178,8 @@ export class ArchivedFormListComponent implements OnInit, OnDestroy {
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private readonly toast: ToastService,
     private readonly loginService: LoginService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private plantService: PlantService
   ) {}
 
   ngOnInit(): void {
@@ -197,13 +199,16 @@ export class ArchivedFormListComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe(() => this.isLoading$.next(true));
+    this.getFilters();
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
-      tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
+      tap(({ permissions = [], plantId = null }) => {
+        this.plantService.setUserPlantIds(plantId);
+        this.filter.plant = plantId;
+        this.prepareMenuActions(permissions);
+      })
     );
     this.getDisplayedForms();
     this.configOptions.allColumns = this.columns;
-    this.getFilters();
-    this.getAllArchivedForms();
     this.archivedFormsListCount$ = combineLatest([
       this.archivedFormsListCountRaw$,
       this.archivedFormsListCountUpdate$
@@ -393,35 +398,27 @@ export class ArchivedFormListComponent implements OnInit, OnDestroy {
   };
 
   getFilters() {
-    this.raceDynamicFormService.getArchivedFilter().subscribe((res) => {
-      this.filterJson = res;
-    });
-  }
-
-  getAllArchivedForms() {
     this.raceDynamicFormService
-      .fetchAllArchivedForms$()
+      .getArchivedFilter()
       .pipe(
-        tap((formsList) => {
-          const objectKeys = Object.keys(formsList);
-          if (objectKeys.length > 0) {
-            this.plants = formsList.rows
-              .map((item) => {
-                if (item.plantId) {
-                  this.plantsIdNameMap[item.plant] = item.plantId;
-                  return item.plant;
+        switchMap((res: any) => {
+          this.filterJson = res;
+          return this.plantService.fetchLoggedInUserPlants$().pipe(
+            tap((plants) => {
+              this.plants = plants
+                .map((plant) => {
+                  this.plantsIdNameMap[`${plant.plantId} - ${plant.name}`] =
+                    plant.id;
+                  return `${plant.plantId} - ${plant.name}`;
+                })
+                .sort();
+              for (const item of this.filterJson) {
+                if (item.column === 'plant') {
+                  item.items = this.plants;
                 }
-                return '';
-              })
-              .filter((value, index, self) => self.indexOf(value) === index)
-              .sort();
-
-            for (const item of this.filterJson) {
-              if (item.column === 'plant') {
-                item.items = this.plants;
               }
-            }
-          }
+            })
+          );
         })
       )
       .subscribe();
@@ -435,13 +432,16 @@ export class ArchivedFormListComponent implements OnInit, OnDestroy {
         this.filter[item.column] = item.value;
       }
     }
+    if (!this.filter.plant) {
+      this.filter.plant = this.plantService.getUserPlantIds();
+    }
     this.nextToken = '';
     this.fetchForms$.next({ data: 'load' });
   }
 
   resetFilter() {
     this.filter = {
-      plant: ''
+      plant: this.plantService.getUserPlantIds()
     };
     this.nextToken = '';
     this.fetchForms$.next({ data: 'load' });

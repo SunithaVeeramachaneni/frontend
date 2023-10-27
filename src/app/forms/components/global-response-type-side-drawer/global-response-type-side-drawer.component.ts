@@ -24,7 +24,7 @@ import {
   ValidatorFn,
   AbstractControl
 } from '@angular/forms';
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { CdkDragDrop } from '@angular/cdk/drag-drop';
 import {
   pairwise,
   debounceTime,
@@ -34,7 +34,7 @@ import {
   startWith
 } from 'rxjs/operators';
 
-import { isEqual } from 'lodash-es';
+import { isEqual, orderBy } from 'lodash-es';
 
 import { ResponseSetService } from 'src/app/components/master-configurations/response-set/services/response-set.service';
 import { ToastService } from 'src/app/shared/toast';
@@ -78,6 +78,8 @@ export class GlobalResponseTypeSideDrawerComponent
   errors: ValidationError = {};
   public isResponseFormUpdated = false;
   public globalResponse: any;
+  sortingApplied = false;
+  elementSorted = false;
   private onDestroy$ = new Subject();
 
   @Input() set globalResponseToBeEdited(response: any) {
@@ -116,7 +118,10 @@ export class GlobalResponseTypeSideDrawerComponent
         distinctUntilChanged(),
         takeUntil(this.onDestroy$),
         tap(([prev, curr]) => {
-          if (isEqual(prev, curr) || !curr.name || curr.responses.length < 1)
+          if (
+            !this.elementSorted &&
+            (isEqual(prev, curr) || !curr.name || curr.responses.length < 1)
+          )
             this.isResponseFormUpdated = false;
           else if (curr.responses.find((item) => !item.title))
             this.isResponseFormUpdated = false;
@@ -128,6 +133,7 @@ export class GlobalResponseTypeSideDrawerComponent
             this.isResponseFormUpdated = false;
           else if (this.responseForm.get('name')?.errors?.responseSetNameExists)
             this.isResponseFormUpdated = false;
+          else if (this.name.errors) this.isResponseFormUpdated = false;
           else this.isResponseFormUpdated = true;
           this.cdrf.markForCheck();
         })
@@ -143,16 +149,21 @@ export class GlobalResponseTypeSideDrawerComponent
         this.name.patchValue(response.name);
         this.description.patchValue(response.description);
         this.moduleName.patchValue(response?.moduleName?.split(','));
-        const globalresponseValues = JSON.parse(response.values);
+        const globalresponseValues = orderBy(
+          JSON.parse(response.values),
+          ['order'],
+          ['asc']
+        );
         this.responses.clear();
-        globalresponseValues.forEach((item) => {
+        globalresponseValues.forEach((item, index) => {
           this.responses.push(
             this.fb.group({
               title: [
                 item.title,
                 [Validators.required, WhiteSpaceValidator.trimWhiteSpace]
               ],
-              color: ''
+              color: '',
+              order: item.order || index
             })
           );
         });
@@ -168,7 +179,8 @@ export class GlobalResponseTypeSideDrawerComponent
     this.responses.push(
       this.fb.group({
         title: ['', [Validators.required, WhiteSpaceValidator.trimWhiteSpace]],
-        color: ''
+        color: '',
+        order: this.getResponseList().length
       })
     );
 
@@ -205,16 +217,26 @@ export class GlobalResponseTypeSideDrawerComponent
   }
 
   dropResponse = (event: CdkDragDrop<any>) => {
-    moveItemInArray(
-      event.container.data,
-      event.previousIndex,
-      event.currentIndex
-    );
-    this.responses.patchValue(event.container.data);
+    // Swap the items and update the order values
+    const movedItem = this.responses.at(event.previousIndex);
+    const targetItem = this.responses.at(event.currentIndex);
+
+    this.responses.setControl(event.previousIndex, targetItem);
+    this.responses.setControl(event.currentIndex, movedItem);
+
+    // Update the order values in the entire FormArray
+    this.responses.controls.forEach((control, index) => {
+      control.get('order').setValue(index);
+    });
+    this.elementSorted = true;
+    this.responses.markAsDirty();
   };
 
   deleteResponse = (idx: number) => {
     this.responses.removeAt(idx);
+    this.responses.controls.forEach((control, index) => {
+      control.get('order').setValue(index);
+    });
     this.responseForm.markAsDirty();
   };
 
@@ -333,6 +355,27 @@ export class GlobalResponseTypeSideDrawerComponent
       );
       return isResponseSetNameExists ? { responseSetNameExists: true } : null;
     };
+  }
+
+  sortResponseSetValue() {
+    this.sortingApplied = !this.sortingApplied;
+    const direction = this.sortingApplied ? 'asc' : 'desc';
+    const formArray = this.responseForm.get('responses') as FormArray;
+    formArray.controls.sort((a, b) => {
+      const nameA = a.get('title').value.toLowerCase();
+      const nameB = b.get('title').value.toLowerCase();
+      if (direction === 'asc') {
+        return nameA.localeCompare(nameB);
+      } else {
+        return nameB.localeCompare(nameA);
+      }
+    });
+    // Update the order values in the entire FormArray
+    this.responses.controls.forEach((control, index) => {
+      control.get('order').setValue(index);
+    });
+    this.elementSorted = true;
+    this.responses.markAsDirty();
   }
 
   ngOnDestroy(): void {

@@ -345,7 +345,8 @@ export class ImportTemplateQuestionsSliderComponent
           questionsCount,
           this.sectionIndexes,
           this.questionCounter,
-          this.importSectionQuestions
+          this.importSectionQuestions,
+          []
         );
       } else if (data.selectedPageOption === 'existing') {
         this.formConfigurationService.addSections(

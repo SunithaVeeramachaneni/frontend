@@ -239,7 +239,9 @@ export class BuilderComponent implements OnInit, OnDestroy {
       this.counter,
       this.selectedNode.id,
       this.isEmbeddedForm,
-      this.isTemplate
+      this.isTemplate,
+      [],
+      []
     );
   }
 
@@ -256,7 +258,9 @@ export class BuilderComponent implements OnInit, OnDestroy {
             this.counter,
             this.selectedNode.id,
             this.isEmbeddedForm,
-            this.isTemplate
+            this.isTemplate,
+            [],
+            []
           );
         }
         break;
@@ -426,7 +430,14 @@ export class BuilderComponent implements OnInit, OnDestroy {
   }
 
   questionEventHandler(event: QuestionEvent) {
-    const { pageIndex, questionIndex, sectionId, question, type } = event;
+    const {
+      pageIndex,
+      questionIndex,
+      sectionId,
+      question,
+      type,
+      instructionsMedia
+    } = event;
     switch (type) {
       case 'add':
         {
@@ -450,7 +461,8 @@ export class BuilderComponent implements OnInit, OnDestroy {
             sectionId,
             pageIndex,
             ...this.getFormConfigurationStatuses(),
-            subFormId: this.selectedNode.id
+            subFormId: this.selectedNode.id,
+            instructionsMedia: instructionsMedia || {}
           })
         );
         break;

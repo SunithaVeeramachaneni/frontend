@@ -54,6 +54,7 @@ export class OperatorRoundsService {
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   attachmentsMapping$ = new BehaviorSubject<any>({});
+  currentShownHierarchyNode$ = new BehaviorSubject<any>({});
   pdfMapping$ = new BehaviorSubject<any>({});
   selectedNode$ = this.selectedNodeSubject.asObservable();
   hierarchyMode$ = this.hierarchyModeSubject.asObservable();
@@ -434,13 +435,23 @@ export class OperatorRoundsService {
   createAuthoredFormDetail$(formDetails) {
     const {
       hierarchy,
-      subForms,
       counter,
-      pages,
       formListId,
+      pages,
       formDetailPublishStatus,
       formStatus
     } = formDetails;
+    let subForms = {};
+    Object.keys(formDetails.subForms).forEach((key) => {
+      const pages = formDetails.subForms[key].map((page) => {
+        const { questionInstructionMediaMap, ...pageData } = page;
+        return pageData;
+      });
+      subForms = {
+        ...subForms,
+        [key]: pages
+      };
+    });
     const flatHierarchy = this.assetHierarchyUtil.convertHierarchyToFlatList(
       cloneDeep(hierarchy),
       0
@@ -465,6 +476,17 @@ export class OperatorRoundsService {
   publishRoundPlan$(roundPlanDetails) {
     roundPlanDetails.authoredFormDetail.formStatus =
       roundPlanDetails.form.formStatus;
+    let subForms = roundPlanDetails.authoredFormDetail.subForms;
+    Object.keys(subForms).forEach((key) => {
+      const pages = subForms[key].map((page) => {
+        const { questionInstructionMediaMap, ...pageData } = page;
+        return pageData;
+      });
+      subForms = {
+        ...subForms,
+        [key]: pages
+      };
+    });
     const { hierarchy } = roundPlanDetails.authoredFormDetail;
     const flatHierarchy = this.assetHierarchyUtil.convertHierarchyToFlatList(
       cloneDeep(hierarchy),
@@ -477,7 +499,8 @@ export class OperatorRoundsService {
         ...roundPlanDetails,
         authoredFormDetail: {
           ...roundPlanDetails.authoredFormDetail,
-          flatHierarchy
+          flatHierarchy,
+          subForms
         },
         isEdit: roundPlanDetails.isEdit
       }
@@ -487,13 +510,24 @@ export class OperatorRoundsService {
   updateAuthoredFormDetail$(formDetails) {
     const {
       hierarchy,
-      subForms,
       counter,
       pages,
       formListId,
       formDetailPublishStatus,
       formStatus
     } = formDetails;
+    let subForms = {};
+    Object.keys(formDetails.subForms).forEach((key) => {
+      const pages = formDetails.subForms[key].map((page) => {
+        const { questionInstructionMediaMap, ...pageData } = page;
+        return pageData;
+      });
+      subForms = {
+        ...subForms,
+        [key]: pages
+      };
+    });
+
     const flatHierarchy = this.assetHierarchyUtil.convertHierarchyToFlatList(
       cloneDeep(hierarchy),
       0
@@ -724,7 +758,7 @@ export class OperatorRoundsService {
     return rows;
   }
 
-  fetchAllOperatorRounds$ = () => {
+  fetchAllOperatorRounds$ = (query) => {
     const params: URLSearchParams = new URLSearchParams();
     params.set('searchTerm', '');
     params.set('limit', '2000000');
@@ -732,6 +766,7 @@ export class OperatorRoundsService {
     params.set('fetchType', '');
     params.set('formStatus', 'All');
     params.set('isArchived', 'false');
+    params.set('plant', query?.plantId);
     return this.appService
       ._getResp(
         environment.operatorRoundsApiUrl,
@@ -741,17 +776,17 @@ export class OperatorRoundsService {
       .pipe(map((res) => this.formateGetRoundPlanResponse(res)));
   };
 
-  fetchAllRounds$ = () =>
+  fetchAllRounds$ = ({ plantId }) =>
     this.appService
       ._getResp(
         environment.operatorRoundsApiUrl,
         'rounds',
         { displayToast: true, failureResponse: {} },
-        { limit: graphQLDefaultMaxLimit, next: '' }
+        { limit: graphQLDefaultMaxLimit, next: '', plant: plantId }
       )
       .pipe(map((res) => this.formatRounds(res?.items || [])));
 
-  fetchAllPlansList$ = () => {
+  fetchAllPlansList$ = ({ plantId }) => {
     const params: URLSearchParams = new URLSearchParams();
     params.set('searchTerm', '');
     params.set('limit', '2000000');
@@ -760,7 +795,7 @@ export class OperatorRoundsService {
     params.set('status', '');
     params.set('assignedTo', '');
     params.set('dueDate', '');
-
+    params.set('plant', plantId);
     return this.appService
       ._getResp(
         environment.operatorRoundsApiUrl,

@@ -10,6 +10,7 @@ import {
   QuickResponseActions,
   UnitOfMeasurementActions
 } from 'src/app/forms/state/actions';
+import { QuestionInstructionMediaMap } from 'src/app/interfaces';
 import { Step } from 'src/app/interfaces/stepper';
 import { CommonService } from 'src/app/shared/services/common.service';
 
@@ -42,6 +43,17 @@ export class TemplateModalComponent implements OnInit, OnDestroy {
 
     this.route.data.subscribe((data) => {
       if (data.form && Object.keys(data.form).length) {
+        data.form.pages = data.form.pages.map((page) => {
+          let questionInstructionMediaMap: QuestionInstructionMediaMap[] = [];
+          page.questions.forEach((question) => {
+            questionInstructionMediaMap.push({
+              questionId: question.id,
+              instructionsMedia: {}
+            });
+          });
+          page.questionInstructionMediaMap = questionInstructionMediaMap;
+          return page;
+        });
         this.store.dispatch(
           BuilderConfigurationActions.updateFormConfiguration({
             formConfiguration: data.form
