@@ -28,7 +28,7 @@ import { format } from 'date-fns';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { takeUntil, tap } from 'rxjs/operators';
 import { cloneDeep, isEqual } from 'lodash-es';
-import { dateFormat6, dateTimeFormat4 } from 'src/app/app.constants';
+import { dateFormat4, dateTimeFormat3 } from 'src/app/app.constants';
 import { ScheduleByDate, TaskLevelScheduleSubForm } from 'src/app/interfaces';
 import { Observable, Subject } from 'rxjs';
 import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
@@ -170,7 +170,7 @@ export class ReviseScheduleComponent implements OnInit, OnDestroy {
       const scheduleDate = this.reviseScheduleConfig.scheduleByDates;
       this.reviseScheduleConfig.scheduleByDates.forEach((scheduleByDate) =>
         this.taskLevelScheduleByDatesPicker.push(
-          format(new Date(scheduleByDate.date), dateTimeFormat4)
+          format(new Date(scheduleByDate.date), dateTimeFormat3)
         )
       );
       this.minDate = new Date(
@@ -291,19 +291,19 @@ export class ReviseScheduleComponent implements OnInit, OnDestroy {
   ) {
     if (formControlDateField === 'startDate') {
       this.reviseScheduleConfigForm.patchValue(
-        { startDate: format(new Date(event.target.value), dateFormat6) },
+        { startDate: format(new Date(event.target.value), dateFormat4) },
         { emitEvent: false }
       );
     } else if (formControlDateField === 'endDate') {
       this.reviseScheduleConfigForm.patchValue(
-        { endDate: format(new Date(event.target.value), dateFormat6) },
+        { endDate: format(new Date(event.target.value), dateFormat4) },
         { emitEvent: false }
       );
     }
   }
 
   dateClass = (date: Date) => {
-    if (this.findDate(format(date, dateTimeFormat4)) !== -1) {
+    if (this.findDate(format(date, dateTimeFormat3)) !== -1) {
       return ['selected'];
     }
     return [];
@@ -321,7 +321,7 @@ export class ReviseScheduleComponent implements OnInit, OnDestroy {
   }
 
   updateScheduleByDates(date: Date) {
-    const index = this.findDate(format(date, dateTimeFormat4));
+    const index = this.findDate(format(date, dateTimeFormat3));
     if (index === -1) {
       this.taskLevelScheduleByDates = [
         ...this.taskLevelScheduleByDates,
@@ -330,7 +330,7 @@ export class ReviseScheduleComponent implements OnInit, OnDestroy {
           scheduled: false
         }
       ];
-      this.taskLevelScheduleByDatesPicker.push(format(date, dateTimeFormat4));
+      this.taskLevelScheduleByDatesPicker.push(format(date, dateTimeFormat3));
     } else {
       this.taskLevelScheduleByDates.splice(index, 1);
       this.taskLevelScheduleByDatesPicker.splice(index, 1);

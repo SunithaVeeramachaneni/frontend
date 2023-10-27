@@ -384,9 +384,17 @@ export const userRolePermissions = 'UserRolePermissions';
 export const defaultProfile = 'assets/user-management-icons/Vector.png';
 export const products = ['MWORKORDER', 'MINVENTORY'];
 export const LIST_LENGTH = 20000000;
+export const dateFormat = 'MMM dd, yy';
+export const dateFormat2 = 'dd MMM yyyy';
+export const dateFormat3 = 'd MMMM yyyy';
+export const dateFormat4 = 'MMM d, yyyy';
+export const dateFormat5 = 'yyyy-MM-dd';
 export const dateFormat6 = 'MMM d, yyyy';
 export const hourFormat = 'HH:00:00';
+export const dateTimeFormat2 = 'dd MMM yyyy hh:mm a';
+export const dateTimeFormat3 = 'yyyy-MM-dd 00:00:00';
 export const dateTimeFormat4 = 'MMM d, yyyy h:mm a';
+export const dateTimeFormat5 = 'yyyy-MM-dd HH:mm:ss';
 export const timeFormat = 'h:mm a';
 
 export const DEFAULT_PDF_BUILDER_CONFIG = {
