@@ -25,7 +25,7 @@ import {
 } from '../../../interfaces';
 import {
   formConfigurationStatus,
-  dateFormat2,
+  dateFormat6,
   graphQLDefaultMaxLimit
 } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
@@ -736,7 +736,7 @@ export class OperatorRoundsService {
           condition: true
         },
         dueDateDisplay: p.dueDate
-          ? format(new Date(p.dueDate), dateFormat2)
+          ? format(new Date(p.dueDate), dateFormat6)
           : '',
         submittedAt: p.submittedAt?.trim() ? new Date(p.submittedAt) : '',
         locationAssetsCompleted: `${p.locationAndAssetsCompleted}/${p.locationAndAssets}`,

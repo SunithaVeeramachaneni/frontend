@@ -27,8 +27,7 @@ import {
 import { scheduleConfigs } from 'src/app/forms/components/schedular/schedule-configuration/schedule-configuration.constants';
 import {
   formConfigurationStatus,
-  dateFormat2,
-  dateTimeFormat2,
+  dateFormat6,
   dateTimeFormat4
 } from 'src/app/app.constants';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
@@ -84,8 +83,8 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   plantTimezoneMap: any;
   slotArr = [];
   templatesUsed = [];
-  readonly dateTimeFormat = dateTimeFormat2;
-  readonly dateFormat = dateFormat2;
+  readonly dateTimeFormat = dateTimeFormat4;
+  readonly dateFormat = dateFormat6;
   readonly formConfigurationStatus = formConfigurationStatus;
   readonly scheduleConfigs = scheduleConfigs;
   private _scheduleConfiguration: RoundPlanScheduleConfiguration;
