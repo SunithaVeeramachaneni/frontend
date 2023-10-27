@@ -524,7 +524,6 @@ export class UsersComponent implements OnInit {
                   initial.data[0].createdAtPlaceHolder = this.formatDateTime(
                     user.createdAt
                   );
-                  console.log(initial.data[0].createdAt);
                 }
                 break;
               case 'deactivate':
