@@ -75,6 +75,7 @@ export class RoundPlanResolverService
           instructions,
           lastModifiedBy,
           additionalDetails,
+          unitLocationId,
           _version: formListDynamoDBVersion
         } = form;
         let pdfTemplateConfiguration = JSON.parse(
@@ -118,6 +119,7 @@ export class RoundPlanResolverService
             this.operatorRoundsService.pdfMapping$.next(result);
           });
         }
+
         const formMetadata = {
           id,
           name,
@@ -131,7 +133,8 @@ export class RoundPlanResolverService
           plant: plant.name,
           pdfTemplateConfiguration,
           additionalDetails: JSON.parse(additionalDetails),
-          instructions: JSON.parse(instructions)
+          instructions: JSON.parse(instructions),
+          unitLocationId: unitLocationId || ''
         };
 
         const subFormsMap = subForms ? JSON.parse(subForms) : {};

@@ -181,6 +181,19 @@ export class LocationService {
     );
   }
 
+  fetchUnitLocations$ = (filter: { plantId: string }) => {
+    const queryParamaters = {
+      plantId: filter.plantId,
+      isUnit: true
+    };
+    return this._appService._getResp(
+      environment.masterConfigApiUrl,
+      'location/listAll',
+      { displayToast: true, failureResponse: {} },
+      queryParamaters
+    );
+  };
+
   private formatGraphQLocationResponse(resp: LocationsResponse) {
     let rows =
       resp.items
