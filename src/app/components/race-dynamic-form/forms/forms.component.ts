@@ -427,7 +427,6 @@ export class FormsComponent implements OnInit, OnDestroy {
         map(
           ([forms, scrollData, formScheduleConfigurations, shifts, plants]) => {
             this.isLoading$.next(false);
-            console.log('plant:', plants);
             plants.forEach((plant) => {
               this.plantsIdNameMap[`${plant.plantId} - ${plant.name}`] =
                 plant.id;
