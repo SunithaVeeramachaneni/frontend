@@ -590,8 +590,13 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
       }
     }
   }
+
   trackBySelectedattachments(index: number, el: any): string {
     return el?.id;
+  }
+
+  onChangeNotes(event) {
+    this.headerDataForm.get('instructions.notes').setValue(event);
   }
 
   processValidationErrors(controlName: string): boolean {
