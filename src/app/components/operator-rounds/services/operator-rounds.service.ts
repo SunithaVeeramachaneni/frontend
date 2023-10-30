@@ -402,6 +402,7 @@ export class OperatorRoundsService {
         tags: formListQuery.tags,
         isPublic: formListQuery.isPublic,
         plantId: formListQuery.plantId,
+        unitLocationId: formListQuery.unitLocationId,
         isArchived: false,
         isDeleted: false,
         pdfTemplateConfiguration: formListQuery.pdfTemplateConfiguration,
