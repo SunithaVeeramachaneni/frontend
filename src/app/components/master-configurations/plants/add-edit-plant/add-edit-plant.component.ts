@@ -35,6 +35,7 @@ import {
 import { ShiftOverlapModalComponent } from '../shift-overlap-modal/shift-overlap-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { FormValidationUtil } from 'src/app/shared/utils/formValidationUtil';
+import { TenantService } from 'src/app/components/tenant-management/services/tenant.service';
 
 @Component({
   selector: 'app-add-edit-plant',
@@ -142,7 +143,8 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
     private shiftService: ShiftService,
     private dialog: MatDialog,
     private formValidationUtil: FormValidationUtil,
-    private cdfr: ChangeDetectorRef
+    private cdfr: ChangeDetectorRef,
+    private tenantService: TenantService
   ) {}
 
   checkPlantIdExists(): AsyncValidatorFn {
@@ -173,7 +175,22 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
     };
   }
 
+  getValidators(tenantInfo): any[] {
+    const validators = [
+      Validators.required,
+      WhiteSpaceValidator.trimWhiteSpace
+    ];
+    if (tenantInfo?.whiteSpace === 'True') {
+      validators.push(WhiteSpaceValidator.whiteSpace);
+    }
+    return validators;
+  }
+
   ngOnInit(): void {
+    const tenantInfo = this.tenantService.getTenantInfo();
+
+    const validators = this.getValidators(tenantInfo);
+
     this.plantMapSubscription = this.plantService.plantMasterData$.subscribe(
       (res) => {
         this.plantMasterData = res;
@@ -185,38 +202,20 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
     this.plantForm = this.fb.group({
       id: '',
       image: '',
-      name: new FormControl('', [
-        Validators.required,
-        WhiteSpaceValidator.whiteSpace,
-        WhiteSpaceValidator.trimWhiteSpace
-      ]),
+      name: new FormControl('', [...validators]),
       plantId: new FormControl(
         '',
-        [
-          Validators.required,
-          WhiteSpaceValidator.whiteSpace,
-          WhiteSpaceValidator.trimWhiteSpace
-        ],
+        [...validators],
         [this.checkPlantIdExists()]
       ),
-      country: new FormControl('', [
-        Validators.required,
-        WhiteSpaceValidator.whiteSpace,
-        WhiteSpaceValidator.trimWhiteSpace
-      ]),
+      country: new FormControl('', [...validators]),
       zipCode: new FormControl('', [
-        Validators.required,
         Validators.minLength(2),
         Validators.maxLength(6),
-        WhiteSpaceValidator.whiteSpace,
-        WhiteSpaceValidator.trimWhiteSpace,
-        Validators.pattern(regex)
+        Validators.pattern(regex),
+        ...validators
       ]),
-      state: new FormControl('', [
-        Validators.required,
-        WhiteSpaceValidator.whiteSpace,
-        WhiteSpaceValidator.trimWhiteSpace
-      ]),
+      state: new FormControl('', [...validators]),
       timeZone: new FormControl('', [Validators.required]),
       shifts: new FormControl('', []),
       label: new FormControl('', [WhiteSpaceValidator.trimWhiteSpace]),

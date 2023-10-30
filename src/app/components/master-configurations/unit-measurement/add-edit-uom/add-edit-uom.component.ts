@@ -23,6 +23,7 @@ import { ValidationError, UnitOfMeasurement } from 'src/app/interfaces';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { UnitMeasurementService } from '../services';
 import { UnitOfMeasurementDeleteModalComponent } from '../uom-delete-modal/uom-delete-modal.component';
+import { TenantService } from 'src/app/components/tenant-management/services/tenant.service';
 
 @Component({
   selector: 'app-add-edit-uom',
@@ -40,6 +41,7 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
     unitList: null,
     rows: []
   };
+  validators: any[];
   public unitType = '';
   public newUnitType = '';
   public measurementList: any[] = [];
@@ -54,7 +56,8 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
   constructor(
     private readonly formBuilder: FormBuilder,
     private readonly unitOfMeasurementService: UnitMeasurementService,
-    public readonly dialog: MatDialog
+    public readonly dialog: MatDialog,
+    private tenantService: TenantService
   ) {}
 
   ngOnChanges(): void {
@@ -76,7 +79,20 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
     }
   }
 
+  getValidators(tenantInfo): any[] {
+    const validators = [
+      Validators.required,
+      WhiteSpaceValidator.trimWhiteSpace
+    ];
+    if (tenantInfo?.whiteSpace === 'True') {
+      validators.push(WhiteSpaceValidator.whiteSpace);
+    }
+    return validators;
+  }
+
   ngOnInit(): void {
+    const tenantInfo = this.tenantService.getTenantInfo();
+    this.validators = this.getValidators(tenantInfo);
     this.unitOfMeasurementService.getUnitTypes().subscribe();
     this.unitOfMeasurementService.unitTypes$.subscribe(
       (units) => (this.measurementList = units)
@@ -160,23 +176,11 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
       version: [null],
       description: [
         '',
-        [
-          Validators.required,
-          Validators.minLength(3),
-          Validators.maxLength(48),
-          WhiteSpaceValidator.whiteSpace,
-          WhiteSpaceValidator.trimWhiteSpace
-        ]
+        [Validators.minLength(3), Validators.maxLength(48), ...this.validators]
       ],
       symbol: [
         '',
-        [
-          Validators.required,
-          Validators.minLength(1),
-          Validators.maxLength(48),
-          WhiteSpaceValidator.whiteSpace,
-          WhiteSpaceValidator.trimWhiteSpace
-        ]
+        [Validators.minLength(1), Validators.maxLength(48), ...this.validators]
       ],
       order: [this.prepareOrder()]
     });

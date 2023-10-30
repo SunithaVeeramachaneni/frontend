@@ -16,6 +16,7 @@ import {
 import { ValidationError } from 'src/app/interfaces';
 import { ShiftService } from '../services/shift.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
+import { TenantService } from 'src/app/components/tenant-management/services/tenant.service';
 
 @Component({
   selector: 'app-add-edit-shift',
@@ -85,27 +86,30 @@ export class AddEditShiftComponent implements OnInit {
   private shiftsEditData;
   private mode;
 
-  constructor(private fb: FormBuilder, private shiftService: ShiftService) {}
+  constructor(
+    private fb: FormBuilder,
+    private shiftService: ShiftService,
+    private tenantService: TenantService
+  ) {}
+  getValidators(tenantInfo): any[] {
+    const validators = [
+      Validators.required,
+      WhiteSpaceValidator.trimWhiteSpace
+    ];
+    if (tenantInfo?.whiteSpace === 'True') {
+      validators.push(WhiteSpaceValidator.whiteSpace);
+    }
+    return validators;
+  }
 
   ngOnInit(): void {
+    const tenantInfo = this.tenantService.getTenantInfo();
+    const validators = this.getValidators(tenantInfo);
     this.shiftForm = this.fb.group({
       id: '',
-      name: new FormControl('', [
-        Validators.required,
-        WhiteSpaceValidator.whiteSpace,
-        WhiteSpaceValidator.trimWhiteSpace,
-        Validators.maxLength(25)
-      ]),
-      startTime: new FormControl('', [
-        Validators.required,
-        WhiteSpaceValidator.whiteSpace,
-        WhiteSpaceValidator.trimWhiteSpace
-      ]),
-      endTime: new FormControl('', [
-        Validators.required,
-        WhiteSpaceValidator.whiteSpace,
-        WhiteSpaceValidator.trimWhiteSpace
-      ]),
+      name: new FormControl('', [...validators, Validators.maxLength(25)]),
+      startTime: new FormControl('', [...validators]),
+      endTime: new FormControl('', [...validators]),
       isActive: new FormControl('', [])
     });
   }

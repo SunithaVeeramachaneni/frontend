@@ -30,6 +30,7 @@ import {
   map,
   first
 } from 'rxjs/operators';
+import { TenantService } from 'src/app/components/tenant-management/services/tenant.service';
 
 @Component({
   selector: 'app-add-edit-location',
@@ -119,7 +120,8 @@ export class AddEditLocationComponent implements OnInit {
     private fb: FormBuilder,
     private locationService: LocationService,
     private formValidationUtil: FormValidationUtil,
-    private cdfr: ChangeDetectorRef
+    private cdfr: ChangeDetectorRef,
+    private tenantService: TenantService
   ) {}
 
   checkLocationIdExists(): AsyncValidatorFn {
@@ -149,22 +151,26 @@ export class AddEditLocationComponent implements OnInit {
       );
     };
   }
+  getValidators(tenantInfo): any[] {
+    const validators = [
+      Validators.required,
+      WhiteSpaceValidator.trimWhiteSpace
+    ];
+    if (tenantInfo?.whiteSpace === 'True') {
+      validators.push(WhiteSpaceValidator.whiteSpace);
+    }
+    return validators;
+  }
 
   ngOnInit(): void {
+    const tenantInfo = this.tenantService.getTenantInfo();
+    const validators = this.getValidators(tenantInfo);
     this.locationForm = this.fb.group({
       image: '',
-      name: new FormControl('', [
-        Validators.required,
-        WhiteSpaceValidator.whiteSpace,
-        WhiteSpaceValidator.trimWhiteSpace
-      ]),
+      name: new FormControl('', [...validators]),
       locationId: new FormControl(
         '',
-        [
-          Validators.required,
-          WhiteSpaceValidator.whiteSpace,
-          WhiteSpaceValidator.trimWhiteSpace
-        ],
+        [...validators],
         [this.checkLocationIdExists()]
       ),
       model: '',
