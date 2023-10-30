@@ -13,6 +13,7 @@ import { OperatorRoundsDashboardComponent } from './operator-rounds-dashboard/op
 import { ReportsComponent } from '../dashboard/reports/reports.component';
 import { ReportConfigurationComponent } from '../dashboard/report-configuration/report-configuration.component';
 import { ShiftHandOverComponent } from './shift-hand-over/shift-hand-over.component';
+import { ShrRoundsComponent } from './shr-rounds/shr-rounds.component';
 
 const routes: Routes = [
   {
@@ -59,6 +60,15 @@ const routes: Routes = [
       {
         path: 'dashboard',
         component: OperatorRoundsDashboardComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: { label: 'Dashboard' },
+          permissions: [permissions.viewOPRDashboards]
+        }
+      },
+      {
+        path: 'shr-rounds',
+        component: ShrRoundsComponent,
         canActivate: [AuthGuard],
         data: {
           breadcrumb: { label: 'Dashboard' },
