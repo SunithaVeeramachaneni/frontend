@@ -156,7 +156,7 @@ export class AddEditLocationComponent implements OnInit {
       Validators.required,
       WhiteSpaceValidator.trimWhiteSpace
     ];
-    if (tenantInfo?.whiteSpace === 'True') {
+    if (tenantInfo?.whiteSpace) {
       validators.push(WhiteSpaceValidator.whiteSpace);
     }
     return validators;

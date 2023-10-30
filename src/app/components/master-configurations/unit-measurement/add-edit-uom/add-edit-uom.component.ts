@@ -84,7 +84,7 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
       Validators.required,
       WhiteSpaceValidator.trimWhiteSpace
     ];
-    if (tenantInfo?.whiteSpace === 'True') {
+    if (tenantInfo?.whiteSpace) {
       validators.push(WhiteSpaceValidator.whiteSpace);
     }
     return validators;
