@@ -57,7 +57,6 @@ import {
   permissions as perms,
   statusColors,
   dateTimeFormat4,
-  dateTimeFormat5,
   graphQLDefaultLimit
 } from 'src/app/app.constants';
 import { LoginService } from '../../login/services/login.service';
@@ -1190,7 +1189,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
             this.plantTimezoneMap[plantId].timeZoneIdentifier
           ) {
             changedDueDate = zonedTimeToUtc(
-              format(changedDueDate, dateTimeFormat5),
+              format(changedDueDate, dateTimeFormat4),
               this.plantTimezoneMap[plantId].timeZoneIdentifier
             );
           }
@@ -1357,7 +1356,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
             this.plantTimezoneMap[plantId].timeZoneIdentifier
           ) {
             changedScheduledAt = zonedTimeToUtc(
-              format(changedScheduledAt, dateTimeFormat5),
+              format(changedScheduledAt, dateTimeFormat4),
               this.plantTimezoneMap[plantId].timeZoneIdentifier
             );
           }
@@ -1518,11 +1517,11 @@ export class InspectionComponent implements OnInit, OnDestroy {
           this.plantTimezoneMap[plantId].timeZoneIdentifier
         ) {
           shiftStartDateAndTime = zonedTimeToUtc(
-            format(shiftStartDateAndTime, dateTimeFormat5),
+            format(shiftStartDateAndTime, dateTimeFormat4),
             this.plantTimezoneMap[plantId].timeZoneIdentifier
           );
           shiftEndDateAndTime = zonedTimeToUtc(
-            format(shiftEndDateAndTime, dateTimeFormat5),
+            format(shiftEndDateAndTime, dateTimeFormat4),
             this.plantTimezoneMap[plantId].timeZoneIdentifier
           );
         }

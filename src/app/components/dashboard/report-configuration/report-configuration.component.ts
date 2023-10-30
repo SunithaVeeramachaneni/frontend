@@ -307,6 +307,16 @@ export class ReportConfigurationComponent implements OnInit {
           this.userEmailToName
         );
         this.dataSource = new MatTableDataSource(loadFilter.reportData);
+        const isRaisedByUsersEmailsNotChanged =
+          loadFilter.report.filterOptions.multi.raisedBy.length &&
+          loadFilter.report.filterOptions.multi.raisedBy[0].includes('@');
+        if (isRaisedByUsersEmailsNotChanged) {
+          loadFilter.report.filterOptions.multi.raisedBy =
+            loadFilter.report.filterOptions.multi.raisedBy.map(
+              (email) => this.userEmailToName[email]
+            );
+        }
+
         return loadFilter;
       })
     );
@@ -732,6 +742,16 @@ export class ReportConfigurationComponent implements OnInit {
           ...filter,
           filters: filtersArray
         };
+      } else if (filter.column === 'assignee') {
+        const filtersArray = filter.filters.map((f) => ({
+          ...f,
+          operand: f.operand.filter((user) => user !== '').join(',')
+        }));
+
+        return {
+          ...filter,
+          filters: filtersArray
+        };
       } else {
         const ids = new Set([
           'assignedTo',
@@ -740,14 +760,15 @@ export class ReportConfigurationComponent implements OnInit {
           'taskCompletedBy'
         ]);
         if (ids.has(filter.column)) {
-          const filtersArray = filter.filters.map(
-            (f) =>
-              (f = {
-                ...f,
-                operand:
-                  this.userNameToEmail[f.operand] || f.operand.replace(' ', '.')
-              })
-          );
+          const filtersArray = filter.filters.map((f) => ({
+            ...f,
+            operand: f.operand
+              .map(
+                (username) =>
+                  this.userNameToEmail[username] || username.replace(' ', '.')
+              )
+              .join(',')
+          }));
           return {
             ...filter,
             filters: filtersArray
