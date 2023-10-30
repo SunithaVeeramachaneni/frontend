@@ -275,8 +275,8 @@ export class AssetsListComponent implements OnInit, OnDestroy {
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
       tap(() => this.headerService.setHeaderTitle(routingUrls.assets.title))
     );
-    this.allPlants$ = this.plantsService.fetchAllPlants$().pipe(
-      tap(({ items: allPlants = [] }) => {
+    this.allPlants$ = this.plantsService.fetchLoggedInUserPlants$().pipe(
+      tap((allPlants = []) => {
         this.plants = allPlants.map((plant) => {
           const { id, name, plantId } = plant;
           this.plantsIdNameMap[`${plantId} - ${name}`] = id;
@@ -315,6 +315,8 @@ export class AssetsListComponent implements OnInit, OnDestroy {
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [], plantId }) => {
         this.currentUserPlantId = plantId;
+        this.plantsService.setUserPlantIds(plantId);
+        this.filter.plant = plantId;
         this.prepareMenuActions(permissions);
       })
     );
@@ -360,7 +362,7 @@ export class AssetsListComponent implements OnInit, OnDestroy {
           rows,
           { form, action },
           scrollData,
-          { items: allPlants = [] },
+          allPlants = [],
           { items: allLocations = [] },
           { items: allAssets = [] }
         ]) => {
@@ -663,6 +665,7 @@ export class AssetsListComponent implements OnInit, OnDestroy {
   }
 
   applyFilters(data: any) {
+    this.isLoading$.next(true);
     this.isPopoverOpen = false;
     for (const item of data) {
       if (item.column === 'plant') {
@@ -670,14 +673,18 @@ export class AssetsListComponent implements OnInit, OnDestroy {
         this.filter[item.column] = plantsID;
       }
     }
+    if (!this.filter.plant) {
+      this.filter.plant = this.plantsService.getUserPlantIds();
+    }
     this.nextToken = '';
     this.assetService.fetchAssets$.next({ data: 'load' });
   }
 
   clearFilters() {
+    this.isLoading$.next(true);
     this.isPopoverOpen = false;
     this.filter = {
-      plant: ''
+      plant: this.plantsService.getUserPlantIds()
     };
     this.assetService.fetchAssets$.next({ data: 'load' });
   }

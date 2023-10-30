@@ -54,7 +54,7 @@ import {
   ErrorInfo
 } from 'src/app/interfaces';
 import {
-  dateFormat,
+  dateFormat6,
   graphQLDefaultLimit,
   graphQLPlanLimit,
   permissions as perms
@@ -468,7 +468,6 @@ export class PlansComponent implements OnInit, OnDestroy {
   selectedRoundConfig: any;
   shiftObj: any = {};
 
-  allPlants: any;
   allShifts: any;
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
@@ -513,6 +512,13 @@ export class PlansComponent implements OnInit, OnDestroy {
     this.planCategory = new FormControl('all');
     this.fetchPlans$.next({} as TableEvent);
     let filterJson = [];
+    this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
+      tap(({ permissions = [], plantId = null }) => {
+        this.plantService.setUserPlantIds(plantId);
+        this.filter.plant = plantId;
+        this.prepareMenuActions(permissions);
+      })
+    );
     this.filterData$ = combineLatest([
       this.users$,
       this.operatorRoundsService.getPlanFilter().pipe(
@@ -520,22 +526,13 @@ export class PlansComponent implements OnInit, OnDestroy {
           filterJson = res;
         })
       ),
-      this.operatorRoundsService.fetchAllPlansList$()
+      this.operatorRoundsService.fetchAllPlansList$({
+        plantId: this.plantService.getUserPlantIds()
+      })
     ]).pipe(
       tap(([, , plansList]) => {
         const objectKeys = Object.keys(plansList);
         if (objectKeys.length > 0) {
-          const uniquePlants = plansList.rows
-            .map((item) => {
-              if (item.plant) {
-                this.plantsIdNameMap[item.plant] = item.plantId;
-                return item.plant;
-              }
-              return '';
-            })
-            .filter((value, index, self) => self.indexOf(value) === index);
-          this.plants = [...uniquePlants];
-
           const uniqueSchedules = plansList.rows
             ?.map((item) => item?.schedule)
             .filter((value, index, self) => self?.indexOf(value) === index);
@@ -548,9 +545,6 @@ export class PlansComponent implements OnInit, OnDestroy {
             });
           }
           for (const item of filterJson) {
-            if (item.column === 'plant') {
-              item.items = this.plants;
-            }
             if (item.column === 'assignedToDisplay') {
               item.items = this.assignedTo.sort();
             }
@@ -574,10 +568,6 @@ export class PlansComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
-
-    this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
-      tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
-    );
 
     const roundPlanScheduleConfigurations$ = this.rpscService
       .fetchRoundPlanScheduleConfigurations$()
@@ -617,7 +607,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       roundPlansOnLoadSearch$,
       onScrollRoundPlans$,
       roundPlanScheduleConfigurations$,
-      this.plantService.fetchAllPlants$(),
+      this.plantService.fetchLoggedInUserPlants$(),
       this.shiftService.fetchAllShifts$(),
       this.users$,
       this.userGroups$
@@ -635,7 +625,18 @@ export class PlansComponent implements OnInit, OnDestroy {
             ?.forEach((value) => {
               this.activeShiftIdMap[value.id] = value.name;
             });
-          this.allPlants = plants;
+
+          this.plants = plants;
+          plants.forEach((plant) => {
+            this.plantsIdNameMap[`${plant.plantId} - ${plant.name}`] = plant.id;
+          });
+          for (const item of this.filterJson) {
+            if (item.column === 'plant') {
+              item.items = plants
+                .map((plant) => `${plant.plantId} - ${plant.name}`)
+                .sort();
+            }
+          }
           this.allShifts = shifts.items.filter((s) => s.isActive);
           this.isLoading$.next(false);
           if (this.skip === 0) {
@@ -818,7 +819,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   };
 
   prepareActiveShifts(plan: any) {
-    const selectedPlant = this.allPlants?.items?.find(
+    const selectedPlant = this.plants?.find(
       (plant) => plant.id === plan.plantId
     );
     const selectedShifts = selectedPlant?.shifts
@@ -1195,11 +1196,11 @@ export class PlansComponent implements OnInit, OnDestroy {
           ? localToTimezoneDate(
               new Date(roundPlanScheduleConfiguration.startDate),
               this.plantTimezoneMap[plantId],
-              dateFormat
+              dateFormat6
             )
           : this.datePipe.transform(
               new Date(roundPlanScheduleConfiguration.startDate),
-              dateFormat
+              dateFormat6
             )
         : '';
     let formatedEndDate =
@@ -1209,17 +1210,17 @@ export class PlansComponent implements OnInit, OnDestroy {
             ? localToTimezoneDate(
                 new Date(scheduleEndOn),
                 this.plantTimezoneMap[plantId],
-                dateFormat
+                dateFormat6
               )
-            : this.datePipe.transform(new Date(scheduleEndOn), dateFormat)
+            : this.datePipe.transform(new Date(scheduleEndOn), dateFormat6)
           : scheduleEndType === 'after'
           ? this.plantTimezoneMap[plantId]?.timeZoneIdentifier
             ? localToTimezoneDate(
                 new Date(endDate),
                 this.plantTimezoneMap[plantId],
-                dateFormat
+                dateFormat6
               )
-            : this.datePipe.transform(new Date(endDate), dateFormat)
+            : this.datePipe.transform(new Date(endDate), dateFormat6)
           : 'Never'
         : '';
 
@@ -1232,18 +1233,18 @@ export class PlansComponent implements OnInit, OnDestroy {
         ? localToTimezoneDate(
             new Date(scheduleDates[0]),
             this.plantTimezoneMap[plantId],
-            dateFormat
+            dateFormat6
           )
-        : this.datePipe.transform(scheduleDates[0], dateFormat);
+        : this.datePipe.transform(scheduleDates[0], dateFormat6);
       formatedEndDate = this.plantTimezoneMap[plantId]?.timeZoneIdentifier
         ? localToTimezoneDate(
             new Date(scheduleDates[scheduleDates.length - 1]),
             this.plantTimezoneMap[plantId],
-            dateFormat
+            dateFormat6
           )
         : this.datePipe.transform(
             scheduleDates[scheduleDates.length - 1],
-            dateFormat
+            dateFormat6
           );
     }
 
@@ -1383,6 +1384,9 @@ export class PlansComponent implements OnInit, OnDestroy {
         }
       }
     }
+    if (!this.filter.plant) {
+      this.filter.plant = this.plantService.getUserPlantIds();
+    }
     this.nextToken = '';
     this.fetchPlans$.next({ data: 'load' });
   }
@@ -1390,7 +1394,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   resetFilter(): void {
     this.isPopoverOpen = false;
     this.filter = {
-      plant: '',
+      plant: this.plantService.getUserPlantIds(),
       schedule: '',
       assignedToDisplay: '',
       scheduledAt: '',

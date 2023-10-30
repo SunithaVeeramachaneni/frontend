@@ -162,7 +162,8 @@ export class RoundPlanHeaderConfigurationComponent
       startWith(null),
       map((tag: string | null) =>
         tag ? this.filter(tag) : this.allTags.slice()
-      )
+      ),
+      map((tagsArray) => tagsArray.filter((tag) => !!tag))
     );
     this.headerDataForm = this.fb.group({
       name: [
@@ -200,6 +201,7 @@ export class RoundPlanHeaderConfigurationComponent
     this.formMetadataSubscrption = this.store
       .select(getFormMetadata)
       .subscribe((res) => {
+        this.formMetadata = res;
         this.headerDataForm.patchValue({
           name: res.name,
           description: res.description ? res.description : ''
@@ -279,8 +281,8 @@ export class RoundPlanHeaderConfigurationComponent
   }
 
   getAllPlantsData() {
-    this.plantService.fetchAllPlants$().subscribe((plants) => {
-      this.allPlantsData = plants.items || [];
+    this.plantService.fetchLoggedInUserPlants$().subscribe((plants) => {
+      this.allPlantsData = plants || [];
       this.plantInformation = this.allPlantsData;
       const plantId = this.roundData?.formMetadata?.plantId;
       if (plantId !== undefined) {
@@ -605,7 +607,11 @@ export class RoundPlanHeaderConfigurationComponent
             };
             if (resizedPdfSize <= maxSize) {
               this.operatorRoundsService
-                .uploadAttachments$({ file: pdf })
+                .uploadAttachments$({
+                  file: pdf,
+                  objectId: this.formMetadata?.id,
+                  plantId: this.formMetadata?.plantId
+                })
                 .pipe(
                   tap((response) => {
                     if (response) {
@@ -638,7 +644,11 @@ export class RoundPlanHeaderConfigurationComponent
             };
             if (resizedImageSize <= maxSize) {
               this.operatorRoundsService
-                .uploadAttachments$({ file: image })
+                .uploadAttachments$({
+                  file: image,
+                  objectId: this.formMetadata?.id,
+                  plantId: this.formMetadata?.plantId
+                })
                 .pipe(
                   tap((response) => {
                     if (response) {
@@ -732,7 +742,7 @@ export class RoundPlanHeaderConfigurationComponent
         height: '100%',
         panelClass: 'slideshow-container',
         backdropClass: 'slideshow-backdrop',
-        data: { images: slideshowImages, type: 'forms' }
+        data: { images: slideshowImages, type: 'base64' }
       });
     }
   }

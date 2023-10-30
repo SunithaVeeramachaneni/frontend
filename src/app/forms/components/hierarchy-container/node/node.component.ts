@@ -7,7 +7,8 @@ import {
   Output,
   EventEmitter,
   ViewChild,
-  OnDestroy
+  OnDestroy,
+  ChangeDetectorRef
 } from '@angular/core';
 import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
@@ -51,7 +52,8 @@ export class NodeComponent implements OnInit {
   constructor(
     public assetHierarchyUtil: AssetHierarchyUtil,
     private operatorRoundsService: OperatorRoundsService,
-    private formService: FormService
+    private formService: FormService,
+    private cdfr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -82,6 +84,7 @@ export class NodeComponent implements OnInit {
     this.operatorRoundsService.currentShownHierarchyNode$.subscribe((node) => {
       if (node.id !== this.node.id) {
         this.togglePopover = false;
+        this.cdfr.markForCheck();
       }
     });
   }

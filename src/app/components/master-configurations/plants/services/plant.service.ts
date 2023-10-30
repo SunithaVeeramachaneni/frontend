@@ -28,7 +28,7 @@ export class PlantService {
 
   plantTimeZoneMapping$ = new BehaviorSubject<any>({});
   plantMasterData$ = new BehaviorSubject<any>({});
-
+  userPlants$ = new BehaviorSubject<string>('');
   private userAssignedPlants$: Observable<any>;
 
   // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -38,6 +38,14 @@ export class PlantService {
     private _appService: AppService,
     private _usersService: UsersService
   ) {}
+
+  setUserPlantIds(plant: string = null) {
+    this.userPlants$.next(plant);
+  }
+
+  getUserPlantIds(): string {
+    return this.userPlants$.value ?? '';
+  }
 
   fetchAllPlants$ = () => {
     const params: URLSearchParams = new URLSearchParams();

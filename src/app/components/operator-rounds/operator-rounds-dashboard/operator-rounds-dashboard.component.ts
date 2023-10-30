@@ -204,6 +204,12 @@ export class OperatorRoundsDashboardComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
+      tap(() => {
+        this.headerService.setHeaderTitle(routingUrls.oprDashboard.title);
+      })
+    );
+
     this.undoRedoUtil = new UndoRedoUtil();
 
     this.dashboardForm = this.fb.group({
@@ -229,8 +235,8 @@ export class OperatorRoundsDashboardComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
-    this.plantService.fetchAllPlants$().subscribe((plants) => {
-      this.allPlantsData = plants.items || [];
+    this.plantService.fetchLoggedInUserPlants$().subscribe((plants) => {
+      this.allPlantsData = plants || [];
       this.plantInformation = this.allPlantsData;
       this.cdrf.detectChanges();
     });
@@ -279,22 +285,6 @@ export class OperatorRoundsDashboardComponent implements OnInit, OnDestroy {
         this.dashboardId = resp.id;
         this.renderDashboard(this.dashboardForm.value);
       });
-
-    this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
-      tap((currentRouteUrl) => {
-        if (currentRouteUrl === routingUrls.oprDashboard.url) {
-          this.headerService.setHeaderTitle(routingUrls.oprDashboard.title);
-          this.breadcrumbService.set(routingUrls.oprDashboard.url, {
-            skip: true
-          });
-          this.cdrf.detectChanges();
-        } else {
-          this.breadcrumbService.set(routingUrls.oprDashboard.url, {
-            skip: false
-          });
-        }
-      })
-    );
   }
 
   createWidget = () => {
@@ -426,8 +416,10 @@ export class OperatorRoundsDashboardComponent implements OnInit, OnDestroy {
     }
 
     for (let i = 0; i < this.widgets.length; i++) {
-      const imgData: any = await this.getWidgetImage(this.widgets[i].id);
-      bodyFormData.append('image', imgData);
+      if (!this.widgets[i]?.isTable) {
+        const imgData: any = await this.getWidgetImage(this.widgets[i].id);
+        bodyFormData.append('image', imgData);
+      }
     }
     const info: ErrorInfo = {
       displayToast: true,

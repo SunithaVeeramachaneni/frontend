@@ -318,7 +318,11 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
     this.getAllOperatorRounds();
     this.configOptions.allColumns = this.columns;
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
-      tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
+      tap(({ permissions = [], plantId = null }) => {
+        this.plantService.setUserPlantIds(plantId);
+        this.filter.plant = plantId;
+        this.prepareMenuActions(permissions);
+      })
     );
     this.formsListCount$ = combineLatest([
       this.formsListCountRaw$,
@@ -328,6 +332,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
         if (this.triggerCountUpdate) {
           count += update;
           this.triggerCountUpdate = false;
+          this.formsListCountRaw$.next(count);
         }
         return count;
       })
@@ -394,17 +399,20 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
       formsOnLoadSearch$,
       this.addEditCopyForm$,
       onScrollForms$,
-      this.plantService.fetchAllPlants$().pipe(
-        tap(
-          ({ items: plants }) =>
-            (this.plantsObject = plants?.reduce((acc, curr) => {
-              acc[curr.id] = `${curr.plantId} - ${curr.name}`;
-              return acc;
-            }, {}))
-        )
-      )
+      this.plantService.fetchLoggedInUserPlants$()
     ]).pipe(
-      map(([rows, form, scrollData]) => {
+      map(([rows, form, scrollData, plants]) => {
+        plants.forEach((plant) => {
+          this.plantsIdNameMap[`${plant.plantId} - ${plant.name}`] = plant.id;
+        });
+        for (const item of this.filterJson) {
+          if (item.column === 'plant') {
+            item.items = plants
+              .map((plant) => `${plant.plantId} - ${plant.name}`)
+              .sort();
+          }
+        }
+
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
@@ -418,6 +426,9 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
               (d) => d?.id === obj?.oldId
             );
             const newIdx = oldIdx !== -1 ? oldIdx : 0;
+            const plantData: any = Object.entries(this.plantsIdNameMap).filter(
+              ([value, id]) => id === obj?.plantId
+            )[0][0];
             initial.data.splice(newIdx, 0, {
               ...obj,
               publishedDate: '',
@@ -430,7 +441,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
                 },
                 condition: true
               },
-              plant: this.plantsObject[obj.plantId]
+              plant: plantData
             });
             form.action = 'add';
             this.triggerCountUpdate = true;
@@ -604,7 +615,9 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
 
   getAllOperatorRounds() {
     this.operatorRoundsService
-      .fetchAllOperatorRounds$()
+      .fetchAllOperatorRounds$({
+        plantId: this.plantService.getUserPlantIds()
+      })
       .subscribe((formsList: any) => {
         const objectKeys = Object.keys(formsList);
         if (objectKeys.length > 0) {
@@ -641,21 +654,6 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
             .map((item) => item.author)
             .filter((value, index, self) => self.indexOf(value) === index)
             .sort();
-
-          this.plants = formsList.rows
-            .map((item) => {
-              if (item.plant) {
-                this.plantsIdNameMap[item.plant.plantId] = item.plant.id;
-                return `${item.plant.plantId} - ${item.plant.name}`;
-              }
-              return null;
-            })
-            .filter(
-              (value, index, self) =>
-                self.indexOf(value) === index && value !== null
-            )
-            .sort();
-
           for (const item of this.filterJson) {
             if (item.column === 'status') {
               item.items = this.status;
@@ -663,8 +661,6 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
               item.items = this.lastPublishedBy;
             } else if (item.column === 'authoredBy') {
               item.items = this.authoredBy;
-            } else if (item.column === 'plant') {
-              item.items = this.plants;
             } else if (item.column === 'createdBy') {
               item.items = this.createdBy;
             }
@@ -685,12 +681,13 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
         this.filter.scheduleStartDate = item.value[0];
         this.filter.scheduleEndDate = item.value[1];
       } else if (item.column === 'plant') {
-        const id = item.value.split(' - ')[0].trim();
-        const plantId = this.plantsIdNameMap[id];
-        this.filter[item.column] = plantId;
+        this.filter[item.column] = this.plantsIdNameMap[item.value] ?? '';
       } else {
         this.filter[item.column] = item.value;
       }
+    }
+    if (!this.filter.plant) {
+      this.filter.plant = this.plantService.getUserPlantIds();
     }
     this.nextToken = '';
     this.isLoading$.next(true);
@@ -723,7 +720,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
       lastModifiedOn: '',
       scheduleStartDate: '',
       scheduleEndDate: '',
-      plant: '',
+      plant: this.plantService.getUserPlantIds(),
       publishedBy: ''
     };
     this.nextToken = '';

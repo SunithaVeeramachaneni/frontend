@@ -182,7 +182,11 @@ export class FormListComponent implements OnInit, OnDestroy {
       });
 
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
-      tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
+      tap(({ permissions = [], plantId = null }) => {
+        this.plantService.setUserPlantIds(plantId);
+        this.filter.plant = plantId;
+        this.prepareMenuActions(permissions);
+      })
     );
     this.formsListCount$ = combineLatest([
       this.formsListCountRaw$,
@@ -191,6 +195,7 @@ export class FormListComponent implements OnInit, OnDestroy {
       map(([count, update]) => {
         if (this.triggerCountUpdate) {
           count += update;
+          this.formsListCountRaw$.next(count);
           this.triggerCountUpdate = false;
         }
         return count;
@@ -550,7 +555,9 @@ export class FormListComponent implements OnInit, OnDestroy {
     combineLatest([
       this.usersService.getUsersInfo$(),
       this.plantService.fetchLoggedInUserPlants$(),
-      this.raceDynamicFormService.fetchAllFormsList$(),
+      this.raceDynamicFormService.fetchAllFormsList$({
+        plantId: this.plantService.getUserPlantIds()
+      }),
       this.raceDynamicFormService.getDataSetsByType$('formHeaderTags'),
       this.columnConfigService.moduleAdditionalDetailsFiltersData$
     ]).subscribe(
@@ -590,6 +597,9 @@ export class FormListComponent implements OnInit, OnDestroy {
       } else {
         this.filter[item.column] = item.value;
       }
+    }
+    if (!this.filter.plant) {
+      this.filter.plant = this.plantService.getUserPlantIds();
     }
     this.nextToken = '';
     this.isLoading$.next(true);
@@ -649,7 +659,7 @@ export class FormListComponent implements OnInit, OnDestroy {
       status: '',
       authoredBy: '',
       lastModifiedOn: '',
-      plant: '',
+      plant: this.plantService.getUserPlantIds(),
       publishedBy: ''
     };
     this.nextToken = '';

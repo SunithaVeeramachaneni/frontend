@@ -290,7 +290,8 @@ export class ActionsListComponent implements OnInit, OnDestroy {
     priority: '',
     status: '',
     dueDate: '',
-    assignedTo: ''
+    assignedTo: '',
+    userPlant: ''
   };
   plants = [];
   plantsIdNameMap: any = {};
@@ -332,7 +333,11 @@ export class ActionsListComponent implements OnInit, OnDestroy {
       )
       .subscribe();
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
-      tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
+      tap(({ permissions = [], plantId = null }) => {
+        this.plantService.setUserPlantIds(plantId);
+        this.filter.userPlant = plantId;
+        this.prepareMenuActions(permissions);
+      })
     );
     this.getFilter();
     this.displayActions();
@@ -568,6 +573,9 @@ export class ActionsListComponent implements OnInit, OnDestroy {
         this.filter[item.column] = item.value ?? '';
       }
     }
+    if (!this.filter.userPlant) {
+      this.filter.userPlant = this.plantService.getUserPlantIds();
+    }
     this.observationsService.actionsNextToken = '';
     this.observationsService.fetchActions$.next({ data: 'load' });
   }
@@ -582,6 +590,7 @@ export class ActionsListComponent implements OnInit, OnDestroy {
       title: '',
       location: '',
       asset: '',
+      userPlant: this.plantService.getUserPlantIds(),
       plant: '',
       priority: '',
       status: '',

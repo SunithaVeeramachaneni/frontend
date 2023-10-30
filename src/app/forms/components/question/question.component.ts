@@ -1299,7 +1299,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
         height: '100%',
         panelClass: 'slideshow-container',
         backdropClass: 'slideshow-backdrop',
-        data: slideshowImages
+        data: { type: 'base64', images: slideshowImages }
       });
     }
   }

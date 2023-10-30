@@ -1,5 +1,10 @@
 @import '../../../../scss/colors.scss';
 
+.scrollDiv {
+  overflow-y: auto;
+  height: calc(100vh - 250px);
+}
+
 .configurations-div {
   ::ng-deep
     .mat-button-toggle-group-appearance-standard

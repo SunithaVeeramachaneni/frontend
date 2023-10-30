@@ -34,11 +34,22 @@
     right: 14px;
     top: 375px;
   }
+  .issues-search-notification {
+    position: fixed;
+    right: 20px;
+    top: 68px;
+  }
   .no-of-issues {
     margin-right: 10px;
     position: fixed;
     right: 255px;
     top: 390px;
+  }
+  .no-of-issues-notification {
+    margin-right: 10px;
+    position: fixed;
+    right: 260px;
+    top: 80px;
   }
   .issues-count {
     font-weight: 500;
@@ -59,6 +70,11 @@
     height: 14px;
     width: 14px;
   }
+
+  .dynamic-table-height {
+    padding: 0px 20px;
+    margin-top: 50px;
+  }
 }
 
 @media screen and (min-width: 1600px) {
@@ -66,4 +82,9 @@
     top: 350px;
     position: relative;
   }
+}
+
+.padding-lr-20-notification {
+  padding: 0 20px;
+  margin-top: 50px;
 }

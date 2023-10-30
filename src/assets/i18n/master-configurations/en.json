@@ -25,6 +25,7 @@
   "location": "Location",
   "asset": "Asset",
   "parent": "Parent",
+  "parentMandatory": "Parent *",
   "cancelBtn": "Cancel",
   "search": "Search by Name/Description",
   "editBtn": "Edit",

@@ -83,7 +83,6 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
         this.plantStatus = 'add';
         this.plantTitle = 'Create Plant';
         this.plantButton = 'Create';
-        this.plantIdValidated = false;
         this.plantForm?.get('plantId').enable();
       }
 
@@ -134,7 +133,6 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
   allParentsData;
   isCopy = false;
   plantIdExists = false;
-  plantIdValidated = false;
 
   activeShifts$: Observable<any>;
   private plantsEditData;
@@ -155,11 +153,9 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
         distinctUntilChanged(),
         switchMap((value) => {
           this.plantIdExists = false;
-          this.plantIdValidated = false;
           return this.plantService.verifyPlantId$(value);
         }),
         map((response) => {
-          this.plantIdValidated = true;
           if (response.alreadyExists) {
             this.plantIdExists = true;
           } else {

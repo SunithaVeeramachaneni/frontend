@@ -379,7 +379,9 @@ export class ImportFormListComponent implements OnInit, OnDestroy {
     combineLatest([
       this.usersService.getUsersInfo$(),
       this.plantService.fetchAllPlants$(),
-      this.raceDynamicFormService.fetchAllFormsList$(),
+      this.raceDynamicFormService.fetchAllFormsList$({
+        plantId: this.plantService.getUserPlantIds()
+      }),
       this.raceDynamicFormService.getDataSetsByType$('formHeaderTags'),
       this.columnConfigService.moduleAdditionalDetailsFiltersData$
     ]).subscribe(

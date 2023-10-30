@@ -282,9 +282,9 @@ export class LocationsListComponent implements OnInit, OnDestroy {
     );
     this.locationService.fetchLocations$.next({ data: 'load' });
     this.locationService.fetchLocations$.next({} as TableEvent);
-    this.allPlants$ = this.plantsService.fetchAllPlants$().pipe(
-      tap(({ items: allPlants = [] }) => {
-        this.plants = allPlants.map((plant) => {
+    this.allPlants$ = this.plantsService.fetchLoggedInUserPlants$().pipe(
+      tap((plants) => {
+        this.plants = plants.map((plant) => {
           const { id, name, plantId } = plant;
           this.plantsIdNameMap[`${plantId} - ${name}`] = id;
           return `${plantId} - ${name}`;
@@ -317,6 +317,8 @@ export class LocationsListComponent implements OnInit, OnDestroy {
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [], plantId }) => {
         this.currentUserPlantId = plantId;
+        this.plantsService.setUserPlantIds(plantId);
+        this.filter.plant = plantId;
         this.prepareMenuActions(permissions);
       })
     );
@@ -362,7 +364,7 @@ export class LocationsListComponent implements OnInit, OnDestroy {
           { form, action },
           scrollData,
           { items: allLocations = [] },
-          { items: allPlants = [] }
+          allPlants = []
         ]) => {
           this.allPlants = allPlants.filter((plant) => !plant._deleted);
           this.allParentsLocations.data = uniqBy(
@@ -429,6 +431,9 @@ export class LocationsListComponent implements OnInit, OnDestroy {
         this.filter[item.column] = plantsID;
       }
     }
+    if (!this.filter.plant) {
+      this.filter.plant = this.plantsService.getUserPlantIds();
+    }
     this.nextToken = '';
     this.locationService.fetchLocations$.next({ data: 'load' });
   }
@@ -437,7 +442,7 @@ export class LocationsListComponent implements OnInit, OnDestroy {
     this.isLoading$.next(true);
     this.isPopoverOpen = false;
     this.filter = {
-      plant: ''
+      plant: this.plantsService.getUserPlantIds()
     };
     this.locationService.fetchLocations$.next({ data: 'load' });
   }
