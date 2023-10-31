@@ -636,7 +636,7 @@ export class AssetsListComponent implements OnInit, OnDestroy {
         this.nextToken = '';
         this.addEditCopyDeleteAssets = true;
         this.isLoading$.next(true);
-        this.assetsCountUpdate$.next(res.successCount);
+        this.assetsCountUpdate$.next(res.successCount - res.updatedCount);
         this.assetService.fetchAssets$.next({ data: 'load' });
         this.toast.show({
           text: 'Asset uploaded successfully!',
