@@ -163,7 +163,11 @@ export class AddEditLocationComponent implements OnInit {
     const tenantInfo = this.tenantService.getTenantInfo();
     this.locationForm = this.fb.group({
       image: '',
-      name: new FormControl('', [...this.getValidators(tenantInfo)]),
+      name: new FormControl('', [
+        Validators.required,
+        WhiteSpaceValidator.whiteSpace,
+        WhiteSpaceValidator.trimWhiteSpace
+      ]),
       locationId: new FormControl(
         '',
         [...this.getValidators(tenantInfo)],

@@ -197,20 +197,34 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
     this.plantForm = this.fb.group({
       id: '',
       image: '',
-      name: new FormControl('', [...this.getValidators(tenantInfo)]),
+      name: new FormControl('', [
+        Validators.required,
+        WhiteSpaceValidator.whiteSpace,
+        WhiteSpaceValidator.trimWhiteSpace
+      ]),
       plantId: new FormControl(
         '',
         [...this.getValidators(tenantInfo)],
         [this.checkPlantIdExists()]
       ),
-      country: new FormControl('', [...this.getValidators(tenantInfo)]),
+      country: new FormControl('', [
+        Validators.required,
+        WhiteSpaceValidator.whiteSpace,
+        WhiteSpaceValidator.trimWhiteSpace
+      ]),
       zipCode: new FormControl('', [
         Validators.minLength(2),
         Validators.maxLength(6),
         Validators.pattern(regex),
-        ...this.getValidators(tenantInfo)
+        Validators.required,
+        WhiteSpaceValidator.whiteSpace,
+        WhiteSpaceValidator.trimWhiteSpace
       ]),
-      state: new FormControl('', [...this.getValidators(tenantInfo)]),
+      state: new FormControl('', [
+        Validators.required,
+        WhiteSpaceValidator.whiteSpace,
+        WhiteSpaceValidator.trimWhiteSpace
+      ]),
       timeZone: new FormControl('', [Validators.required]),
       shifts: new FormControl('', []),
       label: new FormControl('', [WhiteSpaceValidator.trimWhiteSpace]),
