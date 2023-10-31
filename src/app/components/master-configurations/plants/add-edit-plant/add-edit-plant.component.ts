@@ -213,12 +213,12 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
         WhiteSpaceValidator.trimWhiteSpace
       ]),
       zipCode: new FormControl('', [
+        Validators.required,
         Validators.minLength(2),
         Validators.maxLength(6),
-        Validators.pattern(regex),
-        Validators.required,
         WhiteSpaceValidator.whiteSpace,
-        WhiteSpaceValidator.trimWhiteSpace
+        WhiteSpaceValidator.trimWhiteSpace,
+        Validators.pattern(regex)
       ]),
       state: new FormControl('', [
         Validators.required,
