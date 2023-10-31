@@ -153,6 +153,7 @@ export class ReportConfigurationComponent implements OnInit {
   moduleName = 'dashboard';
   ghostLoading = new Array(20).fill(0).map((v, i) => i);
   ghostLoadingChart = new Array(8).fill(0).map((v, i) => i);
+  usersList: any[] = [];
 
   constructor(
     private cdrf: ChangeDetectorRef,
@@ -248,7 +249,9 @@ export class ReportConfigurationComponent implements OnInit {
       this.usersService.getUsersInfo$()
     ]).pipe(
       map(([loadFilter, scroll, usersList]) => {
-        usersList.forEach((user) => {
+        this.usersList = usersList;
+        usersList.forEach((user: any) => {
+          user.full_name = `${user.firstName.toLowerCase()} ${user.lastName.toLowerCase()}`;
           this.userEmailToName[
             user.email
           ] = `${user.firstName} ${user.lastName}`;
@@ -308,7 +311,7 @@ export class ReportConfigurationComponent implements OnInit {
         );
         this.dataSource = new MatTableDataSource(loadFilter.reportData);
         const isRaisedByUsersEmailsNotChanged =
-          loadFilter.report.filterOptions.multi.raisedBy.length &&
+          loadFilter.report.filterOptions.multi.raisedBy?.length &&
           loadFilter.report.filterOptions.multi.raisedBy[0].includes('@');
         if (isRaisedByUsersEmailsNotChanged) {
           loadFilter.report.filterOptions.multi.raisedBy =
@@ -760,15 +763,22 @@ export class ReportConfigurationComponent implements OnInit {
           'taskCompletedBy'
         ]);
         if (ids.has(filter.column)) {
-          const filtersArray = filter.filters.map((f) => ({
-            ...f,
-            operand: f.operand
-              .map(
-                (username) =>
-                  this.userNameToEmail[username] || username.replace(' ', '.')
+          const filtersArray = filter.filters.map((f: any) => {
+            const matchingEmails = this.usersList
+              .filter((record) =>
+                record.full_name.toLowerCase().includes(f.operand.toLowerCase())
               )
-              .join(',')
-          }));
+              .map((record) => record.email);
+
+            return {
+              ...f,
+              operand:
+                f.operand && matchingEmails?.length
+                  ? matchingEmails.join(',')
+                  : f.operand
+            };
+          });
+
           return {
             ...filter,
             filters: filtersArray
