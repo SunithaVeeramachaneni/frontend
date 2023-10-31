@@ -164,7 +164,6 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
           Validators.required,
           Validators.minLength(3),
           Validators.maxLength(48),
-
           WhiteSpaceValidator.whiteSpace,
           WhiteSpaceValidator.trimWhiteSpace
         ]
@@ -175,7 +174,6 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
           Validators.required,
           Validators.minLength(1),
           Validators.maxLength(48),
-
           WhiteSpaceValidator.whiteSpace,
           WhiteSpaceValidator.trimWhiteSpace
         ]
