@@ -23,7 +23,6 @@ import { ValidationError, UnitOfMeasurement } from 'src/app/interfaces';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { UnitMeasurementService } from '../services';
 import { UnitOfMeasurementDeleteModalComponent } from '../uom-delete-modal/uom-delete-modal.component';
-import { TenantService } from 'src/app/components/tenant-management/services/tenant.service';
 
 @Component({
   selector: 'app-add-edit-uom',
@@ -55,8 +54,7 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
   constructor(
     private readonly formBuilder: FormBuilder,
     private readonly unitOfMeasurementService: UnitMeasurementService,
-    public readonly dialog: MatDialog,
-    private tenantService: TenantService
+    public readonly dialog: MatDialog
   ) {}
 
   ngOnChanges(): void {
@@ -163,9 +161,10 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
       description: [
         '',
         [
+          Validators.required,
           Validators.minLength(3),
           Validators.maxLength(48),
-          Validators.required,
+
           WhiteSpaceValidator.whiteSpace,
           WhiteSpaceValidator.trimWhiteSpace
         ]
@@ -173,9 +172,10 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
       symbol: [
         '',
         [
+          Validators.required,
           Validators.minLength(1),
           Validators.maxLength(48),
-          Validators.required,
+
           WhiteSpaceValidator.whiteSpace,
           WhiteSpaceValidator.trimWhiteSpace
         ]
