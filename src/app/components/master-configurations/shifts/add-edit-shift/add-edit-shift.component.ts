@@ -86,13 +86,6 @@ export class AddEditShiftComponent implements OnInit {
   private mode;
 
   constructor(private fb: FormBuilder, private shiftService: ShiftService) {}
-  getValidators(tenantInfo): any[] {
-    const validators = [Validators.required, WhiteSpaceValidator.whiteSpace];
-    if (tenantInfo.trimWhiteSpace) {
-      validators.push(WhiteSpaceValidator.trimWhiteSpace);
-    }
-    return validators;
-  }
 
   ngOnInit(): void {
     this.shiftForm = this.fb.group({
