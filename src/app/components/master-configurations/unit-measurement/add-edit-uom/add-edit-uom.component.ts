@@ -78,14 +78,6 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
     }
   }
 
-  getValidators(tenantInfo): any[] {
-    const validators = [Validators.required, WhiteSpaceValidator.whiteSpace];
-    if (tenantInfo.trimWhiteSpace) {
-      validators.push(WhiteSpaceValidator.trimWhiteSpace);
-    }
-    return validators;
-  }
-
   ngOnInit(): void {
     this.unitOfMeasurementService.getUnitTypes().subscribe();
     this.unitOfMeasurementService.unitTypes$.subscribe(
@@ -165,7 +157,6 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
   }
 
   createUnit(): FormGroup {
-    const tenantInfo = this.tenantService.getTenantInfo();
     return this.formBuilder.group({
       id: [null],
       version: [null],
@@ -174,7 +165,9 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
         [
           Validators.minLength(3),
           Validators.maxLength(48),
-          ...this.getValidators(tenantInfo)
+          Validators.required,
+          WhiteSpaceValidator.whiteSpace,
+          WhiteSpaceValidator.trimWhiteSpace
         ]
       ],
       symbol: [
@@ -182,7 +175,9 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
         [
           Validators.minLength(1),
           Validators.maxLength(48),
-          ...this.getValidators(tenantInfo)
+          Validators.required,
+          WhiteSpaceValidator.whiteSpace,
+          WhiteSpaceValidator.trimWhiteSpace
         ]
       ],
       order: [this.prepareOrder()]
