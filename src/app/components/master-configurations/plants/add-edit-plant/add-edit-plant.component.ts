@@ -176,12 +176,9 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
   }
 
   getValidators(tenantInfo): any[] {
-    const validators = [
-      Validators.required,
-      WhiteSpaceValidator.trimWhiteSpace
-    ];
+    const validators = [Validators.required, WhiteSpaceValidator.whiteSpace];
     if (tenantInfo.trimWhiteSpace) {
-      validators.push(WhiteSpaceValidator.whiteSpace);
+      validators.push(WhiteSpaceValidator.trimWhiteSpace);
     }
     return validators;
   }
