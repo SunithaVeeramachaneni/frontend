@@ -84,7 +84,8 @@ export class AddEditLocationComponent implements OnInit {
         model: this.locEditData?.model,
         description: this.locEditData?.description,
         parentId: this.locEditData?.parentId,
-        plantsID: this.locEditData?.plantsID
+        plantsID: this.locEditData?.plantsID,
+        isUnit: this.locEditData?.isUnit
       };
       this.locationForm?.patchValue(locdata);
       if (!this.isCopy) {
@@ -170,7 +171,8 @@ export class AddEditLocationComponent implements OnInit {
       model: '',
       description: new FormControl('', [WhiteSpaceValidator.trimWhiteSpace]),
       parentId: '',
-      plantsID: new FormControl('', [Validators.required])
+      plantsID: new FormControl('', [Validators.required]),
+      isUnit: [false]
     });
     this.parentInformation = this.allLocations;
     this.allParentsData = this.parentInformation;

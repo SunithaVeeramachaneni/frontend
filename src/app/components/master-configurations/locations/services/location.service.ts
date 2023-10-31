@@ -83,6 +83,7 @@ export class LocationService {
       | 'locationId'
       | 'parentId'
       | 'plantsID'
+      | 'isUnit'
     >
   ) {
     return this._appService._postData(
