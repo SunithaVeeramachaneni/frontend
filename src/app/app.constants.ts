@@ -146,7 +146,7 @@ export const permissions = Object.freeze({
   viewIntegration: 'VIEW_INTEGRATION',
   viewPosition: 'VIEW_POSITIONS',
   createPosition: 'CREATE_POSITIONS',
-  updatePosition: 'UPDATE_POSITIONS',
+  updatePosition: 'UPDATE_POSITIONS'
 });
 
 export const routingUrls = {
@@ -219,6 +219,11 @@ export const routingUrls = {
     url: '/user-management',
     title: 'Active Users',
     permission: permissions.viewUsers
+  },
+  positions: {
+    url: '/user-management/positions',
+    title: 'Positions',
+    permission: permissions.viewPosition // Temporary Permissions
   },
   rolesPermissions: {
     url: '/user-management/roles-permissions',

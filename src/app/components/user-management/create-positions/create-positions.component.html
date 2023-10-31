@@ -1,0 +1,107 @@
+<form [formGroup]="positionsFormData">
+  <div id="create-position">
+    <mat-card class="mat-container">
+      <div class="top-bar">
+        <svg-icon
+          id="createPositionBtn"
+          icon="icon-close"
+          class="cancel"
+          (click)="onClose()"
+        ></svg-icon>
+        <h1 id="createPositionBtn" class="heading">Create Positions</h1>
+      </div>
+      <div class="container-div">
+        <div class="flex-box">
+          <mat-form-field appearance="outline" class="width-100 m-b-10">
+            <mat-label id="name_label" translate="enterName"><span class="text-red">*</span></mat-label>
+            <input
+              matInput
+              [placeholder]="'enterName' | translate"
+              formControlName="name"
+            />
+            <mat-error
+              id="addEditPositionGroupError"
+              *ngIf="processValidationErrors('name')"
+              class="m-t-8 error-fields"
+            >
+              {{
+                errors.name.name
+                  | translate
+                    : {
+                        name: 'enterName' | translate,
+                        length: errors.name.length
+                      }
+              }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="flex-box">
+          <mat-form-field appearance="outline" class="width-100 m-b-10">
+            <mat-label id="name_label" translate="roleDescription"></mat-label>
+            <textarea
+              matInput
+              [placeholder]="'roleDescription' | translate"
+              formControlName="description"
+            ></textarea>
+          </mat-form-field>
+        </div>
+        <div class="flex-box">
+          <mat-form-field appearance="outline" class="width-100 m-b-10 m-t-10">
+            <mat-label id="createPositionsPlant"
+              >{{ 'plant' | translate }}
+              <span class="text-red">*</span></mat-label
+            >
+            <mat-select formControlName="plantId">
+              <input
+                id="createPositionsInputPlant"
+                class="searchable-input"
+                [placeholder]="'search' | translate"
+                (keyup)="onKeyPlant($event)"
+              />
+              <div class="scrollable-area">
+                <mat-option
+                  id="addEditUserGroupOption"
+                  *ngFor="let plant of searchPlantsList"
+                  [value]="plant.id"
+                  >{{ plant.plantId }} - {{ plant.name }}</mat-option
+                >
+              </div>
+            </mat-select>
+            <mat-error
+              id="addEditPositionGroupError"
+              *ngIf="processValidationErrors('plantId')"
+              class="m-t-8 error-fields"
+            >
+              {{
+                errors.plantId.name
+                  | translate
+                    : {
+                        name: 'Plant' | translate
+                      }
+              }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+    </mat-card>
+    <div class="actions-footer">
+      <button
+        id="createPositionBtn"
+        mat-stroked-button
+        class="cancel-btn"
+        type="button"
+        (click)="onClose()"
+        translate="cancelBtn"
+      ></button>
+      <button
+        id="createPositionBtn"
+        mat-raised-button
+        class="create-btn"
+        [disabled]="isCreating"
+        type="submit"
+        (click)="createPositions()"
+        translate="createBtn"
+      ></button>
+    </div>
+  </div>
+</form>

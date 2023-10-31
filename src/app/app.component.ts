@@ -46,6 +46,7 @@ const {
   files,
   userManagement,
   activeUsers,
+  positions,
   rolesPermissions,
   userGroups,
   inActiveUsers,
@@ -127,6 +128,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
           title: activeUsers.title,
           url: activeUsers.url,
           permission: activeUsers.permission
+        },
+        {
+          title: positions.title,
+          url: positions.url,
+          permission: positions.permission
         },
         {
           title: rolesPermissions.title,
