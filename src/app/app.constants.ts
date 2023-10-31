@@ -143,7 +143,10 @@ export const permissions = Object.freeze({
   createIntegration: 'CREATE_INTEGRATION',
   updateIntegration: 'UPDATE_INTEGRATION',
   deleteIntegration: 'DELETE_INTEGRATION',
-  viewIntegration: 'VIEW_INTEGRATION'
+  viewIntegration: 'VIEW_INTEGRATION',
+  viewPosition: 'VIEW_POSITIONS',
+  createPosition: 'CREATE_POSITIONS',
+  updatePosition: 'UPDATE_POSITIONS',
 });
 
 export const routingUrls = {
