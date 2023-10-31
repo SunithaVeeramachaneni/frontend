@@ -5,7 +5,9 @@ import {
   OnInit,
   ChangeDetectionStrategy,
   Inject,
-  ChangeDetectorRef
+  ChangeDetectorRef,
+  ElementRef,
+  ViewChild
 } from '@angular/core';
 import {
   FormControl,
@@ -20,12 +22,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Buffer } from 'buffer';
 import { HttpClient } from '@angular/common/http';
-import {
-  Permission,
-  Role,
-  UserGroup,
-  ValidationError
-} from 'src/app/interfaces';
+import { Permission, Role, ValidationError } from 'src/app/interfaces';
 import { BehaviorSubject, Observable } from 'rxjs';
 import {
   debounceTime,
@@ -50,6 +47,8 @@ import { LoginService } from '../../login/services/login.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddEditUserModalComponent implements OnInit {
+  @ViewChild('searchInput', { static: false })
+  searchInput: ElementRef<HTMLInputElement> = null;
   userForm = this.fb.group({
     firstName: new FormControl('', [
       Validators.required,
@@ -85,7 +84,9 @@ export class AddEditUserModalComponent implements OnInit {
     profileImageFileName: new FormControl(''),
     validFrom: new FormControl('', [Validators.required]),
     validThrough: new FormControl('', [Validators.required]),
-    plantId: new FormControl([], [this.matSelectValidator()])
+    plantId: new FormControl([], [this.matSelectValidator()]),
+    unitIds: new FormControl(''),
+    positionIds: new FormControl('')
   });
   emailValidated = false;
   isValidIDPUser = false;
@@ -103,6 +104,8 @@ export class AddEditUserModalComponent implements OnInit {
   rolesList$: Observable<Role[]>;
   superAdminText = superAdminText;
   selectedRolePermissions$: Observable<any[]>;
+  allPlantsData: any;
+  plantInformation;
   get roles() {
     return this.userForm.get('roles');
   }
@@ -112,6 +115,12 @@ export class AddEditUserModalComponent implements OnInit {
   get plant() {
     return this.userForm.get('plantId');
   }
+  get unit() {
+    return this.userForm.get('unitIds');
+  }
+  get position() {
+    return this.userForm.get('positionIds');
+  }
   rolePermissions: Permission[];
   userRolePermissions = userRolePermissions;
   errors: ValidationError = {};
@@ -119,6 +128,12 @@ export class AddEditUserModalComponent implements OnInit {
   minDate: Date;
   userValidFromDate: Date;
   addingRole$ = new BehaviorSubject<boolean>(false);
+
+  unitsList: any;
+  unitsInformation: { [key: string]: any[] };
+  unitsObject: { [key: string]: any[] };
+  allPositionsData: any;
+  positionsInformation;
 
   constructor(
     private fb: FormBuilder,
@@ -190,6 +205,21 @@ export class AddEditUserModalComponent implements OnInit {
         this.data?.user?.plantId?.split(',')?.includes(plant.id)
       );
     }
+
+    if (this.data?.user?.unitIds && !Array.isArray(this.data?.user?.unitIds)) {
+      this.data.user.unitIds = this.data.unitsList.filter((unit) =>
+        this.data?.user?.unitIds?.split(',')?.includes(unit.id)
+      );
+    }
+
+    if (
+      this.data?.user?.positionIds &&
+      !Array.isArray(this.data?.user?.positionIds)
+    ) {
+      this.data.user.positionIds = this.data.positionsList.filter((pos) =>
+        this.data?.user?.positionIds?.split(',')?.includes(pos.id)
+      );
+    }
     const userDetails = this.data?.user;
     this.permissionsList$ = this.data?.permissionsList$;
     this.rolesInput = this.data?.roles?.rows;
@@ -206,6 +236,13 @@ export class AddEditUserModalComponent implements OnInit {
       this.usergroupInput = this.userGroupList.filter((group) =>
         plantsList.includes(group.plantId)
       );
+    });
+
+    this.userForm.get('unitIds').valueChanges.subscribe(() => {
+      const unitList = [];
+      this.userForm.get('unitIds')?.value?.forEach((unit) => {
+        unitList.push(unit.id);
+      });
     });
 
     if (Object.keys(userDetails).length === 0) {
@@ -248,6 +285,27 @@ export class AddEditUserModalComponent implements OnInit {
         })
       )
       .subscribe();
+
+    this.plantInformation = this.data.plantsList;
+    this.allPlantsData = this.plantInformation;
+
+    this.unitsList = this.data.unitsList;
+    this.unitsObject = this.unitsList?.reduce((result, item) => {
+      const plant = this.plantInformation.find((p) => p.id === item.plantsID);
+      const plantName = plant ? plant.name : item.plantsId;
+
+      if (plantName) {
+        if (!result[plantName]) {
+          result[plantName] = [];
+        }
+        result[plantName].push(item);
+      }
+      return result;
+    }, {});
+    this.unitsInformation = this.unitsObject;
+
+    this.positionsInformation = this.data.positionsList;
+    this.allPositionsData = this.positionsInformation;
   }
 
   validFromDateChange(validFromDate) {
@@ -285,6 +343,74 @@ export class AddEditUserModalComponent implements OnInit {
       return this.sant.bypassSecurityTrustResourceUrl(base64Image);
     }
   };
+
+  onKeyPlant(event) {
+    const value = event.target.value || '';
+
+    if (!value) {
+      this.allPlantsData = this.plantInformation;
+    } else {
+      this.allPlantsData = this.searchPlant(value);
+    }
+  }
+
+  searchPlant(value: string) {
+    const searchValue = value.toLowerCase();
+    return this.plantInformation.filter(
+      (plant) =>
+        (plant.name && plant.name.toLowerCase().indexOf(searchValue) !== -1) ||
+        (plant.plantId &&
+          plant.plantId.toLowerCase().indexOf(searchValue) !== -1)
+    );
+  }
+
+  onKeyUnit(event) {
+    const value = event.target.value || '';
+
+    if (!value) {
+      this.unitsObject = this.unitsInformation;
+    } else {
+      this.unitsObject = this.searchUnit(value);
+    }
+  }
+
+  searchUnit(value: string) {
+    const searchValue = value.toLowerCase();
+    const result = {};
+
+    for (const key in this.unitsInformation) {
+      if (this.unitsInformation.hasOwnProperty(key)) {
+        const matchingItems = this.unitsInformation[key].filter(
+          (item) =>
+            item.locationId.toLowerCase().includes(searchValue) ||
+            item.name.toLowerCase().includes(searchValue)
+        );
+
+        if (matchingItems.length > 0) {
+          result[key] = matchingItems;
+        }
+      }
+    }
+
+    return result;
+  }
+
+  onKeyPosition(event) {
+    const value = event.target.value || '';
+
+    if (!value) {
+      this.allPositionsData = this.positionsInformation;
+    } else {
+      this.allPositionsData = this.searchPosition(value);
+    }
+  }
+
+  searchPosition(value: string) {
+    const searchValue = value.toLowerCase();
+    return this.positionsInformation.filter(
+      (pos) => pos.name && pos.name.toLowerCase().indexOf(searchValue) !== -1
+    );
+  }
 
   objectComparisonFunction(option, value): boolean {
     return option.id === value.id;
@@ -382,12 +508,39 @@ export class AddEditUserModalComponent implements OnInit {
             .get('plantId')
             .value?.map((plant) => plant.id)
             .toString();
+
+    const latestUnitIds =
+      this.data.user?.plantId?.map((plant) => plant.id).toString() ===
+      this.userForm
+        .get('unitIds')
+        .value?.map((plant) => plant.id)
+        .toString()
+        ? this.data.user?.unitIds?.map((unit) => unit.id).toString()
+        : this.userForm
+            .get('unitIds')
+            .value?.map((unit) => unit.id)
+            .toString();
+
+    const latestPosIds =
+      this.data.user?.positionIds?.map((pos) => pos.id).toString() ===
+      this.userForm
+        .get('positionIds')
+        .value?.map((pos) => pos.id)
+        .toString()
+        ? this.data.user?.positionIds?.map((pos) => pos.id).toString()
+        : this.userForm
+            .get('positionIds')
+            .value?.map((pos) => pos.id)
+            .toString();
+
     const payload = {
       user: {
         ...this.data.user,
         ...this.userForm.value,
         plantId: latestPlant,
-        userGroups: newGroupsIds?.toString()
+        unitIds: latestUnitIds,
+        userGroups: newGroupsIds?.toString(),
+        positionIds: latestPosIds
       },
       action: this.dialogText === 'addUser' ? 'add' : 'edit'
     };
@@ -417,5 +570,12 @@ export class AddEditUserModalComponent implements OnInit {
 
   getPlantId() {
     return this.plant?.value?.[0]?.plantId;
+  }
+
+  private resetSearchInput(): void {
+    if (this.searchInput?.nativeElement) {
+      this.searchInput.nativeElement.value = '';
+    }
+    this.allPlantsData = this.plantInformation;
   }
 }
