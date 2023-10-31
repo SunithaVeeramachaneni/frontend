@@ -186,8 +186,6 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     const tenantInfo = this.tenantService.getTenantInfo();
 
-    const validators = this.getValidators(tenantInfo);
-
     this.plantMapSubscription = this.plantService.plantMasterData$.subscribe(
       (res) => {
         this.plantMasterData = res;
@@ -199,20 +197,20 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
     this.plantForm = this.fb.group({
       id: '',
       image: '',
-      name: new FormControl('', [...validators]),
+      name: new FormControl('', [...this.getValidators(tenantInfo)]),
       plantId: new FormControl(
         '',
-        [...validators],
+        [...this.getValidators(tenantInfo)],
         [this.checkPlantIdExists()]
       ),
-      country: new FormControl('', [...validators]),
+      country: new FormControl('', [...this.getValidators(tenantInfo)]),
       zipCode: new FormControl('', [
         Validators.minLength(2),
         Validators.maxLength(6),
         Validators.pattern(regex),
-        ...validators
+        ...this.getValidators(tenantInfo)
       ]),
-      state: new FormControl('', [...validators]),
+      state: new FormControl('', [...this.getValidators(tenantInfo)]),
       timeZone: new FormControl('', [Validators.required]),
       shifts: new FormControl('', []),
       label: new FormControl('', [WhiteSpaceValidator.trimWhiteSpace]),

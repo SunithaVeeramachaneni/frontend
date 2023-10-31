@@ -185,13 +185,12 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     const tenantInfo = this.tenantService.getTenantInfo();
-    const validators = this.getValidators(tenantInfo);
     this.assetForm = this.fb.group({
       image: '',
-      name: new FormControl('', [...validators]),
+      name: new FormControl('', [...this.getValidators(tenantInfo)]),
       assetsId: new FormControl(
         '',
-        [...validators],
+        [...this.getValidators(tenantInfo)],
         [this.checkAssetsIdExists()]
       ),
       model: new FormControl('', [WhiteSpaceValidator.trimWhiteSpace]),

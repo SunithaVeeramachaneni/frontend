@@ -161,13 +161,12 @@ export class AddEditLocationComponent implements OnInit {
 
   ngOnInit(): void {
     const tenantInfo = this.tenantService.getTenantInfo();
-    const validators = this.getValidators(tenantInfo);
     this.locationForm = this.fb.group({
       image: '',
-      name: new FormControl('', [...validators]),
+      name: new FormControl('', [...this.getValidators(tenantInfo)]),
       locationId: new FormControl(
         '',
-        [...validators],
+        [...this.getValidators(tenantInfo)],
         [this.checkLocationIdExists()]
       ),
       model: '',

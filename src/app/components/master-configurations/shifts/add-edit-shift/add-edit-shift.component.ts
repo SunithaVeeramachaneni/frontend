@@ -101,12 +101,14 @@ export class AddEditShiftComponent implements OnInit {
 
   ngOnInit(): void {
     const tenantInfo = this.tenantService.getTenantInfo();
-    const validators = this.getValidators(tenantInfo);
     this.shiftForm = this.fb.group({
       id: '',
-      name: new FormControl('', [...validators, Validators.maxLength(25)]),
-      startTime: new FormControl('', [...validators]),
-      endTime: new FormControl('', [...validators]),
+      name: new FormControl('', [
+        ...this.getValidators(tenantInfo),
+        Validators.maxLength(25)
+      ]),
+      startTime: new FormControl('', [...this.getValidators(tenantInfo)]),
+      endTime: new FormControl('', [...this.getValidators(tenantInfo)]),
       isActive: new FormControl('', [])
     });
   }

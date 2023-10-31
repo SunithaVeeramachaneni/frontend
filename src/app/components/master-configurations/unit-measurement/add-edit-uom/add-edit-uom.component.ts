@@ -41,7 +41,6 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
     unitList: null,
     rows: []
   };
-  validators: any[];
   public unitType = '';
   public newUnitType = '';
   public measurementList: any[] = [];
@@ -88,8 +87,6 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    const tenantInfo = this.tenantService.getTenantInfo();
-    this.validators = this.getValidators(tenantInfo);
     this.unitOfMeasurementService.getUnitTypes().subscribe();
     this.unitOfMeasurementService.unitTypes$.subscribe(
       (units) => (this.measurementList = units)
@@ -168,16 +165,25 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
   }
 
   createUnit(): FormGroup {
+    const tenantInfo = this.tenantService.getTenantInfo();
     return this.formBuilder.group({
       id: [null],
       version: [null],
       description: [
         '',
-        [Validators.minLength(3), Validators.maxLength(48), ...this.validators]
+        [
+          Validators.minLength(3),
+          Validators.maxLength(48),
+          ...this.getValidators(tenantInfo)
+        ]
       ],
       symbol: [
         '',
-        [Validators.minLength(1), Validators.maxLength(48), ...this.validators]
+        [
+          Validators.minLength(1),
+          Validators.maxLength(48),
+          ...this.getValidators(tenantInfo)
+        ]
       ],
       order: [this.prepareOrder()]
     });
