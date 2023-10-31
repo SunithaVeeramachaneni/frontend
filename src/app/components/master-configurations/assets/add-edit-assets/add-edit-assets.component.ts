@@ -180,7 +180,7 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
       Validators.required,
       WhiteSpaceValidator.trimWhiteSpace
     ];
-    if (tenantInfo?.whiteSpace) {
+    if (tenantInfo.trimWhiteSpace) {
       validators.push(WhiteSpaceValidator.whiteSpace);
     }
     return validators;

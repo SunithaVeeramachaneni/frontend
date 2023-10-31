@@ -96,7 +96,7 @@ export class AddEditShiftComponent implements OnInit {
       Validators.required,
       WhiteSpaceValidator.trimWhiteSpace
     ];
-    if (tenantInfo?.whiteSpace) {
+    if (tenantInfo.trimWhiteSpace) {
       validators.push(WhiteSpaceValidator.whiteSpace);
     }
     return validators;
