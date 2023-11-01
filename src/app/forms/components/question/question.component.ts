@@ -578,6 +578,11 @@ export class QuestionComponent implements OnInit, OnDestroy {
     this.unitMenuTrigger.closeMenu();
   }
 
+  onChange(event) {
+    this.isINSTFieldChanged = true;
+    this.questionForm.get('name').setValue(event);
+  }
+
   handleMatMenu() {
     this.unitOfMeasurementsAvailable = [...this.unitOfMeasurements];
   }

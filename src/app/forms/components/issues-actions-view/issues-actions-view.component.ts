@@ -494,6 +494,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
 
       case 'status':
         dueDateOrSubmittedDate = {
+          status: value,
           submittedDate: value === 'Resolved' ? new Date().toISOString() : ''
         };
         break;

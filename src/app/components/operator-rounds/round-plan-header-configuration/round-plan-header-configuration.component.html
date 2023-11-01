@@ -225,7 +225,9 @@
               [ngClass]="{
                 'display-toolbar': isOpen.value
               }"
-              formControlName="notes"
+              [ngModel]="headerDataForm.get('instructions.notes').value"
+              (ngModelChange)="onChangeNotes($event)"
+              [ngModelOptions]="{ standalone: true }"
               [placeholder]="'addNotes' | translate"
               class="notes-field"
               (editorFocus)="handleEditorFocus($event)"
