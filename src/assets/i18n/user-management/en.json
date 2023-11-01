@@ -90,5 +90,9 @@
   "userGroup": "User Group",
   "userGroupsRequired": "User Group is Required",
   "doneBtn": "Done",
-  "selected": "Selected"
+  "selected": "Selected",
+  "unit": "Unit",
+  "unitEmpty": "Atleast one unit is required",
+  "position": "Position",
+  "positionEmpty": "Atleast one position is required"
 }

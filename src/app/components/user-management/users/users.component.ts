@@ -52,6 +52,9 @@ import { FormControl } from '@angular/forms';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { Plant } from 'src/app/interfaces/plant';
 import { format } from 'date-fns';
+import { LocationService } from '../../master-configurations/locations/services/location.service';
+import { PositionsService } from '../services/positions.service';
+
 interface UserTableUpdate {
   action: 'add' | 'deactivate' | 'edit' | 'copy' | null;
   user: UserDetails;
@@ -139,6 +142,28 @@ export class UsersComponent implements OnInit {
     {
       id: 'email',
       displayName: 'Email',
+      type: 'string',
+      controlType: 'string',
+      order: 4,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: false,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: true,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
+      id: 'unitIdPlaceholder',
+      displayName: 'Unit',
       type: 'string',
       controlType: 'string',
       order: 4,
@@ -281,6 +306,10 @@ export class UsersComponent implements OnInit {
   addDeactivateUserCount = false;
   plantsList: Plant[];
   plantsObject = {};
+  unitsList: [any];
+  positionsList: [];
+  positionsObject: [];
+  unitsObject = {};
   isOpenAddEditModal = false;
   searchUserGroup: FormControl;
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
@@ -293,7 +322,9 @@ export class UsersComponent implements OnInit {
     public dialog: MatDialog,
     private toast: ToastService,
     private loginService: LoginService,
-    private plantService: PlantService
+    private plantService: PlantService,
+    private locationService: LocationService,
+    private positionService: PositionsService
   ) {}
 
   ngOnInit() {
@@ -372,7 +403,9 @@ export class UsersComponent implements OnInit {
           permissionsList$: this.permissionsList$,
           rolesList$: this.rolesList$,
           usergroupList$: this.usergroupList$,
-          plantsList: this.plantsList
+          plantsList: this.plantsList,
+          unitsList: this.unitsList,
+          positionsList: this.positionsList
         }
       }
     );
@@ -492,7 +525,27 @@ export class UsersComponent implements OnInit {
           this.plantsList = data.items;
           this.plantsObject = this.getPlantsObject(this.plantsList);
         })
-      )
+      ),
+      this.locationService.fetchAllLocations$().pipe(
+        tap((data) => {
+          this.unitsList = data.items.filter((e) => e.isUnit);
+          this.unitsObject = this.getUnitsObject(this.unitsList);
+        })
+      ),
+
+      this.positionService
+        .getPositionsList$({
+          next: this.nextToken,
+          limit: this.limit,
+          searchKey: '',
+          fetchType: this.fetchType
+        })
+        .pipe(
+          tap((data) => {
+            this.positionsList = data.rows;
+            this.positionsObject = this.getPositionsObject(this.positionsList);
+          })
+        )
     ]).pipe(
       map(([users, update, scrollData, userGroups]) => {
         if (this.skip === 0) {
@@ -519,6 +572,11 @@ export class UsersComponent implements OnInit {
                   initial.data[0].validThroughPlaceholder = this.formatDate(
                     user.validThrough
                   );
+                  initial.data[0].unitIdPlaceholder = this.getUnitIdPlaceholder(
+                    user.unitIds
+                  );
+                  initial.data[0].posIdPlaceholder =
+                    this.getPositionIdPlaceholder(user.positionIds);
                 }
                 break;
               case 'deactivate':
@@ -545,6 +603,10 @@ export class UsersComponent implements OnInit {
                       this.getPlantIdPlaceholder(user.plantId);
                     initial.data[index].validThroughPlaceholder =
                       this.formatDate(user.validThrough);
+                    initial.data[index].unitIdPlaceholder =
+                      this.getUnitIdPlaceholder(user.unitIds);
+                    initial.data[index].posIdPlaceholder =
+                      this.getPositionIdPlaceholder(user.positionIds);
                   }
                 }
             }
@@ -579,6 +641,11 @@ export class UsersComponent implements OnInit {
       if (user.plantId) {
         user.plantIdPlaceholder = this.getPlantIdPlaceholder(user.plantId);
       }
+
+      if (user.unitIds) {
+        user.unitIdPlaceholder = this.getUnitIdPlaceholder(user.unitIds);
+      }
+
       return user;
     });
   }
@@ -595,6 +662,35 @@ export class UsersComponent implements OnInit {
     return plantIdPlaceholder;
   }
 
+  getUnitIdPlaceholder(unitId) {
+    let unitIdPlaceholder = '';
+    if (unitId) {
+      unitId = unitId.split(',');
+      unitId.map((id, idx) => {
+        const unitData = this.unitsList.find((e) => e.id === id);
+
+        if (unitData)
+          unitIdPlaceholder += `${unitData.locationId}${
+            idx !== unitId.length - 1 ? ', ' : ''
+          }`;
+      });
+    }
+    return unitIdPlaceholder;
+  }
+
+  getPositionIdPlaceholder(posId) {
+    let posIdPlaceholder = '';
+    if (posId) {
+      posId = posId.split(',');
+      posId.map((id, idx) => {
+        posIdPlaceholder += `${this.positionsObject[id]}${
+          idx !== posId.length - 1 ? ', ' : ''
+        }`;
+      });
+    }
+    return posIdPlaceholder;
+  }
+
   formatDate(validThrough) {
     if (validThrough) validThrough = format(new Date(validThrough), 'dd.MM.yy');
     return validThrough;
@@ -603,6 +699,20 @@ export class UsersComponent implements OnInit {
   getPlantsObject(plants) {
     return plants.reduce((acc, cur) => {
       acc[cur.id] = cur.plantId;
+      return acc;
+    }, {});
+  }
+
+  getUnitsObject(units) {
+    return units.reduce((acc, cur) => {
+      acc[cur.id] = cur.locationId;
+      return acc;
+    }, {});
+  }
+
+  getPositionsObject(pos) {
+    return pos.reduce((acc, cur) => {
+      acc[cur.id] = cur.name;
       return acc;
     }, {});
   }
