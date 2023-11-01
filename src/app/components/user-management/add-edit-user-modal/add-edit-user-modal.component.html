@@ -336,6 +336,7 @@
           multiple
           [compareWith]="objectComparisonFunction"
           formControlName="plantId"
+          (selectionChange)="resetPlantSearchFilter()"
         >
           <input
             class="searchable-input"
