@@ -236,7 +236,10 @@
       </p>
       <p class="m-0" *ngIf="activeShifts$ | async as activeShifts">
         <mat-form-field appearance="outline" class="width-100 m-b-10">
-          <mat-label id="addEditPlantShifts" translate="shifts"></mat-label>
+          <mat-label
+            id="addEditPlantShifts"
+            translate="shiftMandatory"
+          ></mat-label>
           <mat-select
             id="addEditPlantSelectShifts"
             placeholder="Shifts"
@@ -272,7 +275,34 @@
               </span>
             </mat-option>
           </mat-select>
+          <mat-error
+            id="addEditPlantShiftsError"
+            *ngIf="processValidationErrors('shifts')"
+            class="m-t-5 error-fields"
+          >
+            {{
+              errors.shifts.name
+                | translate
+                  : {
+                      name: 'shift' | translate
+                    }
+            }}
+          </mat-error>
         </mat-form-field>
+      </p>
+      <p class="m-10-5 activeToggleBtn">
+        <mat-label
+          id="addEditSHRActive"
+          translate="activateSHRPlants"
+        ></mat-label>
+        <span class="slide-toggle">
+          <mat-slide-toggle
+            id="addEditSHRToggle"
+            [labelPosition]="'before'"
+            formControlName="isSHRActivated"
+          >
+          </mat-slide-toggle>
+        </span>
       </p>
       <p class="additional-details">
         <mat-label
