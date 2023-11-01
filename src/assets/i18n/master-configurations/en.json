@@ -83,7 +83,7 @@
   "timeZone": "Time Zone",
   "timeZoneMandatory": "Time Zone *",
   "stateNotMandatory": "No states for selected country",
-  "shifts": "Shifts",
+  "shift": "Shift",
   "shiftName": "Shift Name",
   "searchShift": "Search by Shift Name",
   "max25Chars": "Maximum 25 Characters",
@@ -108,5 +108,7 @@
   "alreadyExists": "{name} already exists",
   "exportData": "Export Data as Excel",
   "forms": "Forms",
-  "formTemplate": "Form Templates"
+  "formTemplate": "Form Templates",
+  "activateSHRPlants": "Activate Shift Handover Report for all Units in this Plant",
+  "shiftMandatory": "Shift *"
 }
