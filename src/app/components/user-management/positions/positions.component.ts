@@ -1,9 +1,4 @@
-import {
-  ChangeDetectorRef,
-  Component,
-  OnDestroy,
-  OnInit
-} from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
 import {
   debounceTime,
@@ -27,7 +22,7 @@ import {
   CellClickActionEvent,
   TableEvent,
   FormTableUpdate,
-  Permission,
+  Permission
 } from 'src/app/interfaces';
 import {
   permissions as perms,
@@ -46,9 +41,8 @@ import { ColumnConfigurationService } from 'src/app/forms/services/column-config
 import { PositionsService } from '../services/positions.service';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { CreatePositionsComponent } from '../create-positions/create-positions.component';
-import {
-  UM_POSITION_FILTERS
-} from '../../race-dynamic-form/race-dynamic-forms.constants';
+import { UM_POSITION_FILTERS } from '../../race-dynamic-form/race-dynamic-forms.constants';
+import { MatMenuPanel } from '@angular/material/menu';
 
 @Component({
   selector: 'app-positions',
@@ -145,14 +139,15 @@ export class PositionsComponent implements OnInit, OnDestroy {
     });
   skip = 0;
   limit = graphQLDefaultLimit;
-  
+
   searchPosition: FormControl;
   addCopyFormCount = false;
   positionListCount$: Observable<number>;
-  positionListCountRaw$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
-  positionListCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(
+  positionListCountRaw$: BehaviorSubject<number> = new BehaviorSubject<number>(
     0
   );
+  positionListCountUpdate$: BehaviorSubject<number> =
+    new BehaviorSubject<number>(0);
   ghostLoading = new Array(15).fill(0).map((v, i) => i);
   nextToken = '';
   selectedForm: GetFormList = null;
@@ -173,6 +168,7 @@ export class PositionsComponent implements OnInit, OnDestroy {
   triggerCountUpdate = false;
   readonly perms = perms;
   private onDestroy$ = new Subject();
+  moreMenu: MatMenuPanel<any>;
 
   constructor(
     private readonly positionService: PositionsService,
@@ -266,10 +262,7 @@ export class PositionsComponent implements OnInit, OnDestroy {
       columns: this.columns,
       data: []
     };
-    this.forms$ = combineLatest([
-      formsOnLoadSearch$,
-      onScrollForms$
-    ]).pipe(
+    this.forms$ = combineLatest([formsOnLoadSearch$, onScrollForms$]).pipe(
       map(([rows, scrollData]) => {
         if (this.skip === 0) {
           this.configOptions = {
@@ -278,7 +271,7 @@ export class PositionsComponent implements OnInit, OnDestroy {
           };
           initial.data = rows;
         } else {
-            initial.data = initial.data.concat(scrollData);
+          initial.data = initial.data.concat(scrollData);
         }
         this.allForms = initial.data;
         this.dataSource = new MatTableDataSource(this.allForms);
@@ -416,7 +409,7 @@ export class PositionsComponent implements OnInit, OnDestroy {
     const dialogRef = this.dialog.open(CreatePositionsComponent);
     dialogRef.afterClosed().subscribe((result) => {
       console.log('The dialog was closed', result);
-      if(result === "success") {
+      if (result === 'success') {
         this.cdrf.detectChanges();
         this.positionService.fetchPositions$.next({ data: 'load' });
       }
