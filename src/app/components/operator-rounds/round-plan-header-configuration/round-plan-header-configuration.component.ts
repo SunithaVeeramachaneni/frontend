@@ -549,6 +549,10 @@ export class RoundPlanHeaderConfigurationComponent
     this.router.navigate(['/operator-rounds']);
   }
 
+  onChangeNotes(event) {
+    this.headerDataForm.get('instructions.notes').setValue(event);
+  }
+
   resetPlantSearchFilter = () => {
     this.plantFilterInput = '';
     this.plantInformation = this.allPlantsData;
@@ -742,7 +746,7 @@ export class RoundPlanHeaderConfigurationComponent
         height: '100%',
         panelClass: 'slideshow-container',
         backdropClass: 'slideshow-backdrop',
-        data: { images: slideshowImages, type: 'forms' }
+        data: { images: slideshowImages, type: 'base64' }
       });
     }
   }

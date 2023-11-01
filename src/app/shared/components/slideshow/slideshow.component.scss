@@ -38,8 +38,7 @@
   }
 
   .slide-wrapper {
-    height: 50vw;
-    max-height: 600px;
+    height: 80vh;
     position: relative;
     top: 5px;
     display: flex;
@@ -47,9 +46,8 @@
   }
 
   .slide-images {
-    width: auto;
-    max-width: 1000px;
     margin-bottom: 20px;
+    object-fit: none;
   }
 
   .images {

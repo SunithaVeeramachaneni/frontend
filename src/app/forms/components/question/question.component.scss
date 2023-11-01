@@ -76,8 +76,9 @@
         opacity: 0;
       }
 
-      ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
-        padding: 0 !important;
+      ::ng-deep .mat-form-field-appearance-outline,
+      ::ng-deep .mat-form-field-infix {
+        padding: 0 0 10px 0 !important;
       }
     }
   }
@@ -88,10 +89,6 @@
     border: none;
     margin-left: 5px;
     width: 90%;
-  }
-
-  .instruction-question {
-    padding: 0px 0px 10px 3px;
   }
 
   input:focus {

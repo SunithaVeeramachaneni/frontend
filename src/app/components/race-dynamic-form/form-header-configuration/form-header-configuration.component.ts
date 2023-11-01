@@ -590,8 +590,13 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
       }
     }
   }
+
   trackBySelectedattachments(index: number, el: any): string {
     return el?.id;
+  }
+
+  onChangeNotes(event) {
+    this.headerDataForm.get('instructions.notes').setValue(event);
   }
 
   processValidationErrors(controlName: string): boolean {
@@ -773,7 +778,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
         height: '100%',
         panelClass: 'slideshow-container',
         backdropClass: 'slideshow-backdrop',
-        data: { images: slideshowImages, type: 'forms' }
+        data: { images: slideshowImages, type: 'base64' }
       });
     }
   }

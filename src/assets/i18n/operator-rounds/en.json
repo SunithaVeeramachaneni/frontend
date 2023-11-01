@@ -484,5 +484,7 @@
   "fixedTitleHeader": "Issues with Notifications : ",
   "createNotificationAnyway": "Create New Notification Anyway",
   "showNotifications": "Show Issues with Notifications",
-  "notificationsAlertDialog": "{ count } active Notifications from { count } Issues already exists for this { entityName }. Do you want to create a new Notification?"
+  "notificationsAlertDialog": "{ count } active Notifications from { count } Issues already exists for this { entityName }. Do you want to create a new Notification?",
+  "maxDate": "Days count must be at the max of {count} days",
+  "validEndDate": "Days count must be at the max of {count} days based on the End Date"
 }

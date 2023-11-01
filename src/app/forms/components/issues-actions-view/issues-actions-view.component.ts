@@ -43,8 +43,8 @@ import {
   localToTimezoneDate
 } from 'src/app/shared/utils/timezoneDate';
 import {
-  dateTimeFormat2,
-  dateFormat2,
+  dateTimeFormat4,
+  dateFormat6,
   timeFormat,
   defaultLimit,
   roundObservations
@@ -431,7 +431,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
       });
     }
     this.issuesActionsDetailViewForm.patchValue({
-      [formControlDateField]: format(event.value, dateTimeFormat2)
+      [formControlDateField]: format(event.value, dateTimeFormat4)
     });
     this.issuesActionsDetailViewForm.markAsDirty();
   }
@@ -494,6 +494,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
 
       case 'status':
         dueDateOrSubmittedDate = {
+          status: value,
           submittedDate: value === 'Resolved' ? new Date().toISOString() : ''
         };
         break;
@@ -720,7 +721,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
         height: '100%',
         panelClass: 'slideshow-container',
         backdropClass: 'slideshow-backdrop',
-        data: slideshowImages
+        data: { type: 'base64', images: slideshowImages }
       });
     }
   }
@@ -821,10 +822,10 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
         this.plantTimezoneMap[
           this.issuesActionsDetailViewForm.get('plantId').value
         ],
-        dateTimeFormat2
+        dateTimeFormat4
       );
     }
-    return format(new Date(date), dateTimeFormat2);
+    return format(new Date(date), dateTimeFormat4);
   }
 
   formatTime(date) {
@@ -860,20 +861,20 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
         this.plantTimezoneMap[
           this.issuesActionsDetailViewForm.get('plantId').value
         ],
-        dateTimeFormat2
+        dateTimeFormat4
       );
     }
-    return format(parsedDate, dateTimeFormat2);
+    return format(parsedDate, dateTimeFormat4);
   }
 
   compareDates(dateString: string): string {
-    const parsedDate = parse(dateString, dateTimeFormat2, new Date());
+    const parsedDate = parse(dateString, dateTimeFormat4, new Date());
 
     return isToday(parsedDate)
       ? 'Today'
       : isYesterday(parsedDate)
       ? 'Yesterday'
-      : format(new Date(parsedDate), dateFormat2);
+      : format(new Date(parsedDate), dateFormat6);
   }
 
   ngOnDestroy(): void {
@@ -1058,7 +1059,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     if (this.data?.id === currentChatSelectedId) {
       const newMessage = {
         ...data,
-        createdAt: format(new Date(data?.createdAt), dateTimeFormat2),
+        createdAt: format(new Date(data?.createdAt), dateTimeFormat4),
         message:
           data.type === 'Object' ? JSON.parse(data?.message) : data?.message
       };
