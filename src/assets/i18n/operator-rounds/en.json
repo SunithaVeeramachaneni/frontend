@@ -487,5 +487,9 @@
   "showNotifications": "Show Issues with Notifications",
   "notificationsAlertDialog": "{ count } active Notifications from { count } Issues already exists for this { entityName }. Do you want to create a new Notification?",
   "unitLocation": "Unit",
-  "unitLocationPlaceholder": "Unit"
+  "unitLocationPlaceholder": "Unit",
+  "maxDate": "Days count must be at the max of {count} days",
+  "characterLimit": "Character Limit",
+  "minCharacterLimit": "Min. Character Limit",
+  "maxCharacterLimit": "Max. Character Limit"
 }

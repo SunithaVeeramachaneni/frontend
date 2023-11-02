@@ -55,10 +55,9 @@
   }
 
   .additional-details-heading {
-    font-size: 1.2rem;
-    border-bottom: 1px solid $border-color;
+    font-size: 120%;
     padding: 15px;
-    font-weight: 600;
+    font-weight: 500;
     padding-left: 0;
     margin: 0;
   }
@@ -82,14 +81,6 @@
     right: 0;
   }
 
-  .additional-details-heading {
-    font-size: 1.2rem;
-    border-bottom: 1px solid $border-color;
-    padding: 15px;
-    font-weight: 600;
-    padding-left: 0;
-  }
-
   .remove-btn {
     color: $disabled-color;
     float: right;
@@ -98,15 +89,6 @@
     position: absolute;
     top: 0;
     right: 0;
-  }
-
-  .additional-details-heading {
-    font-size: 1.2rem;
-    border-bottom: 1px solid $border-color;
-    padding: 15px;
-    font-weight: 600;
-    padding-left: 0;
-    margin: 0;
   }
 
   .top-bar {
@@ -126,14 +108,6 @@
     position: absolute;
     top: 0;
     right: 0;
-  }
-
-  .additional-details-heading {
-    font-size: 1.2rem;
-    border-bottom: 1px solid $border-color;
-    padding: 15px;
-    font-weight: 600;
-    padding-left: 0;
   }
 
   .add-response {
@@ -160,13 +134,6 @@
     font-weight: bold;
   }
 
-  .dis-flex {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-    margin-bottom: 20px;
-  }
-
   ::ng-deep .mat-option-text {
     font-size: 100%;
     display: flex;
@@ -174,12 +141,6 @@
 
   .mat-error {
     margin-top: 16px;
-  }
-
-  .attributes-list-item {
-    display: flex;
-    justify-content: space-between;
-    width: 445px;
   }
 
   .margin-20 {
@@ -261,9 +222,8 @@
   }
 
   .tags-heading {
-    font-weight: bold;
+    font-weight: 500;
     font-size: 120%;
-    color: $black;
     margin: 0px;
     padding-bottom: 10px;
   }
@@ -292,12 +252,6 @@
     }
   }
 
-  .attributes-text {
-    font-weight: bold;
-    font-size: 120%;
-    margin: 10px 0;
-  }
-
   .add-button {
     color: $blue-main;
     border: none;
@@ -316,7 +270,7 @@
 
   .label-value-text {
     display: flex;
-    margin: 15px 0 5px 10px;
+    margin: 10px 0 5px 0px;
   }
 
   .label,
@@ -339,10 +293,6 @@
     top: 3px;
     right: 5px;
   }
-}
-
-.additional-details-slider {
-  width: 480px;
 }
 
 .rangeSelectorFooter {
@@ -375,6 +325,8 @@
   justify-content: center;
   .submitBtn {
     width: 48%;
+    background-color: $blue-main;
+    color: $white;
   }
   .cancelBtn {
     width: 48%;
@@ -521,6 +473,18 @@
   overflow-y: auto;
   overflow-x: hidden;
   padding: 5px;
+
+  ::ng-deep
+    .mat-form-field-appearance-outline.mat-form-field-disabled
+    .mat-form-field-outline {
+    background-color: $gray;
+    border-radius: 4px;
+  }
+
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
+    opacity: 1;
+  }
 }
 
 .response-drop-list {

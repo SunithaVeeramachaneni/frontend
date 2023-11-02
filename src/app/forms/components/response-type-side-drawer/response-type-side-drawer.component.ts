@@ -103,6 +103,7 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
   public rangeMetadataForm: FormGroup;
   public additionalDetailsForm: FormGroup;
   public sliderOptionsForm: FormGroup;
+  public minMaxCharForm: FormGroup;
 
   public isFormNotUpdated = true;
   multipleChoiceOpenState = false;
@@ -142,7 +143,7 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
   filteredValues$: Observable<any>;
   labels: any = {};
   errors: ValidationError = {};
-
+  enabledCharLimit = false;
   lowerLimitActions = ['None', 'Warning', 'Alert', 'Note'];
   upperLimitActions = ['None', 'Warning', 'Alert', 'Note'];
   isCreate = true;
@@ -212,6 +213,11 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
       min: 0,
       max: 100,
       increment: 1
+    });
+
+    this.minMaxCharForm = this.fb.group({
+      minCharValue: '',
+      maxCharValue: ''
     });
 
     this.sliderOpenState$ = this.formService.sliderOpenState$;
@@ -344,6 +350,26 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
         takeUntil(this.onDestroy$),
         tap(([prev, curr]) => {
           if (isEqual(prev, curr)) {
+            this.isFormNotUpdated = true;
+          } else {
+            this.isFormNotUpdated = false;
+          }
+          this.cdrf.markForCheck();
+        })
+      )
+      .subscribe();
+
+    this.minMaxCharForm.valueChanges
+      .pipe(
+        pairwise(),
+        debounceTime(500),
+        distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
+        tap(([prev, curr]) => {
+          if (
+            prev.minCharValue === curr.minCharValue &&
+            prev.maxCharValue === curr.maxCharValue
+          ) {
             this.isFormNotUpdated = true;
           } else {
             this.isFormNotUpdated = false;

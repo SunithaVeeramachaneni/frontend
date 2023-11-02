@@ -527,11 +527,11 @@
             }}
           </mat-error>
         </div>
-        <div class="additional-details">
+        <div class="additional-details m-t-16">
           <p
             translate="attributesHeading"
             id="attributesHeading"
-            class="attributes-text"
+            class="tags-heading"
           ></p>
           <div
             class="label-value-text"
@@ -542,7 +542,7 @@
             <div class="width-45 label" id="labelHeading">
               {{ 'label' | translate }}
             </div>
-            <div class="width-45 m-l-20 value" id="valueHeading">
+            <div class="width-45 m-l-10 value" id="valueHeading">
               {{ 'value' | translate }}
             </div>
           </div>
@@ -553,8 +553,8 @@
                 let i = index
               "
             >
-              <div [formGroupName]="i" class="attributes-list-item">
-                <div class="width-45">
+              <div [formGroupName]="i" class="dis-flex">
+                <div class="width-43">
                   <mat-form-field
                     appearance="outline"
                     class="m-l-5 symbol m-b-10 width-100"
@@ -639,7 +639,7 @@
                   </mat-form-field>
                 </div>
 
-                <div class="width-45">
+                <div class="width-43">
                   <mat-form-field
                     appearance="outline"
                     class="m-l-20 symbol m-b-10 width-100 value-field"
@@ -724,7 +724,7 @@
                     </mat-error>
                   </mat-form-field>
                 </div>
-                <div class="width-10 cancel-icon">
+                <div class="width-14 cancel-icon">
                   <svg-icon
                     id="closeIcon"
                     icon="icon-closeIcon"
@@ -768,6 +768,78 @@
             <span>{{ 'addMoreUpto5' | translate }}</span>
           </button>
         </div>
+        <div
+          *ngIf="
+            this.question.fieldType === 'TF' || this.question.fieldType === 'NF'
+          "
+        >
+          <div class="dis-flex justify-content-space-between m-t-16 m-b-16">
+            <p class="tags-heading" translate>characterLimit</p>
+            <mat-slide-toggle
+              id="characterToggle"
+              [(ngModel)]="enabledCharLimit"
+              class="collapse-btn slide-toggle"
+              [ngModelOptions]="{ standalone: true }"
+            ></mat-slide-toggle>
+          </div>
+
+          <div [formGroup]="minMaxCharForm" class="dis-flex">
+            <div class="width-49">
+              <label
+                for="minCharValue"
+                id="minCharacter"
+                class="tags-heading"
+                translate
+              >
+                minCharacterLimit
+              </label>
+              <mat-form-field appearance="outline" class="width-100">
+                <input
+                  formControlName="minCharValue"
+                  [disabled]="!enabledCharLimit"
+                  type="number"
+                  min="0"
+                  [max]="minMaxCharForm.get('maxCharValue').value - 1"
+                  matInput
+              /></mat-form-field>
+              <mat-error
+                *ngIf="
+                  minMaxCharForm.get('minCharValue').hasError('minMaxInvalid')
+                "
+              >
+                Min Character Limit cannot be greater than Max Character Limit.
+              </mat-error>
+            </div>
+            <div class="width-49 m-l-10">
+              <label
+                for="maxCharValue"
+                id="maxCharacter"
+                class="tags-heading"
+                translate
+              >
+                maxCharacterLimit
+              </label>
+              <mat-form-field appearance="outline" class="width-100">
+                <input
+                  formControlName="maxCharValue"
+                  [disabled]="!enabledCharLimit"
+                  type="number"
+                  [min]="minMaxCharForm.get('minCharValue').value + 1"
+                  matInput
+              /></mat-form-field>
+              <mat-error
+                *ngIf="
+                  minMaxCharForm.get('maxCharValue').hasError('minMaxInvalid')
+                "
+              >
+                Max Character Limit cannot be less than Min Character Limit.
+              </mat-error>
+              <mat-error *ngIf="minMaxCharForm.hasError('minMaxEqual')">
+                Max Character Limit cannot be equal to Min Character Limit.
+              </mat-error>
+            </div>
+          </div>
+        </div>
       </div></mat-card-content
     ></mat-card
   >
@@ -784,7 +856,6 @@
       mat-raised-button
       (click)="submitAdditionalDetails()"
       [disabled]="additionalDetailsForm.invalid || tagsCtrl.invalid"
-      color="primary"
       class="submitBtn"
       translate="done"
     ></button>

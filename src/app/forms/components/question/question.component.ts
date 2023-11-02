@@ -537,7 +537,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     if (this.question.isOpen) {
       if (this.question.fieldType !== 'INST') {
         timer(0, asapScheduler).subscribe(() =>
-          this.name.nativeElement.focus()
+          this.name?.nativeElement.focus()
         );
       }
     } else if (!this.question.isOpen) {

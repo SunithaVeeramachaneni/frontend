@@ -123,6 +123,8 @@ import { FormUpdateDeleteProgressComponent } from './components/form-update-dele
 import { HideSectionsDialogComponent } from './components/add-logic/hide-sections-dialog/hide-sections-dialog.component';
 import { NotificationAlertDialogComponent } from './components/notification-alert-dialog/notification-alert-dialog.component';
 import { NotificationIssuesListComponent } from './components/notification-issues-list/notification-issues-list.component';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+
 @NgModule({
   declarations: [
     PageComponent,
@@ -246,7 +248,8 @@ import { NotificationIssuesListComponent } from './components/notification-issue
     }),
     MatToolbarModule,
     MatStepperModule,
-    OverlayModule
+    OverlayModule,
+    MatSlideToggleModule
   ],
   exports: [
     PageComponent,
