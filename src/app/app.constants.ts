@@ -223,7 +223,7 @@ export const routingUrls = {
   positions: {
     url: '/user-management/positions',
     title: 'Positions',
-    permission: permissions.viewPosition // Temporary Permissions
+    permission: permissions.viewPosition
   },
   rolesPermissions: {
     url: '/user-management/roles-permissions',

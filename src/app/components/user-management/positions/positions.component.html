@@ -32,22 +32,15 @@
           translate="Create"
           (click)="createPosition()"
         ></button>
-        <button
-          id="moreButton"
-          mat-raised-button
-          [matMenuTriggerFor]="moreMenu"
-          class="more-btn"
-        >
-          <mat-icon id="moreMenuIcon" class="menu-icon">more_horiz</mat-icon>
-        </button>
       </div>
     </div>
 
-    <div *ngIf="(forms$ | async) && (isLoading$ | async) === false">
+    <div *ngIf="(positions$ | async) && (isLoading$ | async) === false">
       <cwp-dynamictable
         [dataSource]="dataSource"
         [configOptions]="configOptions"
         (fetchDataCallback)="handleTableEvent($event)"
+        (rowLevelActionHandler)="rowLevelActionHandler($event)"
         (onConfigOptionsChange)="configOptionsChangeHandler($event)"
         (cellClickActionHandler)="cellClickActionHandler($event)"
         class="width-100"
