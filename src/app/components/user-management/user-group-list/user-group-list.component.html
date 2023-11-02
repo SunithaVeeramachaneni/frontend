@@ -14,10 +14,25 @@
           <button
             id="userGroupCreateBtn"
             class="add-btn"
-            (click)="createUserGroup()"
+            [matMenuTriggerFor]="userGroupMenu"
           >
             <mat-icon id="userGroupAddIcon" class="add-btn-icon">add</mat-icon>
           </button>
+
+          <mat-menu #userGroupMenu="matMenu">
+            <button
+              id="userGroupPositionBtn"
+              mat-menu-item
+              translate="positionBased"
+              (click)="createUserGroup('positions')"
+            ></button>
+            <button
+              id="userGroupUserBtn"
+              mat-menu-item
+              translate="userBased"
+              (click)="createUserGroup('users')"
+            ></button>
+          </mat-menu>
         </div>
 
         <div class="right-pannel-header">
@@ -83,7 +98,7 @@
                     </span>
                     <div class="list-display">
                       <span class="usergroup-count" id="userGroupUserCount">{{
-                        userGroup?.usersCount
+                        getUsersCount(userGroup)
                       }}</span>
                       <button
                         id="userGroupMoreBtn"
@@ -133,13 +148,31 @@
             </div>
           </div>
         </div>
-        <div class="userList-left-component">
+        <div
+          class="userList-left-component"
+          *ngIf="selectedUserGroup?.type !== 'positions'"
+        >
           <app-user-group-users-list
             [userGroupPlantId]="selectedUserGroup?.plantId"
             [userGroupId]="selectedUserGroup?.id"
             [userGroupName]="selectedUserGroup?.name"
+            [userGroupUnitId]="selectedUserGroup?.unitId"
           >
           </app-user-group-users-list>
+        </div>
+        <div
+          class="userList-left-component"
+          *ngIf="selectedUserGroup?.type === 'positions'"
+        >
+          <app-user-group-positions-list
+            [userGroupPlantId]="selectedUserGroup?.plantId"
+            [userGroupId]="selectedUserGroup?.id"
+            [userGroupName]="selectedUserGroup?.name"
+            [userGroupUnitId]="selectedUserGroup?.unitId"
+            [userGroupPositionIds]="selectedUserGroup?.positionIds"
+            [userGroup]="selectedUserGroup"
+          >
+          </app-user-group-positions-list>
         </div>
       </div>
     </div>

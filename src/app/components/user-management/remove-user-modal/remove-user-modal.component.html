@@ -1,6 +1,22 @@
 <div class="userRemoveModal">
-  <p id="removeUserHeading" class="heading" translate="removeUserHeading"></p>
-  <p id="removeUserMessage" class="message" translate="removeUserMessage"></p>
+  <p
+    id="removeUserHeading"
+    class="heading"
+    translate="{{
+      selectedUserGroupType === 'positions'
+        ? 'removePositionHeading'
+        : 'removeUserHeading'
+    }}"
+  ></p>
+  <p
+    id="removeUserMessage"
+    class="message"
+    translate="{{
+      selectedUserGroupType === 'positions'
+        ? 'removePositionMessage'
+        : 'removeUserMessage'
+    }}"
+  ></p>
   <button
     id="removeUserYesBtn"
     mat-raised-button

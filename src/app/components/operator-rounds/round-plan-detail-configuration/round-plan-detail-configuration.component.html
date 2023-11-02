@@ -182,6 +182,7 @@
       <div class="assetHierarchyContainer" [hidden]="isPreviewActive">
         <app-hierarchy-container
           [plantId]="formMetadata?.plantId"
+          [unitId]="formMetadata?.unitId"
           [nodeWiseQuestionsCount]="props.nodeWiseQuestionsCount"
           (hierarchyEvent)="hierarchyEventHandler($event)"
         ></app-hierarchy-container>

@@ -64,6 +64,7 @@ export class UserGroupListComponent
   userGroupMode: string;
   addingUserGroup$ = new BehaviorSubject<boolean>(false);
   plants: any[] = [];
+  selectedGroupType = '';
 
   userGroupList: any = [];
   selectedUserGroup: any;
@@ -128,14 +129,16 @@ export class UserGroupListComponent
   }
   ngAfterViewChecked(): void {}
 
-  createUserGroup(): void {
+  createUserGroup(groupType: string): void {
+    this.selectedGroupType = groupType;
     const addEditUserGroupRef = this.dialog.open(
       AddEditUserGroupModalComponent,
       {
         data: {
           userGroupData: null,
           plants: this.plants,
-          type: 'create'
+          type: 'create',
+          selectedGroupType: this.selectedGroupType
         }
       }
     );
@@ -151,7 +154,8 @@ export class UserGroupListComponent
         data: {
           userGroupData: data,
           plants: this.plants,
-          type: 'update'
+          type: 'update',
+          selectedGroupType: this.selectedGroupType
         }
       }
     );
@@ -231,6 +235,9 @@ export class UserGroupListComponent
                   (data) => data?.id === group?.id
                 );
                 initial[indexCpy] = group;
+                if (group.type === 'positions') {
+                  this.selectedUserGroup = group;
+                }
                 this.toast.show({
                   type: 'success',
                   text: 'User Group edited successfully'
@@ -314,6 +321,14 @@ export class UserGroupListComponent
         })
       );
   }
+
+  getUsersCount(userGroup) {
+    if (userGroup?.type === 'positions' && userGroup?.positionIds) {
+      return userGroup.positionIds.split(',').length;
+    }
+    return userGroup?.usersCount;
+  }
+
   copyUserGroup(id: any) {
     this.userGroupService.copyUserGroup$(id).subscribe((data) => {
       this.userGroupService.addUpdateDeleteCopyUserGroup = true;
