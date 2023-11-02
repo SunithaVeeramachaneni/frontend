@@ -64,7 +64,7 @@ export const getTimezoneUTC = (date, timezone) => {
   let id = year + '-';
   if (month < 10) id += '0' + month + '-';
   else id += month + '-';
-  if (day < 10) id += '0' + month + ' ';
+  if (day < 10) id += '0' + day + ' ';
   else id += day + ' ';
   if (hour < 10) id += '0' + hour + ':';
   else id += hour + ':';

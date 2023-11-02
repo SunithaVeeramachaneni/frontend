@@ -531,7 +531,7 @@ export class ActionsListComponent implements OnInit, OnDestroy {
           }
           return data;
         });
-        this.dataSource = new MatTableDataSource(this.initial.data);
+        this.dataSource = new MatTableDataSource(this.formatActions(this.initial.data));
         this.cdrf.detectChanges();
       }
     });

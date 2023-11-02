@@ -575,7 +575,9 @@ export class IssuesListComponent implements OnInit, OnDestroy {
           }
           return data;
         });
-        this.dataSource = new MatTableDataSource(this.initial.data);
+        this.dataSource = new MatTableDataSource(
+          this.formatIssues(this.initial.data)
+        );
         this.cdrf.detectChanges();
       }
     });
