@@ -239,6 +239,7 @@ export class OperatorRoundsService {
     isArchived: boolean = false,
     filterData: any = null
   ) {
+    console.log('called');
     const params: URLSearchParams = new URLSearchParams();
     params.set('searchTerm', queryParams?.searchKey);
     params.set('limit', queryParams?.limit);
@@ -270,7 +271,12 @@ export class OperatorRoundsService {
         environment.operatorRoundsApiUrl,
         'round-plans?' + params.toString()
       )
-      .pipe(map((res) => this.formateGetRoundPlanResponse(res)));
+      .pipe(
+        map((res) => {
+          console.log('res:', res);
+          return this.formateGetRoundPlanResponse(res);
+        })
+      );
   }
 
   getRoundsList$(
@@ -583,6 +589,7 @@ export class OperatorRoundsService {
   }
 
   private formateGetRoundPlanResponse(resp: RoundPlanList) {
+    console.log('resp:', resp);
     const rows =
       resp.items
         .sort(

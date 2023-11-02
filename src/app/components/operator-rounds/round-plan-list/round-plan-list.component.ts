@@ -315,7 +315,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
       .subscribe(() => this.isLoading$.next(true));
     this.getFilter();
     this.getDisplayedForms();
-    this.getAllOperatorRounds();
+    // this.getAllOperatorRounds();
     this.configOptions.allColumns = this.columns;
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [], plantId = null }) => {
@@ -402,6 +402,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
       this.plantService.fetchLoggedInUserPlants$()
     ]).pipe(
       map(([rows, form, scrollData, plants]) => {
+        console.log('rows:', rows);
         plants.forEach((plant) => {
           this.plantsIdNameMap[`${plant.plantId} - ${plant.name}`] = plant.id;
         });
@@ -484,6 +485,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
       )
       .pipe(
         mergeMap(({ count, rows, next }) => {
+          console.log('ROWS:', rows);
           // if next token turns null from not null, that means all records have been fetched with the given limit.
           if (next === null && this.nextToken !== null) {
             this.infiniteScrollEnabled = false;

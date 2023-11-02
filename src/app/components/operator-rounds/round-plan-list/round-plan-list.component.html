@@ -2,7 +2,7 @@
   <div class="main-container">
     <div class="forms-header">
       <h2 id="roundPlanListName" class="heading" translate="myPlans"></h2>
-      <div class="custom-form-field-gray-color search">
+      <div class="custom-form-field-gray-color search dis-flex">
         <span class="no-of-forms" *ngIf="formsListCount$ | async as totalCount">
           <span id="roundPlanListCount" class="forms-count">
             {{ totalCount | count }} &nbsp;
@@ -39,17 +39,41 @@
           ></svg-icon>
         </mat-form-field>
         <button
-          id="roundPlanListCreateBtn"
+          mat-menu-item
+          [matMenuTriggerFor]="menu"
           class="create-new-btn"
-          (click)="openRoundPlanCreationModal()"
-          *appCheckUserHasPermission="[perms.createORPlan]"
-        >
-          <span
-            id="roundPlanListCreateText"
-            class="widgets-title"
-            translate="createNew"
-          ></span>
-        </button>
+          translate="createNew"
+        ></button>
+        <mat-menu #menu="matMenu">
+          <button
+            id="uploadExcelMenu"
+            *appCheckUserHasPermission="[perms.createORPlan]"
+          >
+            <svg-icon
+              id="uploadExcelIcon"
+              icon="icon-excel1"
+              class="add-manually-icon"
+            ></svg-icon>
+            <span
+              id="uploadExcelSpan"
+              class="widgets-title"
+              translate="createNew"
+            ></span>
+          </button>
+          <button
+            *appCheckUserHasPermission="[perms.createORPlan]"
+            (click)="openRoundPlanCreationModal()"
+            mat-menu-item
+            id="createManuallyButton"
+          >
+            <svg-icon
+              id="addManuallyIcon"
+              icon="icon-add-manually"
+              class="add-manually-icon"
+            ></svg-icon>
+            {{ 'createManually' | translate }}
+          </button>
+        </mat-menu>
       </div>
     </div>
 
