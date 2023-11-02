@@ -230,7 +230,7 @@
               ><span
                 *ngFor="let it of item.value; let i = index"
                 [attr.data-index]="i"
-                >{{ it.plant
+                >{{ it.plant.display
                 }}<span *ngIf="i !== item.value.length - 1">, </span></span
               ></span
             >
@@ -304,7 +304,7 @@
                 item.value?.name
               }}</span>
               <span *ngIf="assigneeTypeControl.value === 'plant'">{{
-                item.plant
+                item.plant.display
               }}</span>
             </mat-option>
             <div

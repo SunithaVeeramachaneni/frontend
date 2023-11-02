@@ -145,7 +145,7 @@ export class FilterComponent implements OnInit, OnChanges, OnDestroy {
         if (this.assigneeType === 'plant') {
           return (
             json[this.plantTypeIndex]?.items.filter((item) =>
-              item?.toLowerCase().includes(search)
+              item?.display?.toLowerCase().includes(search)
             ) || []
           ).map((item) => ({ type: 'plant', plant: item }));
         }
@@ -249,7 +249,7 @@ export class FilterComponent implements OnInit, OnChanges, OnDestroy {
       );
     }
     if (o1?.type === 'plant') {
-      return o1?.plant === o2?.plant && o1?.plant !== undefined;
+      return o1?.plant?.value === o2?.plant?.value && o1?.plant.value !== undefined;
     }
   }
 

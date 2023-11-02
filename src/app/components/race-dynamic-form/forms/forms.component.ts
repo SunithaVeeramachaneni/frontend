@@ -416,14 +416,15 @@ export class FormsComponent implements OnInit, OnDestroy {
       this.shiftService.fetchAllShifts$(),
       this.plantService.fetchAllPlants$().pipe(
         tap((plants) => {
-          plants.items.forEach((plant) => {
-            this.plantsIdNameMap[`${plant.plantId} - ${plant.name}`] = plant.id;
-          });
 
           for (const item of filterJson) {
             if (item.column === 'plant') {
-              item.items = plants.items
-                .map((plant) => `${plant.plantId} - ${plant.name}`)
+              item.items = Object.values(plants)
+                .map((plant: any) => {
+                  return {
+                  display: `${plant.plantId} - ${plant.name}`,
+                  value: plant.id
+                }})
                 .sort();
             }
           }
@@ -633,9 +634,7 @@ export class FormsComponent implements OnInit, OnDestroy {
   };
 
   prepareActiveShifts(form: any) {
-    const selectedPlant = this.allPlants?.items?.find(
-      (plant) => plant.id === form.plantId
-    );
+    const selectedPlant: any = this.allPlants[form.plantId];
     const selectedShifts = JSON.parse(selectedPlant?.shifts);
     const activeShifts = this.allShifts?.filter((data) =>
       selectedShifts.some((shift) => shift?.id === data?.id)
@@ -1030,14 +1029,6 @@ export class FormsComponent implements OnInit, OnDestroy {
     return userGroupIdsArray;
   }
 
-  getPlantNameToPlantId(data: any) {
-    const plantIdArray = [];
-    data?.forEach((name: any) => {
-      plantIdArray.push(this.plantsIdNameMap[name]);
-    });
-    return plantIdArray;
-  }
-
   getFullNameToEmailArray(data?: any) {
     const emailArray = [];
     // eslint-disable-next-line @typescript-eslint/no-shadow
@@ -1055,7 +1046,7 @@ export class FormsComponent implements OnInit, OnDestroy {
     this.isPopoverOpen = false;
     for (const item of data) {
       if (item.column === 'plant') {
-        this.filter[item.column] = this.plantsIdNameMap[item.value] ?? '';
+        this.filter[item.column] = item.value ?? '';
       } else if (item.column === 'shiftId' && item.value) {
         const foundEntry = Object.entries(this.shiftIdNameMap).find(
           ([key, val]) => val === item.value
@@ -1082,7 +1073,7 @@ export class FormsComponent implements OnInit, OnDestroy {
           if (item.value[0].type === 'plant') {
             this.filter[item.column] = {
               type: 'plant',
-              value: this.getPlantNameToPlantId(item.value.map((p) => p.plant))
+              value: item.value.map((p) => p.plant)
             };
           }
         }

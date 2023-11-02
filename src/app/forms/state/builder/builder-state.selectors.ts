@@ -429,7 +429,7 @@ export const selectQuestionInstuctionsMediaMap = (
     }
     const questionInstructionMediaMap = state[key]
       .find((page) => page.position === pageIndex + 1)
-      ?.questionInstructionMediaMap.find(
+      ?.questionInstructionMediaMap?.find(
         (map) => map.questionId === questionId
       );
     return questionInstructionMediaMap;

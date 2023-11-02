@@ -352,11 +352,7 @@ export class ImportFormListComponent implements OnInit, OnDestroy {
   }
   applyFilter(data: any) {
     for (const item of data) {
-      if (item.column === 'plant') {
-        this.filter[item.column] = this.plantsIdNameMap[item.value];
-      } else {
         this.filter[item.column] = item.value;
-      }
     }
     this.nextToken = '';
     this.isLoading$.next(true);
@@ -385,7 +381,7 @@ export class ImportFormListComponent implements OnInit, OnDestroy {
     ]).subscribe(
       ([
         usersList,
-        { items: plantsList },
+        allPlants,
         formsList,
         allTags,
         additionDetailsData
@@ -396,11 +392,12 @@ export class ImportFormListComponent implements OnInit, OnDestroy {
         this.lastModifiedBy = usersList.map(
           (user) => `${user.firstName} ${user.lastName}`
         );
-        this.plants = plantsList
-          .map((plant) => {
-            this.plantsIdNameMap[`${plant.plantId} - ${plant.name}`] = plant.id;
-            return `${plant.plantId} - ${plant.name}`;
-          })
+        this.plants = Object.values(allPlants)
+          .map((plant: any) => {
+            return {
+              display: `${plant.plantId} - ${plant.name}`,
+              value: plant.id
+          }})
           .sort();
 
         this.lastPublishedBy = formsList.rows

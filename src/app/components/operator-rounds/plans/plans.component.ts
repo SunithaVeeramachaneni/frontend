@@ -526,16 +526,17 @@ export class PlansComponent implements OnInit, OnDestroy {
       tap(([, , plansList]) => {
         const objectKeys = Object.keys(plansList);
         if (objectKeys.length > 0) {
-          const uniquePlants = plansList.rows
-            .map((item) => {
+          const uniquePlantsObj = {};
+          plansList.rows
+            .forEach((item) => {
               if (item.plant) {
-                this.plantsIdNameMap[item.plant] = item.plantId;
-                return item.plant;
+                uniquePlantsObj[item.plant] = {
+                  display: item.plant,
+                  value: item.plantId
+                }
               }
-              return '';
             })
-            .filter((value, index, self) => self.indexOf(value) === index);
-          this.plants = [...uniquePlants];
+          this.plants = [...Object.values(uniquePlantsObj)];
 
           const uniqueSchedules = plansList.rows
             ?.map((item) => item?.schedule)
@@ -1326,21 +1327,13 @@ export class PlansComponent implements OnInit, OnDestroy {
     return userGroupIdsArray;
   }
 
-  getPlantNameToPlantId(data: any) {
-    const plantIdArray = [];
-    data?.forEach((name: any) => {
-      plantIdArray.push(this.plantsIdNameMap[name]);
-    });
-    return plantIdArray;
-  }
-
   applyFilters(data: any): void {
     this.isPopoverOpen = false;
     for (const item of data) {
       if (item.value) {
         switch (item.column) {
           case 'plant':
-            this.filter[item.column] = this.plantsIdNameMap[item.value] ?? '';
+            this.filter[item.column] = item.value ?? '';
             break;
           case 'shiftId':
             const foundEntry = Object.entries(this.activeShiftIdMap).find(
@@ -1369,9 +1362,7 @@ export class PlansComponent implements OnInit, OnDestroy {
               if (item.value[0].type === 'plant') {
                 this.filter[item.column] = {
                   type: 'plant',
-                  value: this.getPlantNameToPlantId(
-                    item.value.map((p) => p.plant)
-                  )
+                  value: item.value.map((p) => p?.plant?.value)
                 };
               }
             }

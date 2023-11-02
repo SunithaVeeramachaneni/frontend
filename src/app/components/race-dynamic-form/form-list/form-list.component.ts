@@ -315,8 +315,8 @@ export class FormListComponent implements OnInit, OnDestroy {
                   name: createdForm.newName,
                   preTextImage: (form as any)?.preTextImage,
                   oldId: form.id,
-                  plant: Object.keys(this.plantsIdNameMap).find(
-                    (key) => this.plantsIdNameMap[key] === newRecord.plantId
+                  plant: Object.keys(this.allPlants).find(
+                    (key) => this.allPlants[key].plantId === newRecord.plantId
                   )
                 } as any
               });
@@ -593,11 +593,7 @@ export class FormListComponent implements OnInit, OnDestroy {
 
   applyFilter(data: any) {
     for (const item of data) {
-      if (item.column === 'plant') {
-        this.filter[item.column] = this.allPlants[item.value].plantId;
-      } else {
         this.filter[item.column] = item.value;
-      }
     }
     this.nextToken = '';
     this.isLoading$.next(true);

@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, of, ReplaySubject } from 'rxjs';
-import { exhaustMap, map, pluck, reduce, scan, switchMap, tap } from 'rxjs/operators';
+import { exhaustMap, map, reduce } from 'rxjs/operators';
 import {
   ErrorInfo,
   LoadEvent,

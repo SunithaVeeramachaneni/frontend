@@ -395,7 +395,7 @@ export const RDF_FORM_LIST_FILTERS = [
     label: 'Plant',
     items: [],
     column: 'plant',
-    type: 'select',
+    type: 'plant',
     value: ''
   },
   {
