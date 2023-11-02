@@ -98,6 +98,7 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
         field: this.plantEditData?.field,
         timeZone: this.plantEditData?.timeZone,
         isSHRActivated: this.plantEditData?.isSHRActivated,
+        wasSHRActivated: this.plantEditData?.wasSHRActivated,
         shifts: this.selectedShiftIDs
       };
 
@@ -222,7 +223,8 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
       shifts: new FormControl('', [Validators.required]),
       label: new FormControl('', [WhiteSpaceValidator.trimWhiteSpace]),
       field: new FormControl('', [WhiteSpaceValidator.trimWhiteSpace]),
-      isSHRActivated: new FormControl(false)
+      isSHRActivated: new FormControl(false),
+      wasSHRActivated: new FormControl(false)
     });
     this.plantForm.get('state').disable();
     this.plantForm.get('timeZone').disable();
