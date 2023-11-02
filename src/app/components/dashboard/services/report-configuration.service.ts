@@ -167,7 +167,7 @@ export class ReportConfigurationService {
   };
 
   formatReportData = (reportData, userEmailToName) => {
-    reportData = reportData.map((data) => {
+    reportData = reportData?.map((data) => {
       if (data.taskType === 'NF') {
         if (data?.exception > 0 || data?.exception === 'True') {
           data.exception = 'True';
@@ -177,10 +177,13 @@ export class ReportConfigurationService {
           data.exception = '';
         }
       }
-      if(data.assignedTo) data.assignedToDisplay = userEmailToName[data.assignedTo];
-      if(data.raisedBy) data.raisedByDisplay = userEmailToName[data.raisedBy];
-      if(data.roundSubmittedBy) data.roundSubmittedByDisplay = userEmailToName[data.roundSubmittedBy];
-      if(data.taskCompletedBy) data.taskCompletedByDisplay = userEmailToName[data.taskCompletedBy];
+      if (data.assignedTo)
+        data.assignedToDisplay = userEmailToName[data.assignedTo];
+      if (data.raisedBy) data.raisedByDisplay = userEmailToName[data.raisedBy];
+      if (data.roundSubmittedBy)
+        data.roundSubmittedByDisplay = userEmailToName[data.roundSubmittedBy];
+      if (data.taskCompletedBy)
+        data.taskCompletedByDisplay = userEmailToName[data.taskCompletedBy];
       data.taskType = fieldTypesMock.fieldTypes.find((fieldType) => {
         return (
           fieldType.type === data.taskType ||
@@ -191,10 +194,15 @@ export class ReportConfigurationService {
   };
 
   getId = (id) => {
-    const ids = new Set(['assignedTo', 'raisedBy', 'roundSubmittedBy', 'taskCompletedBy']);
-    if(ids.has(id)) return `${id}Display`;
+    const ids = new Set([
+      'assignedTo',
+      'raisedBy',
+      'roundSubmittedBy',
+      'taskCompletedBy'
+    ]);
+    if (ids.has(id)) return `${id}Display`;
     return id;
-  }
+  };
 
   updateConfigOptionsFromReportConfiguration(
     reportConfiguration: ReportConfiguration,
@@ -332,7 +340,7 @@ export class ReportConfigurationService {
       newCountFields[0].visible = true;
       newCountFieldName = newCountFields[0].name;
     }
-    if(type !== 'table') {
+    if (type !== 'table') {
       for (const groupField of groupBy) {
         const column = tableColumns.find(
           (tableColumn) => tableColumn.name === groupField

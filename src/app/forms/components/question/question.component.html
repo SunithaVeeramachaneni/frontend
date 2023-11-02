@@ -41,12 +41,13 @@
           >
             <quill-material
               #name
-              formControlName="name"
+              [ngModel]="questionForm.get('name').value"
+              (ngModelChange)="onChange($event)"
+              [ngModelOptions]="{ standalone: true }"
               [placeholder]="'typeQuestion' | translate"
               [ngClass]="{
                 'display-toolbar': questionForm.get('isOpen').value
               }"
-              *ngIf="questionForm.get('fieldType').value === 'INST'"
               (editorFocus)="handleEditorFocus($event)"
             >
             </quill-material>

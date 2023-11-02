@@ -23,7 +23,7 @@ import {
 import {
   formConfigurationStatus,
   LIST_LENGTH,
-  dateFormat2,
+  dateFormat6,
   graphQLDefaultMaxLimit
 } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
@@ -852,7 +852,7 @@ export class RaceDynamicFormService {
           condition: true
         },
         dueDateDisplay: p.dueDate
-          ? format(new Date(p.dueDate), dateFormat2)
+          ? format(new Date(p.dueDate), dateFormat6)
           : '',
         submittedAt: p.submittedAt ? new Date(p.submittedAt) : '',
         tasksCompleted: `${p.totalTasksCompleted}/${p.totalTasks},${

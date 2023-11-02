@@ -93,36 +93,36 @@ export class ChartVariantComponent implements OnInit, OnDestroy {
       colors: this.fb.array([])
     });
 
-        const datasetFieldKeyName = this.chartConfig.datasetFieldName;
-        const data = [];
-        const colorsArr = [];
-  
-        this.chartData.forEach((d) => {
-          const colorConfig = this.chartConfig.customColors;
-          if (colorConfig) {
-            const key = d[datasetFieldKeyName];
-            const colorCode = colorConfig[key] ? colorConfig[key] : '#e8e8e8';
-            colorsArr.push(
-              this.fb.group({
-                seriesName: d[datasetFieldKeyName],
-                color: colorCode
-              })
-            );
-            data.push({ seriesName: d[datasetFieldKeyName], color: colorCode });
-          } else {
-            colorsArr.push(
-              this.fb.group({
-                seriesName: d[datasetFieldKeyName],
-                color: '#e8e8e8'
-              })
-            );
-            data.push({ seriesName: d[datasetFieldKeyName], color: '#7d7d7d' });
-          }
-        });
-        this.colorsForm.setControl('colors', this.fb.array(colorsArr || []));
+    const datasetFieldKeyName = this.chartConfig.datasetFieldName;
+    const data = [];
+    const colorsArr = [];
 
-        this.chartData = data;
-        this.cdrf.detectChanges();
+    this.chartData.forEach((d) => {
+      const colorConfig = this.chartConfig.customColors;
+      if (colorConfig) {
+        const key = d[datasetFieldKeyName];
+        const colorCode = colorConfig[key] ? colorConfig[key] : '#e8e8e8';
+        colorsArr.push(
+          this.fb.group({
+            seriesName: d[datasetFieldKeyName],
+            color: colorCode
+          })
+        );
+        data.push({ seriesName: d[datasetFieldKeyName], color: colorCode });
+      } else {
+        colorsArr.push(
+          this.fb.group({
+            seriesName: d[datasetFieldKeyName],
+            color: '#e8e8e8'
+          })
+        );
+        data.push({ seriesName: d[datasetFieldKeyName], color: '#7d7d7d' });
+      }
+    });
+    this.colorsForm.setControl('colors', this.fb.array(colorsArr || []));
+
+    this.chartData = data;
+    this.cdrf.detectChanges();
 
     const {
       chartDetails: {
@@ -142,9 +142,10 @@ export class ChartVariantComponent implements OnInit, OnDestroy {
     let chartVarient: string;
     if (isStacked) chartVarient = `stacked_${type}_${indexAxis}`;
     else
-      chartVarient = groupBy?.length && type !== 'table'
-        ? `${type}${indexAxis ? `_${indexAxis}` : ``}`
-        : 'table';
+      chartVarient =
+        groupBy?.length && type !== 'table'
+          ? `${type}${indexAxis ? `_${indexAxis}` : ``}`
+          : 'table';
     this.chartVarientForm.patchValue({
       chartVarient,
       chartTitle,

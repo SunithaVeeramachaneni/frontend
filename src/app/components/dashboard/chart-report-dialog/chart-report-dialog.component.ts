@@ -113,7 +113,6 @@ export class ChartReportDialog implements OnInit {
     }
 
     this.selectedReport = this.data?.widgetData;
-    
 
     if (
       this.selectedReport &&
@@ -151,10 +150,15 @@ export class ChartReportDialog implements OnInit {
   }
 
   getId = (id) => {
-    const ids = new Set(['assignedTo', 'raisedBy', 'roundSubmittedBy', 'taskCompletedBy']);
-    if(ids.has(id)) return `${id}Display`;
+    const ids = new Set([
+      'assignedTo',
+      'raisedBy',
+      'roundSubmittedBy',
+      'taskCompletedBy'
+    ]);
+    if (ids.has(id)) return `${id}Display`;
     return id;
-  }
+  };
 
   downloadReport = () => {
     this.downloadInProgress = true;
@@ -221,9 +225,12 @@ export class ChartReportDialog implements OnInit {
     ]).pipe(
       map(([rows, scrollData, usersList]) => {
         usersList.forEach((user) => {
-          this.userEmailToName[user.email] = `${user.firstName} ${user.lastName}`;
-          this.userNameToEmail[`${user.firstName} ${user.lastName}`] = user.email;
-        })
+          this.userEmailToName[
+            user.email
+          ] = `${user.firstName} ${user.lastName}`;
+          this.userNameToEmail[`${user.firstName} ${user.lastName}`] =
+            user.email;
+        });
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
@@ -234,7 +241,10 @@ export class ChartReportDialog implements OnInit {
           initial.data = initial.data.concat(scrollData.reportData);
         }
         this.skip = initial.data.length;
-        this.reportConfigService.formatReportData(initial.data, this.userEmailToName);
+        this.reportConfigService.formatReportData(
+          initial.data,
+          this.userEmailToName
+        );
         this.dataSource = new MatTableDataSource(initial.data);
         return initial;
       })
@@ -318,9 +328,11 @@ export class ChartReportDialog implements OnInit {
       });
     }
     const { chartData } = this.data;
-    if(chartData.additionalData &&
+    if (
+      chartData.additionalData &&
       this.selectedReport.report &&
-      this.selectedReport.report?.groupBy?.length) {
+      this.selectedReport.report?.groupBy?.length
+    ) {
       this.selectedReport.report.groupBy.forEach((groupByFieldName) => {
         const filterObj = {
           column: groupByFieldName,
@@ -349,7 +361,7 @@ export class ChartReportDialog implements OnInit {
           }
         ]
       };
-      filtersApplied.push(filterObj)
+      filtersApplied.push(filterObj);
     }
     return filtersApplied;
   };
