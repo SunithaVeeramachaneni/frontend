@@ -8,7 +8,7 @@
           class="cancel"
           (click)="onClose()"
         ></svg-icon>
-        <h1 id="createPositionBtn" class="heading">Create Positions</h1>
+        <h1 id="createPositionBtn" class="heading">{{ heading }}</h1>
       </div>
       <div class="container-div">
         <div class="flex-box">
@@ -101,9 +101,10 @@
         class="create-btn"
         [disabled]="isCreating"
         type="submit"
-        (click)="createPositions()"
-        translate="createBtn"
-      ></button>
+        (click)="createEditPositions()"
+      >
+        {{ heading === 'Edit Position' ? 'Edit' : 'Create' }}
+      </button>
     </div>
   </div>
 </form>
