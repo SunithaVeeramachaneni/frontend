@@ -215,6 +215,7 @@ export interface History {
 export interface HistoryResponse {
   rows: History[];
   nextToken: string | null;
+  listImages?: string[];
 }
 
 export interface UpdateIssueOrActionEvent {

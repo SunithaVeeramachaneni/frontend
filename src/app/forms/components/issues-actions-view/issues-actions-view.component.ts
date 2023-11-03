@@ -126,7 +126,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   private allData = [];
   private amplifySubscription$: Subscription[] = [];
   private attachmentsSubscriptionData = [];
-
+  private listImages: { message: string }[] = [];
   constructor(
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<IssuesActionsViewComponent>,
@@ -1019,8 +1019,14 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
       .getIssueOrActionLogHistory$(id, type, {}, this.moduleName)
       .pipe(
         tap((logHistory) => {
+          this.logHistory = [];
+          this.filteredMediaType = [];
           this.logHistory = logHistory?.rows || [];
-          this.prepareInitialIssueActionAttachments();
+          this.listImages =
+            logHistory?.listImages?.map((img) => ({
+              message: img
+            })) || [];
+          this.filteredMediaType = this.listImages;
           if (this.logHistory.length > 0) {
             this.logHistory.forEach((history) => {
               if (
@@ -1071,7 +1077,8 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
           newMessage.message = foundImageData?.imageData || newMessage.message;
         }
       }
-      this.prepareInitialIssueActionAttachments();
+      this.filteredMediaType = [];
+      this.filteredMediaType = this.listImages.filter((l: any) => !l?.id);
       this.logHistory = [...this.logHistory, newMessage];
       if (this.logHistory?.length > 0) {
         this.logHistory.forEach((history) => {
@@ -1156,23 +1163,6 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
           this.allData[idx] = this.data;
         }
       }
-    }
-  }
-
-  private prepareInitialIssueActionAttachments(): void {
-    this.filteredMediaType = [];
-    if (
-      this.data &&
-      Array.isArray(this.data?.PHOTO) &&
-      this.data?.PHOTO?.length > 0
-    ) {
-      this.data?.PHOTO?.forEach((element) => {
-        if (element) {
-          this.filteredMediaType.push({
-            message: element
-          });
-        }
-      });
     }
   }
 }
