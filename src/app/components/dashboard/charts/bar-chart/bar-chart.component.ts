@@ -168,7 +168,9 @@ export class BarChartComponent implements OnInit, OnChanges {
       const newOptions = { ...this.chartOptions };
       this.chartTitle = title;
       this.chartType = type;
-      newOptions.series.label.show = showValues;
+      if (newOptions.series && newOptions.series.label) {
+        newOptions.series.label.show = showValues;
+      }
       newOptions.legend.show = showLegends;
       this.chartConfig.datasetFields.filter((dataset) => {
         if (dataset.name === this.chartConfig.datasetFieldName) {

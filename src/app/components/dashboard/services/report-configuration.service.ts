@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable @typescript-eslint/member-ordering */
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AppService } from '../../../shared/services/app.services';
 import {
@@ -25,12 +25,16 @@ import {
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { defaultCountFieldName } from 'src/app/app.constants';
 import { fieldTypesMock } from 'src/app/forms/components/response-type/response-types.mock';
+import { UsersService } from '../../user-management/services/users.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ReportConfigurationService {
-  constructor(private appService: AppService) {}
+  constructor(
+    private appService: AppService,
+    private usersService: UsersService
+  ) {}
 
   getReportDetails$ = (
     urlString: string,
@@ -93,6 +97,48 @@ export class ReportConfigurationService {
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<GroupByCounts[]> => {
     const { displayToast, failureResponse = [] } = info;
+
+    if (
+      report.groupBy.includes('assignedToDisplay') ||
+      report.groupBy.includes('assignedTo')
+    ) {
+      const groupBy = report.groupBy.map((group) => {
+        if (group === 'assignedToDisplay') {
+          return 'assignedTo';
+        } else {
+          return group;
+        }
+      });
+
+      return combineLatest([
+        this.appService._postData(
+          environment.dashboardApiUrl,
+          'reports/groupByCountDetails',
+          { ...report, groupBy },
+          { displayToast, failureResponse },
+          queryParams
+        ),
+        this.usersService.getUsersInfo$()
+      ]).pipe(
+        map(([groupData, userData]) => {
+          const userEmailToName = userData.reduce((result, user) => {
+            result[user.email] = `${user.firstName} ${user.lastName}`;
+            return result;
+          }, {});
+
+          return groupData.map((data) =>
+            data.assignedTo
+              ? {
+                  ...data,
+                  assignedTo: userEmailToName[data.assignedTo],
+                  assignedToDisplay: userEmailToName[data.assignedTo]
+                }
+              : data
+          );
+        })
+      );
+    }
+
     return this.appService._postData(
       environment.dashboardApiUrl,
       'reports/groupByCountDetails',

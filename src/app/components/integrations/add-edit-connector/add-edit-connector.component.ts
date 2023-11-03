@@ -17,7 +17,7 @@ import { ErrorInfo } from 'src/app/interfaces';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { permissions } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
-
+import { LoginService } from '../../login/services/login.service';
 @Component({
   selector: 'app-add-edit-connector',
   templateUrl: './add-edit-connector.component.html',
@@ -78,11 +78,13 @@ export class AddEditConnectorComponent implements OnInit {
     description: new FormControl(''),
     icon: new FormControl('')
   });
+  superAdminEnable = false;
 
   constructor(
     public dialogRef: MatDialogRef<AddEditConnectorComponent>,
     private fb: FormBuilder,
     private cdrf: ChangeDetectorRef,
+    private loginService: LoginService,
     @Inject(MAT_DIALOG_DATA)
     public data: any,
     private integrationsService: IntegrationsService,
@@ -90,6 +92,10 @@ export class AddEditConnectorComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    const userInfo = this.loginService.getLoggedInUserInfo();
+    if (userInfo.roles[0].name === 'Super Admin') {
+      this.superAdminEnable = true;
+    }
     if (this.data.mode === 'edit') {
       const connector = this.data?.connector;
       this.connectionForm.patchValue({

@@ -240,14 +240,15 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
     BuilderConfigurationActions.removeSubFormInstances,
     (state, action): FormConfigurationState => {
       const subFormIds = action.subFormIds;
+      let newState = cloneDeep(state);
       subFormIds.forEach((subFormId) => {
         let key = 'pages';
         if (subFormId) {
           key = `${key}_${subFormId}`;
         }
-        delete state[key];
+        delete newState[key];
       });
-      return { ...state, skipAuthoredDetail: false };
+      return { ...newState, skipAuthoredDetail: false };
     }
   ),
   on(
