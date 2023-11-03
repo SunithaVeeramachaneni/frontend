@@ -286,8 +286,8 @@ export class PositionsComponent implements OnInit, OnDestroy {
           initial.data = initial.data.concat(scrollData);
         }
         cominedResult = initial.data.map((pos) => {
-          const correspondingPlant = (plants.items || []).find((plnt) => plnt.id === pos.plantId);
-          return { ...pos, plant: correspondingPlant.name };
+          const correspondingPlant = (plants?.items || []).find((plnt) => plnt?.id === pos?.plantId);
+          return { ...pos, plant: correspondingPlant?.name || '' };
         });
         this.allPositions = cominedResult;
         this.dataSource = new MatTableDataSource(this.allPositions);
