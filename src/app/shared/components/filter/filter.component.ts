@@ -32,6 +32,8 @@ import {
   takeUntil,
   tap
 } from 'rxjs/operators';
+import { format } from 'date-fns';
+import { dateFormat6 } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-filter',
@@ -42,7 +44,7 @@ import {
     {
       provide: MAT_DATE_FORMATS,
       // Pass any format string you would pass to DatePipe
-      useValue: DatePipeDateAdapter.createCustomMatDateFormats('dd/MM/yyyy')
+      useValue: DatePipeDateAdapter.createCustomMatDateFormats(dateFormat6)
     }
   ]
 })

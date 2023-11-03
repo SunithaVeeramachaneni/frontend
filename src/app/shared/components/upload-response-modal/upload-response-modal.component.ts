@@ -228,8 +228,14 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
       eventSource.stream();
       eventSource.onmessage = (event) => {
         const eventData = JSON.parse(event.data);
-        const { successCount, failedCount, totalCount, failure, isError } =
-          eventData;
+        const {
+          successCount,
+          failedCount,
+          totalCount,
+          failure,
+          isError,
+          updatedCount
+        } = eventData;
         if (!isError) {
           const isCompleted = successCount + failedCount === totalCount;
           this.zone.run(() => {
@@ -238,7 +244,8 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
               failedCount,
               successCount,
               failure,
-              isCompleted
+              isCompleted,
+              updatedCount
             });
           });
 

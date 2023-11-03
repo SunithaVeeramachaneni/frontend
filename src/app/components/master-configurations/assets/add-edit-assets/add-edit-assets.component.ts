@@ -33,6 +33,7 @@ import {
   takeUntil
 } from 'rxjs/operators';
 import { FormValidationUtil } from 'src/app/shared/utils/formValidationUtil';
+import { TenantService } from 'src/app/components/tenant-management/services/tenant.service';
 
 @Component({
   selector: 'app-add-edit-assets',
@@ -143,7 +144,8 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private assetService: AssetsService,
     private formValidationUtil: FormValidationUtil,
-    private cdfr: ChangeDetectorRef
+    private cdfr: ChangeDetectorRef,
+    private tenantService: TenantService
   ) {}
 
   checkAssetsIdExists(): AsyncValidatorFn {
@@ -173,8 +175,16 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
       );
     };
   }
+  getValidators(tenantInfo): any[] {
+    const validators = [Validators.required, WhiteSpaceValidator.whiteSpace];
+    if (tenantInfo.trimWhiteSpace) {
+      validators.push(WhiteSpaceValidator.trimWhiteSpace);
+    }
+    return validators;
+  }
 
   ngOnInit(): void {
+    const tenantInfo = this.tenantService.getTenantInfo();
     this.assetForm = this.fb.group({
       image: '',
       name: new FormControl('', [
@@ -184,11 +194,7 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
       ]),
       assetsId: new FormControl(
         '',
-        [
-          Validators.required,
-          WhiteSpaceValidator.whiteSpace,
-          WhiteSpaceValidator.trimWhiteSpace
-        ],
+        [...this.getValidators(tenantInfo)],
         [this.checkAssetsIdExists()]
       ),
       model: new FormControl('', [WhiteSpaceValidator.trimWhiteSpace]),

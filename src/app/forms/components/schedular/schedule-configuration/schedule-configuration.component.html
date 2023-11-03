@@ -580,19 +580,7 @@
                 isFormModule && processValidationErrors('advanceFormsCount')
               "
             >
-              {{
-                errors?.advanceFormsCount.name
-                  | translate
-                    : {
-                        name: 'advanceFormsCount' | translate,
-                        count:
-                          errors.advanceFormsCount.name === 'min'
-                            ? roundsGeneration.min
-                            : errors.advanceFormsCount.name === 'max'
-                            ? roundsGeneration.max
-                            : 0
-                      }
-              }}
+              {{ getAdvanceRoundCountError(errors?.advanceFormsCount?.name) }}
             </mat-error>
             <mat-error
               id="scheduleConfigAdvanceRoundCountError"
@@ -600,19 +588,7 @@
                 !isFormModule && processValidationErrors('advanceRoundsCount')
               "
             >
-              {{
-                errors.advanceRoundsCount.name
-                  | translate
-                    : {
-                        name: 'advanceRoundsCount' | translate,
-                        count:
-                          errors.advanceRoundsCount.name === 'min'
-                            ? roundsGeneration.min
-                            : errors.advanceRoundsCount.name === 'max'
-                            ? roundsGeneration.max
-                            : 0
-                      }
-              }}
+              {{ getAdvanceRoundCountError(errors?.advanceRoundsCount?.name) }}
             </mat-error>
           </div>
           <mat-menu #menu="matMenu" backdropClass="assign-menu">

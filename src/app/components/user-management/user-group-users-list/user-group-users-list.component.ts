@@ -40,7 +40,11 @@ import { RemoveUserModalComponent } from '../remove-user-modal/remove-user-modal
 import { LoginService } from '../../login/services/login.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { DomSanitizer } from '@angular/platform-browser';
-import { defaultProfilePic, graphQLDefaultLimit } from 'src/app/app.constants';
+import {
+  dateFormat6,
+  defaultProfilePic,
+  graphQLDefaultLimit
+} from 'src/app/app.constants';
 interface UsersListActions {
   action: 'delete' | null;
   id: any[];
@@ -386,7 +390,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
                 if (item?.users?.validThrough) {
                   item.validThrough = format(
                     new Date(item?.users?.validThrough),
-                    'dd.MM.yy'
+                    dateFormat6
                   );
                 } else {
                   item.validThrough = '';

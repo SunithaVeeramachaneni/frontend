@@ -128,6 +128,8 @@ export class HierarchyNodeComponent implements OnInit {
     if (isSelected) {
       this.masterData.isSelected = isSelected;
       this.isParentCheckedData.masterToggle = false;
+    } else {
+      this.checkHierarchyCheckboxSelectedState(event);
     }
 
     this.selectedCount = this.assetHierarchyUtil.getSelectedCount(
@@ -174,6 +176,19 @@ export class HierarchyNodeComponent implements OnInit {
     this.selectedCount = this.assetHierarchyUtil.getSelectedCount(
       this.masterData.children
     );
+  };
+
+  checkHierarchyCheckboxSelectedState = (obj) => {
+    if (obj?.isSelected === true) {
+      obj.isSelected = false;
+    } else {
+      obj.isSelected = false;
+    }
+    if (obj?.children && obj?.children?.length > 0) {
+      obj.children.forEach((child) => {
+        this.checkHierarchyCheckboxSelectedState(child); // Recursive call for each child
+      });
+    }
   };
 
   multipleSelected = () => {

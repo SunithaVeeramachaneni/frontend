@@ -1,5 +1,5 @@
 import { formatInTimeZone, zonedTimeToUtc } from 'date-fns-tz';
-import { dateFormat2, dateTimeFormat3 } from 'src/app/app.constants';
+import { dateFormat6, dateTimeFormat4 } from 'src/app/app.constants';
 const {
   isSameDay,
   isBefore,
@@ -79,11 +79,11 @@ const getTimezoneDate = (date) => new Date(date).getTime();
 
 const getTimezoneDayStart = (date, timezone) => {
   if (!timezone?.timeZoneIdentifier)
-    return getTimezoneDate(format(new Date(date), dateTimeFormat3));
+    return getTimezoneDate(format(new Date(date), dateTimeFormat4));
   const d = formatInTimeZone(
     date,
     timezone.timeZoneIdentifier,
-    dateTimeFormat3
+    dateTimeFormat4
   );
   return getTimezoneDate(zonedTimeToUtc(d, timezone.timeZoneIdentifier));
 };
@@ -118,12 +118,12 @@ export const isBeforeTz = (d1, d2, timezone) => {
 
 export const getDayTz = (date, timezone) => {
   if (!timezone?.timeZoneIdentifier) return getDay(new Date(date));
-  const d = formatInTimeZone(date, timezone.timeZoneIdentifier, dateFormat2);
+  const d = formatInTimeZone(date, timezone.timeZoneIdentifier, dateFormat6);
   return getDay(new Date(d));
 };
 
 export const getWeekOfMonthTz = (date, timezone) => {
   if (!timezone?.timeZoneIdentifier) return getWeekOfMonth(new Date(date));
-  const d = formatInTimeZone(date, timezone.timeZoneIdentifier, dateFormat2);
+  const d = formatInTimeZone(date, timezone.timeZoneIdentifier, dateFormat6);
   return getWeekOfMonth(new Date(d));
 };

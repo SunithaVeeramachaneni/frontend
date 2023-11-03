@@ -34,16 +34,30 @@ import {
   tap
 } from 'rxjs/operators';
 import { of } from 'rxjs';
-import { defaultProfile, superAdminText } from 'src/app/app.constants';
+import {
+  dateFormat6,
+  defaultProfile,
+  superAdminText
+} from 'src/app/app.constants';
 import { userRolePermissions } from 'src/app/app.constants';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { UsersService } from '../services/users.service';
 import { NgxImageCompressService } from 'ngx-image-compress';
 import { LoginService } from '../../login/services/login.service';
+import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
+import { DatePipeDateAdapter } from 'src/app/shared/utils/DatePipeDateAdapter';
 @Component({
   selector: 'app-add-edit-user-modal',
   templateUrl: './add-edit-user-modal.component.html',
   styleUrls: ['./add-edit-user-modal.component.scss'],
+  providers: [
+    { provide: DateAdapter, useClass: DatePipeDateAdapter },
+    {
+      provide: MAT_DATE_FORMATS,
+      // Pass any format string you would pass to DatePipe
+      useValue: DatePipeDateAdapter.createCustomMatDateFormats(dateFormat6)
+    }
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddEditUserModalComponent implements OnInit {
