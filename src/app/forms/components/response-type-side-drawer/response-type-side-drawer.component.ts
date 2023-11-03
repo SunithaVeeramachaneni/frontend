@@ -18,6 +18,7 @@ import {
   FormBuilder,
   FormControl,
   FormGroup,
+  ValidationErrors,
   Validators
 } from '@angular/forms';
 import { isEqual } from 'lodash-es';
@@ -374,6 +375,8 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
           } else {
             this.isFormNotUpdated = false;
           }
+
+          this.validateMinMax(this.minMaxCharForm);
           this.cdrf.markForCheck();
         })
       )
@@ -985,6 +988,31 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
   }
   getAttributeList() {
     return (this.additionalDetailsForm.get('attributes') as FormArray).controls;
+  }
+
+  validateMinMax(formGroup: FormGroup): ValidationErrors | null {
+    if (this.enabledCharLimit) {
+      const minValue = formGroup.get('minCharValue').value;
+      const maxValue = formGroup.get('maxCharValue').value;
+
+      const errors: ValidationErrors = {};
+
+      // Validation logic
+      if (minValue > maxValue) {
+        formGroup.get('minCharValue').setErrors({ minMaxInvalid: true });
+        formGroup.get('maxCharValue').setErrors({ minMaxInvalid: true });
+      } else {
+        formGroup.get('minCharValue').setErrors(null);
+        formGroup.get('maxCharValue').setErrors(null);
+      }
+
+      if (Object.keys(errors).length > 0) {
+        formGroup.get('minCharValue').setErrors(errors);
+        formGroup.get('maxCharValue').setErrors(errors);
+      }
+
+      return Object.keys(errors).length > 0 ? errors : null;
+    }
   }
 
   ngOnDestroy(): void {

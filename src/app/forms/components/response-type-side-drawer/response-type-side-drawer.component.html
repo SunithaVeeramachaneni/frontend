@@ -855,7 +855,11 @@
       id="additionalDetailsSubmitBtn"
       mat-raised-button
       (click)="submitAdditionalDetails()"
-      [disabled]="additionalDetailsForm.invalid || tagsCtrl.invalid"
+      [disabled]="
+        additionalDetailsForm.invalid ||
+        tagsCtrl.invalid ||
+        minMaxCharForm.invalid
+      "
       class="submitBtn"
       translate="done"
     ></button>
