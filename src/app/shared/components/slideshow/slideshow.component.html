@@ -8,8 +8,8 @@
   </button>
   <mat-card class="slider-images-container">
     <div class="slide-wrapper">
-      <ng-container *ngIf="data.type === 'forms'">
-        <ng-container *ngFor="let image of data; let i = index">
+      <ng-container *ngIf="data.type === 's3bucket'">
+        <ng-container *ngFor="let image of data.images; let i = index">
           <img
             id="slideshowImg"
             [src]="image"
@@ -18,11 +18,12 @@
           />
         </ng-container>
       </ng-container>
-      <ng-container *ngIf="data.type !== 'forms'">
-        <ng-container *ngFor="let image of data; let i = index">
+
+      <ng-container *ngIf="data.type === 'base64'">
+        <ng-container *ngFor="let image of data.images; let i = index">
           <img
-            id="slideshowCurrentImg"
-            src="{{ image }}"
+            id="slideshowImg"
+            [src]="getImageSrc(image)"
             *ngIf="i === currentIndex"
             class="slide-images"
           />
@@ -34,7 +35,7 @@
     <mat-icon #previous class="prev-btn">keyboard_arrow_left</mat-icon>
 
     <div class="images">
-      <ng-container *ngIf="data.type === 'forms'">
+      <ng-container *ngIf="data.type === 's3bucket'">
         <div
           *ngFor="let image of data.images; let i = index"
           class="thumbnail-images"
@@ -48,11 +49,11 @@
           />
         </div>
       </ng-container>
-      <ng-container *ngIf="data.type !== 'forms'">
-        <div *ngFor="let image of data; let i = index">
+      <ng-container *ngIf="data.type === 'base64'">
+        <div *ngFor="let image of data.images; let i = index">
           <img
             id="slideshowNoForms"
-            src="{{ image }}"
+            [src]="getImageSrc(image)"
             width="70"
             height="70"
             (click)="currentIndex = i"

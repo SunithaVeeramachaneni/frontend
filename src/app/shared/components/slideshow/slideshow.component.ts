@@ -30,8 +30,11 @@ export class SlideshowComponent implements AfterViewInit, OnInit {
   ) {}
 
   ngOnInit() {}
+
   getImageSrc = (source) => {
-    const base64Image = 'data:image/jpeg;base64,' + source;
+    const base64Image = source.includes('data:image/')
+      ? source
+      : 'data:image/jpeg;base64,' + source;
     return this.sanitizer.bypassSecurityTrustResourceUrl(base64Image);
   };
 

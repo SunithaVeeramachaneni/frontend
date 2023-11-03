@@ -414,5 +414,7 @@
   "createNotificationAnyway": "Create New Notification Anyway",
   "showNotifications": "Show Issues with Notifications",
   "notificationsAlertDialog": "{ count } active Notifications from { count } Issues already exists for this Asset. Do you want to create a new Notification?",
-  "notificationCreation": "Notification Creation In-Progress"
+  "notificationCreation": "Notification Creation In-Progress",
+  "maxDate": "Days count must be at the max of {count} days",
+  "validEndDate": "Days count must be at the max of {count} days based on the End Date"
 }

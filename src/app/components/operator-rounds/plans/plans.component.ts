@@ -54,7 +54,7 @@ import {
   ErrorInfo
 } from 'src/app/interfaces';
 import {
-  dateFormat,
+  dateFormat6,
   graphQLDefaultLimit,
   graphQLPlanLimit,
   permissions as perms
@@ -1197,11 +1197,11 @@ export class PlansComponent implements OnInit, OnDestroy {
           ? localToTimezoneDate(
               new Date(roundPlanScheduleConfiguration.startDate),
               this.plantTimezoneMap[plantId],
-              dateFormat
+              dateFormat6
             )
           : this.datePipe.transform(
               new Date(roundPlanScheduleConfiguration.startDate),
-              dateFormat
+              dateFormat6
             )
         : '';
     let formatedEndDate =
@@ -1211,17 +1211,17 @@ export class PlansComponent implements OnInit, OnDestroy {
             ? localToTimezoneDate(
                 new Date(scheduleEndOn),
                 this.plantTimezoneMap[plantId],
-                dateFormat
+                dateFormat6
               )
-            : this.datePipe.transform(new Date(scheduleEndOn), dateFormat)
+            : this.datePipe.transform(new Date(scheduleEndOn), dateFormat6)
           : scheduleEndType === 'after'
           ? this.plantTimezoneMap[plantId]?.timeZoneIdentifier
             ? localToTimezoneDate(
                 new Date(endDate),
                 this.plantTimezoneMap[plantId],
-                dateFormat
+                dateFormat6
               )
-            : this.datePipe.transform(new Date(endDate), dateFormat)
+            : this.datePipe.transform(new Date(endDate), dateFormat6)
           : 'Never'
         : '';
 
@@ -1234,18 +1234,18 @@ export class PlansComponent implements OnInit, OnDestroy {
         ? localToTimezoneDate(
             new Date(scheduleDates[0]),
             this.plantTimezoneMap[plantId],
-            dateFormat
+            dateFormat6
           )
-        : this.datePipe.transform(scheduleDates[0], dateFormat);
+        : this.datePipe.transform(scheduleDates[0], dateFormat6);
       formatedEndDate = this.plantTimezoneMap[plantId]?.timeZoneIdentifier
         ? localToTimezoneDate(
             new Date(scheduleDates[scheduleDates.length - 1]),
             this.plantTimezoneMap[plantId],
-            dateFormat
+            dateFormat6
           )
         : this.datePipe.transform(
             scheduleDates[scheduleDates.length - 1],
-            dateFormat
+            dateFormat6
           );
     }
 

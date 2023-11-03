@@ -249,6 +249,7 @@ export class ObservationsService {
         plantId
         createdAt
         updatedAt
+        constField
         _version
         _lastChangedAt
         _deleted
@@ -276,6 +277,7 @@ export class ObservationsService {
         plantId
         createdAt
         updatedAt
+        constField
         _version
         _lastChangedAt
         _deleted

@@ -10,7 +10,7 @@ import {
   UserTable
 } from 'src/app/interfaces';
 import { UsersService } from '../services/users.service';
-import { defaultLimit } from 'src/app/app.constants';
+import { dateTimeFormat4, defaultLimit } from 'src/app/app.constants';
 import { MatTableDataSource } from '@angular/material/table';
 import { routingUrls } from 'src/app/app.constants';
 import {
@@ -22,14 +22,16 @@ import {
   switchMap,
   tap
 } from 'rxjs/operators';
-import {
-  Column,
-  ConfigOptions
-} from '@innovapptive.com/dynamictable/lib/interfaces';
+
 import { RolesPermissionsService } from '../services/roles-permissions.service';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { FormControl } from '@angular/forms';
+import { format } from 'date-fns';
+import {
+  Column,
+  ConfigOptions
+} from '@innovapptive.com/dynamictable/lib/interfaces';
 
 @Component({
   selector: 'app-inactive-users',
@@ -107,7 +109,7 @@ export class InactiveUsersComponent implements OnInit {
     {
       id: 'updatedAt',
       displayName: 'Inactive Since',
-      type: 'date',
+      type: 'string',
       controlType: 'string',
       order: 4,
       hasSubtitle: false,
@@ -129,7 +131,7 @@ export class InactiveUsersComponent implements OnInit {
     {
       id: 'createdAt',
       displayName: 'Created At',
-      type: 'date',
+      type: 'string',
       controlType: 'string',
       order: 5,
       hasSubtitle: false,
@@ -247,9 +249,9 @@ export class InactiveUsersComponent implements OnInit {
             ...this.configOptions,
             tableHeight: 'calc(100vh - 150px)'
           }; // To fix dynamic table height issue post search with no records & then remove search with records
-          initial.data = users;
+          initial.data = this.formatUsers(users);
         } else {
-          initial.data = initial.data.concat(scrollData);
+          initial.data = initial.data.concat(this.formatUsers(scrollData));
         }
 
         this.skip = initial.data.length;
@@ -284,4 +286,20 @@ export class InactiveUsersComponent implements OnInit {
   handleTableEvent = (event) => {
     this.fetchUsers$.next(event);
   };
+
+  formatUsers(users) {
+    return users.map((user) => {
+      user.createdAt = this.formatDateTime(user.createdAt);
+      user.updatedAt = this.formatDateTime(user.updatedAt);
+      console.log(user.createdAt);
+      return user;
+    });
+  }
+
+  formatDateTime(createdAt) {
+    if (createdAt) {
+      createdAt = format(new Date(createdAt), dateTimeFormat4);
+      return createdAt;
+    }
+  }
 }

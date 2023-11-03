@@ -715,7 +715,7 @@ export class LocationsListComponent implements OnInit, OnDestroy {
         this.nextToken = '';
         this.addEditCopyDeleteLocations = true;
         this.isLoading$.next(true);
-        this.locationsCountUpdate$.next(res.successCount);
+        this.locationsCountUpdate$.next(res.successCount - res.updatedCount);
         this.locationService.fetchLocations$.next({ data: 'load' });
         this.toast.show({
           text: 'Locations uploaded successfully!',
