@@ -189,7 +189,7 @@ export class RoundPlanHeaderConfigurationComponent
       formType: [formConfigurationStatus.standalone],
       tags: [this.tags],
       plantId: ['', Validators.required],
-      unitLocationId: [''],
+      unitId: [''],
       additionalDetails: this.fb.array([]),
       instructions: this.fb.group({
         notes: [
@@ -210,12 +210,12 @@ export class RoundPlanHeaderConfigurationComponent
       .subscribe((res) => {
         this.formMetadata = res;
         if (res.plantId) {
-          this.getUnitLocations(res.plantId, res.unitLocationId);
+          this.getUnitLocations(res.plantId, res.unitId);
         }
         this.headerDataForm.patchValue({
           name: res.name,
           description: res.description ? res.description : '',
-          unitLocationId: res.unitLocationId || ''
+          unitId: res.unitId || ''
         });
       });
     this.getAllPlantsData();
@@ -1083,10 +1083,10 @@ export class RoundPlanHeaderConfigurationComponent
         this.unitLocations = this.allUnitLocations;
         if (selectedLocationId) {
           const selectedLocation = this.unitLocations.find(
-            (loc) => loc.locationId === selectedLocationId
+            (loc) => loc.id === selectedLocationId
           );
           this.headerDataForm.patchValue({
-            unitLocationId: selectedLocation.locationId || ''
+            unitId: selectedLocation.id || ''
           });
         }
       });

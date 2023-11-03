@@ -155,7 +155,7 @@
               <mat-form-field appearance="outline" class="width-100 form-field">
                 <mat-select
                   id="roundPlanHeaderSelectUnit"
-                  formControlName="unitLocationId"
+                  formControlName="unitId"
                   [placeholder]="'unitLocationPlaceholder' | translate"
                   (openedChange)="resetUnitSearchFilter()"
                 >
@@ -184,7 +184,7 @@
 
                   <div class="scrollable-area">
                     <mat-option
-                      [value]="unit.locationId"
+                      [value]="unit.id"
                       *ngFor="let unit of unitLocations"
                       >{{ unit.name }}</mat-option
                     >
