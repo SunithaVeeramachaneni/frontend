@@ -503,8 +503,8 @@ export class ScheduleConfigurationComponent
                   scheduled: false
                 }
               ];
+              this.scheduleByDatePicker.push(format(new Date(), dateTimeFormat3));
             }
-            this.scheduleByDatePicker.push(format(new Date(), dateTimeFormat3));
             this.schedulerConfigForm.get('repeatEvery').patchValue('none');
             this.updateAdvanceRoundsCountValidation(12);
             break;
