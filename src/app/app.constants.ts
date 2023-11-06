@@ -293,7 +293,7 @@ export const routingUrls = {
     permission: permissions.viewORPlans
   },
   shiftHandOvers: {
-    url: '/operator-rounds/shif-handover',
+    url: '/operator-rounds/shift-handover',
     title: 'Shift Handover',
     permission: permissions.viewShiftHandovers
   },

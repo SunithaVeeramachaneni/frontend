@@ -122,7 +122,7 @@ const routes: Routes = [
         }
       },
       {
-        path: 'shif-handover',
+        path: 'shift-handover',
         component: ShiftHandOverComponent,
         canActivate: [AuthGuard],
         data: {

@@ -77,7 +77,8 @@
   }
 
   .response-drop-list {
-    margin-bottom: 20px;
+    overflow-y: auto;
+    max-height: calc(100vh - 400px);
   }
 
   .input-forms {
@@ -103,7 +104,7 @@
 
   .add-response {
     color: $blue-main;
-    margin-top: 10px;
+    margin-top: 7px;
     position: relative;
     left: -12px;
     background-color: transparent;
@@ -213,10 +214,6 @@
   color: $blue-main;
 }
 
-.input-container {
-  height: calc(100vh - 150px);
-  overflow-y: auto;
-}
 .cdk-drag-preview {
   .delete-btn {
     display: flex;

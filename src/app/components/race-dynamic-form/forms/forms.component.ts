@@ -663,7 +663,7 @@ export class FormsComponent implements OnInit, OnDestroy {
     if (
       this.loginService.checkUserHasPermission(
         permissions,
-        perms.scheduleRoundPlan
+        perms.scheduleInspection
       )
     ) {
       menuActions.push({
