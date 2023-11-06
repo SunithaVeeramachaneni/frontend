@@ -146,7 +146,8 @@ export const permissions = Object.freeze({
   viewIntegration: 'VIEW_INTEGRATION',
   viewPosition: 'VIEW_POSITIONS',
   createPosition: 'CREATE_POSITIONS',
-  updatePosition: 'UPDATE_POSITIONS'
+  updatePosition: 'UPDATE_POSITIONS',
+  viewShiftHandovers: 'VIEW_SHRS'
 });
 
 export const routingUrls = {
@@ -291,6 +292,11 @@ export const routingUrls = {
     title: 'Operator Rounds',
     permission: permissions.viewORPlans
   },
+  shiftHandOvers: {
+    url: '/operator-rounds/shif-handover',
+    title: 'Shift Handover',
+    permission: permissions.viewShiftHandovers
+  },
   oprDashboard: {
     url: '/operator-rounds/dashboard',
     title: 'Dashboard',
@@ -355,8 +361,8 @@ export const routingUrls = {
     url: '/master-configuration/global-response',
     title: 'Global Response Set',
     permission: permissions.viewGlobalResponses
-  }
-};
+  },
+ };
 export const formConfigurationStatus = Object.freeze({
   draft: 'Draft',
   published: 'Published',
