@@ -1,0 +1,113 @@
+<div class="selectUser">
+  <div class="modal-header">
+    <div class="header-right-elements">
+      <button id="selectUserGroupCancel" (click)="onCancel()" class="back-btn">
+        <svg-icon
+          id="selectUserGroupBackIcon"
+          icon="icon-back-arrow"
+          class="back-arrow"
+        ></svg-icon>
+      </button>
+      <h2 id="selectUserGroupTitle" class="title">
+        {{ 'selectPositions' | translate }}
+      </h2>
+    </div>
+
+    <div class="header-left-elements">
+      <span class="no-of-active-users">
+        <span id="selectUserGroupCount" class="active-users-count">
+          {{ allPositions.length }} Positions
+        </span>
+      </span>
+    </div>
+  </div>
+
+  <div class="table-container">
+    <div class="custom-form-field-gray-color search search-positions-container">
+      <mat-form-field appearance="outline" class="width-100">
+        <mat-icon id="roundPlanUnitSearchIcon" matPrefix class="searchIcon"
+          >search</mat-icon
+        >
+        <input
+          matInput
+          type="text"
+          autocomplete="off"
+          id="roundPlanHeaderPlantInput"
+          class="unit-searchable-input"
+          [placeholder]="'searchTxt' | translate"
+          (keyup)="onKeyPosition($event)"
+          [value]="positionFilterInput"
+        />
+      </mat-form-field>
+    </div>
+    <div class="positions-list-container">
+      <div *ngIf="positions.length > 0">
+        <div
+          class="position-checkbox-container"
+          *ngFor="let position of positions"
+        >
+          <mat-checkbox
+            class="position-checkbox"
+            [checked]="position.checked"
+            (change)="togglePositionCheckbox($event.checked, position)"
+          >
+            {{ position.name }}
+          </mat-checkbox>
+        </div>
+      </div>
+
+      <div *ngIf="isLoading === true">
+        <div class="position-empty-container">
+          <p class="loading-text" translate="loadingPositions"></p>
+        </div>
+      </div>
+
+      <div *ngIf="isLoading === false && positions.length === 0">
+        <div class="position-empty-container">
+          <p class="loading-text" translate="emptyPositions"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <span class="no-of-active-users">
+      <span id="selectUserGroupActiveCount" class="active-users-count">
+        {{ getSeletectedPositions()?.length }} Selected
+      </span>
+    </span>
+    <div class="footer-btns">
+      <button
+        id="selectUserGroupCancelBtn"
+        mat-button
+        class="cancel-btn"
+        autofocus="false"
+        mat-dialog-close
+        translate="cancelBtn"
+        (click)="onCancel()"
+        tabindex="-1"
+      ></button>
+
+      <button
+        id="selectUserGroupCreateBtn"
+        *ngIf="type === 'create'"
+        mat-raised-button
+        class="create-btn"
+        type="submit"
+        translate="createBtn"
+        mat-dialog-close
+        (click)="onCreate()"
+        [disabled]="disableBtn || isCreateUpdateLoading"
+      ></button>
+      <button
+        id="selectedUserGroupUpdateBtn"
+        *ngIf="type === 'update'"
+        mat-raised-button
+        class="create-btn"
+        type="submit"
+        translate="doneBtn"
+        (click)="onUpdate()"
+        [disabled]="disableBtn || isCreateUpdateLoading"
+      ></button>
+    </div>
+  </div>
+</div>
