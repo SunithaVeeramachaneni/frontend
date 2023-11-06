@@ -47,6 +47,7 @@ import { formConfigurationStatus } from 'src/app/app.constants';
 export class HierarchyContainerComponent implements OnInit {
   @Output() hierarchyEvent: EventEmitter<any> = new EventEmitter<any>();
   @Input() plantId: string;
+  @Input() unitId: string;
   @Input() set nodeWiseQuestionsCount(nodeWiseQuestionsCount: any) {
     if (nodeWiseQuestionsCount) {
       this._nodeWiseQuestionsCount = nodeWiseQuestionsCount;
@@ -118,11 +119,28 @@ export class HierarchyContainerComponent implements OnInit {
       this.store.select(getMasterHierarchyList)
     ]).pipe(
       map(([allLocations, allAssets, masterHierarchy]) => {
+        //fetch all childrens of unit selected, else return all locations list based on plant selected.
+        const updatedLocations = this.unitId
+          ? allLocations?.items?.filter(
+              (loc) => loc.parentId === this.unitId
+            ) || []
+          : allLocations.items;
+
+        //fetch the selected unit
+        const selectedUnit = allLocations.items.find(
+          (loc) => loc.id === this.unitId
+        );
+
+        // make the selected unit as parentUnit on master hierarchy and make its parentId to null,
+        // to stop fetching parents of this selectedUnit, otherwise recursion keeps occuring
+        if (selectedUnit && this.unitId)
+          updatedLocations.push({ ...selectedUnit, parentId: null });
+
         if (masterHierarchy.length)
           return (this.masterHierarchyList = masterHierarchy);
 
         const hierarchyItems = [
-          ...allLocations.items.map((location) => ({
+          ...updatedLocations?.map((location) => ({
             ...location,
             type: 'location'
           })),
