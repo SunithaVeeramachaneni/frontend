@@ -50,6 +50,7 @@ import { UserGroupDeleteModalComponent } from './user-group-delete-modal/user-gr
 import { RemoveUserModalComponent } from './remove-user-modal/remove-user-modal.component';
 import { PositionsComponent } from './positions/positions.component';
 import { CreatePositionsComponent } from './create-positions/create-positions.component';
+import { OperatorsListComponent } from './operators-list/operators-list.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/user-management/', '.json');
@@ -109,7 +110,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     UserGroupDeleteModalComponent,
     RemoveUserModalComponent,
     PositionsComponent,
-    CreatePositionsComponent
+    CreatePositionsComponent,
+    OperatorsListComponent
   ],
   schemas: [],
   providers: [],
