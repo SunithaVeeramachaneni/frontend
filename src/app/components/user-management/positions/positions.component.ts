@@ -133,6 +133,7 @@ export class PositionsComponent implements OnInit, OnDestroy {
   filter: any = {
     plant: ''
   };
+  currentUserPlantId: string;
   dataSource: MatTableDataSource<any>;
   positions$: Observable<any>;
   addEditCopyForm$: BehaviorSubject<FormTableUpdate> =
@@ -182,7 +183,8 @@ export class PositionsComponent implements OnInit, OnDestroy {
     private usersService: UsersService,
     private plantService: PlantService,
     private cdrf: ChangeDetectorRef,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private plantsService: PlantService
   ) {}
   ngOnInit(): void {
     this.headerService.setHeaderTitle(routingUrls.positions.title);
@@ -224,6 +226,15 @@ export class PositionsComponent implements OnInit, OnDestroy {
       .subscribe(({ permissions = [] }) =>
         this.prepareMenuActions(permissions)
       );
+
+      this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
+      tap(({ permissions = [], plantId }) => {
+        this.currentUserPlantId = plantId;
+        this.plantsService.setUserPlantIds(plantId);
+        this.filter.plant = plantId;
+        this.prepareMenuActions(permissions);
+      })
+    );
     this.populateFilter();
   }
 
@@ -302,15 +313,17 @@ export class PositionsComponent implements OnInit, OnDestroy {
 
     const hasColumnConfigFilter = Object.keys(columnConfigFilter)?.length || 0;
 
-    return this.positionService
-      .getPositionsList$(
-        {
-          next: this.nextToken,
-          limit: hasColumnConfigFilter ? graphQLDefaultFilterLimit : this.limit,
-          searchKey: this.searchPosition.value,
-          fetchType: this.fetchType
-        },
-        this.filter
+      return (
+        this.positionService.getPositionsList$(
+          {
+            next: this.nextToken,
+            limit: hasColumnConfigFilter ? graphQLDefaultFilterLimit : this.limit,
+            searchKey: this.searchPosition.value,
+            
+            fetchType: this.fetchType
+          },
+          this.filter
+        ) as Observable<any>
       )
       .pipe(
         mergeMap(({ count, rows, next }) => {
