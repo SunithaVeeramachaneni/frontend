@@ -12,6 +12,7 @@ import { RoundPlanEditViewComponent } from './round-plan-modal/round-plan-edit-v
 import { OperatorRoundsDashboardComponent } from './operator-rounds-dashboard/operator-rounds-dashboard.component';
 import { ReportsComponent } from '../dashboard/reports/reports.component';
 import { ReportConfigurationComponent } from '../dashboard/report-configuration/report-configuration.component';
+import { ShiftHandOverComponent } from './shift-hand-over/shift-hand-over.component';
 
 const routes: Routes = [
   {
@@ -118,6 +119,15 @@ const routes: Routes = [
         data: {
           breadcrumb: { label: 'Observations' },
           permissions: [permissions.viewORObservations]
+        }
+      },
+      {
+        path: 'shift-handover',
+        component: ShiftHandOverComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: { label: 'Shift Handover' },
+          permissions: [permissions.viewShiftHandovers]
         }
       }
     ]

@@ -69,7 +69,8 @@ const {
   roundPlanArchivedForms,
   roundPlanObservations,
   rdfObservations,
-  oprRounds
+  oprRounds,
+  shiftHandOvers
 } = routingUrls;
 
 @Component({
@@ -144,11 +145,13 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
           url: userGroups.url,
           permission: userGroups.permission
         },
+       
         {
           title: inActiveUsers.title,
           url: inActiveUsers.url,
           permission: inActiveUsers.permission
-        }
+        },
+        
       ],
       disable: false
     },
@@ -242,7 +245,12 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
           title: roundPlanObservations.title,
           url: roundPlanObservations.url,
           permission: roundPlanObservations.permission
-        }
+        },
+        {
+          title: shiftHandOvers.title,
+          url: shiftHandOvers.url,
+          permission: shiftHandOvers.permission
+        },
       ]
     },
     {
