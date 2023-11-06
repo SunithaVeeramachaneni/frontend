@@ -396,11 +396,13 @@ export class TaskLevelSchedulerComponent implements OnInit {
         format(new Date(scheduleByDate.date), dateTimeFormat3)
       );
       if (
-        this.plantTimezoneMap[this.roundPlanData?.plantId]?.timeZoneIdentifier
+        this.plantTimezoneMap[this.roundPlanData.roundPlanDetail.plantId]
+          ?.timeZoneIdentifier
       ) {
         dateByPlantTimezone = zonedTimeToUtc(
           format(new Date(scheduleByDate.date), dateTimeFormat3),
-          this.plantTimezoneMap[this.roundPlanData?.plantId]?.timeZoneIdentifier
+          this.plantTimezoneMap[this.roundPlanData.roundPlanDetail.plantId]
+            ?.timeZoneIdentifier
         );
       }
       return {
@@ -557,6 +559,28 @@ export class TaskLevelSchedulerComponent implements OnInit {
   }
 
   onSchedule() {
+    this.payload = {
+      ...this.payload,
+      scheduleByDates: this.payload.scheduleByDates.map((scheduleByDate) => {
+        let dateByPlantTimezone = new Date(
+          format(new Date(scheduleByDate.date), dateTimeFormat3)
+        );
+        if (
+          this.plantTimezoneMap[this.roundPlanData.roundPlanDetail.plantId]
+            ?.timeZoneIdentifier
+        ) {
+          dateByPlantTimezone = zonedTimeToUtc(
+            format(new Date(scheduleByDate.date), dateTimeFormat3),
+            this.plantTimezoneMap[this.roundPlanData.roundPlanDetail.plantId]
+              ?.timeZoneIdentifier
+          );
+        }
+        return {
+          ...scheduleByDate,
+          date: dateByPlantTimezone
+        };
+      })
+    };
     const payloadCopy = cloneDeep(this.payload);
     delete payloadCopy.advanceFormsCount;
     delete payloadCopy.formId;

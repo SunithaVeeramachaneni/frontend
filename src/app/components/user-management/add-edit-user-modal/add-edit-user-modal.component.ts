@@ -34,16 +34,30 @@ import {
   tap
 } from 'rxjs/operators';
 import { of } from 'rxjs';
-import { defaultProfile, superAdminText } from 'src/app/app.constants';
+import {
+  dateFormat6,
+  defaultProfile,
+  superAdminText
+} from 'src/app/app.constants';
 import { userRolePermissions } from 'src/app/app.constants';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { UsersService } from '../services/users.service';
 import { NgxImageCompressService } from 'ngx-image-compress';
 import { LoginService } from '../../login/services/login.service';
+import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
+import { DatePipeDateAdapter } from 'src/app/shared/utils/DatePipeDateAdapter';
 @Component({
   selector: 'app-add-edit-user-modal',
   templateUrl: './add-edit-user-modal.component.html',
   styleUrls: ['./add-edit-user-modal.component.scss'],
+  providers: [
+    { provide: DateAdapter, useClass: DatePipeDateAdapter },
+    {
+      provide: MAT_DATE_FORMATS,
+      // Pass any format string you would pass to DatePipe
+      useValue: DatePipeDateAdapter.createCustomMatDateFormats(dateFormat6)
+    }
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddEditUserModalComponent implements OnInit {
@@ -230,9 +244,9 @@ export class AddEditUserModalComponent implements OnInit {
     }
     this.userForm.get('plantId').valueChanges.subscribe(() => {
       const plantsList = [];
-      this.userForm.get('plantId')?.value?.forEach((plant) => {
+      for (const plant of this.userForm.get('plantId')?.value ?? []) {
         plantsList.push(plant.id);
-      });
+      }
       this.usergroupInput = this.userGroupList.filter((group) =>
         plantsList.includes(group.plantId)
       );
@@ -240,9 +254,9 @@ export class AddEditUserModalComponent implements OnInit {
 
     this.userForm.get('unitIds').valueChanges.subscribe(() => {
       const unitList = [];
-      this.userForm.get('unitIds')?.value?.forEach((unit) => {
+      for (const unit of this.userForm.get('unitIds')?.value ?? []) {
         unitList.push(unit.id);
-      });
+      }
     });
 
     if (Object.keys(userDetails).length === 0) {
@@ -289,10 +303,14 @@ export class AddEditUserModalComponent implements OnInit {
     this.plantInformation = this.data.plantsList;
     this.allPlantsData = this.plantInformation;
 
-    this.unitsList = this.data.unitsList;
+    this.unitsList = this.data.unitsList.filter(
+      (unit) =>
+        !this.data?.user?.plantId ||
+        this.data?.user?.plantId.some((value) => value.id === unit.plantsID)
+    );
     this.unitsObject = this.unitsList?.reduce((result, item) => {
       const plant = this.plantInformation.find((p) => p.id === item.plantsID);
-      const plantName = plant ? plant.name : item.plantsId;
+      const plantName = plant ? plant.plantId : item.plantsId;
 
       if (plantName) {
         if (!result[plantName]) {
@@ -304,7 +322,11 @@ export class AddEditUserModalComponent implements OnInit {
     }, {});
     this.unitsInformation = this.unitsObject;
 
-    this.positionsInformation = this.data.positionsList;
+    this.positionsInformation = this.data.positionsList.filter(
+      (pos) =>
+        !this.data?.user?.plantId ||
+        this.data?.user?.plantId.some((value) => value.id === pos.plantId)
+    );
     this.allPositionsData = this.positionsInformation;
   }
 
@@ -509,29 +531,39 @@ export class AddEditUserModalComponent implements OnInit {
             .value?.map((plant) => plant.id)
             .toString();
 
-    const latestUnitIds =
-      this.data.user?.plantId?.map((plant) => plant.id).toString() ===
-      this.userForm
-        .get('unitIds')
-        .value?.map((plant) => plant.id)
-        .toString()
-        ? this.data.user?.unitIds?.map((unit) => unit.id).toString()
-        : this.userForm
-            .get('unitIds')
-            .value?.map((unit) => unit.id)
-            .toString();
+    let latestUnitIds = this.data.user?.unitIds
+      ?.map((unit) => unit.id)
+      .toString();
+    if (Array.isArray(this.userForm.get('unitIds').value)) {
+      latestUnitIds =
+        this.data.user?.plantId?.map((plant) => plant.id).toString() ===
+        this.userForm
+          .get('unitIds')
+          .value?.map((plant) => plant.id)
+          .toString()
+          ? this.data.user?.unitIds?.map((unit) => unit.id).toString()
+          : this.userForm
+              .get('unitIds')
+              .value?.map((unit) => unit.id)
+              .toString();
+    }
 
-    const latestPosIds =
-      this.data.user?.positionIds?.map((pos) => pos.id).toString() ===
-      this.userForm
-        .get('positionIds')
-        .value?.map((pos) => pos.id)
-        .toString()
-        ? this.data.user?.positionIds?.map((pos) => pos.id).toString()
-        : this.userForm
-            .get('positionIds')
-            .value?.map((pos) => pos.id)
-            .toString();
+    let latestPosIds = this.data.user?.positionIds
+      ?.map((pos) => pos.id)
+      .toString();
+    if (Array.isArray(this.userForm.get('positionIds').value)) {
+      latestPosIds =
+        this.data.user?.positionIds?.map((pos) => pos.id).toString() ===
+        this.userForm
+          .get('positionIds')
+          .value?.map((pos) => pos.id)
+          .toString()
+          ? this.data.user?.positionIds?.map((pos) => pos.id).toString()
+          : this.userForm
+              .get('positionIds')
+              .value?.map((pos) => pos.id)
+              .toString();
+    }
 
     const payload = {
       user: {
@@ -572,10 +604,35 @@ export class AddEditUserModalComponent implements OnInit {
     return this.plant?.value?.[0]?.plantId;
   }
 
-  private resetSearchInput(): void {
-    if (this.searchInput?.nativeElement) {
-      this.searchInput.nativeElement.value = '';
-    }
-    this.allPlantsData = this.plantInformation;
-  }
+  resetPlantSearchFilter = () => {
+    this.userForm.get('unitIds').setValue('');
+    this.userForm.get('positionIds').setValue('');
+
+    this.unitsList = this.data.unitsList.filter(
+      (unit) =>
+        !this.plant?.value ||
+        this.plant.value?.some((data) => data.id === unit.plantsID)
+    );
+
+    this.unitsObject = this.unitsList?.reduce((result, item) => {
+      const plant = this.plantInformation.find((p) => p.id === item.plantsID);
+      const plantName = plant ? plant.plantId : item.plantsId;
+
+      if (plantName) {
+        if (!result[plantName]) {
+          result[plantName] = [];
+        }
+        result[plantName].push(item);
+      }
+      return result;
+    }, {});
+    this.unitsInformation = this.unitsObject;
+
+    this.positionsInformation = this.data.positionsList.filter(
+      (pos) =>
+        !this.plant?.value ||
+        this.plant.value?.some((data) => data.id === pos.plantId)
+    );
+    this.allPositionsData = this.positionsInformation;
+  };
 }

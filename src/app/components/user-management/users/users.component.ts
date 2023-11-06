@@ -29,6 +29,8 @@ import {
 } from 'src/app/interfaces';
 import { UsersService } from '../services/users.service';
 import {
+  dateFormat6,
+  dateTimeFormat4,
   defaultLimit,
   permissions as perms,
   superAdminText
@@ -37,10 +39,6 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ToastService } from 'src/app/shared/toast';
 import { routingUrls } from 'src/app/app.constants';
 import { map, switchMap, tap } from 'rxjs/operators';
-import {
-  Column,
-  ConfigOptions
-} from '@innovapptive.com/dynamictable/lib/interfaces';
 import { MatDialog } from '@angular/material/dialog';
 import { UserDeleteModalComponent } from '../user-delete-modal/user-delete-modal.component';
 import { AddEditUserModalComponent } from '../add-edit-user-modal/add-edit-user-modal.component';
@@ -54,7 +52,10 @@ import { Plant } from 'src/app/interfaces/plant';
 import { format } from 'date-fns';
 import { LocationService } from '../../master-configurations/locations/services/location.service';
 import { PositionsService } from '../services/positions.service';
-
+import {
+  Column,
+  ConfigOptions
+} from '@innovapptive.com/dynamictable/lib/interfaces';
 interface UserTableUpdate {
   action: 'add' | 'deactivate' | 'edit' | 'copy' | null;
   user: UserDetails;
@@ -228,9 +229,9 @@ export class UsersComponent implements OnInit {
       hasPostTextImage: false
     },
     {
-      id: 'createdAt',
+      id: 'createdAtPlaceHolder',
       displayName: 'Created At',
-      type: 'date',
+      type: 'string',
       controlType: 'string',
       order: 7,
       hasSubtitle: false,
@@ -577,6 +578,9 @@ export class UsersComponent implements OnInit {
                   );
                   initial.data[0].posIdPlaceholder =
                     this.getPositionIdPlaceholder(user.positionIds);
+                  initial.data[0].createdAtPlaceHolder = this.formatDateTime(
+                    user.createdAt
+                  );
                 }
                 break;
               case 'deactivate':
@@ -607,6 +611,8 @@ export class UsersComponent implements OnInit {
                       this.getUnitIdPlaceholder(user.unitIds);
                     initial.data[index].posIdPlaceholder =
                       this.getPositionIdPlaceholder(user.positionIds);
+                    initial.data[index].createdAtPlaceHolder =
+                      this.formatDateTime(user.createdAt);
                   }
                 }
             }
@@ -638,6 +644,7 @@ export class UsersComponent implements OnInit {
   formatUsers(users) {
     return users.map((user) => {
       user.validThroughPlaceholder = this.formatDate(user.validThrough);
+      user.createdAtPlaceHolder = this.formatDateTime(user.createdAt);
       if (user.plantId) {
         user.plantIdPlaceholder = this.getPlantIdPlaceholder(user.plantId);
       }
@@ -692,8 +699,17 @@ export class UsersComponent implements OnInit {
   }
 
   formatDate(validThrough) {
-    if (validThrough) validThrough = format(new Date(validThrough), 'dd.MM.yy');
-    return validThrough;
+    if (validThrough) {
+      validThrough = format(new Date(validThrough), dateFormat6);
+      return validThrough;
+    }
+  }
+
+  formatDateTime(createdAt) {
+    if (createdAt) {
+      createdAt = format(new Date(createdAt), dateTimeFormat4);
+      return createdAt;
+    }
   }
 
   getPlantsObject(plants) {
@@ -817,6 +833,7 @@ export class UsersComponent implements OnInit {
                   usergroup: [],
                   validFrom: '',
                   validThrough: '',
+                  createdAt: '',
                   plantId: ''
                 }
               });

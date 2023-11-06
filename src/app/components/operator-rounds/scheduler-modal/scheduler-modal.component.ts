@@ -13,11 +13,7 @@ import { Step } from 'src/app/interfaces/stepper';
 import { AlertModalComponent } from './alert-modal/alert-modal.component';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
-import {
-  dateFormat3,
-  dateFormat4,
-  dateTimeFormat3
-} from 'src/app/app.constants';
+import { dateFormat6, dateTimeFormat4 } from 'src/app/app.constants';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { RoundPlanScheduleConfiguration } from 'src/app/interfaces';
@@ -85,7 +81,7 @@ export class SchedulerModalComponent implements OnInit {
         startDate: localToTimezoneDate(
           new Date(headerStartDate),
           this.data.plantTimezoneMap[this.data.roundPlanDetail?.plantId],
-          dateFormat3
+          dateFormat6
         ),
         shiftDetails: Object.keys(headerShiftDetails).reduce((acc, curr) => {
           acc[curr] = headerShiftDetails[curr].map((slotInfo) => {
@@ -100,19 +96,19 @@ export class SchedulerModalComponent implements OnInit {
             localToTimezoneDate(
               new Date(scheduleByDate.date),
               this.data.plantTimezoneMap[this.data.roundPlanDetail?.plantId],
-              dateTimeFormat3
+              dateTimeFormat4
             )
           )
         })),
         endDate: localToTimezoneDate(
           new Date(formatedEndDate),
           this.data.plantTimezoneMap[this.data.roundPlanDetail?.plantId],
-          dateFormat3
+          dateFormat6
         ),
         scheduleEndOn: localToTimezoneDate(
           new Date(headerScheduleEndOn),
           this.data.plantTimezoneMap[this.data.roundPlanDetail?.plantId],
-          dateFormat4
+          dateFormat6
         )
       } as RoundPlanScheduleConfiguration;
     }
@@ -142,25 +138,25 @@ export class SchedulerModalComponent implements OnInit {
           const formatedStartDate = localToTimezoneDate(
             new Date(startDate),
             this.data.plantTimezoneMap[this.data.roundPlanDetail?.plantId],
-            dateFormat4
+            dateFormat6
           );
           const formatedEndDate = localToTimezoneDate(
             new Date(endDate),
             this.data.plantTimezoneMap[this.data.roundPlanDetail?.plantId],
-            dateFormat4
+            dateFormat6
           );
           const startDatePicker = new Date(
             localToTimezoneDate(
               new Date(startDate),
               this.data.plantTimezoneMap[this.data.roundPlanDetail?.plantId],
-              dateFormat3
+              dateFormat6
             )
           );
           const endDatePicker = new Date(
             localToTimezoneDate(
               new Date(endDate),
               this.data.plantTimezoneMap[this.data.roundPlanDetail?.plantId],
-              dateFormat3
+              dateFormat6
             )
           );
           uniqueScheduleConfigurations.push({

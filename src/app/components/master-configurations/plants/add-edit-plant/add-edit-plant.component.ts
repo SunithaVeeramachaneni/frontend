@@ -35,6 +35,7 @@ import {
 import { ShiftOverlapModalComponent } from '../shift-overlap-modal/shift-overlap-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { FormValidationUtil } from 'src/app/shared/utils/formValidationUtil';
+import { TenantService } from 'src/app/components/tenant-management/services/tenant.service';
 
 @Component({
   selector: 'app-add-edit-plant',
@@ -98,6 +99,7 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
         field: this.plantEditData?.field,
         timeZone: this.plantEditData?.timeZone,
         isSHRActivated: this.plantEditData?.isSHRActivated,
+        wasSHRActivated: this.plantEditData?.wasSHRActivated,
         shifts: this.selectedShiftIDs
       };
 
@@ -143,7 +145,8 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
     private shiftService: ShiftService,
     private dialog: MatDialog,
     private formValidationUtil: FormValidationUtil,
-    private cdfr: ChangeDetectorRef
+    private cdfr: ChangeDetectorRef,
+    private tenantService: TenantService
   ) {}
 
   checkPlantIdExists(): AsyncValidatorFn {
@@ -174,7 +177,17 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
     };
   }
 
+  getValidators(tenantInfo): any[] {
+    const validators = [Validators.required, WhiteSpaceValidator.whiteSpace];
+    if (tenantInfo.trimWhiteSpace) {
+      validators.push(WhiteSpaceValidator.trimWhiteSpace);
+    }
+    return validators;
+  }
+
   ngOnInit(): void {
+    const tenantInfo = this.tenantService.getTenantInfo();
+
     this.plantMapSubscription = this.plantService.plantMasterData$.subscribe(
       (res) => {
         this.plantMasterData = res;
@@ -193,11 +206,7 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
       ]),
       plantId: new FormControl(
         '',
-        [
-          Validators.required,
-          WhiteSpaceValidator.whiteSpace,
-          WhiteSpaceValidator.trimWhiteSpace
-        ],
+        [...this.getValidators(tenantInfo)],
         [this.checkPlantIdExists()]
       ),
       country: new FormControl('', [
@@ -222,7 +231,8 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
       shifts: new FormControl('', [Validators.required]),
       label: new FormControl('', [WhiteSpaceValidator.trimWhiteSpace]),
       field: new FormControl('', [WhiteSpaceValidator.trimWhiteSpace]),
-      isSHRActivated: new FormControl(false)
+      isSHRActivated: new FormControl(false),
+      wasSHRActivated: new FormControl(false)
     });
     this.plantForm.get('state').disable();
     this.plantForm.get('timeZone').disable();

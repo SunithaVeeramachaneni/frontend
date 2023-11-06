@@ -1,9 +1,4 @@
-import {
-  ChangeDetectorRef,
-  Component,
-  OnDestroy,
-  OnInit
-} from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
 import {
   debounceTime,
@@ -28,6 +23,7 @@ import {
   TableEvent,
   FormTableUpdate,
   Permission,
+  UserInfo
 } from 'src/app/interfaces';
 import {
   permissions as perms,
@@ -36,7 +32,7 @@ import {
   routingUrls
 } from 'src/app/app.constants';
 import { Router } from '@angular/router';
-import { cloneDeep, omit } from 'lodash-es';
+import { cloneDeep } from 'lodash-es';
 import { generateCopyNumber, generateCopyRegex } from '../utils/utils';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -46,9 +42,8 @@ import { ColumnConfigurationService } from 'src/app/forms/services/column-config
 import { PositionsService } from '../services/positions.service';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { CreatePositionsComponent } from '../create-positions/create-positions.component';
-import {
-  UM_POSITION_FILTERS
-} from '../../race-dynamic-form/race-dynamic-forms.constants';
+import { UM_POSITION_FILTERS } from '../../race-dynamic-form/race-dynamic-forms.constants';
+import { LoginService } from '../../login/services/login.service';
 
 @Component({
   selector: 'app-positions',
@@ -77,15 +72,17 @@ export class PositionsComponent implements OnInit, OnDestroy {
       sticky: false,
       groupable: true,
       titleStyle: { 'font-weight': '500', 'font-size': '90%' },
-      hasSubtitle: false,
+      hasSubtitle: true,
+      subtitleColumn: 'description',
       showMenuOptions: false,
-      subtitleColumn: '',
-      subtitleStyle: {},
+      subtitleStyle: {
+        color: 'darkgray'
+      },
       hasPreTextImage: false,
       hasPostTextImage: false
     },
     {
-      id: 'description',
+      id: 'plant',
       displayName: 'Plant',
       type: 'string',
       controlType: 'string',
@@ -111,7 +108,7 @@ export class PositionsComponent implements OnInit, OnDestroy {
     tableID: 'formsTable',
     rowsExpandable: false,
     enablePagination: false,
-    enableRowsSelection: true,
+    enableRowsSelection: false,
     displayFilterPanel: false,
     displayActionsColumn: false,
     rowLevelActions: {
@@ -137,7 +134,7 @@ export class PositionsComponent implements OnInit, OnDestroy {
     plant: ''
   };
   dataSource: MatTableDataSource<any>;
-  forms$: Observable<any>;
+  positions$: Observable<any>;
   addEditCopyForm$: BehaviorSubject<FormTableUpdate> =
     new BehaviorSubject<FormTableUpdate>({
       action: null,
@@ -145,14 +142,15 @@ export class PositionsComponent implements OnInit, OnDestroy {
     });
   skip = 0;
   limit = graphQLDefaultLimit;
-  
+
   searchPosition: FormControl;
   addCopyFormCount = false;
   positionListCount$: Observable<number>;
-  positionListCountRaw$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
-  positionListCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(
+  positionListCountRaw$: BehaviorSubject<number> = new BehaviorSubject<number>(
     0
   );
+  positionListCountUpdate$: BehaviorSubject<number> =
+    new BehaviorSubject<number>(0);
   ghostLoading = new Array(15).fill(0).map((v, i) => i);
   nextToken = '';
   selectedForm: GetFormList = null;
@@ -161,7 +159,7 @@ export class PositionsComponent implements OnInit, OnDestroy {
   isLoadingColumns$: Observable<boolean> =
     this.columnConfigService.isLoadingColumns$;
   formsList$: Observable<any>;
-  allForms = [];
+  allPositions = [];
   lastPublishedBy = [];
   lastPublishedOn = [];
   lastModifiedBy = [];
@@ -173,6 +171,7 @@ export class PositionsComponent implements OnInit, OnDestroy {
   triggerCountUpdate = false;
   readonly perms = perms;
   private onDestroy$ = new Subject();
+  userInfo$: Observable<UserInfo>;
 
   constructor(
     private readonly positionService: PositionsService,
@@ -182,7 +181,8 @@ export class PositionsComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private usersService: UsersService,
     private plantService: PlantService,
-    private cdrf: ChangeDetectorRef
+    private cdrf: ChangeDetectorRef,
+    private loginService: LoginService
   ) {}
   ngOnInit(): void {
     this.headerService.setHeaderTitle(routingUrls.positions.title);
@@ -219,6 +219,11 @@ export class PositionsComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.filterJson = UM_POSITION_FILTERS;
       });
+    this.loginService.loggedInUserInfo$
+      .pipe()
+      .subscribe(({ permissions = [] }) =>
+        this.prepareMenuActions(permissions)
+      );
     this.populateFilter();
   }
 
@@ -246,31 +251,31 @@ export class PositionsComponent implements OnInit, OnDestroy {
         this.skip = 0;
         this.fetchType = data;
         this.nextToken = '';
-        return this.getForms();
+        return this.getPositions();
       })
     );
-
-    const onScrollForms$ = this.positionService.fetchPositions$.pipe(
+    const onScrollPositions$ = this.positionService.fetchPositions$.pipe(
       filter(({ data }) => data !== 'load' && data !== 'search'),
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
           this.fetchType = 'infiniteScroll';
-          return this.getForms();
+          if(this.nextToken){
+            return this.getPositions();
+          }
         } else {
           return of([] as GetFormList[]);
         }
       })
     );
+    const plants$ = this.plantService.fetchAllPlants$();
 
     const initial = {
       columns: this.columns,
       data: []
     };
-    this.forms$ = combineLatest([
-      formsOnLoadSearch$,
-      onScrollForms$
-    ]).pipe(
-      map(([rows, scrollData]) => {
+    let cominedResult = [];
+    this.positions$ = combineLatest([formsOnLoadSearch$, onScrollPositions$, plants$]).pipe(
+      map(([rows, scrollData, plants]) => {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
@@ -278,17 +283,21 @@ export class PositionsComponent implements OnInit, OnDestroy {
           };
           initial.data = rows;
         } else {
-            initial.data = initial.data.concat(scrollData);
+          initial.data = initial.data.concat(scrollData);
         }
-        this.allForms = initial.data;
-        this.dataSource = new MatTableDataSource(this.allForms);
-        this.skip = this.allForms.length;
+        cominedResult = initial.data.map((pos) => {
+          const correspondingPlant = (plants?.items || []).find((plnt) => plnt?.id === pos?.plantId);
+          return { ...pos, plant: correspondingPlant?.name || '' };
+        });
+        this.allPositions = cominedResult;
+        this.dataSource = new MatTableDataSource(this.allPositions);
+        this.skip = this.allPositions.length;
         return initial;
       })
     );
   }
 
-  getForms() {
+  getPositions() {
     const columnConfigFilter = cloneDeep(this.filter);
 
     const hasColumnConfigFilter = Object.keys(columnConfigFilter)?.length || 0;
@@ -341,30 +350,28 @@ export class PositionsComponent implements OnInit, OnDestroy {
 
   prepareMenuActions(permissions: Permission[]): void {
     const menuActions = [];
-
-    // if (this.loginService.checkUserHasPermission(permissions, 'UPDATE_FORM')) {
-    //   menuActions.push({
-    //     title: 'Edit',
-    //     action: 'edit'
-    //   });
-    // }
-    // if (this.loginService.checkUserHasPermission(permissions, 'COPY_FORM')) {
-    //   menuActions.push({
-    //     title: 'Copy',
-    //     action: 'copy'
-    //   });
-    // }
-    // if (this.loginService.checkUserHasPermission(permissions, 'ARCHIVE_FORM')) {
-    //   menuActions.push({
-    //     title: 'Archive',
-    //     action: 'archive'
-    //   });
-    // }
-
+    if (this.loginService.checkUserHasPermission(permissions, 'UPDATE_POSITIONS')) {
+      menuActions.push({
+        title: 'Edit',
+        action: 'edit'
+      });
+    }
     this.configOptions.rowLevelActions.menuActions = menuActions;
-    //this.configOptions.displayActionsColumn = menuActions.length ? true : false;
-    this.configOptions.displayActionsColumn = true;
+    this.configOptions.displayActionsColumn = menuActions.length ? true : false;
     this.configOptions = { ...this.configOptions };
+  }
+
+  rowLevelActionHandler(event) {
+    const { action, data } = event;
+    if (action === 'edit') {
+      const dialogRef = this.dialog.open(CreatePositionsComponent, { data : { action, ...data} });
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result === 'success') {
+          this.cdrf.detectChanges();
+          this.positionService.fetchPositions$.next({ data: 'load' });
+        }
+      });
+    }
   }
 
   onCloseViewDetail() {
@@ -374,16 +381,12 @@ export class PositionsComponent implements OnInit, OnDestroy {
   onCloseColumnConfig() {
     this.columnConfigMenuState = 'out';
   }
-  formDetailActionHandler() {
-    this.router.navigate([`/forms/edit/${this.selectedForm.id}`]);
-  }
 
   populateFilter() {
     combineLatest([
       this.usersService.getUsersInfo$(),
       this.plantService.fetchAllPlants$()
     ]).subscribe(([usersList, { items: plantsList }]) => {
-      console.log({ usersList, items: plantsList });
       this.createdBy = usersList
         .map((user) => `${user.firstName} ${user.lastName}`)
         .sort();
@@ -413,10 +416,10 @@ export class PositionsComponent implements OnInit, OnDestroy {
     this.positionService.fetchPositions$.next({ data: 'load' });
   }
   createPosition() {
-    const dialogRef = this.dialog.open(CreatePositionsComponent);
+    const data = { action: 'create'};
+    const dialogRef = this.dialog.open(CreatePositionsComponent, { data });
     dialogRef.afterClosed().subscribe((result) => {
-      console.log('The dialog was closed', result);
-      if(result === "success") {
+      if (result === 'success') {
         this.cdrf.detectChanges();
         this.positionService.fetchPositions$.next({ data: 'load' });
       }

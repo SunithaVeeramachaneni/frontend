@@ -1,7 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { PositionsComponent } from '../positions/positions.component';
-import { DialogData } from 'src/app/shared/components/collaboration/CollabDialog';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { ValidationError } from 'src/app/interfaces';
@@ -9,6 +8,13 @@ import { PlantService } from '../../master-configurations/plants/services/plant.
 import { PositionsService } from '../services/positions.service';
 import { ToastService } from 'src/app/shared/toast';
 
+interface DialogData {
+  action: 'create' | 'edit';
+  description: string;
+  id: string;
+  plantId: string;
+  name: string;
+}
 @Component({
   selector: 'app-create-positions',
   templateUrl: './create-positions.component.html',
@@ -20,6 +26,7 @@ export class CreatePositionsComponent implements OnInit {
   plantsList: any[];
   searchPlantsList: any[];
   isCreating: boolean;
+  heading: string;
   constructor(
     private toast: ToastService,
     private plantService: PlantService,
@@ -45,6 +52,17 @@ export class CreatePositionsComponent implements OnInit {
         WhiteSpaceValidator.trimWhiteSpace
       ])
     });
+    if(this.data?.action === "edit"){
+      this.heading = `Edit Position`;
+      this.positionsFormData.patchValue({
+        name: this.data.name,
+        description: this.data.description,
+        plantId: this.data.plantId
+      })
+    }
+    if(this.data?.action === "create"){
+      this.heading = `Create Position`;
+    }
     this.plantService.fetchAllPlants$().subscribe((plant) => {
       this.plantsList = plant?.items || [];
       this.searchPlantsList = plant?.items || [];
@@ -90,25 +108,45 @@ export class CreatePositionsComponent implements OnInit {
     this.dialogRef.close(result);
   }
 
-  createPositions() {
+  createEditPositions() {
     this.isCreating = true;
-    const payload = this.positionsFormData.value;
-    this.positionService.createPositions$(payload).subscribe(
-      (res) => {
-        this.toast.show({
-          text: 'Postion created successfully',
-          type: 'success'
-        });
-        this.isCreating = false;
-        this.onClose('success');
-      },
-      (err) => {
-        this.toast.show({
-          text: 'Something went wrong !',
-          type: 'warning'
-        });
-        this.isCreating = false;
-      }
-    );
+    const payload = { ...this.positionsFormData.value, _version: 1 };
+    if(this.heading.includes('Create')){
+      this.positionService.createPositions$(payload).subscribe(
+        (res) => {
+          this.toast.show({
+            text: 'Postion created successfully',
+            type: 'success'
+          });
+          this.isCreating = false;
+          this.onClose('success');
+        },
+        (err) => {
+          this.toast.show({
+            text: 'Something went wrong !',
+            type: 'warning'
+          });
+          this.isCreating = false;
+        }
+      );
+    } else if(this.heading.includes('Edit')){
+      this.positionService.updatePositions$(this.data?.id, payload).subscribe(
+        () => {
+          this.toast.show({
+            text: 'Postion updated successfully',
+            type: 'success'
+          });
+          this.isCreating = false;
+          this.onClose('success');
+        },
+        () => {
+          this.toast.show({
+            text: 'Something went wrong !',
+            type: 'warning'
+          });
+          this.isCreating = false;
+        }
+      );
+    }
   }
 }

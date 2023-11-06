@@ -578,6 +578,11 @@ export class QuestionComponent implements OnInit, OnDestroy {
     this.unitMenuTrigger.closeMenu();
   }
 
+  onChange(event) {
+    this.isINSTFieldChanged = true;
+    this.questionForm.get('name').setValue(event);
+  }
+
   handleMatMenu() {
     this.unitOfMeasurementsAvailable = [...this.unitOfMeasurements];
   }
@@ -1300,7 +1305,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
         height: '100%',
         panelClass: 'slideshow-container',
         backdropClass: 'slideshow-backdrop',
-        data: slideshowImages
+        data: { type: 'base64', images: slideshowImages }
       });
     }
   }

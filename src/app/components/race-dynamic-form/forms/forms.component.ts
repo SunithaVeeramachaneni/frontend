@@ -53,7 +53,7 @@ import {
   ErrorInfo
 } from 'src/app/interfaces';
 import {
-  dateFormat,
+  dateFormat6,
   graphQLDefaultLimit,
   permissions as perms
 } from 'src/app/app.constants';
@@ -418,21 +418,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       onScrollForms$,
       formScheduleConfigurations$,
       this.shiftService.fetchAllShifts$(),
-      this.plantService.fetchLoggedInUserPlants$().pipe(
-        tap((plants) => {
-          plants.forEach((plant) => {
-            this.plantsIdNameMap[`${plant.plantId} - ${plant.name}`] = plant.id;
-          });
-
-          for (const item of filterJson) {
-            if (item.column === 'plant') {
-              item.items = plants
-                .map((plant) => `${plant.plantId} - ${plant.name}`)
-                .sort();
-            }
-          }
-        })
-      ),
+      this.plantService.fetchLoggedInUserPlants$(),
       this.users$,
       this.userGroups$,
       this.raceDynamicFormService.getFormsFilter().pipe(
@@ -445,6 +431,18 @@ export class FormsComponent implements OnInit, OnDestroy {
         map(
           ([forms, scrollData, formScheduleConfigurations, shifts, plants]) => {
             this.isLoading$.next(false);
+            plants.forEach((plant) => {
+              this.plantsIdNameMap[`${plant.plantId} - ${plant.name}`] =
+                plant.id;
+            });
+
+            for (const item of filterJson) {
+              if (item.column === 'plant') {
+                item.items = plants
+                  .map((plant) => `${plant.plantId} - ${plant.name}`)
+                  .sort();
+              }
+            }
             shifts?.items?.forEach((shift) => {
               this.shiftIdNameMap[shift.id] = shift.name;
             });
@@ -636,9 +634,9 @@ export class FormsComponent implements OnInit, OnDestroy {
 
   prepareActiveShifts(form: any) {
     const selectedPlant = this.allPlants?.items?.find(
-      (plant) => plant.id === form.plantId
+      (plant) => plant?.id === form?.plantId
     );
-    const selectedShifts = JSON.parse(selectedPlant?.shifts);
+    const selectedShifts = JSON.parse(selectedPlant?.shifts ?? '[]');
     const activeShifts = this.allShifts?.filter((data) =>
       selectedShifts.some((shift) => shift?.id === data?.id)
     );
@@ -665,7 +663,7 @@ export class FormsComponent implements OnInit, OnDestroy {
     if (
       this.loginService.checkUserHasPermission(
         permissions,
-        perms.scheduleRoundPlan
+        perms.scheduleInspection
       )
     ) {
       menuActions.push({
@@ -946,11 +944,11 @@ export class FormsComponent implements OnInit, OnDestroy {
           ? localToTimezoneDate(
               new Date(formScheduleConfiguration.startDate),
               this.plantTimezoneMap[plantId],
-              dateFormat
+              dateFormat6
             )
           : this.datePipe.transform(
               formScheduleConfiguration.startDate,
-              dateFormat
+              dateFormat6
             )
         : '';
     let formatedEndDate =
@@ -960,17 +958,17 @@ export class FormsComponent implements OnInit, OnDestroy {
             ? localToTimezoneDate(
                 new Date(scheduleEndOn),
                 this.plantTimezoneMap[plantId],
-                dateFormat
+                dateFormat6
               )
-            : this.datePipe.transform(scheduleEndOn, dateFormat)
+            : this.datePipe.transform(scheduleEndOn, dateFormat6)
           : scheduleEndType === 'after'
           ? this.plantTimezoneMap[plantId]?.timeZoneIdentifier
             ? localToTimezoneDate(
                 new Date(endDate),
                 this.plantTimezoneMap[plantId],
-                dateFormat
+                dateFormat6
               )
-            : this.datePipe.transform(endDate, dateFormat)
+            : this.datePipe.transform(endDate, dateFormat6)
           : 'Never'
         : '';
     if (scheduleType === 'byDate') {
@@ -982,18 +980,18 @@ export class FormsComponent implements OnInit, OnDestroy {
         ? localToTimezoneDate(
             new Date(scheduleDates[0]),
             this.plantTimezoneMap[plantId],
-            dateFormat
+            dateFormat6
           )
-        : this.datePipe.transform(scheduleDates[0], dateFormat);
+        : this.datePipe.transform(scheduleDates[0], dateFormat6);
       formatedEndDate = this.plantTimezoneMap[plantId]?.timeZoneIdentifier
         ? localToTimezoneDate(
             new Date(scheduleDates[scheduleDates.length - 1]),
             this.plantTimezoneMap[plantId],
-            dateFormat
+            dateFormat6
           )
         : this.datePipe.transform(
             scheduleDates[scheduleDates.length - 1],
-            dateFormat
+            dateFormat6
           );
     }
 

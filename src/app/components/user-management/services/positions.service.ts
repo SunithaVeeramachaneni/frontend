@@ -7,11 +7,7 @@ import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
-import {
-  LoadEvent,
-  SearchEvent,
-  TableEvent,
-} from './../../../interfaces';
+import { LoadEvent, SearchEvent, TableEvent } from './../../../interfaces';
 import { isEmpty, omitBy } from 'lodash-es';
 @Injectable({
   providedIn: 'root'
@@ -24,9 +20,7 @@ export class PositionsService {
   redirectToFormsList$ = new BehaviorSubject<boolean>(false);
   embeddedFormId;
 
-  constructor(
-    private appService: AppService,
-  ) {}
+  constructor(private appService: AppService) {}
 
   /**
    * Get event source (SSE)
@@ -66,6 +60,14 @@ export class PositionsService {
     return this.appService._postData(
       environment.userRoleManagementApiUrl,
       'position/create',
+      payload
+    );
+  };
+
+  updatePositions$ = (id: string, payload: any): Observable<any> => {
+    return this.appService.patchData(
+      environment.userRoleManagementApiUrl,
+      `position/${id}/update`,
       payload
     );
   };

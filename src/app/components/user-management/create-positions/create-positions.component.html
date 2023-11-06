@@ -1,6 +1,6 @@
 <form [formGroup]="positionsFormData">
   <div id="create-position">
-    <mat-card class="mat-container">
+    <div class="mat-container">
       <div class="top-bar">
         <svg-icon
           id="createPositionBtn"
@@ -8,12 +8,14 @@
           class="cancel"
           (click)="onClose()"
         ></svg-icon>
-        <h1 id="createPositionBtn" class="heading">Create Positions</h1>
+        <h1 id="createPositionBtn" class="heading">{{ heading }}</h1>
       </div>
       <div class="container-div">
         <div class="flex-box">
           <mat-form-field appearance="outline" class="width-100 m-b-10">
-            <mat-label id="name_label" translate="enterName"><span class="text-red">*</span></mat-label>
+            <mat-label id="name_label" translate="enterName"
+              ><span class="text-red">*</span></mat-label
+            >
             <input
               matInput
               [placeholder]="'enterName' | translate"
@@ -83,7 +85,7 @@
           </mat-form-field>
         </div>
       </div>
-    </mat-card>
+    </div>
     <div class="actions-footer">
       <button
         id="createPositionBtn"
@@ -99,9 +101,10 @@
         class="create-btn"
         [disabled]="isCreating"
         type="submit"
-        (click)="createPositions()"
-        translate="createBtn"
-      ></button>
+        (click)="createEditPositions()"
+      >
+        {{ heading === 'Edit Position' ? 'Edit' : 'Create' }}
+      </button>
     </div>
   </div>
 </form>
