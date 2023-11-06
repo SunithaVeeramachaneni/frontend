@@ -434,6 +434,7 @@ export class ShiftHandOverComponent implements OnInit {
 
   prepareMenuActions() {
     const menuActions = [];
+    
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : true;
     this.configOptions = { ...this.configOptions };
