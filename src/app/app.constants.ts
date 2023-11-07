@@ -147,7 +147,8 @@ export const permissions = Object.freeze({
   viewPosition: 'VIEW_POSITIONS',
   createPosition: 'CREATE_POSITIONS',
   updatePosition: 'UPDATE_POSITIONS',
-  viewShiftHandovers: 'VIEW_SHRS'
+  viewShiftHandovers: 'VIEW_SHRS',
+  updateSHRConfiguration: 'UPDATE_SHR_CONFIG'
 });
 
 export const routingUrls = {
@@ -361,8 +362,8 @@ export const routingUrls = {
     url: '/master-configuration/global-response',
     title: 'Global Response Set',
     permission: permissions.viewGlobalResponses
-  },
- };
+  }
+};
 export const formConfigurationStatus = Object.freeze({
   draft: 'Draft',
   published: 'Published',
