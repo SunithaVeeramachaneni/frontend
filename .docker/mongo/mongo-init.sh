@@ -303,9 +303,9 @@ db.shrconfigurations.insertOne({
   notes: true,
   operators: true,
   shiftLogs: true
+  }
   createdAt: new Date(),
   updatedAt: new Date(),
   __v: 0
-  }
 })
 EOF
