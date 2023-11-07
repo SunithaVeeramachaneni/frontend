@@ -27,6 +27,24 @@
             class="filter-icon"
           ></svg-icon>
         </mat-form-field>
+        <ng-template
+        cdkConnectedOverlay
+        cdkConnectedOverlayPanelClass="custom-popover"
+        cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+        [cdkConnectedOverlayHasBackdrop]="true"
+        [cdkConnectedOverlayOpen]="isPopoverOpen"
+        [cdkConnectedOverlayOrigin]="trigger"
+        cdkConnectedOverlayWidth="400px"
+        (backdropClick)="isPopoverOpen = false"
+      >
+        <app-filter
+          *ngIf="(isLoading$ | async) === false"
+          [json]="filterJson"
+          (close)="isPopoverOpen = false"
+          (apply)="applyFilter($event)"
+          (reset)="resetFilter()"
+        ></app-filter>
+      </ng-template>
         <button
           id="formsListCreateNewBtn"
           class="create-new-btn"
@@ -49,7 +67,7 @@
     </div>
   </div>
   </ng-container>
-  <div *ngIf="isLoading$ | async">
+  <div *ngIf="(isLoading$ | async) || !dataFetchingComplete">
     <div class="ghost-loading">
       <div *ngFor="let number of ghostLoading">
         <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
@@ -58,22 +76,5 @@
     </div>
   </div>
 
-  <ng-template
-    cdkConnectedOverlay
-    cdkConnectedOverlayPanelClass="custom-popover"
-    cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-    [cdkConnectedOverlayHasBackdrop]="true"
-    [cdkConnectedOverlayOpen]="isPopoverOpen"
-    [cdkConnectedOverlayOrigin]="trigger"
-    cdkConnectedOverlayWidth="400px"
-    (backdropClick)="isPopoverOpen = false"
-  >
-    <app-filter
-      *ngIf="(isLoading$ | async) === false"
-      [json]="filterJson"
-      (close)="isPopoverOpen = false"
-      (apply)="applyFilter($event)"
-      (reset)="resetFilter()"
-    ></app-filter>
-  </ng-template>
+ 
 </div>
