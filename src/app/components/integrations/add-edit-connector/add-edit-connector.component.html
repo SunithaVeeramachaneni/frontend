@@ -164,6 +164,7 @@
             type="button"
             mat-icon-button
             matSuffix
+            *ngIf="superAdminEnable === true"
             (click)="hidePasswordSMTP = !hidePasswordSMTP"
             [attr.aria-label]="'Hide password ERPS'"
             [attr.aria-pressed]="hidePasswordSMTP"
