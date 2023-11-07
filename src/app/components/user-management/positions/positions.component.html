@@ -1,4 +1,5 @@
 <div class="list-view">
+  <ng-container *ngIf="userInfo$ | async">
   <div class="main-container">
     <div class="forms-header">
       <h2 id="formsListHeading" class="heading" translate="Positions"></h2>
@@ -47,6 +48,7 @@
       ></cwp-dynamictable>
     </div>
   </div>
+  </ng-container>
   <div *ngIf="isLoading$ | async">
     <div class="ghost-loading">
       <div *ngFor="let number of ghostLoading">

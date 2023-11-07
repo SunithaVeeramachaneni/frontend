@@ -2,11 +2,8 @@
 import {
   Component,
   OnInit,
-  EventEmitter,
   Input,
-  Output,
   OnChanges,
-  SimpleChange,
   SimpleChanges,
   ChangeDetectionStrategy
 } from '@angular/core';
@@ -17,7 +14,6 @@ import {
   combineLatest,
   of
 } from 'rxjs';
-import { CommonService } from 'src/app/shared/services/common.service';
 import { MatTableDataSource } from '@angular/material/table';
 import {
   Column,
@@ -33,32 +29,27 @@ import {
 } from 'src/app/interfaces';
 import { FormControl } from '@angular/forms';
 import { filter, map, mergeMap, switchMap, tap } from 'rxjs/operators';
-import { format } from 'date-fns';
-import { SelectUserUsergroupModalComponent } from '../select-user-usergroup-modal/select-user-usergroup-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { RemoveUserModalComponent } from '../remove-user-modal/remove-user-modal.component';
 import { LoginService } from '../../login/services/login.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { DomSanitizer } from '@angular/platform-browser';
-import {
-  dateFormat6,
-  defaultProfilePic,
-  graphQLDefaultLimit
-} from 'src/app/app.constants';
+import { defaultProfilePic, graphQLDefaultLimit } from 'src/app/app.constants';
 import { LocationService } from '../../master-configurations/locations/services/location.service';
 import { PositionsService } from '../services/positions.service';
+import { SelectUserGroupPositionsModalComponent } from '../select-user-group-positions-modal/select-user-group-positions-modal.component';
 interface UsersListActions {
   action: 'delete' | null;
   id: any[];
 }
 
 @Component({
-  selector: 'app-user-group-users-list',
-  templateUrl: './user-group-users-list.component.html',
-  styleUrls: ['./user-group-users-list.component.scss'],
+  selector: 'app-user-group-positions-list',
+  templateUrl: './user-group-positions-list.component.html',
+  styleUrls: ['./user-group-positions-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class UserGroupUsersListComponent implements OnInit, OnChanges {
+export class UserGroupPositionsListComponent implements OnInit, OnChanges {
   @Input() set userGroupId(userGroupId: string) {
     this._userGroupId = userGroupId;
   }
@@ -87,22 +78,35 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
     return this._userGroupUnitId;
   }
 
+  @Input() set userGroupPositionIds(userGroupPositionIds: string) {
+    this._userGroupPositionIds = userGroupPositionIds;
+  }
+  get userGroupPositionIds() {
+    return this._userGroupPositionIds;
+  }
+  @Input() set userGroup(userGroup: string) {
+    this._userGroup = userGroup;
+  }
+  get userGroup() {
+    return this._userGroup;
+  }
+
   userListActions$: BehaviorSubject<UsersListActions> =
     new BehaviorSubject<UsersListActions>({ action: null, id: [] });
-  userAddEdit = false;
+  positionAddEdit = false;
   disableBtn = true;
-  userCount = 0;
+  positionCount = 0;
   limit = graphQLDefaultLimit;
   next = '';
-  selectedUsers = [];
-  allUsersList = [];
+  selectedPositions = [];
+  allPositionsList = [];
   selectedCount = 0;
   plantName;
 
   columns: Column[] = [
     {
-      id: 'user',
-      displayName: 'User',
+      id: 'position',
+      displayName: 'Positions',
       type: 'string',
       controlType: 'string',
       order: 1,
@@ -165,53 +169,9 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: true
-    },
-    {
-      id: 'email',
-      displayName: 'Email',
-      type: 'string',
-      controlType: 'string',
-      order: 4,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
-      sortable: false,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
-    },
-    {
-      id: 'positions',
-      displayName: 'Positions',
-      type: 'string',
-      controlType: 'string',
-      order: 5,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
-      sortable: false,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
     }
   ];
-  fetchUsers$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
+  fetchPositions$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   configOptions: ConfigOptions = {
     tableID: 'usersGroupTable',
@@ -232,7 +192,6 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
   dataSource: MatTableDataSource<any>;
   allUsers$: Observable<any>;
   searchUser: FormControl;
-  // searchUser$: Observable<any>;
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
   ghostLoading = new Array(8).fill(0).map((v, i) => i);
   skip = 0;
@@ -243,6 +202,8 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
   private _userGroupPlantId: string;
   private _userGroupName: string;
   private _userGroupUnitId: string;
+  private _userGroupPositionIds: string;
+  private _userGroup: any;
 
   constructor(
     private userGroupService: UserGroupService,
@@ -260,27 +221,29 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
       this.disableBtn = false;
       this._userGroupId = changes.userGroupId?.currentValue;
       this._userGroupName = changes.userGroupName?.currentValue;
+      this._userGroup = changes.userGroup?.currentValue;
+      this._userGroupPositionIds = this._userGroup?.positionIds;
       if (changes.userGroupPlantId) {
         this._userGroupPlantId = changes.userGroupPlantId?.currentValue;
       }
-      this.fetchUsers$.next({ data: 'load' });
-      this.fetchUsers$.next({} as TableEvent);
+      this.fetchPositions$.next({ data: 'load' });
+      this.fetchPositions$.next({} as TableEvent);
       this.getUnitLocations(this._userGroupPlantId);
-      this.getAllUsers();
+      this.getAllPositions();
     } else {
       this.dataSource = new MatTableDataSource([]);
       this.isLoading$.next(false);
       this.disableBtn = true;
       this._userGroupName = '';
     }
-    this.selectedUsers = [];
+    this.selectedPositions = [];
     this.selectedCount = 0;
-    this.userCount = 0;
+    this.positionCount = 0;
   }
 
   ngOnInit(): void {
-    this.fetchUsers$.next({ data: 'load' });
-    this.fetchUsers$.next({} as TableEvent);
+    this.fetchPositions$.next({ data: 'load' });
+    this.fetchPositions$.next({} as TableEvent);
     this.searchUser = new FormControl('');
     this.loginService.loggedInUserInfo$
       .pipe(
@@ -289,37 +252,28 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
         })
       )
       .subscribe();
-    this.getAllUsers();
+    this.getAllPositions();
     this.configOptions.allColumns = this.columns;
     this.isLoading$.next(true);
   }
 
-  getAllUsers() {
-    const allPositions$ = this.positionsService.getPositionsList$(
-      {
-        limit: this.limit,
-        next: this.next,
-        fetchType: this.fetchType,
-        searchKey: this.searchUser.value
-      },
-      { plant: this._userGroupPlantId }
-    );
-    const usersOnLoadSearch$ = this.fetchUsers$.pipe(
+  getAllPositions() {
+    const usersOnLoadSearch$ = this.fetchPositions$.pipe(
       filter(({ data }) => data === 'load' || data === 'search'),
       switchMap(({ data }) => {
         this.fetchType = data;
         this.skip = 0;
         this.next = '';
         this.isLoading$.next(true);
-        return this.getUsersList();
+        return this.getPositionsList();
       })
     );
-    const usersOnScroll$ = this.fetchUsers$.pipe(
+    const usersOnScroll$ = this.fetchPositions$.pipe(
       filter(({ data }) => data !== 'load' && data !== 'search'),
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
           this.fetchType = data;
-          return this.getUsersList();
+          return this.getPositionsList();
         } else {
           return of([]);
         }
@@ -333,125 +287,76 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
       usersOnLoadSearch$,
       usersOnScroll$,
       this.userListActions$,
-      this.plantService.fetchAllPlants$(),
-      allPositions$
+      this.plantService.fetchAllPlants$()
     ]).pipe(
-      map(([users, scrollData, { action, id }, plant, positions]) => {
+      map(([users, scrollData, { action, id }, plant]) => {
         this.plantName = plant?.items.find(
           (data) => data.id === this.userGroupPlantId
         )?.name;
+
         if (this.skip === 0) {
-          initial.data = users.map((usr) => ({
-            ...usr,
-            positions:
-              usr.users?.positionIds
-                ?.split(',')
-                .map(
-                  (pos) =>
-                    positions.rows.find((item) => item.id === pos)?.name || null
-                )
-                .filter((item) => item)
-                .join(', ') || ''
-          }));
-        } else if (this.userAddEdit) {
+          initial.data =
+            (this._userGroupPositionIds &&
+              this._userGroupPositionIds?.split(',').map((pos) => ({
+                id: users.find((us) => us.id === pos)?.id,
+                position: users.find((us) => us.id === pos)?.name || '',
+                units:
+                  this.allUnitLocations.find(
+                    (unit) => unit.id === this._userGroupUnitId
+                  )?.name || '',
+                plant: this.plantName
+              }))) ||
+            [];
+        } else if (this.positionAddEdit) {
           switch (action) {
             case 'delete':
               id.forEach((data) => {
-                initial.data = initial?.data?.filter(
-                  (user) => user.id !== data
-                );
+                initial.data = initial?.data?.filter((pos) => pos.id !== data);
               });
               this.toast.show({
                 type: 'success',
-                text: 'User removed successfully'
+                text: 'Position removed successfully'
               });
           }
-          this.userAddEdit = false;
-          this.fetchUsers$.next({ data: 'load' });
-          this.fetchUsers$.next({} as TableEvent);
-          this.getAllUsers();
+
+          this.positionAddEdit = false;
+          this.fetchPositions$.next({ data: 'load' });
+          this.fetchPositions$.next({} as TableEvent);
+          this.getAllPositions();
         } else {
           initial.data = initial.data.concat(scrollData);
         }
 
-        this.skip = initial.data?.length;
+        this.isLoading$.next(false);
+        this.positionCount = initial.data?.length;
+        this.userGroupService.usersListEdit = true;
+        this.userGroupService.usersCount$.next({
+          groupId: this._userGroupId,
+          count: this.positionCount
+        });
+        this.skip = this.positionCount;
         this.dataSource = new MatTableDataSource(initial.data);
-        this.allUsersList = initial.data;
+        this.allPositionsList = initial.data;
         return initial;
       })
     );
   }
 
-  getUsersList() {
+  getPositionsList() {
     if (this.userGroupId) {
-      return this.userGroupService
-        .listUserGroupUsers$(
+      return this.positionsService
+        .getPositionsList$(
           {
             limit: this.limit,
-            nextToken: this.next,
+            next: this.next,
             fetchType: this.fetchType,
             searchKey: this.searchUser.value
           },
-          this.userGroupId
+          { plant: this._userGroupPlantId }
         )
         .pipe(
-          mergeMap((resp: any) => {
-            this.isLoading$.next(false);
-            if (resp?.count !== null && resp?.count !== undefined) {
-              this.userCount = resp.count;
-            }
-            this.userGroupService.usersListEdit = true;
-            this.userGroupService.usersCount$.next({
-              groupId: this._userGroupId,
-              count: this.userCount
-            });
-            this.next = resp.next;
-
-            return of(resp.items);
-          }),
-
-          map((data) => {
-            if (data && data.length) {
-              const rows = data?.map((item) => {
-                if (item?.users.firstName && item?.users.lastName) {
-                  item.user =
-                    item?.users.firstName + ' ' + item?.users.lastName;
-                } else {
-                  item.user = '';
-                }
-                if (item?.users.email) {
-                  item.email = item?.users.email ?? '';
-                }
-                if (item?.users?.validThrough) {
-                  item.validThrough = format(
-                    new Date(item?.users?.validThrough),
-                    dateFormat6
-                  );
-                } else {
-                  item.validThrough = '';
-                }
-                item.units = this.allUnitLocations.find(
-                  (unit) => unit.id === this._userGroupUnitId
-                )?.name;
-                item.plant = this.plantName;
-                item.preTextImage = {
-                  style: {
-                    width: '30px',
-                    height: '30px',
-                    'border-radius': '50%',
-                    display: 'block',
-                    padding: '0px 10px'
-                  },
-                  image: this.getImageSrc(item?.users?.profileImage),
-                  condition: true
-                };
-                return item;
-              });
-              return rows;
-            } else {
-              return [];
-            }
-          })
+          mergeMap((resp: any) => of(resp.rows || [])),
+          map((data) => (data && data.length ? data : []))
         );
     } else {
       return of({
@@ -463,23 +368,14 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
   }
 
   handleTableEvent = (event) => {
-    this.fetchUsers$.next(event);
-  };
-
-  getImageSrc = (source: string) => {
-    if (source) {
-      const base64Image = 'data:image/jpeg;base64,' + source;
-      return this.sant.bypassSecurityTrustResourceUrl(base64Image);
-    } else {
-      return this.sant.bypassSecurityTrustResourceUrl(defaultProfilePic);
-    }
+    this.fetchPositions$.next(event);
   };
 
   prepareMenuActions(permissions: Permission[]) {
     const menuActions = [];
     if (this.loginService.checkUserHasPermission(permissions, 'UPDATE_ASSET')) {
       menuActions.push({
-        title: 'Remove User',
+        title: 'Remove Position',
         action: 'delete'
       });
     }
@@ -491,16 +387,17 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
 
   deleteUserGroupUsers() {}
 
-  selectUnselectUsers() {
+  selectUnselectPositions() {
     const openSelectUserRef = this.dialog.open(
-      SelectUserUsergroupModalComponent,
+      SelectUserGroupPositionsModalComponent,
       {
         data: {
           type: 'update',
           plantId: this._userGroupPlantId,
           userGroupId: this._userGroupId,
           name: this._userGroupName,
-          unitId: this._userGroupUnitId
+          unitId: this._userGroupUnitId,
+          selectedUserGroup: this._userGroup
         }
       }
     );
@@ -508,11 +405,11 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
     openSelectUserRef.afterClosed().subscribe((data) => {
       const { returnType } = data;
       if (returnType === 'done') {
-        this.fetchUsers$.next({ data: 'load' });
-        this.fetchUsers$.next({} as TableEvent);
+        this.fetchPositions$.next({ data: 'load' });
+        this.fetchPositions$.next({} as TableEvent);
         this.skip = 0;
         this.userGroupService.usersListEdit = true;
-        this.getAllUsers();
+        this.getAllPositions();
       }
     });
   }
@@ -521,31 +418,31 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
     switch (action) {
       case 'toggleAllRows':
         let selectedAll = false;
-        const users = this.allUsersList;
+        const positions = this.allPositionsList;
         if (
-          this.selectedUsers.length === 0 ||
-          this.selectedUsers.length !== users.length
+          this.selectedPositions.length === 0 ||
+          this.selectedPositions.length !== positions.length
         ) {
           selectedAll = true;
-          this.selectedUsers = users;
+          this.selectedPositions = positions;
         } else {
           selectedAll = false;
-          this.selectedUsers = [];
+          this.selectedPositions = [];
         }
-        this.selectedCount = this.selectedUsers.length;
+        this.selectedCount = this.selectedPositions.length;
         break;
       case 'toggleRowSelect':
-        const index = this.selectedUsers.findIndex(
-          (user) => user.id === data.id
+        const index = this.selectedPositions.findIndex(
+          (pos) => pos.id === data.id
         );
         if (index !== -1) {
-          this.selectedUsers = this.selectedUsers.filter(
-            (user) => user.id !== data.id
+          this.selectedPositions = this.selectedPositions.filter(
+            (pos) => pos.id !== data.id
           );
         } else {
-          this.selectedUsers.push(data);
+          this.selectedPositions.push(data);
         }
-        this.selectedCount = this.selectedUsers.length;
+        this.selectedCount = this.selectedPositions.length;
         break;
       case 'delete':
         this.openRemoveUserModaSingleDelete(data);
@@ -557,25 +454,44 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
   openRemoveUserModaSingleDelete(data): void {
     const removeUserModalRef = this.dialog.open(RemoveUserModalComponent, {
       data: {
-        type: 'single'
+        type: 'single',
+        userGroupType: this._userGroup.type
       }
     });
     removeUserModalRef.afterClosed().subscribe((resp) => {
       const { response } = resp;
       if (response === 'yes') {
         const id = data?.id;
+        const payload = this._userGroupPositionIds
+          ? this._userGroupPositionIds
+              .split(',')
+              .filter((pos) => pos !== id)
+              .join(',')
+          : '';
         this.isLoading$.next(true);
         this.userGroupService
-          .deleteUserGroupMembers([id], this.userGroupId)
+          .updateUserGroup$(
+            this._userGroupId,
+            { positionIds: payload },
+            {
+              displayToast: true,
+              failureResponse: {}
+            }
+          )
           .subscribe(() => {
-            this.userAddEdit = true;
+            this.positionAddEdit = true;
+            this.userGroupService.addUpdateDeleteCopyUserGroup = true;
+            this.userGroupService.userGroupActions$.next({
+              action: 'edit',
+              group: { ...this._userGroup, positionIds: payload }
+            });
             this.userListActions$.next({ action: 'delete', id: [id] });
-            this.userCount -= 1;
+            this.positionCount -= 1;
             this.userGroupService.usersListEdit = true;
             this.isLoading$.next(false);
             this.userGroupService.usersCount$.next({
               groupId: this._userGroupId,
-              count: this.userCount
+              count: this.positionCount
             });
           });
       }
@@ -586,38 +502,57 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
       RemoveUserModalComponent,
       {
         data: {
-          text: 'multiple'
+          text: 'multiple',
+          userGroupType: this._userGroup.type
         }
       }
     );
     removeMultipleUserModelRef.afterClosed().subscribe((resp) => {
       const { response } = resp;
       if (response === 'yes') {
-        const idList = this.selectedUsers.map((user) => user.id);
+        const idList = this.selectedPositions.map((pos) => pos.id);
+        const payload = this._userGroupPositionIds
+          .split(',')
+          .filter((pos) => !idList.includes(pos))
+          .join(',');
+        this.isLoading$.next(true);
         this.userGroupService
-          .deleteUserGroupMembers(idList, this.userGroupId)
+          .updateUserGroup$(
+            this._userGroupId,
+            { positionIds: payload },
+            {
+              displayToast: true,
+              failureResponse: {}
+            }
+          )
           .subscribe(() => {
-            this.selectedUsers = [];
-            this.selectedCount = this.selectedUsers.length;
-            this.userAddEdit = true;
+            this.selectedPositions = [];
+            this.selectedCount = this.selectedPositions.length;
+            this.positionAddEdit = true;
+            this.userGroupService.addUpdateDeleteCopyUserGroup = true;
+            this.userGroupService.userGroupActions$.next({
+              action: 'edit',
+              group: { ...this._userGroup, positionIds: payload }
+            });
             this.userListActions$.next({ action: 'delete', id: idList });
-            this.userCount -= idList.length;
+            this.positionCount -= 1;
             this.userGroupService.usersListEdit = true;
+            this.isLoading$.next(false);
             this.userGroupService.usersCount$.next({
               groupId: this._userGroupId,
-              count: this.userCount
+              count: this.positionCount
             });
           });
       }
     });
   }
   onCancelFooter() {
-    this.fetchUsers$.next({ data: 'load' });
-    this.fetchUsers$.next({} as TableEvent);
-    this.getAllUsers();
-    this.selectedUsers = [];
+    this.fetchPositions$.next({ data: 'load' });
+    this.fetchPositions$.next({} as TableEvent);
+    this.getAllPositions();
+    this.selectedPositions = [];
     this.skip = 0;
-    this.selectedCount = this.selectedUsers.length;
+    this.selectedCount = this.selectedPositions.length;
   }
 
   getUnitLocations(selectedPlantId?: string) {
