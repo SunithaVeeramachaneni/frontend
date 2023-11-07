@@ -173,6 +173,7 @@ export class PositionsComponent implements OnInit, OnDestroy {
   readonly perms = perms;
   private onDestroy$ = new Subject();
   userInfo$: Observable<UserInfo>;
+  dataFetchingComplete = false;
 
   constructor(
     private readonly positionService: PositionsService,
@@ -256,6 +257,7 @@ export class PositionsComponent implements OnInit, OnDestroy {
   };
 
   getDisplayedForms(): void {
+    
     const formsOnLoadSearch$ = this.positionService.fetchPositions$.pipe(
       filter(({ data }) => data === 'load' || data === 'search'),
       switchMap(({ data }) => {
@@ -292,6 +294,7 @@ export class PositionsComponent implements OnInit, OnDestroy {
             ...this.configOptions,
             tableHeight: 'calc(100vh - 130px)'
           };
+          this.dataFetchingComplete = true;
           initial.data = rows;
         } else {
           initial.data = initial.data.concat(scrollData);
@@ -398,7 +401,24 @@ export class PositionsComponent implements OnInit, OnDestroy {
   populateFilter() {
     combineLatest([
       this.usersService.getUsersInfo$(),
-      this.plantService.fetchAllPlants$()
+      this.plantsService.fetchLoggedInUserPlants$().pipe(
+        tap((plants) => {
+          this.plants = plants.map((plant) => {
+            const { id, name, plantId } = plant;
+            this.plantsIdNameMap[`${plantId} - ${name}`] = id;
+            return `${plantId} - ${name}`;
+          });
+          this.filterJson = [
+            {
+              column: 'plant',
+              items: this.plants,
+              label: 'Plant',
+              type: 'select',
+              value: ''
+            }
+          ];
+        })
+      )
     ]).subscribe(([usersList, { items: plantsList }]) => {
       this.createdBy = usersList
         .map((user) => `${user.firstName} ${user.lastName}`)
@@ -406,12 +426,6 @@ export class PositionsComponent implements OnInit, OnDestroy {
       this.lastModifiedBy = usersList.map(
         (user) => `${user.firstName} ${user.lastName}`
       );
-      this.plants = plantsList
-        .map((plant) => {
-          this.plantsIdNameMap[`${plant.plantId} - ${plant.name}`] = plant.id;
-          return `${plant.plantId} - ${plant.name}`;
-        })
-        .sort();
       this.setFilters();
     });
   }

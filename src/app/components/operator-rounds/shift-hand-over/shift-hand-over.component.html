@@ -19,7 +19,6 @@
         <div *ngIf="(forms$ | async) && (isLoading$ | async) === false">
             <cwp-dynamictable [dataSource]="dataSource" [configOptions]="configOptions"
               (fetchDataCallback)="handleTableEvent($event)"
-              (onConfigOptionsChange)="configOptionsChangeHandler($event)"
               (cellClickActionHandler)="cellClickActionHandler($event)" class="width-100">
             </cwp-dynamictable>
           </div>
