@@ -1083,15 +1083,20 @@ export class RoundPlanHeaderConfigurationComponent
         plantId: selectedPlant || ''
       };
       this.locationService.fetchUnitLocations$(filter).subscribe((units) => {
-        this.allUnitLocations = units.items;
+        this.allUnitLocations = units.items || [];
+        this.allUnitLocations = [
+          {
+            name: 'None',
+            id: ''
+          },
+          ...this.allUnitLocations
+        ];
         this.unitLocations = this.allUnitLocations;
         if (selectedLocationId) {
           const selectedLocation = this.unitLocations.find(
             (loc) => loc.id === selectedLocationId
           );
-          this.headerDataForm.patchValue({
-            unitId: selectedLocation.id || ''
-          });
+          this.headerDataForm.get('unitId').setValue(selectedLocation.id || '');
         }
       });
     }

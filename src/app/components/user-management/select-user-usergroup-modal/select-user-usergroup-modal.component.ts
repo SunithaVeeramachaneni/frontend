@@ -37,6 +37,7 @@ import {
 } from 'rxjs/operators';
 import { UserGroupService } from '../services/user-group.service';
 import { DomSanitizer } from '@angular/platform-browser';
+import { LocationService } from '../../master-configurations/locations/services/location.service';
 @Component({
   selector: 'app-select-user-usergroup-modal',
   templateUrl: './select-user-usergroup-modal.component.html',
@@ -67,8 +68,8 @@ export class SelectUserUsergroupModalComponent implements OnInit {
       hasPostTextImage: false
     },
     {
-      id: 'roleString',
-      displayName: 'Role',
+      id: 'units',
+      displayName: 'Unit',
       type: 'string',
       controlType: 'string',
       order: 2,
@@ -83,7 +84,7 @@ export class SelectUserUsergroupModalComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: true,
-      titleStyle: { color: '#3D5AFE' },
+      titleStyle: {},
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: true
@@ -159,12 +160,15 @@ export class SelectUserUsergroupModalComponent implements OnInit {
   initialUsers = [];
   disableBtn: any;
   preselectedUsers = [];
+  allUnitLocations = [];
+  selectedUnit = {};
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<SelectUserUsergroupModalComponent>,
     private userGroupService: UserGroupService,
     private roleService: RolesPermissionsService,
+    private locationService: LocationService,
     private sant: DomSanitizer
   ) {}
 
@@ -193,6 +197,7 @@ export class SelectUserUsergroupModalComponent implements OnInit {
       )
       .subscribe(() => this.isLoading$.next(true));
 
+    this.getUnitLocations(this.data.plantId, this.data.unitId);
     this.getDisplayedUsers();
     this.configOptions.allColumns = this.columns;
     this.permissionsList$ = this.roleService.getPermissions$();
@@ -272,9 +277,17 @@ export class SelectUserUsergroupModalComponent implements OnInit {
 
         this.skip = initial.data?.length;
         initial?.data?.map((user) => {
-          const rolesArray = user?.roles;
-          const rolesList = rolesArray?.map((role) => role.name);
-          user.roleString = rolesList?.toString();
+          const updatedUnits = user?.unitIds
+            ?.split(',')
+            .map((unit) => {
+              const res = this.allUnitLocations.find(
+                (item) => item.id === unit
+              );
+              return res?.name || null;
+            })
+            .filter((item) => item)
+            .join(', ');
+          user.units = updatedUnits;
           return user;
         });
         this.dataSource = new MatTableDataSource(initial.data);
@@ -299,6 +312,7 @@ export class SelectUserUsergroupModalComponent implements OnInit {
         limit: this.limit,
         searchKey: this.searchUser.value,
         plantId: this.data.plantId,
+        unitId: this.data.unitId,
         fetchType: this.fetchType,
         next: this.next
       })
@@ -421,6 +435,8 @@ export class SelectUserUsergroupModalComponent implements OnInit {
       description: this.data?.description ?? '',
       plantId: this.data?.plantId,
       users: selectedUserId,
+      unitId: this.data?.unitId || '',
+      type: this.data.selectedGroupType || 'users',
       searchTerm: `${this.data?.name?.toLowerCase() ?? ''} ${
         this.data?.description?.toLowerCase() ?? ''
       }`
@@ -477,5 +493,24 @@ export class SelectUserUsergroupModalComponent implements OnInit {
     }
     const uniqueArray = Object.values(uniqueMap);
     return uniqueArray;
+  }
+
+  getUnitLocations(selectedPlantId?: string, selectedLocationId?: string) {
+    const selectedPlant = selectedPlantId;
+    if (selectedPlant) {
+      const unitFilter = {
+        plantId: selectedPlant || ''
+      };
+      this.locationService
+        .fetchUnitLocations$(unitFilter)
+        .subscribe((units) => {
+          this.allUnitLocations = units.items;
+          if (selectedLocationId) {
+            this.selectedUnit = this.allUnitLocations.find(
+              (loc) => loc.id === selectedLocationId
+            );
+          }
+        });
+    }
   }
 }

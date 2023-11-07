@@ -158,6 +158,7 @@
                   formControlName="unitId"
                   [placeholder]="'unitLocationPlaceholder' | translate"
                   (openedChange)="resetUnitSearchFilter()"
+                  [disabled]="roundData.roundExists"
                 >
                   <div
                     class="custom-form-field-gray-color search search-container"

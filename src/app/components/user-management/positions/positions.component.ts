@@ -133,6 +133,7 @@ export class PositionsComponent implements OnInit, OnDestroy {
   filter: any = {
     plant: ''
   };
+  currentUserPlantId: string;
   dataSource: MatTableDataSource<any>;
   positions$: Observable<any>;
   addEditCopyForm$: BehaviorSubject<FormTableUpdate> =
@@ -172,6 +173,7 @@ export class PositionsComponent implements OnInit, OnDestroy {
   readonly perms = perms;
   private onDestroy$ = new Subject();
   userInfo$: Observable<UserInfo>;
+  dataFetchingComplete = false;
 
   constructor(
     private readonly positionService: PositionsService,
@@ -182,7 +184,8 @@ export class PositionsComponent implements OnInit, OnDestroy {
     private usersService: UsersService,
     private plantService: PlantService,
     private cdrf: ChangeDetectorRef,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private plantsService: PlantService
   ) {}
   ngOnInit(): void {
     this.headerService.setHeaderTitle(routingUrls.positions.title);
@@ -224,6 +227,15 @@ export class PositionsComponent implements OnInit, OnDestroy {
       .subscribe(({ permissions = [] }) =>
         this.prepareMenuActions(permissions)
       );
+
+      this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
+      tap(({ permissions = [], plantId }) => {
+        this.currentUserPlantId = plantId;
+        this.plantsService.setUserPlantIds(plantId);
+        this.filter.plant = plantId;
+        this.prepareMenuActions(permissions);
+      })
+    );
     this.populateFilter();
   }
 
@@ -245,6 +257,7 @@ export class PositionsComponent implements OnInit, OnDestroy {
   };
 
   getDisplayedForms(): void {
+    
     const formsOnLoadSearch$ = this.positionService.fetchPositions$.pipe(
       filter(({ data }) => data === 'load' || data === 'search'),
       switchMap(({ data }) => {
@@ -281,6 +294,7 @@ export class PositionsComponent implements OnInit, OnDestroy {
             ...this.configOptions,
             tableHeight: 'calc(100vh - 130px)'
           };
+          this.dataFetchingComplete = true;
           initial.data = rows;
         } else {
           initial.data = initial.data.concat(scrollData);
@@ -302,15 +316,17 @@ export class PositionsComponent implements OnInit, OnDestroy {
 
     const hasColumnConfigFilter = Object.keys(columnConfigFilter)?.length || 0;
 
-    return this.positionService
-      .getPositionsList$(
-        {
-          next: this.nextToken,
-          limit: hasColumnConfigFilter ? graphQLDefaultFilterLimit : this.limit,
-          searchKey: this.searchPosition.value,
-          fetchType: this.fetchType
-        },
-        this.filter
+      return (
+        this.positionService.getPositionsList$(
+          {
+            next: this.nextToken,
+            limit: hasColumnConfigFilter ? graphQLDefaultFilterLimit : this.limit,
+            searchKey: this.searchPosition.value,
+            
+            fetchType: this.fetchType
+          },
+          this.filter
+        ) as Observable<any>
       )
       .pipe(
         mergeMap(({ count, rows, next }) => {
@@ -385,7 +401,24 @@ export class PositionsComponent implements OnInit, OnDestroy {
   populateFilter() {
     combineLatest([
       this.usersService.getUsersInfo$(),
-      this.plantService.fetchAllPlants$()
+      this.plantsService.fetchLoggedInUserPlants$().pipe(
+        tap((plants) => {
+          this.plants = plants.map((plant) => {
+            const { id, name, plantId } = plant;
+            this.plantsIdNameMap[`${plantId} - ${name}`] = id;
+            return `${plantId} - ${name}`;
+          });
+          this.filterJson = [
+            {
+              column: 'plant',
+              items: this.plants,
+              label: 'Plant',
+              type: 'select',
+              value: ''
+            }
+          ];
+        })
+      )
     ]).subscribe(([usersList, { items: plantsList }]) => {
       this.createdBy = usersList
         .map((user) => `${user.firstName} ${user.lastName}`)
@@ -393,12 +426,6 @@ export class PositionsComponent implements OnInit, OnDestroy {
       this.lastModifiedBy = usersList.map(
         (user) => `${user.firstName} ${user.lastName}`
       );
-      this.plants = plantsList
-        .map((plant) => {
-          this.plantsIdNameMap[`${plant.plantId} - ${plant.name}`] = plant.id;
-          return `${plant.plantId} - ${plant.name}`;
-        })
-        .sort();
       this.setFilters();
     });
   }
