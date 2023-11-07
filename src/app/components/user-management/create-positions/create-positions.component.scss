@@ -1,0 +1,161 @@
+@import '../../../../scss/colors.scss';
+
+:host {
+    background: $white;
+    color: black;
+    position: absolute;
+    left: auto;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 450px;
+    min-width: 450px;
+    z-index: 9999;
+    box-shadow: 0px 2px 1px -1px rgb(0 0 0 / 20%),
+        0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
+    overflow-x: hidden;
+}
+
+.top-bar {
+    padding: 16px 16px 0px 16px;
+    display: flex;
+}
+
+.container-div {
+    padding: 0px 16px;
+    margin-bottom: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: calc(100vh - 145px);
+
+    ::ng-deep .mat-form-field-appearance-outline .mat-form-field-wrapper {
+        margin-top: 7px;
+    }
+}
+
+#create-position {
+    display: flex;
+    width: 450px;
+
+    .flex-box {
+        display: flex;
+        width: 100%;
+    }
+
+    .mat-card {
+        box-shadow: none;
+        padding: 0px;
+    }
+
+    .mat-container {
+        width: 100%;
+    }
+
+    .cancel {
+        cursor: pointer;
+        height: 15px;
+        width: 15px;
+        float: left;
+    }
+
+    .heading {
+        font-size: 1.2rem;
+        font-weight: 500;
+        float: left;
+        margin-top: 32px;
+        margin-left: -12px;
+    }
+
+    .image-container {
+        margin: 0;
+    }
+
+    .image-contain {
+        height: 75px;
+        width: 75px;
+        position: relative;
+        left: -2px;
+    }
+
+    .create-btn {
+        background-color: $blue-main;
+        color: $white;
+        float: right;
+        margin-top: 15px;
+        width: 50%;
+    }
+
+    .create-btn:disabled {
+        background-color: $gray2-bg;
+        color: $gray7;
+        margin-top: 15px;
+        width: 50%;
+    }
+
+    .cancel-btn {
+        color: $blue-main;
+        border-color: $blue-main;
+        float: right;
+        margin-right: 10px;
+        margin-top: 15px;
+        width: 50%;
+    }
+
+    .error-fields {
+        margin-top: 14px;
+    }
+
+    .actions-footer {
+        display: flex;
+        justify-content: center;
+        position: absolute;
+        bottom: 0;
+        padding: 0px 20px 12px 22px;
+        width: 90%;
+    }
+
+    .searchable-input {
+        width: 92%;
+        border: 1px solid $border-color;
+        padding: 5px;
+        border-radius: 4px;
+        margin: 10px 10px 10px 12px;
+    }
+
+    .additional-details {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding: 9px 16px;
+
+        width: 93%;
+        height: 30px;
+
+        background: rgba(61, 90, 254, 0.15);
+        border-radius: 8px;
+        margin: 12px 0 0 0;
+    }
+}
+
+.searchable-input {
+    width: 92%;
+    border: 1px solid $border-color;
+    padding: 5px;
+    border-radius: 4px;
+    margin: 10px 10px 10px 12px;
+}
+
+.scrollable-area {
+    max-height: 200px;
+    overflow: auto;
+}
+
+.shiftOption {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .shiftTimeLabel {
+        color: $light-gray;
+    }
+}

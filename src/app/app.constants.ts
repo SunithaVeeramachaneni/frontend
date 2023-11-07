@@ -143,7 +143,11 @@ export const permissions = Object.freeze({
   createIntegration: 'CREATE_INTEGRATION',
   updateIntegration: 'UPDATE_INTEGRATION',
   deleteIntegration: 'DELETE_INTEGRATION',
-  viewIntegration: 'VIEW_INTEGRATION'
+  viewIntegration: 'VIEW_INTEGRATION',
+  viewPosition: 'VIEW_POSITIONS',
+  createPosition: 'CREATE_POSITIONS',
+  updatePosition: 'UPDATE_POSITIONS',
+  viewShiftHandovers: 'VIEW_SHRS'
 });
 
 export const routingUrls = {
@@ -217,6 +221,11 @@ export const routingUrls = {
     title: 'Active Users',
     permission: permissions.viewUsers
   },
+  positions: {
+    url: '/user-management/positions',
+    title: 'Positions',
+    permission: permissions.viewPosition
+  },
   rolesPermissions: {
     url: '/user-management/roles-permissions',
     title: 'Roles & Permissions',
@@ -283,6 +292,11 @@ export const routingUrls = {
     title: 'Operator Rounds',
     permission: permissions.viewORPlans
   },
+  shiftHandOvers: {
+    url: '/operator-rounds/shift-handover',
+    title: 'Shift Handover',
+    permission: permissions.viewShiftHandovers
+  },
   oprDashboard: {
     url: '/operator-rounds/dashboard',
     title: 'Dashboard',
@@ -347,8 +361,8 @@ export const routingUrls = {
     url: '/master-configuration/global-response',
     title: 'Global Response Set',
     permission: permissions.viewGlobalResponses
-  }
-};
+  },
+ };
 export const formConfigurationStatus = Object.freeze({
   draft: 'Draft',
   published: 'Published',

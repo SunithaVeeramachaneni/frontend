@@ -471,6 +471,7 @@
   "revisedDates": "Revised Dates:",
   "recent": "Recent",
   "favorite": "Favorite",
+  "all": "All",
   "allReports": "All",
   "collapseAllSections": "Collapse All Sections",
   "saveAs": "Save As",
@@ -485,6 +486,8 @@
   "createNotificationAnyway": "Create New Notification Anyway",
   "showNotifications": "Show Issues with Notifications",
   "notificationsAlertDialog": "{ count } active Notifications from { count } Issues already exists for this { entityName }. Do you want to create a new Notification?",
+  "unitLocation": "Unit",
+  "unitLocationPlaceholder": "Unit",
   "maxDate": "Days count must be at the max of {count} days",
   "validEndDate": "Days count must be at the max of {count} days based on the End Date"
 }

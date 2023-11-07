@@ -11,6 +11,7 @@ export interface CreateLocation {
   image?: string;
   searchTerm?: string;
   plantsID?: string;
+  isUnit?: boolean;
 }
 
 export interface DeleteLocation {

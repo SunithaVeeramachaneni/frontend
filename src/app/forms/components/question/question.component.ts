@@ -411,7 +411,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
                 sectionId: this.sectionId,
                 question: this.questionForm.value,
                 questionIndex: this.questionIndex,
-                type: 'update'
+                type: 'update',
+                instructionsMedia:this.instructionsMedia
               });
             }
           }

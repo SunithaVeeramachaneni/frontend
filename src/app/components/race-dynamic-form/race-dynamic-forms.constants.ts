@@ -417,6 +417,16 @@ export const RDF_FORM_LIST_FILTERS = [
   }
 ];
 
+export const UM_POSITION_FILTERS = [
+  {
+    label: 'Plant',
+    items: [],
+    column: 'plant',
+    type: 'select',
+    value: ''
+  },
+]
+
 export const RDF_TEMPLATE_LIST_FILTERS = [
   {
     label: 'Status',

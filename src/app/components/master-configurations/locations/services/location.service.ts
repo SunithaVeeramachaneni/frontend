@@ -83,6 +83,7 @@ export class LocationService {
       | 'locationId'
       | 'parentId'
       | 'plantsID'
+      | 'isUnit'
     >
   ) {
     return this._appService._postData(
@@ -180,6 +181,19 @@ export class LocationService {
       true
     );
   }
+
+  fetchUnitLocations$ = (filter: { plantId: string }) => {
+    const queryParamaters = {
+      plantId: filter.plantId,
+      isUnit: true
+    };
+    return this._appService._getResp(
+      environment.masterConfigApiUrl,
+      'location/listAll',
+      { displayToast: true, failureResponse: {} },
+      queryParamaters
+    );
+  };
 
   private formatGraphQLocationResponse(resp: LocationsResponse) {
     let rows =

@@ -11,6 +11,8 @@ import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-valid
 import { ValidationError } from 'src/app/interfaces';
 import { SelectUserUsergroupModalComponent } from '../select-user-usergroup-modal/select-user-usergroup-modal.component';
 import { UserGroupService } from '../services/user-group.service';
+import { LocationService } from '../../master-configurations/locations/services/location.service';
+import { SelectUserGroupPositionsModalComponent } from '../select-user-group-positions-modal/select-user-group-positions-modal.component';
 @Component({
   selector: 'app-add-edit-user-group-modal',
   templateUrl: './add-edit-user-group-modal.component.html',
@@ -30,12 +32,17 @@ export class AddEditUserGroupModalComponent implements OnInit {
   groupBtn: string;
   groupData: any;
   errors: ValidationError = {};
+  allUnitLocations = [];
+  unitLocations = this.allUnitLocations;
+  unitFilterInput = '';
+  searchUnits = '';
 
   constructor(
     public dialog: MatDialog,
     private dailogRef: MatDialogRef<AddEditUserGroupModalComponent>,
     private fb: FormBuilder,
     private userGroupService: UserGroupService,
+    private locationService: LocationService,
     @Inject(MAT_DIALOG_DATA)
     public data: any
   ) {}
@@ -50,7 +57,8 @@ export class AddEditUserGroupModalComponent implements OnInit {
         WhiteSpaceValidator.trimWhiteSpace
       ]),
       description: new FormControl(''),
-      plantId: new FormControl('', [Validators.required])
+      plantId: new FormControl('', [Validators.required]),
+      unitId: ['']
     });
     const { type, plants } = this.data;
     if (type === 'create') {
@@ -72,9 +80,14 @@ export class AddEditUserGroupModalComponent implements OnInit {
       };
       this.userGroupForm.patchValue(groupEditData);
       this.userGroupForm.get('plantId').disable();
+      this.userGroupForm.get('unitId').disable();
     }
     this.plants = plants;
     this.plantInformation = plants;
+    this.getUnitLocations(
+      this.data.userGroupData.plantId,
+      this.data.userGroupData.unitId
+    );
   }
 
   close() {
@@ -82,20 +95,39 @@ export class AddEditUserGroupModalComponent implements OnInit {
   }
 
   openSelectUser(): void {
-    const openSelectUserRef = this.dialog.open(
-      SelectUserUsergroupModalComponent,
-      {
-        data: {
-          type: 'create',
-          ...this.userGroupForm.value
+    if (this.data.selectedGroupType === 'positions') {
+      const openSelectUserRef = this.dialog.open(
+        SelectUserGroupPositionsModalComponent,
+        {
+          data: {
+            type: 'create',
+            selectedGroupType: this.data.selectedGroupType,
+            ...this.userGroupForm.value
+          }
         }
-      }
-    );
-    openSelectUserRef.afterClosed().subscribe((data) => {
-      if (!data.isBack) {
-        this.dailogRef.close();
-      }
-    });
+      );
+      openSelectUserRef.afterClosed().subscribe((data) => {
+        if (!data.isBack) {
+          this.dailogRef.close();
+        }
+      });
+    } else {
+      const openSelectUserRef = this.dialog.open(
+        SelectUserUsergroupModalComponent,
+        {
+          data: {
+            type: 'create',
+            selectedGroupType: this.data.selectedGroupType,
+            ...this.userGroupForm.value
+          }
+        }
+      );
+      openSelectUserRef.afterClosed().subscribe((data) => {
+        if (!data.isBack) {
+          this.dailogRef.close();
+        }
+      });
+    }
   }
 
   next() {
@@ -106,10 +138,12 @@ export class AddEditUserGroupModalComponent implements OnInit {
   updateUserGroup() {
     const updatedName = this.userGroupForm.get('name').value;
     const updatedDesc = this.userGroupForm.get('description').value;
+    const updatedUnitId = this.userGroupForm.get('unitId').value;
     const updatedData = {
       ...this.groupData,
       name: updatedName ?? '',
       description: updatedDesc ?? '',
+      unitId: updatedUnitId || '',
       searchTerm: `${updatedName?.toLowerCase() ?? ''} ${
         updatedDesc?.toLowerCase() ?? ''
       }`
@@ -117,6 +151,7 @@ export class AddEditUserGroupModalComponent implements OnInit {
     const payload = {
       name: updatedName,
       description: updatedDesc,
+      unitId: updatedUnitId,
       searchTerm: `${updatedName?.toLowerCase()} ${updatedDesc?.toLowerCase()}`
     };
     this.userGroupService
@@ -143,6 +178,17 @@ export class AddEditUserGroupModalComponent implements OnInit {
     }
   }
 
+  onKeyUnit(event) {
+    this.unitFilterInput = event.target.value.trim() || '';
+    if (this.unitFilterInput) {
+      this.unitLocations = this.unitLocations.filter((unit) =>
+        unit.name.toLowerCase().includes(this.unitFilterInput.toLowerCase())
+      );
+    } else {
+      this.unitLocations = this.allUnitLocations;
+    }
+  }
+
   searchPlant(value: string) {
     const searchValue = value.toLowerCase();
     return this.plants?.filter(
@@ -166,5 +212,41 @@ export class AddEditUserGroupModalComponent implements OnInit {
       });
     }
     return !touched || this.errors[controlName] === null ? false : true;
+  }
+
+  handlePlantChange = () => {
+    this.userGroupForm.get('unitId').setValue('');
+    this.getUnitLocations();
+  };
+
+  isUnitDropdownDisabled() {
+    return !Boolean(this.userGroupForm.get('plantId').value);
+  }
+
+  getUnitLocations(selectedPlantId?: string, selectedLocationId?: string) {
+    const selectedPlant =
+      selectedPlantId || this.userGroupForm.get('plantId').value;
+    if (selectedPlant) {
+      const filter = {
+        plantId: selectedPlant || ''
+      };
+      this.locationService.fetchUnitLocations$(filter).subscribe((units) => {
+        this.allUnitLocations = units.items;
+        this.allUnitLocations = [
+          {
+            name: 'None',
+            id: ''
+          },
+          ...this.allUnitLocations
+        ];
+        this.unitLocations = this.allUnitLocations;
+        if (selectedLocationId) {
+          const selectedLocation = this.unitLocations.find(
+            (loc) => loc.id === selectedLocationId
+          );
+          this.userGroupForm.get('unitId').setValue(selectedLocation.id || '');
+        }
+      });
+    }
   }
 }

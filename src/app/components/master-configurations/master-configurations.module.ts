@@ -51,6 +51,7 @@ import { ResponsesListComponent } from './response-set/responses-list/responses-
 import { AddEditShiftComponent } from './shifts/add-edit-shift/add-edit-shift.component';
 import { ShiftListComponent } from './shifts/shift-list/shift-list.component';
 import { ShiftOverlapModalComponent } from './plants/shift-overlap-modal/shift-overlap-modal.component';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(
@@ -115,7 +116,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatRadioModule,
     NgxShimmerLoadingModule,
     MatProgressSpinnerModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatCheckboxModule
   ],
   exports: [
     MasterConfigurationsContainerComponent,

@@ -7,6 +7,7 @@ import { InactiveUsersComponent } from './inactive-users/inactive-users.componen
 import { AuthGuard } from 'src/app/shared/guards/auth.guard';
 import { permissions } from 'src/app/app.constants';
 import { UserGroupListComponent } from './user-group-list/user-group-list.component';
+import { PositionsComponent } from './positions/positions.component';
 
 const routes: Routes = [
   {
@@ -42,6 +43,15 @@ const routes: Routes = [
         canActivate: [AuthGuard],
         data: {
           breadcrumb: { label: 'User Groups' },
+          permissions: [permissions.viewUserGroup]
+        }
+      },
+      {
+        path: 'positions',
+        component: PositionsComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: { label: 'Positions' },
           permissions: [permissions.viewUserGroup]
         }
       }

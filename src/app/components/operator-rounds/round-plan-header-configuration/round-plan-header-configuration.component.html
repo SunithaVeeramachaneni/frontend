@@ -98,49 +98,102 @@
               formControlName="description"
             />
           </mat-form-field>
-          <p
-            id="roundPlanHeaderPlan"
-            class="form-name-description m-t-20 m-b-0"
-          >
-            {{ 'plantMandatory' | translate }}
-          </p>
-          <mat-form-field appearance="outline" class="width-100 form-field">
-            <mat-select
-              id="roundPlanHeaderSelectPlant"
-              formControlName="plantId"
-              [placeholder]="'plant' | translate"
-              (openedChange)="resetPlantSearchFilter()"
-              [disabled]="roundData.roundExists"
-            >
-              <input
-                id="roundPlanHeaderPlantInput"
-                class="searchable-input"
-                [placeholder]="'search' | translate"
-                (keyup)="onKeyPlant($event)"
-                [value]="plantFilterInput"
-              />
-              <div class="scrollable-area">
-                <mat-option
-                  [value]="plant.id"
-                  *ngFor="let plant of plantInformation"
-                  >{{ plant.plantId }} - {{ plant.name }}</mat-option
+          <div class="flexContainer">
+            <div class="width-100 m-r-10">
+              <p
+                id="roundPlanHeaderPlan"
+                class="form-name-description m-t-20 m-b-0"
+              >
+                {{ 'plantMandatory' | translate }}
+              </p>
+              <mat-form-field appearance="outline" class="width-100 form-field">
+                <mat-select
+                  id="roundPlanHeaderSelectPlant"
+                  formControlName="plantId"
+                  [placeholder]="'plant' | translate"
+                  (openedChange)="resetPlantSearchFilter()"
+                  [disabled]="roundData.roundExists"
                 >
-              </div>
-            </mat-select>
-            <mat-error
-              id="roundPlanHeaderPlantError"
-              *ngIf="processValidationErrors('plantId')"
-              class="m-t-5 error-fields"
-            >
-              {{
-                errors.plantId.name
-                  | translate
-                    : {
-                        name: 'plant' | translate
-                      }
-              }}
-            </mat-error>
-          </mat-form-field>
+                  <input
+                    id="roundPlanHeaderPlantInput"
+                    class="searchable-input"
+                    [placeholder]="'search' | translate"
+                    (keyup)="onKeyPlant($event)"
+                    [value]="plantFilterInput"
+                  />
+                  <div class="scrollable-area">
+                    <mat-option
+                      [value]="plant.id"
+                      *ngFor="let plant of plantInformation"
+                      >{{ plant.plantId }} - {{ plant.name }}</mat-option
+                    >
+                  </div>
+                </mat-select>
+                <mat-error
+                  id="roundPlanHeaderPlantError"
+                  *ngIf="processValidationErrors('plantId')"
+                  class="m-t-5 error-fields"
+                >
+                  {{
+                    errors.plantId.name
+                      | translate
+                        : {
+                            name: 'plant' | translate
+                          }
+                  }}
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="width-100">
+              <p
+                id="roundPlanHeaderUnit"
+                class="form-name-description m-t-20 m-b-0"
+              >
+                {{ 'unitLocation' | translate }}
+              </p>
+              <mat-form-field appearance="outline" class="width-100 form-field">
+                <mat-select
+                  id="roundPlanHeaderSelectUnit"
+                  formControlName="unitId"
+                  [placeholder]="'unitLocationPlaceholder' | translate"
+                  (openedChange)="resetUnitSearchFilter()"
+                  [disabled]="roundData.roundExists"
+                >
+                  <div
+                    class="custom-form-field-gray-color search search-container"
+                  >
+                    <mat-form-field appearance="outline" class="width-100">
+                      <mat-icon
+                        id="roundPlanUnitSearchIcon"
+                        matPrefix
+                        class="searchIcon"
+                        >search</mat-icon
+                      >
+                      <input
+                        matInput
+                        type="text"
+                        autocomplete="off"
+                        id="roundPlanHeaderPlantInput"
+                        class="unit-searchable-input"
+                        [placeholder]="'searchTxt' | translate"
+                        (keyup)="onKeyUnit($event)"
+                        [value]="unitFilterInput"
+                      />
+                    </mat-form-field>
+                  </div>
+
+                  <div class="scrollable-area">
+                    <mat-option
+                      [value]="unit.id"
+                      *ngFor="let unit of unitLocations"
+                      >{{ unit.name }}</mat-option
+                    >
+                  </div>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
         </div>
 
         <div class="tags">

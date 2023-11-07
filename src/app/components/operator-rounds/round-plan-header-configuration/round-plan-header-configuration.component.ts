@@ -53,6 +53,7 @@ import {
 } from 'src/app/app.constants';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
+import { LocationService } from '../../master-configurations/locations/services/location.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastService } from 'src/app/shared/toast';
@@ -106,6 +107,7 @@ export class RoundPlanHeaderConfigurationComponent
   deletedLabel = '';
 
   plantFilterInput = '';
+  unitFilterInput = '';
   readonly formConfigurationStatus = formConfigurationStatus;
 
   dropDownIsOpen = false;
@@ -126,6 +128,9 @@ export class RoundPlanHeaderConfigurationComponent
   hasFormChanges = false;
 
   formMetadataSubscrption: Subscription;
+  allUnitLocations = [];
+  unitLocations = this.allUnitLocations;
+  searchUnits: '';
   private destroy$ = new Subject();
 
   constructor(
@@ -135,6 +140,7 @@ export class RoundPlanHeaderConfigurationComponent
     private store: Store<State>,
     private operatorRoundsService: OperatorRoundsService,
     private plantService: PlantService,
+    private locationService: LocationService,
     private cdrf: ChangeDetectorRef,
     private toastService: ToastService,
     public dialog: MatDialog,
@@ -183,6 +189,7 @@ export class RoundPlanHeaderConfigurationComponent
       formType: [formConfigurationStatus.standalone],
       tags: [this.tags],
       plantId: ['', Validators.required],
+      unitId: [''],
       additionalDetails: this.fb.array([]),
       instructions: this.fb.group({
         notes: [
@@ -202,9 +209,13 @@ export class RoundPlanHeaderConfigurationComponent
       .select(getFormMetadata)
       .subscribe((res) => {
         this.formMetadata = res;
+        if (res.plantId) {
+          this.getUnitLocations(res.plantId, res.unitId);
+        }
         this.headerDataForm.patchValue({
           name: res.name,
-          description: res.description ? res.description : ''
+          description: res.description ? res.description : '',
+          unitId: res.unitId || ''
         });
       });
     this.getAllPlantsData();
@@ -556,6 +567,12 @@ export class RoundPlanHeaderConfigurationComponent
   resetPlantSearchFilter = () => {
     this.plantFilterInput = '';
     this.plantInformation = this.allPlantsData;
+    this.getUnitLocations();
+  };
+
+  resetUnitSearchFilter = () => {
+    this.unitFilterInput = '';
+    this.unitLocations = this.allUnitLocations;
   };
 
   onKeyPlant(event) {
@@ -572,6 +589,17 @@ export class RoundPlanHeaderConfigurationComponent
       );
     } else {
       this.plantInformation = this.allPlantsData;
+    }
+  }
+
+  onKeyUnit(event) {
+    this.unitFilterInput = event.target.value.trim() || '';
+    if (this.unitFilterInput) {
+      this.unitLocations = this.unitLocations.filter((unit) =>
+        unit.name.toLowerCase().includes(this.unitFilterInput.toLowerCase())
+      );
+    } else {
+      this.unitLocations = this.allUnitLocations;
     }
   }
 
@@ -1045,5 +1073,32 @@ export class RoundPlanHeaderConfigurationComponent
   }
   clearAttachmentUpload() {
     this.roundPlanFileUpload.nativeElement.value = '';
+  }
+
+  getUnitLocations(selectedPlantId?: string, selectedLocationId?: string) {
+    const selectedPlant =
+      selectedPlantId || this.headerDataForm.get('plantId').value;
+    if (selectedPlant) {
+      const filter = {
+        plantId: selectedPlant || ''
+      };
+      this.locationService.fetchUnitLocations$(filter).subscribe((units) => {
+        this.allUnitLocations = units.items || [];
+        this.allUnitLocations = [
+          {
+            name: 'None',
+            id: ''
+          },
+          ...this.allUnitLocations
+        ];
+        this.unitLocations = this.allUnitLocations;
+        if (selectedLocationId) {
+          const selectedLocation = this.unitLocations.find(
+            (loc) => loc.id === selectedLocationId
+          );
+          this.headerDataForm.get('unitId').setValue(selectedLocation.id || '');
+        }
+      });
+    }
   }
 }

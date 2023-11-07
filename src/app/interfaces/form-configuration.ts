@@ -23,6 +23,7 @@ export interface FormMetadata {
   lastModifiedBy: string;
   embeddedFormId?: string;
   additionalDetails: string;
+  unitId?: string;
 }
 
 export interface Page {

@@ -83,7 +83,7 @@
   "timeZone": "Time Zone",
   "timeZoneMandatory": "Time Zone *",
   "stateNotMandatory": "No states for selected country",
-  "shifts": "Shifts",
+  "shift": "Shift",
   "shiftName": "Shift Name",
   "searchShift": "Search by Shift Name",
   "max25Chars": "Maximum 25 Characters",
@@ -103,8 +103,12 @@
   "sort": "Sort",
   "addModuleNameHeading": "Add as Meta Data For",
   "responseSetNameExists": "Response Set Name already exists",
+  "markLocation": "Mark this location",
+  "markLocationDesc": "Users, Plans, Rounds & Shift Handovers can be assigned at Unit level",
   "alreadyExists": "{name} already exists",
   "exportData": "Export Data as Excel",
   "forms": "Forms",
-  "formTemplate": "Form Templates"
+  "formTemplate": "Form Templates",
+  "activateSHRPlants": "Activate Shift Handover Report for all Units in this Plant",
+  "shiftMandatory": "Shift *"
 }

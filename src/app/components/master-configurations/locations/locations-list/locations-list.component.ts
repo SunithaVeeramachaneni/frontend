@@ -120,6 +120,29 @@ export class LocationsListComponent implements OnInit, OnDestroy {
       }
     },
     {
+      id: 'unit',
+      displayName: 'Marked as Unit',
+      type: 'string',
+      controlType: 'string',
+      order: 2,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: true,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false,
+      hasConditionalStyles: true
+    },
+    {
       id: 'description',
       displayName: 'Description',
       type: 'string',
@@ -576,6 +599,7 @@ export class LocationsListComponent implements OnInit, OnDestroy {
     switch (columnId) {
       case 'name':
       case 'plant':
+      case 'unit':
       case 'description':
       case 'model':
       case 'parent':
@@ -727,6 +751,10 @@ export class LocationsListComponent implements OnInit, OnDestroy {
           });
         } else Object.assign(data, { parent: '', parentId: '' });
       }
+
+      Object.assign(data, {
+        unit: data.isUnit ? 'Yes' : 'No'
+      });
 
       return data;
     });

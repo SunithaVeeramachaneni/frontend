@@ -45,6 +45,8 @@ import {
   defaultProfilePic,
   graphQLDefaultLimit
 } from 'src/app/app.constants';
+import { LocationService } from '../../master-configurations/locations/services/location.service';
+import { PositionsService } from '../services/positions.service';
 interface UsersListActions {
   action: 'delete' | null;
   id: any[];
@@ -76,6 +78,13 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
   }
   get userGroupName() {
     return this._userGroupName;
+  }
+
+  @Input() set userGroupUnitId(userGroupUnitId: string) {
+    this._userGroupUnitId = userGroupUnitId;
+  }
+  get userGroupUnitId() {
+    return this._userGroupUnitId;
   }
 
   userListActions$: BehaviorSubject<UsersListActions> =
@@ -114,13 +123,35 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
       hasPostTextImage: false
     },
     {
-      id: 'roles',
-      displayName: 'Role',
+      id: 'plant',
+      displayName: 'Plant',
       type: 'string',
       controlType: 'string',
       order: 2,
       hasSubtitle: false,
-      showMenuOptions: true,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: false,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: true,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
+      id: 'units',
+      displayName: 'Unit',
+      type: 'string',
+      controlType: 'string',
+      order: 3,
+      hasSubtitle: false,
+      showMenuOptions: false,
       subtitleColumn: '',
       searchable: false,
       sortable: true,
@@ -130,7 +161,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
       stickable: false,
       sticky: false,
       groupable: true,
-      titleStyle: { color: '#3D5AFE' },
+      titleStyle: {},
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: true
@@ -140,7 +171,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
       displayName: 'Email',
       type: 'string',
       controlType: 'string',
-      order: 3,
+      order: 4,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -158,33 +189,11 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
       hasPostTextImage: false
     },
     {
-      id: 'validThrough',
-      displayName: 'Valid Through',
+      id: 'positions',
+      displayName: 'Positions',
       type: 'string',
       controlType: 'string',
-      order: 3,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
-      sortable: false,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
-    },
-    {
-      id: 'plant',
-      displayName: 'Plant',
-      type: 'string',
-      controlType: 'string',
-      order: 3,
+      order: 5,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -229,9 +238,11 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
   skip = 0;
   fetchType: string;
   userInfo$: any;
+  allUnitLocations = [];
   private _userGroupId: string;
   private _userGroupPlantId: string;
   private _userGroupName: string;
+  private _userGroupUnitId: string;
 
   constructor(
     private userGroupService: UserGroupService,
@@ -239,6 +250,8 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
     private toast: ToastService,
     private loginService: LoginService,
     private plantService: PlantService,
+    private locationService: LocationService,
+    private positionsService: PositionsService,
     private sant: DomSanitizer
   ) {}
 
@@ -252,6 +265,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
       }
       this.fetchUsers$.next({ data: 'load' });
       this.fetchUsers$.next({} as TableEvent);
+      this.getUnitLocations(this._userGroupPlantId);
       this.getAllUsers();
     } else {
       this.dataSource = new MatTableDataSource([]);
@@ -281,6 +295,15 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
   }
 
   getAllUsers() {
+    const allPositions$ = this.positionsService.getPositionsList$(
+      {
+        limit: this.limit,
+        next: this.next,
+        fetchType: this.fetchType,
+        searchKey: this.searchUser.value
+      },
+      { plant: this._userGroupPlantId }
+    );
     const usersOnLoadSearch$ = this.fetchUsers$.pipe(
       filter(({ data }) => data === 'load' || data === 'search'),
       switchMap(({ data }) => {
@@ -310,14 +333,26 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
       usersOnLoadSearch$,
       usersOnScroll$,
       this.userListActions$,
-      this.plantService.fetchAllPlants$()
+      this.plantService.fetchAllPlants$(),
+      allPositions$
     ]).pipe(
-      map(([users, scrollData, { action, id }, plant]) => {
+      map(([users, scrollData, { action, id }, plant, positions]) => {
         this.plantName = plant?.items.find(
           (data) => data.id === this.userGroupPlantId
         )?.name;
         if (this.skip === 0) {
-          initial.data = users;
+          initial.data = users.map((usr) => ({
+            ...usr,
+            positions:
+              usr.users?.positionIds
+                ?.split(',')
+                .map(
+                  (pos) =>
+                    positions.rows.find((item) => item.id === pos)?.name || null
+                )
+                .filter((item) => item)
+                .join(', ') || ''
+          }));
         } else if (this.userAddEdit) {
           switch (action) {
             case 'delete':
@@ -395,15 +430,9 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
                 } else {
                   item.validThrough = '';
                 }
-                if (item?.users?.roles) {
-                  const rolesNames = [];
-                  item?.users?.roles?.forEach((role) => {
-                    rolesNames.push(role?.name);
-                  });
-                  item.roles = rolesNames?.toString();
-                } else {
-                  item.roles = '';
-                }
+                item.units = this.allUnitLocations.find(
+                  (unit) => unit.id === this._userGroupUnitId
+                )?.name;
                 item.plant = this.plantName;
                 item.preTextImage = {
                   style: {
@@ -470,7 +499,8 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
           type: 'update',
           plantId: this._userGroupPlantId,
           userGroupId: this._userGroupId,
-          name: this._userGroupName
+          name: this._userGroupName,
+          unitId: this._userGroupUnitId
         }
       }
     );
@@ -588,5 +618,19 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
     this.selectedUsers = [];
     this.skip = 0;
     this.selectedCount = this.selectedUsers.length;
+  }
+
+  getUnitLocations(selectedPlantId?: string) {
+    const selectedPlant = selectedPlantId;
+    if (selectedPlant) {
+      const unitFilter = {
+        plantId: selectedPlant || ''
+      };
+      this.locationService
+        .fetchUnitLocations$(unitFilter)
+        .subscribe((units) => {
+          this.allUnitLocations = units.items;
+        });
+    }
   }
 }

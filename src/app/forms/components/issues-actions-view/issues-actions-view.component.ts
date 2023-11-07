@@ -18,6 +18,7 @@ import {
 import { Observable, Subscription, of } from 'rxjs';
 import { Router } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
+import { NgxImageCompressService } from 'ngx-image-compress';
 
 import {
   AssigneeDetails,
@@ -140,7 +141,8 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     private router: Router,
     private cdRef: ChangeDetectorRef,
     private toastService: ToastService,
-    private plantService: PlantService
+    private plantService: PlantService,
+    private imageCompress: NgxImageCompressService,
   ) {}
 
   getAttachmentsList() {
@@ -373,39 +375,51 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   uploadFile(event): void {
     const { files } = event.target as HTMLInputElement;
     const reader = new FileReader();
-    const file: File = files[0];
-    const size = file.size;
     const maxSize = 180000;
-    if (size > maxSize) {
-      this.toastService.show({
-        type: 'warning',
-        text: 'Please select file less than 175KB'
-      });
-      return;
-    }
     reader.readAsDataURL(files[0]);
     reader.onloadend = () => {
       const { id, type } = this.data;
-      const base64result = (reader?.result as string)?.split(';base64,')[1];
-      this.observations
-        .uploadIssueOrActionLogHistoryAttachment$(
-          id,
-          { file: base64result },
-          type,
-          this.moduleName
-        )
-        .pipe(
-          tap((resp) => {
-            if (Object.keys(resp).length) {
-              this.filteredMediaType.push(resp);
-              this.issuesActionsDetailViewForm.markAsDirty();
-            }
-          })
-        )
-        .subscribe();
+      const base64result = reader?.result as string;
+      this.resizeImage(base64result).then((compressedImage) => {
+        const onlybase64 = compressedImage.split(',')[1];
+        const resizedImageSize = atob(onlybase64).length;
+        if (resizedImageSize <= maxSize) {
+          this.observations
+            .uploadIssueOrActionLogHistoryAttachment$(
+              id,
+              { file: onlybase64 },
+              type,
+              this.moduleName
+            )
+            .pipe(
+              tap((resp) => {
+                if (Object.keys(resp).length) {
+                  this.filteredMediaType.push(resp);
+                  this.issuesActionsDetailViewForm.markAsDirty();
+                }
+              })
+            )
+            .subscribe();
+        } else {
+          this.toastService.show({
+            type: 'warning',
+            text: 'Compressed Image exceeding 175KB'
+          });
+        }
+      })
+      
     };
   }
-
+  async resizeImage(base64result: string): Promise<string> {
+    const compressedImage = await this.imageCompress.compressFile(
+      base64result,
+      -1,
+      100,
+      800,
+      600
+    );
+    return compressedImage;
+  }
   updateDate(
     event: MatDatetimePickerInputEvent<Date>,
     formControlDateField: string

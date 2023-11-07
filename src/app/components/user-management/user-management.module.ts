@@ -48,6 +48,10 @@ import { SelectUserUsergroupModalComponent } from './select-user-usergroup-modal
 import { UserGroupUsersListComponent } from './user-group-users-list/user-group-users-list.component';
 import { UserGroupDeleteModalComponent } from './user-group-delete-modal/user-group-delete-modal.component';
 import { RemoveUserModalComponent } from './remove-user-modal/remove-user-modal.component';
+import { PositionsComponent } from './positions/positions.component';
+import { CreatePositionsComponent } from './create-positions/create-positions.component';
+import { SelectUserGroupPositionsModalComponent } from './select-user-group-positions-modal/select-user-group-positions-modal.component';
+import { UserGroupPositionsListComponent } from './user-group-positions-list/user-group-positions-list.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/user-management/', '.json');
@@ -105,7 +109,11 @@ export const customTranslateLoader = (http: HttpClient) =>
     SelectUserUsergroupModalComponent,
     UserGroupUsersListComponent,
     UserGroupDeleteModalComponent,
-    RemoveUserModalComponent
+    RemoveUserModalComponent,
+    PositionsComponent,
+    CreatePositionsComponent,
+    SelectUserGroupPositionsModalComponent,
+    UserGroupPositionsListComponent
   ],
   schemas: [],
   providers: [],
