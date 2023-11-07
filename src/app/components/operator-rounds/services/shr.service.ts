@@ -5,6 +5,7 @@ import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
 import { LoadEvent, SearchEvent, TableEvent } from './../../../interfaces';
 import { isEmpty, omitBy } from 'lodash-es';
+import { DatePipe } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,7 @@ export class ShrService {
   redirectToFormsList$ = new BehaviorSubject<boolean>(false);
   embeddedFormId;
 
-  constructor(private appService: AppService) {}
+  constructor(private appService: AppService,private datePipe: DatePipe) {}
 
   getShiftHandOverList$(
     queryParams: {
@@ -64,11 +65,14 @@ export class ShrService {
         try {
           // r.shift = JSON.parse(r.shift);
           if(r.shift !== null){
-          r.shiftNames = r.shift.name + r?.shift?.startTime + r?.shift?.endTime;
+            
+            if (r.shiftStartDatetime) {
+              r.shiftStartDatetime = this.datePipe.transform(r.shiftStartDatetime, 'MMM dd, yyyy');
+            } else {
+              r.shiftStartDatetime = 'N/A'; // or any other default value
+            }
+            r.shiftNames = `${r?.shiftStartDatetime} / ${r.shift.name} ${r?.shift?.startTime} - ${r?.shift?.endTime}`;
           }
-          // if(r?.shiftStatus == 'not-started'){
-          //   r.style.backgroundColor = 'red'; // Set the background color to red
-          // }
           if(r.shiftSupervisor !== null){
             r.shiftSupervisor = r?.shiftSupervisor?.firstName + ' ' + r?.shiftSupervisor?.lastName; 
           }else{
@@ -78,6 +82,16 @@ export class ShrService {
             r.incomingSupervisor = r?.incomingSupervisor?.firstName + ' ' + r?.incomingSupervisor?.lastName; 
           }else{
             r.incomingSupervisor = '--';
+          }
+          if(r.submittedOn){
+            r.submittedOn = this.datePipe.transform(r.submittedOn, 'hh:mm a, MMM dd');
+          }else{
+            r.submittedOn = '--';
+          }
+          if(r.acceptedOn){
+            r.acceptedOn = this.datePipe.transform(r.acceptedOn, 'hh:mm a, MMM dd');
+          }else{
+            r.acceptedOn = '--';
           }
         } catch (err) {
           console.log("err", err);

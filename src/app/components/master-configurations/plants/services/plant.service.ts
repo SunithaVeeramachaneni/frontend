@@ -65,7 +65,7 @@ export class PlantService {
             .pipe(
               map((user: any) =>
                 plants.items.filter((item: any) =>
-                  user.plantId.split(',').includes(item.id)
+                  user?.plantId?.split(',')?.includes(item.id)
                 )
               )
             )

@@ -38,6 +38,7 @@ import { Router } from '@angular/router';
 import { UsersService } from '../../user-management/services/users.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { MatTableDataSource } from '@angular/material/table';
+import { LocationService } from '../../master-configurations/locations/services/location.service';
 
 @Component({
   selector: 'app-shift-hand-over',
@@ -47,9 +48,12 @@ import { MatTableDataSource } from '@angular/material/table';
 export class ShiftHandOverComponent implements OnInit {
   readonly perms = perms;
   public menuState = 'out';
+  status:any[] = ["Not-Started", "Completed", "Ongoing"];
+  handOverStatus:any[] = ["Draft", "Submitted"]
 
   searchPosition: FormControl;
   userInfo$: Observable<UserInfo>;
+  units: [];
   columns: Column[] = [
     {
       id: 'shiftNames',
@@ -66,24 +70,17 @@ export class ShiftHandOverComponent implements OnInit {
       sticky: false,
       groupable: false,
       titleStyle: {
-        'font-weight': '500',
-        'font-size': '100%',
-        color: '#000000',
-        'overflow-wrap': 'anywhere'
+        fontWeight: 500,
       },
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
-      subtitleStyle: {
-        'font-size': '80%',
-        color: 'darkgray',
-        'overflow-wrap': 'anywhere'
-      },
+      subtitleStyle: {},
       hasPreTextImage: true,
       hasPostTextImage: false
     },
     {
-      id: 'unitId',
+      id: 'unit',
       displayName: 'Unit',
       type: 'string',
       controlType: 'string',
@@ -99,7 +96,9 @@ export class ShiftHandOverComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: true,
-      titleStyle: {},
+      titleStyle: {
+        fontWeight: 500,
+      },
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false,
@@ -122,8 +121,20 @@ export class ShiftHandOverComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: true,
-      titleStyle: {},
+      titleStyle: {
+        textTransform: 'capitalize',
+        fontWeight: 500,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'relative',
+        top: '10px',
+        width: '80px',
+        height: '24px',
+      },
       subtitleStyle: {},
+      hasConditionalStyles: true,
       hasPreTextImage: false,
       hasPostTextImage: false
     },
@@ -166,8 +177,23 @@ export class ShiftHandOverComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: true,
-      titleStyle: {},
+      titleStyle: {
+        textTransform: 'capitalize',
+        fontWeight: 500,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'relative',
+        top: '10px',
+        width: '80px',
+        height: '24px',
+        background: '#FEF3C7',
+        color: '#92400E',
+        borderRadius: '12px'
+      },
       subtitleStyle: {},
+      hasConditionalStyles: true,
       hasPreTextImage: false,
       hasPostTextImage: false
     },
@@ -188,7 +214,9 @@ export class ShiftHandOverComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: true,
-      titleStyle: {},
+      titleStyle: {
+        fontWeight: 500,
+      },
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
@@ -211,7 +239,9 @@ export class ShiftHandOverComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: true,
-      titleStyle: {},
+      titleStyle: {
+        fontWeight: 500,
+      },
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
@@ -234,12 +264,16 @@ export class ShiftHandOverComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: true,
-      titleStyle: {},
+      titleStyle: {
+        fontWeight: 500,
+      },
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
     }
   ];
+  ghostLoading = new Array(15).fill(0).map((v, i) => i);
+  dataFetchingComplete = false;
 
   configOptions: ConfigOptions = {
     tableID: 'formsTable',
@@ -257,14 +291,24 @@ export class ShiftHandOverComponent implements OnInit {
     tableHeight: 'calc(100vh - 150px)',
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
     conditionalStyles: {
-      draft: {
-        'background-color': '#FEF3C7',
+      'not-started': {
         color: '#92400E'
       },
-      published: {
-        'background-color': '#D1FAE5',
-        color: '#065f46'
+      'completed': {
+        color: '#2C9E53'
+      },
+      'ongoing': {
+        color: '#FF9800'
+      },
+      'submitted': {
+        'background-color': '#2C9E53',
+        color: '#FFFFFF',
+      },
+      'draft': {
+        'background-color': '#FFCC00',
+        color: '#000000',
       }
+      
     }
   };
   private onDestroy$ = new Subject();
@@ -293,7 +337,8 @@ export class ShiftHandOverComponent implements OnInit {
     private shrService: ShrService,
     private router: Router,
     private usersService: UsersService,
-    private plantService: PlantService
+    private plantService: PlantService,
+    private locationService: LocationService,
   ) {}
   //  this.headerService.setHeaderTitle(routingUrls?.shiftHandOvers?.title);
   ngOnInit(): void {
@@ -339,13 +384,15 @@ export class ShiftHandOverComponent implements OnInit {
         }
       })
     );
-
+    const units$ = this.locationService.fetchAllLocations$();
     const initial = {
       columns: this.columns,
       data: []
     };
-    this.forms$ = combineLatest([formsOnLoadSearch$, onScrollForms$]).pipe(
-      map(([rows, scrollData]) => {
+    let cominedResult = [];
+    this.forms$ = combineLatest([formsOnLoadSearch$, onScrollForms$, units$]).pipe(
+      map(([rows, scrollData, units]) => {
+        this.dataFetchingComplete = true;
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
@@ -355,9 +402,13 @@ export class ShiftHandOverComponent implements OnInit {
         } else {
           initial.data = initial.data.concat(scrollData);
         }
-        this.allForms = initial.data;
+        cominedResult = initial.data.map((shr) => {
+          const unitName = (units?.items || []).find((unit) => unit?.id === shr?.unitId);
+          return { ...shr, unit: unitName?.name || '--' };
+        });
+        this.allForms = cominedResult;
         this.dataSource = new MatTableDataSource(this.allForms);
-        console.log("data", this.allForms[11]?.incomingSupervisor?.firstName);
+        console.log("datasource",this.dataSource.data.length);
         this.skip = this.allForms.length;
         return initial;
       })
@@ -365,20 +416,6 @@ export class ShiftHandOverComponent implements OnInit {
   }
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
-    // const { columnId, row } = event;
-    // switch (columnId) {
-    //   case 'shiftId':
-    //   // case 'description':
-    //   // case 'author':
-    //   // case 'plant':
-    //   // case 'formStatus':
-    //   // case 'lastPublishedBy':
-    //   // case 'publishedDate':
-    //   // case 'responses':
-    //     // this.showFormDetail(row);
-    //     break;
-    //   default:
-    // }
   };
 
   getForms() {
@@ -414,14 +451,6 @@ export class ShiftHandOverComponent implements OnInit {
         }),
         map((data) =>
           data.map((item) => {
-            // if (item.plantId) {
-            //   item = {
-            //     ...item,
-            //     plant: item.plant
-            //   };
-            // } else {
-            //   item = { ...item, plant: '' };
-            // }
             return item;
           })
         )
