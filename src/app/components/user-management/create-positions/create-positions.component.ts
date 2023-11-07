@@ -113,15 +113,19 @@ export class CreatePositionsComponent implements OnInit {
     const payload = { ...this.positionsFormData.value, _version: 1 };
     if(this.heading.includes('Create')){
       this.positionService.createPositions$(payload).subscribe(
-        (res) => {
-          this.toast.show({
-            text: 'Postion created successfully',
-            type: 'success'
-          });
-          this.isCreating = false;
-          this.onClose('success');
+        (res) => { 
+          if (res.id) {      
+            this.toast.show({
+              text: 'Postion created successfully',
+              type: 'success'
+            });
+            this.isCreating = false;
+            this.onClose('success');            
+          } else {
+            this.isCreating = false;
+          } 
         },
-        (err) => {
+        (err) => {          
           this.toast.show({
             text: 'Something went wrong !',
             type: 'warning'
@@ -131,15 +135,19 @@ export class CreatePositionsComponent implements OnInit {
       );
     } else if(this.heading.includes('Edit')){
       this.positionService.updatePositions$(this.data?.id, payload).subscribe(
-        () => {
-          this.toast.show({
-            text: 'Postion updated successfully',
-            type: 'success'
-          });
+        (res) => {
+          if (res.id) {
+            this.toast.show({
+              text: 'Postion updated successfully',
+              type: 'success'
+            });
+            this.isCreating = false;
+            this.onClose('success');
+        } else {
           this.isCreating = false;
-          this.onClose('success');
+        } 
         },
-        () => {
+        (err) => {
           this.toast.show({
             text: 'Something went wrong !',
             type: 'warning'

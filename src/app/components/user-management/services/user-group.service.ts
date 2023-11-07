@@ -47,6 +47,7 @@ export class UserGroupService {
       searchKey: string;
       plantId: string;
       next?: string;
+      unitId: string;
     },
     info: ErrorInfo = {} as ErrorInfo
   ) => {
@@ -55,6 +56,7 @@ export class UserGroupService {
     params.set('nextToken', queryParams.next ?? '');
     params.set('searchTerm', queryParams?.searchKey.toLocaleLowerCase() ?? '');
     params.set('plantId', queryParams.plantId);
+    params.set('unitId', queryParams.unitId);
 
     if (
       ['load', 'search'].includes(queryParams.fetchType) ||
