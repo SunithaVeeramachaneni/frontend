@@ -1,4 +1,3 @@
-/* eslint-disable arrow-body-style */
 import { Component, OnInit } from '@angular/core';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { routingUrls } from 'src/app/app.constants';
@@ -39,8 +38,6 @@ import { Router } from '@angular/router';
 import { UsersService } from '../../user-management/services/users.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatDialog } from '@angular/material/dialog';
-import { ShiftHandOverModalComponent } from '../shift-hand-over-modal/shift-hand-over-modal.component';
 
 @Component({
   selector: 'app-shift-hand-over',
@@ -270,6 +267,7 @@ export class ShiftHandOverComponent implements OnInit {
       }
     }
   };
+  private onDestroy$ = new Subject();
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   skip = 0;
   limit = graphQLDefaultLimit;
@@ -289,15 +287,13 @@ export class ShiftHandOverComponent implements OnInit {
   dataSource: MatTableDataSource<any>;
   isArchived = '';
   incomingSupervisorId = '';
-  private onDestroy$ = new Subject();
 
   constructor(
     private headerService: HeaderService,
     private shrService: ShrService,
     private router: Router,
     private usersService: UsersService,
-    private plantService: PlantService,
-    private dialog: MatDialog
+    private plantService: PlantService
   ) {}
   //  this.headerService.setHeaderTitle(routingUrls?.shiftHandOvers?.title);
   ngOnInit(): void {
@@ -318,6 +314,7 @@ export class ShiftHandOverComponent implements OnInit {
     this.getDisplayedForms();
     this.configOptions.allColumns = this.columns;
     this.prepareMenuActions();
+    
   }
 
   getDisplayedForms(): void {
@@ -360,6 +357,7 @@ export class ShiftHandOverComponent implements OnInit {
         }
         this.allForms = initial.data;
         this.dataSource = new MatTableDataSource(this.allForms);
+        console.log("data", this.allForms[11]?.incomingSupervisor?.firstName);
         this.skip = this.allForms.length;
         return initial;
       })
@@ -367,21 +365,20 @@ export class ShiftHandOverComponent implements OnInit {
   }
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
-    const { columnId, row } = event;
-    switch (columnId) {
-      case 'shiftNames':
-        this.dialog.open(ShiftHandOverModalComponent, {
-          maxWidth: '100vw',
-          maxHeight: '100vh',
-          height: '100%',
-          width: '100%',
-          panelClass: 'full-screen-modal',
-          disableClose: true,
-          data: row
-        });
-        break;
-      default:
-    }
+    // const { columnId, row } = event;
+    // switch (columnId) {
+    //   case 'shiftId':
+    //   // case 'description':
+    //   // case 'author':
+    //   // case 'plant':
+    //   // case 'formStatus':
+    //   // case 'lastPublishedBy':
+    //   // case 'publishedDate':
+    //   // case 'responses':
+    //     // this.showFormDetail(row);
+    //     break;
+    //   default:
+    // }
   };
 
   getForms() {
@@ -437,7 +434,7 @@ export class ShiftHandOverComponent implements OnInit {
 
   prepareMenuActions() {
     const menuActions = [];
-
+    
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : true;
     this.configOptions = { ...this.configOptions };

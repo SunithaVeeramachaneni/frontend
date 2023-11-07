@@ -489,10 +489,5 @@
   "unitLocation": "Unit",
   "unitLocationPlaceholder": "Unit",
   "maxDate": "Days count must be at the max of {count} days",
-  "validEndDate": "Days count must be at the max of {count} days based on the End Date",
-  "outgoing": "Outgoing:",
-  "incoming": "Incoming:",
-  "startHandover": "Start Handover",
-  "startReview": "Start Review",
-  "previous": "Previous"
+  "validEndDate": "Days count must be at the max of {count} days based on the End Date"
 }

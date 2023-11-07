@@ -361,8 +361,8 @@ export const routingUrls = {
     url: '/master-configuration/global-response',
     title: 'Global Response Set',
     permission: permissions.viewGlobalResponses
-  }
-};
+  },
+ };
 export const formConfigurationStatus = Object.freeze({
   draft: 'Draft',
   published: 'Published',
