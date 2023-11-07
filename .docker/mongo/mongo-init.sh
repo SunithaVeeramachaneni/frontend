@@ -292,6 +292,7 @@ db.datasets.insertMany([
 ])
 db.shrconfigurations.insertOne({
    _id: 'reportConfiguration',
+  config:{
   trends: true,
   instructions: true,
   shiftDetails: true,
@@ -305,5 +306,6 @@ db.shrconfigurations.insertOne({
   createdAt: new Date(),
   updatedAt: new Date(),
   __v: 0
+  }
 })
 EOF
