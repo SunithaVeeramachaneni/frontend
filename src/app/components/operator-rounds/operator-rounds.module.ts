@@ -88,6 +88,7 @@ import { TaskLevelTaskComponentsComponent } from './task-level-task-components/t
 import { AlertModalComponent } from './scheduler-modal/alert-modal/alert-modal.component';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ShiftHandOverComponent } from './shift-hand-over/shift-hand-over.component';
+import { OperatorsListComponent } from './operators-list/operators-list.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/operator-rounds/', '.json');
@@ -120,7 +121,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     TaskLevelTaskComponentsComponent,
     ReviseScheduleComponent,
     AlertModalComponent,
-    ShiftHandOverComponent
+    ShiftHandOverComponent,
+    OperatorsListComponent
   ],
   imports: [
     FormsModule,

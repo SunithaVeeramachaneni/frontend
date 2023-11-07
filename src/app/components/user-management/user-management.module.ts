@@ -52,7 +52,6 @@ import { PositionsComponent } from './positions/positions.component';
 import { CreatePositionsComponent } from './create-positions/create-positions.component';
 import { SelectUserGroupPositionsModalComponent } from './select-user-group-positions-modal/select-user-group-positions-modal.component';
 import { UserGroupPositionsListComponent } from './user-group-positions-list/user-group-positions-list.component';
-import { OperatorsListComponent } from './operators-list/operators-list.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/user-management/', '.json');
@@ -114,8 +113,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     PositionsComponent,
     CreatePositionsComponent,
     SelectUserGroupPositionsModalComponent,
-    UserGroupPositionsListComponent,
-    OperatorsListComponent
+    UserGroupPositionsListComponent
   ],
   schemas: [],
   providers: [],
