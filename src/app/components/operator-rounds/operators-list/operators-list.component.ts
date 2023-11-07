@@ -1,4 +1,9 @@
-import { Component, OnInit, Input } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  ChangeDetectionStrategy
+} from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import {
   Column,
@@ -8,7 +13,8 @@ import {
 @Component({
   selector: 'app-operators-list',
   templateUrl: './operators-list.component.html',
-  styleUrls: ['./operators-list.component.scss']
+  styleUrls: ['./operators-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OperatorsListComponent implements OnInit {
   @Input() operatorList: any;
