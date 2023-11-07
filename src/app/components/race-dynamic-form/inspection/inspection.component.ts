@@ -1189,7 +1189,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
             this.plantTimezoneMap[plantId].timeZoneIdentifier
           ) {
             changedDueDate = zonedTimeToUtc(
-              format(changedDueDate, dateTimeFormat4),
+              changedDueDate,
               this.plantTimezoneMap[plantId].timeZoneIdentifier
             );
           }

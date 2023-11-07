@@ -643,63 +643,74 @@ export class RoundsComponent implements OnInit, OnDestroy {
         this.prepareMenuActions(permissions);
       })
     );
-    this.filterData$ = combineLatest([
-      this.users$,
-      this.operatorRoundsService.getRoundFilter().pipe(
-        tap((res) => {
-          filterJson = res;
-          for (const item of filterJson) {
-            if (item['column'] === 'status') {
-              item.items = this.status;
-            }
-          }
-        })
-      ),
-      this.operatorRoundsService.fetchAllRounds$({
-        plantId: this.plantService.getUserPlantIds()
-      }),
-      this.plantService.fetchLoggedInUserPlants$()
-    ]).pipe(
-      tap(([, , formsList, plants]) => {
-        plants.forEach((plant) => {
-          this.plantsIdNameMap[`${plant.plantId} - ${plant.name}`] = plant.id;
-        });
-        for (const item of filterJson) {
-          if (item.column === 'plant') {
-            item.items = plants
-              .map((plant) => `${plant.plantId} - ${plant.name}`)
-              .sort();
-          }
-        }
-        const objectKeys = Object.keys(formsList);
-        if (objectKeys.length > 0) {
-          const uniqueSchedules = formsList
-            ?.map((item) => item?.schedule)
-            .filter((value, index, self) => self?.indexOf(value) === index);
 
-          if (uniqueSchedules?.length > 0) {
-            uniqueSchedules?.filter(Boolean).forEach((item) => {
-              if (item) {
-                this.schedules.push(item);
+    this.filterData$ = this.loginService.loggedInUserInfo$.pipe(
+      tap(({ permissions = [], plantId = null }) => {
+        this.plantService.setUserPlantIds(plantId);
+        this.filter.plant = plantId;
+        this.prepareMenuActions(permissions);
+      }),
+      switchMap(() => {
+        return combineLatest([
+          this.users$,
+          this.operatorRoundsService.getRoundFilter().pipe(
+            tap((res) => {
+              filterJson = res;
+              for (const item of filterJson) {
+                if (item['column'] === 'status') {
+                  item.items = this.status;
+                }
               }
+            })
+          ),
+          this.operatorRoundsService.fetchAllRounds$({
+            plantId: this.plantService.getUserPlantIds()
+          }),
+          this.plantService.fetchLoggedInUserPlants$()
+        ]).pipe(
+          tap(([, , formsList, plants]) => {
+            plants.forEach((plant) => {
+              this.plantsIdNameMap[`${plant.plantId} - ${plant.name}`] =
+                plant.id;
             });
-          }
-          for (const item of filterJson) {
-            if (item.column === 'assignedToDisplay') {
-              item.items = this.assignedTo.sort();
+            for (const item of filterJson) {
+              if (item.column === 'plant') {
+                item.items = plants
+                  .map((plant) => `${plant.plantId} - ${plant.name}`)
+                  .sort();
+              }
             }
-            if (item.column === 'schedule') {
-              item.items = this.schedules.sort();
+            const objectKeys = Object.keys(formsList);
+            if (objectKeys.length > 0) {
+              const uniqueSchedules = formsList
+                ?.map((item) => item?.schedule)
+                .filter((value, index, self) => self?.indexOf(value) === index);
+
+              if (uniqueSchedules?.length > 0) {
+                uniqueSchedules?.filter(Boolean).forEach((item) => {
+                  if (item) {
+                    this.schedules.push(item);
+                  }
+                });
+              }
+              for (const item of filterJson) {
+                if (item.column === 'assignedToDisplay') {
+                  item.items = this.assignedTo.sort();
+                }
+                if (item.column === 'schedule') {
+                  item.items = this.schedules.sort();
+                }
+                if (item['column'] === 'shiftId') {
+                  item.items = Object.values(this.shiftNameMap).sort();
+                }
+                if (item['column'] === 'dueDate') {
+                  item.items = this.selectedDueDate;
+                }
+              }
             }
-            if (item['column'] === 'shiftId') {
-              item.items = Object.values(this.shiftNameMap).sort();
-            }
-            if (item['column'] === 'dueDate') {
-              item.items = this.selectedDueDate;
-            }
-          }
-        }
-        this.filterJson = filterJson;
+            this.filterJson = filterJson;
+          })
+        );
       })
     );
     this.searchForm.valueChanges
@@ -1388,7 +1399,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
             this.plantTimezoneMap[plantId].timeZoneIdentifier
           ) {
             changedDueDateToUTC = zonedTimeToUtc(
-              format(changedDueDate, dateTimeFormat4),
+              changedDueDate,
               this.plantTimezoneMap[plantId].timeZoneIdentifier
             );
           } else {
