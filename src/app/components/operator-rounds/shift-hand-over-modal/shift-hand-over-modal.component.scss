@@ -1,0 +1,208 @@
+@import '../../../../scss/colors.scss';
+
+.shift-hand-over-toolbar {
+  height: 50px;
+  background-color: $white;
+  border-bottom: 1px solid $border-color;
+
+  .back-btn {
+    border: none;
+    background-color: transparent;
+
+    .back-arrow {
+      height: 15px;
+      width: 15px;
+      position: relative;
+      top: 2px;
+    }
+
+    .back-text {
+      padding-left: 12px;
+      font-weight: 500;
+      font-size: initial;
+    }
+  }
+
+  .shift-hand-over {
+    display: flex;
+    width: 100%;
+  }
+}
+
+.shift-hand-over-content {
+  margin: 15px;
+  background-color: $white;
+  border-radius: 7px 7px 0px 0px;
+  height: calc(100vh - 85px);
+  box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.1);
+
+  .header {
+    padding: 10px;
+    border-bottom: 1px solid $border-color;
+    align-items: center;
+
+    .shift-name {
+      color: $blue-head;
+      font-weight: 500;
+      font-size: 140%;
+      padding-left: 10px;
+    }
+
+    .header-right {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    .submitted-shift-status {
+      padding: 6px 12px;
+      background: $submitted-bg;
+      color: $white;
+      font-size: 110%;
+      border-radius: 20px;
+      margin-right: 15px;
+    }
+
+    .draft-shift-status {
+      padding: 6px 12px;
+      background: $in-progress-bg;
+      color: $in-progress-color;
+      font-size: 110%;
+      border-radius: 20px;
+      margin-right: 15px;
+    }
+
+    .text {
+      font-size: 125%;
+      font-weight: 500;
+      margin-right: 15px;
+    }
+
+    .sub-text {
+      color: $gray1;
+      font-size: 110%;
+      margin-right: 15px;
+      position: relative;
+      top: 2px;
+    }
+
+    .user-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    .line {
+      font-size: 200%;
+      margin: 0 20px 0 5px;
+      color: $border-color;
+    }
+
+    .start-review-btn {
+      background-color: $blue-main;
+      color: $white;
+    }
+
+    .nxt-btn {
+      background-color: $blue-main;
+      color: $white;
+    }
+
+    .prev-btn {
+      color: $blue-main;
+      border: 1px solid $blue-main;
+      background: rgba(61, 90, 254, 0.08);
+      margin-right: 10px;
+    }
+
+    ::ng-deep .mat-button-wrapper {
+      font-size: 100%;
+    }
+
+    ::ng-deep .mat-button.mat-button-disabled.mat-button-disabled {
+      color: $disabled-color !important;
+      border-color: $gray2-bg !important;
+    }
+  }
+
+  .shift-hand-over-tabs {
+    padding: 12px 10px 10px 10px;
+  }
+
+  .steps-breadcrumb {
+    display: flex;
+    border: none;
+    background: none;
+    width: 100%;
+
+    .title {
+      position: relative;
+      top: 4px;
+      color: $black;
+    }
+    .index span {
+      color: $black;
+    }
+    .index {
+      display: flex;
+      margin-right: 6px;
+      span {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        width: 23px;
+        height: 23px;
+        border-radius: 100%;
+        background-color: $blue-main;
+        color: $white;
+      }
+    }
+    &.current {
+      .title {
+        color: $blue-main;
+        font-weight: 500;
+      }
+      .index span {
+        color: $white;
+      }
+    }
+  }
+
+  .stepper-line {
+    rotate: 90deg;
+    width: 22px;
+    display: table-cell;
+    position: relative;
+    left: 16px;
+    border-bottom: none;
+  }
+
+  .disable-step {
+    cursor: not-allowed;
+    .title {
+      color: $gray1;
+      position: relative;
+      top: 4px;
+    }
+    .index span {
+      background-color: $disable-stpper-bg;
+      color: $light-gray;
+    }
+  }
+
+  .completed-step {
+    .index span {
+      background-color: $blue-main;
+    }
+  }
+
+  .active-tab {
+    background-color: $lavendar;
+  }
+
+  .border {
+    border-right: 1px solid $border-color;
+  }
+}

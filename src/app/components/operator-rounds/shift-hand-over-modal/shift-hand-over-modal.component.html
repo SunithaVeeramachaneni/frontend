@@ -1,0 +1,159 @@
+<mat-toolbar class="shift-hand-over-toolbar">
+  <div class="shift-hand-over">
+    <div class="width-10">
+      <button id="backBtn" (click)="goBack()" class="back-btn">
+        <svg-icon
+          id="stepperHeaderBackIcon"
+          id="backBtnIcon"
+          icon="icon-back-arrow"
+          class="back-arrow"
+        ></svg-icon>
+        <span class="back-text" translate="backToList"></span>
+      </button>
+    </div>
+  </div>
+</mat-toolbar>
+<div class="shift-hand-over-content">
+  <div class="header dis-flex">
+    <div class="width-30">
+      <span class="shift-name">{{ data.shiftNames }}</span>
+    </div>
+    <div class="width-70 header-right">
+      <span
+        class="draft-shift-status"
+        *ngIf="
+          data.handoverStatus === 'draft' || data.handoverStatus === 'pending'
+        "
+        >{{ data.handoverStatus }}</span
+      >
+      <span
+        class="submitted-shift-status"
+        *ngIf="
+          data.handoverStatus === 'submitted' ||
+          data.handoverStatus === 'auto-submitted' ||
+          data.handoverStatus === 'accepted'
+        "
+      >
+        {{ data.handoverStatus }}
+      </span>
+
+      <ng-container *ngIf="data.shiftSupervisorId !== ''">
+        <span class="text">{{ outgoing | translate }}</span>
+        <div class="dis-flex">
+          <img src="assets/Images/user.jfif" class="user-icon" />
+          <div>
+            <span class="text">{{ data.shiftSupervisor }}</span> <br />
+            <span class="sub-text">Super Admin</span>
+          </div>
+        </div>
+      </ng-container>
+
+      <span class="line" *ngIf="data.incomingSupervisorId !== ''">|</span>
+
+      <ng-container *ngIf="data.incomingSupervisorId !== ''">
+        <span class="text">{{ incoming | translate }}</span>
+        <div class="dis-flex">
+          <img src="assets/Images/user.jfif" class="user-icon" />
+          <div>
+            <span class="text">{{ data.incomingSupervisor }}</span> <br />
+            <span class="sub-text">Super Admin</span>
+          </div>
+        </div>
+      </ng-container>
+
+      <button
+        mat-button
+        class="start-review-btn"
+        *ngIf="
+          data.handoverStatus === 'submitted' &&
+          data.incomingSupervisorId === ''
+        "
+        translate="startReview"
+      ></button>
+      <button
+        mat-button
+        class="start-review-btn"
+        *ngIf="
+          (data.handoverStatus === 'draft' ||
+            data.handoverStatus === 'pending') &&
+          data.shiftSupervisorId === ''
+        "
+        translate="startHandover"
+      ></button>
+      <button
+        mat-button
+        class="prev-btn"
+        (click)="gotoPreviousStep()"
+        [disabled]="currentStep === 0"
+        *ngIf="
+          data.shiftSupervisorId !== '' || data.incomingSupervisorId !== ''
+        "
+        translate="previous"
+      ></button>
+      <button
+        mat-button
+        class="nxt-btn"
+        (click)="gotoNextStep()"
+        *ngIf="
+          data.shiftSupervisorId !== '' || data.incomingSupervisorId !== ''
+        "
+      >
+        {{ currentStep === steps.length - 1 ? 'Accept' : 'Next' }}
+      </button>
+    </div>
+  </div>
+  <div class="dis-flex h-100">
+    <div class="width-20 border">
+      <ng-container
+        *ngFor="
+          let step of steps;
+          let i = index;
+          let last = last;
+          let first = first
+        "
+      >
+        <div
+          class="shift-hand-over-tabs"
+          [ngClass]="{
+            'active-tab': currentStep === i
+          }"
+        >
+          <button
+            id="stepsBreadcrumb"
+            class="steps-breadcrumb"
+            (click)="onGotoStep(i)"
+            [ngClass]="{
+              current: currentStep === i,
+              completed: currentStep > i,
+              last: last,
+              first: first,
+              'disable-step': currentStep < i,
+              'completed-step': currentStep > i
+            }"
+            [disabled]="currentStep < i"
+          >
+            <div class="index">
+              <span id="stepsNumber">
+                {{ i + 1 }}
+              </span>
+            </div>
+            <div id="stepsTitle" class="title pr-8">{{ step.title }}</div>
+          </button>
+        </div>
+        <hr class="stepper-line" *ngIf="i !== steps.length - 1" />
+      </ng-container>
+    </div>
+    <div class="width-80">
+      <!-- STEP 1 -->
+      <div *ngIf="currentStep === 0">Summary Component</div>
+      <!-- STEP 2 -->
+      <div *ngIf="currentStep === 1">Rounds Component</div>
+      <!-- STEP 3 -->
+      <div *ngIf="currentStep === 2">Observations Component</div>
+      <!-- STEP 4 -->
+      <div *ngIf="currentStep === 3">Notes and Logs Component</div>
+      <!-- STEP 5 -->
+      <div *ngIf="currentStep === 4">Operators Component</div>
+    </div>
+  </div>
+</div>
