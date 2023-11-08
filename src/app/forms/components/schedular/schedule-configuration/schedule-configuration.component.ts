@@ -301,7 +301,7 @@ export class ScheduleConfigurationComponent
           unit?.isUnit && unit.plantsID === plantId
         ),
         position: assigneeDetails.position?.filter((pos) =>
-          pos.plantId?.includes(plantId)
+          pos.plantsID?.includes(plantId)
         )
       };
       this.moduleName = moduleName;
