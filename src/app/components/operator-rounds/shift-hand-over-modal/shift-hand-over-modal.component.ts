@@ -1,6 +1,8 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Step } from 'src/app/interfaces/stepper';
+import { ShrService } from '../services/shr.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-shift-hand-over-modal',
@@ -19,12 +21,16 @@ export class ShiftHandOverModalComponent implements OnInit {
   totalSteps: number;
   currentStep = 0;
 
+  shrAllDetails$: Observable<any>;
   constructor(
     public dialogRef: MatDialogRef<ShiftHandOverModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data
+    @Inject(MAT_DIALOG_DATA) public data,
+    private shrService: ShrService
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.shrAllDetails$ = this.shrService.getSHRDetailsId$(this.data.id);
+  }
 
   goBack(): void {
     this.dialogRef.close();
