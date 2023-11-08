@@ -300,7 +300,7 @@ export class PositionsComponent implements OnInit, OnDestroy {
           initial.data = initial.data.concat(scrollData);
         }
         cominedResult = initial.data.map((pos) => {
-          const correspondingPlant = (plants?.items || []).find((plnt) => plnt?.id === pos?.plantId);
+          const correspondingPlant = (plants?.items || []).find((plnt) => plnt?.id === pos?.plantsID);
           return { ...pos, plant: correspondingPlant?.name || '' };
         });
         this.allPositions = cominedResult;
@@ -344,7 +344,7 @@ export class PositionsComponent implements OnInit, OnDestroy {
         }),
         map((data) =>
           data.map((item) => {
-            if (item.plantId) {
+            if (item.plantsID) {
               item = {
                 ...item,
                 plant: item.plant
