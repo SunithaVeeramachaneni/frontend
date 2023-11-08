@@ -21,6 +21,7 @@
           *ngFor="let assignType of assignTypes"
           (click)="$event.stopPropagation()"
           [value]="assignType"
+          [ngClass]="{'next-radio-button': assignType === 'userGroup'}"
         >
           {{ assignType | translate }}</mat-radio-button
         >
@@ -94,6 +95,28 @@
             (click)="selectAssignee(plant)"
           >
             {{ plant }}
+          </div>
+        </ng-container>
+      </ng-container>
+      <ng-container *ngIf="assigneeType === 'unit'">
+        <ng-container *ngFor="let unit of filteredData$ | async">
+          <div
+            mat-menu-item
+            class="user-group-item"
+            (click)="selectAssignee(unit)"
+          >
+            {{ unit?.name }}
+          </div>
+        </ng-container>
+      </ng-container>
+      <ng-container *ngIf="assigneeType === 'position'">
+        <ng-container *ngFor="let pos of filteredData$ | async">
+          <div
+            mat-menu-item
+            class="user-group-item"
+            (click)="selectAssignee(pos)"
+          >
+            {{ pos?.name }}
           </div>
         </ng-container>
       </ng-container>

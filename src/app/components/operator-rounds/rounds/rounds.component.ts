@@ -77,8 +77,9 @@ import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
 import { format } from 'date-fns';
 import { formatInTimeZone, zonedTimeToUtc } from 'date-fns-tz';
 import { ShiftService } from '../../master-configurations/shifts/services/shift.service';
-import { CommonService } from 'src/app/shared/services/common.service';
 import { ShiftDateChangeWarningModalComponent } from 'src/app/forms/components/shift-date-change-warning-modal/shift-date-change-warning-modal.component';
+import { LocationService } from '../../master-configurations/locations/services/location.service';
+import { PositionsService } from '../../user-management/services/positions.service';
 @Component({
   selector: 'app-rounds',
   templateUrl: './rounds.component.html',
@@ -584,6 +585,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   userInfo$: Observable<UserInfo>;
+  allLocation: any[];
+  allPositions: any[];
   filterData$: Observable<any>;
   selectedRound: RoundDetail;
   selectedRoundInfo: RoundDetail = {} as RoundDetail;
@@ -625,7 +628,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
     private cdrf: ChangeDetectorRef,
     private plantService: PlantService,
     private shiftSevice: ShiftService,
-    private commonService: CommonService
+    private locationService: LocationService,
+    private positionsService: PositionsService,
   ) {}
 
   ngOnInit(): void {
@@ -643,74 +647,84 @@ export class RoundsComponent implements OnInit, OnDestroy {
         this.prepareMenuActions(permissions);
       })
     );
-
-    this.filterData$ = this.loginService.loggedInUserInfo$.pipe(
-      tap(({ permissions = [], plantId = null }) => {
-        this.plantService.setUserPlantIds(plantId);
-        this.filter.plant = plantId;
-        this.prepareMenuActions(permissions);
+    this.filterData$ = combineLatest([
+      this.users$,
+      this.operatorRoundsService.getRoundFilter().pipe(
+        tap((res) => {
+          filterJson = res;
+          for (const item of filterJson) {
+            if (item['column'] === 'status') {
+              item.items = this.status;
+            }
+          }
+        })
+      ),
+      this.operatorRoundsService.fetchAllRounds$({
+        plantId: this.plantService.getUserPlantIds()
       }),
-      switchMap(() => {
-        return combineLatest([
-          this.users$,
-          this.operatorRoundsService.getRoundFilter().pipe(
-            tap((res) => {
-              filterJson = res;
-              for (const item of filterJson) {
-                if (item['column'] === 'status') {
-                  item.items = this.status;
-                }
-              }
-            })
-          ),
-          this.operatorRoundsService.fetchAllRounds$({
-            plantId: this.plantService.getUserPlantIds()
-          }),
-          this.plantService.fetchLoggedInUserPlants$()
-        ]).pipe(
-          tap(([, , formsList, plants]) => {
-            plants.forEach((plant) => {
-              this.plantsIdNameMap[`${plant.plantId} - ${plant.name}`] =
-                plant.id;
+      this.plantService.fetchLoggedInUserPlants$(),
+      this.locationService.fetchAllLocations$(),
+      this.positionsService.fetchAllPositions$()
+    ]).pipe(
+      tap(([, , formsList, plants, location, position]) => {
+        this.allLocation = location?.items || [];
+        this.allPositions = position?.items || [];
+        let filterLocation = [];
+        let filterPosition = [];
+        this.allLocation?.forEach((val) => {
+          if (val?.isUnit) {
+            filterLocation.push({
+              type: 'unit',
+              value: val
             });
-            for (const item of filterJson) {
-              if (item.column === 'plant') {
-                item.items = plants
-                  .map((plant) => `${plant.plantId} - ${plant.name}`)
-                  .sort();
-              }
-            }
-            const objectKeys = Object.keys(formsList);
-            if (objectKeys.length > 0) {
-              const uniqueSchedules = formsList
-                ?.map((item) => item?.schedule)
-                .filter((value, index, self) => self?.indexOf(value) === index);
+          }
+        });
+        this.allPositions?.forEach((val) => {
+          filterPosition.push({
+            type: 'position',
+            value: val
+          });
+        });
+        plants.forEach((plant) => {
+          this.plantsIdNameMap[`${plant.plantId} - ${plant.name}`] = plant.id;
+        });
+        for (const item of filterJson) {
+          if (item.column === 'plant') {
+            item.items = plants
+              .map((plant) => `${plant.plantId} - ${plant.name}`)
+              .sort();
+          }
+        }
+        const objectKeys = Object.keys(formsList);
+        if (objectKeys.length > 0) {
+          const uniqueSchedules = formsList
+            ?.map((item) => item?.schedule)
+            .filter((value, index, self) => self?.indexOf(value) === index);
 
-              if (uniqueSchedules?.length > 0) {
-                uniqueSchedules?.filter(Boolean).forEach((item) => {
-                  if (item) {
-                    this.schedules.push(item);
-                  }
-                });
+          if (uniqueSchedules?.length > 0) {
+            uniqueSchedules?.filter(Boolean).forEach((item) => {
+              if (item) {
+                this.schedules.push(item);
               }
-              for (const item of filterJson) {
-                if (item.column === 'assignedToDisplay') {
-                  item.items = this.assignedTo.sort();
-                }
-                if (item.column === 'schedule') {
-                  item.items = this.schedules.sort();
-                }
-                if (item['column'] === 'shiftId') {
-                  item.items = Object.values(this.shiftNameMap).sort();
-                }
-                if (item['column'] === 'dueDate') {
-                  item.items = this.selectedDueDate;
-                }
-              }
+            });
+          }
+          for (const item of filterJson) {
+            if (item.column === 'assignedToDisplay') {
+              this.assignedTo = [...this.assignedTo, ...filterLocation, ...filterPosition].sort();
+              item.items = this.assignedTo
             }
-            this.filterJson = filterJson;
-          })
-        );
+            if (item.column === 'schedule') {
+              item.items = this.schedules.sort();
+            }
+            if (item['column'] === 'shiftId') {
+              item.items = Object.values(this.shiftNameMap).sort();
+            }
+            if (item['column'] === 'dueDate') {
+              item.items = this.selectedDueDate;
+            }
+          }
+        }
+        this.filterJson = filterJson;
       })
     );
     this.searchForm.valueChanges
@@ -846,7 +860,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
         this.isLoading$.next(true);
       }
     );
-
     this.configOptions.allColumns = this.columns;
   }
 
@@ -918,7 +931,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
           userGroups: this.assigneeDetails.userGroups?.filter((userGroup) =>
             userGroup.plantId?.includes(row.plantId)
           ),
-          plants: [row.plant]
+          plants: [row.plant],
+          unit: this.allLocation.filter((val) => val?.isUnit && val?.plantsID === row?.plantId),
+          position: this.allPositions.filter((val) => val?.plantId === row?.plantId)
         };
         if (
           row.status !== 'submitted' &&
@@ -1164,6 +1179,18 @@ export class RoundsComponent implements OnInit, OnDestroy {
           this.filter[item.column] = {
             type: 'plant',
             value: this.getPlantNameToPlantId(item.value.map((p) => p.plant))
+          };
+        }
+        if (item.value[0].type === 'unit') {
+          this.filter[item.column] = {
+            type: 'unit',
+            value: item.value.map((unit) => unit.value.id)
+          };
+        }
+        if (item.value[0].type === 'position') {
+          this.filter[item.column] = {
+            type: 'position',
+            value: item.value.map((unit) => unit.value.id)
           };
         }
       } else if (item.column === 'dueDate' && item.value) {

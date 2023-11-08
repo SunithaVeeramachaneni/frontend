@@ -26,6 +26,19 @@ export class PositionsService {
    * Get event source (SSE)
    */
 
+  fetchAllPositions$ = (plantId = null) => {
+    let queryParamaters = {};
+    if (plantId) {
+      queryParamaters = { ...queryParamaters, plantId };
+    }
+    return this.appService._getResp(
+      environment.userRoleManagementApiUrl,
+      'positions',
+      { displayToast: true, failureResponse: {} },
+      queryParamaters
+    );
+  };
+
   getPositionsList$(
     queryParams: {
       next?: string;

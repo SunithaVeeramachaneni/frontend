@@ -185,6 +185,8 @@ export interface AssigneeDetails {
   users: UserDetails[];
   userGroups?: UserGroup[];
   plants?: any[];
+  position?: any[];
+  unit?: any[];
 }
 
 export interface IssueOrAction {
