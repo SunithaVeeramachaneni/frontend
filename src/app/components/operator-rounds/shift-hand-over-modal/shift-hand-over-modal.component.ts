@@ -11,11 +11,11 @@ import { Observable } from 'rxjs';
 })
 export class ShiftHandOverModalComponent implements OnInit {
   steps: Step[] = [
-    { title: 'Summary', content: '' },
-    { title: 'Rounds', content: '' },
-    { title: 'Observations', content: '' },
-    { title: 'Notes and Logs', content: '' },
-    { title: 'Operators', content: '' }
+    { title: 'Summary', content: '', columnId: 'summary' },
+    { title: 'Rounds', content: '', columnId: 'rounds' },
+    { title: 'Observations', content: '', columnId: 'observations' },
+    { title: 'Notes and Logs', content: '', columnId: 'notes' },
+    { title: 'Operators', content: '', columnId: 'operators' }
   ];
 
   totalSteps: number;
@@ -30,6 +30,30 @@ export class ShiftHandOverModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.shrAllDetails$ = this.shrService.getSHRDetailsId$(this.data.id);
+
+    this.updateSHRSteps();
+  }
+
+  updateSHRSteps() {
+    for (const shrData of this.data.shrConfigColumns) {
+      if (shrData.content && !shrData.selected) {
+        let value = false;
+        for (const content of shrData.content) {
+          if (content.selected) value = true;
+        }
+        if (!value) {
+          this.steps = this.steps.filter(
+            (val) => val.columnId !== shrData.columnId
+          );
+        }
+      } else {
+        if (!shrData.selected) {
+          this.steps = this.steps.filter(
+            (val) => val.columnId !== shrData.columnId
+          );
+        }
+      }
+    }
   }
 
   goBack(): void {
