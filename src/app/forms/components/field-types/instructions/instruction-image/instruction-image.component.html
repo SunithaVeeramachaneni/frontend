@@ -2,7 +2,7 @@
   <img
     id="instructionImg"
     class="insert-instruction-image"
-    [src]="image.imageData"
+    [src]="getImageSrc(image.imageData)"
     alt="image"
     (click)="triggerPreview()"
   />

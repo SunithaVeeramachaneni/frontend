@@ -492,15 +492,11 @@ export class QuestionComponent implements OnInit, OnDestroy {
               fileSize: fileInfo.size,
               fileType: 'image',
               imageData: data?.attachment
-                ? `data:image/jpeg;base64,${data?.attachment}`
-                : null
             });
           }),
           map((data) => ({
             id: image,
             data: data?.attachment
-              ? `data:image/jpeg;base64,${data?.attachment}`
-              : null
           }))
         );
       });
@@ -521,8 +517,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
                   fileSize: fileInfo.size,
                   fileType: 'file',
                   imageData: data?.attachment
-                    ? `data:application/pdf;base64,${data?.attachment}`
-                    : null
                 });
               }),
               map((data) => ({
@@ -530,8 +524,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
                 data: {
                   fileInfo: data?.fileInfo ? JSON.parse(data.fileInfo) : null,
                   attachment: data?.attachment
-                    ? `data:application/pdf;base64,${data?.attachment}`
-                    : null
                 }
               }))
             );

@@ -131,6 +131,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   private allData = [];
   private amplifySubscription$: Subscription[] = [];
   private attachmentsSubscriptionData = [];
+  IssueActionDetailAttachments = [];
 
   constructor(
     private fb: FormBuilder,
@@ -751,11 +752,12 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   selectedAssigneeHandler({ user, checked }: SelectedAssignee) {
-    this.updateIssueOrAction({
-      field: 'assignee',
-      value: user?.email,
-      checked
-    });
+    if (user?.email)
+      this.updateIssueOrAction({
+        field: 'assignee',
+        value: user?.email,
+        checked
+      });
   }
 
   createIssueOrActionHistory() {
@@ -1133,6 +1135,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
       .getIssueOrActionLogHistory$(id, type, {}, this.moduleName)
       .pipe(
         tap((logHistory) => {
+          this.IssueActionDetailAttachments = logHistory.listImages;
           this.logHistory = logHistory?.rows || [];
           this.prepareInitialIssueActionAttachments();
           if (this.logHistory.length > 0) {
@@ -1313,12 +1316,8 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
 
   private prepareInitialIssueActionAttachments(): void {
     this.filteredMediaType = [];
-    if (
-      this.data &&
-      Array.isArray(this.data?.PHOTO) &&
-      this.data?.PHOTO?.length > 0
-    ) {
-      this.data?.PHOTO?.forEach((element) => {
+    if (this.data && this.IssueActionDetailAttachments.length > 0) {
+      this.IssueActionDetailAttachments.forEach((element) => {
         if (element) {
           this.filteredMediaType.push({
             message: element

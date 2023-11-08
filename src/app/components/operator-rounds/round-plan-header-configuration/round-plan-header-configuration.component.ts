@@ -144,6 +144,7 @@ export class RoundPlanHeaderConfigurationComponent
     private cdrf: ChangeDetectorRef,
     private toastService: ToastService,
     public dialog: MatDialog,
+    private locationService: LocationService,
     private imageCompress: NgxImageCompressService,
     private router: Router
   ) {}
@@ -698,7 +699,7 @@ export class RoundPlanHeaderConfigurationComponent
                   })
                   .pipe(
                     tap((response) => {
-                      if (response) {
+                      if (Object.keys(response).length) {
                         const responsenew = response?.id;
                         this.filteredMediaTypeIds = {
                           mediaIds: [
