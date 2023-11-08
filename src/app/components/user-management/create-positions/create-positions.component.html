@@ -53,7 +53,7 @@
               >{{ 'plant' | translate }}
               <span class="text-red">*</span></mat-label
             >
-            <mat-select formControlName="plantId">
+            <mat-select formControlName="plantsID">
               <input
                 id="createPositionsInputPlant"
                 class="searchable-input"
@@ -71,11 +71,11 @@
             </mat-select>
             <mat-error
               id="addEditPositionGroupError"
-              *ngIf="processValidationErrors('plantId')"
+              *ngIf="processValidationErrors('plantsID')"
               class="m-t-8 error-fields"
             >
               {{
-                errors.plantId.name
+                errors.plantsID.name
                   | translate
                     : {
                         name: 'Plant' | translate

@@ -35,15 +35,15 @@ export class PositionsService {
     },
     filterData: any = {}
   ) {
-    const { plant: plantId } = filterData;
+    const { plant: plantsID } = filterData;
     const rawParams = {
       searchTerm: queryParams?.searchKey,
       limit: queryParams?.limit.toString(),
-      ...(filterData ? { plantId: filterData?.plant } : {})
+      ...(filterData ? { plantsID: filterData?.plant } : {})
     };
     const params = new URLSearchParams({
       next: queryParams.next,
-      plantId,
+      plantsID,
       ...omitBy(rawParams, isEmpty)
     });
     return this.appService
