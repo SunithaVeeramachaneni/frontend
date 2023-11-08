@@ -1,20 +1,41 @@
 @import '../../../../scss/colors.scss';
 
 .card-container {
+  .slideshow-header-container {
+    display: grid;
+    grid-template-columns: 90fr 5fr 5fr;
+    justify-content: space-between;
+    align-items: center;
+    top: 15px;
+    position: relative;
+    padding: 0px 10%;
+  }
   .close-btn {
     background: none;
     border: none;
     padding: 10px;
-    position: relative;
-    top: 10px;
-    left: 79%;
+    margin-top: 4px;
     cursor: pointer;
   }
-
+  .file-name-text {
+    color: white;
+    font-size: 110%;
+  }
   .cancel-icon {
     width: 15px;
     height: 15px;
     cursor: pointer;
+  }
+  .download-btn {
+    background: none;
+    border: none;
+
+    cursor: pointer;
+    .download-icon {
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+    }
   }
 
   mat-card {
@@ -32,9 +53,9 @@
 
   .thumbnail-images-container {
     display: flex;
+    justify-content: center;
+    padding: 0px 10%;
     background-color: transparent;
-    margin: 0 auto;
-    padding: 0px;
   }
 
   .slide-wrapper {
@@ -46,19 +67,107 @@
   }
 
   .slide-images {
-    margin-bottom: 20px;
-    object-fit: none;
+    margin: 20px 0px;
+  }
+  .slide-videos {
+    overflow: auto;
+    margin: 20px 0px;
   }
 
   .images {
     display: flex;
-    width: 810px;
     overflow-x: auto;
-    justify-content: center;
+    overflow-y: hidden;
+    justify-content: start;
   }
 
   .thumbnail-images {
+    width: 70px;
+    height: 70px;
     margin: 0 10px;
+    border-radius: 5px;
+    object-fit: cover;
+  }
+  .attachments {
+    object-fit: cover;
+  }
+  .selected-thumbnail {
+    border: 2px solid $white;
+  }
+  .video-player-container {
+    position: relative;
+    .video-player-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      z-index: 999999;
+      background-color: $video-overlay;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      .video-player-play-icon {
+        height: 40px;
+        width: 40px;
+      }
+    }
+  }
+  .attachment-document-container {
+    background: $gray-bg;
+    padding: 5px;
+    flex-direction: column;
+    border-radius: 4px;
+    justify-content: center;
+    align-items: center;
+    width: 100px;
+    height: 60px;
+    margin: 0px 10px;
+
+    .pdf-icon {
+      height: 25px;
+      width: 25px;
+      position: relative;
+    }
+
+    .pdf-text {
+      font-size: 80%;
+      margin-top: 10px;
+      font-weight: 500;
+      letter-spacing: -0.24px;
+      text-align: center;
+      color: $disabled-color;
+    }
+  }
+  .document-container {
+    background: $gray-bg;
+    padding: 5px;
+    flex-direction: column;
+    border-radius: 4px;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin: 15px;
+
+    .pdf-icon {
+      height: 135px;
+      width: 172px;
+      position: relative;
+    }
+
+    .pdf-text {
+      font-size: 110%;
+      margin-top: 10px;
+      text-align: center;
+      color: $disabled-color;
+    }
+    .download-btn {
+      border-radius: 5px;
+      background-color: $blue-main;
+      padding: 6px 16px;
+      color: white;
+      margin-top: 15px;
+    }
   }
 
   .prev-btn {

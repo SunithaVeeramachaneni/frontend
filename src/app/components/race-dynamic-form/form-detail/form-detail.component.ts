@@ -256,6 +256,9 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   downloadPDF() {
     this.formDetailAction.emit({ type: 'DOWNLOAD_PDF' });
   }
+  downloadAttachments() {
+    this.formDetailAction.emit({ type: 'DOWNLOAD_ATTACHMENTS' });
+  }
 
   ngOnDestroy(): void {
     this.plantMapSubscription.unsubscribe();

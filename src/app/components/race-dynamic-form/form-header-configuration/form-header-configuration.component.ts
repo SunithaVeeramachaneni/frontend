@@ -54,6 +54,8 @@ import {
   DEFAULT_PDF_BUILDER_CONFIG,
   fileUploadSizeToastMessage,
   formConfigurationStatus,
+  maxFileUploadSizeMongo,
+  mediaTypes,
   raceDynamicForms
 } from 'src/app/app.constants';
 import { ResponseSetService } from '../../master-configurations/response-set/services/response-set.service';
@@ -117,12 +119,11 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   readonly formConfigurationStatus = formConfigurationStatus;
   additionalDetails: FormArray;
   labelSelected: any;
-  filteredMediaType: any = { mediaType: [] };
+  filteredMediaType: any[] = [];
   filteredMediaTypeIds: any = { mediaIds: [] };
   filteredMediaPdfTypeIds: any = [];
   filteredMediaPdfType: any = [];
   base64result: string;
-  pdfFiles: any = { mediaType: [] };
   hasFormChanges = false;
   allValue: any;
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
@@ -232,10 +233,12 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
       .pipe(map((data) => (Array.isArray(data) ? data : [])))
       .subscribe((attachments) => {
         attachments?.forEach((att) => {
-          this.filteredMediaType.mediaType = [
-            ...this.filteredMediaType.mediaType,
-            att.attachment
-          ];
+          const fileInfo = JSON.parse(att.fileInfo);
+          this.filteredMediaType.push({
+            fileName: fileInfo.name,
+            fileType: 'image',
+            imageData: att.attachment
+          });
           this.filteredMediaTypeIds.mediaIds = [
             ...this.filteredMediaTypeIds.mediaIds,
             att.id
@@ -248,9 +251,13 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
       .pipe(map((data) => (Array.isArray(data) ? data : [])))
       .subscribe((pdfs) => {
         pdfs?.forEach((pdf) => {
-          this.pdfFiles = {
-            mediaType: [...this.pdfFiles.mediaType, JSON.parse(pdf.fileInfo)]
-          };
+          const fileInfo = JSON.parse(pdf.fileInfo);
+          this.filteredMediaPdfType.push({
+            fileName: fileInfo.name,
+            fileType: 'file',
+            imageData: pdf.attachment,
+            fileSize: fileInfo.size
+          });
           this.filteredMediaPdfTypeIds.push(pdf.id);
         });
         this.cdrf.detectChanges();
@@ -457,11 +464,10 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
           return {
             FIELDLABEL: additionalinfo.label,
             DEFAULTVALUE: this.additionalDetailMap[additionalinfo.label].reduce(
-              (accumulatedLable, current) => {
-                return accumulatedLable === ''
+              (accumulatedLable, current) =>
+                accumulatedLable === ''
                   ? current
-                  : accumulatedLable + ',' + current;
-              },
+                  : accumulatedLable + ',' + current,
               ''
             ),
             UIFIELDTYPE: 'LF'
@@ -635,7 +641,8 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
     const reader = new FileReader();
     if (files.length > 0 && files[0] instanceof File) {
       const file: File = files[0];
-      const maxSize = 390000;
+      const fileName: string = file.name;
+      const maxSize = maxFileUploadSizeMongo;
       reader.readAsDataURL(file);
       reader.onloadend = () => {
         this.base64result = reader?.result as string;
@@ -652,18 +659,21 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
                 .uploadAttachments$({
                   file: pdf,
                   plantId: this.formMetadata?.plantId,
-                  objectId: this.formMetadata?.id
+                  objectId: this.formMetadata?.id,
+                  fileType: mediaTypes.file,
+                  fileName
                 })
                 .pipe(
                   tap((response) => {
-                    if (response) {
-                      this.pdfFiles = {
-                        mediaType: [...this.pdfFiles.mediaType, file]
-                      };
-                      const responsenew =
-                        response?.data?.createFormAttachments?.id;
+                    if (Object.keys(response).length) {
+                      const responsenew = response?.id;
                       this.filteredMediaPdfTypeIds.push(responsenew);
-                      this.filteredMediaPdfType.push(this.base64result);
+                      this.filteredMediaPdfType.push({
+                        fileName,
+                        fileType: 'file',
+                        imageData: this.base64result,
+                        fileSize: resizedPdfSize
+                      });
                     }
                     this.cdrf.detectChanges();
                   })
@@ -677,62 +687,73 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
             }
           });
         } else {
-          this.resizeImage(this.base64result).then((compressedImage) => {
-            const onlybase64 = compressedImage.split(',')[1];
-            const resizedImageSize = atob(onlybase64).length;
-            const image = {
-              fileInfo: { name: file.name, size: resizedImageSize },
-              attachment: onlybase64
-            };
-            if (resizedImageSize <= maxSize) {
-              this.rdfService
-                .uploadAttachments$({
-                  file: image,
-                  plantId: this.formMetadata?.plantId,
-                  objectId: this.formMetadata?.id
-                })
-                .pipe(
-                  tap((response) => {
-                    if (response) {
-                      const responsenew =
-                        response?.data?.createFormAttachments?.id;
-                      this.filteredMediaTypeIds = {
-                        mediaIds: [
-                          ...this.filteredMediaTypeIds.mediaIds,
-                          responsenew
-                        ]
-                      };
-                      this.filteredMediaType = {
-                        mediaType: [
-                          ...this.filteredMediaType.mediaType,
-                          onlybase64
-                        ]
-                      };
-                      this.cdrf.detectChanges();
-                    }
+          const imageSize = atob(this.base64result.split(',')[1]).length;
+          const compressionRatio = Math.sqrt(maxSize / imageSize) * 100;
+          this.resizeImage(this.base64result, compressionRatio).then(
+            (compressedImage) => {
+              const onlybase64 = compressedImage.split(',')[1];
+              const resizedImageSize = atob(onlybase64).length;
+              const image = {
+                fileInfo: { name: file.name, size: resizedImageSize },
+                attachment: onlybase64
+              };
+              if (resizedImageSize <= maxSize) {
+                this.rdfService
+                  .uploadAttachments$({
+                    file: image,
+                    plantId: this.data.formData?.plantId,
+                    objectId: this.data.formData?.id,
+                    fileType: mediaTypes.image,
+                    fileName
                   })
-                )
-                .subscribe();
-            } else {
-              this.toastService.show({
-                type: 'warning',
-                text: fileUploadSizeToastMessage
-              });
+                  .pipe(
+                    tap((response) => {
+                      if (Object.keys(response).length) {
+                        const responsenew = response?.id;
+                        this.filteredMediaTypeIds = {
+                          mediaIds: [
+                            ...this.filteredMediaTypeIds.mediaIds,
+                            responsenew
+                          ]
+                        };
+                        this.filteredMediaType.push({
+                          fileName: file.name,
+                          fileType: 'image',
+                          imageData: onlybase64
+                        });
+                        this.cdrf.detectChanges();
+                      }
+                    })
+                  )
+                  .subscribe();
+              } else {
+                this.toastService.show({
+                  type: 'warning',
+                  text: fileUploadSizeToastMessage
+                });
+              }
             }
-          });
+          );
         }
       };
     }
     this.clearAttachmentUpload();
   };
 
-  async resizeImage(base64result: string): Promise<string> {
+  async resizeImage(
+    base64result: string,
+    compressionRatio: number
+  ): Promise<string> {
+    if (
+      compressionRatio > 100 &&
+      atob(this.base64result.split(',')[1]).length < 500000
+    )
+      return base64result;
     const compressedImage = await this.imageCompress.compressFile(
       base64result,
       -1,
-      100,
-      800,
-      600
+      50,
+      compressionRatio
     );
     return compressedImage;
   }
@@ -745,7 +766,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
       const pdfBytes = encoder.encode(binaryString);
       const pdfDoc = await PDFDocument.load(pdfBytes);
       const currentSize = pdfBytes.length / 1024;
-      const desiredSize = 400 * 1024;
+      const desiredSize = maxFileUploadSizeMongo;
       if (currentSize <= desiredSize) {
         return base64Pdf;
       }
@@ -766,12 +787,10 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   }
 
   openPreviewDialog() {
-    const filteredMediaTypes = [...this.filteredMediaType.mediaType];
-    const slideshowImages = [];
-    filteredMediaTypes.forEach((media) => {
-      slideshowImages.push(media);
-    });
-
+    const slideshowImages = [
+      ...this.filteredMediaType,
+      ...this.filteredMediaPdfType
+    ];
     if (slideshowImages) {
       this.dialog.open(SlideshowComponent, {
         width: '100%',
@@ -784,7 +803,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   }
 
   formFileDeleteHandler(index: number): void {
-    this.filteredMediaType.mediaType = this.filteredMediaType.mediaType.filter(
+    this.filteredMediaType = this.filteredMediaType.filter(
       (_, i) => i !== index
     );
     this.filteredMediaTypeIds.mediaIds =
@@ -792,7 +811,7 @@ export class FormHeaderConfigurationComponent implements OnInit, OnDestroy {
   }
 
   formPdfDeleteHandler(index: number): void {
-    this.pdfFiles.mediaType = this.pdfFiles.mediaType.filter(
+    this.filteredMediaPdfType = this.filteredMediaPdfType.filter(
       (_, i) => i !== index
     );
     this.filteredMediaPdfTypeIds = this.filteredMediaPdfTypeIds.filter(

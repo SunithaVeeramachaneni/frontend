@@ -22,6 +22,7 @@ export class ResponseTypeButtonComponent implements OnInit, OnDestroy {
   @Input() fieldTypes;
   @Input() title;
   @Input() isImported: boolean;
+  @Input() isEmbeddedForm: boolean;
   @Output() responseTypeOpenEvent: EventEmitter<boolean> =
     new EventEmitter<boolean>();
 
@@ -38,6 +39,7 @@ export class ResponseTypeButtonComponent implements OnInit, OnDestroy {
   }
 
   getFieldTypeImage(type) {
+    if (type === 'ATT' && !this.isEmbeddedForm) return `icon-ATT-standalone`;
     return type ? `icon-${type}` : null;
   }
 

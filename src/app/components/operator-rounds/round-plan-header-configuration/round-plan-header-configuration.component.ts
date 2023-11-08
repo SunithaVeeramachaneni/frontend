@@ -49,7 +49,9 @@ import {
 import {
   DEFAULT_PDF_BUILDER_CONFIG,
   fileUploadSizeToastMessage,
-  formConfigurationStatus
+  formConfigurationStatus,
+  maxFileUploadSizeMongo,
+  mediaTypes
 } from 'src/app/app.constants';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
@@ -117,12 +119,11 @@ export class RoundPlanHeaderConfigurationComponent
   form: FormGroup;
   isOpen = new FormControl(false);
   options: any = [];
-  filteredMediaType: any = { mediaType: [] };
+  filteredMediaType: any[] = [];
   filteredMediaTypeIds: any = { mediaIds: [] };
   filteredMediaPdfTypeIds: any = [];
   filteredMediaPdfType: any = [];
   base64result: string;
-  pdfFiles: any = { mediaType: [] };
   additionalDetails: FormArray;
   labelSelected: any;
   hasFormChanges = false;
@@ -140,7 +141,6 @@ export class RoundPlanHeaderConfigurationComponent
     private store: Store<State>,
     private operatorRoundsService: OperatorRoundsService,
     private plantService: PlantService,
-    private locationService: LocationService,
     private cdrf: ChangeDetectorRef,
     private toastService: ToastService,
     public dialog: MatDialog,
@@ -225,10 +225,12 @@ export class RoundPlanHeaderConfigurationComponent
       .pipe(map((data) => (Array.isArray(data) ? data : [])))
       .subscribe((attachments) => {
         attachments?.forEach((att) => {
-          this.filteredMediaType.mediaType = [
-            ...this.filteredMediaType.mediaType,
-            att.attachment
-          ];
+          const fileInfo = JSON.parse(att.fileInfo);
+          this.filteredMediaType.push({
+            fileName: fileInfo.name,
+            fileType: 'image',
+            imageData: att.attachment
+          });
           this.filteredMediaTypeIds.mediaIds = [
             ...this.filteredMediaTypeIds.mediaIds,
             att.id
@@ -241,9 +243,13 @@ export class RoundPlanHeaderConfigurationComponent
       .pipe(map((data) => (Array.isArray(data) ? data : [])))
       .subscribe((pdfs) => {
         pdfs?.forEach((pdf) => {
-          this.pdfFiles = {
-            mediaType: [...this.pdfFiles.mediaType, JSON.parse(pdf.fileInfo)]
-          };
+          const fileInfo = JSON.parse(pdf.fileInfo);
+          this.filteredMediaPdfType.push({
+            fileName: fileInfo.name,
+            fileType: 'file',
+            imageData: pdf.attachment,
+            fileSize: fileInfo.size
+          });
           this.filteredMediaPdfTypeIds.push(pdf.id);
         });
         this.cdrf.detectChanges();
@@ -625,7 +631,8 @@ export class RoundPlanHeaderConfigurationComponent
 
     if (files.length > 0 && files[0] instanceof File) {
       const file: File = files[0];
-      const maxSize = 390000;
+      const fileName: string = file.name;
+      const maxSize = maxFileUploadSizeMongo;
       reader.readAsDataURL(file);
       reader.onloadend = () => {
         this.base64result = reader?.result as string;
@@ -642,18 +649,21 @@ export class RoundPlanHeaderConfigurationComponent
                 .uploadAttachments$({
                   file: pdf,
                   objectId: this.formMetadata?.id,
-                  plantId: this.formMetadata?.plantId
+                  plantId: this.formMetadata?.plantId,
+                  fileType: mediaTypes.file,
+                  fileName
                 })
                 .pipe(
                   tap((response) => {
-                    if (response) {
-                      this.pdfFiles = {
-                        mediaType: [...this.pdfFiles.mediaType, file]
-                      };
-                      const responsenew =
-                        response?.data?.createRoundPlanAttachments?.id;
+                    if (Object.keys(response).length) {
+                      const responsenew = response?.id;
                       this.filteredMediaPdfTypeIds.push(responsenew);
-                      this.filteredMediaPdfType.push(this.base64result);
+                      this.filteredMediaPdfType.push({
+                        fileName,
+                        fileType: 'file',
+                        imageData: this.base64result,
+                        fileSize: resizedPdfSize
+                      });
                     }
                     this.cdrf.detectChanges();
                   })
@@ -667,62 +677,74 @@ export class RoundPlanHeaderConfigurationComponent
             }
           });
         } else {
-          this.resizeImage(this.base64result).then((compressedImage) => {
-            const onlybase64 = compressedImage.split(',')[1];
-            const resizedImageSize = atob(onlybase64).length;
-            const image = {
-              fileInfo: { name: file.name, size: resizedImageSize },
-              attachment: onlybase64
-            };
-            if (resizedImageSize <= maxSize) {
-              this.operatorRoundsService
-                .uploadAttachments$({
-                  file: image,
-                  objectId: this.formMetadata?.id,
-                  plantId: this.formMetadata?.plantId
-                })
-                .pipe(
-                  tap((response) => {
-                    if (response) {
-                      const responsenew =
-                        response?.data?.createRoundPlanAttachments?.id;
-                      this.filteredMediaTypeIds = {
-                        mediaIds: [
-                          ...this.filteredMediaTypeIds.mediaIds,
-                          responsenew
-                        ]
-                      };
-                      this.filteredMediaType = {
-                        mediaType: [
-                          ...this.filteredMediaType.mediaType,
-                          onlybase64
-                        ]
-                      };
-                      this.cdrf.detectChanges();
-                    }
+          const imageSize = atob(this.base64result.split(',')[1]).length;
+          const compressionRatio = Math.sqrt(maxSize / imageSize) * 100;
+          this.resizeImage(this.base64result, compressionRatio).then(
+            (compressedImage) => {
+              const onlybase64 = compressedImage.split(',')[1];
+              const resizedImageSize = atob(onlybase64).length;
+              const image = {
+                fileInfo: { name: file.name, size: resizedImageSize },
+                attachment: onlybase64
+              };
+              if (resizedImageSize <= maxSize) {
+                this.operatorRoundsService
+                  .uploadAttachments$({
+                    file: image,
+                    plantId: this.roundData?.formMetadata?.plantId,
+                    objectId: this.roundData?.formMetadata?.id,
+                    fileType: mediaTypes.image,
+                    fileName
                   })
-                )
-                .subscribe();
-            } else {
-              this.toastService.show({
-                type: 'warning',
-                text: fileUploadSizeToastMessage
-              });
+                  .pipe(
+                    tap((response) => {
+                      if (response) {
+                        const responsenew = response?.id;
+                        this.filteredMediaTypeIds = {
+                          mediaIds: [
+                            ...this.filteredMediaTypeIds.mediaIds,
+                            responsenew
+                          ]
+                        };
+                        this.filteredMediaType.push({
+                          fileName: file.name,
+                          fileType: 'image',
+                          imageData: onlybase64
+                        });
+                        this.cdrf.detectChanges();
+                      }
+                    })
+                  )
+                  .subscribe();
+              } else {
+                this.toastService.show({
+                  type: 'warning',
+                  text: fileUploadSizeToastMessage
+                });
+              }
             }
-          });
+          );
         }
       };
     }
     this.clearAttachmentUpload();
+    this.cdrf.detectChanges();
   };
 
-  async resizeImage(base64result: string): Promise<string> {
+  async resizeImage(
+    base64result: string,
+    compressionRatio: number
+  ): Promise<string> {
+    if (
+      compressionRatio > 100 &&
+      atob(this.base64result.split(',')[1]).length < 500000
+    )
+      return base64result;
     const compressedImage = await this.imageCompress.compressFile(
       base64result,
       -1,
-      100,
-      800,
-      600
+      50,
+      compressionRatio
     );
     return compressedImage;
   }
@@ -738,7 +760,7 @@ export class RoundPlanHeaderConfigurationComponent
       const pdfDoc = await PDFDocument.load(pdfBytes);
 
       const currentSize = pdfBytes.length / 1024;
-      const desiredSize = 400 * 1024;
+      const desiredSize = maxFileUploadSizeMongo;
       if (currentSize <= desiredSize) {
         return base64Pdf;
       }
@@ -762,11 +784,10 @@ export class RoundPlanHeaderConfigurationComponent
   }
 
   openPreviewDialog() {
-    const filteredMediaTypes = [...this.filteredMediaType.mediaType];
-    const slideshowImages = [];
-    filteredMediaTypes.forEach((media) => {
-      slideshowImages.push(media);
-    });
+    const slideshowImages = [
+      ...this.filteredMediaType,
+      ...this.filteredMediaPdfType
+    ];
 
     if (slideshowImages) {
       this.dialog.open(SlideshowComponent, {
@@ -780,7 +801,7 @@ export class RoundPlanHeaderConfigurationComponent
   }
 
   roundPlanFileDeleteHandler(index: number): void {
-    this.filteredMediaType.mediaType = this.filteredMediaType.mediaType.filter(
+    this.filteredMediaType = this.filteredMediaType.filter(
       (_, i) => i !== index
     );
     this.filteredMediaTypeIds.mediaIds =
@@ -788,7 +809,7 @@ export class RoundPlanHeaderConfigurationComponent
   }
 
   roundPlanPdfDeleteHandler(index: number): void {
-    this.pdfFiles.mediaType = this.pdfFiles.mediaType.filter(
+    this.filteredMediaPdfType = this.filteredMediaPdfType.filter(
       (_, i) => i !== index
     );
     this.filteredMediaPdfTypeIds = this.filteredMediaPdfTypeIds.filter(

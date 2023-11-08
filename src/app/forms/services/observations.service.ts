@@ -184,6 +184,19 @@ export class ObservationsService {
       info
     );
 
+  getIssueOrActionLogHistoryAttachment$(
+    attachmentId: string,
+    type: string,
+    moduleName: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    return this.appService._getResp(
+      environment.operatorRoundsApiUrl,
+      `${moduleName}/${type}/attachment/${attachmentId}`,
+      info
+    );
+  }
+
   getIssueOrActionLogHistory$(
     issueOrActionId: string,
     type: string,

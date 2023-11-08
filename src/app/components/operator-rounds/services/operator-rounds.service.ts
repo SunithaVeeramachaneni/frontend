@@ -787,6 +787,13 @@ export class OperatorRoundsService {
       )
       .pipe(map((res) => this.formatRounds(res?.items || [])));
 
+  fetchAllRoundAttachments$ = (roundId) =>
+    this.appService._getResp(
+      environment.operatorRoundsApiUrl,
+      `rounds/all-attachments/${roundId}`,
+      { displayToast: true, failureResponse: {} }
+    );
+
   fetchAllPlansList$ = ({ plantId }) => {
     const params: URLSearchParams = new URLSearchParams();
     params.set('searchTerm', '');
@@ -885,7 +892,18 @@ export class OperatorRoundsService {
       {},
       'arraybuffer'
     );
-
+  downloadRoundAttachments$ = (
+    roundId: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<Blob> =>
+    this.appService.downloadFile(
+      environment.operatorRoundsApiUrl,
+      `rounds/download-attachments/${roundId}`,
+      info,
+      true,
+      {},
+      'arraybuffer'
+    );
   generateDashboardPDF$ = (
     formData: FormData,
     customHeaders: any,

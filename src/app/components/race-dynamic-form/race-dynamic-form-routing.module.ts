@@ -11,6 +11,7 @@ import { TemplateContainerComponent } from './template-container/template-contai
 import { InspectionObservationsComponent } from './inspection-observations/inspection-observations.component';
 import { FormEditViewComponent } from './form-modal/form-edit-view.component';
 import { TemplateModalComponent } from './template-modal/template-modal.component';
+import { AttachmentViewerComponent } from 'src/app/forms/components/attachment-viewer/attachment-viewer.component';
 
 const routes: Routes = [
   {
@@ -86,6 +87,15 @@ const routes: Routes = [
         data: {
           breadcrumb: { label: 'Observations' },
           permissions: [permissions.viewRdfObservations]
+        }
+      },
+      {
+        path: 'inspection/:id/attachments',
+        component: AttachmentViewerComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: { label: 'Attachments' },
+          permissions: [permissions.viewFormScheduler]
         }
       }
     ]

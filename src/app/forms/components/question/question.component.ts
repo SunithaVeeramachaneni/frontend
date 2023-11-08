@@ -69,6 +69,8 @@ import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/ser
 import { CommonService } from 'src/app/shared/services/common.service';
 import {
   fileUploadSizeToastMessage,
+  maxFileUploadSizeMongo,
+  mediaTypes,
   operatorRounds
 } from 'src/app/app.constants';
 import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
@@ -186,6 +188,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   moduleName: string;
   operatorRounds: string = operatorRounds;
   showAskQuestionFeatures = true;
+  instructionPreviewMedia: any[] = [];
 
   get rangeDisplayText() {
     return this._rangeDisplayText;
@@ -356,6 +359,11 @@ export class QuestionComponent implements OnInit, OnDestroy {
             fieldType.type !== 'IMG' &&
             fieldType.type !== 'USR')
     );
+    this.fieldTypes.forEach((fieldType) => {
+      if (fieldType.type === 'ATT' && !this.isEmbeddedForm) {
+        fieldType.description = 'Attachment';
+      }
+    });
 
     // isAskQuestion true set question id and section id
     if (this.isAskQuestion) {
@@ -411,8 +419,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
                 sectionId: this.sectionId,
                 question: this.questionForm.value,
                 questionIndex: this.questionIndex,
-                type: 'update',
-                instructionsMedia:this.instructionsMedia
+                type: 'update'
               });
             }
           }
@@ -471,11 +478,24 @@ export class QuestionComponent implements OnInit, OnDestroy {
     if (this.question.fieldType === 'INST') {
       const { images, pdf } = this.question.value;
       const imageObservables = images.map((image) => {
+        if (image === null) return of({ id: null, data: null });
         const getAttachmentsById$ =
           this.moduleName === 'RDF'
             ? this.rdfService.getAttachmentsById$(image)
             : this.operatorRoundsService.getAttachmentsById$(image);
         return getAttachmentsById$.pipe(
+          tap((data) => {
+            const fileInfo = JSON.parse(data?.fileInfo);
+            this.instructionPreviewMedia.push({
+              id: data.id,
+              fileName: fileInfo.name,
+              fileSize: fileInfo.size,
+              fileType: 'image',
+              imageData: data?.attachment
+                ? `data:image/jpeg;base64,${data?.attachment}`
+                : null
+            });
+          }),
           map((data) => ({
             id: image,
             data: data?.attachment
@@ -488,17 +508,33 @@ export class QuestionComponent implements OnInit, OnDestroy {
         this.moduleName === 'RDF'
           ? this.rdfService.getAttachmentsById$(pdf)
           : this.operatorRoundsService.getAttachmentsById$(pdf);
-      const pdfObservable = getAttachmentsById$.pipe(
-        map((data) => ({
-          id: pdf,
-          data: {
-            fileInfo: data?.fileInfo ? JSON.parse(data.fileInfo) : null,
-            attachment: data?.attachment
-              ? `data:application/pdf;base64,${data?.attachment}`
-              : null
-          }
-        }))
-      );
+
+      const pdfObservable =
+        !pdf || pdf === null
+          ? of({ id: null, data: { fileInfo: null, attachment: null } })
+          : getAttachmentsById$.pipe(
+              tap((data) => {
+                const fileInfo = JSON.parse(data?.fileInfo);
+                this.instructionPreviewMedia.push({
+                  id: data.id,
+                  fileName: fileInfo.name,
+                  fileSize: fileInfo.size,
+                  fileType: 'file',
+                  imageData: data?.attachment
+                    ? `data:application/pdf;base64,${data?.attachment}`
+                    : null
+                });
+              }),
+              map((data) => ({
+                id: pdf,
+                data: {
+                  fileInfo: data?.fileInfo ? JSON.parse(data.fileInfo) : null,
+                  attachment: data?.attachment
+                    ? `data:application/pdf;base64,${data?.attachment}`
+                    : null
+                }
+              }))
+            );
 
       forkJoin([...imageObservables, pdfObservable])
         .pipe(
@@ -998,6 +1034,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
 
     if (files.length > 0 && files[0] instanceof File) {
       const file: File = files[0];
+      const fileName: string = file.name;
       if (allowedFileTypes.indexOf(file.type) === -1) {
         this.toast.show({
           text: 'Invalid file type, only JPG/JPEG/PNG/PDF accepted.',
@@ -1006,7 +1043,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
         return;
       }
 
-      const maxSize = 390000;
+      const maxSize = maxFileUploadSizeMongo;
       reader.readAsDataURL(file);
       reader.onloadend = () => {
         let originalValue = this.questionForm.get('value').value;
@@ -1025,23 +1062,24 @@ export class QuestionComponent implements OnInit, OnDestroy {
                   ? this.rdfService.uploadAttachments$({
                       file: pdf,
                       objectId: this.formId,
-                      plantId: this.formMetadata?.plantId
+                      plantId: this.formMetadata?.plantId,
+                      fileType: mediaTypes.file,
+                      fileName
                     })
                   : this.operatorRoundsService.uploadAttachments$({
                       file: pdf,
                       objectId: this.formId,
-                      plantId: this.formMetadata?.plantId
+                      plantId: this.formMetadata?.plantId,
+                      fileType: mediaTypes.file,
+                      fileName
                     });
               if (resizedPdfSize <= maxSize) {
                 if (originalValue.pdf === null) {
                   pdfObservable
                     .pipe(
                       tap((response) => {
-                        if (response) {
-                          const responsenew =
-                            this.moduleName === 'RDF'
-                              ? response?.data?.createFormAttachments?.id
-                              : response?.data?.createRoundPlanAttachments?.id;
+                        if (Object.keys(response).length) {
+                          const responsenew = response?.id;
                           this.instructionsMedia = {
                             ...this.instructionsMedia,
                             pdf: {
@@ -1049,6 +1087,15 @@ export class QuestionComponent implements OnInit, OnDestroy {
                               data: pdf
                             }
                           };
+                          this.instructionPreviewMedia.push({
+                            id: response?.id,
+                            fileName,
+                            fileSize: resizedPdfSize,
+                            fileType: 'file',
+                            imageData: onlybase64
+                              ? `data:application/pdf;base64,${onlybase64}`
+                              : null
+                          });
                           originalValue = cloneDeep({
                             ...originalValue,
                             pdf: responsenew
@@ -1082,87 +1129,110 @@ export class QuestionComponent implements OnInit, OnDestroy {
               });
             });
         } else {
-          this.resizeImage(this.base64result).then((compressedImage) => {
-            const onlybase64 = compressedImage.split(',')[1];
-            const resizedImageSize = atob(onlybase64).length;
-            const image = {
-              fileInfo: { name: file.name, size: resizedImageSize },
-              attachment: onlybase64
-            };
-            if (resizedImageSize <= maxSize) {
-              const imageObservable =
-                this.moduleName === 'RDF'
-                  ? this.rdfService.uploadAttachments$({
-                      file: image,
-                      objectId: this.formId,
-                      plantId: this.formMetadata?.plantId
-                    })
-                  : this.operatorRoundsService.uploadAttachments$({
-                      file: image,
-                      objectId: this.formId,
-                      plantId: this.formMetadata?.plantId
-                    });
-              const index = originalValue.images.findIndex(
-                (image) => image === null
-              );
-              if (index !== -1) {
-                imageObservable
-                  .pipe(
-                    tap((response) => {
-                      if (response) {
-                        const responsenew =
-                          this.moduleName === 'RDF'
-                            ? response?.data?.createFormAttachments?.id
-                            : response?.data?.createRoundPlanAttachments?.id;
-                        const images = [...originalValue.images];
-                        images[index] = responsenew;
-                        originalValue = cloneDeep({
-                          ...originalValue,
-                          images
-                        });
-                        this.instructionsMedia = {
-                          ...this.instructionsMedia,
-                          images: [
-                            ...this.instructionsMedia.images.slice(0, index),
-                            {
-                              id: responsenew,
-                              data: compressedImage
-                            },
-                            ...this.instructionsMedia.images.slice(index + 1)
-                          ]
-                        };
-                        this.questionForm.get('value').setValue(originalValue);
-                        this.instructionsUpdateValue();
-                        this.cdrf.detectChanges();
-                      }
-                    })
-                  )
-                  .subscribe();
+          const imageSize = atob(this.base64result.split(',')[1]).length;
+          const compressionRatio = Math.sqrt(maxSize / imageSize) * 100;
+          this.resizeImage(this.base64result, compressionRatio).then(
+            (compressedImage) => {
+              const onlybase64 = compressedImage.split(',')[1];
+              const resizedImageSize = atob(onlybase64).length;
+              const image = {
+                fileInfo: { name: file.name, size: resizedImageSize },
+                attachment: onlybase64
+              };
+              if (resizedImageSize <= maxSize) {
+                const imageObservable =
+                  this.moduleName === 'RDF'
+                    ? this.rdfService.uploadAttachments$({
+                        file: image,
+                        objectId: this.formId,
+                        plantId: this.formMetadata?.plantId,
+                        fileType: mediaTypes.image,
+                        fileName
+                      })
+                    : this.operatorRoundsService.uploadAttachments$({
+                        file: image,
+                        objectId: this.formId,
+                        plantId: this.formMetadata?.plantId,
+                        fileType: mediaTypes.image,
+                        fileName
+                      });
+                const index = originalValue.images.findIndex(
+                  (image) => image === null
+                );
+                if (index !== -1) {
+                  imageObservable
+                    .pipe(
+                      tap((response) => {
+                        if (Object.keys(response).length) {
+                          const responsenew = response.id;
+                          const images = [...originalValue.images];
+                          images[index] = responsenew;
+                          originalValue = cloneDeep({
+                            ...originalValue,
+                            images
+                          });
+                          this.instructionPreviewMedia.push({
+                            id: response?.id,
+                            fileName,
+                            fileSize: resizedImageSize,
+                            fileType: 'image',
+                            imageData: onlybase64
+                              ? `data:image/jpeg;base64,${onlybase64}`
+                              : null
+                          });
+                          this.instructionsMedia = {
+                            ...this.instructionsMedia,
+                            images: [
+                              ...this.instructionsMedia.images.slice(0, index),
+                              {
+                                id: responsenew,
+                                data: compressedImage
+                              },
+                              ...this.instructionsMedia.images.slice(index + 1)
+                            ]
+                          };
+                          this.questionForm
+                            .get('value')
+                            .setValue(originalValue);
+                          this.instructionsUpdateValue();
+                          this.cdrf.detectChanges();
+                        }
+                      })
+                    )
+                    .subscribe();
+                } else {
+                  this.toast.show({
+                    text: 'Only upto 3 images can be attached to an instruction.',
+                    type: 'warning'
+                  });
+                }
               } else {
                 this.toast.show({
-                  text: 'Only upto 3 images can be attached to an instruction.',
-                  type: 'warning'
+                  type: 'warning',
+                  text: fileUploadSizeToastMessage
                 });
               }
-            } else {
-              this.toast.show({
-                type: 'warning',
-                text: fileUploadSizeToastMessage
-              });
             }
-          });
+          );
         }
       };
     }
   }
 
-  async resizeImage(base64result: string): Promise<string> {
+  async resizeImage(
+    base64result: string,
+    compressionRatio: number
+  ): Promise<string> {
+    if (
+      compressionRatio > 100 &&
+      atob(this.base64result.split(',')[1]).length < 500000
+    )
+      return base64result;
     const compressedImage = await this.imageCompress.compressFile(
       base64result,
       -1,
-      100,
-      800,
-      600
+      50,
+      compressionRatio
     );
     return compressedImage;
   }
@@ -1178,7 +1248,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
       const pdfDoc = await PDFDocument.load(pdfBytes);
 
       const currentSize = pdfBytes.length / 1024;
-      const desiredSize = 400 * 1024;
+      const desiredSize = maxFileUploadSizeMongo;
       if (currentSize <= desiredSize) {
         return base64Pdf;
       }
@@ -1262,6 +1332,9 @@ export class QuestionComponent implements OnInit, OnDestroy {
         ...originalValue,
         images: this.imagesArrayRemoveNullGaps(originalValue.images)
       });
+      this.instructionPreviewMedia = this.instructionPreviewMedia.filter(
+        (image) => image?.id !== attachmentId
+      );
     } else {
       this.instructionsMedia = {
         ...this.instructionsMedia,
@@ -1277,6 +1350,9 @@ export class QuestionComponent implements OnInit, OnDestroy {
         ...originalValue,
         pdf: null
       });
+      this.instructionPreviewMedia = this.instructionPreviewMedia.filter(
+        (image) => image?.fileType !== 'file'
+      );
     }
     this.questionForm.get('value').setValue(originalValue);
     this.instructionsUpdateValue();
@@ -1294,12 +1370,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
 
   openPreviewDialog() {
-    const slideshowImages = [];
-    this.instructionsMedia.images.forEach((image) => {
-      if (image?.data) {
-        slideshowImages.push(image.data);
-      }
-    });
+    const slideshowImages = this.instructionPreviewMedia;
     if (slideshowImages) {
       this.dialog.open(SlideshowComponent, {
         width: '100%',

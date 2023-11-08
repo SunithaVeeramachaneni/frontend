@@ -48,10 +48,14 @@ import {
   dateFormat6,
   timeFormat,
   defaultLimit,
-  roundObservations
+  roundObservations,
+  maxFileUploadSizeMongo,
+  fileUploadSizeToastMessage,
+  mediaTypes
 } from 'src/app/app.constants';
 import { NotificationAlertDialogComponent } from '../notification-alert-dialog/notification-alert-dialog.component';
 import { NotificationIssuesListComponent } from '../notification-issues-list/notification-issues-list.component';
+import { PDFDocument } from 'pdf-lib';
 
 @Directive({
   selector: '[appScrollToBottom]'
@@ -127,7 +131,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   private allData = [];
   private amplifySubscription$: Subscription[] = [];
   private attachmentsSubscriptionData = [];
-  private listImages: { message: string }[] = [];
+
   constructor(
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<IssuesActionsViewComponent>,
@@ -142,7 +146,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     private cdRef: ChangeDetectorRef,
     private toastService: ToastService,
     private plantService: PlantService,
-    private imageCompress: NgxImageCompressService,
+    private imageCompress: NgxImageCompressService
   ) {}
 
   getAttachmentsList() {
@@ -285,64 +289,6 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
             if (onUpdateIssuesList$) {
               this.amplifySubscription$.push(onUpdateIssuesList$);
             }
-
-            // 6. Create issue attachments issues log history
-            const onCreateIssuesAttachments$ = this.observations
-              .onCreateIssuesAttachments$({
-                objectId: this.data.id
-              })
-              ?.subscribe({
-                next: ({
-                  _,
-                  value: {
-                    data: { onCreateIssuesAttachments }
-                  }
-                }) => {
-                  if (onCreateIssuesAttachments) {
-                    const base64Image =
-                      'data:image/jpeg;base64,' +
-                      onCreateIssuesAttachments?.imageData;
-                    this.attachmentsSubscriptionData.push({
-                      objectId: onCreateIssuesAttachments?.objectId,
-                      imageData: base64Image,
-                      id: onCreateIssuesAttachments?.id
-                    });
-                  }
-                }
-              });
-
-            if (onCreateIssuesAttachments$) {
-              this.amplifySubscription$.push(onCreateIssuesAttachments$);
-            }
-
-            // 7. Create action attachments action log history
-            const onCreateActionsAttachments$ = this.observations
-              .onCreateActionsAttachments$({
-                objectId: this.data.id
-              })
-              ?.subscribe({
-                next: ({
-                  _,
-                  value: {
-                    data: { onCreateActionsAttachments }
-                  }
-                }) => {
-                  if (onCreateActionsAttachments) {
-                    const base64Image =
-                      'data:image/jpeg;base64,' +
-                      onCreateActionsAttachments?.imageData;
-                    this.attachmentsSubscriptionData.push({
-                      objectId: onCreateActionsAttachments?.objectId,
-                      imageData: base64Image,
-                      id: onCreateActionsAttachments?.id
-                    });
-                  }
-                }
-              });
-
-            if (onCreateActionsAttachments$) {
-              this.amplifySubscription$.push(onCreateActionsAttachments$);
-            }
           }
         });
     }
@@ -375,51 +321,192 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   uploadFile(event): void {
     const { files } = event.target as HTMLInputElement;
     const reader = new FileReader();
-    const maxSize = 180000;
-    reader.readAsDataURL(files[0]);
-    reader.onloadend = () => {
-      const { id, type } = this.data;
-      const base64result = reader?.result as string;
-      this.resizeImage(base64result).then((compressedImage) => {
-        const onlybase64 = compressedImage.split(',')[1];
-        const resizedImageSize = atob(onlybase64).length;
-        if (resizedImageSize <= maxSize) {
-          this.observations
-            .uploadIssueOrActionLogHistoryAttachment$(
-              id,
-              { file: onlybase64 },
-              type,
-              this.moduleName
-            )
-            .pipe(
-              tap((resp) => {
-                if (Object.keys(resp).length) {
-                  this.filteredMediaType.push(resp);
-                  this.issuesActionsDetailViewForm.markAsDirty();
-                }
-              })
-            )
-            .subscribe();
-        } else {
-          this.toastService.show({
-            type: 'warning',
-            text: 'Compressed Image exceeding 175KB'
+    const file: File = files[0];
+    if (file instanceof File) {
+      const fileName: string = file.name;
+      const fileType: string = file.type;
+      const maxSize = maxFileUploadSizeMongo;
+      reader.readAsDataURL(file);
+      reader.onloadend = () => {
+        const { id, type } = this.data;
+        const base64result = reader?.result as string;
+        if (fileType.includes('video')) {
+          const resultBase64 = base64result.split(',')[1];
+          const videoSize = atob(resultBase64).length;
+          const video = {
+            fileName,
+            fileType: mediaTypes.video,
+            imageData: resultBase64
+          };
+          if (videoSize <= maxSize) {
+            this.observations
+              .uploadIssueOrActionLogHistoryAttachment$(
+                id,
+                video,
+                type,
+                this.moduleName
+              )
+              .pipe(
+                tap((resp) => {
+                  if (Object.keys(resp).length) {
+                    this.issuesActionsDetailViewForm.markAsDirty();
+                  }
+                })
+              )
+              .subscribe();
+          } else {
+            this.toastService.show({
+              type: 'warning',
+              text: fileUploadSizeToastMessage
+            });
+          }
+        } else if (fileType.includes('image')) {
+          const imageSize = atob(base64result.split(',')[1]).length;
+          const compressionRatio = Math.sqrt(maxSize / imageSize) * 100;
+          this.resizeImage(base64result, compressionRatio).then(
+            (compressedImage) => {
+              const compressedBase64 = compressedImage.split(',')[1];
+              const resizedImageSize = atob(compressedBase64).length;
+              const image = {
+                fileName,
+                fileType: mediaTypes.image,
+                imageData: compressedBase64
+              };
+              if (resizedImageSize <= maxSize) {
+                this.observations
+                  .uploadIssueOrActionLogHistoryAttachment$(
+                    id,
+                    image,
+                    type,
+                    this.moduleName
+                  )
+                  .pipe(
+                    tap((resp) => {
+                      if (Object.keys(resp).length) {
+                        this.issuesActionsDetailViewForm.markAsDirty();
+                      }
+                    })
+                  )
+                  .subscribe();
+              } else {
+                this.toastService.show({
+                  type: 'warning',
+                  text: fileUploadSizeToastMessage
+                });
+              }
+            }
+          );
+        } else if (fileType === 'application/pdf') {
+          this.resizePdf(base64result).then((compressedPdf) => {
+            const compressedBase64 = compressedPdf.split(',')[1];
+            const resizedPdfSize = atob(compressedBase64).length;
+            const pdf = {
+              fileName,
+              fileType: mediaTypes.file,
+              imageData: compressedBase64
+            };
+            if (resizedPdfSize <= maxSize) {
+              this.observations
+                .uploadIssueOrActionLogHistoryAttachment$(
+                  id,
+                  pdf,
+                  type,
+                  this.moduleName
+                )
+                .pipe(
+                  tap((resp) => {
+                    if (Object.keys(resp).length) {
+                      this.issuesActionsDetailViewForm.markAsDirty();
+                    }
+                  })
+                )
+                .subscribe();
+            } else {
+              this.toastService.show({
+                type: 'warning',
+                text: fileUploadSizeToastMessage
+              });
+            }
           });
+        } else {
+          const resultBase64 = base64result.split(',')[1];
+          const fileSize = atob(resultBase64).length;
+          const attachmentFile = {
+            fileName,
+            fileType: mediaTypes.file,
+            imageData: resultBase64
+          };
+          if (fileSize <= maxSize) {
+            this.observations
+              .uploadIssueOrActionLogHistoryAttachment$(
+                id,
+                attachmentFile,
+                type,
+                this.moduleName
+              )
+              .pipe(
+                tap((resp) => {
+                  if (Object.keys(resp).length) {
+                    this.issuesActionsDetailViewForm.markAsDirty();
+                  }
+                })
+              )
+              .subscribe();
+          } else {
+            this.toastService.show({
+              type: 'warning',
+              text: fileUploadSizeToastMessage
+            });
+          }
         }
-      })
-      
-    };
+      };
+    }
   }
-  async resizeImage(base64result: string): Promise<string> {
+  async resizePdf(base64Pdf: string): Promise<string> {
+    try {
+      const base64Data = base64Pdf.split(',')[1];
+      const binaryString = atob(base64Data);
+      const encoder = new TextEncoder();
+      const pdfBytes = encoder.encode(binaryString);
+      const pdfDoc = await PDFDocument.load(pdfBytes);
+      const currentSize = pdfBytes.length / 1024;
+      const desiredSize = maxFileUploadSizeMongo;
+      if (currentSize <= desiredSize) {
+        return base64Pdf;
+      }
+      const scalingFactor = Math.sqrt(desiredSize / currentSize);
+      const pages = pdfDoc.getPages();
+      pages.forEach((page) => {
+        const { width, height } = page.getSize();
+        page.setSize(width * scalingFactor, height * scalingFactor);
+      });
+
+      const modifiedPdfBytes = await pdfDoc.save();
+      const decoder = new TextDecoder();
+      const base64ModifiedPdf = btoa(decoder.decode(modifiedPdfBytes));
+      return base64ModifiedPdf;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async resizeImage(
+    base64result: string,
+    compressionRatio: number
+  ): Promise<string> {
+    if (
+      compressionRatio > 100 &&
+      atob(base64result.split(',')[1]).length < 500000
+    )
+      return base64result;
     const compressedImage = await this.imageCompress.compressFile(
       base64result,
       -1,
-      100,
-      800,
-      600
+      50,
+      compressionRatio
     );
     return compressedImage;
   }
+
   updateDate(
     event: MatDatetimePickerInputEvent<Date>,
     formControlDateField: string
@@ -725,21 +812,35 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   openPreviewDialog() {
-    const slideshowImages = [];
+    const slideshowFiles = [];
     this.filteredMediaType.forEach((media) => {
-      slideshowImages.push(media.message);
+      slideshowFiles.push(media.message);
     });
-    if (slideshowImages) {
+    if (slideshowFiles) {
       this.dialog.open(SlideshowComponent, {
         width: '100%',
         height: '100%',
         panelClass: 'slideshow-container',
         backdropClass: 'slideshow-backdrop',
-        data: { type: 'base64', images: slideshowImages }
+        data: { type: 'base64', images: slideshowFiles }
       });
     }
   }
-
+  getDocumentIcon(fileName: string) {
+    const extension = fileName.split('.').pop();
+    switch (extension) {
+      case 'pdf':
+        return 'icon-pdfIcon';
+      case 'doc':
+      case 'docx':
+        return 'icon-docx-file';
+      case 'xls':
+      case 'xlsx':
+        return 'icon-xlsx-file';
+      default:
+        return 'icon-pdfIcon';
+    }
+  }
   getUserNameByEmail(emails: string) {
     return this.observations.formatUserFullNameDisplay(emails);
   }
@@ -900,7 +1001,6 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
         }
       });
     }
-    this.attachmentsSubscriptionData = [];
   }
   notificationCreateSelector() {
     if (this.notificationsCount === 0) {
@@ -1033,14 +1133,8 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
       .getIssueOrActionLogHistory$(id, type, {}, this.moduleName)
       .pipe(
         tap((logHistory) => {
-          this.logHistory = [];
-          this.filteredMediaType = [];
           this.logHistory = logHistory?.rows || [];
-          this.listImages =
-            logHistory?.listImages?.map((img) => ({
-              message: img
-            })) || [];
-          this.filteredMediaType = this.listImages;
+          this.prepareInitialIssueActionAttachments();
           if (this.logHistory.length > 0) {
             this.logHistory.forEach((history) => {
               if (
@@ -1055,11 +1149,10 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
                   }
                 });
               }
-
               if (
                 history.type === 'Media' &&
                 !this.filteredMediaType.some(
-                  (a) => a?.message === history?.message
+                  (a) => a?.message?.imageData === history?.message?.imageData
                 )
               ) {
                 this.filteredMediaType.push(history);
@@ -1084,42 +1177,80 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
           data.type === 'Object' ? JSON.parse(data?.message) : data?.message
       };
       if (newMessage.type === 'Media') {
-        const foundImageData = this.attachmentsSubscriptionData.find(
-          (a) => a?.id === newMessage?.message
-        );
-        if (foundImageData) {
-          newMessage.message = foundImageData?.imageData || newMessage.message;
-        }
-      }
-      this.filteredMediaType = [];
-      this.filteredMediaType = this.listImages.filter((l: any) => !l?.id);
-      this.logHistory = [...this.logHistory, newMessage];
-      if (this.logHistory?.length > 0) {
-        this.logHistory.forEach((history) => {
-          if (
-            typeof history?.message === 'object' &&
-            history?.message?.PHOTO?.length > 0
-          ) {
-            history?.message?.PHOTO.forEach((element) => {
-              if (element) {
-                this.filteredMediaType.push({
-                  message: element
+        this.observations
+          .getIssueOrActionLogHistoryAttachment$(
+            newMessage.message,
+            this.data?.type,
+            this.moduleName
+          )
+          .subscribe((result) => {
+            if (Object.keys(result).length) {
+              newMessage.message = result;
+              this.prepareInitialIssueActionAttachments();
+              this.logHistory = [...this.logHistory, newMessage];
+              if (this.logHistory?.length > 0) {
+                this.logHistory.forEach((history) => {
+                  if (
+                    typeof history?.message === 'object' &&
+                    history?.message?.PHOTO?.length > 0
+                  ) {
+                    history?.message?.PHOTO.forEach((element) => {
+                      if (element) {
+                        this.filteredMediaType.push({
+                          message: element
+                        });
+                      }
+                    });
+                  }
+                  if (
+                    history.type === 'Media' &&
+                    !this.filteredMediaType.some(
+                      (a) =>
+                        a?.message?.imageData === history?.message?.imageData
+                    )
+                  ) {
+                    this.filteredMediaType.push(history);
+                  }
                 });
               }
-            });
-          }
-          if (
-            history.type === 'Media' &&
-            !this.filteredMediaType.some((a) => a?.message === history?.message)
-          ) {
-            this.filteredMediaType.push(history);
-          }
+              this.logHistory$ = of({
+                nextToken: null,
+                rows: this.logHistory
+              });
+            }
+          });
+      } else {
+        this.prepareInitialIssueActionAttachments();
+        this.logHistory = [...this.logHistory, newMessage];
+        if (this.logHistory?.length > 0) {
+          this.logHistory.forEach((history) => {
+            if (
+              typeof history?.message === 'object' &&
+              history?.message?.PHOTO?.length > 0
+            ) {
+              history?.message?.PHOTO.forEach((element) => {
+                if (element) {
+                  this.filteredMediaType.push({
+                    message: element
+                  });
+                }
+              });
+            }
+            if (
+              history.type === 'Media' &&
+              !this.filteredMediaType.some(
+                (a) => a?.message?.imageData === history?.message?.imageData
+              )
+            ) {
+              this.filteredMediaType.push(history);
+            }
+          });
+        }
+        this.logHistory$ = of({
+          nextToken: null,
+          rows: this.logHistory
         });
       }
-      this.logHistory$ = of({
-        nextToken: null,
-        rows: this.logHistory
-      });
     }
   }
 
@@ -1177,6 +1308,23 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
           this.allData[idx] = this.data;
         }
       }
+    }
+  }
+
+  private prepareInitialIssueActionAttachments(): void {
+    this.filteredMediaType = [];
+    if (
+      this.data &&
+      Array.isArray(this.data?.PHOTO) &&
+      this.data?.PHOTO?.length > 0
+    ) {
+      this.data?.PHOTO?.forEach((element) => {
+        if (element) {
+          this.filteredMediaType.push({
+            message: element
+          });
+        }
+      });
     }
   }
 }

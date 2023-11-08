@@ -581,6 +581,22 @@
               </h4>
             </div>
           </div>
+          <div class="name-heading" *ngIf="showPDFDownload">
+            <div>
+              <p id="formDetailAttachment" class="color-gray">
+                {{ 'attachment' | translate }}
+              </p>
+            </div>
+            <div class="flex-custom">
+              <button
+                class="attachment-download-btn"
+                (click)="downloadAttachments()"
+                [disabled]="pdfButtonDisabled"
+              >
+                {{ 'download' | translate }}
+              </button>
+            </div>
+          </div>
         </ng-template>
       </div>
     </ng-container>

@@ -33,6 +33,16 @@
     min-height: 96vh;
     padding: 16px 0 !important;
   }
+  .attachment-download-btn {
+    background-color: transparent;
+    border: none;
+    font-weight: 500;
+    color: $blue-main;
+    font-size: 110%;
+  }
+  .attachment-download-btn:disabled {
+    color: $gray7 !important;
+  }
   .footer {
     position: absolute;
     bottom: 5px;

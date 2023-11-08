@@ -146,13 +146,30 @@
           border: 5px solid $border-color;
           border-radius: 4px;
           width: 300px;
-          height: 280px;
           margin: 10px;
         }
 
         .media-image {
           width: 300px;
           height: 280px;
+        }
+
+        .media-video {
+          width: 300px;
+          height: 280px;
+          object-fit: cover;
+        }
+        .video-player-container {
+          position: relative;
+          .video-player-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            z-index: 999999;
+            background-color: $video-overlay;
+          }
         }
 
         .time {
@@ -263,6 +280,53 @@
       }
     }
   }
+  .document-container {
+    background: $blue8;
+    padding: 13px;
+    border-radius: 4px;
+    justify-content: start;
+    align-items: center;
+
+    .pdf-icon {
+      height: 25px;
+      width: 25px;
+      position: relative;
+    }
+
+    .pdf-text {
+      font-size: 95%;
+      margin-left: 10px;
+      font-weight: 500;
+      letter-spacing: -0.24px;
+      color: $active-blue;
+    }
+  }
+  .attachment-document-container {
+    background: $blue8;
+    padding: 5px;
+    flex-direction: column;
+    border-radius: 4px;
+    justify-content: center;
+    align-items: center;
+    width: 100px;
+    height: 90px;
+    margin: 0px 15px 15px 0px;
+
+    .pdf-icon {
+      height: 25px;
+      width: 25px;
+      position: relative;
+    }
+
+    .pdf-text {
+      font-size: 80%;
+      margin-top: 10px;
+      font-weight: 500;
+      letter-spacing: -0.24px;
+      text-align: center;
+      color: #37428b;
+    }
+  }
 
   .attachments-container {
     display: flex;
@@ -270,12 +334,31 @@
     margin-left: 10px;
     margin-top: 10px;
   }
-
+  .video-player-container {
+    position: relative;
+    .video-player-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      z-index: 999999;
+      background-color: $video-overlay;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      .video-player-play-icon {
+        height: 40px;
+        width: 40px;
+      }
+    }
+  }
   .attachments {
     width: 110px;
     height: 100px;
     margin-right: 15px;
     margin-bottom: 10px;
+    object-fit: cover;
   }
 
   .cursor-pointer {

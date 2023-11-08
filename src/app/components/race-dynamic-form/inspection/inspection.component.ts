@@ -57,7 +57,8 @@ import {
   permissions as perms,
   statusColors,
   dateTimeFormat4,
-  graphQLDefaultLimit
+  graphQLDefaultLimit,
+  months
 } from 'src/app/app.constants';
 import { LoginService } from '../../login/services/login.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -858,6 +859,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
         });
       } else if (type === 'DOWNLOAD_PDF') {
         this.downloadPDF(this.selectedForm);
+      } else if (type === 'DOWNLOAD_ATTACHMENTS') {
+        this.downloadAttachments(this.selectedForm);
       }
     } else {
       this.router.navigate([`/forms/edit/${this.selectedForm.id}`]);
@@ -892,6 +895,45 @@ export class InspectionComponent implements OnInit, OnDestroy {
         (err) => {
           this.toastService.show({
             text: `Error occured while generating PDF, ${err.message}`,
+            type: 'warning'
+          });
+        }
+      );
+  }
+  downloadAttachments(selectedForm) {
+    const { id: inspectionId } = selectedForm;
+    const info: ErrorInfo = {
+      displayToast: false,
+      failureResponse: 'throwError'
+    };
+    this.raceDynamicFormService
+      .downloadRoundAttachments$(inspectionId, info)
+      .subscribe(
+        (data) => {
+          const blob = new Blob([data], { type: 'application/zip' });
+          const aElement = document.createElement('a');
+          const fileName =
+            selectedForm.name && selectedForm.name?.length
+              ? selectedForm.name
+              : 'untitled';
+          const currentDate = new Date();
+          const formattedDate = `${
+            months[currentDate.getMonth()]
+          } ${currentDate.getDate()}, ${currentDate.getFullYear()}`;
+
+          aElement.setAttribute(
+            'download',
+            `${fileName} - ${formattedDate}.zip`
+          );
+          const href = URL.createObjectURL(blob);
+          aElement.href = href;
+          aElement.setAttribute('target', '_blank');
+          aElement.click();
+          URL.revokeObjectURL(href);
+        },
+        (err) => {
+          this.toastService.show({
+            text: `Error occured while generating Zip - ${err.message}`,
             type: 'warning'
           });
         }

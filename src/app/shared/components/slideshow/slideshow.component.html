@@ -1,11 +1,27 @@
 <div class="card-container">
-  <button id="slideshowCloseBtn" (click)="close()" class="close-btn">
-    <svg-icon
-      id="slideshowCancelIcon"
-      icon="icon-cancel-white-icon"
-      class="cancel-icon"
-    ></svg-icon>
-  </button>
+  <div class="slideshow-header-container">
+    <span class="file-name-text">{{ data.images[currentIndex].fileName }}</span>
+    <a
+      id="slideshowCloseBtn"
+      [download]="data.images[currentIndex].fileName"
+      [href]="getFileSrc(data.images[currentIndex].imageData)"
+      class="download-btn"
+    >
+      <svg-icon
+        id="slideshowCancelIcon"
+        icon="icon-download-file"
+        class="download-icon"
+      ></svg-icon>
+    </a>
+
+    <button id="slideshowCloseBtn" (click)="close()" class="close-btn">
+      <svg-icon
+        id="slideshowCancelIcon"
+        icon="icon-cancel-white-icon"
+        class="cancel-icon"
+      ></svg-icon>
+    </button>
+  </div>
   <mat-card class="slider-images-container">
     <div class="slide-wrapper">
       <ng-container *ngIf="data.type === 's3bucket'">
@@ -23,28 +39,60 @@
         <ng-container *ngFor="let image of data.images; let i = index">
           <img
             id="slideshowImg"
-            [src]="getImageSrc(image)"
-            *ngIf="i === currentIndex"
+            [src]="getImageSrc(image?.imageData)"
+            *ngIf="i === currentIndex && image.fileType === 'image'"
             class="slide-images"
           />
+          <video
+            id="slideShowVid"
+            [src]="image?.imageData"
+            *ngIf="i === currentIndex && image.fileType === 'video'"
+            class="slide-videos"
+            controls
+          >
+            <source type="video/mp4" [src]="image?.imageData" />
+          </video>
+          <ng-container *ngIf="i === currentIndex && image.fileType === 'file'">
+            <div class="dis-flex document-container">
+              <svg-icon
+                id="instructionPDFIcon"
+                [icon]="getDocumentIcon(image?.fileName)"
+                class="pdf-icon"
+              ></svg-icon>
+
+              <span id="instructionPDFName" class="pdf-text">
+                Preview is currently unavailable.<br />Please download to view
+              </span>
+              <a
+                id="slideshowCloseBtn"
+                [download]="data.images[currentIndex].fileName"
+                [href]="getFileSrc(data.images[currentIndex].imageData)"
+                class="download-btn"
+              >
+                Download
+              </a>
+            </div>
+          </ng-container>
         </ng-container>
       </ng-container>
     </div>
   </mat-card>
-  <mat-card class="thumbnail-images-container">
+  <div class="thumbnail-images-container">
     <mat-icon #previous class="prev-btn">keyboard_arrow_left</mat-icon>
 
     <div class="images">
       <ng-container *ngIf="data.type === 's3bucket'">
-        <div
-          *ngFor="let image of data.images; let i = index"
-          class="thumbnail-images"
-        >
+        <div *ngFor="let image of data.images; let i = index">
           <img
             id="slideshowFormImg"
             [src]="image"
             width="70"
             height="70"
+            [ngClass]="
+              i === currentIndex
+                ? 'thumbnail-images selected-thumbnail'
+                : 'thumbnail-images'
+            "
             (click)="currentIndex = i"
           />
         </div>
@@ -53,15 +101,70 @@
         <div *ngFor="let image of data.images; let i = index">
           <img
             id="slideshowNoForms"
-            [src]="getImageSrc(image)"
+            [src]="getImageSrc(image?.imageData)"
             width="70"
             height="70"
+            *ngIf="image.fileType === 'image'"
+            [ngClass]="
+              i === currentIndex
+                ? 'thumbnail-images selected-thumbnail'
+                : 'thumbnail-images'
+            "
             (click)="currentIndex = i"
           />
+          <div
+            [ngClass]="
+              i === currentIndex
+                ? 'thumbnail-images video-player-container selected-thumbnail'
+                : 'thumbnail-images video-player-container'
+            "
+            *ngIf="image?.fileType === 'video'"
+            (click)="currentIndex = i"
+          >
+            <div class="video-player">
+              <video
+                id="issuesActionsViewVideo"
+                width="70"
+                height="70"
+                class="attachments"
+              >
+                <source
+                  type="video/mp4"
+                  [src]="getVideoSrc(image?.imageData)"
+                />
+              </video>
+            </div>
+            <div class="video-player-overlay">
+              <svg-icon
+                class="video-player-play-icon"
+                icon="icon-video-play"
+              ></svg-icon>
+            </div>
+          </div>
+          <ng-container *ngIf="image?.fileType === 'file'">
+            <div
+              [ngClass]="
+                i === currentIndex
+                  ? 'dis-flex attachment-document-container selected-thumbnail'
+                  : 'dis-flex attachment-document-container'
+              "
+              (click)="currentIndex = i"
+            >
+              <svg-icon
+                id="instructionPDFIcon"
+                [icon]="getDocumentIcon(image?.fileName)"
+                class="pdf-icon"
+              ></svg-icon>
+
+              <span id="instructionPDFName" class="pdf-text">
+                {{ image?.fileName }}
+              </span>
+            </div>
+          </ng-container>
         </div>
       </ng-container>
     </div>
 
     <mat-icon #next class="next-btn">keyboard_arrow_right</mat-icon>
-  </mat-card>
+  </div>
 </div>

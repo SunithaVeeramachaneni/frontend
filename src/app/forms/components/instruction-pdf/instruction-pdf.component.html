@@ -1,18 +1,18 @@
 <div class="bg-white dis-flex instruction-pdf-container">
-  <div>
+  <div (click)="triggerPreview()">
     <svg-icon
       id="instructionPDFIcon"
       icon="icon-pdfIcon"
       class="pdf-icon"
     ></svg-icon>
   </div>
-  <div>
+  <div (click)="triggerPreview()">
     <span id="instructionPDFName" class="pdf-text">
-      {{ pdf?.name }}
+      {{ pdf?.fileName }}
     </span>
     <br />
     <span id="instructionPDFSize" class="pdf-sub-text">
-      {{ (pdf?.size / 1024).toFixed(2) }}
+      {{ (pdf?.fileSize / 1024).toFixed(2) }}
       KB
     </span>
   </div>

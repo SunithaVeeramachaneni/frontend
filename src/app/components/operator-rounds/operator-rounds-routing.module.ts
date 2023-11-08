@@ -13,7 +13,7 @@ import { OperatorRoundsDashboardComponent } from './operator-rounds-dashboard/op
 import { ReportsComponent } from '../dashboard/reports/reports.component';
 import { ReportConfigurationComponent } from '../dashboard/report-configuration/report-configuration.component';
 import { ShiftHandOverComponent } from './shift-hand-over/shift-hand-over.component';
-
+import { AttachmentViewerComponent } from 'src/app/forms/components/attachment-viewer/attachment-viewer.component';
 const routes: Routes = [
   {
     path: '',
@@ -128,6 +128,15 @@ const routes: Routes = [
         data: {
           breadcrumb: { label: 'Shift Handover' },
           permissions: [permissions.viewShiftHandovers]
+        }
+      },
+      {
+        path: 'round/:id/attachments',
+        component: AttachmentViewerComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: { label: 'Attachments' },
+          permissions: [permissions.viewScheduler]
         }
       }
     ]

@@ -37,6 +37,14 @@ export class SlideshowComponent implements AfterViewInit, OnInit {
       : 'data:image/jpeg;base64,' + source;
     return this.sanitizer.bypassSecurityTrustResourceUrl(base64Image);
   };
+  getVideoSrc = (source) => {
+    const base64Video = source.includes('data:video/')
+      ? source
+      : 'data:video/mp4;base64,' + source;
+    return this.sanitizer.bypassSecurityTrustResourceUrl(base64Video);
+  };
+  getFileSrc = (source) =>
+    this.sanitizer.bypassSecurityTrustResourceUrl(source);
 
   ngAfterViewInit() {
     const previous = fromEvent(
@@ -67,6 +75,21 @@ export class SlideshowComponent implements AfterViewInit, OnInit {
       .subscribe((event) => {
         this.currentIndex = event.index;
       });
+  }
+  getDocumentIcon(fileName: string) {
+    const extension = fileName.split('.').pop();
+    switch (extension) {
+      case 'pdf':
+        return 'icon-pdfIcon';
+      case 'doc':
+      case 'docx':
+        return 'icon-docx-file';
+      case 'xls':
+      case 'xlsx':
+        return 'icon-xlsx-file';
+      default:
+        return 'icon-pdfIcon';
+    }
   }
 
   getNativeElement(element) {

@@ -326,11 +326,51 @@
               <div class="media-created">
                 <img
                   id="issuesActionsViewImg"
-                  [src]="history?.message"
-                  *ngIf="history?.message"
+                  [src]="history?.message?.imageData"
+                  *ngIf="
+                    history?.message && history?.message?.fileType === 'image'
+                  "
                   alt="Log History"
                   class="media-image"
                 />
+                <div
+                  class="video-player-container"
+                  *ngIf="
+                    history?.message && history?.message?.fileType === 'video'
+                  "
+                >
+                  <div class="video-player">
+                    <video id="issuesActionsViewVideo" class="media-video">
+                      <source
+                        type="video/mp4"
+                        [src]="history?.message?.imageData"
+                      />
+                    </video>
+                  </div>
+                  <div class="video-player-overlay">
+                    <svg-icon
+                      class="video-player-play-icon"
+                      icon="icon-video-play"
+                    ></svg-icon>
+                  </div>
+                </div>
+                <ng-container
+                  *ngIf="
+                    history?.message && history?.message?.fileType === 'file'
+                  "
+                >
+                  <div class="bg-white dis-flex document-container">
+                    <svg-icon
+                      id="instructionPDFIcon"
+                      [icon]="getDocumentIcon(history?.message?.fileName)"
+                      class="pdf-icon"
+                    ></svg-icon>
+
+                    <span id="instructionPDFName" class="pdf-text">
+                      {{ history?.message?.fileName }}
+                    </span>
+                  </div>
+                </ng-container>
               </div>
             </ng-container>
           </div>
@@ -386,7 +426,7 @@
           id="issuesActionsViewFileType"
           hidden
           type="file"
-          accept="image/x-png,image/jpeg,,image/jpg"
+          accept="image/x-png,image/jpeg,image/jpg,video/mp4,application/pdf,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
           #fileInput
           (change)="uploadFile($event)"
           (click)="resetFile($event)"
@@ -434,7 +474,7 @@
             id="issuesActionsViewFIle"
             hidden
             type="file"
-            accept="image/x-png,image/jpeg"
+            accept="image/x-png,image/jpeg,image/jpg,video/mp4,application/pdf,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
             #fileInput
             (change)="uploadFile($event)"
           />
@@ -807,12 +847,48 @@
         <div *ngFor="let att of filteredMediaType; let i = index">
           <img
             id="issuesActionsViewAttachmentfilterImg"
-            [src]="att?.message"
+            [src]="att?.message?.imageData"
             alt="images"
-            *ngIf="att?.message"
+            *ngIf="att?.message && att?.message?.fileType === 'image'"
             class="attachments cursor-pointer"
             (click)="openPreviewDialog()"
           />
+
+          <div
+            class="video-player-container attachments cursor-pointer"
+            *ngIf="att?.message && att?.message?.fileType === 'video'"
+            (click)="openPreviewDialog()"
+          >
+            <div class="video-player">
+              <video id="issuesActionsViewVideo" class="attachments">
+                <source type="video/mp4" [src]="att?.message?.imageData" />
+              </video>
+            </div>
+            <div class="video-player-overlay">
+              <svg-icon
+                class="video-player-play-icon"
+                icon="icon-video-play"
+              ></svg-icon>
+            </div>
+          </div>
+          <ng-container
+            *ngIf="att?.message && att?.message?.fileType === 'file'"
+          >
+            <div
+              class="bg-white dis-flex cursor-pointer attachment-document-container"
+              (click)="openPreviewDialog()"
+            >
+              <svg-icon
+                id="instructionPDFIcon"
+                [icon]="getDocumentIcon(att?.message?.fileName)"
+                class="pdf-icon"
+              ></svg-icon>
+
+              <span id="instructionPDFName" class="pdf-text">
+                {{ att?.message?.fileName }}
+              </span>
+            </div>
+          </ng-container>
         </div>
       </div>
     </div>

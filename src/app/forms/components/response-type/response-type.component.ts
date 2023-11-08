@@ -50,6 +50,7 @@ export class ResponseTypeComponent implements OnInit {
   @Output() responseTypeCloseEvent: EventEmitter<boolean> =
     new EventEmitter<boolean>();
   @Input() isPreviewActive;
+  @Input() isEmbeddedForm: boolean;
 
   public isMCQResponseOpen = false;
   public isGlobalResponseOpen = false;
@@ -115,6 +116,7 @@ export class ResponseTypeComponent implements OnInit {
   }
 
   getFieldTypeImage(type) {
+    if (type === 'ATT' && !this.isEmbeddedForm) return `icon-ATT-standalone`;
     return type ? `icon-${type}` : null;
   }
 

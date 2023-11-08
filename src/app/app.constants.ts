@@ -382,6 +382,7 @@ export const HIERARCHY_MODES = Object.freeze({
   ROUTE_PLAN: 'route_plan'
 });
 
+export const maxFileUploadSizeMongo = 5120000;
 export const defaultCategoryId = '_UnassignedCategory_';
 export const defaultCategoryName = 'Unassigned';
 export const defaultLanguage = 'en';
@@ -881,4 +882,24 @@ export const additionalDetailColumnConfig = {
   groupable: true
 };
 
-export const fileUploadSizeToastMessage = 'Compressed Image exceeding 390KB';
+export const mediaTypes = {
+  image: 'image',
+  video: 'video',
+  file: 'file'
+};
+
+export const fileUploadSizeToastMessage = 'Compressed File exceeding 5 MB';
+export const months = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec'
+];

@@ -100,6 +100,7 @@
             [questionForm]="questionForm"
             [isImported]="this.isImported"
             [fieldTypes]="fieldTypes"
+            [isEmbeddedForm]="this.isEmbeddedForm"
             (responseTypeOpenEvent)="responseTypeOpenEventHandler($event)"
           >
           </app-response-type-button>
@@ -113,6 +114,7 @@
               [fieldTypes]="fieldTypes"
               [question]="questionForm.value"
               [isPreviewActive]="isPreviewActive"
+              [isEmbeddedForm]="this.isEmbeddedForm"
             ></app-response-type>
           </ng-container>
         </div>
@@ -168,24 +170,31 @@
               >
                 <div class="dis-flex">
                   <span
-                    *ngFor="let image of instructionsMedia.images; index as i"
+                    *ngFor="let image of instructionPreviewMedia; index as i"
                   >
                     <app-instruction-image
-                      [image]="image.data"
+                      [image]="image"
                       [index]="i"
                       (indexEmitter)="
                         instructionsFileDeleteHandler($event, 'image', image)
                       "
-                      *ngIf="image !== null && image.id !== null"
+                      *ngIf="
+                        image !== null &&
+                        image.id !== null &&
+                        image.fileType === 'image'
+                      "
                       class="m-r-10"
-                      (click)="openPreviewDialog()"
+                      (triggerPreviewDialog)="openPreviewDialog()"
                     ></app-instruction-image>
                   </span>
-
-                  <span *ngIf="instructionsMedia.pdf.data.fileInfo !== null">
+                  <span
+                    *ngFor="let image of instructionPreviewMedia; index as i"
+                  >
                     <app-instruction-pdf
-                      [pdf]="instructionsMedia.pdf.data.fileInfo"
+                      [pdf]="image"
                       [index]="'4'"
+                      *ngIf="image.fileType === 'file'"
+                      (triggerPreviewDialog)="openPreviewDialog()"
                       (indexEmitter)="
                         instructionsFileDeleteHandler($event, 'pdf')
                       "

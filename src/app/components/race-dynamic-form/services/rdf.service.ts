@@ -366,7 +366,18 @@ export class RaceDynamicFormService {
       {},
       'arraybuffer'
     );
-
+  downloadRoundAttachments$ = (
+    inspectionId: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<Blob> =>
+    this.appService.downloadFile(
+      environment.rdfApiUrl,
+      `inspections/download-attachments/${inspectionId}`,
+      info,
+      true,
+      {},
+      'arraybuffer'
+    );
   getFormById$(
     id: string,
     queryParams: { includeAttachments: boolean },
@@ -633,6 +644,12 @@ export class RaceDynamicFormService {
       })
       .pipe(map((res) => this.formatGetRdfFormsResponse(res)));
   }
+  fetchAllInspectionAttachments$ = (inspectionId) =>
+    this.appService._getResp(
+      environment.rdfApiUrl,
+      `inspections/all-attachments/${inspectionId}`,
+      { displayToast: true, failureResponse: {} }
+    );
 
   getAuthoredFormDetail$(formlistID: string) {
     return from(

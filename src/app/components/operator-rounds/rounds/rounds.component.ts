@@ -61,7 +61,8 @@ import {
   statusColors,
   dateFormat6,
   timeFormat,
-  graphQLDefaultLimit
+  graphQLDefaultLimit,
+  months
 } from 'src/app/app.constants';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
 import { LoginService } from '../../login/services/login.service';
@@ -1056,10 +1057,52 @@ export class RoundsComponent implements OnInit, OnDestroy {
         });
       } else if (type === 'DOWNLOAD_PDF') {
         this.downloadPDF(this.selectedRound);
+      } else if (type === 'DOWNLOAD_ATTACHMENTS') {
+        this.downloadAttachments(this.selectedRound);
       }
     } else {
       this.router.navigate([`/operator-rounds/edit/${this.selectedRound.id}`]);
     }
+  }
+
+  downloadAttachments(selectedForm) {
+    const { id: roundId } = selectedForm;
+    const info: ErrorInfo = {
+      displayToast: false,
+      failureResponse: 'throwError'
+    };
+    this.operatorRoundsService
+      .downloadRoundAttachments$(roundId, info)
+      .subscribe(
+        (data) => {
+          const blob = new Blob([data], { type: 'application/zip' });
+          const aElement = document.createElement('a');
+          const fileName =
+            selectedForm.name && selectedForm.name?.length
+              ? selectedForm.name
+              : 'untitled';
+          const currentDate = new Date();
+          const formattedDate = `${
+            months[currentDate.getMonth()]
+          } ${currentDate.getDate()}, ${currentDate.getFullYear()}`;
+
+          aElement.setAttribute(
+            'download',
+            `${fileName} - ${formattedDate}.zip`
+          );
+          const href = URL.createObjectURL(blob);
+          aElement.href = href;
+          aElement.setAttribute('target', '_blank');
+          aElement.click();
+          URL.revokeObjectURL(href);
+        },
+        (err) => {
+          this.toastService.show({
+            text: `Error occured while generating Zip - ${err.message}`,
+            type: 'warning'
+          });
+        }
+      );
   }
 
   downloadPDF(selectedForm) {

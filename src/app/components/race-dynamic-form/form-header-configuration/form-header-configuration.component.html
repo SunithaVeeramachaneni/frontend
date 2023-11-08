@@ -256,14 +256,14 @@
             <span
               id="attachmentsTrack"
               *ngFor="
-                let image of filteredMediaType.mediaType;
+                let image of filteredMediaType;
                 index as i;
                 trackBy: trackBySelectedattachments
               "
               class="m-r-10"
             >
               <app-upload-image-preview
-                [image]="image"
+                [image]="image?.imageData"
                 (imageIndexEmitter)="formFileDeleteHandler(i)"
                 class="attachments cursor-pointer"
                 (triggerPreviewDialog)="openPreviewDialog()"
@@ -272,7 +272,7 @@
 
             <span
               *ngFor="
-                let pdf of pdfFiles.mediaType;
+                let pdf of filteredMediaPdfType;
                 index as i;
                 trackBy: trackBySelectedattachments
               "
@@ -280,6 +280,7 @@
             >
               <app-instruction-pdf
                 [pdf]="pdf"
+                (triggerPreviewDialog)="openPreviewDialog()"
                 (indexEmitter)="formPdfDeleteHandler(i)"
               ></app-instruction-pdf>
             </span>

@@ -2,8 +2,9 @@
   <img
     id="instructionImg"
     class="insert-instruction-image"
-    [src]="image"
+    [src]="image.imageData"
     alt="image"
+    (click)="triggerPreview()"
   />
   <svg-icon
     id="instructionImgCloseIcon"
