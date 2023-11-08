@@ -167,11 +167,7 @@ export class ColumnChartComponent implements OnInit, OnChanges {
       const newOptions = { ...this.chartOptions };
       this.chartTitle = title;
       this.chartType = type;
-      if (
-        newOptions.series &&
-        newOptions.series.label &&
-        newOptions.series.label
-      ) {
+      if (newOptions.series && newOptions.series.label) {
         newOptions.series.label.show = showValues;
       }
 

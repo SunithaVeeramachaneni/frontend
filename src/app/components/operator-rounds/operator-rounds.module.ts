@@ -89,6 +89,7 @@ import { AlertModalComponent } from './scheduler-modal/alert-modal/alert-modal.c
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ShiftHandOverComponent } from './shift-hand-over/shift-hand-over.component';
 import { OperatorsListComponent } from './operators-list/operators-list.component';
+import { ShiftHandOverModalComponent } from './shift-hand-over-modal/shift-hand-over-modal.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/operator-rounds/', '.json');
@@ -122,7 +123,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     ReviseScheduleComponent,
     AlertModalComponent,
     ShiftHandOverComponent,
-    OperatorsListComponent
+    OperatorsListComponent,
+    ShiftHandOverModalComponent
   ],
   imports: [
     FormsModule,

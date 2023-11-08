@@ -63,9 +63,9 @@ export class CreatePositionsComponent implements OnInit {
     if(this.data?.action === "create"){
       this.heading = `Create Position`;
     }
-    this.plantService.fetchAllPlants$().subscribe((plant) => {
-      this.plantsList = plant?.items || [];
-      this.searchPlantsList = plant?.items || [];
+    this.plantService.fetchLoggedInUserPlants$().subscribe((plant) => {
+      this.plantsList = plant || [];
+      this.searchPlantsList = plant || [];
     });
     this.isCreating = false;
   }
