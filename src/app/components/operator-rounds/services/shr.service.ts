@@ -72,6 +72,8 @@ export class ShrService {
               r.shiftStartDatetime = 'N/A'; // or any other default value
             }
             r.shiftNames = `${r?.shiftStartDatetime} / ${r.shift.name} ${r?.shift?.startTime} - ${r?.shift?.endTime}`;
+          }else{
+            r.shiftNames = '--';
           }
           if(r.shiftSupervisor !== null){
             r.shiftSupervisor = r?.shiftSupervisor?.firstName + ' ' + r?.shiftSupervisor?.lastName; 
