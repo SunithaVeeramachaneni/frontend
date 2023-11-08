@@ -1,11 +1,15 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, ReplaySubject, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
 import { LoadEvent, SearchEvent, TableEvent } from './../../../interfaces';
 import { isEmpty, omitBy } from 'lodash-es';
 import { DatePipe } from '@angular/common';
+import { PlantService } from '../../master-configurations/plants/services/plant.service';
+import {
+  localToTimezoneDate
+} from 'src/app/shared/utils/timezoneDate';
 
 @Injectable({
   providedIn: 'root'
@@ -17,8 +21,14 @@ export class ShrService {
   pdfMapping$ = new BehaviorSubject<any>({});
   redirectToFormsList$ = new BehaviorSubject<boolean>(false);
   embeddedFormId;
+  plantTimezoneMap: any = {};
+  plantMapSubscription: Subscription;
 
-  constructor(private appService: AppService,private datePipe: DatePipe) {}
+  constructor(
+    private appService: AppService, 
+    private datePipe: DatePipe,
+    private plantService: PlantService
+  ) {}
 
   getShiftHandOverList$(
     queryParams: {
@@ -56,6 +66,10 @@ export class ShrService {
   }
 
   private formatSHRResponse(resp: any) {
+    this.plantMapSubscription =
+    this.plantService.plantTimeZoneMapping$.subscribe(
+      (data) => (this.plantTimezoneMap = data)
+    );
     let rows =
       resp?.items?.sort(
         (a, b) =>
@@ -67,7 +81,11 @@ export class ShrService {
           if(r.shift !== null){
             
             if (r.shiftStartDatetime) {
-              r.shiftStartDatetime = this.datePipe.transform(r.shiftStartDatetime, 'MMM dd, yyyy');
+              r.shiftStartDatetime = localToTimezoneDate(
+                r.shiftStartDatetime,
+                this.plantTimezoneMap[r?.plantId],
+                'MMM dd, yyyy'
+              )
             } else {
               r.shiftStartDatetime = 'N/A'; // or any other default value
             }
