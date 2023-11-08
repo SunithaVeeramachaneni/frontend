@@ -133,12 +133,15 @@
 
   .radio-group,
   mat-radio-button {
-    margin: 10px;
+    padding: 10px;
 
     ::ng-deep .mat-radio-label-content {
       font-weight: 500;
       font-size: 115%;
     }
+  }
+  .next-radio-button {
+    margin-left: 10px;
   }
 }
 

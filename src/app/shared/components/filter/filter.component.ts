@@ -71,6 +71,8 @@ export class FilterComponent implements OnInit, OnChanges, OnDestroy {
     return this._json;
   }
 
+  @Input() moduleName;
+
   @Output()
   close: EventEmitter<any> = new EventEmitter();
 
@@ -82,7 +84,7 @@ export class FilterComponent implements OnInit, OnChanges, OnDestroy {
 
   ghostLoading = new Array(5).fill(0).map((v, i) => i);
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
-  assignTypes = ['plant', 'userGroup', 'user'];
+  assignTypes = ['plant', 'userGroup', 'user', 'position', 'unit'];
   assigneeType = 'plant';
   assignmentTypeIndex = -1;
   plantTypeIndex = -1;
@@ -102,6 +104,9 @@ export class FilterComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnInit(): void {
+    if (this.moduleName !== 'rounds') {
+      this.assignTypes = ['plant', 'userGroup', 'user', 'position', 'unit'];
+    }
     this.assigneeTypeControl.valueChanges
       .pipe(
         takeUntil(this.onDestroy$),
@@ -144,6 +149,25 @@ export class FilterComponent implements OnInit, OnChanges, OnDestroy {
             ) || []
           );
         }
+        if (this.assigneeType === 'position') {
+          return (
+            json[this.assignmentTypeIndex]?.items.filter(
+              (item) =>
+                item.type === 'position' &&
+                item.value?.name?.toLowerCase().includes(search)
+            ) || []
+          );
+        }
+        if (this.assigneeType === 'unit') {
+          return (
+            json[this.assignmentTypeIndex]?.items.filter(
+              (item) =>
+                item.type === 'unit' &&
+                item.value?.name?.toLowerCase().includes(search)
+            ) || []
+          );
+        }
+
         if (this.assigneeType === 'plant') {
           return (
             json[this.plantTypeIndex]?.items.filter((item) =>

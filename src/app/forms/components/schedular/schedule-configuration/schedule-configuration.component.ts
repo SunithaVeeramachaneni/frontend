@@ -296,6 +296,12 @@ export class ScheduleConfigurationComponent
         ),
         userGroups: assigneeDetails.userGroups?.filter((userGroup) =>
           userGroup.plantId?.includes(plantId)
+        ),
+        unit: assigneeDetails.unit?.filter((unit) =>
+          unit?.isUnit && unit.plantsID === plantId
+        ),
+        position: assigneeDetails.position?.filter((pos) =>
+          pos.plantId?.includes(plantId)
         )
       };
       this.moduleName = moduleName;
@@ -1603,6 +1609,18 @@ export class ScheduleConfigurationComponent
     }
     if (selectedAssignee.assigneeType === 'userGroup') {
       const { id: value, name: displayValue } = selectedAssignee.userGroup;
+      this.schedulerConfigForm
+        .get('assignmentDetails')
+        .patchValue({ value, displayValue });
+    }
+    if (selectedAssignee.assigneeType === 'unit') {
+      const { id: value, name: displayValue } = selectedAssignee.unit;
+      this.schedulerConfigForm
+        .get('assignmentDetails')
+        .patchValue({ value, displayValue });
+    }
+    if (selectedAssignee.assigneeType === 'position') {
+      const { id: value, name: displayValue } = selectedAssignee.position;
       this.schedulerConfigForm
         .get('assignmentDetails')
         .patchValue({ value, displayValue });

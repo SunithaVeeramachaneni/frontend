@@ -14,7 +14,7 @@ export const scheduleConfigs = Object.freeze({
 
   shortDaysOfWeek: ['Sun', 'Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat'],
   weeksOfMonth: ['1st Week', '2nd Week', '3rd Week', '4th Week', '5th Week'],
-  assignTypes: ['plant', 'userGroup', 'user']
+  assignTypes: ['plant', 'user', 'unit', 'userGroup', 'position']
 });
 
 export const TIME_SLOTS: string[] = [

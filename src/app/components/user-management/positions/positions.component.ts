@@ -228,7 +228,7 @@ export class PositionsComponent implements OnInit, OnDestroy {
         this.prepareMenuActions(permissions)
       );
 
-      this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
+    this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [], plantId }) => {
         this.currentUserPlantId = plantId;
         this.plantsService.setUserPlantIds(plantId);
@@ -257,7 +257,6 @@ export class PositionsComponent implements OnInit, OnDestroy {
   };
 
   getDisplayedForms(): void {
-    
     const formsOnLoadSearch$ = this.positionService.fetchPositions$.pipe(
       filter(({ data }) => data === 'load' || data === 'search'),
       switchMap(({ data }) => {
@@ -272,7 +271,7 @@ export class PositionsComponent implements OnInit, OnDestroy {
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
           this.fetchType = 'infiniteScroll';
-          if(this.nextToken){
+          if (this.nextToken) {
             return this.getPositions();
           }
         } else {
@@ -287,7 +286,11 @@ export class PositionsComponent implements OnInit, OnDestroy {
       data: []
     };
     let cominedResult = [];
-    this.positions$ = combineLatest([formsOnLoadSearch$, onScrollPositions$, plants$]).pipe(
+    this.positions$ = combineLatest([
+      formsOnLoadSearch$,
+      onScrollPositions$,
+      plants$
+    ]).pipe(
       map(([rows, scrollData, plants]) => {
         if (this.skip === 0) {
           this.configOptions = {
@@ -300,7 +303,9 @@ export class PositionsComponent implements OnInit, OnDestroy {
           initial.data = initial.data.concat(scrollData);
         }
         cominedResult = initial.data.map((pos) => {
-          const correspondingPlant = (plants?.items || []).find((plnt) => plnt?.id === pos?.plantsID);
+          const correspondingPlant = (plants?.items || []).find(
+            (plnt) => plnt?.id === pos?.plantId
+          );
           return { ...pos, plant: correspondingPlant?.name || '' };
         });
         this.allPositions = cominedResult;
@@ -316,46 +321,45 @@ export class PositionsComponent implements OnInit, OnDestroy {
 
     const hasColumnConfigFilter = Object.keys(columnConfigFilter)?.length || 0;
 
-      return (
-        this.positionService.getPositionsList$(
-          {
-            next: this.nextToken,
-            limit: hasColumnConfigFilter ? graphQLDefaultFilterLimit : this.limit,
-            searchKey: this.searchPosition.value,
-            
-            fetchType: this.fetchType
-          },
-          this.filter
-        ) as Observable<any>
-      )
-      .pipe(
-        mergeMap(({ count, rows, next }) => {
-          if (count !== undefined) {
-            this.positionListCountRaw$.next(count);
+    return (
+      this.positionService.getPositionsList$(
+        {
+          next: this.nextToken,
+          limit: hasColumnConfigFilter ? graphQLDefaultFilterLimit : this.limit,
+          searchKey: this.searchPosition.value,
+
+          fetchType: this.fetchType
+        },
+        this.filter
+      ) as Observable<any>
+    ).pipe(
+      mergeMap(({ count, rows, next }) => {
+        if (count !== undefined) {
+          this.positionListCountRaw$.next(count);
+        }
+        this.nextToken = next;
+        this.isLoading$.next(false);
+        return of(rows);
+      }),
+      catchError(() => {
+        this.positionListCount$ = of(0);
+        this.isLoading$.next(false);
+        return of([]);
+      }),
+      map((data) =>
+        data.map((item) => {
+          if (item.plantId) {
+            item = {
+              ...item,
+              plant: item.plant
+            };
+          } else {
+            item = { ...item, plant: '' };
           }
-          this.nextToken = next;
-          this.isLoading$.next(false);
-          return of(rows);
-        }),
-        catchError(() => {
-          this.positionListCount$ = of(0);
-          this.isLoading$.next(false);
-          return of([]);
-        }),
-        map((data) =>
-          data.map((item) => {
-            if (item.plantsID) {
-              item = {
-                ...item,
-                plant: item.plant
-              };
-            } else {
-              item = { ...item, plant: '' };
-            }
-            return item;
-          })
-        )
-      );
+          return item;
+        })
+      )
+    );
   }
 
   handleTableEvent = (event): void => {
@@ -366,7 +370,9 @@ export class PositionsComponent implements OnInit, OnDestroy {
 
   prepareMenuActions(permissions: Permission[]): void {
     const menuActions = [];
-    if (this.loginService.checkUserHasPermission(permissions, 'UPDATE_POSITIONS')) {
+    if (
+      this.loginService.checkUserHasPermission(permissions, 'UPDATE_POSITIONS')
+    ) {
       menuActions.push({
         title: 'Edit',
         action: 'edit'
@@ -380,7 +386,9 @@ export class PositionsComponent implements OnInit, OnDestroy {
   rowLevelActionHandler(event) {
     const { action, data } = event;
     if (action === 'edit') {
-      const dialogRef = this.dialog.open(CreatePositionsComponent, { data : { action, ...data} });
+      const dialogRef = this.dialog.open(CreatePositionsComponent, {
+        data: { action, ...data }
+      });
       dialogRef.afterClosed().subscribe((result) => {
         if (result === 'success') {
           this.cdrf.detectChanges();
@@ -443,7 +451,7 @@ export class PositionsComponent implements OnInit, OnDestroy {
     this.positionService.fetchPositions$.next({ data: 'load' });
   }
   createPosition() {
-    const data = { action: 'create'};
+    const data = { action: 'create' };
     const dialogRef = this.dialog.open(CreatePositionsComponent, { data });
     dialogRef.afterClosed().subscribe((result) => {
       if (result === 'success') {
