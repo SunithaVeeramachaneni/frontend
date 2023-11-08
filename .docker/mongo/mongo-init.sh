@@ -290,8 +290,9 @@ db.datasets.insertMany([
     createdBy: 'dev@innovapptive.com'
   }
 ])
-db.shrconfigurations.insertOne({
+db.configurations.insertOne({
    _id: 'reportConfiguration',
+  config:{
   trends: true,
   instructions: true,
   shiftDetails: true,
@@ -302,6 +303,7 @@ db.shrconfigurations.insertOne({
   notes: true,
   operators: true,
   shiftLogs: true
+  }
   createdAt: new Date(),
   updatedAt: new Date(),
   __v: 0
