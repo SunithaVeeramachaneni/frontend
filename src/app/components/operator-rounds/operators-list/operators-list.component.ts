@@ -206,7 +206,7 @@ export class OperatorsListComponent implements OnInit {
   ngOnInit(): void {
     this.configOptions.allColumns = this.columns;
     this.dataSource = new MatTableDataSource(
-      this.operatorList ? this.operatorList : []
+      this.operatorList ? JSON.parse(this.operatorList) : []
     );
   }
 }

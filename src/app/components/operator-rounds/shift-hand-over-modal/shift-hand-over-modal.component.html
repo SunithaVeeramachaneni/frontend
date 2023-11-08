@@ -158,7 +158,11 @@
       <!-- STEP 4 -->
       <div *ngIf="currentStep === 3">Notes and Logs Component</div>
       <!-- STEP 5 -->
-      <div *ngIf="currentStep === 4">Operators Component</div>
+      <div *ngIf="currentStep === 4">
+        <app-operators-list
+          [operatorList]="shrAllDetails?.shrDetails?.operators"
+        ></app-operators-list>
+      </div>
     </div>
   </div>
 </div>
