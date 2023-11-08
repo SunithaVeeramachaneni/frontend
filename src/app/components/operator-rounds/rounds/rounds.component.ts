@@ -932,8 +932,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
             userGroup.plantId?.includes(row.plantId)
           ),
           plants: [row.plant],
-          unit: this.allLocation.filter((val) => val?.isUnit && val?.plantsID === row?.plantId),
-          position: this.allPositions.filter((val) => val?.plantId === row?.plantId)
+          unit: this.allLocation?.filter((val) => val?.isUnit && val?.plantsID === row?.plantId),
+          position: this.allPositions?.filter((val) => val?.plantsID === row?.plantId)
         };
         if (
           row.status !== 'submitted' &&
