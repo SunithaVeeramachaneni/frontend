@@ -503,8 +503,10 @@ export class ScheduleConfigurationComponent
                   scheduled: false
                 }
               ];
+              this.scheduleByDatePicker.push(
+                format(new Date(), dateTimeFormat3)
+              );
             }
-            this.scheduleByDatePicker.push(format(new Date(), dateTimeFormat3));
             this.schedulerConfigForm.get('repeatEvery').patchValue('none');
             this.updateAdvanceRoundsCountValidation(12);
             break;
@@ -1719,6 +1721,11 @@ export class ScheduleConfigurationComponent
         }
       });
 
+      for (const key in this.shiftDetails) {
+        if (!value.includes(key)) {
+          delete this.shiftDetails[key];
+        }
+      }
       // remove old shift which is not selected
       this.shiftSlots?.value
         ?.filter(
