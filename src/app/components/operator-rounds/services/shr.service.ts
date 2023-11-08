@@ -98,7 +98,6 @@ export class ShrService {
           r.incomingSupervisor = '--';
         }
       } catch (err) {
-        console.log('err', err);
         r.shiftSupervisor = [];
         r.incomingSupervisor = [];
         r.shiftNames = [];
