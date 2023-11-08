@@ -61,7 +61,7 @@ export class AssignedToComponent implements OnInit, OnDestroy {
   searchInput = new FormControl('');
   filteredData$: Observable<any[]>;
   filteredDataCount: number;
-  assignTypes = ['plant', 'userGroup', 'user'];
+  assignTypes = ['plant', 'user', 'unit', 'position', 'userGroup'];
   assigneeTypeControl = new FormControl('plant');
   assigneeDetails$ = new BehaviorSubject({} as AssigneeDetails);
   selectedAssigneeInput$ = new BehaviorSubject({});
@@ -80,7 +80,6 @@ export class AssignedToComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
-
     this.filteredData$ = combineLatest([
       this.searchInput.valueChanges.pipe(
         startWith(''),
@@ -112,6 +111,20 @@ export class AssignedToComponent implements OnInit, OnDestroy {
           return (
             assigneeDetails?.plants?.filter(
               (plant: any) => plant.indexOf(search) !== -1
+            ) || []
+          );
+        }
+        if (this.assigneeType === 'unit') {
+          return (
+            assigneeDetails?.unit?.filter(
+              (unit: any) => unit?.name.indexOf(search) !== -1
+            ) || []
+          );
+        }
+        if (this.assigneeType === 'position') {
+          return (
+            assigneeDetails?.position?.filter(
+              (pos: any) => pos?.name.indexOf(search) !== -1
             ) || []
           );
         }
@@ -149,6 +162,12 @@ export class AssignedToComponent implements OnInit, OnDestroy {
     }
     if (this.assigneeType === 'plant') {
       selectedAssignee.plant = data;
+    }
+    if (this.assigneeType === 'unit') {
+      selectedAssignee.unit = data;
+    }
+    if (this.assigneeType === 'position') {
+      selectedAssignee.position = data;
     }
     if (this.assigneeType) {
       this.selectedAssigneeInput$.next(selectedAssignee);

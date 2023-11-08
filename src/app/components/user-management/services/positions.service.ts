@@ -26,6 +26,19 @@ export class PositionsService {
    * Get event source (SSE)
    */
 
+  fetchAllPositions$ = (plantId = null) => {
+    let queryParamaters = {};
+    if (plantId) {
+      queryParamaters = { ...queryParamaters, plantId };
+    }
+    return this.appService._getResp(
+      environment.userRoleManagementApiUrl,
+      'positions',
+      { displayToast: true, failureResponse: {} },
+      queryParamaters
+    );
+  };
+
   getPositionsList$(
     queryParams: {
       next?: string;
@@ -35,15 +48,15 @@ export class PositionsService {
     },
     filterData: any = {}
   ) {
-    const { plant: plantId } = filterData;
+    const { plant: plantsID } = filterData;
     const rawParams = {
       searchTerm: queryParams?.searchKey,
       limit: queryParams?.limit.toString(),
-      ...(filterData ? { plantId: filterData?.plant } : {})
+      ...(filterData ? { plantsID: filterData?.plant } : {})
     };
     const params = new URLSearchParams({
       next: queryParams.next,
-      plantId,
+      plantsID,
       ...omitBy(rawParams, isEmpty)
     });
     return this.appService

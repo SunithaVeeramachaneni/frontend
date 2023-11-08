@@ -455,13 +455,20 @@
                 assignTo
               </div>
               <mat-radio-group class="radio-group" formControlName="type">
-                <mat-radio-button
-                  color="primary"
-                  *ngFor="let assignType of assignTypes; let i = index"
-                  [value]="assignType"
-                >
-                  {{ assignType | translate }}</mat-radio-button
-                >
+                <span *ngFor="let assignType of assignTypes; let i = index">
+                  <mat-radio-button
+                    color="primary"
+                    [value]="assignType"
+                    *ngIf="
+                      !isFormModule ||
+                      (isFormModule &&
+                        assignType !== 'unit' &&
+                        assignType !== 'position')
+                    "
+                  >
+                    {{ assignType | translate }}
+                  </mat-radio-button>
+                </span>
               </mat-radio-group>
             </div>
             <mat-form-field
@@ -535,6 +542,24 @@
                 translate
               >
                 userGroup
+              </span>
+              <span
+                *ngIf="
+                  schedulerConfigForm?.get('assignmentDetails').value.type ===
+                  'unit'
+                "
+                translate
+              >
+                unit
+              </span>
+              <span
+                *ngIf="
+                  schedulerConfigForm?.get('assignmentDetails').value.type ===
+                  'position'
+                "
+                translate
+              >
+                position
               </span>
             </div>
           </div>

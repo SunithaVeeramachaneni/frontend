@@ -214,6 +214,22 @@
                 }}<span *ngIf="i !== item.value.length - 1">, </span></span
               ></span
             >
+            <span *ngIf="assigneeTypeControl.value === 'unit'"
+              ><span
+                *ngFor="let it of item.value; let i = index"
+                [attr.data-index]="i"
+                >{{ it.value?.name
+                }}<span *ngIf="i !== item.value.length - 1">, </span></span
+              ></span
+            >
+            <span *ngIf="assigneeTypeControl.value === 'position'"
+              ><span
+                *ngFor="let it of item.value; let i = index"
+                [attr.data-index]="i"
+                >{{ it.value?.name
+                }}<span *ngIf="i !== item.value.length - 1">, </span></span
+              ></span
+            >
             <span *ngIf="assigneeTypeControl.value === 'plant'"
               ><span
                 *ngFor="let it of item.value; let i = index"
@@ -293,6 +309,12 @@
               }}</span>
               <span *ngIf="assigneeTypeControl.value === 'plant'">{{
                 item.plant
+              }}</span>
+              <span *ngIf="assigneeTypeControl.value === 'unit'">{{
+                item.value?.name
+              }}</span>
+              <span *ngIf="assigneeTypeControl.value === 'position'">{{
+                item.value?.name
               }}</span>
             </mat-option>
             <div

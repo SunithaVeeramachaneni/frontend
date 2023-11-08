@@ -78,6 +78,8 @@ import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
 import { ShiftService } from '../../master-configurations/shifts/services/shift.service';
 import { ScheduleConfigurationService } from 'src/app/forms/services/schedule.service';
 import { MatDialog } from '@angular/material/dialog';
+import { LocationService } from '../../master-configurations/locations/services/location.service';
+import { PositionsService } from '../../user-management/services/positions.service';
 
 @Component({
   selector: 'app-plans',
@@ -438,6 +440,8 @@ export class PlansComponent implements OnInit, OnDestroy {
     unscheduled: 0
   };
   allroundPlans = [];
+  allLocations: any[] = [];
+  allPositions: any[] = [];
   nextToken = '';
   formDetailState = 'out';
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
@@ -487,6 +491,8 @@ export class PlansComponent implements OnInit, OnDestroy {
     private cdrf: ChangeDetectorRef,
     private shiftService: ShiftService,
     private dialog: MatDialog,
+    private locationService: LocationService,
+    private positionService: PositionsService,
     private readonly scheduleConfigurationService: ScheduleConfigurationService
   ) {}
 
@@ -529,9 +535,29 @@ export class PlansComponent implements OnInit, OnDestroy {
       ),
       this.operatorRoundsService.fetchAllPlansList$({
         plantId: this.plantService.getUserPlantIds()
-      })
+      }),
+      this.locationService.fetchAllLocations$(),
+      this.positionService.fetchAllPositions$()
     ]).pipe(
-      tap(([, , plansList]) => {
+      tap(([, , plansList, location, position]) => {
+        this.allLocations = location?.items || [];
+        this.allPositions = position?.items || [];
+        let filterLocation = [];
+        let filterPosition = [];
+        this.allLocations.forEach((val) => {
+          if (val?.isUnit) {
+            filterLocation.push({
+              type: 'unit',
+              value: val
+            });
+          }
+        });
+        this.allPositions.forEach((val) => {
+          filterPosition.push({
+            type: 'position',
+            value: val
+          });
+        });
         const objectKeys = Object.keys(plansList);
         if (objectKeys.length > 0) {
           const uniqueSchedules = plansList.rows
@@ -547,7 +573,8 @@ export class PlansComponent implements OnInit, OnDestroy {
           }
           for (const item of filterJson) {
             if (item.column === 'assignedToDisplay') {
-              item.items = this.assignedTo.sort();
+              this.assignedTo = [...this.assignedTo, ...filterLocation, ...filterPosition].sort();
+              item.items = this.assignedTo
             }
             if (item.column === 'schedule') {
               item.items = this.schedules.sort();
@@ -631,6 +658,7 @@ export class PlansComponent implements OnInit, OnDestroy {
           plants.forEach((plant) => {
             this.plantsIdNameMap[`${plant.plantId} - ${plant.name}`] = plant.id;
           });
+
           for (const item of this.filterJson) {
             if (item.column === 'plant') {
               item.items = plants
@@ -927,7 +955,11 @@ export class PlansComponent implements OnInit, OnDestroy {
         hidden: this.hideScheduleConfig,
         moduleName: 'OPERATOR_ROUNDS',
         isTaskLevel,
-        assigneeDetails: this.assigneeDetails
+        assigneeDetails: {
+          ...this.assigneeDetails,
+          unit: this.allLocations,
+          position: this.allPositions
+        }
       }
     });
     this.hideScheduleConfig = false;
@@ -985,7 +1017,11 @@ export class PlansComponent implements OnInit, OnDestroy {
         hidden: this.hideScheduleConfig,
         moduleName: 'OPERATOR_ROUNDS',
         isTaskLevel,
-        assigneeDetails: this.assigneeDetails,
+        assigneeDetails: {
+          ...this.assigneeDetails,
+          unit: this.allLocations,
+          position: this.allPositions
+        },
         scheduleConfiguration,
         plantTimezoneMap: this.plantTimezoneMap
       }
@@ -1367,6 +1403,18 @@ export class PlansComponent implements OnInit, OnDestroy {
                   value: this.getUserGroupNameToIdsArray(
                     item.value.map((userGroup) => userGroup.value.name)
                   )
+                };
+              }
+              if (item.value[0].type === 'unit') {
+                this.filter[item.column] = {
+                  type: 'unit',
+                  value: item.value.map((unit) => unit.value.id)
+                };
+              }
+              if (item.value[0].type === 'position') {
+                this.filter[item.column] = {
+                  type: 'position',
+                  value: item.value.map((unit) => unit.value.id)
                 };
               }
               if (item.value[0].type === 'plant') {

@@ -12,7 +12,7 @@ interface DialogData {
   action: 'create' | 'edit';
   description: string;
   id: string;
-  plantId: string;
+  plantsID: string;
   name: string;
 }
 @Component({
@@ -46,7 +46,7 @@ export class CreatePositionsComponent implements OnInit {
         WhiteSpaceValidator.trimWhiteSpace
       ]),
       description: new FormControl(''),
-      plantId: new FormControl('', [
+      plantsID: new FormControl('', [
         Validators.required,
         WhiteSpaceValidator.whiteSpace,
         WhiteSpaceValidator.trimWhiteSpace
@@ -57,7 +57,7 @@ export class CreatePositionsComponent implements OnInit {
       this.positionsFormData.patchValue({
         name: this.data.name,
         description: this.data.description,
-        plantId: this.data.plantId
+        plantsID: this.data.plantsID
       })
     }
     if(this.data?.action === "create"){
@@ -99,8 +99,8 @@ export class CreatePositionsComponent implements OnInit {
     return this.searchPlantsList?.filter(
       (plant: any) =>
         (plant.name && plant.name.toLowerCase().indexOf(searchValue) !== -1) ||
-        (plant.plantId &&
-          plant.plantId.toLowerCase().indexOf(searchValue) !== -1)
+        (plant.plantsID &&
+          plant.plantsID.toLowerCase().indexOf(searchValue) !== -1)
     );
   }
 

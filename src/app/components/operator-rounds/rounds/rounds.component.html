@@ -73,15 +73,13 @@
       (close)="isPopoverOpen = false"
       (apply)="applyFilters($event)"
       (reset)="clearFilters()"
+      [moduleName]="'rounds'"
     ></app-filter>
   </ng-template>
 </div>
 <ng-container *ngIf="userInfo$ | async">
   <div
-    *ngIf="
-      (rounds$ | async) &&
-      (isLoading$ | async) === false
-    "
+    *ngIf="(rounds$ | async) && (isLoading$ | async) === false"
     class="rounds-list"
   >
     <cwp-dynamictable
@@ -94,7 +92,7 @@
       class="width-100"
     ></cwp-dynamictable>
   </div>
-  <ng-container *ngIf="(filterData$ | async)"></ng-container>
+  <ng-container *ngIf="filterData$ | async"></ng-container>
 
   <div *ngIf="isLoading$ | async">
     <div class="padding-lr-20">
