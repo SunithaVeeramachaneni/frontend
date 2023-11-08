@@ -1,0 +1,111 @@
+<div id="opendetail" class="column-config-slider">
+  <mat-card class="Card-header">
+    <ng-container>
+      <div id="column-config-slider-header" class="slider-close-container">
+        <svg-icon
+          id="templateSliderCancelIcon"
+          icon="icon-close"
+          class="cancel-icon"
+          (click)="cancelForm()"
+        ></svg-icon>
+      </div>
+      <div *ngIf="isLoading$ | async; else columnConfigContainer">
+        <div class="ghost-loading">
+          <div *ngFor="let number of ghostLoading">
+            <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+            </ngx-shimmer-loading>
+          </div>
+        </div>
+      </div>
+      <ng-template #columnConfigContainer>
+        <h2 id="column-configuration-heading" class="detail-heading" translate>
+          configureShiftHandover
+        </h2>
+        <span
+          id="column-config-sub-heading"
+          class="detail-sub-heading"
+          translate
+        >
+          shrContent
+        </span>
+
+        <section class="column-select-all">
+          <ul
+            class="column-list-container"
+            cdkDropList
+            (cdkDropListDropped)="drop($event)"
+          >
+            <li *ngFor="let column of draggableColumns">
+              <div class="column-container" cdkDrag>
+                <div class="dis-flex justify-content-start align-items-center">
+                  <svg-icon
+                    icon="icon-six-dots"
+                    [ngClass]="'drag-handle'"
+                    cdkDragHandle
+                  ></svg-icon>
+                  <mat-checkbox
+                    id="column-config-dynamic-column-checkbox-{{
+                      column.columnId
+                    }}"
+                    [(ngModel)]="column.selected"
+                    (ngModelChange)="updateAllComplete(column.columnId)"
+                  >
+                    {{ column.columnName }}
+                  </mat-checkbox>
+                </div>
+                <div class="subColumn-container">
+                  <ul
+                    class="column-list-container"
+                    cdkDropList
+                    (cdkDropListDropped)="dropSub($event, column.columnName)"
+                  >
+                    <li *ngFor="let subColumn of column.content ?? []">
+                      <div class="column-container" cdkDrag>
+                        <div
+                          class="dis-flex justify-content-start align-items-center"
+                        >
+                          <svg-icon
+                            icon="icon-six-dots"
+                            [ngClass]="'drag-handle'"
+                            cdkDragHandle
+                          ></svg-icon>
+                          <mat-checkbox
+                            id="column-config-dynamic-column-checkbox-{{
+                              subColumn.columnId
+                            }}"
+                            [(ngModel)]="subColumn.selected"
+                            (ngModelChange)="updateSubColumn(column.columnId)"
+                          >
+                            {{ subColumn.columnName }}
+                          </mat-checkbox>
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </section>
+        <div class="column-config-footer">
+          <button
+            id="column-config-cancel"
+            mat-stroked-button
+            class="cancel-button"
+            translate="cancel"
+            (click)="cancelForm()"
+          ></button>
+          <button
+            id="saveColumnConfigBtn"
+            mat-raised-button
+            color="primary"
+            class="save-button"
+            translate="save"
+            [disabled]="saveIsDisabled"
+            (click)="onSave()"
+          ></button>
+        </div>
+      </ng-template>
+    </ng-container>
+  </mat-card>
+</div>

@@ -41,11 +41,14 @@ import { PlantService } from '../../master-configurations/plants/services/plant.
 import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 import { ShiftHandOverModalComponent } from '../shift-hand-over-modal/shift-hand-over-modal.component';
+import { slideInOut } from 'src/app/animations';
+import { SHRColumnConfiguration } from 'src/app/interfaces/shr-column-configuration';
 
 @Component({
   selector: 'app-shift-hand-over',
   templateUrl: './shift-hand-over.component.html',
-  styleUrls: ['./shift-hand-over.component.css']
+  styleUrls: ['./shift-hand-over.component.scss'],
+  animations: [slideInOut]
 })
 export class ShiftHandOverComponent implements OnInit {
   readonly perms = perms;
@@ -290,6 +293,7 @@ export class ShiftHandOverComponent implements OnInit {
   isArchived = '';
   incomingSupervisorId = '';
   private onDestroy$ = new Subject();
+  shrConfigColumns: SHRColumnConfiguration[] = [];
 
   constructor(
     private headerService: HeaderService,
@@ -366,8 +370,13 @@ export class ShiftHandOverComponent implements OnInit {
     );
   }
 
+  receiveData(shrConfig: SHRColumnConfiguration[]) {
+    this.shrConfigColumns = shrConfig;
+  }
+
   cellClickActionHandler = (event: CellClickActionEvent): void => {
     const { columnId, row } = event;
+    row.shrConfigColumns = this.shrConfigColumns;
     switch (columnId) {
       case 'shiftNames':
         this.dialog.open(ShiftHandOverModalComponent, {
@@ -441,5 +450,13 @@ export class ShiftHandOverComponent implements OnInit {
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : true;
     this.configOptions = { ...this.configOptions };
+  }
+
+  showColumnConfig(): void {
+    this.columnConfigMenuState = 'in';
+  }
+
+  onCloseColumnConfig() {
+    this.columnConfigMenuState = 'out';
   }
 }
