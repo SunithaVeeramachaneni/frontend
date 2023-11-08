@@ -1,9 +1,15 @@
+/* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, ReplaySubject, Subscription } from 'rxjs';
+import { BehaviorSubject, ReplaySubject, Subscription,Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
-import { LoadEvent, SearchEvent, TableEvent } from './../../../interfaces';
+import {
+  ErrorInfo,
+  LoadEvent,
+  SearchEvent,
+  TableEvent
+} from './../../../interfaces';
 import { isEmpty, omitBy } from 'lodash-es';
 import { DatePipe } from '@angular/common';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
@@ -65,7 +71,16 @@ export class ShrService {
       .pipe(map((res) => this.formatSHRResponse(res)));
   }
 
+  getSHRDetailsId$(id, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
+    return this.appService._getResp(
+      environment.operatorRoundsApiUrl,
+      `shr/current/${id}`,
+      info
+    );
+  }
+
   private formatSHRResponse(resp: any) {
+    
     this.plantMapSubscription =
     this.plantService.plantTimeZoneMapping$.subscribe(
       (data) => (this.plantTimezoneMap = data)
@@ -77,10 +92,11 @@ export class ShrService {
       ) || [];
       rows = rows.map((r: any) => {
         try {
+          
           // r.shift = JSON.parse(r.shift);
           if(r.shift !== null){
             
-            if (r.shiftStartDatetime) {
+            if (r.shiftStartDatetime) {              
               r.shiftStartDatetime = localToTimezoneDate(
                 r.shiftStartDatetime,
                 this.plantTimezoneMap[r?.plantId],
@@ -91,27 +107,27 @@ export class ShrService {
             }
             r.shiftNames = `${r?.shiftStartDatetime} / ${r.shift.name} ${r?.shift?.startTime} - ${r?.shift?.endTime}`;
           }else{
-            r.shiftNames = '--';
+            r.shiftNames = ' ';
           }
           if(r.shiftSupervisor !== null){
             r.shiftSupervisor = r?.shiftSupervisor?.firstName + ' ' + r?.shiftSupervisor?.lastName; 
           }else{
-            r.shiftSupervisor = '--';
+            r.shiftSupervisor = ' ';
           }
           if(r.incomingSupervisor !== null){
             r.incomingSupervisor = r?.incomingSupervisor?.firstName + ' ' + r?.incomingSupervisor?.lastName; 
           }else{
-            r.incomingSupervisor = '--';
+            r.incomingSupervisor = ' ';
           }
           if(r.submittedOn){
             r.submittedOn = this.datePipe.transform(r.submittedOn, 'hh:mm a, MMM dd');
           }else{
-            r.submittedOn = '--';
+            r.submittedOn = ' ';
           }
           if(r.acceptedOn){
             r.acceptedOn = this.datePipe.transform(r.acceptedOn, 'hh:mm a, MMM dd');
           }else{
-            r.acceptedOn = '--';
+            r.acceptedOn = ' ';
           }
         } catch (err) {
           console.log("err", err);

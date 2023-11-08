@@ -143,11 +143,16 @@
         <hr class="stepper-line" *ngIf="i !== steps.length - 1" />
       </ng-container>
     </div>
-    <div class="width-80">
+    <div class="width-80" *ngIf="shrAllDetails$ | async as shrAllDetails">
       <!-- STEP 1 -->
       <div *ngIf="currentStep === 0">Summary Component</div>
       <!-- STEP 2 -->
-      <div *ngIf="currentStep === 1">Rounds Component</div>
+      <div *ngIf="currentStep === 1">
+        Rounds Componnet
+        <!-- <app-shift-hand-over-rounds
+            [roundsData]="shrAllDetails.shrDetails.rounds"
+          ></app-shift-hand-over-rounds> -->
+      </div>
       <!-- STEP 3 -->
       <div *ngIf="currentStep === 2">Observations Component</div>
       <!-- STEP 4 -->

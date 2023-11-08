@@ -288,15 +288,15 @@ export class HierarchyContainerComponent implements OnInit {
       } else {
         const hierarchyClone = JSON.parse(JSON.stringify(this.hierarchy));
         const hierarchyUpdated = this.promoteChildren(hierarchyClone, event);
-        this.hierarchyEvent.emit({
-          hierarchy: hierarchyUpdated,
-          node: event
-        });
         this.store.dispatch(
           BuilderConfigurationActions.removeSubFormInstances({
             subFormIds: [event.id]
           })
         );
+        this.hierarchyEvent.emit({
+          hierarchy: hierarchyUpdated,
+          node: event
+        });
       }
 
       this.store.dispatch(
