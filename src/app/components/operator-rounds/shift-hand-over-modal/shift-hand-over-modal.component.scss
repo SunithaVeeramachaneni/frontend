@@ -206,3 +206,20 @@
     border-right: 1px solid $border-color;
   }
 }
+
+.ghost-loading-header .ghost-loading-footer {
+  padding: 0 20px;
+}
+
+::ng-deep .ghost-loading-header .ngx-shimmer {
+  margin: 1%;
+  width: 22% !important;
+  float: left;
+}
+
+::ng-deep .ghost-loading-footer .ngx-shimmer {
+  width: 94% !important;
+  margin: 1%;
+  height: 200px;
+  border-radius: 5px;
+}

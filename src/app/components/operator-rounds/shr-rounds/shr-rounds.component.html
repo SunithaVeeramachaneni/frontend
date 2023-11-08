@@ -9,6 +9,7 @@
         *ngFor="let filter of shrRoundsFilterOptions"
         [value]="filter.id"
         (click)="updateFilter(filter.id)"
+        [disabled]="filter.count === 0"
       >
         {{
           filter.id + ' (' + filter.count + ')' | titlecase
@@ -16,9 +17,9 @@
       >
     </mat-button-toggle-group>
   </div>
-  <div class="table-container">
+  <div class="rounds-table-container">
     <cwp-dynamictable
-      *ngIf="!isLoading$ && dataSource"
+      *ngIf="!isLoading$ && dataSource.length !== 0"
       [dataSource]="dataSource"
       [configOptions]="configOptions"
     >
