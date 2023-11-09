@@ -1,0 +1,14 @@
+.container {
+  ::ng-deep .table-column {
+    width: 20%;
+  }
+  ::ng-deep .mat-column-title {
+    min-width: 400px;
+  }
+  ::ng-deep .mat-column-task {
+    min-width: 400px;
+  }
+  ::ng-deep .mat-column-actions {
+    max-width: 15%;
+  }
+}

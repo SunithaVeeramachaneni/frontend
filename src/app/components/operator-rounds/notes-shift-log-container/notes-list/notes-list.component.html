@@ -1,0 +1,21 @@
+<div id="main-container" class="container">
+  <cwp-dynamictable
+    class="dynamicTable width-100"
+    id="table"
+    [dataSource]="dataSource"
+    [configOptions]="configOptions"
+    (rowLevelActionHandler)="rowLevelActionHandler($event)"
+  >
+  </cwp-dynamictable>
+
+  <ng-container *ngIf="menuState">
+    <app-edit-notes-side-drawer
+      [@slideInOut]="menuState"
+      (slideInOut)="onCloseNoteMenuState($event)"
+      [noteEditData]="selectedNote"
+      [isLog]="false"
+      [shrId]="shrId"
+      (updateNote)="updateNotes($event)"
+    ></app-edit-notes-side-drawer>
+  </ng-container>
+</div>

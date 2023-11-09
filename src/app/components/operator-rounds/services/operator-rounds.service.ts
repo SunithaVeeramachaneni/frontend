@@ -33,6 +33,7 @@ import { isJson } from '../../race-dynamic-form/utils/utils';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
 import { cloneDeep, isEmpty, omitBy, isEqual, sortBy } from 'lodash-es';
 import { scheduleConfigs } from 'src/app/forms/components/schedular/schedule-configuration/schedule-configuration.constants';
+import { UsersService } from '../../user-management/services/users.service';
 
 @Injectable({
   providedIn: 'root'
@@ -71,7 +72,8 @@ export class OperatorRoundsService {
   constructor(
     public assetHierarchyUtil: AssetHierarchyUtil,
     private toastService: ToastService,
-    private appService: AppService
+    private appService: AppService,
+    private userService: UsersService
   ) {}
 
   setSelectedNode(node: any) {
@@ -616,6 +618,28 @@ export class OperatorRoundsService {
       rows,
       next: resp?.next
     };
+  }
+
+  formatUserFullNameDisplay(emailList): string {
+    let emailToDisplay = null;
+    if (emailList && emailList?.includes(',')) {
+      const list = emailList?.split(',')?.filter(Boolean);
+      emailToDisplay = [];
+      if (list?.length > 0) {
+        list.forEach((email) => {
+          if (email) {
+            const foundName = this.userService.getUserFullName(email);
+            if (foundName && !emailToDisplay.includes(foundName)) {
+              emailToDisplay.push(foundName);
+            }
+          }
+        });
+      }
+      emailToDisplay = emailToDisplay.toString();
+    } else {
+      emailToDisplay = this.userService.getUserFullName(emailList);
+    }
+    return emailToDisplay;
   }
 
   private formatSubmittedListResponse(resp: RoundPlanSubmissionList) {

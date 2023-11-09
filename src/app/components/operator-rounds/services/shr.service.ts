@@ -81,6 +81,54 @@ export class ShrService {
     );
   }
 
+  updateNotes$(id, body, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
+    return this.appService.patchData(
+      environment.operatorRoundsApiUrl,
+      `shr/update/notes/${id}`,
+      body,
+      info
+    );
+  }
+
+  updateSupervisorLogs$(
+    id,
+    body,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    return this.appService.patchData(
+      environment.operatorRoundsApiUrl,
+      `shr/update/supervisor-logs/${id}`,
+      body,
+      info
+    );
+  }
+
+  deleteSHRNotes$(
+    id,
+    body,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    return this.appService.patchData(
+      environment.operatorRoundsApiUrl,
+      `shr/delete/notes/${id}`,
+      body,
+      info
+    );
+  }
+
+  deleteSupervisorLogs$(
+    id,
+    body,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    return this.appService.patchData(
+      environment.operatorRoundsApiUrl,
+      `shr/delete/supervisor-logs/${id}`,
+      body,
+      info
+    );
+  }
+
   private formatSHRResponse(resp: any) {
     
     this.plantMapSubscription =

@@ -1,0 +1,83 @@
+<div id="add-edit-slider">
+  <mat-card [formGroup]="notesForm">
+    <div class="top-bar">
+      <svg-icon
+        id="editNotesCancelBtn"
+        icon="icon-close"
+        class="cancel"
+        (click)="cancel()"
+      ></svg-icon>
+      <h1 id="editNotesTitle" class="heading" translate="editNotes"></h1>
+    </div>
+    <div class="container-div">
+      <p class="m-0">
+        <mat-form-field appearance="outline" class="width-100 m-b-10">
+          <mat-label id="editNotesTitle" translate="note"></mat-label>
+          <input
+            matInput
+            [placeholder]="'noteMandatory' | translate"
+            formControlName="title"
+          />
+          <mat-error
+            id="editNoteNameError"
+            *ngIf="processValidationErrors('title')"
+            class="m-t-5 error-fields"
+          >
+            {{
+              errors.title.name
+                | translate
+                  : {
+                      name: 'note' | translate
+                    }
+            }}
+          </mat-error>
+        </mat-form-field>
+      </p>
+      <p class="m-0" *ngIf="isLog">
+        <mat-form-field appearance="outline" class="width-100 m-b-10">
+          <mat-label id="editLog" translate="log"></mat-label>
+          <input
+            matInput
+            [placeholder]="'logMandatory' | translate"
+            formControlName="description"
+          />
+          <mat-error
+            id="editLogError"
+            *ngIf="processValidationErrors('description')"
+            class="m-t-5 error-fields"
+          >
+            {{
+              errors.description.name
+                | translate
+                  : {
+                      name: 'log' | translate
+                    }
+            }}
+          </mat-error>
+        </mat-form-field>
+      </p>
+    </div>
+  </mat-card>
+  <div class="actions-footer">
+    <button
+      id="editNoteCancelBtn"
+      mat-stroked-button
+      class="cancel-btn"
+      type="button"
+      (click)="cancel()"
+      translate="cancelBtn"
+    ></button>
+    <button
+      id="editNoteBtn"
+      mat-raised-button
+      class="update-btn"
+      type="submit"
+      [disabled]="
+        notesForm.invalid || (!notesForm.pristine && notesForm.pending)
+      "
+      (click)="update()"
+    >
+      {{ 'save' | translate }}
+    </button>
+  </div>
+</div>

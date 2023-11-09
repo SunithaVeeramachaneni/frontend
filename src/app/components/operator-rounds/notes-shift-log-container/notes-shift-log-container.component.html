@@ -1,0 +1,29 @@
+<div class="scrollable-area">
+  <div>
+    <button id="expandableComponent" mat-icon-button (click)="toggleNotes()">
+      <mat-icon id="expandableComponentIcon">{{
+        showNotes ? 'keyboard_arrow_down' : 'keyboard_arrow_up'
+      }}</mat-icon>
+      <span id="expandableComponentTitle" translate="notes"></span>
+    </button>
+    <app-notes-list
+      [shrId]="shrId"
+      [notes]="notes"
+      [hidden]="!showNotes"
+    ></app-notes-list>
+  </div>
+
+  <div class="shift-log-list">
+    <button id="expandableComponent" mat-icon-button (click)="toggleLogs()">
+      <mat-icon id="expandableComponentIcon">{{
+        showLogs ? 'keyboard_arrow_down' : 'keyboard_arrow_up'
+      }}</mat-icon>
+      <span id="expandableComponentTitle" translate="shiftLogs"></span>
+    </button>
+    <app-shift-log-list
+      [shrId]="shrId"
+      [logs]="shiftLogs"
+      [hidden]="!showLogs"
+    ></app-shift-log-list>
+  </div>
+</div>
