@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, ReplaySubject, Subscription,Observable } from 'rxjs';
+import { BehaviorSubject, ReplaySubject, Subscription, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
@@ -13,9 +13,7 @@ import {
 import { isEmpty, omitBy } from 'lodash-es';
 import { DatePipe } from '@angular/common';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
-import {
-  localToTimezoneDate
-} from 'src/app/shared/utils/timezoneDate';
+import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
 import { SHRColumnConfiguration } from 'src/app/interfaces/shr-column-configuration';
 import { SHR_CONFIGURATION_DATA } from '../operator-rounds.constants';
 
@@ -33,7 +31,7 @@ export class ShrService {
   plantMapSubscription: Subscription;
 
   constructor(
-    private appService: AppService, 
+    private appService: AppService,
     private datePipe: DatePipe,
     private plantService: PlantService
   ) {}
@@ -128,66 +126,80 @@ export class ShrService {
       info
     );
   }
+  updateSHRList$(id, body, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
+    return this.appService.patchData(
+      environment.operatorRoundsApiUrl,
+      `shr/${id}`,
+      body,
+      info
+    );
+  }
 
   private formatSHRResponse(resp: any) {
-    
     this.plantMapSubscription =
-    this.plantService.plantTimeZoneMapping$.subscribe(
-      (data) => (this.plantTimezoneMap = data)
-    );
+      this.plantService.plantTimeZoneMapping$.subscribe(
+        (data) => (this.plantTimezoneMap = data)
+      );
     let rows =
       resp?.items?.sort(
         (a, b) =>
           new Date(b?.createdAt).getTime() - new Date(a.createdAt).getTime()
       ) || [];
-      rows = rows.map((r: any) => {
-        try {
-          
-          // r.shift = JSON.parse(r.shift);
-          if(r.shift !== null){
-            
-            if (r.shiftStartDatetime) {              
-              r.shiftStartDatetime = localToTimezoneDate(
-                r.shiftStartDatetime,
-                this.plantTimezoneMap[r?.plantId],
-                'MMM dd, yyyy'
-              )
-            } else {
-              r.shiftStartDatetime = 'N/A'; // or any other default value
-            }
-            r.shiftNames = `${r?.shiftStartDatetime} / ${r.shift.name} ${r?.shift?.startTime} - ${r?.shift?.endTime}`;
-          }else{
-            r.shiftNames = ' ';
+    rows = rows.map((r: any) => {
+      try {
+        // r.shift = JSON.parse(r.shift);
+        if (r.shift !== null) {
+          if (r.shiftStartDatetime) {
+            r.shiftStartDatetime = localToTimezoneDate(
+              r.shiftStartDatetime,
+              this.plantTimezoneMap[r?.plantId],
+              'MMM dd, yyyy'
+            );
+          } else {
+            r.shiftStartDatetime = 'N/A'; // or any other default value
           }
-          if(r.shiftSupervisor !== null){
-            r.shiftSupervisor = r?.shiftSupervisor?.firstName + ' ' + r?.shiftSupervisor?.lastName; 
-          }else{
-            r.shiftSupervisor = ' ';
-          }
-          if(r.incomingSupervisor !== null){
-            r.incomingSupervisor = r?.incomingSupervisor?.firstName + ' ' + r?.incomingSupervisor?.lastName; 
-          }else{
-            r.incomingSupervisor = ' ';
-          }
-          if(r.submittedOn){
-            r.submittedOn = this.datePipe.transform(r.submittedOn, 'hh:mm a, MMM dd');
-          }else{
-            r.submittedOn = ' ';
-          }
-          if(r.acceptedOn){
-            r.acceptedOn = this.datePipe.transform(r.acceptedOn, 'hh:mm a, MMM dd');
-          }else{
-            r.acceptedOn = ' ';
-          }
-        } catch (err) {
-          console.log("err", err);
-          r.shiftSupervisor = [];
-          r.incomingSupervisor = [];
-          r.shiftNames = [];
-
+          r.shiftNames = `${r?.shiftStartDatetime} / ${r.shift.name} ${r?.shift?.startTime} - ${r?.shift?.endTime}`;
+        } else {
+          r.shiftNames = ' ';
         }
-        return r;
-      });
+        if (r.shiftSupervisor !== null) {
+          r.shiftSupervisor =
+            r?.shiftSupervisor?.firstName + ' ' + r?.shiftSupervisor?.lastName;
+        } else {
+          r.shiftSupervisor = ' ';
+        }
+        if (r.incomingSupervisor !== null) {
+          r.incomingSupervisor =
+            r?.incomingSupervisor?.firstName +
+            ' ' +
+            r?.incomingSupervisor?.lastName;
+        } else {
+          r.incomingSupervisor = ' ';
+        }
+        if (r.submittedOn) {
+          r.submittedOn = this.datePipe.transform(
+            r.submittedOn,
+            'hh:mm a, MMM dd'
+          );
+        } else {
+          r.submittedOn = ' ';
+        }
+        if (r.acceptedOn) {
+          r.acceptedOn = this.datePipe.transform(
+            r.acceptedOn,
+            'hh:mm a, MMM dd'
+          );
+        } else {
+          r.acceptedOn = ' ';
+        }
+      } catch (err) {
+        console.log('err', err);
+        r.shiftSupervisor = [];
+        r.incomingSupervisor = [];
+        r.shiftNames = [];
+      }
+      return r;
+    });
 
     return {
       count: resp?.count,
