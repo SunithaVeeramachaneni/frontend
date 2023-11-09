@@ -43,7 +43,7 @@
           <img src="assets/Images/user.jfif" class="user-icon" />
           <div>
             <span class="text">{{ data.shiftSupervisor }}</span> <br />
-            <span class="sub-text">Super Admin</span>
+            <span class="sub-text">{{ data.title }}</span>
           </div>
         </div>
       </ng-container>
@@ -78,6 +78,7 @@
             data.handoverStatus === 'pending') &&
           data.shiftSupervisorId === ''
         "
+        (click)="updateSHRList()"
         translate="startHandover"
       ></button>
       <button
@@ -153,7 +154,9 @@
       </div>
       <!-- STEP 2 -->
       <div *ngIf="currentStep === 1">
-          <app-shr-rounds [data]="shrAllDetails?.shrDetails?.rounds"></app-shr-rounds>
+        <app-shr-rounds
+          [data]="shrAllDetails?.shrDetails?.rounds"
+        ></app-shr-rounds>
       </div>
       <!-- STEP 3 -->
       <div *ngIf="currentStep === 2">Observations Component</div>

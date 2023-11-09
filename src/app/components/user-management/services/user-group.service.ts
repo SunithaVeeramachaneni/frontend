@@ -216,4 +216,10 @@ export class UserGroupService {
       'user-groups/all',
       { displayToast: true, failureResponse: { items: [], count: 0 } }
     );
+  listAllDynamoUsers$ = (info = {} as ErrorInfo) =>
+    this.appService._getResp(
+      environment.userRoleManagementApiUrl,
+      'user-groups/allUsers',
+      { displayToast: true, failureResponse: { items: [] } }
+    );
 }
