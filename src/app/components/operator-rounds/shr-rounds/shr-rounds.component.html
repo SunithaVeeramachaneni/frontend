@@ -1,0 +1,33 @@
+<div class="container">
+  <div class="filter-container shr-rounds">
+    <mat-button-toggle-group
+      name="fontStyle"
+      aria-label="Font Style"
+      [value]="shrRoundFilterS"
+    >
+      <mat-button-toggle
+        *ngFor="let filter of shrRoundsFilterOptions"
+        [value]="filter.id"
+        (click)="updateFilter(filter.id)"
+      >
+        {{
+          filter.id + ' (' + filter.count + ')' | titlecase
+        }}</mat-button-toggle
+      >
+    </mat-button-toggle-group>
+  </div>
+  <div class="table-container">
+    <cwp-dynamictable
+      *ngIf="!isLoading$ && dataSource"
+      [dataSource]="dataSource"
+      [configOptions]="configOptions"
+    >
+    </cwp-dynamictable>
+    <div class="ghost-loading" *ngIf="isLoading$">
+      <div *ngFor="let number of ghostLoading">
+        <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+        </ngx-shimmer-loading>
+      </div>
+    </div>
+  </div>
+</div>

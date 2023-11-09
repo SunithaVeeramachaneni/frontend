@@ -96,6 +96,7 @@ import { NotesShiftLogContainerComponent } from './notes-shift-log-container/not
 import { ConfirmDeleteModalComponent } from './notes-shift-log-container/confirm-delete-modal/confirm-delete-modal.component';
 import { NotesListComponent } from './notes-shift-log-container/notes-list/notes-list.component';
 import { HandoverReportConfigurationComponent } from './handover-report-configuration/handover-report-configuration.component';
+import { ShrRoundsComponent } from './shr-rounds/shr-rounds.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/operator-rounds/', '.json');
@@ -137,7 +138,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     NotesShiftLogContainerComponent,
     OperatorsListComponent,
     ShiftHandOverModalComponent,
-    HandoverReportConfigurationComponent
+    HandoverReportConfigurationComponent,
+    ShrRoundsComponent
   ],
   imports: [
     FormsModule,

@@ -148,10 +148,7 @@
       <div *ngIf="currentStep === 0">Summary Component</div>
       <!-- STEP 2 -->
       <div *ngIf="currentStep === 1">
-        Rounds Componnet
-        <!-- <app-shift-hand-over-rounds
-            [roundsData]="shrAllDetails.shrDetails.rounds"
-          ></app-shift-hand-over-rounds> -->
+          <app-shr-rounds [data]="shrAllDetails?.shrDetails?.rounds"></app-shr-rounds>
       </div>
       <!-- STEP 3 -->
       <div *ngIf="currentStep === 2">Observations Component</div>
