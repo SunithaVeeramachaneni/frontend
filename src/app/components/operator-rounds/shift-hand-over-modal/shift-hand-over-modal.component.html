@@ -38,7 +38,7 @@
       </span>
 
       <ng-container *ngIf="data.shiftSupervisorId !== ''">
-        <span class="text">{{ outgoing | translate }}</span>
+        <span class="text">{{ 'outgoing' | translate }}</span>
         <div class="dis-flex">
           <img src="assets/Images/user.jfif" class="user-icon" />
           <div>
@@ -51,7 +51,7 @@
       <span class="line" *ngIf="data.incomingSupervisorId !== ''">|</span>
 
       <ng-container *ngIf="data.incomingSupervisorId !== ''">
-        <span class="text">{{ incoming | translate }}</span>
+        <span class="text">{{ 'incoming' | translate }}</span>
         <div class="dis-flex">
           <img src="assets/Images/user.jfif" class="user-icon" />
           <div>
@@ -156,7 +156,11 @@
       <!-- STEP 3 -->
       <div *ngIf="currentStep === 2">Observations Component</div>
       <!-- STEP 4 -->
-      <div *ngIf="currentStep === 3">Notes and Logs Component</div>
+      <div *ngIf="currentStep === 3">
+        <app-notes-shift-log-container
+          [shrAllDetails]="shrAllDetails"
+        ></app-notes-shift-log-container>
+      </div>
       <!-- STEP 5 -->
       <div *ngIf="currentStep === 4">
         <app-operators-list

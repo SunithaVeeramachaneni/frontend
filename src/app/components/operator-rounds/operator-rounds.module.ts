@@ -88,8 +88,13 @@ import { TaskLevelTaskComponentsComponent } from './task-level-task-components/t
 import { AlertModalComponent } from './scheduler-modal/alert-modal/alert-modal.component';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ShiftHandOverComponent } from './shift-hand-over/shift-hand-over.component';
+import { EditNotesSideDrawerComponent } from './notes-shift-log-container/edit-notes-side-drawer/edit-notes-side-drawer.component';
+import { ShiftLogListComponent } from './notes-shift-log-container/shift-log-list/shift-log-list.component';
 import { OperatorsListComponent } from './operators-list/operators-list.component';
 import { ShiftHandOverModalComponent } from './shift-hand-over-modal/shift-hand-over-modal.component';
+import { NotesShiftLogContainerComponent } from './notes-shift-log-container/notes-shift-log-container.component';
+import { ConfirmDeleteModalComponent } from './notes-shift-log-container/confirm-delete-modal/confirm-delete-modal.component';
+import { NotesListComponent } from './notes-shift-log-container/notes-list/notes-list.component';
 import { HandoverReportConfigurationComponent } from './handover-report-configuration/handover-report-configuration.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
@@ -124,6 +129,12 @@ export const customTranslateLoader = (http: HttpClient) =>
     ReviseScheduleComponent,
     AlertModalComponent,
     ShiftHandOverComponent,
+    NotesListComponent,
+    EditNotesSideDrawerComponent,
+    ConfirmDeleteModalComponent,
+    ShiftLogListComponent,
+    ShiftHandOverModalComponent,
+    NotesShiftLogContainerComponent,
     OperatorsListComponent,
     ShiftHandOverModalComponent,
     HandoverReportConfigurationComponent

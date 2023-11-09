@@ -1,0 +1,22 @@
+<div class="deleteModal">
+  <p id="deleteHeading" class="heading" translate="confirmDeleteHeading"></p>
+  <p class="subHeading">
+    <span id="deleteSubHeading">{{
+      'deleteSubHeading' | translate : { title: title }
+    }}</span>
+  </p>
+  <button
+    id="deleteYesBtn"
+    mat-raised-button
+    class="yes-btn"
+    (click)="deleteModal(true)"
+    translate="yesBtn"
+  ></button>
+  <button
+    id="deleteNoBtn"
+    mat-button
+    class="no-btn"
+    (click)="deleteModal(false)"
+    translate="noBtn"
+  ></button>
+</div>
