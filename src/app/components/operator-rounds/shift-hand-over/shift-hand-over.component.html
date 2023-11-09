@@ -1,100 +1,131 @@
-<div class="list-view">
+<div class="list-view" id="shr-list-view">
   <div class="main-container">
-    <div class="forms-header">
-      <!-- <h2 id="formsListHeading" class="heading" translate="Positions"></h2> -->
+    <div class="header-filters">
+
+      <div class="toggle-btns" [formGroup]="SHRForm">
+        <div class="date-segment">
+          <mat-button-toggle-group (change)="dateChanged($event)">
+            <mat-button-toggle value="last_24_hours" class="toogle-btn-text" [ngClass]="{
+                            selected: SHRForm?.value?.timePeriod === 'last_24_hours'
+                          }">
+              {{ 'last24Hours' | translate }}
+            </mat-button-toggle>
+            <mat-button-toggle value="last_week" class="toogle-btn-text" [ngClass]="{
+                            selected: SHRForm?.value?.timePeriod === 'last_week'
+                          }">
+              {{ 'lastWeek' | translate }}
+            </mat-button-toggle>
+
+            <mat-button-toggle id="dateSegmentCustomText" value="custom" (click)="rangePicker.open()"
+              class="toogle-btn-text" [ngClass]="{
+                            selected: SHRForm?.value?.timePeriod === 'custom'
+                          }">
+              {{ customText | translate }}
+            </mat-button-toggle>
+          </mat-button-toggle-group>
+          <mat-form-field appearance="fill" class="date-range-form-field">
+            <mat-date-range-input [rangePicker]="rangePicker">
+              <input type="button" matStartDate formControlName="startDate" />
+              <input type="button" matEndDate formControlName="endDate" />
+            </mat-date-range-input>
+            <mat-date-range-picker #rangePicker>
+              <mat-date-range-picker-actions>
+                <button id="dateSegmentCancelBtn" mat-button matDateRangePickerCancel>
+                  {{ 'cancel' | translate }}
+                </button>
+                <button id="dateSegmentApplyBtn" mat-raised-button color="primary" matDateRangePickerApply (click)="
+                    appliedDateRange(
+                      dashboardForm.value.startDate,
+                      dashboardForm.value.endDate
+                    )
+                  ">
+                  {{ 'apply' | translate }}
+                </button>
+              </mat-date-range-picker-actions>
+            </mat-date-range-picker>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="filter-field custom-form-field-white-color">
+            <mat-label id="addEditAssetsPlant" translate="plant"></mat-label>
+            <mat-select (valueChange)="onSelectPlant($event)" formControlName="plantId">
+              <input class="searchable-input" [placeholder]="'searchTxt' | translate" (keyup)="onKeyPlant($event)"
+                #searchInput />
+              <div class="scrollable-area">
+                <mat-option value="">{{ 'all' | translate }}</mat-option>
+                <mat-option id="addEditAssetsPlantOptions" [value]="plant.id"
+                  *ngFor="let plant of allPlantsData">{{ plant.plantId }} - {{ plant.name }}</mat-option>
+              </div>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="filter-field custom-form-field-white-color">
+            <mat-label id="addEditAssetsPlant" translate="unit"></mat-label>
+            <mat-select (valueChange)="onSelectUnit($event)" formControlName="unitId">
+              <input class="searchable-input" [placeholder]="'searchTxt' | translate" #searchInput />
+              <div class="scrollable-area">
+                <mat-option value="">{{ 'all' | translate }}</mat-option>
+                <mat-option id="addEditAssetsPlantOptions" [value]="unit.id"
+                  *ngFor="let unit of allUnits">
+                  {{ unit.name }}
+                </mat-option>
+              </div>
+            </mat-select>
+          </mat-form-field>
+
+        </div>
+      </div>
+      
       <div class="custom-form-field-gray-color search">
         <mat-form-field appearance="outline">
-          <mat-icon matPrefix id="formsListsearchIcon" class="searchIcon"
-            >search</mat-icon
-          >
-          <input
-            id="searchPositionsList"
-            matInput
-            type="text"
-            placeholder="Search..."
-            autocomplete="off"
-            [formControl]="searchPosition"
-          />
-          <!-- <svg-icon icon="icon-filterIcon" cdkOverlayOrigin class="pointer" #trigger="cdkOverlayOrigin"
-                        (click)="isPopoverOpen = !isPopoverOpen" id="formListfilterBtn" matSuffix
-                        class="filter-icon"></svg-icon> -->
+          <mat-icon matPrefix id="formsListsearchIcon" class="searchIcon">search</mat-icon>
+          <input id="searchPositionsList" matInput type="text" placeholder="Search..." autocomplete="off"
+            [formControl]="searchPosition" />
+          <svg-icon icon="icon-filterIcon" cdkOverlayOrigin class="pointer" #trigger="cdkOverlayOrigin"
+            (click)="isPopoverOpen = !isPopoverOpen" id="formListfilterBtn" matSuffix class="filter-icon"></svg-icon>
         </mat-form-field>
-        <!-- <button id="moreButton" mat-raised-button [matMenuTriggerFor]="moreMenu" class="more-btn">
-                    <mat-icon id="moreMenuIcon" class="menu-icon">more_horiz</mat-icon>
-                </button> -->
-        <button
-          id="moreButton"
-          mat-raised-button
-          [matMenuTriggerFor]="moreMenu"
-          class="more-btn"
-        >
+        <ng-template cdkConnectedOverlay cdkConnectedOverlayPanelClass="custom-popover"
+          cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop" [cdkConnectedOverlayHasBackdrop]="true"
+          [cdkConnectedOverlayOpen]="isPopoverOpen" [cdkConnectedOverlayOrigin]="trigger"
+          cdkConnectedOverlayWidth="400px" (backdropClick)="isPopoverOpen = false">
+          <app-filter *ngIf="(isLoading$ | async) === false" [json]="filterJson" (close)="isPopoverOpen = false"
+            (apply)="applyFilter($event)" (reset)="resetFilter()"></app-filter>
+        </ng-template>  
+        <button id="moreButton" mat-raised-button [matMenuTriggerFor]="moreMenu" class="more-btn">
           <mat-icon id="moreMenuIcon" class="menu-icon">more_horiz</mat-icon>
         </button>
       </div>
       <mat-menu id="moreMenu" #moreMenu="matMenu">
-        <button
-          id="columnConfigurationBtn"
-          mat-menu-item
-          class="menu-buttons"
-          (click)="showColumnConfig()"
-        >
-          <svg-icon
-            id="fileIconMenu"
-            icon="icon-file-copy"
-            class="menu-icons"
-          ></svg-icon>
-          <span
-            id="columnConfigurationSpan"
-            translate="handoverShrConfiguration"
-          ></span>
+        <button id="columnConfigurationBtn" mat-menu-item class="menu-buttons" (click)="showColumnConfig()">
+          <svg-icon id="fileIconMenu" icon="icon-file-copy" class="menu-icons"></svg-icon>
+          <span id="columnConfigurationSpan" translate="handoverShrConfiguration"></span>
         </button>
-        <button
-          id="columnEmailConfigurationBtn"
-          mat-menu-item
-          class="menu-buttons"
-        >
-          <svg-icon
-            id="emailIconMenu"
-            icon="icon-alternate-email"
-            class="menu-icons"
-          ></svg-icon>
-          <span
-            id="columnEmailConfigurationSpan"
-            translate="emailConfiguration"
-          ></span>
+        <button id="columnEmailConfigurationBtn" mat-menu-item class="menu-buttons">
+          <svg-icon id="emailIconMenu" icon="icon-alternate-email" class="menu-icons"></svg-icon>
+          <span id="columnEmailConfigurationSpan" translate="emailConfiguration"></span>
         </button>
       </mat-menu>
 
       <ng-container *ngIf="columnConfigMenuState">
-        <app-handover-report-configuration
-          [@slideInOut]="columnConfigMenuState"
-          (slideInOut)="onCloseColumnConfig()"
-          (shrConfig)="receiveData($event)"
-        ></app-handover-report-configuration>
+        <app-handover-report-configuration [@slideInOut]="columnConfigMenuState" (slideInOut)="onCloseColumnConfig()"
+          (shrConfig)="receiveData($event)"></app-handover-report-configuration>
         <!-- [moduleName]="rdfTemplateModuleName" -->
       </ng-container>
     </div>
     <div *ngIf="(forms$ | async) && (isLoading$ | async) === false">
-      <cwp-dynamictable
-        [dataSource]="dataSource"
-        [configOptions]="configOptions"
-        (fetchDataCallback)="handleTableEvent($event)"
-        (cellClickActionHandler)="cellClickActionHandler($event)"
-        class="width-100"
-      >
+      <cwp-dynamictable [dataSource]="dataSource" [configOptions]="configOptions"
+        (fetchDataCallback)="handleTableEvent($event)" (cellClickActionHandler)="cellClickActionHandler($event)"
+        class="width-100">
       </cwp-dynamictable>
     </div>
   </div>
-   <div *ngIf="(isLoading$ | async) || dataFetchingComplete">
-        <div class="ghost-loading">
-            <div *ngFor="let number of ghostLoading">
-                <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
-                </ngx-shimmer-loading>
-            </div>
-        </div>
+  <div *ngIf="(isLoading$ | async) || dataFetchingComplete">
+    <div class="ghost-loading">
+      <div *ngFor="let number of ghostLoading">
+        <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+        </ngx-shimmer-loading>
+      </div>
     </div>
+  </div>
 
-   <!-- <ng-template cdkConnectedOverlay cdkConnectedOverlayPanelClass="custom-popover"
+  <!-- <ng-template cdkConnectedOverlay cdkConnectedOverlayPanelClass="custom-popover"
         cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop" [cdkConnectedOverlayHasBackdrop]="true"
         [cdkConnectedOverlayOpen]="isPopoverOpen" [cdkConnectedOverlayOrigin]="trigger" cdkConnectedOverlayWidth="400px"
         (backdropClick)="isPopoverOpen = false">

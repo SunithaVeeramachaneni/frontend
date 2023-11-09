@@ -17,6 +17,7 @@ import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
 import { SHRColumnConfiguration } from 'src/app/interfaces/shr-column-configuration';
 import { SHR_CONFIGURATION_DATA } from '../operator-rounds.constants';
 
+
 @Injectable({
   providedIn: 'root'
 })
@@ -29,6 +30,7 @@ export class ShrService {
   embeddedFormId;
   plantTimezoneMap: any = {};
   plantMapSubscription: Subscription;
+  placeHolder = '_ _';
 
   constructor(
     private appService: AppService,
@@ -36,28 +38,35 @@ export class ShrService {
     private plantService: PlantService
   ) {}
 
+  
+
   getShiftHandOverList$(
     queryParams: {
-      // next?: string;
+      next?: string;
       limit: number;
       searchKey: string;
       fetchType: string;
-      // isArchived:string;
-      // incomingSupervisorId: string;
+      createdOn: string;
+      plantId: string;
+      unitId: string;
     },
-    filterData: any = null
-  ) {
+  ) 
+  {
     const rawParams = {
       searchTerm: queryParams?.searchKey,
       limit: queryParams?.limit.toString(),
-      // isArchived: queryParams?.isArchived,
-      // incomingSupervisorId: queryParams?.incomingSupervisorId,
-      ...(filterData ? { plantId: filterData?.plant } : {})
+      createdOn: queryParams?.createdOn,
+      plantId:  queryParams?.plantId,
+      unitId: queryParams?.unitId
+      
     };
     const params = new URLSearchParams({
-      // next: queryParams.next,
-      // isArchived: queryParams.isArchived,
-      ...omitBy(rawParams, isEmpty)
+      searchTerm: rawParams?.searchTerm,
+      next: '',
+      limit: rawParams?.limit,
+      createdOn: rawParams?.createdOn,
+      plantId: rawParams?.plantId,
+      unitId: rawParams?.unitId
     });
     return this.appService
       ._getResp(
@@ -135,6 +144,14 @@ export class ShrService {
     );
   }
 
+  getSHRFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
+    return this.appService._getLocal(
+      '',
+      '/assets/json/shift-handover-round-filter.json',
+      info
+    );
+  }
+
   private formatSHRResponse(resp: any) {
     this.plantMapSubscription =
       this.plantService.plantTimeZoneMapping$.subscribe(
@@ -147,7 +164,6 @@ export class ShrService {
       ) || [];
     rows = rows.map((r: any) => {
       try {
-        // r.shift = JSON.parse(r.shift);
         if (r.shift !== null) {
           if (r.shiftStartDatetime) {
             r.shiftStartDatetime = localToTimezoneDate(
@@ -160,13 +176,13 @@ export class ShrService {
           }
           r.shiftNames = `${r?.shiftStartDatetime} / ${r.shift.name} ${r?.shift?.startTime} - ${r?.shift?.endTime}`;
         } else {
-          r.shiftNames = ' ';
+          r.shiftNames = this.placeHolder;
         }
         if (r.shiftSupervisor !== null) {
           r.shiftSupervisor =
             r?.shiftSupervisor?.firstName + ' ' + r?.shiftSupervisor?.lastName;
         } else {
-          r.shiftSupervisor = ' ';
+          r.shiftSupervisor = this.placeHolder ;
         }
         if (r.incomingSupervisor !== null) {
           r.incomingSupervisor =
@@ -174,7 +190,7 @@ export class ShrService {
             ' ' +
             r?.incomingSupervisor?.lastName;
         } else {
-          r.incomingSupervisor = ' ';
+          r.incomingSupervisor = this.placeHolder;
         }
         if (r.submittedOn) {
           r.submittedOn = this.datePipe.transform(
@@ -182,7 +198,7 @@ export class ShrService {
             'hh:mm a, MMM dd'
           );
         } else {
-          r.submittedOn = ' ';
+          r.submittedOn = this.placeHolder;
         }
         if (r.acceptedOn) {
           r.acceptedOn = this.datePipe.transform(
@@ -190,10 +206,9 @@ export class ShrService {
             'hh:mm a, MMM dd'
           );
         } else {
-          r.acceptedOn = ' ';
+          r.acceptedOn = this.placeHolder;
         }
       } catch (err) {
-        console.log('err', err);
         r.shiftSupervisor = [];
         r.incomingSupervisor = [];
         r.shiftNames = [];

@@ -1,5 +1,5 @@
 /* eslint-disable arrow-body-style */
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { routingUrls } from 'src/app/app.constants';
 import {
@@ -25,14 +25,16 @@ import {
   switchMap,
   tap,
   catchError,
-  takeUntil
+  takeUntil,
+  startWith,
+  pairwise
 } from 'rxjs/operators';
 import {
   Column,
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { ShrService } from '../services/shr.service';
-import { FormControl } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { cloneDeep, omit } from 'lodash-es';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 import { Router } from '@angular/router';
@@ -46,6 +48,8 @@ import { slideInOut } from 'src/app/animations';
 import { SHRColumnConfiguration } from 'src/app/interfaces/shr-column-configuration';
 import { UserGroupService } from '../../user-management/services/user-group.service';
 
+import { DateSegmentService } from '../../../shared/components/date-segment/date-segment.service';
+import { isEqual } from 'date-fns';
 @Component({
   selector: 'app-shift-hand-over',
   templateUrl: './shift-hand-over.component.html',
@@ -60,7 +64,22 @@ export class ShiftHandOverComponent implements OnInit {
 
   searchPosition: FormControl;
   userInfo$: Observable<UserInfo>;
+  SHRForm: FormGroup;
+  
+  public dateRange$: BehaviorSubject<any>;
   units: [];
+  public selectDate: string;
+  startDate: any;
+  endDate: any;
+  dateRange: any;
+  customText = 'Custom';
+  undoRedoUtil: any;
+  isPopoverOpen = false;
+  private destroy$ = new Subject();
+  unitsList: [any];
+  placeHolder = '_ _';
+
+  downloadInProgress = false;
   columns: Column[] = [
     {
       id: 'shiftNames',
@@ -68,7 +87,7 @@ export class ShiftHandOverComponent implements OnInit {
       type: 'string',
       controlType: 'string',
       order: 1,
-      searchable: false,
+      searchable: true,
       sortable: false,
       hideable: false,
       visible: true,
@@ -95,7 +114,7 @@ export class ShiftHandOverComponent implements OnInit {
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
-      searchable: false,
+      searchable: true,
       sortable: false,
       hideable: false,
       visible: true,
@@ -154,7 +173,7 @@ export class ShiftHandOverComponent implements OnInit {
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
-      searchable: false,
+      searchable: true,
       sortable: false,
       hideable: false,
       visible: true,
@@ -238,7 +257,7 @@ export class ShiftHandOverComponent implements OnInit {
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
-      searchable: false,
+      searchable: true,
       sortable: false,
       hideable: false,
       visible: true,
@@ -320,11 +339,6 @@ export class ShiftHandOverComponent implements OnInit {
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   skip = 0;
   limit = graphQLDefaultLimit;
-  addEditCopyForm$: BehaviorSubject<FormTableUpdate> =
-    new BehaviorSubject<FormTableUpdate>({
-      action: null,
-      form: {} as GetFormList
-    });
   fetchType = 'load';
   selectedForm: GetFormList = null;
   nextToken = '';
@@ -346,6 +360,10 @@ export class ShiftHandOverComponent implements OnInit {
 
   private onDestroy$ = new Subject();
 
+  allPlantsData: any;
+  plantInformation;
+  allUnits: any = [];
+  
   constructor(
     private headerService: HeaderService,
     private shrService: ShrService,
@@ -354,14 +372,39 @@ export class ShiftHandOverComponent implements OnInit {
     private plantService: PlantService,
     private locationService: LocationService,
     private dialog: MatDialog,
+    private _dateSegmentService: DateSegmentService,
+    private fb: FormBuilder,
+    private cdrf: ChangeDetectorRef,
     private userGroupService: UserGroupService
   ) {}
-  //  this.headerService.setHeaderTitle(routingUrls?.shiftHandOvers?.title);
+  
   ngOnInit(): void {
+    this.SHRForm = this.fb.group({
+      timePeriod: new FormControl('', []),
+      plantId: new FormControl('', []),
+      startDate: new FormControl(''),
+      endDate: new FormControl(''),
+      unitId: new FormControl('')
+    });
+    this.SHRForm.valueChanges
+    .pipe(
+      startWith({}),
+      debounceTime(100),
+      distinctUntilChanged(),
+      takeUntil(this.destroy$),
+      pairwise(),
+      tap(([previous, current]) => {
+        if (!isEqual(previous, current)) {
+          this.shrService.fetchShr$.next({ data: 'load' });
+        }
+      })
+    )
+    .subscribe();
     this.headerService.setHeaderTitle(routingUrls?.shiftHandOvers?.title);
     this.shrService.fetchShr$.next({ data: 'load' });
     this.shrService.fetchShr$.next({} as TableEvent);
     this.searchPosition = new FormControl('');
+    let filterJson = [];
     this.loggedInUser = this.usersService.getLoggedInUser$();
     this.allDynamoUsers = this.userGroupService.listAllDynamoUsers$();
     this.searchPosition.valueChanges
@@ -377,6 +420,23 @@ export class ShiftHandOverComponent implements OnInit {
     this.getDisplayedForms();
     this.configOptions.allColumns = this.columns;
     this.prepareMenuActions();
+    this.dateRange$ = new BehaviorSubject(
+      this._dateSegmentService.getStartAndEndDate('month')
+    );
+    this.plantService.fetchLoggedInUserPlants$().subscribe((plants) => {
+      this.allPlantsData = plants || [];
+      this.plantInformation = this.allPlantsData;
+      this.cdrf.detectChanges();
+    });
+    this.locationService.fetchAllLocations$().pipe(
+      tap((data) => {
+        this.unitsList = data.items.filter((e) => e.isUnit);
+      })
+    ).subscribe();
+  }
+  
+  dateRangeEventHandler($event: any) {
+    this.dateRange$.next($event);
   }
 
   getDisplayedForms(): void {
@@ -437,7 +497,7 @@ export class ShiftHandOverComponent implements OnInit {
           const unitName = (units?.items || []).find(
             (unit) => unit?.id === shr?.unitId
           );
-          return { ...shr, unit: unitName?.name || '--' };
+          return { ...shr, unit: unitName?.name || this.placeHolder };
         });
         this.allForms = cominedResult;
         this.allForms = this.allForms.map((form) => {
@@ -509,14 +569,14 @@ export class ShiftHandOverComponent implements OnInit {
     return this.shrService
       .getShiftHandOverList$(
         {
-          // next: this.nextToken,
+          next: this.nextToken,
           limit: hasColumnConfigFilter ? graphQLDefaultFilterLimit : this.limit,
           searchKey: this.searchPosition.value,
-          fetchType: this.fetchType
-          // isArchived: this.isArchived,
-          // incomingSupervisorId: this.incomingSupervisorId
+          fetchType: this.fetchType,
+          createdOn: this.SHRForm.value.timePeriod,
+          plantId: this.SHRForm.value.plantId,
+          unitId: this.SHRForm.value.unitId
         }
-        // this.filter
       )
       .pipe(
         mergeMap(({ count, rows, next }) => {
@@ -559,17 +619,92 @@ export class ShiftHandOverComponent implements OnInit {
   onCloseColumnConfig() {
     this.columnConfigMenuState = 'out';
   }
+  
+
+  dateChanged(event) {
+    let final_date = '';
+    if (event.value !== 'custom') {
+      this.selectDate = event.value;
+      if (this.selectDate == 'last_24_hours') {
+        let last_24_h_date = new Date(
+          new Date().getTime() - 24 * 60 * 60 * 1000
+        );
+        let dateObject = new Date(last_24_h_date);
+        let last_24_format = dateObject.toISOString();
+  
+        let current_date = new Date();
+        let current_date_format = current_date.toISOString();
+        final_date = `${last_24_format},${current_date_format}`;
+      } else if (this.selectDate == 'last_week') {
+        const currentDate = new Date();
+        const startOfLastWeek = new Date(
+          currentDate.getFullYear(),
+          currentDate.getMonth(),
+          currentDate.getDate() - currentDate.getDay() - 6,
+          0,
+          0,
+          0
+        );
+        const currentDateString = currentDate.toISOString();
+        const startOfLastWeekString = startOfLastWeek.toISOString();
+        final_date = `${startOfLastWeekString},${currentDateString}`;
+      }
+      this.startDate = '';
+      this.endDate = '';
+      this.customText = 'Custom';
+      this.SHRForm.patchValue({
+        timePeriod: final_date,
+        startDate: '',
+        endDate: ''
+      });
+    }
+  }
+  
+
+  onSelectPlant(plant) {
+    if (plant) {
+      this.allUnits = this.unitsList.filter((u) => u.plantsID === plant);
+      this.cdrf.detectChanges();
+    }
+  }
+  searchPlant(value: string) {
+    const searchValue = value.toLowerCase();
+    return this.plantInformation.filter(
+      (plant) =>
+        (plant.name && plant.name.toLowerCase().indexOf(searchValue) !== -1) ||
+        (plant.plantId &&
+          plant.plantId.toLowerCase().indexOf(searchValue) !== -1)
+    );
+  }
+
+  onKeyPlant(event) {
+    const value = event.target.value || '';
+    if (!value) {
+      this.allPlantsData = this.plantInformation;
+    } else {
+      this.allPlantsData = this.searchPlant(value);
+    }
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  onSelectUnit(unit){
+
+  }
+
+  
   removeDuplicates(arr) {
     const uniqueEmails = new Set();
     const result = [];
-
     for (const obj of arr) {
       if (!uniqueEmails.has(obj.email)) {
         uniqueEmails.add(obj.email);
         result.push(obj);
       }
     }
-
     return result;
   }
 }
