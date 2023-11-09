@@ -3,7 +3,6 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Step } from 'src/app/interfaces/stepper';
 import { ShrService } from '../services/shr.service';
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-shift-hand-over-modal',
@@ -11,6 +10,7 @@ import { tap } from 'rxjs/operators';
   styleUrls: ['./shift-hand-over-modal.component.scss']
 })
 export class ShiftHandOverModalComponent implements OnInit {
+  selectedRow;
   steps: Step[] = [
     { title: 'Summary', content: '', columnId: 'summary' },
     { title: 'Rounds', content: '', columnId: 'rounds' },
@@ -32,6 +32,7 @@ export class ShiftHandOverModalComponent implements OnInit {
   ngOnInit(): void {
     this.shrAllDetails$ = this.shrService.getSHRDetailsId$(this.data.id);
     this.updateSHRSteps();
+    this.selectedRow = this.data;
   }
 
   updateSHRSteps() {

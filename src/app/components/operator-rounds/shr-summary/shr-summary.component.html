@@ -1,0 +1,210 @@
+<div class="summary-container">
+  <div class="summary-charts-container">
+    <div class="dis-flex header-container" (click)="toggleRowDisplay('trends')">
+      <mat-icon id="roundPlanUnitSearchIcon" matPrefix class="arrowIcon">{{
+        isTrendsVisible ? 'keyboard_arrow_down' : 'keyboard_arrow_right'
+      }}</mat-icon>
+      <h1 class="heading" translate="summaryTrends"></h1>
+    </div>
+    <div class="chart-container-items" *ngIf="isTrendsVisible">
+      <div class="width-100 m-r-10 summary-items">
+        <h3 id="shrSummaryRoundsInfo" translate="summaryRounds"></h3>
+        <div class="width-100">
+          <app-donut-chart
+            class="issue-chart"
+            [options]="summaryData?.rounds"
+          ></app-donut-chart>
+        </div>
+        <p id="shrSummaryRoundsInfo" class="subText">
+          {{ roundsCompliance }}% Compliance
+        </p>
+      </div>
+      <div class="width-100 m-r-10 summary-items">
+        <h3 id="shrSummaryRoundsInfo" translate="summaryTasks"></h3>
+        <div class="width-100">
+          <app-donut-chart
+            class="issue-chart"
+            [options]="summaryData?.tasks"
+          ></app-donut-chart>
+        </div>
+        <p id="shrSummaryRoundsInfo" class="subText">
+          {{ tasksCompliance }}% Compliance
+        </p>
+      </div>
+      <div class="width-100 m-r-10 summary-items">
+        <h3 id="shrSummaryRoundsInfo" translate="summaryIssues"></h3>
+        <div class="width-100 bar-item-container">
+          <div class="pendingItem">
+            <h3 class="textTypo">{{ pendingIssues }}</h3>
+            <p class="paraText" translate="summaryPending"></p>
+          </div>
+          <div class="width-100">
+            <app-donut-chart
+              class="issue-chart"
+              [options]="summaryData?.issues"
+            ></app-donut-chart>
+          </div>
+        </div>
+        <p id="shrSummaryRoundsInfo" class="subText">
+          {{ issuesHighPriority }} in High priority
+        </p>
+      </div>
+      <div class="width-100 m-r-10 summary-items">
+        <h3 id="shrSummaryRoundsInfo" translate="summaryActions"></h3>
+        <div class="width-100 bar-item-container">
+          <div class="pendingItem">
+            <h3 class="textTypo">{{ pendingActions }}</h3>
+            <p class="paraText" translate="summaryPending"></p>
+          </div>
+          <div class="width-100">
+            <app-donut-chart
+              class="issue-chart"
+              [options]="summaryData?.actions"
+            ></app-donut-chart>
+          </div>
+        </div>
+        <p id="shrSummaryRoundsInfo" class="subText">
+          {{ actionsHighPriority }} in High priority
+        </p>
+      </div>
+    </div>
+    <div class="container-items" *ngIf="isTrendsVisible">
+      <div class="width-50 dis-flex">
+        <div class="width-50 summary-items-text m-r-10">
+          <h3 id="shrSummaryRoundsInfo" translate="summaryExceptions"></h3>
+          <p class="textTypo">{{ chartData.exceptions?.length || 0 }}</p>
+        </div>
+        <div class="width-50 summary-items-text m-r-10">
+          <h3 id="shrSummaryRoundsInfo" translate="summaryNotesLogs"></h3>
+          <p class="textTypo">{{ chartData.notesLogs?.length || 0 }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary-instructions-container" [formGroup]="summaryForm">
+    <div
+      class="dis-flex header-container"
+      (click)="toggleRowDisplay('instructions')"
+    >
+      <mat-icon id="roundPlanUnitSearchIcon" matPrefix class="arrowIcon">
+        {{
+          isInstructionsVisible ? 'keyboard_arrow_down' : 'keyboard_arrow_right'
+        }}</mat-icon
+      >
+      <h1 class="heading" translate="summaryInstructions"></h1>
+    </div>
+    <div class="dis-flex" *ngIf="isInstructionsVisible">
+      <div class="width-50 m-r-10">
+        <mat-label
+          class="labelText"
+          translate="summarySupervisorNotes"
+        ></mat-label>
+        <mat-form-field appearance="outline" class="width-100">
+          <textarea
+            matInput
+            formControlName="supervisorNotes"
+            cdkTextareaAutosize
+            cdkAutosizeMinRows="5"
+            cdkAutosizeMaxRows="5"
+          ></textarea>
+        </mat-form-field>
+      </div>
+      <div class="width-50">
+        <mat-label
+          class="labelText"
+          translate="summaryStandingInstructions"
+        ></mat-label>
+        <mat-form-field appearance="outline" class="width-100">
+          <textarea
+            matInput
+            formControlName="standingInstructions"
+            cdkTextareaAutosize
+            cdkAutosizeMinRows="5"
+            cdkAutosizeMaxRows="5"
+          ></textarea>
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="add-attachments" *ngIf="isInstructionsVisible">
+      <br />
+      <input
+        id="roundPlanHeaderUploadFile"
+        type="file"
+        class="file-upload"
+        accept="image/jpeg,image/jpg,image/png,application/pdf"
+        [hidden]="true"
+        (change)="roundplanFileUploadHandler($event)"
+        #roundPlanFileUpload
+      />
+      <button
+        id="roundPlanHeaderUploadBtn"
+        mat-button
+        color="primary"
+        class="upload-button"
+        (click)="roundPlanFileUpload.click()"
+      >
+        <mat-icon id="roundPlanHeaderLink" class="icon-upload">link</mat-icon>
+        <span translate="addImagesAndPDFBtnNew"></span>
+      </button>
+      <div class="attachments-container">
+        <span
+          *ngFor="
+            let image of filteredMediaType.mediaType;
+            index as i;
+            trackBy: trackBySelectedattachments
+          "
+          class="m-r-10"
+        >
+          <app-upload-image-preview
+            [image]="image"
+            (imageIndexEmitter)="roundPlanFileDeleteHandler(i)"
+            class="attachments cursor-pointer"
+          ></app-upload-image-preview>
+        </span>
+
+        <span
+          *ngFor="
+            let pdf of pdfFiles.mediaType;
+            index as i;
+            trackBy: trackBySelectedattachments
+          "
+          class="m-r-10"
+        >
+          <app-instruction-pdf
+            [pdf]="pdf"
+            (indexEmitter)="roundPlanPdfDeleteHandler(i)"
+          ></app-instruction-pdf>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary-shiftInfo-container">
+    <div
+      class="dis-flex header-container"
+      (click)="toggleRowDisplay('shiftInfo')"
+    >
+      <mat-icon id="roundPlanUnitSearchIcon" matPrefix class="arrowIcon">{{
+        isShiftInfoVisible ? 'keyboard_arrow_down' : 'keyboard_arrow_right'
+      }}</mat-icon>
+      <h1 class="heading" translate="summaryShiftInfo"></h1>
+    </div>
+    <div *ngIf="isShiftInfoVisible" [formGroup]="summaryForm">
+      <div class="dis-flex shiftRows" *ngFor="let rows of shiftRows">
+        <div class="width-50 m-r-10" *ngFor="let col of rows">
+          <mat-label class="labelText">{{ col.label }}</mat-label>
+          <mat-form-field appearance="fill" class="width-100 form-field">
+            <input
+              formControlName="{{ col.formName }}"
+              id="roundPlanHeaderName"
+              type="text"
+              name="{{ col.formName }}"
+              matInput
+            />
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
