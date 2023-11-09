@@ -496,5 +496,9 @@
   "incoming": "Incoming:",
   "startHandover": "Start Handover",
   "startReview": "Start Review",
-  "previous": "Previous"
+  "previous": "Previous",
+  "configureShiftHandover": "Configure Shift Handover",
+  "shrContent": "SHR Content",
+  "handoverShrConfiguration": "Handover Report Configuration",
+  "emailConfiguration": "Email Configuration"
 }

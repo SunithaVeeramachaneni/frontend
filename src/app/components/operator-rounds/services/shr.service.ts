@@ -16,6 +16,8 @@ import { PlantService } from '../../master-configurations/plants/services/plant.
 import {
   localToTimezoneDate
 } from 'src/app/shared/utils/timezoneDate';
+import { SHRColumnConfiguration } from 'src/app/interfaces/shr-column-configuration';
+import { SHR_CONFIGURATION_DATA } from '../operator-rounds.constants';
 
 @Injectable({
   providedIn: 'root'
@@ -145,4 +147,53 @@ export class ShrService {
       next: resp?.next
     };
   }
+
+  getSHRConfiugration$() {
+    return this.appService
+      ._getResp(environment.operatorRoundsApiUrl, 'shr/config')
+      .pipe(map((res) => this.formatSHRConfiguration(res)));
+  }
+
+  private formatSHRConfiguration(res): SHRColumnConfiguration[] {
+    let data: SHRColumnConfiguration[] = SHR_CONFIGURATION_DATA.map(
+      (column) => ({ ...column })
+    );
+    for (const column of data) {
+      if (res[column.columnId] !== undefined) {
+        column.selected = res[column.columnId];
+      }
+      if (column.content && Array.isArray(column.content)) {
+        let selected = true;
+        for (const subColumn of column.content) {
+          if (res[subColumn.columnId] !== undefined) {
+            subColumn.selected = res[subColumn.columnId];
+            if (!subColumn.selected) selected = false;
+          }
+          column.selected = selected;
+        }
+      }
+    }
+    return data;
+  }
+
+  updateSHRConfiguration$ = (
+    shrDetails: SHRColumnConfiguration[]
+  ): Observable<any> => {
+    const jsonRes = {};
+    for (const data of shrDetails) {
+      if (data.content) {
+        for (const value of data.content) {
+          jsonRes[value.columnId] = value.selected;
+        }
+      } else {
+        jsonRes[data.columnId] = data.selected;
+      }
+    }
+
+    return this.appService._postData(
+      environment.operatorRoundsApiUrl,
+      'shr/update-config',
+      jsonRes
+    );
+  };
 }
