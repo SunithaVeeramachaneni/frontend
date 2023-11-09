@@ -145,7 +145,12 @@
     </div>
     <div class="width-80" *ngIf="shrAllDetails$ | async as shrAllDetails">
       <!-- STEP 1 -->
-      <div *ngIf="currentStep === 0">Summary Component</div>
+      <div *ngIf="currentStep === 0">
+        <app-shr-summary
+          [selectedRow]="selectedRow"
+          [shrAllDetails]="shrAllDetails"
+        ></app-shr-summary>
+      </div>
       <!-- STEP 2 -->
       <div *ngIf="currentStep === 1">
           <app-shr-rounds [data]="shrAllDetails?.shrDetails?.rounds"></app-shr-rounds>
