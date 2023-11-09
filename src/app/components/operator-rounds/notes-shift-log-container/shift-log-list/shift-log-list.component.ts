@@ -159,14 +159,12 @@ export class ShiftLogListComponent implements OnInit {
   ngOnInit(): void {
     this.configOptions.allColumns = this.columns;
     this.userService.getUsersInfo$().subscribe(() => {
-      const data = this.logs.map((log) => {
-        return {
-          ...log,
-          raisedBy: this.operatorRoundService.formatUserFullNameDisplay(
-            log.raisedBy || 'ayush.solanki@innovapptive.com'
-          )
-        };
-      });
+      const data = this.logs.map((log) => ({
+        ...log,
+        raisedBy: this.operatorRoundService.formatUserFullNameDisplay(
+          log.raisedBy || 'ayush.solanki@innovapptive.com'
+        )
+      }));
       this.dataSource = new MatTableDataSource(data);
     });
     this.prepareMenuActions();
@@ -224,14 +222,12 @@ export class ShiftLogListComponent implements OnInit {
           )
           .subscribe(() => {
             this.logs = this.logs.filter((log) => log.id !== data.id);
-            const logsData = this.logs.map((log) => {
-              return {
-                ...log,
-                raisedBy: this.operatorRoundService.formatUserFullNameDisplay(
-                  log.raisedBy || ''
-                )
-              };
-            });
+            const logsData = this.logs.map((log) => ({
+              ...log,
+              raisedBy: this.operatorRoundService.formatUserFullNameDisplay(
+                log.raisedBy || ''
+              )
+            }));
             this.dataSource = new MatTableDataSource(logsData);
           });
       }

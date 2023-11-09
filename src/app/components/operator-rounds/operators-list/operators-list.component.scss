@@ -1,8 +1,14 @@
 .container {
+  padding: 16px;
+
   ::ng-deep .table-column {
     width: 20%;
   }
   ::ng-deep .mat-column-email {
     min-width: 225px;
   }
+}
+
+.ghost-loading {
+  padding: 0 20px;
 }

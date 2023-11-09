@@ -520,5 +520,6 @@
   "summaryInstructions": "Instructions",
   "summarySupervisorNotes": "Supervisor Notes",
   "summaryStandingInstructions": "Standing Instructions",
-  "summaryShiftInfo": "Shift Information"
+  "summaryShiftInfo": "Shift Information",
+  "startHandovertext": "Only corresponding Unit Supervisors are authorised to Start Handover for editing"
 }

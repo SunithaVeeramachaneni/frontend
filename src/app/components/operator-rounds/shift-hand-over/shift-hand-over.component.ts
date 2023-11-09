@@ -54,8 +54,8 @@ import { SHRColumnConfiguration } from 'src/app/interfaces/shr-column-configurat
 export class ShiftHandOverComponent implements OnInit {
   readonly perms = perms;
   public menuState = 'out';
-  status:any[] = ["Not-Started", "Completed", "Ongoing"];
-  handOverStatus:any[] = ["Draft", "Submitted"]
+  status: any[] = ['Not-Started', 'Completed', 'Ongoing'];
+  handOverStatus: any[] = ['Draft', 'Submitted'];
 
   searchPosition: FormControl;
   userInfo$: Observable<UserInfo>;
@@ -76,7 +76,7 @@ export class ShiftHandOverComponent implements OnInit {
       sticky: false,
       groupable: false,
       titleStyle: {
-        fontWeight: 500,
+        fontWeight: 500
       },
       hasSubtitle: false,
       showMenuOptions: false,
@@ -103,7 +103,7 @@ export class ShiftHandOverComponent implements OnInit {
       sticky: false,
       groupable: true,
       titleStyle: {
-        fontWeight: 500,
+        fontWeight: 500
       },
       subtitleStyle: {},
       hasPreTextImage: false,
@@ -137,7 +137,7 @@ export class ShiftHandOverComponent implements OnInit {
         position: 'relative',
         top: '10px',
         width: '80px',
-        height: '24px',
+        height: '24px'
       },
       subtitleStyle: {},
       hasConditionalStyles: true,
@@ -221,7 +221,7 @@ export class ShiftHandOverComponent implements OnInit {
       sticky: false,
       groupable: true,
       titleStyle: {
-        fontWeight: 500,
+        fontWeight: 500
       },
       subtitleStyle: {},
       hasPreTextImage: false,
@@ -246,7 +246,7 @@ export class ShiftHandOverComponent implements OnInit {
       sticky: false,
       groupable: true,
       titleStyle: {
-        fontWeight: 500,
+        fontWeight: 500
       },
       subtitleStyle: {},
       hasPreTextImage: false,
@@ -271,7 +271,7 @@ export class ShiftHandOverComponent implements OnInit {
       sticky: false,
       groupable: true,
       titleStyle: {
-        fontWeight: 500,
+        fontWeight: 500
       },
       subtitleStyle: {},
       hasPreTextImage: false,
@@ -300,21 +300,20 @@ export class ShiftHandOverComponent implements OnInit {
       'not-started': {
         color: '#92400E'
       },
-      'completed': {
+      completed: {
         color: '#2C9E53'
       },
-      'ongoing': {
+      ongoing: {
         color: '#FF9800'
       },
-      'submitted': {
+      submitted: {
         'background-color': '#2C9E53',
-        color: '#FFFFFF',
+        color: '#FFFFFF'
       },
-      'draft': {
+      draft: {
         'background-color': '#FFCC00',
-        color: '#000000',
+        color: '#000000'
       }
-      
     }
   };
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
@@ -336,8 +335,8 @@ export class ShiftHandOverComponent implements OnInit {
   dataSource: MatTableDataSource<any>;
   isArchived = '';
   incomingSupervisorId = '';
-  private onDestroy$ = new Subject();
   shrConfigColumns: SHRColumnConfiguration[] = [];
+  private onDestroy$ = new Subject();
 
   constructor(
     private headerService: HeaderService,
@@ -397,7 +396,11 @@ export class ShiftHandOverComponent implements OnInit {
       data: []
     };
     let cominedResult = [];
-    this.forms$ = combineLatest([formsOnLoadSearch$, onScrollForms$, units$]).pipe(
+    this.forms$ = combineLatest([
+      formsOnLoadSearch$,
+      onScrollForms$,
+      units$
+    ]).pipe(
       map(([rows, scrollData, units]) => {
         this.dataFetchingComplete = true;
         if (this.skip === 0) {
@@ -410,12 +413,13 @@ export class ShiftHandOverComponent implements OnInit {
           initial.data = initial.data.concat(scrollData);
         }
         cominedResult = initial.data.map((shr) => {
-          const unitName = (units?.items || []).find((unit) => unit?.id === shr?.unitId);
+          const unitName = (units?.items || []).find(
+            (unit) => unit?.id === shr?.unitId
+          );
           return { ...shr, unit: unitName?.name || '--' };
         });
         this.allForms = cominedResult;
         this.dataSource = new MatTableDataSource(this.allForms);
-        console.log("datasource",this.dataSource.data.length);
         this.skip = this.allForms.length;
         return initial;
       })
@@ -431,6 +435,13 @@ export class ShiftHandOverComponent implements OnInit {
     row.shrConfigColumns = this.shrConfigColumns;
     switch (columnId) {
       case 'shiftNames':
+      case 'unitId':
+      case 'shiftStatus':
+      case 'shiftSupervisor':
+      case 'handoverStatus':
+      case 'submittedOn':
+      case 'incomingSupervisor':
+      case 'acceptedOn':
         this.dialog.open(ShiftHandOverModalComponent, {
           maxWidth: '100vw',
           maxHeight: '100vh',

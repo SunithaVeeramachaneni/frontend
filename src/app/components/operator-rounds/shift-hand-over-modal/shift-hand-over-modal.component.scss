@@ -54,6 +54,12 @@
       align-items: center;
     }
 
+    .start-handover-text {
+      font-size: 120%;
+      margin-right: 15px;
+      color: rgba(0, 0, 0, 0.7);
+    }
+
     .submitted-shift-status {
       padding: 6px 12px;
       background: $submitted-bg;
@@ -61,15 +67,7 @@
       font-size: 110%;
       border-radius: 20px;
       margin-right: 15px;
-    }
-
-    .draft-shift-status {
-      padding: 6px 12px;
-      background: $in-progress-bg;
-      color: $in-progress-color;
-      font-size: 110%;
-      border-radius: 20px;
-      margin-right: 15px;
+      text-transform: capitalize;
     }
 
     .text {

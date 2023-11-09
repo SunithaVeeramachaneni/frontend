@@ -9,6 +9,8 @@ import {
   Column,
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
+import { UsersService } from '../../user-management/services/users.service';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-operators-list',
@@ -145,7 +147,7 @@ export class OperatorsListComponent implements OnInit {
     },
     {
       id: 'email',
-      displayName: 'email ID',
+      displayName: 'Email ID',
       type: 'string',
       controlType: 'string',
       order: 5,
@@ -202,11 +204,24 @@ export class OperatorsListComponent implements OnInit {
     }
   };
   dataSource: MatTableDataSource<any>;
-  constructor() {}
+  isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+
+  constructor(private userService: UsersService) {}
+
   ngOnInit(): void {
     this.configOptions.allColumns = this.columns;
-    this.dataSource = new MatTableDataSource(
-      this.operatorList ? JSON.parse(this.operatorList) : []
-    );
+    this.isLoading$.next(true);
+    const operators = this.operatorList ? JSON.parse(this.operatorList) : [];
+    if (operators) {
+      this.userService.getUsersInfo$().subscribe(() => {
+        const tableData = operators.map((val) => ({
+          ...val,
+          roundsSubmitted: `${val?.submittedRounds}/${val?.totalRounds}`,
+          name: this.userService.getUserFullName(val.email)
+        }));
+        this.isLoading$.next(false);
+        this.dataSource = new MatTableDataSource(tableData);
+      });
+    }
   }
 }
