@@ -31,7 +31,6 @@ export class ShiftHandOverModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.shrAllDetails$ = this.shrService.getSHRDetailsId$(this.data.id);
-
     this.updateSHRSteps();
   }
 

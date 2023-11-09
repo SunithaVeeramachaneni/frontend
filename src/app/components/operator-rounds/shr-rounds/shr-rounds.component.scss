@@ -1,0 +1,86 @@
+@import '../../../../scss/colors.scss';
+
+::ng-deep .table-column {
+    width: 25%;
+  }
+
+::ng-deep .rounds-table-container .mat-column-name {
+    min-width: 300px !important;
+}
+::ng-deep .rounds-table-container .mat-column-status {
+    min-width: 100px !important;;
+}
+::ng-deep .rounds-table-container .mat-column-slotDetails {
+    min-width: 100px !important;;
+}
+::ng-deep .rounds-table-container .mat-column-taskCompleted {
+    min-width: 30px !important;;
+}
+::ng-deep .rounds-table-container .mat-column-assignedTo {
+    min-width: 100px !important;;
+}
+
+::ng-deep .rounds-table-container .mat-column-completed {
+    min-width: 100px !important;;
+}
+::ng-deep .rounds-table-container .mat-column-shiftName {
+    min-width: 100px !important;;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    padding: 2px;
+}
+
+.filter-container {
+    margin-top: 10px;
+    display: flex;
+    justify-content: flex-end;
+}
+.rounds-table-container {
+    padding: 12px;
+    width: 100%;
+    .ghost-loading {
+        padding: 0 20px;
+    }
+}
+
+::ng-deep .shr-rounds .mat-button-toggle-group-appearance-standard {
+    border: none;
+}
+
+::ng-deep .shr-rounds .mat-button-toggle-group-appearance-standard .mat-button-toggle-label-content {
+    line-height: 24px;
+    font-size: 90%;
+    font-weight: 600;
+    font-style: normal;
+    color: $blue-main;
+}
+
+::ng-deep .shr-rounds .mat-button-toggle-checked.mat-button-toggle-appearance-standard {
+    background: $blue-main;
+    border-radius: 30px;
+}
+::ng-deep .shr-rounds .mat-button-toggle-group-appearance-standard .mat-button-toggle+.mat-button-toggle {
+    border-radius: 30px;
+    margin-left: 10px;
+    border: none;
+}
+::ng-deep .shr-rounds .mat-button-toggle {
+    margin-right: 10px;
+    border-radius: 30px;
+    align-items: center;
+    height: 16px;
+    padding: 5px 15px 12px 15px;
+    background: $blue8;
+    border: none;
+}
+::ng-deep .shr-rounds .mat-button-toggle-checked.mat-button-toggle-appearance-standard .mat-button-toggle-label-content {
+    color: $white;
+    border-radius: 30px;
+}
+
+::ng-deep .shr-rounds .mat-button-toggle .mat-button-toggle-ripple {
+    border-radius: 30px;
+}
