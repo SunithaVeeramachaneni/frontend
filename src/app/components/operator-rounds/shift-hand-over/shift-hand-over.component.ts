@@ -44,6 +44,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ShiftHandOverModalComponent } from '../shift-hand-over-modal/shift-hand-over-modal.component';
 import { slideInOut } from 'src/app/animations';
 import { SHRColumnConfiguration } from 'src/app/interfaces/shr-column-configuration';
+import { UserGroupService } from '../../user-management/services/user-group.service';
 
 @Component({
   selector: 'app-shift-hand-over',
@@ -336,6 +337,13 @@ export class ShiftHandOverComponent implements OnInit {
   isArchived = '';
   incomingSupervisorId = '';
   shrConfigColumns: SHRColumnConfiguration[] = [];
+  loggedInUser: Observable<any>;
+  allDynamoUsers: Observable<any>;
+  shiftSupervisorEmail = '';
+  shiftSupervisorId = '';
+  loggedInUserName = '';
+  loggedInUserTitle = '';
+
   private onDestroy$ = new Subject();
 
   constructor(
@@ -345,7 +353,8 @@ export class ShiftHandOverComponent implements OnInit {
     private usersService: UsersService,
     private plantService: PlantService,
     private locationService: LocationService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private userGroupService: UserGroupService
   ) {}
   //  this.headerService.setHeaderTitle(routingUrls?.shiftHandOvers?.title);
   ngOnInit(): void {
@@ -353,6 +362,8 @@ export class ShiftHandOverComponent implements OnInit {
     this.shrService.fetchShr$.next({ data: 'load' });
     this.shrService.fetchShr$.next({} as TableEvent);
     this.searchPosition = new FormControl('');
+    this.loggedInUser = this.usersService.getLoggedInUser$();
+    this.allDynamoUsers = this.userGroupService.listAllDynamoUsers$();
     this.searchPosition.valueChanges
       .pipe(
         debounceTime(500),
@@ -399,10 +410,20 @@ export class ShiftHandOverComponent implements OnInit {
     this.forms$ = combineLatest([
       formsOnLoadSearch$,
       onScrollForms$,
-      units$
+      units$,
+      this.loggedInUser,
+      this.allDynamoUsers
     ]).pipe(
-      map(([rows, scrollData, units]) => {
+      map(([rows, scrollData, units, userDetails, allUsers]) => {
         this.dataFetchingComplete = true;
+        allUsers = this.removeDuplicates(allUsers?.items);
+        this.shiftSupervisorEmail = userDetails?.email;
+        const loggedDynamoUser = allUsers.find(
+          (user) => user.email === this.shiftSupervisorEmail
+        );
+        this.shiftSupervisorId = loggedDynamoUser?.id;
+        this.loggedInUserName = `${userDetails?.firstName} ${userDetails?.lastName}`;
+        this.loggedInUserTitle = loggedDynamoUser?.title;
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
@@ -419,6 +440,15 @@ export class ShiftHandOverComponent implements OnInit {
           return { ...shr, unit: unitName?.name || '--' };
         });
         this.allForms = cominedResult;
+        this.allForms = this.allForms.map((form) => {
+          if (form?.shiftSupervisorEmail) {
+            const user = allUsers.find(
+              (u) => u.email === form?.shiftSupervisorEmail
+            );
+            form.title = user.title;
+          }
+          return form;
+        });
         this.dataSource = new MatTableDataSource(this.allForms);
         this.skip = this.allForms.length;
         return initial;
@@ -442,14 +472,36 @@ export class ShiftHandOverComponent implements OnInit {
       case 'submittedOn':
       case 'incomingSupervisor':
       case 'acceptedOn':
-        this.dialog.open(ShiftHandOverModalComponent, {
+        const shiftDetailModal = this.dialog.open(ShiftHandOverModalComponent, {
           maxWidth: '100vw',
           maxHeight: '100vh',
           height: '100%',
           width: '100%',
           panelClass: 'full-screen-modal',
           disableClose: true,
-          data: row
+          data: {
+            ...row,
+            loggedInUserEmail: this.shiftSupervisorEmail,
+            loggedInUserId: this.shiftSupervisorId,
+            loggedInUserName: this.loggedInUserName,
+            loggedInUserTitle: this.loggedInUserTitle
+          }
+        });
+        shiftDetailModal.afterClosed().subscribe((result) => {
+          if (result.handOver) {
+            const updatedForm = this.allForms.find(
+              (form) => form.id === result.data.id
+            );
+            const updatedFormIndex = this.allForms.findIndex(
+              (form) => form.id === result.data.id
+            );
+            updatedForm.shiftSupervisorId = result.data.shiftSupervisorId;
+            updatedForm.shiftSupervisorEmail = result.data.shiftSupervisorEmail;
+            updatedForm.shiftSupervisor = result.data.shiftSupervisor;
+            updatedForm.title = result.data.title;
+            this.allForms[updatedFormIndex] = updatedForm;
+            this.dataSource = new MatTableDataSource(this.allForms);
+          }
         });
         break;
       default:
@@ -513,5 +565,18 @@ export class ShiftHandOverComponent implements OnInit {
 
   onCloseColumnConfig() {
     this.columnConfigMenuState = 'out';
+  }
+  removeDuplicates(arr) {
+    const uniqueEmails = new Set();
+    const result = [];
+
+    for (const obj of arr) {
+      if (!uniqueEmails.has(obj.email)) {
+        uniqueEmails.add(obj.email);
+        result.push(obj);
+      }
+    }
+
+    return result;
   }
 }

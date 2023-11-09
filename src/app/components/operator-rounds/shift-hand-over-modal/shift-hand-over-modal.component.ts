@@ -23,6 +23,11 @@ export class ShiftHandOverModalComponent implements OnInit {
   currentStep = 0;
 
   shrAllDetails$: Observable<any>;
+  loggedInUserId = '';
+  loggedInUserEmail = '';
+  loggedInUserName = '';
+  clickedHandover = false;
+  loggedInUserTitle = '';
   constructor(
     public dialogRef: MatDialogRef<ShiftHandOverModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data,
@@ -31,6 +36,11 @@ export class ShiftHandOverModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.shrAllDetails$ = this.shrService.getSHRDetailsId$(this.data.id);
+    this.loggedInUserId = this.data?.loggedInUserId;
+    this.loggedInUserEmail = this.data?.loggedInUserEmail;
+    this.loggedInUserName = this.data?.loggedInUserName;
+    this.loggedInUserTitle = this.data?.loggedInUserTitle;
+
     this.updateSHRSteps();
     this.selectedRow = this.data;
   }
@@ -58,7 +68,7 @@ export class ShiftHandOverModalComponent implements OnInit {
   }
 
   goBack(): void {
-    this.dialogRef.close();
+    this.dialogRef.close({ handOver: this.clickedHandover, data: this.data });
   }
 
   onGotoStep(step): void {
@@ -71,5 +81,19 @@ export class ShiftHandOverModalComponent implements OnInit {
 
   gotoPreviousStep(): void {
     this.currentStep--;
+  }
+  updateSHRList() {
+    this.shrService
+      .updateSHRList$(this.data.id, {
+        shiftSupervisorId: this.loggedInUserId,
+        shiftSupervisorEmail: this.loggedInUserEmail
+      })
+      .subscribe(() => {
+        this.clickedHandover = true;
+        this.data.shiftSupervisorId = this.loggedInUserId;
+        this.data.shiftSupervisorEmail = this.loggedInUserEmail;
+        this.data.shiftSupervisor = this.loggedInUserName;
+        this.data.title = this.loggedInUserTitle;
+      });
   }
 }
