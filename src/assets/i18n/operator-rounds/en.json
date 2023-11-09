@@ -509,6 +509,7 @@
   "shrContent": "SHR Content",
   "handoverShrConfiguration": "Handover Report Configuration",
   "emailConfiguration": "Email Configuration",
+  "last24Hours": "Last 24 Hours",
   "summaryTrends": "Trends",
   "summaryRounds": "ROUNDS",
   "summaryTasks": "TASKS",
