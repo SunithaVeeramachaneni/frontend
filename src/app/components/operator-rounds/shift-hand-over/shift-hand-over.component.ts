@@ -528,6 +528,13 @@ export class ShiftHandOverComponent implements OnInit {
     row.shrConfigColumns = this.shrConfigColumns;
     switch (columnId) {
       case 'shiftNames':
+      case 'unitId':
+      case 'shiftStatus':
+      case 'shiftSupervisor':
+      case 'handoverStatus':
+      case 'submittedOn':
+      case 'incomingSupervisor':
+      case 'acceptedOn':
         const shiftDetailModal = this.dialog.open(ShiftHandOverModalComponent, {
           maxWidth: '100vw',
           maxHeight: '100vh',

@@ -1,9 +1,18 @@
 <div id="main-container" class="container">
-  <cwp-dynamictable
-    class="dynamicTable"
-    id="table"
-    [dataSource]="dataSource"
-    [configOptions]="configOptions"
-  >
-  </cwp-dynamictable>
+  <div *ngIf="(isLoading$ | async) === false && dataSource">
+    <cwp-dynamictable
+      class="dynamicTable"
+      id="table"
+      [dataSource]="dataSource"
+      [configOptions]="configOptions"
+    >
+    </cwp-dynamictable>
+  </div>
+
+  <div class="ghost-loading" *ngIf="isLoading$ | async">
+    <div *ngFor="let number of ghostLoading">
+      <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+      </ngx-shimmer-loading>
+    </div>
+  </div>
 </div>

@@ -166,16 +166,13 @@ export class ShiftLogListComponent implements OnInit {
     this.isLoading$.next(true);
     this.configOptions.allColumns = this.columns;
     this.userService.getUsersInfo$().subscribe(() => {
-      const data = this.logs.map((log) => {
-        return {
-          ...log,
-          raisedBy: log.raisedBy
-            ? this.operatorRoundService.formatUserFullNameDisplay(
-                log.raisedBy
-              ) || ''
-            : ''
-        };
-      });
+      const data = this.logs.map((log) => ({
+        ...log,
+        raisedBy: log.raisedBy
+          ? this.operatorRoundService.formatUserFullNameDisplay(log.raisedBy) ||
+            ''
+          : ''
+      }));
       this.dataSource = new MatTableDataSource(data);
       this.isLoading$.next(false);
       this.cdfr.markForCheck();
@@ -235,14 +232,12 @@ export class ShiftLogListComponent implements OnInit {
           )
           .subscribe(() => {
             this.logs = this.logs.filter((log) => log.id !== data.id);
-            const logsData = this.logs.map((log) => {
-              return {
-                ...log,
-                raisedBy: this.operatorRoundService.formatUserFullNameDisplay(
-                  log.raisedBy || ''
-                )
-              };
-            });
+            const logsData = this.logs.map((log) => ({
+              ...log,
+              raisedBy: this.operatorRoundService.formatUserFullNameDisplay(
+                log.raisedBy || ''
+              )
+            }));
             this.dataSource = new MatTableDataSource(logsData);
             this.toastService.show({
               type: 'success',

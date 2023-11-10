@@ -20,13 +20,6 @@
     </div>
     <div class="width-70 header-right">
       <span
-        class="draft-shift-status"
-        *ngIf="
-          data.handoverStatus === 'draft' || data.handoverStatus === 'pending'
-        "
-        >{{ data.handoverStatus }}</span
-      >
-      <span
         class="submitted-shift-status"
         *ngIf="
           data.handoverStatus === 'submitted' ||
@@ -61,11 +54,23 @@
         </div>
       </ng-container>
 
+      <span
+        *ngIf="
+          (data.handoverStatus === 'draft' ||
+            data.handoverStatus === 'pending') &&
+          data.shiftSupervisorId === ''
+        "
+        translate="startHandovertext"
+        class="start-handover-text"
+      >
+      </span>
+
       <button
         mat-button
         class="start-review-btn"
         *ngIf="
-          data.handoverStatus === 'submitted' &&
+          (data.handoverStatus === 'submitted' ||
+            data.handoverStatus === 'auto-submitted') &&
           data.incomingSupervisorId === ''
         "
         translate="startReview"
@@ -86,9 +91,7 @@
         class="prev-btn"
         (click)="gotoPreviousStep()"
         [disabled]="currentStep === 0"
-        *ngIf="
-          data.shiftSupervisorId !== '' || data.incomingSupervisorId !== ''
-        "
+        *ngIf="data.shiftSupervisorId !== ''"
         translate="previous"
       ></button>
       <button
@@ -96,7 +99,18 @@
         class="nxt-btn"
         (click)="gotoNextStep()"
         *ngIf="
-          data.shiftSupervisorId !== '' || data.incomingSupervisorId !== ''
+          data.shiftSupervisorId !== '' && data.incomingSupervisorId === ''
+        "
+      >
+        {{ currentStep === steps.length - 1 ? 'Submit' : 'Next' }}
+      </button>
+
+      <button
+        mat-button
+        class="nxt-btn"
+        (click)="gotoNextStep()"
+        *ngIf="
+          data.shiftSupervisorId !== '' && data.incomingSupervisorId !== ''
         "
       >
         {{ currentStep === steps.length - 1 ? 'Accept' : 'Next' }}
