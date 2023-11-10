@@ -17,7 +17,6 @@ import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
 import { SHRColumnConfiguration } from 'src/app/interfaces/shr-column-configuration';
 import { SHR_CONFIGURATION_DATA } from '../operator-rounds.constants';
 
-
 @Injectable({
   providedIn: 'root'
 })
@@ -38,27 +37,21 @@ export class ShrService {
     private plantService: PlantService
   ) {}
 
-  
-
-  getShiftHandOverList$(
-    queryParams: {
-      next?: string;
-      limit: number;
-      searchKey: string;
-      fetchType: string;
-      createdOn: string;
-      plantId: string;
-      unitId: string;
-    },
-  ) 
-  {
+  getShiftHandOverList$(queryParams: {
+    next?: string;
+    limit: number;
+    searchKey: string;
+    fetchType: string;
+    createdOn: string;
+    plantId: string;
+    unitId: string;
+  }) {
     const rawParams = {
       searchTerm: queryParams?.searchKey,
       limit: queryParams?.limit.toString(),
       createdOn: queryParams?.createdOn,
-      plantId:  queryParams?.plantId,
+      plantId: queryParams?.plantId,
       unitId: queryParams?.unitId
-      
     };
     const params = new URLSearchParams({
       searchTerm: rawParams?.searchTerm,
@@ -92,6 +85,48 @@ export class ShrService {
     return this.appService.patchData(
       environment.operatorRoundsApiUrl,
       `shr/update/notes/${id}`,
+      body,
+      info
+    );
+  }
+
+  uploadAttachments$(file, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
+    return this.appService._postData(
+      environment.operatorRoundsApiUrl,
+      `shr/upload-attachments`,
+      file,
+      info
+    );
+  }
+  getAttachmentsById$(id, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
+    return this.appService._getResp(
+      environment.operatorRoundsApiUrl,
+      `shr/upload-attachments/${id}`,
+      info
+    );
+  }
+
+  submitSHRReport(
+    id,
+    body,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    return this.appService.patchData(
+      environment.operatorRoundsApiUrl,
+      `shr/${id}`,
+      body,
+      info
+    );
+  }
+
+  updateSHRDetails(
+    id,
+    body,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    return this.appService.patchData(
+      environment.operatorRoundsApiUrl,
+      `shr/details/${id}`,
       body,
       info
     );
@@ -182,7 +217,7 @@ export class ShrService {
           r.shiftSupervisor =
             r?.shiftSupervisor?.firstName + ' ' + r?.shiftSupervisor?.lastName;
         } else {
-          r.shiftSupervisor = this.placeHolder ;
+          r.shiftSupervisor = this.placeHolder;
         }
         if (r.incomingSupervisor !== null) {
           r.incomingSupervisor =
@@ -225,7 +260,7 @@ export class ShrService {
 
   getSHRConfiugration$() {
     return this.appService
-      ._getResp(environment.operatorRoundsApiUrl, 'shr/config')
+      ._getResp(environment.operatorRoundsApiUrl, 'shr-current/config')
       .pipe(map((res) => this.formatSHRConfiguration(res)));
   }
 

@@ -522,5 +522,18 @@
   "summarySupervisorNotes": "Supervisor Notes",
   "summaryStandingInstructions": "Standing Instructions",
   "summaryShiftInfo": "Shift Information",
-  "startHandovertext": "Only corresponding Unit Supervisors are authorised to Start Handover for editing"
+  "startHandovertext": "Only corresponding Unit Supervisors are authorised to Start Handover for editing",
+  "exceptions": "Exceptions",
+  "resolved": "Resolved",
+  "raised": "Raised",
+  "pending": "Pending",
+  "last": "Last",
+  "readings": "Readings",
+  "trendMap": "Trend Map",
+  "confirmSubmission": "Confirm Submission",
+  "shrContacts": "Contacts",
+  "otherRecipients": "Other Recipients",
+  "submitNote": "Note: Submission cannot be revoked",
+  "submitCancel": "Cancel",
+  "shrSubmit": "Submit"
 }

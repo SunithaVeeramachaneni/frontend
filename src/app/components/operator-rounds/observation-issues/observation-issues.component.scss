@@ -1,0 +1,111 @@
+@import '../../../../scss/colors.scss';
+
+.issues-list {
+  ::ng-deep .table-column {
+    width: 15%;
+  }
+
+  ::ng-deep .mat-column-title {
+    min-width: 250px;
+  }
+
+  ::ng-deep .mat-column-priority {
+    min-width: 90px;
+  }
+
+  ::ng-deep .mat-column-plant {
+    min-width: 90px;
+  }
+
+  ::ng-deep .mat-column-status {
+    min-width: 90px;
+  }
+
+  ::ng-deep .mat-column-dueDate {
+    min-width: 100px;
+  }
+
+  ::ng-deep .mat-column-notificationInfo {
+    min-width: 70px;
+  }
+
+  .issues-search {
+    position: fixed;
+    right: 14px;
+    top: 375px;
+  }
+  .issues-search-notification {
+    position: fixed;
+    right: 20px;
+    top: 68px;
+  }
+  .no-of-issues {
+    margin-right: 10px;
+    position: fixed;
+    right: 255px;
+    top: 390px;
+  }
+  .no-of-issues-notification {
+    margin-right: 10px;
+    position: fixed;
+    right: 260px;
+    top: 80px;
+  }
+  .issues-count {
+    font-weight: 500;
+    font-size: 110%;
+    color: $gray-bg;
+  }
+  .issues-text {
+    font-weight: 500;
+    font-size: 110%;
+    color: $gray1;
+    margin-left: 5px;
+    .ghost-loading {
+      padding: 0 20px;
+    }
+  }
+
+  .common-filter-icon {
+    height: 14px;
+    width: 14px;
+  }
+
+  .dynamic-table-height {
+    padding: 0px 20px;
+    margin-top: 50px;
+  }
+}
+
+@media screen and (min-width: 1600px) {
+  .set-filter {
+    top: 350px;
+    position: relative;
+  }
+}
+
+.padding-lr-20-notification {
+  padding: 0 20px;
+  margin-top: 50px;
+}
+
+.category-button {
+  border-radius: 20px;
+  padding: 8px 17px;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  margin: 10px 8px 8px 0px;
+  background-color: $blue8;
+  color: $blue-main;
+}
+
+.category-button:hover {
+  background-color: $blue-main;
+  color: $white;
+}
+
+.category-button.active {
+  background-color: $blue-main;
+  color: $white;
+}

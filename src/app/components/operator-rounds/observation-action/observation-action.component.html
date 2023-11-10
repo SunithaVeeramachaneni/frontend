@@ -1,0 +1,38 @@
+<div *ngIf="userInfo$ | async" class="actions-list">
+  <button
+    class="category-button"
+    (click)="onStatusClick('pending')"
+    [ngClass]="{ active: selectedStatus === 'pending' }"
+    translate
+  >
+    {{ 'pending' | translate }} ({{ pendingStatusCount }})
+  </button>
+
+  <button
+    class="category-button"
+    (click)="onStatusClick('raised')"
+    [ngClass]="{ active: selectedStatus === 'raised' }"
+    translate
+  >
+    {{ 'raised' | translate }} ({{ raisedStatusCount }})
+  </button>
+
+  <button
+    class="category-button"
+    (click)="onStatusClick('resolved')"
+    [ngClass]="{ active: selectedStatus === 'resolved' }"
+  >
+    {{ 'resolved' | translate }} ({{ resolvedStatusCount }})
+  </button>
+
+  <div>
+    <cwp-dynamictable
+      [dataSource]="dataSource"
+      [configOptions]="configOptions"
+      (fetchDataCallback)="handleTableEvent($event)"
+      (cellClickActionHandler)="cellClickActionHandler($event)"
+      (rowLevelActionHandler)="rowLevelActionHandler($event)"
+      class="width-100"
+    ></cwp-dynamictable>
+  </div>
+</div>

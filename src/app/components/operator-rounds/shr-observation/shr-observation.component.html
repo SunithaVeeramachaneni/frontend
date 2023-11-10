@@ -1,0 +1,51 @@
+<div class="scrollable-area">
+  <div>
+    <button
+      id="expandableComponent"
+      mat-icon-button
+      (click)="toggleException()"
+    >
+      <mat-icon id="expandableComponentIcon">{{
+        showExpections ? 'keyboard_arrow_down' : 'keyboard_arrow_up'
+      }}</mat-icon>
+      <span id="expandableComponentTitle" translate="exceptions"></span>
+    </button>
+    <app-observation-exception
+      [users$]="users$"
+      [hidden]="!showExpections"
+      moduleName="round-observations"
+      [exceptions]="this.exceptions"
+      [rounds]="this.rounds"
+    ></app-observation-exception>
+  </div>
+
+  <div class="issues-list">
+    <button id="expandableComponent" mat-icon-button (click)="toggleIssues()">
+      <mat-icon id="expandableComponentIcon">{{
+        showIssues ? 'keyboard_arrow_down' : 'keyboard_arrow_up'
+      }}</mat-icon>
+      <span id="expandableComponentTitle" translate="issues"></span>
+    </button>
+    <app-observation-issues
+      [users$]="users$"
+      [hidden]="!showIssues"
+      moduleName="round-observations"
+      [issues]="this.issues"
+    ></app-observation-issues>
+  </div>
+
+  <div class="actions-list">
+    <button id="expandableComponent" mat-icon-button (click)="toggleAction()">
+      <mat-icon id="expandableComponentIcon">{{
+        showActions ? 'keyboard_arrow_down' : 'keyboard_arrow_up'
+      }}</mat-icon>
+      <span id="expandableComponentTitle" translate="actions"></span>
+    </button>
+    <app-observation-action
+      [users$]="users$"
+      [hidden]="!showActions"
+      moduleName="round-observations"
+      [actions]="this.actions"
+    ></app-observation-action>
+  </div>
+</div>

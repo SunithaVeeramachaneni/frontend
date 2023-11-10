@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   Input,
   OnInit
@@ -15,6 +16,8 @@ import { ConfirmDeleteModalComponent } from '../confirm-delete-modal/confirm-del
 import { UsersService } from 'src/app/components/user-management/services/users.service';
 import { OperatorRoundsService } from '../../services/operator-rounds.service';
 import { ShrService } from '../../services/shr.service';
+import { ToastService } from 'src/app/shared/toast';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-notes-list',
@@ -30,6 +33,8 @@ export class NotesListComponent implements OnInit {
   menuState = 'out';
   selectedNote: any;
   dataSource: MatTableDataSource<any>;
+  isLoading$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+  ghostLoading = new Array(5).fill(0).map((v, i) => i);
 
   columns: Column[] = [
     {
@@ -177,10 +182,13 @@ export class NotesListComponent implements OnInit {
     private dialog: MatDialog,
     private userService: UsersService,
     private operatorRoundService: OperatorRoundsService,
-    private shrService: ShrService
+    private shrService: ShrService,
+    private cdfr: ChangeDetectorRef,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
+    this.isLoading$.next(true);
     this.configOptions.allColumns = this.columns;
     this.userService.getUsersInfo$().subscribe(() => {
       const data =
@@ -222,6 +230,8 @@ export class NotesListComponent implements OnInit {
           };
         }) || [];
       this.dataSource = new MatTableDataSource(data);
+      this.isLoading$.next(false);
+      this.cdfr.detectChanges();
     });
     this.prepareMenuActions();
   }
@@ -269,9 +279,9 @@ export class NotesListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        console.log(result);
+        this.isLoading$.next(true);
         this.shrService
-          .deleteSupervisorLogs$(
+          .deleteSHRNotes$(
             data.id,
             { shrId: this.shrId, questionId: data.questionId },
             { displayToast: true, failureResponse: {} }
@@ -321,15 +331,22 @@ export class NotesListComponent implements OnInit {
                 };
               }) || [];
             this.dataSource = new MatTableDataSource(notesData);
+            this.toastService.show({
+              type: 'success',
+              text: 'Note deleted successfully'
+            });
+            this.cdfr.detectChanges();
+            this.isLoading$.next(false);
           });
       }
     });
   }
 
   updateNotes(data: any): void {
-    console.log(data);
     const index = this.notes.findIndex((note) => note.id === data.id);
     this.notes[index].title = data.title;
     this.selectedNote = null;
+    this.dataSource = new MatTableDataSource(this.notes);
+    this.cdfr.detectChanges();
   }
 }

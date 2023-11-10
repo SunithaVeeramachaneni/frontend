@@ -11,6 +11,7 @@ import { ValidationError } from 'src/app/interfaces';
 import { FormValidationUtil } from 'src/app/shared/utils/formValidationUtil';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { ShrService } from '../../services/shr.service';
+import { ToastService } from 'src/app/shared/toast';
 
 @Component({
   selector: 'app-edit-notes-side-drawer',
@@ -46,7 +47,8 @@ export class EditNotesSideDrawerComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private formValidationUtil: FormValidationUtil,
-    private shrService: ShrService
+    private shrService: ShrService,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -84,6 +86,10 @@ export class EditNotesSideDrawerComponent implements OnInit {
             description: this.notesForm.get('description').value,
             id: this.noteEditData.id
           });
+          this.toastService.show({
+            type: 'success',
+            text: 'Shift Log updated successfully'
+          });
           this.notesForm.reset();
           this.slideInOut.emit('out');
         });
@@ -102,6 +108,10 @@ export class EditNotesSideDrawerComponent implements OnInit {
           this.updateNote.emit({
             title: this.notesForm.get('title').value,
             id: this.noteEditData.id
+          });
+          this.toastService.show({
+            type: 'success',
+            text: 'Note updated successfully'
           });
           this.notesForm.reset();
           this.slideInOut.emit('out');

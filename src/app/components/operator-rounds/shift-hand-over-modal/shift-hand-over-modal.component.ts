@@ -1,8 +1,13 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogRef
+} from '@angular/material/dialog';
 import { Step } from 'src/app/interfaces/stepper';
 import { ShrService } from '../services/shr.service';
 import { Observable } from 'rxjs';
+import { ShrSubmissionModalComponent } from '../shr-submission-modal/shr-submission-modal.component';
 
 @Component({
   selector: 'app-shift-hand-over-modal',
@@ -31,7 +36,8 @@ export class ShiftHandOverModalComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<ShiftHandOverModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data,
-    private shrService: ShrService
+    private shrService: ShrService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -77,6 +83,7 @@ export class ShiftHandOverModalComponent implements OnInit {
 
   gotoNextStep(): void {
     this.currentStep++;
+    if (this.currentStep === this.steps.length) this.openShrSubmissionModal();
   }
 
   gotoPreviousStep(): void {
@@ -95,5 +102,17 @@ export class ShiftHandOverModalComponent implements OnInit {
         this.data.shiftSupervisor = this.loggedInUserName;
         this.data.title = this.loggedInUserTitle;
       });
+  }
+
+  openShrSubmissionModal() {
+    const shrDialogRef = this.dialog.open(ShrSubmissionModalComponent, {
+      height: 'auto',
+      width: '50%',
+      data: this.selectedRow
+    });
+
+    shrDialogRef.afterClosed().subscribe((data) => {
+      this.dialogRef.close();
+    });
   }
 }

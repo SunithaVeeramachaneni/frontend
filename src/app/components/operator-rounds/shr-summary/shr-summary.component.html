@@ -107,6 +107,8 @@
             cdkTextareaAutosize
             cdkAutosizeMinRows="5"
             cdkAutosizeMaxRows="5"
+            name="supervisorNotes"
+            (blur)="handleOnBlur($event)"
           ></textarea>
         </mat-form-field>
       </div>
@@ -122,6 +124,8 @@
             cdkTextareaAutosize
             cdkAutosizeMinRows="5"
             cdkAutosizeMaxRows="5"
+            name="standingInstructions"
+            (blur)="handleOnBlur($event)"
           ></textarea>
         </mat-form-field>
       </div>

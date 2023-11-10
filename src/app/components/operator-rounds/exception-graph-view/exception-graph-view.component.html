@@ -1,0 +1,51 @@
+<div class="header">
+  <div class="header-left">
+    <p>{{ 'last' | translate }} 5 {{ 'readings' | translate }}</p>
+  </div>
+  <button
+    class="close-btn"
+    color="black"
+    mat-dialog-close
+    translate="x"
+  ></button>
+</div>
+
+<div>
+  <div class="info">
+    <div class="info-icon">
+      <i class="fa fa-info-circle"></i>
+    </div>
+    <div class="info-text">
+      <p>{{ 'exceptions' | translate }}: 99 Pa</p>
+    </div>
+  </div>
+  <div class="scrollable-content">
+    <div class="content">
+      <div class="graph-container">
+        <div class="graph-header">
+          <p>{{ 'trendMap' | translate }}</p>
+        </div>
+        <div echarts [options]="chartOptions" class="chart"></div>
+        <div class="legends">
+          <div class="circle blue-circle"></div>
+          <p>{{ 'readings' | translate }}</p>
+          <div class="circle grey-circle"></div>
+          <p>{{ 'skipped' | translate }}</p>
+          <div class="line-min"></div>
+          <p>{{ 'minTxt' | translate }}</p>
+          <div class="line-max"></div>
+          <p>{{ 'maxTxt' | translate }}</p>
+        </div>
+      </div>
+
+      <cwp-dynamictable
+        [dataSource]="dataSource"
+        [configOptions]="configOptions"
+        class="width-100"
+      ></cwp-dynamictable>
+    </div>
+  </div>
+  <div class="footer">
+    <button mat-button mat-dialog-close>{{ 'done' | translate }}</button>
+  </div>
+</div>

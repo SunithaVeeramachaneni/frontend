@@ -1,0 +1,48 @@
+@import '../../../../scss/colors.scss';
+
+.actions-list {
+  ::ng-deep .table-column {
+    width: 15%;
+  }
+
+  ::ng-deep .mat-column-title {
+    min-width: 250px;
+  }
+
+  ::ng-deep .mat-column-priority {
+    min-width: 90px;
+  }
+
+  ::ng-deep .mat-column-plant {
+    min-width: 90px;
+  }
+
+  ::ng-deep .mat-column-status {
+    min-width: 90px;
+  }
+
+  ::ng-deep .mat-column-dueDate {
+    min-width: 100px;
+  }
+}
+
+.category-button {
+  border-radius: 20px;
+  padding: 8px 17px;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  margin: 10px 8px 8px 0px;
+  background-color: $blue8;
+  color: $blue-main;
+}
+
+.category-button:hover {
+  background-color: $blue-main;
+  color: $white;
+}
+
+.category-button.active {
+  background-color: $blue-main;
+  color: $white;
+}

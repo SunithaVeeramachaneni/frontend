@@ -142,7 +142,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     private cdRef: ChangeDetectorRef,
     private toastService: ToastService,
     private plantService: PlantService,
-    private imageCompress: NgxImageCompressService,
+    private imageCompress: NgxImageCompressService
   ) {}
 
   getAttachmentsList() {
@@ -406,8 +406,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
             text: 'Compressed Image exceeding 175KB'
           });
         }
-      })
-      
+      });
     };
   }
   async resizeImage(base64result: string): Promise<string> {
@@ -451,20 +450,29 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   onCancel(): void {
-    this.observations
-      .getObservationChartCounts$(this.moduleName, {
-        plant: this.plantService.getUserPlantIds()
-      })
-      .subscribe(() => {
-        this.dialogRef.close({
-          data: {
-            ...this.issuesActionsDetailViewForm.value,
-            id: this.data.id,
-            priority: this.data.priority,
-            notificationInfo: this.data.notificationInfo
-          }
-        });
+    if (this.data.isSHR === true) {
+      this.dialogRef.close({
+        ...this.issuesActionsDetailViewForm.value,
+        id: this.data.id,
+        priority: this.data.priority,
+        notificationInfo: this.data.notificationInfo
       });
+    } else {
+      this.observations
+        .getObservationChartCounts$(this.moduleName, {
+          plant: this.plantService.getUserPlantIds()
+        })
+        .subscribe(() => {
+          this.dialogRef.close({
+            data: {
+              ...this.issuesActionsDetailViewForm.value,
+              id: this.data.id,
+              priority: this.data.priority,
+              notificationInfo: this.data.notificationInfo
+            }
+          });
+        });
+    }
   }
 
   updateIssueOrAction(event: UpdateIssueOrActionEvent) {
@@ -1126,7 +1134,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   private initJSONData(data = null) {
     const obj = {};
     data = JSON.parse(data) ?? {};
-    data?.FORMS.forEach((form) => {
+    data?.FORMS?.forEach((form) => {
       form?.PAGES.forEach((page) => {
         page?.SECTIONS.forEach((section) => {
           section?.FIELDS.forEach((field) => {
