@@ -1,0 +1,47 @@
+[
+    {
+      "label": "Submitted By",
+      "items": [],
+      "column": "submitted by",
+      "type": "multiple",
+      "value": ""
+    },
+    {
+      "label": "Submitted On",
+      "items": [],
+      "column": "submittedOn",
+      "type": "assignmentType",
+      "value": ""
+    },
+    {
+      "label": "Scheduling Period",
+      "items": [],
+      "column": "scheduledAt",
+      "type": "daterange",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "value": ""
+    },
+    {
+      "label": "Accepted By",
+      "items": [],
+      "column": "acceptedBy",
+      "type": "select",
+      "value": ""
+    },
+    {
+      "label": "Placeholder",
+      "items": [],
+      "column": "placeholder",
+      "type": "select",
+      "value": ""
+    },
+    {
+        "label": "Placeholder",
+        "items": [],
+        "column": "placeholder",
+        "type": "select",
+        "value": ""
+      }
+  ]
+  
