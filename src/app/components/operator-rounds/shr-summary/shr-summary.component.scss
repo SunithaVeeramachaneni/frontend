@@ -7,6 +7,17 @@
   gap: 3em;
   max-height: 82vh;
   overflow: auto;
+
+  ::ng-deep
+    .mat-form-field-appearance-outline.mat-form-field-disabled
+    .mat-form-field-outline {
+    background-color: rgba(0, 0, 0, 0.02);
+    border-radius: 8px;
+  }
+
+  ::ng-deep .mat-form-field-infix {
+    border-top: none !important;
+  }
 }
 .header-container {
   display: flex;

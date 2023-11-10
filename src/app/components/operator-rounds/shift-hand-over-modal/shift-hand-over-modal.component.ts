@@ -42,7 +42,19 @@ export class ShiftHandOverModalComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.shrAllDetails$ = this.shrService.getSHRDetailsId$(this.data.id);
+    if (
+      this.data?.handoverStatus !== 'submitted' ||
+      this.data?.handoverStatus !== 'auto-submitted'
+    )
+      this.shrAllDetails$ = this.shrService.getCurrentSHRDetailsId$(
+        this.data.id
+      );
+
+    if (
+      this.data?.handoverStatus === 'submitted' ||
+      this.data?.handoverStatus === 'auto-submitted'
+    )
+      this.shrAllDetails$ = this.shrService.getSHRDetailsId$(this.data.id);
     this.loggedInUserId = this.data?.loggedInUserId;
     this.loggedInUserEmail = this.data?.loggedInUserEmail;
     this.loggedInUserName = this.data?.loggedInUserName;
@@ -84,7 +96,6 @@ export class ShiftHandOverModalComponent implements OnInit {
 
   gotoNextStep(): void {
     this.currentStep++;
-    if (this.currentStep === this.steps.length) this.openShrSubmissionModal();
   }
 
   gotoPreviousStep(): void {
@@ -102,6 +113,24 @@ export class ShiftHandOverModalComponent implements OnInit {
         this.data.shiftSupervisorEmail = this.loggedInUserEmail;
         this.data.shiftSupervisor = this.loggedInUserName;
         this.data.title = this.loggedInUserTitle;
+      });
+  }
+
+  submit() {
+    this.openShrSubmissionModal();
+  }
+
+  startReview() {
+    this.shrService
+      .updateSHRList$(this.data.id, {
+        incomingSupervisorId: this.loggedInUserId,
+        incomingSupervisorEmail: this.loggedInUserEmail
+      })
+      .subscribe(() => {
+        this.data.incomingSupervisorId = this.loggedInUserId;
+        this.data.incomingSupervisorEmail = this.loggedInUserEmail;
+        this.data.incomingSupervisor = this.loggedInUserName;
+        this.data.role = this.loggedInUserTitle;
       });
   }
 

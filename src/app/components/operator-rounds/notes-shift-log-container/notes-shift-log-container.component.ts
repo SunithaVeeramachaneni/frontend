@@ -6,9 +6,10 @@ import { Component, Input, OnInit } from '@angular/core';
   styleUrls: ['./notes-shift-log-container.component.scss']
 })
 export class NotesShiftLogContainerComponent implements OnInit {
-  showNotes: boolean = true;
-  showLogs: boolean = true;
   @Input() shrAllDetails: any;
+  @Input() selectedRow: any;
+  showNotes = true;
+  showLogs = true;
   shrId: string;
   notes: any;
   shiftLogs: any;

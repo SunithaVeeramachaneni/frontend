@@ -54,6 +54,7 @@ export class ShrSummaryComponent implements OnInit, OnChanges {
   filteredMediaPdfType: any = [];
   userInfo;
   isHandOverStarted = false;
+  isReviewStarted = false;
   shiftDetails: ShiftDetails;
   summaryDetails: any;
   shiftRows = [
@@ -312,6 +313,10 @@ export class ShrSummaryComponent implements OnInit, OnChanges {
     this.isHandOverStarted = true;
   }
 
+  handleStartReview() {
+    this.isReviewStarted = true;
+  }
+
   prepareShiftDetails() {
     if (this.selectedRow) {
       const {
@@ -321,6 +326,7 @@ export class ShrSummaryComponent implements OnInit, OnChanges {
         unitId,
         unit,
         incomingSupervisor,
+        incomingSupervisorEmail,
         shiftSupervisor,
         shiftStartDatetime,
         shiftEndDatetime,
@@ -332,6 +338,9 @@ export class ShrSummaryComponent implements OnInit, OnChanges {
       if (this.userInfo.email === shiftSupervisorEmail) {
         this.handleStartHandOver();
       }
+
+      if (this.userInfo.email === incomingSupervisorEmail)
+        this.handleStartReview();
 
       this.shiftDetails = {
         plant: {
@@ -345,11 +354,7 @@ export class ShrSummaryComponent implements OnInit, OnChanges {
         currentShift: shiftNames || '--',
         shiftSupervisor: shiftSupervisor || '--',
         upcomingShift: nextShift || '--',
-        upcomingShiftSupervisor: incomingSupervisor
-          ? `${incomingSupervisor.firstName || ''} ${
-              incomingSupervisor.lastName || ''
-            }`
-          : '--',
+        upcomingShiftSupervisor: incomingSupervisor || '--',
         shiftId
       };
     }
@@ -378,12 +383,22 @@ export class ShrSummaryComponent implements OnInit, OnChanges {
       'standingInstructions'
     ].forEach((fname) => {
       if (
-        (fname === 'supervisorNotes' || fname === 'standingInstructions') &&
+        fname === 'supervisorNotes' &&
+        this.selectedRow.incomingSupervisorId === '' &&
         this.isHandOverStarted
       ) {
         this.summaryForm.get(fname)?.enable();
         return;
       } else this.summaryForm.get(fname)?.disable();
+
+      if (
+        fname === 'standingInstructions' &&
+        (this.isHandOverStarted || this.isReviewStarted)
+      ) {
+        this.summaryForm.get(fname)?.enable();
+        return;
+      } else this.summaryForm.get(fname)?.disable();
+
       if (this.shiftDetails) {
         this.summaryForm.get(fname)?.setValue(this.getShiftValue(fname));
       }

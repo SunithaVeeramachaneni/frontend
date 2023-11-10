@@ -146,6 +146,12 @@
         mat-button
         color="primary"
         class="upload-button"
+        [disabled]="
+          !(
+            this.selectedRow.incomingSupervisorId === '' &&
+            this.isHandOverStarted
+          )
+        "
         (click)="roundPlanFileUpload.click()"
       >
         <mat-icon id="roundPlanHeaderLink" class="icon-upload">link</mat-icon>

@@ -73,10 +73,21 @@ export class ShrService {
       .pipe(map((res) => this.formatSHRResponse(res)));
   }
 
-  getSHRDetailsId$(id, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
+  getCurrentSHRDetailsId$(
+    id,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
     return this.appService._getResp(
       environment.operatorRoundsApiUrl,
       `shr/current/${id}`,
+      info
+    );
+  }
+
+  getSHRDetailsId$(id, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
+    return this.appService._getResp(
+      environment.operatorRoundsApiUrl,
+      `shr/${id}`,
       info
     );
   }
@@ -187,6 +198,33 @@ export class ShrService {
     );
   }
 
+  getSHRConfiugration$() {
+    return this.appService
+      ._getResp(environment.operatorRoundsApiUrl, 'shr-current/config')
+      .pipe(map((res) => this.formatSHRConfiguration(res)));
+  }
+
+  updateSHRConfiguration$ = (
+    shrDetails: SHRColumnConfiguration[]
+  ): Observable<any> => {
+    const jsonRes = {};
+    for (const data of shrDetails) {
+      if (data.content) {
+        for (const value of data.content) {
+          jsonRes[value.columnId] = value.selected;
+        }
+      } else {
+        jsonRes[data.columnId] = data.selected;
+      }
+    }
+
+    return this.appService._postData(
+      environment.operatorRoundsApiUrl,
+      'shr/update-config',
+      jsonRes
+    );
+  };
+
   private formatSHRResponse(resp: any) {
     this.plantMapSubscription =
       this.plantService.plantTimeZoneMapping$.subscribe(
@@ -258,14 +296,8 @@ export class ShrService {
     };
   }
 
-  getSHRConfiugration$() {
-    return this.appService
-      ._getResp(environment.operatorRoundsApiUrl, 'shr-current/config')
-      .pipe(map((res) => this.formatSHRConfiguration(res)));
-  }
-
   private formatSHRConfiguration(res): SHRColumnConfiguration[] {
-    let data: SHRColumnConfiguration[] = SHR_CONFIGURATION_DATA.map(
+    const data: SHRColumnConfiguration[] = SHR_CONFIGURATION_DATA.map(
       (column) => ({ ...column })
     );
     for (const column of data) {
@@ -285,25 +317,4 @@ export class ShrService {
     }
     return data;
   }
-
-  updateSHRConfiguration$ = (
-    shrDetails: SHRColumnConfiguration[]
-  ): Observable<any> => {
-    const jsonRes = {};
-    for (const data of shrDetails) {
-      if (data.content) {
-        for (const value of data.content) {
-          jsonRes[value.columnId] = value.selected;
-        }
-      } else {
-        jsonRes[data.columnId] = data.selected;
-      }
-    }
-
-    return this.appService._postData(
-      environment.operatorRoundsApiUrl,
-      'shr/update-config',
-      jsonRes
-    );
-  };
 }

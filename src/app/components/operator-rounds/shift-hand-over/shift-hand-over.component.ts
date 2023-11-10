@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable arrow-body-style */
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { routingUrls } from 'src/app/app.constants';
 import {
@@ -56,7 +57,7 @@ import { isEqual } from 'date-fns';
   styleUrls: ['./shift-hand-over.component.scss'],
   animations: [slideInOut]
 })
-export class ShiftHandOverComponent implements OnInit {
+export class ShiftHandOverComponent implements OnInit, OnDestroy {
   readonly perms = perms;
   public menuState = 'out';
   status: any[] = ['Not-Started', 'Completed', 'Ongoing'];
@@ -75,7 +76,6 @@ export class ShiftHandOverComponent implements OnInit {
   customText = 'Custom';
   undoRedoUtil: any;
   isPopoverOpen = false;
-  private destroy$ = new Subject();
   unitsList: [any];
   placeHolder = '_ _';
 
@@ -353,26 +353,24 @@ export class ShiftHandOverComponent implements OnInit {
   shrConfigColumns: SHRColumnConfiguration[] = [];
   loggedInUser: Observable<any>;
   allDynamoUsers: Observable<any>;
-  shiftSupervisorEmail = '';
-  shiftSupervisorId = '';
+  loggedInUserEmail = '';
+  loggedInUserId = '';
   loggedInUserName = '';
   loggedInUserTitle = '';
-
-  private onDestroy$ = new Subject();
-
   allPlantsData: any;
   plantInformation;
   allUnits: any = [];
 
+  private onDestroy$ = new Subject();
+
   constructor(
     private headerService: HeaderService,
     private shrService: ShrService,
-    private router: Router,
     private usersService: UsersService,
     private plantService: PlantService,
     private locationService: LocationService,
     private dialog: MatDialog,
-    private _dateSegmentService: DateSegmentService,
+    private dateSegmentService: DateSegmentService,
     private fb: FormBuilder,
     private cdrf: ChangeDetectorRef,
     private userGroupService: UserGroupService
@@ -391,7 +389,7 @@ export class ShiftHandOverComponent implements OnInit {
         startWith({}),
         debounceTime(100),
         distinctUntilChanged(),
-        takeUntil(this.destroy$),
+        takeUntil(this.onDestroy$),
         pairwise(),
         tap(([previous, current]) => {
           if (!isEqual(previous, current)) {
@@ -404,7 +402,6 @@ export class ShiftHandOverComponent implements OnInit {
     this.shrService.fetchShr$.next({ data: 'load' });
     this.shrService.fetchShr$.next({} as TableEvent);
     this.searchPosition = new FormControl('');
-    let filterJson = [];
     this.loggedInUser = this.usersService.getLoggedInUser$();
     this.allDynamoUsers = this.userGroupService.listAllDynamoUsers$();
     this.searchPosition.valueChanges
@@ -421,7 +418,7 @@ export class ShiftHandOverComponent implements OnInit {
     this.configOptions.allColumns = this.columns;
     this.prepareMenuActions();
     this.dateRange$ = new BehaviorSubject(
-      this._dateSegmentService.getStartAndEndDate('month')
+      this.dateSegmentService.getStartAndEndDate('month')
     );
     this.plantService.fetchLoggedInUserPlants$().subscribe((plants) => {
       this.allPlantsData = plants || [];
@@ -480,11 +477,11 @@ export class ShiftHandOverComponent implements OnInit {
       map(([rows, scrollData, units, userDetails, allUsers]) => {
         this.dataFetchingComplete = true;
         allUsers = this.removeDuplicates(allUsers?.items);
-        this.shiftSupervisorEmail = userDetails?.email;
+        this.loggedInUserEmail = userDetails?.email;
         const loggedDynamoUser = allUsers.find(
-          (user) => user.email === this.shiftSupervisorEmail
+          (user) => user.email === this.loggedInUserEmail
         );
-        this.shiftSupervisorId = loggedDynamoUser?.id;
+        this.loggedInUserId = loggedDynamoUser?.id;
         this.loggedInUserName = `${userDetails?.firstName} ${userDetails?.lastName}`;
         this.loggedInUserTitle = loggedDynamoUser?.title;
         if (this.skip === 0) {
@@ -544,8 +541,8 @@ export class ShiftHandOverComponent implements OnInit {
           disableClose: true,
           data: {
             ...row,
-            loggedInUserEmail: this.shiftSupervisorEmail,
-            loggedInUserId: this.shiftSupervisorId,
+            loggedInUserEmail: this.loggedInUserEmail,
+            loggedInUserId: this.loggedInUserId,
             loggedInUserName: this.loggedInUserName,
             loggedInUserTitle: this.loggedInUserTitle
           }
@@ -632,17 +629,17 @@ export class ShiftHandOverComponent implements OnInit {
     let final_date = '';
     if (event.value !== 'custom') {
       this.selectDate = event.value;
-      if (this.selectDate == 'last_24_hours') {
-        let last_24_h_date = new Date(
+      if (this.selectDate === 'last_24_hours') {
+        const last_24_h_date = new Date(
           new Date().getTime() - 24 * 60 * 60 * 1000
         );
-        let dateObject = new Date(last_24_h_date);
-        let last_24_format = dateObject.toISOString();
+        const dateObject = new Date(last_24_h_date);
+        const last_24_format = dateObject.toISOString();
 
-        let current_date = new Date();
-        let current_date_format = current_date.toISOString();
+        const current_date = new Date();
+        const current_date_format = current_date.toISOString();
         final_date = `${last_24_format},${current_date_format}`;
-      } else if (this.selectDate == 'last_week') {
+      } else if (this.selectDate === 'last_week') {
         const currentDate = new Date();
         const startOfLastWeek = new Date(
           currentDate.getFullYear(),
@@ -693,8 +690,8 @@ export class ShiftHandOverComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    this.destroy$.next();
-    this.destroy$.complete();
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   onSelectUnit(unit) {}

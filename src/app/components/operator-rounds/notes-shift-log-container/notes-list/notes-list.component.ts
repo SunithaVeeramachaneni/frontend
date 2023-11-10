@@ -29,6 +29,7 @@ import { BehaviorSubject } from 'rxjs';
 export class NotesListComponent implements OnInit {
   @Input() notes: any[];
   @Input() shrId: string;
+  @Input() selectedRow: any;
 
   menuState = 'out';
   selectedNote: any;
@@ -237,16 +238,19 @@ export class NotesListComponent implements OnInit {
   }
 
   prepareMenuActions(): void {
-    const menuActions = [
-      {
-        title: 'Edit',
-        action: 'edit'
-      },
-      {
-        title: 'Remove',
-        action: 'remove'
-      }
-    ];
+    const menuActions = [];
+    if (this.selectedRow.incomingSupervisorId === '') {
+      menuActions.push(
+        {
+          title: 'Edit',
+          action: 'edit'
+        },
+        {
+          title: 'Remove',
+          action: 'remove'
+        }
+      );
+    }
 
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;

@@ -29,6 +29,7 @@ import { ToastService } from 'src/app/shared/toast';
 })
 export class ShiftLogListComponent implements OnInit {
   @Input() logs: any[];
+  @Input() selectedRow: any;
   @Input() shrId: string;
 
   menuState = 'out';
@@ -181,16 +182,19 @@ export class ShiftLogListComponent implements OnInit {
   }
 
   prepareMenuActions(): void {
-    const menuActions = [
-      {
-        title: 'Edit',
-        action: 'edit'
-      },
-      {
-        title: 'Remove',
-        action: 'remove'
-      }
-    ];
+    const menuActions = [];
+    if (this.selectedRow.incomingSupervisorId === '') {
+      menuActions.push(
+        {
+          title: 'Edit',
+          action: 'edit'
+        },
+        {
+          title: 'Remove',
+          action: 'remove'
+        }
+      );
+    }
 
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
