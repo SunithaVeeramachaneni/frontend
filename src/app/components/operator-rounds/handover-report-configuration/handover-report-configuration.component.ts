@@ -15,7 +15,6 @@ import { slideInOut } from 'src/app/animations';
 import { columnConfiguration } from 'src/app/interfaces/columnConfiguration';
 import { cloneDeep } from 'lodash-es';
 import { ColumnConfigurationService } from 'src/app/forms/services/column-configuration.service';
-import { SHR_CONFIGURATION_DATA } from '../operator-rounds.constants';
 import { SHRColumnConfiguration } from 'src/app/interfaces/shr-column-configuration';
 import { ShrService } from '../services/shr.service';
 import { ToastService } from 'src/app/shared/toast';
@@ -45,9 +44,6 @@ export class HandoverReportConfigurationComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.allColumns = SHR_CONFIGURATION_DATA.map((column) => ({ ...column }));
-    this.draggableColumns = [...this.allColumns];
-    this.originalColumns = cloneDeep(this.allColumns);
     this.fetchCurrentSHRConfiguration().subscribe();
   }
 
@@ -159,6 +155,7 @@ export class HandoverReportConfigurationComponent implements OnInit, OnDestroy {
       .subscribe((response) => {
         if (Object.keys(response).length) {
           this.columnConfigService.isLoadingColumns$.next(true);
+          this.originalColumns = cloneDeep(this.allColumns);
           this.toastService.show({
             type: 'success',
             text: 'SHR Configuration Stored Successfully'

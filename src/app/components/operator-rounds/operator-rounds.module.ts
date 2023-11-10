@@ -141,7 +141,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     ShiftHandOverModalComponent,
     HandoverReportConfigurationComponent,
     ShrRoundsComponent,
-    ShrSummaryComponent
+    ShrSummaryComponent,
+    HandoverReportConfigurationComponent
   ],
   imports: [
     FormsModule,
