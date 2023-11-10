@@ -1399,7 +1399,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
             this.plantTimezoneMap[plantId].timeZoneIdentifier
           ) {
             changedDueDateToUTC = zonedTimeToUtc(
-              format(changedDueDate, dateTimeFormat4),
+              changedDueDate,
               this.plantTimezoneMap[plantId].timeZoneIdentifier
             );
           } else {
