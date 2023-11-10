@@ -36,6 +36,7 @@ import {
 import { of } from 'rxjs';
 import {
   dateFormat6,
+  defaultLimit,
   defaultProfile,
   superAdminText
 } from 'src/app/app.constants';
@@ -46,6 +47,7 @@ import { NgxImageCompressService } from 'ngx-image-compress';
 import { LoginService } from '../../login/services/login.service';
 import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
 import { DatePipeDateAdapter } from 'src/app/shared/utils/DatePipeDateAdapter';
+import { PositionsService } from '../services/positions.service';
 @Component({
   selector: 'app-add-edit-user-modal',
   templateUrl: './add-edit-user-modal.component.html',
@@ -99,8 +101,8 @@ export class AddEditUserModalComponent implements OnInit {
     validFrom: new FormControl('', [Validators.required]),
     validThrough: new FormControl('', [Validators.required]),
     plantId: new FormControl([], [this.matSelectValidator()]),
-    unitIds: new FormControl(''),
-    positionIds: new FormControl('')
+    unitIds: new FormControl([]),
+    positionIds: new FormControl([])
   });
   emailValidated = false;
   isValidIDPUser = false;
@@ -146,8 +148,12 @@ export class AddEditUserModalComponent implements OnInit {
   unitsList: any;
   unitsInformation: { [key: string]: any[] };
   unitsObject: { [key: string]: any[] };
-  allPositionsData: any;
-  positionsInformation;
+  allPositionsData = [];
+  positionsInformation = [];
+  positionList = [];
+  fetchType = 'load';
+  nextToken = '';
+  limit = defaultLimit;
 
   constructor(
     private fb: FormBuilder,
@@ -158,6 +164,7 @@ export class AddEditUserModalComponent implements OnInit {
     private http: HttpClient,
     private imageCompress: NgxImageCompressService,
     private loginService: LoginService,
+    private positionService: PositionsService,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
 
@@ -218,6 +225,9 @@ export class AddEditUserModalComponent implements OnInit {
       this.data.user.plantId = this.data.plantsList.filter((plant) =>
         this.data?.user?.plantId?.split(',')?.includes(plant.id)
       );
+      this.fetchPositions(this.data.user.plantId);
+    } else if (this.data?.user?.plantId) {
+      this.fetchPositions(this.data.user.plantId);
     }
 
     if (this.data?.user?.unitIds && !Array.isArray(this.data?.user?.unitIds)) {
@@ -226,14 +236,6 @@ export class AddEditUserModalComponent implements OnInit {
       );
     }
 
-    if (
-      this.data?.user?.positionIds &&
-      !Array.isArray(this.data?.user?.positionIds)
-    ) {
-      this.data.user.positionIds = this.data.positionsList.filter((pos) =>
-        this.data?.user?.positionIds?.split(',')?.includes(pos.id)
-      );
-    }
     const userDetails = this.data?.user;
     this.permissionsList$ = this.data?.permissionsList$;
     this.rolesInput = this.data?.roles?.rows;
@@ -256,6 +258,15 @@ export class AddEditUserModalComponent implements OnInit {
       const unitList = [];
       for (const unit of this.userForm.get('unitIds')?.value ?? []) {
         unitList.push(unit.id);
+      }
+    });
+
+    this.userForm.get('positionIds').valueChanges.subscribe(() => {
+      if (
+        this.userForm.get('positionIds')?.value &&
+        !Array.isArray(this.userForm.get('positionIds')?.value)
+      ) {
+        this.userForm.get('positionIds')?.setValue([]);
       }
     });
 
@@ -321,13 +332,6 @@ export class AddEditUserModalComponent implements OnInit {
       return result;
     }, {});
     this.unitsInformation = this.unitsObject;
-
-    this.positionsInformation = this.data.positionsList.filter(
-      (pos) =>
-        !this.data?.user?.plantId ||
-        this.data?.user?.plantId.some((value) => value.id === pos.plantId)
-    );
-    this.allPositionsData = this.positionsInformation;
   }
 
   validFromDateChange(validFromDate) {
@@ -605,8 +609,8 @@ export class AddEditUserModalComponent implements OnInit {
   }
 
   resetPlantSearchFilter = () => {
-    this.userForm.get('unitIds').setValue('');
-    this.userForm.get('positionIds').setValue('');
+    this.userForm.get('unitIds').setValue([]);
+    this.userForm.get('positionIds').setValue([]);
 
     this.unitsList = this.data.unitsList.filter(
       (unit) =>
@@ -627,12 +631,39 @@ export class AddEditUserModalComponent implements OnInit {
       return result;
     }, {});
     this.unitsInformation = this.unitsObject;
-
-    this.positionsInformation = this.data.positionsList.filter(
-      (pos) =>
-        !this.plant?.value ||
-        this.plant.value?.some((data) => data.id === pos.plantId)
-    );
-    this.allPositionsData = this.positionsInformation;
+    this.fetchPositions(this.plant?.value);
   };
+
+  fetchPositions(plants) {
+    const plantIds = plants.map((val) => val.id).join(',');
+    this.positionService
+      .getPositionsList$(
+        {
+          next: this.nextToken,
+          limit: this.limit,
+          searchKey: '',
+          fetchType: this.fetchType
+        },
+        {
+          plant: plantIds
+        }
+      )
+      .subscribe((data) => {
+        this.positionList = data.rows;
+        this.positionsInformation = this.positionList;
+        this.allPositionsData = this.positionsInformation;
+        if (
+          this.data?.user?.positionIds &&
+          !Array.isArray(this.data?.user?.positionIds)
+        ) {
+          this.data.user.positionIds = this.positionList.filter((pos) =>
+            this.data?.user?.positionIds?.split(',')?.includes(pos.id)
+          );
+
+          this.userForm
+            .get('positionIds')
+            ?.setValue(this.data.user.positionIds);
+        }
+      });
+  }
 }

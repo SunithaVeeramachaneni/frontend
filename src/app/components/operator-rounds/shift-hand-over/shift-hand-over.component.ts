@@ -65,7 +65,7 @@ export class ShiftHandOverComponent implements OnInit {
   searchPosition: FormControl;
   userInfo$: Observable<UserInfo>;
   SHRForm: FormGroup;
-  
+
   public dateRange$: BehaviorSubject<any>;
   units: [];
   public selectDate: string;
@@ -363,7 +363,7 @@ export class ShiftHandOverComponent implements OnInit {
   allPlantsData: any;
   plantInformation;
   allUnits: any = [];
-  
+
   constructor(
     private headerService: HeaderService,
     private shrService: ShrService,
@@ -377,7 +377,7 @@ export class ShiftHandOverComponent implements OnInit {
     private cdrf: ChangeDetectorRef,
     private userGroupService: UserGroupService
   ) {}
-  
+
   ngOnInit(): void {
     this.SHRForm = this.fb.group({
       timePeriod: new FormControl('', []),
@@ -387,19 +387,19 @@ export class ShiftHandOverComponent implements OnInit {
       unitId: new FormControl('')
     });
     this.SHRForm.valueChanges
-    .pipe(
-      startWith({}),
-      debounceTime(100),
-      distinctUntilChanged(),
-      takeUntil(this.destroy$),
-      pairwise(),
-      tap(([previous, current]) => {
-        if (!isEqual(previous, current)) {
-          this.shrService.fetchShr$.next({ data: 'load' });
-        }
-      })
-    )
-    .subscribe();
+      .pipe(
+        startWith({}),
+        debounceTime(100),
+        distinctUntilChanged(),
+        takeUntil(this.destroy$),
+        pairwise(),
+        tap(([previous, current]) => {
+          if (!isEqual(previous, current)) {
+            this.shrService.fetchShr$.next({ data: 'load' });
+          }
+        })
+      )
+      .subscribe();
     this.headerService.setHeaderTitle(routingUrls?.shiftHandOvers?.title);
     this.shrService.fetchShr$.next({ data: 'load' });
     this.shrService.fetchShr$.next({} as TableEvent);
@@ -428,13 +428,16 @@ export class ShiftHandOverComponent implements OnInit {
       this.plantInformation = this.allPlantsData;
       this.cdrf.detectChanges();
     });
-    this.locationService.fetchAllLocations$().pipe(
-      tap((data) => {
-        this.unitsList = data.items.filter((e) => e.isUnit);
-      })
-    ).subscribe();
+    this.locationService
+      .fetchAllLocations$()
+      .pipe(
+        tap((data) => {
+          this.unitsList = data.items.filter((e) => e.isUnit);
+        })
+      )
+      .subscribe();
   }
-  
+
   dateRangeEventHandler($event: any) {
     this.dateRange$.next($event);
   }
@@ -567,17 +570,15 @@ export class ShiftHandOverComponent implements OnInit {
     const hasColumnConfigFilter = Object.keys(columnConfigFilter)?.length || 0;
 
     return this.shrService
-      .getShiftHandOverList$(
-        {
-          next: this.nextToken,
-          limit: hasColumnConfigFilter ? graphQLDefaultFilterLimit : this.limit,
-          searchKey: this.searchPosition.value,
-          fetchType: this.fetchType,
-          createdOn: this.SHRForm.value.timePeriod,
-          plantId: this.SHRForm.value.plantId,
-          unitId: this.SHRForm.value.unitId
-        }
-      )
+      .getShiftHandOverList$({
+        next: this.nextToken,
+        limit: hasColumnConfigFilter ? graphQLDefaultFilterLimit : this.limit,
+        searchKey: this.searchPosition.value,
+        fetchType: this.fetchType,
+        createdOn: this.SHRForm.value.timePeriod,
+        plantId: this.SHRForm.value.plantId,
+        unitId: this.SHRForm.value.unitId
+      })
       .pipe(
         mergeMap(({ count, rows, next }) => {
           if (count !== undefined) {
@@ -619,7 +620,6 @@ export class ShiftHandOverComponent implements OnInit {
   onCloseColumnConfig() {
     this.columnConfigMenuState = 'out';
   }
-  
 
   dateChanged(event) {
     let final_date = '';
@@ -631,7 +631,7 @@ export class ShiftHandOverComponent implements OnInit {
         );
         let dateObject = new Date(last_24_h_date);
         let last_24_format = dateObject.toISOString();
-  
+
         let current_date = new Date();
         let current_date_format = current_date.toISOString();
         final_date = `${last_24_format},${current_date_format}`;
@@ -659,7 +659,6 @@ export class ShiftHandOverComponent implements OnInit {
       });
     }
   }
-  
 
   onSelectPlant(plant) {
     if (plant) {
@@ -691,11 +690,8 @@ export class ShiftHandOverComponent implements OnInit {
     this.destroy$.complete();
   }
 
-  onSelectUnit(unit){
+  onSelectUnit(unit) {}
 
-  }
-
-  
   removeDuplicates(arr) {
     const uniqueEmails = new Set();
     const result = [];
