@@ -159,7 +159,11 @@
         ></app-shr-rounds>
       </div>
       <!-- STEP 3 -->
-      <div *ngIf="currentStep === 2">Observations Component</div>
+      <div *ngIf="currentStep === 2">
+        <app-shr-observation
+          [shrDetailsData]="shrAllDetails"
+        ></app-shr-observation>
+      </div>
       <!-- STEP 4 -->
       <div *ngIf="currentStep === 3">
         <app-notes-shift-log-container

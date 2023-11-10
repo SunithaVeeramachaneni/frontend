@@ -521,5 +521,12 @@
   "summaryInstructions": "Instructions",
   "summarySupervisorNotes": "Supervisor Notes",
   "summaryStandingInstructions": "Standing Instructions",
-  "summaryShiftInfo": "Shift Information"
+  "summaryShiftInfo": "Shift Information",
+  "exceptions": "Exceptions",
+  "resolved": "Resolved",
+  "raised": "Raised",
+  "pending": "Pending",
+  "last": "Last",
+  "readings": "Readings",
+  "trendMap": "Trend Map"
 }

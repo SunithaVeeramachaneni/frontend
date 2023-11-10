@@ -87,6 +87,11 @@ import { ReviseScheduleComponent } from './revise-schedule/revise-schedule.compo
 import { TaskLevelTaskComponentsComponent } from './task-level-task-components/task-level-task-components.component';
 import { AlertModalComponent } from './scheduler-modal/alert-modal/alert-modal.component';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { ObservationActionComponent } from './observation-action/observation-action.component';
+import { ObservationExceptionComponent } from './observation-exception/observation-exception.component';
+import { ObservationIssuesComponent } from './observation-issues/observation-issues.component';
+import { ExceptionGraphViewComponent } from './exception-graph-view/exception-graph-view.component';
+import { ShrObservationComponent } from './shr-observation/shr-observation.component';
 import { ShiftHandOverComponent } from './shift-hand-over/shift-hand-over.component';
 import { EditNotesSideDrawerComponent } from './notes-shift-log-container/edit-notes-side-drawer/edit-notes-side-drawer.component';
 import { ShiftLogListComponent } from './notes-shift-log-container/shift-log-list/shift-log-list.component';
@@ -98,6 +103,7 @@ import { NotesListComponent } from './notes-shift-log-container/notes-list/notes
 import { HandoverReportConfigurationComponent } from './handover-report-configuration/handover-report-configuration.component';
 import { ShrRoundsComponent } from './shr-rounds/shr-rounds.component';
 import { ShrSummaryComponent } from './shr-summary/shr-summary.component';
+import { NgxEchartsModule } from 'ngx-echarts';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/operator-rounds/', '.json');
@@ -130,6 +136,11 @@ export const customTranslateLoader = (http: HttpClient) =>
     TaskLevelTaskComponentsComponent,
     ReviseScheduleComponent,
     AlertModalComponent,
+    ObservationActionComponent,
+    ObservationExceptionComponent,
+    ObservationIssuesComponent,
+    ExceptionGraphViewComponent,
+    ShrObservationComponent,
     ShiftHandOverComponent,
     NotesListComponent,
     EditNotesSideDrawerComponent,
@@ -178,6 +189,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatButtonToggleModule,
     NgxShimmerLoadingModule,
     NgxMatDatetimePickerModule,
+    NgxEchartsModule,
     TranslateModule.forChild({
       loader: {
         provide: TranslateLoader,

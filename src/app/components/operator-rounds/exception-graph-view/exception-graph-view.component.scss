@@ -1,0 +1,136 @@
+@import '../../../../scss/colors.scss';
+
+.container {
+  display: flex;
+  align-items: center;
+}
+.circle {
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+.blue-circle {
+  background-color: $white;
+  border: 2px solid $blue-border;
+  margin-left: 20px;
+}
+
+.grey-circle {
+  // background-color: grey;
+  border: 2px solid $black;
+  margin-left: 15px;
+}
+
+.line-min {
+  width: 15px;
+  border-top: 2px dashed $blue-border;
+  margin-right: 5px;
+  margin-left: 15px;
+}
+
+.line-max {
+  width: 15px;
+  border-top: 2px dashed $action-bg;
+  margin-right: 5px;
+  margin-left: 15px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  margin: 12px 0 12px 10px;
+}
+
+.header-left p {
+  font-size: 16px;
+  margin: 0 0 0 10px;
+}
+
+.close-btn {
+  float: right;
+  background-color: transparent;
+  border: none;
+  font-size: 18px;
+  color: $gray4;
+  margin: 12px 10px 12px 0;
+}
+
+.info {
+  display: flex;
+  background-color: $blue4;
+  padding: 12px;
+  border-top: 1px solid $gray3;
+  border-bottom: 1px solid $gray3;
+}
+
+.info-icon i {
+  font-size: 15px;
+  margin: 0.5px 10px 0 8px;
+  color: $blue6;
+}
+
+.info-text p {
+  font-size: 14px;
+  color: $blue5;
+  margin: 0;
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid $gray3;
+}
+
+.footer button {
+  float: right;
+  background-color: $blue-main;
+  font-size: 15px;
+  color: $white;
+  cursor: pointer;
+  margin-top: 12px;
+  margin-right: 12px;
+}
+
+.scrollable-content {
+  height: 54.5vh;
+  overflow-y: auto;
+}
+
+.content {
+  display: flex;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.graph-container {
+  display: block;
+  border-right: 1px solid $gray3;
+  height: 100%;
+}
+
+.graph-header {
+  padding: 4px 0 5px 15px;
+  background-color: $active-bg;
+  border-bottom: 1px solid $gray3;
+  font-weight: 500;
+}
+
+.chart {
+  position: relative;
+  top: 25px;
+  right: 10px;
+  width: 450px;
+  height: 283px;
+}
+
+.legends {
+  display: flex;
+  align-items: center;
+  margin-left: 12px;
+}

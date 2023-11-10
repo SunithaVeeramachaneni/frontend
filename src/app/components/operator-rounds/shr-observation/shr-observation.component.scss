@@ -1,0 +1,23 @@
+// blue-main
+@import '../../../../scss/colors.scss';
+
+#expandableComponentIcon {
+  color: $blue-main;
+}
+
+.scrollable-area {
+  height: calc(
+    100vh - 220px
+  ); // If scroll issue reduce this - Top bar size or any addtional component on top
+  overflow: auto;
+  padding: 16px 16px 0 16px;
+}
+
+.issues-list {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.actions-list {
+  margin-bottom: 40px;
+}
