@@ -19,7 +19,7 @@
   </div>
   <div class="rounds-table-container">
     <cwp-dynamictable
-      *ngIf="!isLoading$ && dataSource.length !== 0"
+      *ngIf="!isLoading$"
       [dataSource]="dataSource"
       [configOptions]="configOptions"
     >

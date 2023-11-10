@@ -136,7 +136,7 @@ export class ShrRoundsComponent implements OnInit {
       ...this.commonColumnFeatures
     }
   ];
-  shrRoundsFilterOptions = [
+  shrRoundsFilterOptions : { id: shrRoundFilterSType, count: number }[] = [
     {
       id: 'all',
       count: 0
