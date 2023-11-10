@@ -104,6 +104,7 @@ import { HandoverReportConfigurationComponent } from './handover-report-configur
 import { ShrRoundsComponent } from './shr-rounds/shr-rounds.component';
 import { ShrSummaryComponent } from './shr-summary/shr-summary.component';
 import { NgxEchartsModule } from 'ngx-echarts';
+import { ShrSubmissionModalComponent } from './shr-submission-modal/shr-submission-modal.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/operator-rounds/', '.json');
@@ -153,7 +154,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     HandoverReportConfigurationComponent,
     ShrRoundsComponent,
     ShrSummaryComponent,
-    HandoverReportConfigurationComponent
+    HandoverReportConfigurationComponent,
+    ShrSubmissionModalComponent
   ],
   imports: [
     FormsModule,
