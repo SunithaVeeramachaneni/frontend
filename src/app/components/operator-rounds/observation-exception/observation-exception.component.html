@@ -1,0 +1,29 @@
+<div *ngIf="userInfo$ | async" class="expcetions-list">
+  <div
+    *ngIf="(exceptions$ | async) && (isLoading$ | async) === false"
+    [ngClass]="{ 'dynamic-table-height': isNotificationAlert }"
+  >
+    <cwp-dynamictable
+      [dataSource]="dataSource"
+      [configOptions]="configOptions"
+      (fetchDataCallback)="handleTableEvent($event)"
+      (cellClickActionHandler)="cellClickActionHandler($event)"
+      (rowLevelActionHandler)="rowLevelActionHandler($event)"
+      class="width-100"
+    ></cwp-dynamictable>
+  </div>
+
+  <div *ngIf="isLoading$ | async">
+    <div
+      [ngClass]="{
+        'padding-lr-20': !isNotificationAlert,
+        'padding-lr-20-notification': isNotificationAlert
+      }"
+    >
+      <div *ngFor="let number of ghostLoading">
+        <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+        </ngx-shimmer-loading>
+      </div>
+    </div>
+  </div>
+</div>

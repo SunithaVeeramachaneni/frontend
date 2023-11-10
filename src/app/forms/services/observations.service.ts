@@ -562,17 +562,24 @@ export class ObservationsService {
     }
     return desc;
   }
-  private formateGetObservationResponse(resp, type) {
+  /// Used with temp json data for SHR make private again once API integration is done
+  formateGetObservationResponse(resp, type) {
     if (resp?.filters?.assignedTo?.length > 0) {
       resp.filters.assignedTo = resp.filters.assignedTo
         .map((email) => this.userService.getUserFullName(email))
         .filter(Boolean);
     }
 
-    const items = resp?.items?.sort(
-      (a, b) =>
-        new Date(b?.createdAt).getTime() - new Date(a?.createdAt).getTime()
-    );
+    /// Used with temp json data for SHR revert changes again once API integration is done
+    const items =
+      resp?.items === undefined
+        ? resp
+        : resp?.items?.sort(
+            (a, b) =>
+              new Date(b?.createdAt).getTime() -
+              new Date(a?.createdAt).getTime()
+          );
+
     const rows = items.map((item) => {
       const location =
         item.SWERK?.replace(dataPlaceHolder, placeHolder) || placeHolder;
@@ -610,7 +617,8 @@ export class ObservationsService {
         raisedBy: item.createdBy,
         notificationInfo: item.notificationInfo || placeHolder,
         issueOrActionDBVersion: item._version,
-        type
+        type,
+        trend: 'View' // for exceptions table
       };
     });
     return {
