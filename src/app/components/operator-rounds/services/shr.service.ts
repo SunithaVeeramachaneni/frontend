@@ -90,6 +90,48 @@ export class ShrService {
     );
   }
 
+  uploadAttachments$(file, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
+    return this.appService._postData(
+      environment.operatorRoundsApiUrl,
+      `shr/upload-attachments`,
+      file,
+      info
+    );
+  }
+  getAttachmentsById$(id, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
+    return this.appService._getResp(
+      environment.operatorRoundsApiUrl,
+      `shr/upload-attachments/${id}`,
+      info
+    );
+  }
+
+  submitSHRReport(
+    id,
+    body,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    return this.appService.patchData(
+      environment.operatorRoundsApiUrl,
+      `shr/${id}`,
+      body,
+      info
+    );
+  }
+
+  updateSHRDetails(
+    id,
+    body,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    return this.appService.patchData(
+      environment.operatorRoundsApiUrl,
+      `shr/details/${id}`,
+      body,
+      info
+    );
+  }
+
   updateSupervisorLogs$(
     id,
     body,

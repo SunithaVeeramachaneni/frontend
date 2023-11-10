@@ -8,7 +8,6 @@ import {
   SimpleChanges
 } from '@angular/core';
 import { PDFDocument } from 'pdf-lib';
-import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { UserDetails, UserInfo } from 'src/app/interfaces';
 import { map, tap } from 'rxjs/operators';
 import { ToastService } from 'src/app/shared/toast';
@@ -18,6 +17,7 @@ import { Observable } from 'rxjs';
 import { ShrSummaryService } from '../services/shr-summary.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { LoginService } from '../../login/services/login.service';
+import { ShrService } from '../services/shr.service';
 
 type ShiftDetails = {
   plant: {
@@ -234,7 +234,7 @@ export class ShrSummaryComponent implements OnInit, OnChanges {
   };
 
   constructor(
-    private operatorRoundsService: OperatorRoundsService,
+    private shrService: ShrService,
     private cdrf: ChangeDetectorRef,
     private toastService: ToastService,
     private imageCompress: NgxImageCompressService,
@@ -267,7 +267,7 @@ export class ShrSummaryComponent implements OnInit, OnChanges {
     });
     this.setInitialValues();
 
-    this.operatorRoundsService.attachmentsMapping$
+    this.shrService.attachmentsMapping$
       .pipe(map((data) => (Array.isArray(data) ? data : [])))
       .subscribe((attachments) => {
         attachments?.forEach((att) => {
@@ -283,7 +283,7 @@ export class ShrSummaryComponent implements OnInit, OnChanges {
         this.cdrf.detectChanges();
       });
 
-    this.operatorRoundsService.pdfMapping$
+    this.shrService.pdfMapping$
       .pipe(map((data) => (Array.isArray(data) ? data : [])))
       .subscribe((pdfs) => {
         pdfs?.forEach((pdf) => {
@@ -318,34 +318,38 @@ export class ShrSummaryComponent implements OnInit, OnChanges {
         shiftSupervisorEmail,
         shift,
         plant,
+        unitId,
         unit,
         incomingSupervisor,
         shiftSupervisor,
         shiftStartDatetime,
         shiftEndDatetime,
-        shiftId
+        shiftId,
+        nextShift,
+        shiftNames
       } = this.selectedRow;
 
-      if (this.userInfo.email === shiftSupervisorEmail)
+      if (this.userInfo.email === shiftSupervisorEmail) {
         this.handleStartHandOver();
+      }
 
       this.shiftDetails = {
         plant: {
           plantId: plant.id,
-          plantName: plant.name || ''
+          plantName: plant.name || '--'
         },
         unit: {
-          unitId: unit.id || '',
-          unitName: unit.name || ''
+          unitId: unitId || '--',
+          unitName: unit || '--'
         },
-        currentShift: `${this.getFormattedDate(shiftStartDatetime)} / ${
-          shift.name
-        }`,
-        shiftSupervisor: shiftSupervisor || '',
-        upcomingShift: `${this.getFormattedDate(shiftEndDatetime)} / ${
-          shift.name
-        }`,
-        upcomingShiftSupervisor: incomingSupervisor || '',
+        currentShift: shiftNames || '--',
+        shiftSupervisor: shiftSupervisor || '--',
+        upcomingShift: nextShift || '--',
+        upcomingShiftSupervisor: incomingSupervisor
+          ? `${incomingSupervisor.firstName || ''} ${
+              incomingSupervisor.lastName || ''
+            }`
+          : '--',
         shiftId
       };
     }
@@ -420,25 +424,40 @@ export class ShrSummaryComponent implements OnInit, OnChanges {
       const { image, pdfDocs } = summary?.instructions;
       const attachmentPromises =
         image?.map((attachmentId) =>
-          this.operatorRoundsService
-            .getAttachmentsById$(attachmentId)
-            .toPromise()
-            .then()
+          this.shrService.getAttachmentsById$(attachmentId).toPromise().then()
         ) || [];
       const pdfPromises =
         pdfDocs?.map((pdfId) =>
-          this.operatorRoundsService
-            .getAttachmentsById$(pdfId)
-            .toPromise()
-            .then()
+          this.shrService.getAttachmentsById$(pdfId).toPromise().then()
         ) || [];
       Promise.all(attachmentPromises).then((result) => {
-        this.operatorRoundsService.attachmentsMapping$.next(result);
+        this.shrService.attachmentsMapping$.next(result);
       });
       Promise.all(pdfPromises).then((result) => {
-        this.operatorRoundsService.pdfMapping$.next(result);
+        this.shrService.pdfMapping$.next(result);
       });
     }
+  }
+
+  updateShrDetails(payload) {
+    const id = this.selectedRow.id;
+    const updatedPayload = {
+      ...payload
+    };
+    this.shrService.updateSHRDetails(id, updatedPayload);
+  }
+
+  handleOnBlur(event) {
+    const { name } = event.target;
+    const payload = {
+      summary: JSON.stringify({
+        instructions: {
+          [name]: this.summaryForm.get(name).value
+        }
+      })
+    };
+
+    this.updateShrDetails(payload);
   }
 
   prepareSummaryChart() {
@@ -634,11 +653,13 @@ export class ShrSummaryComponent implements OnInit, OnChanges {
               attachment: onlybase64
             };
             if (resizedPdfSize <= maxSize) {
-              this.operatorRoundsService
+              this.shrService
                 .uploadAttachments$({
                   file: pdf,
                   objectId: this.shiftDetails?.shiftId,
-                  plantId: this.shiftDetails?.plant?.plantId
+                  plantId: this.shiftDetails?.plant?.plantId,
+                  unitId: this.shiftDetails?.unit?.unitId,
+                  submittedDate: new Date().toISOString()
                 })
                 .pipe(
                   tap((response) => {
@@ -647,9 +668,17 @@ export class ShrSummaryComponent implements OnInit, OnChanges {
                         mediaType: [...this.pdfFiles.mediaType, file]
                       };
                       const responsenew =
-                        response?.data?.createRoundPlanAttachments?.id;
+                        response?.data?.createSHRAttachments?.id;
                       this.filteredMediaPdfTypeIds.push(responsenew);
                       this.filteredMediaPdfType.push(this.base64result);
+                      const payload = {
+                        summary: JSON.stringify({
+                          instructions: {
+                            pdfDocs: this.filteredMediaPdfTypeIds
+                          }
+                        })
+                      };
+                      this.updateShrDetails(payload);
                     }
                     this.cdrf.detectChanges();
                   })
@@ -671,17 +700,19 @@ export class ShrSummaryComponent implements OnInit, OnChanges {
               attachment: onlybase64
             };
             if (resizedImageSize <= maxSize) {
-              this.operatorRoundsService
+              this.shrService
                 .uploadAttachments$({
                   file: image,
                   objectId: this.shiftDetails?.shiftId,
-                  plantId: this.shiftDetails?.plant?.plantId
+                  plantId: this.shiftDetails?.plant?.plantId,
+                  unitId: this.shiftDetails?.unit?.unitId,
+                  submittedDate: new Date().toISOString()
                 })
                 .pipe(
                   tap((response) => {
                     if (response) {
                       const responsenew =
-                        response?.data?.createRoundPlanAttachments?.id;
+                        response?.data?.createSHRAttachments?.id;
                       this.filteredMediaTypeIds = {
                         mediaIds: [
                           ...this.filteredMediaTypeIds.mediaIds,
@@ -694,6 +725,14 @@ export class ShrSummaryComponent implements OnInit, OnChanges {
                           onlybase64
                         ]
                       };
+                      const payload = {
+                        summary: JSON.stringify({
+                          instructions: {
+                            image: this.filteredMediaTypeIds.mediaIds
+                          }
+                        })
+                      };
+                      this.updateShrDetails(payload);
                       this.cdrf.detectChanges();
                     }
                   })

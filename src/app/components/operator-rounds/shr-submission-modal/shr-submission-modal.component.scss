@@ -1,0 +1,53 @@
+@import '../../../../scss/colors.scss';
+
+.shr-modal-container {
+  padding: 5px 10px 10px 10px;
+  display: 'grid';
+  align-content: space-between;
+  gap: 1em;
+
+  .header {
+    .heading {
+      font-size: 20px;
+      font-weight: bold;
+    }
+  }
+  .main-content {
+    display: grid;
+    gap: 1em;
+    .list-container {
+      padding: 0 15px;
+      .list-item {
+        font-size: 16px;
+        font-weight: 400;
+        margin-bottom: 5px;
+        list-style-type: disc;
+      }
+      .labelText {
+        font-size: 16px;
+        font-weight: 500;
+      }
+    }
+
+    .displayNote {
+      font-size: 16px;
+      color: gray;
+      font-weight: 400;
+    }
+  }
+
+  .footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: auto;
+    .cancel-btn {
+      color: $blue-main;
+      margin-right: 10px;
+    }
+
+    .submit-btn {
+      background-color: $blue-main;
+      color: $white;
+    }
+  }
+}
