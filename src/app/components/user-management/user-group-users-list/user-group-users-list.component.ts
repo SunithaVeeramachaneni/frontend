@@ -167,8 +167,8 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
       hasPostTextImage: true
     },
     {
-      id: 'email',
-      displayName: 'Email',
+      id: 'positions',
+      displayName: 'Positions',
       type: 'string',
       controlType: 'string',
       order: 4,
@@ -189,8 +189,8 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
       hasPostTextImage: false
     },
     {
-      id: 'positions',
-      displayName: 'Positions',
+      id: 'email',
+      displayName: 'Email',
       type: 'string',
       controlType: 'string',
       order: 5,
@@ -343,6 +343,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
         if (this.skip === 0) {
           initial.data = users.map((usr) => ({
             ...usr,
+            plant: this.plantName,
             positions:
               usr.users?.positionIds
                 ?.split(',')
@@ -433,14 +434,13 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
                 item.units = this.allUnitLocations.find(
                   (unit) => unit.id === this._userGroupUnitId
                 )?.name;
-                item.plant = this.plantName;
                 item.preTextImage = {
                   style: {
                     width: '30px',
                     height: '30px',
                     'border-radius': '50%',
                     display: 'block',
-                    padding: '0px 10px'
+                    'padding-right': '10px'
                   },
                   image: this.getImageSrc(item?.users?.profileImage),
                   condition: true
