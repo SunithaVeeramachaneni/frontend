@@ -144,7 +144,10 @@
         <hr class="stepper-line" *ngIf="i !== steps.length - 1" />
       </ng-container>
     </div>
-    <div class="width-80" *ngIf="shrAllDetails$ | async as shrAllDetails">
+    <div
+      class="width-80"
+      *ngIf="shrAllDetails$ | async as shrAllDetails; else loadingSummary"
+    >
       <!-- STEP 1 -->
       <div *ngIf="currentStep === 0">
         <app-shr-summary
@@ -177,5 +180,27 @@
         ></app-operators-list>
       </div>
     </div>
+    <ng-template #loadingSummary>
+      <div class="width-80">
+        <div
+          class="ghost-loading-header"
+          *ngFor="let number of ghostLoadingHeader"
+        >
+          <ngx-shimmer-loading
+            [width]="'25%'"
+            [height]="'200px'"
+          ></ngx-shimmer-loading>
+        </div>
+        <div
+          class="ghost-loading-footer"
+          *ngFor="let number of ghostLoadingFooter"
+        >
+          <ngx-shimmer-loading
+            [width]="'100%'"
+            [height]="'200px'"
+          ></ngx-shimmer-loading>
+        </div>
+      </div>
+    </ng-template>
   </div>
 </div>

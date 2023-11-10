@@ -26,7 +26,8 @@ export class ShiftHandOverModalComponent implements OnInit {
 
   totalSteps: number;
   currentStep = 0;
-
+  ghostLoadingHeader = new Array(4).fill(0).map((v, i) => i);
+  ghostLoadingFooter = new Array(2).fill(0).map((v, i) => i);
   shrAllDetails$: Observable<any>;
   loggedInUserId = '';
   loggedInUserEmail = '';

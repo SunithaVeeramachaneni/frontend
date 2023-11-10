@@ -5,9 +5,7 @@ import {
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { ShiftService } from '../../master-configurations/shifts/services/shift.service';
-// import { PlantService } from '../../master-configurations/plants/services/plant.service';
-// import { combineLatest } from 'rxjs';
-// import { map } from 'rxjs/operators';
+import { Observable, forkJoin } from 'rxjs';
 
 type shrRoundFilterSType =
   | 'all'
@@ -25,6 +23,12 @@ export class ShrRoundsComponent implements OnInit {
   @Input() data: string;
   isLoading$: boolean = false;
   ghostLoading = new Array(10).fill(0).map((v, i) => i);
+  shiftAndUsers$: Observable<any>;
+  colorObject = Object.fromEntries(
+    new Array(101)
+      .fill(null)
+      .map((v, i) => [`${i}%`, { color: i < 25 ? '#AA2E25' : '#B28704' }])
+  );
   commonColumnFeatures = {
     type: 'string',
     controlType: 'string',
@@ -67,6 +71,7 @@ export class ShrRoundsComponent implements OnInit {
       displayName: 'Status',
       order: 2,
       ...this.commonColumnFeatures,
+      hasConditionalStyles: true,
       titleStyle: {
         textTransform: 'capitalize',
         fontWeight: 500,
@@ -78,8 +83,6 @@ export class ShrRoundsComponent implements OnInit {
         top: '10px',
         width: '80px',
         height: '24px',
-        background: 'red',
-        color: '#FFFFFF',
         borderRadius: '12px'
       }
     },
@@ -121,6 +124,7 @@ export class ShrRoundsComponent implements OnInit {
     {
       id: 'completed',
       displayName: 'Completed',
+      hasConditionalStyles: true,
       order: 5,
       ...this.commonColumnFeatures,
       sortable: true
@@ -132,7 +136,7 @@ export class ShrRoundsComponent implements OnInit {
       ...this.commonColumnFeatures
     }
   ];
-  shrRoundsFilterOptions = [
+  shrRoundsFilterOptions : { id: shrRoundFilterSType, count: number }[] = [
     {
       id: 'all',
       count: 0
@@ -173,32 +177,49 @@ export class ShrRoundsComponent implements OnInit {
     },
     allColumns: [],
     groupByColumns: [],
-    groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957']
+    groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
+    conditionalStyles: {
+      open: {
+        background: '#F56565',
+        color: '#FFFFFF'
+      },
+      inprogress: {
+        background: '#FFCC00',
+        color: '#000000'
+      },
+      skipped: {
+        background: '#9E9E9E',
+        color: '#000000'
+      },
+      resolved: {
+        background: '#4CAF50',
+        color: '#FFFFFF'
+      },
+      overdue: {
+        background: '#F44336',
+        color: '#FFFFFF'
+      },
+      submitted: {
+        background: '#4CAF50',
+        color: '#FFFFFF'
+      },
+      ...this.colorObject
+    }
   };
-  constructor(
-    private shiftService: ShiftService,
-    // private plantService: PlantService
-  ) {}
+  constructor(private shiftService: ShiftService) {}
 
   ngOnInit(): void {
     this.isLoading$ = true;
     this.shrRoundFilterS = 'overdue'; //default value
     this.configOptions.allColumns = this.columns;
     this.updateFilterCount();
-    this.shiftService.fetchAllShifts$().subscribe((res) => {
-      res?.items?.map((sft) => {
+    forkJoin([this.shiftService.fetchAllShifts$()]).subscribe(([shifts]) => {
+      shifts?.items?.map((sft) => {
         this.allShifts[sft?.id] = sft;
         this.updateFilter(this.shrRoundFilterS);
         this.isLoading$ = false;
       });
     });
-    // this.plantService.fetchAllPlants$().subscribe((res) => {
-    //   console.log(res);
-    // });
-    // combineLatest([
-    //   this.shiftService.fetchAllShifts$(),
-    //   this.plantService.fetchAllPlants$()
-    // ]).pipe(map(([shifts, plants]) => {}));
   }
 
   updateFilterCount() {
