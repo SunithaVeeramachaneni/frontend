@@ -1,5 +1,6 @@
 <div id="main-container" class="container">
   <cwp-dynamictable
+    *ngIf="!(isLoading$ | async)"
     class="dynamicTable width-100"
     id="table"
     [dataSource]="dataSource"
@@ -17,5 +18,14 @@
       [shrId]="shrId"
       (updateNote)="updateNotes($event)"
     ></app-edit-notes-side-drawer>
+
+    <div *ngIf="isLoading$ | async">
+      <div class="ghost-loading">
+        <div *ngFor="let number of ghostLoading">
+          <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+          </ngx-shimmer-loading>
+        </div>
+      </div>
+    </div>
   </ng-container>
 </div>

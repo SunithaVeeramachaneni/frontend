@@ -2,7 +2,8 @@ import {
   Component,
   OnInit,
   Input,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  ChangeDetectorRef
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
@@ -11,12 +12,13 @@ import {
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { ConfirmDeleteModalComponent } from '../confirm-delete-modal/confirm-delete-modal.component';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { UserDetails } from 'src/app/interfaces';
 import { UsersService } from 'src/app/components/user-management/services/users.service';
 import { slideInOut } from 'src/app/animations';
 import { OperatorRoundsService } from '../../services/operator-rounds.service';
 import { ShrService } from '../../services/shr.service';
+import { ToastService } from 'src/app/shared/toast';
 
 @Component({
   selector: 'app-shift-log-list',
@@ -33,6 +35,8 @@ export class ShiftLogListComponent implements OnInit {
   selectedLog: any;
   dataSource: MatTableDataSource<any>;
   users$: Observable<UserDetails[]>;
+  ghostLoading = new Array(5).fill(0).map((v, i) => i);
+  isLoading$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
 
   columns: Column[] = [
     {
@@ -153,21 +157,28 @@ export class ShiftLogListComponent implements OnInit {
     private dialog: MatDialog,
     private userService: UsersService,
     private operatorRoundService: OperatorRoundsService,
-    private shrService: ShrService
+    private shrService: ShrService,
+    private cdfr: ChangeDetectorRef,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
+    this.isLoading$.next(true);
     this.configOptions.allColumns = this.columns;
     this.userService.getUsersInfo$().subscribe(() => {
       const data = this.logs.map((log) => {
         return {
           ...log,
-          raisedBy: this.operatorRoundService.formatUserFullNameDisplay(
-            log.raisedBy || 'ayush.solanki@innovapptive.com'
-          )
+          raisedBy: log.raisedBy
+            ? this.operatorRoundService.formatUserFullNameDisplay(
+                log.raisedBy
+              ) || ''
+            : ''
         };
       });
       this.dataSource = new MatTableDataSource(data);
+      this.isLoading$.next(false);
+      this.cdfr.markForCheck();
     });
     this.prepareMenuActions();
   }
@@ -214,10 +225,10 @@ export class ShiftLogListComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
+      this.isLoading$.next(true);
       if (result) {
-        console.log(result);
         this.shrService
-          .deleteSHRNotes$(
+          .deleteSupervisorLogs$(
             data.id,
             { shrId: this.shrId },
             { displayToast: true, failureResponse: {} }
@@ -233,13 +244,18 @@ export class ShiftLogListComponent implements OnInit {
               };
             });
             this.dataSource = new MatTableDataSource(logsData);
+            this.toastService.show({
+              type: 'success',
+              text: 'Shift Log deleted successfully'
+            });
+            this.isLoading$.next(false);
+            this.cdfr.detectChanges();
           });
       }
     });
   }
 
   updateShiftLogs(data: any): void {
-    console.log(data);
     const index = this.logs.findIndex((log) => log.id === data.id);
     this.logs[index] = {
       ...this.logs[index],
@@ -247,5 +263,7 @@ export class ShiftLogListComponent implements OnInit {
       description: data.description
     };
     this.selectedLog = null;
+    this.cdfr.detectChanges();
+    this.dataSource = new MatTableDataSource(this.logs);
   }
 }
